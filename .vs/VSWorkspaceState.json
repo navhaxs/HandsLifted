@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\HandsLiftedApp",
+    "\\HandsLiftedApp\\AvaloniaNDI",
+    "\\HandsLiftedApp\\AvaloniaNDI\\AvaloniaNDI",
+    "\\HandsLiftedApp\\HandsLiftedApp",
+    "\\HandsLiftedApp\\HandsLiftedApp\\Assets",
+    "\\HandsLiftedApp\\HandsLiftedApp\\Models",
+    "\\HandsLiftedApp\\HandsLiftedApp\\ViewModels",
+    "\\HandsLiftedApp\\HandsLiftedApp\\Views"
+  ],
+  "SelectedNode": "\\HandsLiftedApp\\HandsLiftedApp\\Views\\MainWindow.axaml",
+  "PreviewInSolutionExplorer": false
+}

@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="HandsLiftedApp.Views.SplashWindow"
+        Title="SplashWindow"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        HasSystemDecorations="False"
+        SystemDecorations="None"
+        CanResize="False"
+        Height="450" Width="600"
+        TransparencyLevelHint="Transparent"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True"
+        ExtendClientAreaTitleBarHeightHint="-1">
+    <Image Source="avares://HandsLiftedApp/Assets/splash.png"
+        RenderOptions.BitmapInterpolationMode="HighQuality"
+         />
+</Window>

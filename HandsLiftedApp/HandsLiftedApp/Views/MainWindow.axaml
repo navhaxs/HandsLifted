@@ -1,0 +1,176 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:HandsLiftedApp.Views"
+        xmlns:vm="using:HandsLiftedApp.ViewModels"
+        xmlns:utils="using:HandsLiftedApp.Utils"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ndi="using:AvaloniaNDI"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="HandsLiftedApp.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+		Width="1920" Height="1080"
+		DoubleTapped="MainWindow_DoubleTapped"
+        Title="HandsLiftedApp">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width = "0.3 *" />
+			<ColumnDefinition Width = "Auto" />
+			<ColumnDefinition Width = "*" />
+			<ColumnDefinition Width = "Auto" />
+			<ColumnDefinition Width = "0.4 *" />
+		</Grid.ColumnDefinitions>
+
+		<!-- Left hand panel -->
+		<DockPanel>
+			<Border Padding="10" Background="#4b3ea3" DockPanel.Dock="Top" Height="90">
+				<StackPanel VerticalAlignment="Bottom">
+					<TextBlock HorizontalAlignment="Stretch" FontSize="26" Foreground="White">Sunday 11am</TextBlock>
+					<TextBlock HorizontalAlignment="Stretch" Foreground="White">28 Nov 2021</TextBlock>
+				</StackPanel>
+			</Border>
+			<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
+			<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Add Item</Button>
+			<ListBox>
+				<ListBoxItem>
+					<TextBlock>Pre-service roll</TextBlock>
+				</ListBoxItem>
+				<ListBoxItem>
+					<TextBlock>Call to worship</TextBlock>
+				</ListBoxItem>
+				<ListBoxItem>
+					<TextBlock>Song Set 1</TextBlock>
+				</ListBoxItem>
+				<ListBoxItem>
+					<TextBlock>Confession</TextBlock>
+				</ListBoxItem>
+				<ListBoxItem>
+					<TextBlock>Song Set 2</TextBlock>
+				</ListBoxItem>
+				<ListBoxItem>
+					<TextBlock>Bible reading</TextBlock>
+				</ListBoxItem>
+				<ListBoxItem>
+					<TextBlock>Song Set 3</TextBlock>
+				</ListBoxItem>
+				<ListBoxItem>
+					<TextBlock>Post-service roll</TextBlock>
+				</ListBoxItem>
+			</ListBox>
+		</DockPanel>
+		
+		<GridSplitter Grid.Column = "1" />
+
+		<!-- Centre panel-->
+		<DockPanel Grid.Column = "2" >
+			<ListBox Items="{Binding Slides}"
+					 SelectedIndex="{Binding SlidesSelectedIndex}"
+					 SelectedItem="{Binding SlidesSelectedItem}">
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<UniformGrid />
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+				<!--<ListBox.ItemTemplate>
+					<DataTemplate>
+						--><!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">--><!--
+						<TextBlock HorizontalAlignment="Center" Text="{Binding Text}"/>
+						--><!--</Border>--><!--
+					</DataTemplate>
+				</ListBox.ItemTemplate>-->
+				<ListBox.DataTemplates>
+					<utils:MyTemplateSelector>
+						<DataTemplate x:Key="SongSlide">
+							<TextBlock Text="{Binding Text}"/>
+						</DataTemplate>
+						<DataTemplate x:Key="ImageSlide">
+							<Image Stretch="Uniform" Source="{Binding Image}" />
+						</DataTemplate>
+						<DataTemplate x:Key="MyKey">
+							<TextBlock Background="Red" Text="{Binding Text}"/>
+						</DataTemplate>
+						<DataTemplate x:Key="MyKey2">
+							<TextBlock Background="Blue" Text="{Binding Text}"/>
+						</DataTemplate>
+
+					</utils:MyTemplateSelector>
+				</ListBox.DataTemplates>
+			</ListBox>
+			<!--<ItemsRepeater Name="repeater" Background="Transparent" Items="{Binding Albums}" Margin="5">
+				<ItemsRepeater.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Scan for Music" Command="{Binding ScanLibraryCommand}" />
+					</ContextMenu>
+				</ItemsRepeater.ContextMenu>
+				<ItemsRepeater.Layout>
+					<UniformGridLayout MinRowSpacing="10" MinColumnSpacing="10" Orientation="Horizontal"
+									   MaximumRowsOrColumns="6" />
+				</ItemsRepeater.Layout>
+				<ItemsRepeater.ItemTemplate>
+					<DataTemplate>
+						<Grid Width="280" Height="150">
+							<views:GridItemTemplate />
+						</Grid>
+					</DataTemplate>
+				</ItemsRepeater.ItemTemplate>
+			</ItemsRepeater>-->
+		</DockPanel>
+		
+		<GridSplitter Grid.Column = "3" />
+
+		<!-- Right panel -->
+		<DockPanel Grid.Column = "4" Background="#f2f2f2">
+
+			<Border Padding="10" DockPanel.Dock="Top" Height="90">
+				<StackPanel VerticalAlignment="Center">
+					<TextBlock HorizontalAlignment="Right" FontSize="18">Live</TextBlock>
+				</StackPanel>
+			</Border>
+
+			<Grid DockPanel.Dock="Top">
+				<Grid.Background>
+					<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+						<VisualBrush.Visual>
+							<Canvas Width="16" Height="16" Background="#1a1a1a">
+								<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+								<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+							</Canvas>
+						</VisualBrush.Visual>
+					</VisualBrush>
+				</Grid.Background>
+				<Viewbox>
+					<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />
+				</Viewbox>	
+			</Grid>
+
+			<Grid DockPanel.Dock="Top">
+				<Grid.Background>
+					<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+						<VisualBrush.Visual>
+							<Canvas Width="16" Height="16" Background="#1a1a1a">
+								<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+								<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+							</Canvas>
+						</VisualBrush.Visual>
+					</VisualBrush>
+				</Grid.Background>
+				<Viewbox>
+					<views:LowerThirdSlideTemplate Name="NextPreview"  Width="1920" Height="1080" />
+				</Viewbox>
+			</Grid>
+
+			<TextBlock DockPanel.Dock="Bottom" Text="{Binding Text}" />
+
+			<Grid>
+				
+			</Grid>
+			
+		</DockPanel>
+	</Grid>
+
+</Window>
