@@ -6,13 +6,6 @@
         x:Class="HandsLiftedApp.Views.TestWindow"
         Title="TestWindow">
 		<StackPanel>
-			<ComboBox SelectedIndex="0">
-				<ComboBoxItem>
-					<TextBlock Margin="8">Live</TextBlock>
-				</ComboBoxItem>
-				<ComboBoxItem>
-					<TextBlock Margin="8">Freeze</TextBlock>
-				</ComboBoxItem>
-			</ComboBox>
+		
 		</StackPanel>
 </Window>

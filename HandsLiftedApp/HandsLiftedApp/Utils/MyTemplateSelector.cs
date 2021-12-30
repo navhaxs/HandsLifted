@@ -20,12 +20,15 @@ namespace HandsLiftedApp.Utils
         {
             if (data is SongSlide)
             {
+                System.Diagnostics.Debug.Print("SongSlide");
                 return Templates["SongSlide"].Build(data);
             }
             else if (data is ImageSlide)
             {
                 return Templates["ImageSlide"].Build(data);
             }
+
+            System.Diagnostics.Debug.Print("MyKey2");
             //return Templates[((SongSlideViewModel)data).Text].Build(data);
             return Templates["MyKey2"].Build(data);
         }

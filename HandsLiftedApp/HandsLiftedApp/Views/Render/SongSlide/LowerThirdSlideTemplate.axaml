@@ -22,7 +22,7 @@
 
       <Grid Grid.Row="1" HorizontalAlignment="Stretch">
       <Viewbox StretchDirection="DownOnly">
-        <TextBlock Text="{Binding Text, FallbackValue='lyrics'}"
+        <TextBlock Text="{Binding Text, FallbackValue='lyrics (did not bind to Path=Text)'}"
                    FontFamily="Arial"
                    FontWeight="Bold"
                    HorizontalAlignment="Center" 

@@ -2,6 +2,8 @@ using HandsLiftedApp.Models;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -16,9 +18,9 @@ As I wait upon You now";
 
         public int SlidesSelectedIndex { get; set; }
 
-        SongSlide _slidesSelectedItem;
+        Slide _slidesSelectedItem;
 
-        public SongSlide SlidesSelectedItem
+        public Slide SlidesSelectedItem
         {
             get => _slidesSelectedItem;
             set {
@@ -32,7 +34,7 @@ As I wait upon You now";
         {
             get
             {
-                return SlidesSelectedItem != null ? SlidesSelectedItem.Text : "hello";
+                return SlidesSelectedItem is SongSlide ? ((SongSlide) SlidesSelectedItem).Text : "No slide selected yet";
             }
         }
 
@@ -40,11 +42,17 @@ As I wait upon You now";
 
         public Boolean IsFrozen { get; set; }
 
+        public SongSlide Slide { get; set; } = new SongSlide() { Text = "Path=slide from View Model" };
+
+        //public String Slide { get; set; } = "hello this is my slide text set from the ViewModel";
+
         public MainWindowViewModel()
         {
             this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
                 this.RaisePropertyChanged("Text");
                 OnPropertyChanged("Text");
+                this.RaisePropertyChanged("SlidesSelectedItem");
+                OnPropertyChanged("SlidesSelectedItem");
             });
 
             Slides = new ObservableCollection<Slide>();
@@ -95,6 +103,16 @@ As I wait upon You now";
                 Text = "By His blood and in His Name\nIn His freedom I am free\nFor the love of Jesus Christ\nWho has resurrected me"
             });
 
+            var images = Directory.GetFiles(@"C:\Users\Jeremy\Desktop\ego");
+            Array.Sort(images, (x, y) => String.Compare(x, y));
+            foreach (var f in images)
+            {
+                Slides.Add(new ImageSlide(f));
+            }
+            Slides.Add(new ImageSlide());
+            Slides.Add(new ImageSlide());
+            Slides.Add(new ImageSlide());
+            Slides.Add(new ImageSlide());
             Slides.Add(new ImageSlide());
          
         }

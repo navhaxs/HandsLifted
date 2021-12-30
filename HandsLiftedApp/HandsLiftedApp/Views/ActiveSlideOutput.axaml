@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:utils="using:HandsLiftedApp.Utils"
+			 xmlns:views="using:HandsLiftedApp.Views"
+             x:Class="HandsLiftedApp.Views.ActiveSlideOutput">
+	<UserControl.DataTemplates>
+		<utils:MyTemplateSelector>
+			<DataTemplate x:Key="SongSlide">
+				<views:LowerThirdSlideTemplate />
+			</DataTemplate>
+			<DataTemplate x:Key="SongPlainSlide">
+				<TextBlock Text="{Binding Text}"
+						   Foreground="Yellow" FontSize="92"
+						   HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+			</DataTemplate>
+			<DataTemplate x:Key="ImageSlide">
+				<Image Stretch="Uniform" Source="{Binding Image}"/>
+			</DataTemplate>
+			<DataTemplate x:Key="MyKey">
+				<TextBlock Background="Red" Text="{Binding Text}"/>
+			</DataTemplate>
+			<DataTemplate x:Key="MyKey2">
+				<Grid Background="Blue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+			</DataTemplate>
+		</utils:MyTemplateSelector>
+	</UserControl.DataTemplates>
+	<ContentControl/>
+</UserControl>

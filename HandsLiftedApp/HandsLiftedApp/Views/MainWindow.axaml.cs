@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.ViewModels;
@@ -51,11 +52,38 @@ namespace HandsLiftedApp.Views
 
             //LowerThirdSlideTemplate nextPreview = this.FindControl<LowerThirdSlideTemplate>("NextPreview");
             //nextPreview.DataContext = DataContext; // new ProjectorViewModel();
+            this.KeyDown += ZoomBorder_KeyDown;
         }
 
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+
+
+        }
+
+        private void ZoomBorder_KeyDown(object? sender, KeyEventArgs e)
+        {
+            try
+            {
+                ListBox _list = this.Find<ListBox>("List");
+
+                switch (e.Key)
+                {
+                    case Key.Right:
+                        _list.SelectedIndex += 1;
+                        break;
+                    case Key.Left:
+                        _list.SelectedIndex -= 1;
+                        break;
+                }
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+          
         }
 
         private void MainWindow_DoubleTapped(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

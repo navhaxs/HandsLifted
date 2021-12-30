@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace HandsLiftedApp.Views
 {
-    public partial class LowerThirdSlideTemplate : UserControl
+    public partial class ActiveSlideOutput : UserControl
     {
-        public LowerThirdSlideTemplate()
+        public ActiveSlideOutput()
         {
             InitializeComponent();
         }
