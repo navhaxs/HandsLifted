@@ -103,12 +103,20 @@ As I wait upon You now";
                 Text = "By His blood and in His Name\nIn His freedom I am free\nFor the love of Jesus Christ\nWho has resurrected me"
             });
 
-            var images = Directory.GetFiles(@"C:\Users\Jeremy\Desktop\ego");
-            Array.Sort(images, (x, y) => String.Compare(x, y));
-            foreach (var f in images)
+            try
             {
-                Slides.Add(new ImageSlide(f));
+                var images = Directory.GetFiles(@"C:\Users\Jeremy\Desktop\ego");
+                Array.Sort(images, (x, y) => String.Compare(x, y));
+                foreach (var f in images)
+                {
+                    Slides.Add(new ImageSlide(f));
+                }
             }
+            catch (Exception ex)
+            {
+
+            }
+        
             Slides.Add(new ImageSlide());
             Slides.Add(new ImageSlide());
             Slides.Add(new ImageSlide());
