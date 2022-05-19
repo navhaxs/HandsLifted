@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AvaloniaNDI", "AvaloniaNDI"
 		AvaloniaNDI\README.md = AvaloniaNDI\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaNDI", "AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj", "{38414B46-41C5-4B15-9B31-DA7D81DACD46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaNDI", "Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj", "{38414B46-41C5-4B15-9B31-DA7D81DACD46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NDILibDotNet2", "AvaloniaNDI\NDILibDotNet2\NDILibDotNet2.csproj", "{1B8181E7-C1CA-4D89-8403-E279545ACF81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NDILibDotNet2", "Libraries\AvaloniaNDI\NDILibDotNet2\NDILibDotNet2.csproj", "{1B8181E7-C1CA-4D89-8403-E279545ACF81}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{DF9D61D4-EE1B-4212-914D-C74223DDC1EF}"
 EndProject
@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibVLCSharp.Avalonia.Sample
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibVLCSharp.Avalonia", "Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj", "{13B23917-78C2-458D-A175-559E99C96D3C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaNDI.Sample", "AvaloniaNDI\AvaloniaNDI.Sample\AvaloniaNDI.Sample.csproj", "{16B34400-9320-47C7-92AF-6E90E79D05C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaNDI.Sample", "Libraries\AvaloniaNDI\AvaloniaNDI.Sample\AvaloniaNDI.Sample.csproj", "{16B34400-9320-47C7-92AF-6E90E79D05C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Data", "HandsLiftedApp.Models\HandsLiftedApp.Data.csproj", "{CF068750-B490-4363-8826-8FF406540324}"
 EndProject
