@@ -1,7 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Metadata;
-using HandsLiftedApp.Models;
+using HandsLiftedApp.Data;
+using HandsLiftedApp.Data.Slides;
 using System;
 using System.Collections.Generic;
 using System.Linq;

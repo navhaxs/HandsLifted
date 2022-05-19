@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models
+namespace HandsLiftedApp.Models2
 {
     public class VideoSlide : Slide
     {

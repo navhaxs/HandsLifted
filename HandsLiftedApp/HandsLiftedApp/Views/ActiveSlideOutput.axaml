@@ -5,27 +5,52 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
 			 xmlns:views="using:HandsLiftedApp.Views"
+			 xmlns:reactiveUi="using:Avalonia.ReactiveUI"
+			 		xmlns:ext="using:HandsLiftedApp.Extensions"
+
              x:Class="HandsLiftedApp.Views.ActiveSlideOutput">
+	<!--<views:LowerThirdSlideTemplate Width="1920" Height="1080" />-->
+
+	<UserControl.Resources>
+		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
+	</UserControl.Resources>
+
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
 			<DataTemplate x:Key="SongSlide">
-				<views:LowerThirdSlideTemplate />
-			</DataTemplate>
-			<DataTemplate x:Key="SongPlainSlide">
-				<TextBlock Text="{Binding Text}"
-						   Foreground="Yellow" FontSize="92"
-						   HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+				<Grid>
+					<TextBlock Text="{Binding Text}"/>
+					<views:LowerThirdSlideTemplate Width="1920" Height="1080" />
+				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="ImageSlide">
-				<Image Stretch="Uniform" Source="{Binding Image}"/>
+				<Grid>
+					<TextBlock Text="{Binding ImagePath}" TextWrapping="Wrap" />
+					<Image Stretch="Uniform" Source="{Binding ImagePath, Converter={StaticResource variableImage}}" />
+				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="MyKey">
 				<TextBlock Background="Red" Text="{Binding Text}"/>
 			</DataTemplate>
 			<DataTemplate x:Key="MyKey2">
-				<Grid Background="Blue" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				<TextBlock Background="Blue" Text="{Binding Text}"/>
 			</DataTemplate>
+
 		</utils:MyTemplateSelector>
 	</UserControl.DataTemplates>
-	<ContentControl/>
+	
+	<TransitioningContentControl Name="root" Content="{Binding SlidesSelectedItem}" >
+		<TransitioningContentControl.PageTransition>
+			<!--<CrossFade Duration="0.25" />-->
+			<CompositePageTransition>
+				<!--<CrossFade Duration="0:00:00.500" />
+				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
+				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />-->
+				<ext:CustomTransition Duration="0:00:00.250" />
+			</CompositePageTransition>
+		</TransitioningContentControl.PageTransition>
+		<TransitioningContentControl.Content>
+			<ContentControl Content="{Binding SlidesSelectedItem}" />
+		</TransitioningContentControl.Content>
+	</TransitioningContentControl>
 </UserControl>

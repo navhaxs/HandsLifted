@@ -4,6 +4,8 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.ViewModels;
+using HandsLiftedApp.ViewModels.Editor;
+using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Views
@@ -27,9 +29,6 @@ namespace HandsLiftedApp.Views
             //WebBrowserWindow w = new WebBrowserWindow();
             //w.Show();
 
-            TestWindow testWindow = new TestWindow();
-            testWindow.Show();
-
             //LowerThirdSlideTemplate livePreview = this.FindControl<LowerThirdSlideTemplate>("LivePreview");
             //livePreview.DataContext = x;
             //new ProjectorViewModel();
@@ -52,6 +51,12 @@ namespace HandsLiftedApp.Views
 
             //LowerThirdSlideTemplate nextPreview = this.FindControl<LowerThirdSlideTemplate>("NextPreview");
             //nextPreview.DataContext = DataContext; // new ProjectorViewModel();
+
+            SongEditorWindow songEditorWindow = new SongEditorWindow();
+            songEditorWindow.DataContext = new SongEditorViewModel();
+            songEditorWindow.Show();
+               
+
             this.KeyDown += ZoomBorder_KeyDown;
         }
 

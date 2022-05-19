@@ -1,3 +1,5 @@
+using HandsLiftedApp.Data;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using ReactiveUI;
 using System;
@@ -27,7 +29,24 @@ As I wait upon You now";
                 this.RaiseAndSetIfChanged(ref _slidesSelectedItem, value);
                 this.RaisePropertyChanged("Text");
                 OnPropertyChanged("Text");
+
+                this.RaisePropertyChanged("PreviousSlide");
             }
+        }
+
+        Slide? _previousSlide;
+
+        public Slide? PreviousSlide
+        {
+            get => _previousSlide;
+            set {
+                this.RaiseAndSetIfChanged(ref _previousSlide, value);
+            }
+        }
+
+        public Slide SlidesNextItem
+        {
+            get => _slidesSelectedItem;
         }
 
         public string Text
@@ -53,6 +72,8 @@ As I wait upon You now";
                 OnPropertyChanged("Text");
                 this.RaisePropertyChanged("SlidesSelectedItem");
                 OnPropertyChanged("SlidesSelectedItem");
+
+                PreviousSlide = Slides != null && SlidesSelectedIndex > 0 ? Slides[SlidesSelectedIndex - 1] : null;
             });
 
             Slides = new ObservableCollection<Slide>();
@@ -103,17 +124,12 @@ As I wait upon You now";
                 Text = "By His blood and in His Name\nIn His freedom I am free\nFor the love of Jesus Christ\nWho has resurrected me"
             });
 
-            var images = Directory.GetFiles(@"C:\Users\Jeremy\Desktop\ego");
-            Array.Sort(images, (x, y) => String.Compare(x, y));
+            var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
+                            .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg"));
             foreach (var f in images)
             {
                 Slides.Add(new ImageSlide(f));
             }
-            Slides.Add(new ImageSlide());
-            Slides.Add(new ImageSlide());
-            Slides.Add(new ImageSlide());
-            Slides.Add(new ImageSlide());
-            Slides.Add(new ImageSlide());
          
         }
     }

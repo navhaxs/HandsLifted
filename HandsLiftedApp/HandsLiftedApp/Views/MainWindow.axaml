@@ -3,6 +3,7 @@
         xmlns:views="using:HandsLiftedApp.Views"
         xmlns:vm="using:HandsLiftedApp.ViewModels"
         xmlns:utils="using:HandsLiftedApp.Utils"
+		xmlns:ext="using:HandsLiftedApp.Extensions"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ndi="using:AvaloniaNDI"
@@ -12,6 +13,10 @@
 		Width="1920" Height="1080"
 		DoubleTapped="MainWindow_DoubleTapped"
         Title="HandsLiftedApp">
+
+	<Window.Resources>
+		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
+	</Window.Resources>
 
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
@@ -31,7 +36,7 @@
 			<Border Padding="10" Background="#4b3ea3" DockPanel.Dock="Top" Height="90">
 				<StackPanel VerticalAlignment="Bottom">
 					<TextBlock HorizontalAlignment="Stretch" FontSize="26" Foreground="White">Sunday 11am</TextBlock>
-					<TextBlock HorizontalAlignment="Stretch" Foreground="White">28 Nov 2021</TextBlock>
+					<TextBlock HorizontalAlignment="Stretch" Foreground="White">22 May 2022</TextBlock>
 				</StackPanel>
 			</Border>
 			<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
@@ -90,10 +95,13 @@
 							<TextBlock Text="{Binding Text}"/>
 						</DataTemplate>
 						<DataTemplate x:Key="ImageSlide">
-							<Image Stretch="Uniform" Source="{Binding Image}" />
+							<Grid>
+								<TextBlock Text="{Binding ImagePath}" TextWrapping="Wrap" />
+								<Image Stretch="Uniform" Source="{Binding ImagePath, Converter={StaticResource variableImage}}" />
+							</Grid>
 						</DataTemplate>
 						<DataTemplate x:Key="MyKey">
-							<TextBlock Background="Red" Text="{Binding Text}"/>
+							<TextBlock Background="Red" Text="{Binding Text}" />
 						</DataTemplate>
 						<DataTemplate x:Key="MyKey2">
 							<TextBlock Background="Blue" Text="{Binding Text}"/>
@@ -145,8 +153,8 @@
 					</VisualBrush>
 				</Grid.Background>
 				<Viewbox>
-					<views:ActiveSlideOutput Width="1920" Height="1080" Content="{Binding SlidesSelectedItem}" />
-					<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
+					<!--<views:ActiveSlideOutput Width="1920" Height="1080" Content="{Binding SlidesSelectedItem}" />-->
+					<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />
 				</Viewbox>	
 			</Grid>
 

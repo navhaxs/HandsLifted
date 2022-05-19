@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibVLCSharp.Avalonia", "Lib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaNDI.Sample", "AvaloniaNDI\AvaloniaNDI.Sample\AvaloniaNDI.Sample.csproj", "{16B34400-9320-47C7-92AF-6E90E79D05C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Data", "HandsLiftedApp.Models\HandsLiftedApp.Data.csproj", "{CF068750-B490-4363-8826-8FF406540324}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,18 @@ Global
 		{16B34400-9320-47C7-92AF-6E90E79D05C7}.Release|x64.Build.0 = Release|Any CPU
 		{16B34400-9320-47C7-92AF-6E90E79D05C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{16B34400-9320-47C7-92AF-6E90E79D05C7}.Release|x86.Build.0 = Release|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Debug|x64.Build.0 = Debug|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Debug|x86.Build.0 = Debug|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Release|x64.ActiveCfg = Release|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Release|x64.Build.0 = Release|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Release|x86.ActiveCfg = Release|Any CPU
+		{CF068750-B490-4363-8826-8FF406540324}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace HandsLiftedApp.Views
+namespace HandsLiftedApp.Views.Editor
 {
-    public partial class TestWindow : Window
+    public partial class SongEditorWindow : Window
     {
-        public TestWindow()
+        public SongEditorWindow()
         {
             InitializeComponent();
 #if DEBUG

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
@@ -14,14 +14,15 @@
     <None Remove="Assets\test2.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.10" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.10" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10" />
-    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.6.1" />
-    <PackageReference Include="WebViewControl-Avalonia" Version="2.91.11" />
+    <PackageReference Include="Avalonia" Version="0.10.14" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.14" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.14" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.14" />
+    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.6.6" />
+    <PackageReference Include="WebViewControl-Avalonia" Version="2.91.24" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
+    <ProjectReference Include="..\HandsLiftedApp.Models\HandsLiftedApp.Data.csproj" />
   </ItemGroup>
 </Project>

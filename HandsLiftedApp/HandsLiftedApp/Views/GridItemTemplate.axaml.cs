@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using HandsLiftedApp.Models;
+using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Views
 {

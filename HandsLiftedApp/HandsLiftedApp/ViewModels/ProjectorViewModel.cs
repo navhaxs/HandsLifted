@@ -1,4 +1,5 @@
-using HandsLiftedApp.Models;
+using HandsLiftedApp.Data;
+using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;

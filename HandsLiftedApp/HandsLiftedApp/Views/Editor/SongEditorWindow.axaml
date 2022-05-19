@@ -1,0 +1,86 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
+		xmlns:utils="using:HandsLiftedApp.Utils"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="HandsLiftedApp.Views.Editor.SongEditorWindow"
+		Icon="/Assets/avalonia-logo.ico"
+        Title="SongEditorWindow">
+
+	<Design.DataContext>
+		<vme:SongEditorViewModel/>
+	</Design.DataContext>
+
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width = "0.4 *" />
+			<ColumnDefinition Width = "Auto" />
+			<ColumnDefinition Width = "0.6 *" />
+		</Grid.ColumnDefinitions>
+
+		<DockPanel>
+			<TextBox Text="{Binding song.Title}" DockPanel.Dock="Top" />
+			<TextBox Text="{Binding song.Copyright}" DockPanel.Dock="Top" />
+			<Button DockPanel.Dock="Bottom" Command="{Binding OnClickCommand}" HorizontalAlignment="Stretch">Add New Slide</Button>
+			<ListBox Items="{Binding song.Stanzas}"
+					 VirtualizationMode="None"
+					 ScrollViewer.VerticalScrollBarVisibility="Visible">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border Background="Red" CornerRadius="4" Padding="4">
+							<StackPanel>
+								<TextBox Text="{Binding Path=Uuid}"/>
+								<TextBox Text="{Binding Path=Name}"/>
+								<TextBox Text="{Binding Path=Lyrics}" AcceptsReturn="True" />
+							</StackPanel>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</DockPanel>
+
+		<GridSplitter Grid.Column = "1" />
+
+		<ListBox Name="List"
+				Items="{Binding song.Slides}"
+				Grid.Column = "2" >
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<UniformGrid />
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+			<!--<ListBox.ItemTemplate>
+					<DataTemplate>
+						-->
+			<!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">-->
+			<!--
+						<TextBlock HorizontalAlignment="Center" Text="{Binding Text}"/>
+						-->
+			<!--</Border>-->
+			<!--
+					</DataTemplate>
+				</ListBox.ItemTemplate>-->
+			<ListBox.DataTemplates>
+				<utils:MyTemplateSelector>
+					<DataTemplate x:Key="SongSlide">
+						<TextBlock Text="{Binding Text}"/>
+					</DataTemplate>
+					<DataTemplate x:Key="ImageSlide">
+						<Image Stretch="Uniform" Source="{Binding Image}" />
+					</DataTemplate>
+					<DataTemplate x:Key="MyKey">
+						<TextBlock Background="Red" Text="{Binding Text}"/>
+					</DataTemplate>
+					<DataTemplate x:Key="MyKey2">
+						<TextBlock Background="Blue" Text="{Binding Text}"/>
+					</DataTemplate>
+
+				</utils:MyTemplateSelector>
+			</ListBox.DataTemplates>
+		</ListBox>
+	</Grid>
+	
+</Window>
