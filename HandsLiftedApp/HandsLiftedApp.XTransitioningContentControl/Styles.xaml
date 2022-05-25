@@ -1,0 +1,40 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+		xmlns:skia="using:Avalonia.Controls.Skia"
+		xmlns:local="using:HandsLiftedApp.XTransitioningContentControl">
+	<Style Selector="local|XTransitioningContentControl">
+		<!-- Set Defaults -->
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Grid
+						Name="PART_Container"
+						Background="Blue"
+						HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalAlignment}">
+					<Image
+						Name="PART_PreviousImageSite"
+						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+						<!--<Image.RenderTransform>
+							<TransformGroup>
+								<TransformGroup.Children>
+									<ScaleTransform ScaleX="1" ScaleY="1" />
+									<TranslateTransform X="0" Y="0" />
+								</TransformGroup.Children>
+							</TransformGroup>
+						</Image.RenderTransform>-->
+					</Image>
+					<ContentPresenter Name="PART_ContentPresenter"
+							  Background="{TemplateBinding Background}"
+							  BorderBrush="{TemplateBinding BorderBrush}"
+							  BorderThickness="{TemplateBinding BorderThickness}"
+							  CornerRadius="{TemplateBinding CornerRadius}"
+							  ContentTemplate="{TemplateBinding ContentTemplate}"
+							  Content="{TemplateBinding CurrentContent}"
+							  Padding="{TemplateBinding Padding}"
+							  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+							  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+				</Grid>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+</Styles>

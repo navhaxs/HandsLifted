@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Slides;
 
@@ -21,7 +22,7 @@ namespace HandsLiftedApp.Views
             root.Tapped += Root_Tapped;
         }
 
-        private void Root_Tapped(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void Root_Tapped(object? sender, RoutedEventArgs e)
         {
             string next = ((SongSlide)((Control)sender).DataContext).Text;
             //throw new System.NotImplementedException();

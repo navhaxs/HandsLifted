@@ -9,8 +9,6 @@ namespace HandsLiftedApp.Views
         public LowerThirdSlideTemplate()
         {
             InitializeComponent();
-
-            System.Diagnostics.Debug.Print("Constructor LowerThirdSlideTemplate");
         }
 
         private void InitializeComponent()

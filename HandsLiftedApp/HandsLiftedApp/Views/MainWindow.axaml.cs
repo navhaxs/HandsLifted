@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.ViewModels;
@@ -91,7 +92,7 @@ namespace HandsLiftedApp.Views
           
         }
 
-        private void MainWindow_DoubleTapped(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)
         {
             this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
         }

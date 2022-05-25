@@ -5,5 +5,11 @@
 			 xmlns:v="using:LibVLCSharp.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Views.Render.VideoSlide">
-	<v:VideoView x:Name="VideoView" Grid.Row="0" MediaPlayer="{Binding MediaPlayer}"/>
+	<v:VideoView x:Name="VideoView" VlcRenderingOptions="Avalonia">
+		<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom">
+			<Button Content="PLAY" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click" />
+			<Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
+			<Button Content="Pause" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" />
+		</StackPanel>
+	</v:VideoView >
 </UserControl>

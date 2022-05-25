@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -7,22 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models2
+namespace HandsLiftedApp.Models.Render
 {
-    public class ImageSlide : Slide
+    public class ImageSlideState : SlideState<ImageSlide>
     {
-        public string ImagePath { get; set; }
-
-        public ImageSlide(String imagePath = @"C:\Users\Jeremy\source\repos\navhaxs\HandsLifted\HandsLiftedApp\HandsLiftedApp\Assets\SWEC-ProPresenter-Logo-Slide.png")
+        public ImageSlideState(ImageSlide data) : base(data)
         {
-            using (Stream imageStream = File.OpenRead(imagePath))
+            using (Stream imageStream = File.OpenRead(data.ImagePath))
             {
                 Image = Bitmap.DecodeToWidth(imageStream, 400);
             }
         }
 
         private Bitmap? _image;
-
         public Bitmap? Image
         {
             get => _image;

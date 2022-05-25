@@ -26,7 +26,7 @@ namespace HandsLiftedApp.Views
         private async Task sAsync()
         {
             await Task.Run(() => {
-                //Task.Delay(3* 1000).Wait();
+                //Task.Delay(3 * 1000).Wait();
                 Dispatcher.UIThread.InvokeAsync(() => Close());
             });
         }

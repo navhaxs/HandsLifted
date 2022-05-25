@@ -62,7 +62,6 @@ namespace HandsLiftedApp.Data.Documents
 
         private void Stanzas_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            System.Diagnostics.Debug.Print("MMM MMM MMM");
             //List<Slide> slides = new List<Slide>();
 
             //foreach (var _datum in Stanzas)

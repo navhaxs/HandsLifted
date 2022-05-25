@@ -30,17 +30,20 @@ As I wait upon You now";
                 this.RaisePropertyChanged("Text");
                 OnPropertyChanged("Text");
 
-                this.RaisePropertyChanged("PreviousSlide");
+                //this.RaisePropertyChanged("NextSlide");
+                //this.RaisePropertyChanged("SlidesNextItem");
+                OnPropertyChanged("NextSlide");
+                OnPropertyChanged("SlidesNextItem");
             }
         }
 
-        Slide? _previousSlide;
+        Slide? _nextSlide;
 
-        public Slide? PreviousSlide
+        public Slide? NextSlide
         {
-            get => _previousSlide;
+            get => _nextSlide;
             set {
-                this.RaiseAndSetIfChanged(ref _previousSlide, value);
+                this.RaiseAndSetIfChanged(ref _nextSlide, value);
             }
         }
 
@@ -73,7 +76,7 @@ As I wait upon You now";
                 this.RaisePropertyChanged("SlidesSelectedItem");
                 OnPropertyChanged("SlidesSelectedItem");
 
-                PreviousSlide = Slides != null && SlidesSelectedIndex > 0 ? Slides[SlidesSelectedIndex - 1] : null;
+                NextSlide = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
             });
 
             Slides = new ObservableCollection<Slide>();
@@ -130,6 +133,8 @@ As I wait upon You now";
             {
                 Slides.Add(new ImageSlide(f));
             }
+
+            Slides.Add(new VideoSlide());
          
         }
     }

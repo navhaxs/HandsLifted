@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ScratchApp.MainWindow"
+        Title="ScratchApp">
+	<Window.Styles>
+		<Style Selector="Rectangle.red">
+			<Setter Property="Height" Value="100"/>
+			<Setter Property="Width" Value="100"/>
+			<Setter Property="Fill" Value="Red"/>
+			<Setter Property="Opacity" Value="0.1"/>
+		</Style>
+		<Style Selector="Rectangle.red:pointerover">
+			<Setter Property="Opacity" Value="1"/>
+			<Setter Property="Fill" Value="Yellow"/>
+		</Style>
+	</Window.Styles>
+
+	<Rectangle Classes="red">
+		<Rectangle.Transitions>
+			<Transitions>
+				<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+				<BrushTransition Property="Fill" Duration="0:0:1.0"/>
+			</Transitions>
+		</Rectangle.Transitions>
+	</Rectangle>
+
+</Window>

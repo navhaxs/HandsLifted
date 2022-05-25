@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ndi="using:AvaloniaNDI"
+		xmlns:v="using:LibVLCSharp.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -30,11 +31,24 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<Viewbox>
-		<ndi:NDISendContainer NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
-			 <!--<views:LowerThirdSlideTemplate Width="1920" Height="1080" />--> 
-			<views:ActiveSlideOutput Width="1920" Height="1080"/>
-		</ndi:NDISendContainer>
-	</Viewbox>
+	<!--<DockPanel LastChildFill="True">
+		<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom" DockPanel.Dock="Bottom">
+			<Button Content="PLAY" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click" />
+			<Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
+			<Button Content="Pause" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" />
+		</StackPanel>
+		<v:VideoView x:Name="VideoView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VlcRenderingOptions="Avalonia">
+		</v:VideoView >
+	</DockPanel>-->
+
+	<Grid>
+		<TextBlock Text="{Binding Position, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+		<Viewbox>
+			<ndi:NDISendContainer NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="True">
+				 <!--<views:LowerThirdSlideTemplate Width="1920" Height="1080" />--> 
+				<views:ActiveSlideOutput Width="1920" Height="1080"/>
+			</ndi:NDISendContainer>
+		</Viewbox>
+	</Grid>
 </Window>
 

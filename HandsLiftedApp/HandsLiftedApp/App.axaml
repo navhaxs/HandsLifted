@@ -8,5 +8,7 @@
 
     <Application.Styles>
         <FluentTheme Mode="Light"/>
-    </Application.Styles>
+		<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />
+		<StyleInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml" />
+	</Application.Styles>
 </Application>

@@ -19,17 +19,29 @@ namespace HandsLiftedApp.Utils
 
         public IControl Build(object data)
         {
-            if (data is SongSlide)
+
+            var dataType = data.GetType().Name;
+
+            if (Templates.ContainsKey(dataType))
             {
-                System.Diagnostics.Debug.Print("SongSlide");
-                return Templates["SongSlide"].Build(data);
-            }
-            else if (data is ImageSlide)
-            {
-                return Templates["ImageSlide"].Build(data);
+                return Templates[dataType].Build(data);
             }
 
-            System.Diagnostics.Debug.Print("MyKey2");
+            //if (data is SongSlide)
+            //{
+            //    System.Diagnostics.Debug.Print("SongSlide");
+            //    return Templates["SongSlide"].Build(data);
+            //}
+            //else if (data is ImageSlide)
+            //{
+            //    return Templates["ImageSlide"].Build(data);
+            //}
+
+            //else if (data is VideoSlide && Templates.ContainsKey("VideoSlide"))
+            //{
+            //    return Templates["VideoSlide"].Build(data);
+            //}
+
             //return Templates[((SongSlideViewModel)data).Text].Build(data);
             return Templates["MyKey2"].Build(data);
         }

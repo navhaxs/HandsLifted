@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using System;
@@ -30,7 +31,7 @@ namespace HandsLiftedApp.Extensions
             if (value == null)
                 return null;
 
-            if (value is string rawUri && targetType == typeof(Avalonia.Media.IImage))
+            if (value is string rawUri && targetType == typeof(IImage))
             {
                 Uri uri;
 

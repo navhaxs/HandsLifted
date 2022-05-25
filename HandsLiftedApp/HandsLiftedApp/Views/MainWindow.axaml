@@ -7,6 +7,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ndi="using:AvaloniaNDI"
+		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -154,7 +155,8 @@
 				</Grid.Background>
 				<Viewbox>
 					<!--<views:ActiveSlideOutput Width="1920" Height="1080" Content="{Binding SlidesSelectedItem}" />-->
-					<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />
+					<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
+					<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
 				</Viewbox>	
 			</Grid>
 
@@ -170,7 +172,9 @@
 					</VisualBrush>
 				</Grid.Background>
 				<Viewbox>
-					<views:LowerThirdSlideTemplate Name="NextPreview"  Width="1920" Height="1080" />
+					<!--<views:LowerThirdSlideTemplate Name="NextPreview"  Width="1920" Height="1080" />-->
+					<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" />-->
+					<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" IsLive="False" />-->
 				</Viewbox>
 			</Grid>
 
