@@ -34,7 +34,7 @@ namespace HandsLiftedApp.Views.Render
             _libVLC = new LibVLC();
             _mediaPlayer = new MediaPlayer(_libVLC);
 
-            VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.AvaloniaCustomDrawingOperation;
+            VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia;
 
             VideoView.MediaPlayer = _mediaPlayer;
 //#if DEBUG
@@ -59,10 +59,14 @@ namespace HandsLiftedApp.Views.Render
         private async Task sAsync()
         {
             await Task.Run(() => {
-                Task.Delay(3 * 1000).Wait();
+                //Task.Delay(3 * 1000).Wait();
                 Dispatcher.UIThread.InvokeAsync(() => {
                     if (!VideoView.MediaPlayer.IsPlaying)
                     {
+                        if (this.DataContext == null)
+                        {
+                            return;
+                        }
                         //VideoView.MediaPlayer.Play(new Media(_libVLC,
                         //    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
                         VideoView.MediaPlayer.Play(new Media(_libVLC,

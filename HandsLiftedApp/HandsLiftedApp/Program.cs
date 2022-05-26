@@ -39,7 +39,7 @@ namespace HandsLiftedApp
                 .LogToTrace()
                 .UseReactiveUI()
                 .With(new SkiaOptions { MaxGpuResourceSizeBytes = 0x20000000 })
-                .UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.AvaloniaCustomDrawingOperation)
+                .UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.Avalonia)
             ;
     }
 }

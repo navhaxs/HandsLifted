@@ -31,7 +31,7 @@
 			<DataTemplate x:Key="VideoSlideState">
 				<Grid>
 					<TextBlock Text="{Binding Data.VideoPath}" TextWrapping="Wrap" />
-					<viewsrender:VideoSlide DataContext="{Binding Data}" />
+					<viewsrender:VideoSlide DataContext="{Binding}" />
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="MyKey">

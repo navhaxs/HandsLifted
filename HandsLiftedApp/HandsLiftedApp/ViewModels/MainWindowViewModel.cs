@@ -128,13 +128,19 @@ As I wait upon You now";
             });
 
             var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
-                            .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg"));
+                            .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"));
             foreach (var f in images)
             {
-                m.Add(new ImageSlide(f));
+                if (f.EndsWith(".mp4"))
+                {
+                    m.Add(new VideoSlide(f));
+                }
+                else {
+                    m.Add(new ImageSlide(f));
+                }
             }
 
-            m.Add(new VideoSlide());
+
 
 
 

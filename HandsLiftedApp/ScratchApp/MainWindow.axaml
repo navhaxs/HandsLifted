@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ScratchApp.MainWindow"
+		xmlns:local="using:ScratchApp"
         Title="ScratchApp">
 	<Window.Styles>
 		<Style Selector="Rectangle.red">
@@ -18,6 +19,7 @@
 		</Style>
 	</Window.Styles>
 
+	<Grid>
 	<Rectangle Classes="red">
 		<Rectangle.Transitions>
 			<Transitions>
@@ -26,5 +28,23 @@
 			</Transitions>
 		</Rectangle.Transitions>
 	</Rectangle>
+
+	<StackPanel Margin="30">
+		<StackPanel.Styles>
+			<Style Selector="ProgressBar">
+				<Setter Property="Transitions">
+					<Transitions>
+						<DoubleTransition
+                              Property="(local:ProgressBarWorkaround.Value)"
+                              Duration="0:0:0.5"/>
+					</Transitions>
+				</Setter>
+			</Style>
+		</StackPanel.Styles>
+		<ProgressBar local:ProgressBarWorkaround.Value="{Binding #Hello.Text}" />
+	</StackPanel>
+		
+		<TextBox  Height="20" Width="200"  Background="Red"  Name="Hello" Text="100" />
+	</Grid>
 
 </Window>
