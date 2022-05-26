@@ -7,9 +7,16 @@
 			<ControlTemplate>
 				<Grid
 						Name="PART_Container"
-						Background="Blue"
 						HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
 						VerticalAlignment="{TemplateBinding VerticalAlignment}">
+					<Grid.Background>
+						<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
+							<LinearGradientBrush.GradientStops>
+								<GradientStop Offset="0" Color="DarkBlue"/>
+								<GradientStop Offset="1" Color="Black"/>
+							</LinearGradientBrush.GradientStops>
+						</LinearGradientBrush>
+					</Grid.Background>
 					<Image
 						Name="PART_PreviousImageSite"
 						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -33,8 +40,8 @@
 							  Padding="{TemplateBinding Padding}"
 							  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
 							  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
-				</Grid>
-			</ControlTemplate>
+					</Grid>
+				</ControlTemplate>
 		</Setter>
 	</Style>
 </Styles>

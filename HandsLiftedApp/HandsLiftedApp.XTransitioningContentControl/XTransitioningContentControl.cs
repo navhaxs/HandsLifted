@@ -40,7 +40,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         public static readonly StyledProperty<IPageTransition?> PageTransitionProperty =
             AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(nameof(PageTransition),
                 //new CrossFade(TimeSpan.FromSeconds(0.125)));
-                new XFade(TimeSpan.FromSeconds(0.800)));
+                new XFade(TimeSpan.FromSeconds(0.350)));
 
         /// <summary>
         /// Defines the <see cref="CurrentContent"/> property.
@@ -52,8 +52,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
         System.Timers.Timer aTimer = new System.Timers.Timer();
         public XTransitioningContentControl()
         {
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Enabled = true;
+            //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            //aTimer.Enabled = true;
 
         }
 
@@ -125,16 +125,23 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             if (_previousImageSite != null)
             {
+                //_contentPresenter.IsVisible = true;
                 _previousImageSite.Source = renderControlAsBitmap(_contentPresenter);
                 _previousImageSite.IsVisible = true;
                 _previousImageSite.Opacity = 1;
             }
 
+            _contentPresenter.IsVisible = false;
 
             CurrentContent = content;
 
+            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
+            //Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
+
             if (PageTransition != null)
+            {
                 await PageTransition.Start(_previousImageSite, _contentPresenter, true, _lastTransitionCts.Token);
+            }
 
             //if (_previousImageSite != null)
             //{
@@ -149,14 +156,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
 
-            Dispatcher.UIThread.Post(() =>
-            {
+            //Dispatcher.UIThread.Post(() =>
+            //{
 
-                if (_previousImageSite.Opacity != 1 && _contentPresenter.Opacity != 1)
-                {
-                    System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenter.Opacity}={_previousImageSite.Opacity+ _contentPresenter.Opacity}");
-                }
-            });
+            //    if (_previousImageSite.Opacity != 1 && _contentPresenter.Opacity != 1)
+            //    {
+            //        System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenter.Opacity}={_previousImageSite.Opacity+ _contentPresenter.Opacity}");
+            //    }
+            //});
 
 
         }

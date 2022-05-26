@@ -6,7 +6,7 @@ using System;
 
 namespace HandsLiftedApp.Models.Render
 {
-    public class VideoSlideState : SlideState<VideoSlide>
+    public class VideoSlideState : SlideState
     {
         private LibVLC _libVLC;
 
@@ -20,9 +20,10 @@ namespace HandsLiftedApp.Models.Render
             string absolute = new Uri(VideoPath).AbsoluteUri;
             bool isfile = absolute.StartsWith("file://");
             MediaPlayer.Media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
-            MediaPlayer.Play();
+            //MediaPlayer.Play();
         }
 
+        // TODO: thumbnail
         //private Bitmap? _image;
 
         //public Bitmap? Image

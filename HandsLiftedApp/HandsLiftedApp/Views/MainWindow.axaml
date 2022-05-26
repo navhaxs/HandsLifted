@@ -92,22 +92,28 @@
 				</ListBox.ItemTemplate>-->
 				<ListBox.DataTemplates>
 					<utils:MyTemplateSelector>
-						<DataTemplate x:Key="SongSlide">
-							<TextBlock Text="{Binding Text}"/>
+						<DataTemplate x:Key="SongSlideState">
+							<!--<Viewbox>
+								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
+							</Viewbox>-->
+							<TextBlock Text="{Binding Data.Text}" TextWrapping="Wrap" />
 						</DataTemplate>
-						<DataTemplate x:Key="ImageSlide">
-							<Grid>
-								<TextBlock Text="{Binding ImagePath}" TextWrapping="Wrap" />
-								<Image Stretch="Uniform" Source="{Binding ImagePath, Converter={StaticResource variableImage}}" />
+						<DataTemplate x:Key="ImageSlideState">
+							<Grid Background="Yellow">
+								<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
+								<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
+								<Image Stretch="Uniform" Source="{Binding Image}" />
 							</Grid>
 						</DataTemplate>
 						<DataTemplate x:Key="MyKey">
 							<TextBlock Background="Red" Text="{Binding Text}" />
 						</DataTemplate>
 						<DataTemplate x:Key="MyKey2">
-							<TextBlock Background="Blue" Text="{Binding Text}"/>
+							<TextBlock Background="Green" Text="{Binding Text}"/>
 						</DataTemplate>
-
+						<DataTemplate x:Key="Fallback">
+							<TextBlock Background="Red" Text="{Binding Text}" />
+						</DataTemplate>
 					</utils:MyTemplateSelector>
 				</ListBox.DataTemplates>
 			</ListBox>

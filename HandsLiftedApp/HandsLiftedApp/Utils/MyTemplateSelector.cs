@@ -3,6 +3,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Metadata;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models.Render;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace HandsLiftedApp.Utils
 {
     public class MyTemplateSelector : IDataTemplate
     {
+  
         public bool SupportsRecycling => false;
         [Content]
         public Dictionary<string, IDataTemplate> Templates { get; } = new Dictionary<string, IDataTemplate>();
@@ -43,12 +45,16 @@ namespace HandsLiftedApp.Utils
             //}
 
             //return Templates[((SongSlideViewModel)data).Text].Build(data);
-            return Templates["MyKey2"].Build(data);
+            else if (Templates.ContainsKey("Fallback"))
+            {
+                return Templates["Fallback"].Build(data);
+            }
+            return null;
         }
 
         public bool Match(object data)
         {
-            return data is Slide;
+            return data is SlideState;
         }
     }
 }

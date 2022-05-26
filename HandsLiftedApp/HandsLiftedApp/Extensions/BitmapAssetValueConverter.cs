@@ -6,6 +6,7 @@ using Avalonia.Platform;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -44,7 +45,11 @@ namespace HandsLiftedApp.Extensions
                 {
                     //string assemblyName = Assembly.GetEntryAssembly().GetName().Name;
                     //uri = new Uri($"avares://{assemblyName}{rawUri}");
-                    return new Bitmap(rawUri);
+                    using (Stream imageStream = File.OpenRead(rawUri))
+                    {
+                        return Bitmap.DecodeToWidth(imageStream, 400);
+                    }
+                    //return new Bitmap(rawUri);
                 }
 
                 var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();

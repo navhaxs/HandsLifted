@@ -16,22 +16,22 @@
 
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
-			<DataTemplate x:Key="SongSlide">
+			<DataTemplate x:Key="SongSlideState">
 				<Grid>
-					<TextBlock Text="{Binding Text}"/>
-					<views:LowerThirdSlideTemplate Width="1920" Height="1080" />
+					<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
 				</Grid>
 			</DataTemplate>
-			<DataTemplate x:Key="ImageSlide">
+			<DataTemplate x:Key="ImageSlideState">
 				<Grid>
-					<TextBlock Text="{Binding ImagePath}" TextWrapping="Wrap" />
-					<Image Stretch="Uniform" Source="{Binding ImagePath, Converter={StaticResource variableImage}}" />
+					<Image Stretch="Uniform" Source="{Binding Image}" />
+					<TextBlock Text="{Binding ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />
+					<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
 				</Grid>
 			</DataTemplate>
-			<DataTemplate x:Key="VideoSlide">
+			<DataTemplate x:Key="VideoSlideState">
 				<Grid>
-					<TextBlock Text="{Binding VideoPath}" TextWrapping="Wrap" />
-					<viewsrender:VideoSlide DataContext="{Binding}" />
+					<TextBlock Text="{Binding Data.VideoPath}" TextWrapping="Wrap" />
+					<viewsrender:VideoSlide DataContext="{Binding Data}" />
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="MyKey">

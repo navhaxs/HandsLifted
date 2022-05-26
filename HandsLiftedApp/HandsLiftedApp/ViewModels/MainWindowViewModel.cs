@@ -1,6 +1,6 @@
-using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.Render;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
@@ -16,13 +16,13 @@ Lord I wait upon You now
 Let Your presence fill me now
 As I wait upon You now";
 
-        public ObservableCollection<Slide> Slides { get; set; }
+        public ObservableCollection<SlideState> Slides { get; set; }
 
         public int SlidesSelectedIndex { get; set; }
 
-        Slide _slidesSelectedItem;
+        SlideState _slidesSelectedItem;
 
-        public Slide SlidesSelectedItem
+        public SlideState SlidesSelectedItem
         {
             get => _slidesSelectedItem;
             set {
@@ -30,16 +30,14 @@ As I wait upon You now";
                 this.RaisePropertyChanged("Text");
                 OnPropertyChanged("Text");
 
-                //this.RaisePropertyChanged("NextSlide");
-                //this.RaisePropertyChanged("SlidesNextItem");
                 OnPropertyChanged("NextSlide");
                 OnPropertyChanged("SlidesNextItem");
             }
         }
 
-        Slide? _nextSlide;
+        SlideState? _nextSlide;
 
-        public Slide? NextSlide
+        public SlideState? NextSlide
         {
             get => _nextSlide;
             set {
@@ -47,7 +45,7 @@ As I wait upon You now";
             }
         }
 
-        public Slide SlidesNextItem
+        public SlideState SlidesNextItem
         {
             get => _slidesSelectedItem;
         }
@@ -56,7 +54,7 @@ As I wait upon You now";
         {
             get
             {
-                return SlidesSelectedItem is SongSlide ? ((SongSlide) SlidesSelectedItem).Text : "No slide selected yet";
+                return SlidesSelectedItem is SongSlideState ? ((SongSlideState)SlidesSelectedItem).Data.SlideText : "No slide selected yet";
             }
         }
 
@@ -76,53 +74,55 @@ As I wait upon You now";
                 this.RaisePropertyChanged("SlidesSelectedItem");
                 OnPropertyChanged("SlidesSelectedItem");
 
-                NextSlide = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
+                var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
+                if (nextSlideState != null)
+                    NextSlide = nextSlideState;
             });
 
-            Slides = new ObservableCollection<Slide>();
+            var m = new ObservableCollection<Slide>();
 
 
             // Verse 1
-            Slides.Add(new SongSlide { Text = "In the darkness we were waiting\nWithout hope without light\nTill from Heaven You came running\nThere was mercy in Your eyes" });
-            Slides.Add(new SongSlide { Text = "To fulfil the law and prophets\nTo a virgin came the Word\nFrom a throne of endless glory\nTo a cradle in the dirt" });
+            m.Add(new SongSlide { Text = "In the darkness we were waiting\nWithout hope without light\nTill from Heaven You came running\nThere was mercy in Your eyes" });
+            m.Add(new SongSlide { Text = "To fulfil the law and prophets\nTo a virgin came the Word\nFrom a throne of endless glory\nTo a cradle in the dirt" });
 
 
             // C
-            Slides.Add(new SongSlide { Text = "Praise the Father\nPraise the Son\nPraise the Spirit three in one" });
-            Slides.Add(new SongSlide { Text = "God of Glory\nMajesty\nPraise forever to the King of kings" });
+            m.Add(new SongSlide { Text = "Praise the Father\nPraise the Son\nPraise the Spirit three in one" });
+            m.Add(new SongSlide { Text = "God of Glory\nMajesty\nPraise forever to the King of kings" });
 
 
             // Verse 2
-            Slides.Add(new SongSlide
+            m.Add(new SongSlide
             {
                 Text = "To reveal the kingdom coming\nAnd to reconcile the lost\nTo redeem the whole creation\nYou did not despise the cross"
             });
 
-            Slides.Add(new SongSlide
+            m.Add(new SongSlide
             {
                 Text = "For even in Your suffering\nYou saw to the other side\nKnowing this was our salvation\nJesus for our sake You died"
             });
 
 
             //Verse 3
-            Slides.Add(new SongSlide
+            m.Add(new SongSlide
             {
                 Text = "And the morning that You rose\nAll of heaven held its breath\nTill that stone was moved for good\nFor the Lamb had conquered death"
             });
 
-            Slides.Add(new SongSlide
+            m.Add(new SongSlide
             {
                 Text = "And the dead rose from their tombs\nAnd the angels stood in awe\nFor the souls of all who'd come\nTo the Father are restored"
             });
 
 
             //Verse 4
-            Slides.Add(new SongSlide
+            m.Add(new SongSlide
             {
                 Text = "And the Church of Christ was born\nThen the Spirit lit the flame\nNow this Gospel truth of old\nShall not kneel shall not faint"
             });
 
-            Slides.Add(new SongSlide
+            m.Add(new SongSlide
             {
                 Text = "By His blood and in His Name\nIn His freedom I am free\nFor the love of Jesus Christ\nWho has resurrected me"
             });
@@ -131,11 +131,31 @@ As I wait upon You now";
                             .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg"));
             foreach (var f in images)
             {
-                Slides.Add(new ImageSlide(f));
+                m.Add(new ImageSlide(f));
             }
 
-            Slides.Add(new VideoSlide());
-         
+            m.Add(new VideoSlide());
+
+
+
+            var xxx = m.Select(s => convertDataToState(s)).ToList();
+            Slides = new ObservableCollection<SlideState>(xxx);
+        }
+
+        SlideState convertDataToState(Slide slide)
+        {
+            switch (slide)
+            {
+                case SongSlide d:
+                    return new SongSlideState(d);
+                case VideoSlide d:
+                    return new VideoSlideState(d);
+                case ImageSlide d:
+                    return new ImageSlideState(d);
+                default:
+                    throw new Exception("error");
+                    break;
+            }
         }
     }
 }

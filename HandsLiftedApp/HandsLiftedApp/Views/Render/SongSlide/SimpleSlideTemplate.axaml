@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             x:Class="HandsLiftedApp.Views.SimpleSlideTemplate">
+	<Grid Width="1920" Height="1080" Background="Black">
+
+		<Border BorderThickness="20" Margin="80 80">
+			<Border.BorderBrush>
+				<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
+					<LinearGradientBrush.GradientStops>
+						<GradientStop Offset="0" Color="#6ebadd"/>
+						<GradientStop Offset="1" Color="#3c7dab"/>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Border.BorderBrush>
+			
+		</Border>
+
+		<Grid Grid.Row="1" HorizontalAlignment="Stretch">
+			<Viewbox StretchDirection="DownOnly">
+				<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
+						   LineHeight="120"
+						   FontFamily="Open Sans"
+						   FontWeight="SemiBold"
+						   HorizontalAlignment="Center"
+						   VerticalAlignment="Center"
+						   RenderOptions.BitmapInterpolationMode="HighQuality"
+						   Foreground="White" FontSize="70" TextAlignment="Center"/>
+			</Viewbox>
+		</Grid>
+
+
+	</Grid>
+</UserControl>

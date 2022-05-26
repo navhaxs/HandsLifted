@@ -29,4 +29,9 @@
   <ItemGroup>
     <Folder Include="Controls\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\Render\SongSlide\SimpleSlideTemplate.axaml.cs">
+      <DependentUpon>SimpleSlideTemplate.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

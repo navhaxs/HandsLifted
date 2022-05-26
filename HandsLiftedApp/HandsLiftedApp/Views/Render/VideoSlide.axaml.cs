@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using HandsLiftedApp.Models.Render;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
 using System;
@@ -21,6 +22,8 @@ namespace HandsLiftedApp.Views.Render
         {
             InitializeComponent();
 
+            this.DetachedFromLogicalTree += VideoSlide_DetachedFromLogicalTree;
+
 
             if (Design.IsDesignMode)
                 return;
@@ -31,13 +34,6 @@ namespace HandsLiftedApp.Views.Render
             _libVLC = new LibVLC();
             _mediaPlayer = new MediaPlayer(_libVLC);
 
-
-            // Important (not working)
-            // Important (not working)
-            // Important (not working)
-            // Important (not working)
-            // Important (not working)
-            // Important (not working)
             VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.AvaloniaCustomDrawingOperation;
 
             VideoView.MediaPlayer = _mediaPlayer;
@@ -55,6 +51,11 @@ namespace HandsLiftedApp.Views.Render
             sAsync();
         }
 
+        private void VideoSlide_DetachedFromLogicalTree(object? sender, Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs e)
+        {
+            VideoView.MediaPlayer.Stop();
+        }
+
         private async Task sAsync()
         {
             await Task.Run(() => {
@@ -62,8 +63,10 @@ namespace HandsLiftedApp.Views.Render
                 Dispatcher.UIThread.InvokeAsync(() => {
                     if (!VideoView.MediaPlayer.IsPlaying)
                     {
+                        //VideoView.MediaPlayer.Play(new Media(_libVLC,
+                        //    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
                         VideoView.MediaPlayer.Play(new Media(_libVLC,
-                            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
+                            ((VideoSlideState) this.DataContext).VideoPath, FromType.FromPath));
                     }
                 });
             });

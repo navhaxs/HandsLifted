@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models.Render
 {
-    public class SongSlideState : SlideState<SongSlide>
+    public class SongSlideState : SlideState
     {
         public SongSlideState(SongSlide data) : base(data)
         {

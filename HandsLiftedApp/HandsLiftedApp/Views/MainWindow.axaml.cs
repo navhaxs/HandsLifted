@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -8,6 +9,8 @@ using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.ViewModels.Editor;
 using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
+using System;
+using System.ComponentModel;
 
 namespace HandsLiftedApp.Views
 {
@@ -19,7 +22,7 @@ namespace HandsLiftedApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-
+            this.Closed += MainWindow_Closed;
             //var x = new MainWindowViewModel();
 
             //this.DataContext = x;
@@ -53,9 +56,15 @@ namespace HandsLiftedApp.Views
             //LowerThirdSlideTemplate nextPreview = this.FindControl<LowerThirdSlideTemplate>("NextPreview");
             //nextPreview.DataContext = DataContext; // new ProjectorViewModel();
 
-            SongEditorWindow songEditorWindow = new SongEditorWindow();
-            songEditorWindow.DataContext = new SongEditorViewModel();
-            songEditorWindow.Show();
+            // TODO: debug
+            // TODO: debug
+            // TODO: debug
+            // TODO: debug
+            // TODO: debug
+            // TODO: debug
+            //SongEditorWindow songEditorWindow = new SongEditorWindow();
+            //songEditorWindow.DataContext = new SongEditorViewModel();
+            //songEditorWindow.Show();
                
 
             this.KeyDown += ZoomBorder_KeyDown;
@@ -95,6 +104,10 @@ namespace HandsLiftedApp.Views
         private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)
         {
             this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
+        }
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
         }
     }
 }

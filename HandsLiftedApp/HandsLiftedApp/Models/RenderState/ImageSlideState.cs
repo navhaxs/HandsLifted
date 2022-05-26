@@ -10,13 +10,21 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models.Render
 {
-    public class ImageSlideState : SlideState<ImageSlide>
+    public class ImageSlideState : SlideState
     {
         public ImageSlideState(ImageSlide data) : base(data)
         {
             using (Stream imageStream = File.OpenRead(data.ImagePath))
             {
-                Image = Bitmap.DecodeToWidth(imageStream, 400);
+                Image = Bitmap.DecodeToWidth(imageStream, 1920);
+            }
+        }
+
+        public string ImageName
+        {
+            get
+            {
+                return Path.GetFileName(((ImageSlide) this.Data).ImagePath);
             }
         }
 

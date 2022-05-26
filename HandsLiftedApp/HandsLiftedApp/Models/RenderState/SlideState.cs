@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models.Render
 {
-    public class SlideState<T> : ReactiveObject where T : Slide
+    public class SlideState
+        : ReactiveObject
     {
-        public SlideState(T data)
+        public SlideState(Slide data)
         {
             Data = data;
         }
 
-        T Data { get; set; }
+        public Slide Data { get; set; }
     }
 }

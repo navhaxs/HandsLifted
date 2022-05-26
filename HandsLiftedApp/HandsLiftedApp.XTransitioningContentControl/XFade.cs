@@ -52,7 +52,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
                         Cue = new Cue(1d)
                     }
                 },
-                Easing = new CubicEaseIn()
+                Easing = new XEasingIn()
+                //Easing = new CubicEaseIn()
             };
             _fadeInAnimation = new Animation
             {
@@ -72,7 +73,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     }
 
                 },
-                Easing = new CubicEaseOut()
+                //Easing = new CubicEaseOut()
+                Easing = new XEasingIn()
             };
             _fadeOutAnimation.Duration = _fadeInAnimation.Duration = duration;
         }
@@ -122,14 +124,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
                 if (from != null)
                 {
-                    tasks.Add(_fadeOutAnimation.RunAsync(from, null, cancellationToken));
                     from.IsVisible = true;
+                    tasks.Add(_fadeOutAnimation.RunAsync(from, null, cancellationToken));
                 }
 
                 if (to != null)
                 {
                     tasks.Add(_fadeInAnimation.RunAsync(to, null, cancellationToken));
-                    //to.IsVisible = true;
+                    to.IsVisible = true;
                 }
 
                 await Task.WhenAll(tasks);
