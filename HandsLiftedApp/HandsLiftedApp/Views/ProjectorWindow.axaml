@@ -42,7 +42,6 @@
 	</DockPanel>-->
 
 	<Grid>
-		<TextBlock Text="{Binding Position, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
 		<Viewbox>
 			<ndi:NDISendContainer NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="True">
 				 <!--<views:LowerThirdSlideTemplate Width="1920" Height="1080" />--> 

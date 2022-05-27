@@ -12,6 +12,7 @@
         x:Class="HandsLiftedApp.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
 		Width="1920" Height="1080"
+		WindowStartupLocation="CenterScreen"
 		DoubleTapped="MainWindow_DoubleTapped"
         Title="HandsLiftedApp">
 

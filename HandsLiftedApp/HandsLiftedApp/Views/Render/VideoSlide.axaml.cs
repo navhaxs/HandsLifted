@@ -23,6 +23,7 @@ namespace HandsLiftedApp.Views.Render
             InitializeComponent();
 
             this.DetachedFromLogicalTree += VideoSlide_DetachedFromLogicalTree;
+            this.TemplateApplied += VideoSlide_TemplateApplied;
 
 
             if (Design.IsDesignMode)
@@ -48,6 +49,10 @@ namespace HandsLiftedApp.Views.Render
             //_mediaPlayer.Media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
             ////
 
+        }
+
+        private void VideoSlide_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
+        {
             sAsync();
         }
 
@@ -59,7 +64,7 @@ namespace HandsLiftedApp.Views.Render
         private async Task sAsync()
         {
             await Task.Run(() => {
-                //Task.Delay(3 * 1000).Wait();
+                //Task.Delay(1 * 1000).Wait();
                 Dispatcher.UIThread.InvokeAsync(() => {
                     if (!VideoView.MediaPlayer.IsPlaying)
                     {

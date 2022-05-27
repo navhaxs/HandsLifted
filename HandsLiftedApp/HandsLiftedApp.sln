@@ -40,7 +40,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestVlcApp", "Libraries\nat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.XTransitioningContentControl", "HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj", "{1556AECA-43B2-4954-AA1B-0EEF06A562EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScratchApp", "ScratchApp\ScratchApp.csproj", "{B9DF2FD7-7E55-4B17-BA43-82DA35F27D73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScratchApp", "ScratchApp\ScratchApp.csproj", "{B9DF2FD7-7E55-4B17-BA43-82DA35F27D73}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackedImagesOpacityDemo", "Demos\StackedImagesOpacityDemo\StackedImagesOpacityDemo.csproj", "{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -184,6 +188,18 @@ Global
 		{B9DF2FD7-7E55-4B17-BA43-82DA35F27D73}.Release|x64.Build.0 = Release|Any CPU
 		{B9DF2FD7-7E55-4B17-BA43-82DA35F27D73}.Release|x86.ActiveCfg = Release|Any CPU
 		{B9DF2FD7-7E55-4B17-BA43-82DA35F27D73}.Release|x86.Build.0 = Release|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Debug|x64.Build.0 = Debug|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Debug|x86.Build.0 = Debug|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Release|x64.ActiveCfg = Release|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Release|x64.Build.0 = Release|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Release|x86.ActiveCfg = Release|Any CPU
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,6 +215,7 @@ Global
 		{185F6A79-3344-4E11-A2FE-FB067B06059B} = {DF9D61D4-EE1B-4212-914D-C74223DDC1EF}
 		{54DF9FA2-053C-45BC-8248-0106D10DED75} = {185F6A79-3344-4E11-A2FE-FB067B06059B}
 		{18E0E14F-BB0B-46CF-BCC4-143337E5C3BC} = {185F6A79-3344-4E11-A2FE-FB067B06059B}
+		{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A} = {CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F842927-3492-494F-A1CE-4A9ECF57C018}

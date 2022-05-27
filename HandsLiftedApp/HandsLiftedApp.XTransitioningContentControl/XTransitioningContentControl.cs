@@ -33,6 +33,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         private object? _currentContent;
         Image _previousImageSite;
         ContentPresenter _contentPresenter;
+        Grid _contentPresenterContainer;
 
         /// <summary>
         /// Defines the <see cref="PageTransition"/> property.
@@ -40,7 +41,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         public static readonly StyledProperty<IPageTransition?> PageTransitionProperty =
             AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(nameof(PageTransition),
                 //new CrossFade(TimeSpan.FromSeconds(0.125)));
-                new XFade(TimeSpan.FromSeconds(0.350)));
+                new XFade(TimeSpan.FromSeconds(0.800)));
 
         /// <summary>
         /// Defines the <see cref="CurrentContent"/> property.
@@ -49,12 +50,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
             AvaloniaProperty.RegisterDirect<XTransitioningContentControl, object?>(nameof(CurrentContent),
                 o => o.CurrentContent);
 
-        System.Timers.Timer aTimer = new System.Timers.Timer();
+        //System.Timers.Timer aTimer = new System.Timers.Timer();
         public XTransitioningContentControl()
         {
             //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             //aTimer.Enabled = true;
-
         }
 
         /// <summary>
@@ -104,6 +104,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             base.OnApplyTemplate(e);
             _previousImageSite = e.NameScope.Find<Image>("PART_PreviousImageSite");
             _contentPresenter = e.NameScope.Find<ContentPresenter>("PART_ContentPresenter");
+            _contentPresenterContainer = e.NameScope.Find<Grid>("PART_ContentPresenterContainer");
         }
 
   
@@ -118,29 +119,40 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 return;
             }
 
+            var clock = AvaloniaLocator.Current.GetService<IGlobalClock>();
+            clock.PlayState = PlayState.Pause;
 
             _lastTransitionCts?.Cancel();
             _lastTransitionCts = new CancellationTokenSource();
 
-
             if (_previousImageSite != null)
             {
-                //_contentPresenter.IsVisible = true;
+                //_contentPresenterContainer.IsVisible = true;
+                //_contentPresenterContainer.Opacity = 1;
+
+
+                //Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
                 _previousImageSite.Source = renderControlAsBitmap(_contentPresenter);
                 _previousImageSite.IsVisible = true;
                 _previousImageSite.Opacity = 1;
             }
 
-            _contentPresenter.IsVisible = false;
+            _contentPresenterContainer.IsVisible = false;
 
             CurrentContent = content;
 
-            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
-            //Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
+
+            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+            Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
+            clock.PlayState = PlayState.Run;
 
             if (PageTransition != null)
             {
-                await PageTransition.Start(_previousImageSite, _contentPresenter, true, _lastTransitionCts.Token);
+                //aTimer.Start();
+
+                await PageTransition.Start(_previousImageSite, _contentPresenterContainer, true, _lastTransitionCts.Token);
+
+
             }
 
             //if (_previousImageSite != null)
@@ -156,14 +168,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
 
-            //Dispatcher.UIThread.Post(() =>
-            //{
+            Dispatcher.UIThread.Post(() =>
+            {
 
-            //    if (_previousImageSite.Opacity != 1 && _contentPresenter.Opacity != 1)
-            //    {
-            //        System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenter.Opacity}={_previousImageSite.Opacity+ _contentPresenter.Opacity}");
-            //    }
-            //});
+                if (_contentPresenterContainer.Opacity != 1)
+                {
+                    System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenterContainer.Opacity}={_previousImageSite.Opacity + _contentPresenterContainer.Opacity}");
+                }
+            });
 
 
         }

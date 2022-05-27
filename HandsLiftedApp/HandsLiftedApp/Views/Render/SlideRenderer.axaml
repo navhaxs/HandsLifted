@@ -17,13 +17,11 @@
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
 			<DataTemplate x:Key="SongSlideState">
-				<Grid>
-					<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
-				</Grid>
+				<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
 			</DataTemplate>
 			<DataTemplate x:Key="ImageSlideState">
 				<Grid>
-					<Image Stretch="Uniform" Source="{Binding Image}" />
+					<Image Stretch="Uniform" Source="{Binding Image}" RenderOptions.BitmapInterpolationMode="HighQuality" />
 					<TextBlock Text="{Binding ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />
 					<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
 				</Grid>

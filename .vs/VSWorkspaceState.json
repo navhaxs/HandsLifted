@@ -1,13 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\HandsLiftedApp",
-    "\\HandsLiftedApp\\HandsLiftedApp",
-    "\\HandsLiftedApp\\Libraries",
-    "\\HandsLiftedApp\\Libraries\\vlcsharpavalonia",
-    "\\HandsLiftedApp\\Libraries\\vlcsharpavalonia\\src",
-    "\\HandsLiftedApp\\Libraries\\vlcsharpavalonia\\src\\LibVLCSharp.Avalonia"
+    ""
   ],
-  "SelectedNode": "\\HandsLiftedApp\\Libraries\\vlcsharpavalonia\\src\\LibVLCSharp.Avalonia\\LibVLCSharp.Avalonia.csproj",
   "PreviewInSolutionExplorer": false
 }

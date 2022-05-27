@@ -37,8 +37,32 @@ namespace HandsLiftedApp.XTransitioningContentControl
         {
             _fadeOutAnimation = new Animation
             {
-                Children =
+                Children = 
                 {
+                    new KeyFrame()
+                    {
+                        Setters =
+                        {
+                            new Setter
+                            {
+                                Property = Visual.OpacityProperty,
+                                Value = 1d
+                            }
+                        },
+                        Cue = new Cue(0d)
+                    },
+                    new KeyFrame()
+                    {
+                        Setters =
+                        {
+                            new Setter
+                            {
+                                Property = Visual.OpacityProperty,
+                                Value = 1d
+                            }
+                        },
+                        Cue = new Cue(0.9d)
+                    },
                     new KeyFrame()
                     {
                         Setters =
@@ -50,9 +74,10 @@ namespace HandsLiftedApp.XTransitioningContentControl
                             }
                         },
                         Cue = new Cue(1d)
-                    }
+                    },
                 },
                 Easing = new XEasingIn()
+                //, Delay = new TimeSpan(0,0,0,0, 500)
                 //Easing = new CubicEaseIn()
             };
             _fadeInAnimation = new Animation

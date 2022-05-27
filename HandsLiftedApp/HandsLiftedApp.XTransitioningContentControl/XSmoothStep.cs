@@ -23,7 +23,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             var x = Math.Max(0, Math.Min(1, (value - min) / (max - min)));
             var next = x * x * (3 - 2 * x);
 
-            System.Diagnostics.Debug.Print($"{_id}:{value}={next}");
+            //System.Diagnostics.Debug.Print($"{_id}:{value}={next}");
             return next;
         }
     }

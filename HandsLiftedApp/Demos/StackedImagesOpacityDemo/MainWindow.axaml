@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="StackedImagesOpacityDemo.MainWindow"
+        Title="StackedImagesOpacityDemo">
+	<Viewbox>
+		<Grid>
+			<Image Source="avares://StackedImagesOpacityDemo/Test1.png" Width="1920" Height="1080"
+				   Opacity="{Binding #BackgroundSlider.Value, Mode=TwoWay}"
+				   />
+			<!--<Image Source="avares://StackedImagesOpacityDemo/Test2.png" Width="1920" Height="1080"
+				   Opacity="{Binding #ForegroundSlider.Value, Mode=TwoWay}"
+				   />-->
+			<Grid Width="1920" Height="1080" Opacity="{Binding #ForegroundSlider.Value, Mode=TwoWay}">
+					<Border BorderThickness="20" Margin="80 80">
+						<Border.BorderBrush>
+							<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Offset="0" Color="Red"/>
+									<GradientStop Offset="1" Color="#3c7dab"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</Border.BorderBrush>
+						<Grid Grid.Row="1" HorizontalAlignment="Stretch" Background="Black">
+							<Viewbox StretchDirection="DownOnly">
+								<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
+										   LineHeight="120"
+										   FontFamily="Open Sans"
+										   FontWeight="SemiBold"
+										   HorizontalAlignment="Center"
+										   VerticalAlignment="Center"
+										   RenderOptions.BitmapInterpolationMode="HighQuality"
+										   Foreground="White" FontSize="70" TextAlignment="Center"/>
+							</Viewbox>
+						</Grid>
+
+					</Border>
+
+			
+			</Grid>
+			<StackPanel>
+				<Slider Minimum="0" Maximum="1" Name="ForegroundSlider" Value="0.7" />
+				<Slider Minimum="0" Maximum="1" Name="BackgroundSlider" Value="1" />
+			</StackPanel>
+		</Grid>
+	</Viewbox>
+</Window>

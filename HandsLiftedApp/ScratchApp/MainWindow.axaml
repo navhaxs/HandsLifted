@@ -20,31 +20,31 @@
 	</Window.Styles>
 
 	<Grid>
-	<Rectangle Classes="red">
-		<Rectangle.Transitions>
-			<Transitions>
-				<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-				<BrushTransition Property="Fill" Duration="0:0:1.0"/>
-			</Transitions>
-		</Rectangle.Transitions>
-	</Rectangle>
+		<Rectangle Classes="red">
+			<Rectangle.Transitions>
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+					<BrushTransition Property="Fill" Duration="0:0:1.0"/>
+				</Transitions>
+			</Rectangle.Transitions>
+		</Rectangle>
 
-	<StackPanel Margin="30">
-		<StackPanel.Styles>
-			<Style Selector="ProgressBar">
-				<Setter Property="Transitions">
-					<Transitions>
-						<DoubleTransition
-                              Property="(local:ProgressBarWorkaround.Value)"
-                              Duration="0:0:0.5"/>
-					</Transitions>
-				</Setter>
-			</Style>
-		</StackPanel.Styles>
-		<ProgressBar local:ProgressBarWorkaround.Value="{Binding #Hello.Text}" />
-	</StackPanel>
-		
-		<TextBox  Height="20" Width="200"  Background="Red"  Name="Hello" Text="100" />
+		<StackPanel Margin="30">
+			<StackPanel.Styles>
+				<Style Selector="ProgressBar">
+					<Setter Property="Transitions">
+						<Transitions>
+							<DoubleTransition
+								  Property="(local:ProgressBarWorkaround.Value)"
+								  Duration="0:0:0.5"/>
+						</Transitions>
+					</Setter>
+				</Style>
+			</StackPanel.Styles>
+			<ProgressBar local:ProgressBarWorkaround.Value="{Binding #Hello.Text}" />
+		</StackPanel>
+
+		<TextBox Height="20" Width="200" Background="Red" Name="Hello" Text="100" />
 	</Grid>
 
 </Window>
