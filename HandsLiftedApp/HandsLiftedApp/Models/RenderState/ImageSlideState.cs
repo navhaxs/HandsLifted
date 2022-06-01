@@ -16,10 +16,17 @@ namespace HandsLiftedApp.Models.Render
     {
         public ImageSlideState(ImageSlide data) : base(data)
         {
-            using (Stream imageStream = File.OpenRead(data.ImagePath))
-            {
-                Image = Bitmap.DecodeToWidth(imageStream, 1920);
-            }
+            _ = LoadImage();
+        }
+        public async Task LoadImage()
+        {
+            Image = await Task.Run(() => {
+                var path = ((ImageSlide)this.Data).ImagePath;
+                using (Stream imageStream = File.OpenRead(path))
+                {
+                    return Bitmap.DecodeToWidth(imageStream, 1920);
+                }
+            });
         }
 
         public string ImageName

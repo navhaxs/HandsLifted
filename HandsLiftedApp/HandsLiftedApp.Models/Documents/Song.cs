@@ -95,6 +95,12 @@ namespace HandsLiftedApp.Data.Documents
                 get => lyrics;
                 set => this.RaiseAndSetIfChanged(ref lyrics, value);
             }
+
+            // parameter-less constructor required for serialization
+            public SongStanza()
+            {
+            }
+
             public SongStanza(Guid Uuid, string Name, string Lyrics)
             {
                 this.Uuid = Uuid;

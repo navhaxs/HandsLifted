@@ -7,6 +7,7 @@ using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 
 
@@ -150,6 +151,9 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 if (from != null)
                 {
                     from.IsVisible = true;
+                    from.Opacity = 1;
+                    Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+
                     tasks.Add(_fadeOutAnimation.RunAsync(from, null, cancellationToken));
                 }
 
@@ -163,7 +167,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
                 if (from != null && !cancellationToken.IsCancellationRequested)
                 {
-                    from.IsVisible = false;
+                    from.Opacity = 0;
                 }
             }
         }

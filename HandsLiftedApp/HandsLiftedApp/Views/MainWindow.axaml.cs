@@ -11,6 +11,7 @@ using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
 {
@@ -22,6 +23,9 @@ namespace HandsLiftedApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+            if (Design.IsDesignMode)
+                return;
+
             this.Closed += MainWindow_Closed;
             //var x = new MainWindowViewModel();
 
@@ -62,10 +66,10 @@ namespace HandsLiftedApp.Views
             // TODO: debug
             // TODO: debug
             // TODO: debug
-            //SongEditorWindow songEditorWindow = new SongEditorWindow();
-            //songEditorWindow.DataContext = new SongEditorViewModel();
-            //songEditorWindow.Show();
-               
+            SongEditorWindow songEditorWindow = new SongEditorWindow();
+            songEditorWindow.DataContext = new SongEditorViewModel();
+            songEditorWindow.Show();
+
 
             this.KeyDown += ZoomBorder_KeyDown;
         }
@@ -109,5 +113,12 @@ namespace HandsLiftedApp.Views
         {
             ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
         }
+
+        private async Task OnLaunchProjector()
+        {
+
+        }
+
+        
     }
 }

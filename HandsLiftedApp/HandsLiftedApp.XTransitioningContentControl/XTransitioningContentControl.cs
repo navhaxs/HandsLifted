@@ -130,8 +130,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 //_contentPresenterContainer.IsVisible = true;
                 //_contentPresenterContainer.Opacity = 1;
 
-
-                //Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
                 _previousImageSite.Source = renderControlAsBitmap(_contentPresenter);
                 _previousImageSite.IsVisible = true;
                 _previousImageSite.Opacity = 1;
@@ -141,9 +139,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             CurrentContent = content;
 
-
             Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
-            Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
+
             clock.PlayState = PlayState.Run;
 
             if (PageTransition != null)
@@ -168,14 +165,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
 
-            Dispatcher.UIThread.Post(() =>
-            {
+            //Dispatcher.UIThread.Post(() =>
+            //{
 
-                if (_contentPresenterContainer.Opacity != 1)
-                {
-                    System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenterContainer.Opacity}={_previousImageSite.Opacity + _contentPresenterContainer.Opacity}");
-                }
-            });
+            //    if (_contentPresenterContainer.Opacity != 1)
+            //    {
+            //        System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenterContainer.Opacity}={_previousImageSite.Opacity + _contentPresenterContainer.Opacity}");
+            //    }
+            //});
 
 
         }

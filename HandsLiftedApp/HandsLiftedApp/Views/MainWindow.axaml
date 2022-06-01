@@ -97,7 +97,7 @@
 							<!--<Viewbox>
 								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
 							</Viewbox>-->
-							<TextBlock Text="{Binding Data.Text}" TextWrapping="Wrap" />
+							<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" />
 						</DataTemplate>
 						<DataTemplate x:Key="ImageSlideState">
 							<Grid Background="Yellow">
@@ -146,6 +146,7 @@
 			<Border Padding="10" DockPanel.Dock="Top" Height="90">
 				<StackPanel VerticalAlignment="Center">
 					<TextBlock HorizontalAlignment="Right" FontSize="18">Live</TextBlock>
+					<Button Command="{Binding OnClickCommand}">Projector</Button>
 				</StackPanel>
 			</Border>
 

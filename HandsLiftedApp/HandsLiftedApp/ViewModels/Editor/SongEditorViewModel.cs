@@ -13,7 +13,16 @@ namespace HandsLiftedApp.ViewModels.Editor
 {
     public class SongEditorViewModel : ViewModelBase
     {
-        public Song song { get; set; }
+
+        private Song? _song;
+        public Song? song
+        {
+            get => _song;
+            set {
+                this.RaiseAndSetIfChanged(ref _song, value);
+                OnPropertyChanged();
+            }
+        }
         public SongEditorViewModel()
         {
             OnClickCommand = ReactiveCommand.Create(RunTheThing);

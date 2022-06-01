@@ -54,7 +54,8 @@ namespace HandsLiftedApp.Utils
 
         public bool Match(object data)
         {
-            return data is SlideState;
+            //return data is SlideState;
+            return true;
         }
     }
 }

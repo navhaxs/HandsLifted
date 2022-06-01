@@ -16,8 +16,9 @@
 
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Height="40" Orientation="Horizontal">
-			<Button Content="Import" />
-			<Button Content="Save" />
+			<Button Name="btnGetWavHeader" Content="Import TXT" />
+			<Button Name="btnFileLoad" Content="Load XML" />
+			<Button Name="btnFileSave" Content="Save XML" />
 		</StackPanel>
 		<Grid>
 			<Grid.ColumnDefinitions>

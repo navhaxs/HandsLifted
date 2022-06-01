@@ -5,13 +5,12 @@
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
              x:Class="HandsLiftedApp.Views.SimpleSlideTemplate">
 	<Grid Width="1920" Height="1080">
-
 		<Border BorderThickness="20" Margin="80 80">
 			<Border.BorderBrush>
 				<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
 					<LinearGradientBrush.GradientStops>
-						<GradientStop Offset="0" Color="#5eb5de"/>
-						<GradientStop Offset="1" Color="#3c7dab"/>
+						<GradientStop Offset="0" Color="#ff5eb5de"/>
+						<GradientStop Offset="1" Color="#ff3c7dab"/>
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Border.BorderBrush>

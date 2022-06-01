@@ -33,6 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestVlcSharpAvaloniaApplica
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BD358C60-3880-4636-BD41-3C4AC68C5227}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		global.json = global.json
 	EndProjectSection
 EndProject
@@ -44,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScratchApp", "ScratchApp\Sc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackedImagesOpacityDemo", "Demos\StackedImagesOpacityDemo\StackedImagesOpacityDemo.csproj", "{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackedImagesOpacityDemo", "Demos\StackedImagesOpacityDemo\StackedImagesOpacityDemo.csproj", "{7903927C-3E49-4B5D-B2F7-163EBEFC1B0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
