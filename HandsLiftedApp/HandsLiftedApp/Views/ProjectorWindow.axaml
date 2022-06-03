@@ -43,7 +43,7 @@
 
 	<Grid>
 		<Viewbox>
-			<ndi:NDISendContainer NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="True">
+			<ndi:NDISendContainer NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
 				 <!--<views:LowerThirdSlideTemplate Width="1920" Height="1080" />--> 
 				<views:ActiveSlideOutput Width="1920" Height="1080"/>
 			</ndi:NDISendContainer>

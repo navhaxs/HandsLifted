@@ -6,20 +6,30 @@ using System;
 
 namespace HandsLiftedApp.Models.Render
 {
+    // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
     public class VideoSlideState : SlideState
     {
         private LibVLC _libVLC;
 
         public VideoSlideState(VideoSlide data) : base(data)
         {
-            _libVLC = new LibVLC();
-            MediaPlayer = new MediaPlayer(_libVLC);
-
             VideoPath = data.VideoPath;
 
-            string absolute = new Uri(VideoPath).AbsoluteUri;
-            bool isfile = absolute.StartsWith("file://");
-            MediaPlayer.Media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
+            try
+            {
+                return;
+                _libVLC = new LibVLC();
+                MediaPlayer = new MediaPlayer(_libVLC);
+
+
+                string absolute = new Uri(VideoPath).AbsoluteUri;
+                bool isfile = absolute.StartsWith("file://");
+                MediaPlayer.Media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
+            }
+            catch
+            {
+
+            }
             //MediaPlayer.Play();
         }
 

@@ -13,10 +13,19 @@ namespace HandsLiftedApp.ViewModels
 {
 	public class MainWindowViewModel : ViewModelBase
 	{
-		public string Greeting => @"I wait upon You now
-Lord I wait upon You now
-Let Your presence fill me now
-As I wait upon You now";
+
+		public DateTime CurrentTime
+		{
+			get => DateTime.Now;
+		}
+		private async Task Update()
+		{
+			while (true)
+			{
+				await Task.Delay(100);
+				OnPropertyChanged(nameof(CurrentTime));
+			}
+		}
 
 		private ObservableCollection<SlideState>? _slides = new ObservableCollection<SlideState>();
 		public ObservableCollection<SlideState>? Slides
@@ -25,7 +34,16 @@ As I wait upon You now";
 			private set => this.RaiseAndSetIfChanged(ref _slides, value);
 		}
 
-		public int SlidesSelectedIndex { get; set; }
+		public int _slidesSelectedIndex;
+		public int SlidesSelectedIndex
+		{
+			get => _slidesSelectedIndex;
+			set
+			{
+				this.RaiseAndSetIfChanged(ref _slidesSelectedIndex, value);
+				OnPropertyChanged();
+			}
+		}
 
 		SlideState _slidesSelectedItem;
 
@@ -226,8 +244,23 @@ As I wait upon You now";
 			//});
 		}
 
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
+		// CONSTRUCTOR
 		public MainWindowViewModel()
 		{
+
+			_ = Update(); // calling an async function we do not want to await
+
 			this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
 				this.RaisePropertyChanged("Text");
 				OnPropertyChanged("Text");
@@ -258,11 +291,21 @@ As I wait upon You now";
 			}
 		}
 
-		public void OnClickCommand()
+		public void OnProjectorClickCommand()
 		{
 			ProjectorWindow p = new ProjectorWindow();
             p.DataContext = this;
             p.Show();
+		}
+		
+		public void OnNextSlideClickCommand()
+		{
+			SlidesSelectedIndex += 1;
+		}
+		
+		public void OnPrevSlideClickCommand()
+		{
+			SlidesSelectedIndex -= 1;
 		}
 	}
 }

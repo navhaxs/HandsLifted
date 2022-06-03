@@ -27,9 +27,6 @@
     <ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="Views\Render\SongSlide\SimpleSlideTemplate.axaml.cs">
       <DependentUpon>SimpleSlideTemplate.axaml</DependentUpon>
     </Compile>

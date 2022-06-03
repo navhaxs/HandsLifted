@@ -16,7 +16,7 @@
         WindowStartupLocation="CenterScreen"
         Topmost="True"
         ExtendClientAreaTitleBarHeightHint="-1">
-    <Image Source="avares://HandsLiftedApp/Assets/splash.png"
+    <Image Source="avares://HandsLiftedApp/Assets/SplashScreen1.png"
         RenderOptions.BitmapInterpolationMode="HighQuality"
          />
 </Window>

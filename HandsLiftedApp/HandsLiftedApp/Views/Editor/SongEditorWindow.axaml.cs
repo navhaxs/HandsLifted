@@ -10,9 +10,9 @@ namespace HandsLiftedApp.Views.Editor
 {
     public partial class SongEditorWindow : Window
     {
-        private Button _btnGetWavHeader;
-        private Button _btnFileLoad;
-        private Button _btnFileSave;
+        private MenuItem _btnGetWavHeader;
+        private MenuItem _btnFileLoad;
+        private MenuItem _btnFileSave;
         public SongEditorWindow()
         {
             InitializeComponent();
@@ -20,11 +20,11 @@ namespace HandsLiftedApp.Views.Editor
             this.AttachDevTools();
 #endif
 
-            _btnGetWavHeader = this.FindControl<Button>("btnGetWavHeader");
+            _btnGetWavHeader = this.FindControl<MenuItem>("btnGetWavHeader");
             _btnGetWavHeader.Click += async (sender, e) => await GetWavHeader();
-            _btnFileLoad = this.FindControl<Button>("btnFileLoad");
+            _btnFileLoad = this.FindControl<MenuItem>("btnFileLoad");
             _btnFileLoad.Click += async (sender, e) => await LoadFromXML();
-            _btnFileSave = this.FindControl<Button>("btnFileSave");
+            _btnFileSave = this.FindControl<MenuItem>("btnFileSave");
             _btnFileSave.Click += async (sender, e) => await SaveToXML();
         }
 

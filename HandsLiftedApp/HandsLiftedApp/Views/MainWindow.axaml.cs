@@ -107,7 +107,8 @@ namespace HandsLiftedApp.Views
 
         private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)
         {
-            this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
+            if (e.Source is Border)
+                this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
         }
         private void MainWindow_Closed(object sender, EventArgs e)
         {

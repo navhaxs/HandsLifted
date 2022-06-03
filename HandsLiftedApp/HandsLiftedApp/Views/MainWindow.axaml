@@ -1,20 +1,21 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:views="using:HandsLiftedApp.Views"
-        xmlns:vm="using:HandsLiftedApp.ViewModels"
-        xmlns:utils="using:HandsLiftedApp.Utils"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:views="using:HandsLiftedApp.Views"
+		xmlns:vm="using:HandsLiftedApp.ViewModels"
+		xmlns:utils="using:HandsLiftedApp.Utils"
 		xmlns:ext="using:HandsLiftedApp.Extensions"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ndi="using:AvaloniaNDI"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ndi="using:AvaloniaNDI"
 		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="HandsLiftedApp.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-		Width="1920" Height="1080"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		x:Class="HandsLiftedApp.Views.MainWindow"
+		Icon="/Assets/avalonia-logo.ico"
+		Width="1800" Height="900"
 		WindowStartupLocation="CenterScreen"
 		DoubleTapped="MainWindow_DoubleTapped"
-        Title="HandsLiftedApp">
+		Title="VisionScreens">
 
 	<Window.Resources>
 		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
@@ -26,99 +27,121 @@
 
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width = "0.3 *" />
-			<ColumnDefinition Width = "Auto" />
 			<ColumnDefinition Width = "*" />
-			<ColumnDefinition Width = "Auto" />
+			<ColumnDefinition Width = "1" />
 			<ColumnDefinition Width = "0.4 *" />
 		</Grid.ColumnDefinitions>
 
-		<!-- Left hand panel -->
-		<DockPanel>
-			<Border Padding="10" Background="#4b3ea3" DockPanel.Dock="Top" Height="90">
-				<StackPanel VerticalAlignment="Bottom">
-					<TextBlock HorizontalAlignment="Stretch" FontSize="26" Foreground="White">Sunday 11am</TextBlock>
-					<TextBlock HorizontalAlignment="Stretch" Foreground="White">22 May 2022</TextBlock>
-				</StackPanel>
-			</Border>
+		<!--<DockPanel>
 			<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
 			<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Add Item</Button>
-			<ListBox>
-				<ListBoxItem>
-					<TextBlock>Pre-service roll</TextBlock>
-				</ListBoxItem>
-				<ListBoxItem>
-					<TextBlock>Call to worship</TextBlock>
-				</ListBoxItem>
-				<ListBoxItem>
-					<TextBlock>Song Set 1</TextBlock>
-				</ListBoxItem>
-				<ListBoxItem>
-					<TextBlock>Confession</TextBlock>
-				</ListBoxItem>
-				<ListBoxItem>
-					<TextBlock>Song Set 2</TextBlock>
-				</ListBoxItem>
-				<ListBoxItem>
-					<TextBlock>Bible reading</TextBlock>
-				</ListBoxItem>
-				<ListBoxItem>
-					<TextBlock>Song Set 3</TextBlock>
-				</ListBoxItem>
-				<ListBoxItem>
-					<TextBlock>Post-service roll</TextBlock>
-				</ListBoxItem>
-			</ListBox>
-		</DockPanel>
-		
-		<GridSplitter Grid.Column = "1" />
+		</DockPanel>-->
 
 		<!-- Centre panel-->
-		<DockPanel Grid.Column = "2" >
-			<ListBox Name="List"
-					 Items="{Binding Slides}"
-					 SelectedIndex="{Binding SlidesSelectedIndex}"
-					 SelectedItem="{Binding SlidesSelectedItem}">
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<UniformGrid />
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-				<!--<ListBox.ItemTemplate>
+		<DockPanel Grid.Column = "0" >
+			<Border
+				Height="50"
+				Padding="10,5,10,5"
+				VerticalAlignment="Bottom"
+				Background="#FFD6D6D6"
+				DockPanel.Dock="Bottom">
+				<Grid>
+					<Grid.Styles>
+						<Style Selector="Button">
+							<Setter Property="MinWidth" Value="250" />
+							<Setter Property="HorizontalContentAlignment" Value="Center" />
+						</Style>
+					</Grid.Styles>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="2*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="2*" />
+					</Grid.ColumnDefinitions>
+					<Button
+						Command="{Binding OnPrevSlideClickCommand}"
+						Content="Prev"
+						FontSize="16"
+						IsCancel="True"
+						IsTabStop="False" />
+					<TextBlock
+						Grid.Column="1"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Foreground="{DynamicResource ForegroundText}">
+					</TextBlock>
+					<Button
+						Command="{Binding OnNextSlideClickCommand}"
+						HorizontalAlignment="Right"
+						Grid.Column="2"
+						Content="Next"
+						FontSize="16"
+						IsCancel="True"
+						IsTabStop="False" />
+					</Grid>
+			</Border>
+			<ScrollViewer>
+				<StackPanel>
+
+					<Border Padding="20 10" Background="#eeeef2" DockPanel.Dock="Top" Height="90">
+						<StackPanel VerticalAlignment="Center">
+							<TextBlock HorizontalAlignment="Stretch" FontSize="22">Sunday 11am Service</TextBlock>
+							<TextBlock HorizontalAlignment="Stretch" Foreground="#8a8c8c">22 May 2022</TextBlock>
+						</StackPanel>
+					</Border>
+
+					<ListBox Name="List"
+							 Items="{Binding Slides}"
+							 SelectedIndex="{Binding SlidesSelectedIndex}"
+							 SelectedItem="{Binding SlidesSelectedItem}">
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<UniformGrid />
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+						<!--<ListBox.ItemTemplate>
 					<DataTemplate>
-						--><!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">--><!--
+						-->
+						<!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">-->
+						<!--
 						<TextBlock HorizontalAlignment="Center" Text="{Binding Text}"/>
-						--><!--</Border>--><!--
+						-->
+						<!--</Border>-->
+						<!--
 					</DataTemplate>
 				</ListBox.ItemTemplate>-->
-				<ListBox.DataTemplates>
-					<utils:MyTemplateSelector>
-						<DataTemplate x:Key="SongSlideState">
-							<!--<Viewbox>
+						<ListBox.DataTemplates>
+							<utils:MyTemplateSelector>
+								<DataTemplate x:Key="SongSlideState">
+									<!--<Viewbox>
 								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
 							</Viewbox>-->
-							<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" />
-						</DataTemplate>
-						<DataTemplate x:Key="ImageSlideState">
-							<Grid Background="Yellow">
-								<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
-								<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
-								<Image Stretch="Uniform" Source="{Binding Image}" />
-							</Grid>
-						</DataTemplate>
-						<DataTemplate x:Key="MyKey">
-							<TextBlock Background="Red" Text="{Binding Text}" />
-						</DataTemplate>
-						<DataTemplate x:Key="MyKey2">
-							<TextBlock Background="Green" Text="{Binding Text}"/>
-						</DataTemplate>
-						<DataTemplate x:Key="Fallback">
-							<TextBlock Background="Red" Text="{Binding Text}" />
-						</DataTemplate>
-					</utils:MyTemplateSelector>
-				</ListBox.DataTemplates>
-			</ListBox>
-			<!--<ItemsRepeater Name="repeater" Background="Transparent" Items="{Binding Albums}" Margin="5">
+									<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" />
+								</DataTemplate>
+								<DataTemplate x:Key="ImageSlideState">
+									<Grid>
+										<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
+										<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
+										<Image Stretch="Uniform" Source="{Binding Image}" />
+									</Grid>
+								</DataTemplate>
+								<DataTemplate x:Key="VideoSlideState">
+									<Border Padding="20">
+										<TextBlock>Video</TextBlock>
+									</Border>
+								</DataTemplate>
+								<DataTemplate x:Key="MyKey">
+									<TextBlock Background="Red" Text="{Binding Text}" />
+								</DataTemplate>
+								<DataTemplate x:Key="MyKey2">
+									<TextBlock Background="Green" Text="{Binding Text}"/>
+								</DataTemplate>
+								<DataTemplate x:Key="Fallback">
+									<TextBlock Background="Red" Text="{Binding Text}" />
+								</DataTemplate>
+							</utils:MyTemplateSelector>
+						</ListBox.DataTemplates>
+					</ListBox>
+					<!--<ItemsRepeater Name="repeater" Background="Transparent" Items="{Binding Albums}" Margin="5">
 				<ItemsRepeater.ContextMenu>
 					<ContextMenu>
 						<MenuItem Header="Scan for Music" Command="{Binding ScanLibraryCommand}" />
@@ -136,18 +159,20 @@
 					</DataTemplate>
 				</ItemsRepeater.ItemTemplate>
 			</ItemsRepeater>-->
+				</StackPanel>
+			</ScrollViewer>
 		</DockPanel>
-		
-		<GridSplitter Grid.Column = "3" />
+
+		<GridSplitter Grid.Column = "1" Background="#eeeef2" />
 
 		<!-- Right panel -->
-		<DockPanel Grid.Column = "4" Background="#f2f2f2">
+		<DockPanel Grid.Column="2" Background="#eeeef2">
 
-			<Border Padding="10" DockPanel.Dock="Top" Height="90">
-				<StackPanel VerticalAlignment="Center">
-					<TextBlock HorizontalAlignment="Right" FontSize="18">Live</TextBlock>
-					<Button Command="{Binding OnClickCommand}">Projector</Button>
-				</StackPanel>
+			<Border Padding="10" DockPanel.Dock="Top" Height="70">
+				<DockPanel>
+					<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}">Projector</Button>
+					<TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18">Live</TextBlock>
+				</DockPanel>
 			</Border>
 
 			<Grid DockPanel.Dock="Top">
@@ -161,11 +186,13 @@
 						</VisualBrush.Visual>
 					</VisualBrush>
 				</Grid.Background>
-				<Viewbox>
-					<!--<views:ActiveSlideOutput Width="1920" Height="1080" Content="{Binding SlidesSelectedItem}" />-->
-					<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
-					<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
-				</Viewbox>	
+				<Border Margin="50">
+					<Viewbox>
+						<views:ActiveSlideOutput Width="1920" Height="1080" Content="{Binding SlidesSelectedItem}" />
+						<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
+						<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
+					</Viewbox>
+				</Border>
 			</Grid>
 
 			<Grid DockPanel.Dock="Top">
@@ -186,12 +213,17 @@
 				</Viewbox>
 			</Grid>
 
-			<TextBlock DockPanel.Dock="Bottom" Text="{Binding Text}" />
+			<UniformGrid DockPanel.Dock="Top" Columns="4" Rows="1" Height="35">
+				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+			</UniformGrid>
 
-			<Grid>
-				
-			</Grid>
+			<TextBlock Padding="5 5 5 10" FontSize="20" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
 			
+			<Grid></Grid>
+
 		</DockPanel>
 	</Grid>
 

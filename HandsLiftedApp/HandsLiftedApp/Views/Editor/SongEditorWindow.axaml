@@ -15,78 +15,93 @@
 
 
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Height="40" Orientation="Horizontal">
-			<Button Name="btnGetWavHeader" Content="Import TXT" />
-			<Button Name="btnFileLoad" Content="Load XML" />
-			<Button Name="btnFileSave" Content="Save XML" />
-		</StackPanel>
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width = "0.4 *" />
-				<ColumnDefinition Width = "Auto" />
-				<ColumnDefinition Width = "0.6 *" />
-			</Grid.ColumnDefinitions>
-
-			<DockPanel>
-				<TextBox Text="{Binding song.Title}" DockPanel.Dock="Top" />
-				<TextBox Text="{Binding song.Copyright}" DockPanel.Dock="Top" />
-				<Button DockPanel.Dock="Bottom" Command="{Binding OnClickCommand}" HorizontalAlignment="Stretch">Add New Slide</Button>
-				<ListBox Items="{Binding song.Stanzas}"
-						 VirtualizationMode="None"
-						 ScrollViewer.VerticalScrollBarVisibility="Visible">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Border Background="Red" CornerRadius="4" Padding="4">
-								<StackPanel>
-									<TextBox Text="{Binding Path=Uuid}"/>
-									<TextBox Text="{Binding Path=Name}"/>
-									<TextBox Text="{Binding Path=Lyrics}" AcceptsReturn="True" />
-								</StackPanel>
-							</Border>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</DockPanel>
-
-			<GridSplitter Grid.Column = "1" />
-
-			<ListBox Name="List"
-					Items="{Binding song.Slides}"
-					Grid.Column = "2" >
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<UniformGrid />
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-				<!--<ListBox.ItemTemplate>
+		<Menu DockPanel.Dock="Top">
+			<MenuItem  Name="btnGetWavHeader" Header="Import TXT" />
+			<MenuItem  Name="btnFileLoad" Header="Load XML" />
+			<MenuItem  Name="btnFileSave" Header="Save XML" />
+		</Menu>
+		<TabControl>
+			<TabItem Header="Edit Lyrics" VerticalContentAlignment="Center">
+				<ScrollViewer>
+					<Grid MaxWidth="750" Margin="0 40 0 40">
+						<DockPanel>
+							<DockPanel.Styles>
+								<Style Selector="TextBox">
+									<Setter Property="BorderThickness" Value="0" />
+								</Style>
+							</DockPanel.Styles>
+							<TextBox Text="{Binding song.Title}" Watermark="Song Title" DockPanel.Dock="Top" FontWeight="Bold" FontSize="34" Padding="0 6 0 5" />
+							<TextBox Text="{Binding song.Copyright}" Watermark="Copyright" DockPanel.Dock="Top" Padding="0 6 0 5" />
+							<Rectangle DockPanel.Dock="Top" Height="12" />
+							<Button DockPanel.Dock="Bottom" Command="{Binding OnClickCommand}" HorizontalAlignment="Stretch">Add New Slide</Button>
+							<ItemsControl Items="{Binding song.Stanzas}">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<Border Padding="0 12 0 18">
+											<StackPanel>
+												<!--<TextBox Text="{Binding Path=Uuid}"/>-->
+												<TextBox Text="{Binding Path=Name}" Watermark="Stanza Name" FontWeight="SemiBold" FontSize="22" Padding="0" />
+												<TextBox Text="{Binding Path=Lyrics}" Watermark="Stanza Lyrics" AcceptsReturn="True" FontSize="18" Padding="0" />
+											</StackPanel>
+										</Border>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</DockPanel>
+					</Grid>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem>
+				<TabItem.Header>
+					<TextBlock VerticalAlignment="Center">Edit Design</TextBlock>
+				</TabItem.Header>
+				<StackPanel>
+					<TextBlock Text="I am in the triangle page ! I'll put a button to show you that each page contains what you want." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Button>A button in the triangle page !</Button>
+				</StackPanel>
+			</TabItem>
+			<TabItem>
+				<TabItem.Header>
+					<TextBlock VerticalAlignment="Center">Preview</TextBlock>
+				</TabItem.Header>
+				<ListBox Name="List"
+						Items="{Binding song.Slides}"
+						Grid.Column = "2" >
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<UniformGrid />
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+					<!--<ListBox.ItemTemplate>
 						<DataTemplate>
 							-->
-				<!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">-->
-				<!--
+					<!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">-->
+					<!--
 							<TextBlock HorizontalAlignment="Center" Text="{Binding Text}"/>
 							-->
-				<!--</Border>-->
-				<!--
+					<!--</Border>-->
+					<!--
 						</DataTemplate>
 					</ListBox.ItemTemplate>-->
-				<ListBox.DataTemplates>
-					<utils:MyTemplateSelector>
-						<DataTemplate x:Key="SongSlide">
-							<TextBlock Text="{Binding Text}"/>
-						</DataTemplate>
-						<DataTemplate x:Key="ImageSlide">
-							<Image Stretch="Uniform" Source="{Binding Image}" />
-						</DataTemplate>
-						<DataTemplate x:Key="MyKey">
-							<TextBlock Background="Red" Text="{Binding Text}"/>
-						</DataTemplate>
-						<DataTemplate x:Key="MyKey2">
-							<TextBlock Background="Blue" Text="{Binding Text}"/>
-						</DataTemplate>
+					<ListBox.DataTemplates>
+						<utils:MyTemplateSelector>
+							<DataTemplate x:Key="SongSlide">
+								<TextBlock Text="{Binding Text}"/>
+							</DataTemplate>
+							<DataTemplate x:Key="ImageSlide">
+								<Image Stretch="Uniform" Source="{Binding Image}" />
+							</DataTemplate>
+							<DataTemplate x:Key="MyKey">
+								<TextBlock Background="Red" Text="{Binding Text}"/>
+							</DataTemplate>
+							<DataTemplate x:Key="MyKey2">
+								<TextBlock Background="Blue" Text="{Binding Text}"/>
+							</DataTemplate>
 
-					</utils:MyTemplateSelector>
-				</ListBox.DataTemplates>
-			</ListBox>
-		</Grid>
+						</utils:MyTemplateSelector>
+					</ListBox.DataTemplates>
+				</ListBox>
+			</TabItem>
+		</TabControl>
 	</DockPanel>
 </Window>
