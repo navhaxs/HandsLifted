@@ -1,4 +1,4 @@
-﻿using HandsLiftedApp.Data.Documents;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
 using System;

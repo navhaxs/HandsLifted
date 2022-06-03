@@ -2,9 +2,9 @@
 using ReactiveUI;
 using System.Xml.Serialization;
 
-namespace HandsLiftedApp.Data.Documents
+namespace HandsLiftedApp.Data.Models.Items
 {
-    public abstract class SlidesDocument : ReactiveObject {
+    public abstract class Item : ReactiveObject {
         [XmlIgnore]
         public abstract IEnumerable<Slide> Slides { get; } //=> _slides;
     }

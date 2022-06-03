@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using HandsLiftedApp.Data.Documents;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels.Editor;
 using System.Threading.Tasks;

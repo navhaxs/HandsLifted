@@ -6,11 +6,11 @@ using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 
-namespace HandsLiftedApp.Data.Documents
+namespace HandsLiftedApp.Data.Models.Items
 {
     [XmlRoot("Song", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
-    public class Song : SlidesDocument
+    public class Song : Item
     {
         public Guid Uuid { get; set; }
 

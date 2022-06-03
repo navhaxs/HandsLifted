@@ -23,9 +23,9 @@ namespace HandsLiftedApp
                     DataContext = x,
                 };
 
-                ProjectorWindow p = new ProjectorWindow();
-                p.DataContext = x;
-                p.Show();
+                //ProjectorWindow p = new ProjectorWindow();
+                //p.DataContext = x;
+                //p.Show();
 
             }
 

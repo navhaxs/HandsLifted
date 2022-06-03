@@ -8,6 +8,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:ndi="using:AvaloniaNDI"
 		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+		xmlns:controls="using:HandsLiftedApp.Controls"
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="HandsLiftedApp.Views.MainWindow"
@@ -88,77 +89,9 @@
 							<TextBlock HorizontalAlignment="Stretch" Foreground="#8a8c8c">22 May 2022</TextBlock>
 						</StackPanel>
 					</Border>
-
-					<ListBox Name="List"
-							 Items="{Binding Slides}"
-							 SelectedIndex="{Binding SlidesSelectedIndex}"
-							 SelectedItem="{Binding SlidesSelectedItem}">
-						<ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<UniformGrid />
-							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
-						<!--<ListBox.ItemTemplate>
-					<DataTemplate>
-						-->
-						<!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">-->
-						<!--
-						<TextBlock HorizontalAlignment="Center" Text="{Binding Text}"/>
-						-->
-						<!--</Border>-->
-						<!--
-					</DataTemplate>
-				</ListBox.ItemTemplate>-->
-						<ListBox.DataTemplates>
-							<utils:MyTemplateSelector>
-								<DataTemplate x:Key="SongSlideState">
-									<!--<Viewbox>
-								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
-							</Viewbox>-->
-									<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" />
-								</DataTemplate>
-								<DataTemplate x:Key="ImageSlideState">
-									<Grid>
-										<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
-										<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
-										<Image Stretch="Uniform" Source="{Binding Image}" />
-									</Grid>
-								</DataTemplate>
-								<DataTemplate x:Key="VideoSlideState">
-									<Border Padding="20">
-										<TextBlock>Video</TextBlock>
-									</Border>
-								</DataTemplate>
-								<DataTemplate x:Key="MyKey">
-									<TextBlock Background="Red" Text="{Binding Text}" />
-								</DataTemplate>
-								<DataTemplate x:Key="MyKey2">
-									<TextBlock Background="Green" Text="{Binding Text}"/>
-								</DataTemplate>
-								<DataTemplate x:Key="Fallback">
-									<TextBlock Background="Red" Text="{Binding Text}" />
-								</DataTemplate>
-							</utils:MyTemplateSelector>
-						</ListBox.DataTemplates>
-					</ListBox>
-					<!--<ItemsRepeater Name="repeater" Background="Transparent" Items="{Binding Albums}" Margin="5">
-				<ItemsRepeater.ContextMenu>
-					<ContextMenu>
-						<MenuItem Header="Scan for Music" Command="{Binding ScanLibraryCommand}" />
-					</ContextMenu>
-				</ItemsRepeater.ContextMenu>
-				<ItemsRepeater.Layout>
-					<UniformGridLayout MinRowSpacing="10" MinColumnSpacing="10" Orientation="Horizontal"
-									   MaximumRowsOrColumns="6" />
-				</ItemsRepeater.Layout>
-				<ItemsRepeater.ItemTemplate>
-					<DataTemplate>
-						<Grid Width="280" Height="150">
-							<views:GridItemTemplate />
-						</Grid>
-					</DataTemplate>
-				</ItemsRepeater.ItemTemplate>
-			</ItemsRepeater>-->
+					
+					<controls:ItemStateView />
+				
 				</StackPanel>
 			</ScrollViewer>
 		</DockPanel>

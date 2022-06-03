@@ -1,5 +1,5 @@
 using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Documents;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
