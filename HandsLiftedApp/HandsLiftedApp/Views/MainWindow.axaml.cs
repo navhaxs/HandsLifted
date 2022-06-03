@@ -90,10 +90,10 @@ namespace HandsLiftedApp.Views
                 switch (e.Key)
                 {
                     case Key.Right:
-                        _list.SelectedIndex += 1;
+                        //_list.SelectedIndex += 1;
                         break;
                     case Key.Left:
-                        _list.SelectedIndex -= 1;
+                        //_list.SelectedIndex -= 1;
                         break;
                 }
             }

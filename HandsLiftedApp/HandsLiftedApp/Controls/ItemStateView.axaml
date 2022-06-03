@@ -2,30 +2,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:controls="using:HandsLiftedApp.Controls"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Controls.ItemStateView">
 
 	<ListBox Name="List"
-			 Items="{Binding Slides}"
-			 SelectedIndex="{Binding SlidesSelectedIndex}"
-			 SelectedItem="{Binding SlidesSelectedItem}">
+			 Background="Transparent"
+			 Items="{Binding SlideStates}"
+			 SelectedIndex="{Binding SelectedIndex}"
+			 SelectedItem="{Binding SelectedItem}">
 		<ListBox.ItemsPanel>
 			<ItemsPanelTemplate>
-				<UniformGrid />
+				<WrapPanel ItemWidth="250"
+						   ItemHeight="200"
+						   />
+				<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
 			</ItemsPanelTemplate>
 		</ListBox.ItemsPanel>
-		<!--<ListBox.ItemTemplate>
-					<DataTemplate>
-						-->
-		<!--<Border Background="Red" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch">-->
-		<!--
-						<TextBlock HorizontalAlignment="Center" Text="{Binding Text}"/>
-						-->
-		<!--</Border>-->
-		<!--
-					</DataTemplate>
-				</ListBox.ItemTemplate>-->
+	
 		<ListBox.DataTemplates>
 			<utils:MyTemplateSelector>
 				<DataTemplate x:Key="SongSlideState">
@@ -35,11 +30,13 @@
 					<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" />
 				</DataTemplate>
 				<DataTemplate x:Key="ImageSlideState">
-					<Grid>
-						<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
-						<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
-						<Image Stretch="Uniform" Source="{Binding Image}" />
-					</Grid>
+					<controls:SlideThumbnail MaxWidth="250">
+						<Grid>
+							<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
+							<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
+							<Image Stretch="Uniform" Source="{Binding Image}" />
+						</Grid>
+					</controls:SlideThumbnail>
 				</DataTemplate>
 				<DataTemplate x:Key="VideoSlideState">
 					<Border Padding="20">
@@ -53,7 +50,7 @@
 					<TextBlock Background="Green" Text="{Binding Text}"/>
 				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
-					<TextBlock Background="Red" Text="{Binding Text}" />
+					<TextBlock Background="Red" Text="{Binding}" />
 				</DataTemplate>
 			</utils:MyTemplateSelector>
 		</ListBox.DataTemplates>

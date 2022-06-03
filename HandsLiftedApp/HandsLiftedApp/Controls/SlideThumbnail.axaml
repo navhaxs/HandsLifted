@@ -6,10 +6,10 @@
              x:Class="HandsLiftedApp.Controls.SlideThumbnail">
 	<Grid>
 		<DockPanel>
-			<Border DockPanel.Dock="Bottom" BorderBrush="#724bab" BorderThickness="5 5 5 0">
-				
+			<TextBlock DockPanel.Dock="Bottom" Background="#724bab" Foreground="White" Padding="5 0 5 5">Slide 1</TextBlock>
+			<Border DockPanel.Dock="Bottom" BorderBrush="#724bab" BorderThickness="5 5 5 5">
+				<ContentPresenter />
 			</Border>
-			<TextBlock>Slide 1</TextBlock>
 		</DockPanel>
 	</Grid>
 </UserControl>

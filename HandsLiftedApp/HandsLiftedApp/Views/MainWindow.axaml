@@ -14,6 +14,7 @@
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/avalonia-logo.ico"
 		Width="1800" Height="900"
+		WindowState="Maximized"
 		WindowStartupLocation="CenterScreen"
 		DoubleTapped="MainWindow_DoubleTapped"
 		Title="VisionScreens">
@@ -83,14 +84,14 @@
 			<ScrollViewer>
 				<StackPanel>
 
-					<Border Padding="20 10" Background="#eeeef2" DockPanel.Dock="Top" Height="90">
+					<Border Padding="30 10" Background="#f2f2f2" DockPanel.Dock="Top" Height="90">
 						<StackPanel VerticalAlignment="Center">
 							<TextBlock HorizontalAlignment="Stretch" FontSize="22">Sunday 11am Service</TextBlock>
 							<TextBlock HorizontalAlignment="Stretch" Foreground="#8a8c8c">22 May 2022</TextBlock>
 						</StackPanel>
 					</Border>
 					
-					<controls:ItemStateView />
+					<controls:PlaylistStateView DataContext="{Binding PlaylistState}" />
 				
 				</StackPanel>
 			</ScrollViewer>
@@ -119,9 +120,9 @@
 						</VisualBrush.Visual>
 					</VisualBrush>
 				</Grid.Background>
-				<Border Margin="50">
+				<Border>
 					<Viewbox>
-						<views:ActiveSlideOutput Width="1920" Height="1080" Content="{Binding SlidesSelectedItem}" />
+						<views:ActiveSlideOutput Width="1920" Height="1080" />
 						<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
 						<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
 					</Viewbox>

@@ -9,6 +9,9 @@ namespace HandsLiftedApp.Controls
         public ItemStateView()
         {
             InitializeComponent();
+
+            //var livePreview = this.FindControl<List>("LivePreview");
+
         }
 
         private void InitializeComponent()

@@ -1,4 +1,6 @@
-﻿using HandsLiftedApp.Data.Models.Items;
+﻿using Avalonia;
+using Avalonia.Platform;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
 using System;
@@ -15,7 +17,8 @@ namespace HandsLiftedApp.Utils
 
         public static Song ImportSongFromTxt(string txtFilePath)
         {
-            string text = System.IO.File.ReadAllText(txtFilePath);
+            string text = File.ReadAllText(txtFilePath);
+
             List<string> parsed = new List<string>(text.Split("\r\n\r\n\r\n").Select(str => str.Trim()));
 
             Song song = new Song()

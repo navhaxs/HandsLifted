@@ -1,6 +1,7 @@
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.Render;
+using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views;
 using ReactiveUI;
 using System;
@@ -34,6 +35,18 @@ namespace HandsLiftedApp.ViewModels
 			private set => this.RaiseAndSetIfChanged(ref _slides, value);
 		}
 
+		public PlaylistState _playlistState;
+
+		public PlaylistState PlaylistState
+		{
+			get => _playlistState;
+			set
+			{
+				this.RaiseAndSetIfChanged(ref _playlistState, value);
+				OnPropertyChanged();
+			}
+		}
+
 		public int _slidesSelectedIndex;
 		public int SlidesSelectedIndex
 		{
@@ -47,20 +60,26 @@ namespace HandsLiftedApp.ViewModels
 
 		SlideState _slidesSelectedItem;
 
+		//public SlideState SlidesSelectedItem
+		//{
+		//	get => _slidesSelectedItem;
+		//	set {
+		//		this.RaiseAndSetIfChanged(ref _slidesSelectedItem, value);
+		//		this.RaisePropertyChanged("Text");
+		//		OnPropertyChanged("Text");
+
+		//		OnPropertyChanged("NextSlide");
+		//		OnPropertyChanged("SlidesNextItem");
+		//	}
+		//}
+
 		public SlideState SlidesSelectedItem
 		{
-			get => _slidesSelectedItem;
-			set {
-				this.RaiseAndSetIfChanged(ref _slidesSelectedItem, value);
-				this.RaisePropertyChanged("Text");
-				OnPropertyChanged("Text");
-
-				OnPropertyChanged("NextSlide");
-				OnPropertyChanged("SlidesNextItem");
-			}
+			get => _playlistState?.SelectedItem?.SelectedItem;
 		}
+	
 
-		SlideState? _nextSlide;
+        SlideState? _nextSlide;
 
 		public SlideState? NextSlide
 		{
@@ -96,154 +115,18 @@ namespace HandsLiftedApp.ViewModels
 			// = await Task.Run(() =>
 			//{
 
+			var playlist = TestPlaylistDataGenerator.Generate();
+
+			PlaylistState = new PlaylistState(playlist);
+
 				var m = new ObservableCollection<Slide>();
- 
-
-				// Verse 1
-				m.Add(new SongSlide { Text = "In the darkness we were waiting\nWithout hope without light\nTill from Heaven You came running\nThere was mercy in Your eyes" });
-				m.Add(new SongSlide { Text = "To fulfil the law and prophets\nTo a virgin came the Word\nFrom a throne of endless glory\nTo a cradle in the dirt" });
-
-
-				// C
-				m.Add(new SongSlide { Text = "Praise the Father\nPraise the Son\nPraise the Spirit three in one" });
-				m.Add(new SongSlide { Text = "God of Glory\nMajesty\nPraise forever to the King of kings" });
-
-
-				// Verse 2
-				m.Add(new SongSlide
-				{
-					Text = "To reveal the kingdom coming\nAnd to reconcile the lost\nTo redeem the whole creation\nYou did not despise the cross"
-				});
-
-				m.Add(new SongSlide
-				{
-					Text = "For even in Your suffering\nYou saw to the other side\nKnowing this was our salvation\nJesus for our sake You died"
-				});
-
-
-				//Verse 3
-				m.Add(new SongSlide
-				{
-					Text = "And the morning that You rose\nAll of heaven held its breath\nTill that stone was moved for good\nFor the Lamb had conquered death"
-				});
-
-				m.Add(new SongSlide
-				{
-					Text = "And the dead rose from their tombs\nAnd the angels stood in awe\nFor the souls of all who'd come\nTo the Father are restored"
-				});
-
-
-				//Verse 4
-				m.Add(new SongSlide
-				{
-					Text = "And the Church of Christ was born\nThen the Spirit lit the flame\nNow this Gospel truth of old\nShall not kneel shall not faint"
-				});
-
-				m.Add(new SongSlide
-				{
-					Text = "By His blood and in His Name\nIn His freedom I am free\nFor the love of Jesus Christ\nWho has resurrected me"
-				});
-
-				try
-				{
-					var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
-									.Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"));
-					foreach (var f in images)
-					{
-						if (f.EndsWith(".mp4"))
-						{
-							m.Add(new VideoSlide(f));
-						}
-						else
-						{
-							m.Add(new ImageSlide(f));
-						}
-					}
-				}
-				catch { }
 
 				var xxx = m.Select(s => convertDataToState(s)).ToList();
 				Slides =  new ObservableCollection<SlideState>(xxx);
 
 			//});
 		}
- 	public void LoadOtherSchedule()
-		{
-			// = await Task.Run(() =>
-			//{
-
-				var m = new ObservableCollection<Slide>();
-
-
-				// Verse 1
-				m.Add(new SongSlide { Text = "In the darkness we were waiting\nWithout hope without light\nTill from Heaven You came running\nThere was mercy in Your eyes" });
-				m.Add(new SongSlide { Text = "To fulfil the law and prophets\nTo a virgin came the Word\nFrom a throne of endless glory\nTo a cradle in the dirt" });
-
-
-				// C
-				m.Add(new SongSlide { Text = "Praise the Father\nPraise the Son\nPraise the Spirit three in one" });
-				m.Add(new SongSlide { Text = "God of Glory\nMajesty\nPraise forever to the King of kings" });
-
-
-				// Verse 2
-				m.Add(new SongSlide
-				{
-					Text = "To reveal the kingdom coming\nAnd to reconcile the lost\nTo redeem the whole creation\nYou did not despise the cross"
-				});
-
-				m.Add(new SongSlide
-				{
-					Text = "For even in Your suffering\nYou saw to the other side\nKnowing this was our salvation\nJesus for our sake You died"
-				});
-
-
-				//Verse 3
-				m.Add(new SongSlide
-				{
-					Text = "And the morning that You rose\nAll of heaven held its breath\nTill that stone was moved for good\nFor the Lamb had conquered death"
-				});
-
-				m.Add(new SongSlide
-				{
-					Text = "And the dead rose from their tombs\nAnd the angels stood in awe\nFor the souls of all who'd come\nTo the Father are restored"
-				});
-
-
-				//Verse 4
-				m.Add(new SongSlide
-				{
-					Text = "And the Church of Christ was born\nThen the Spirit lit the flame\nNow this Gospel truth of old\nShall not kneel shall not faint"
-				});
-
-				m.Add(new SongSlide
-				{
-					Text = "By His blood and in His Name\nIn His freedom I am free\nFor the love of Jesus Christ\nWho has resurrected me"
-				});
-
-				try
-				{
-					var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
-									.Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"));
-					foreach (var f in images)
-					{
-						if (f.EndsWith(".mp4"))
-						{
-							m.Add(new VideoSlide(f));
-						}
-						else
-						{
-							m.Add(new ImageSlide(f));
-						}
-					}
-				}
-				catch { }
-
-				var xxx = m.Select(s => convertDataToState(s)).ToList();
-				Slides =  new ObservableCollection<SlideState>(xxx);
-
-			//});
-		}
-
+ 	
 		// CONSTRUCTOR
 		// CONSTRUCTOR
 		// CONSTRUCTOR
@@ -272,7 +155,24 @@ namespace HandsLiftedApp.ViewModels
 					NextSlide = nextSlideState;
 			});
 
+			MessageBus.Current.Listen<Class1>()
+				.Subscribe(x => {
+					_playlistState.SelectedIndex = x.SourceItemStateIndex;
+				
+				});
+
+			
+
 			LoadDemoSchedule();
+
+			this.WhenAnyValue(t => t._playlistState.SelectedItem).Subscribe(s =>
+			{
+				this.WhenAnyValue(tt => tt._playlistState.SelectedItem.SelectedItem).Subscribe(ss =>
+				{
+                    this.RaisePropertyChanged("SlidesSelectedItem");
+                    OnPropertyChanged("SlidesSelectedItem");
+				});
+			});
 		}
 
 		SlideState convertDataToState(Slide slide)
