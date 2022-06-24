@@ -6,53 +6,93 @@
 			 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Controls.ItemStateView">
+	<UserControl.Styles>
+		<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml"/>
 
-	<ListBox Name="List"
+		<Style Selector="ListBoxItem">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Padding" Value="5 8"/>
+			<!--<Setter Property="Template">
+				<ControlTemplate>
+					<Grid>
+						<controls:SlideThumbnail 
+							Margin="5 8"
+							Content="{TemplateBinding Content}" />
+					</Grid>
+				</ControlTemplate>
+			</Setter>-->
+		</Style>
+	</UserControl.Styles>
+	<Border Background="#f2f2f2" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch" BorderBrush="#A59DDB" BorderThickness="2">
+		<StackPanel>
+			<Label Padding="10 20" Content="{Binding Item.Title, FallbackValue=Item}" FontWeight="SemiBold" FontSize="24" />
+
+			<ListBox Name="List"
 			 Background="Transparent"
 			 Items="{Binding SlideStates}"
-			 SelectedIndex="{Binding SelectedIndex}"
+			 SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
 			 SelectedItem="{Binding SelectedItem}">
-		<ListBox.ItemsPanel>
-			<ItemsPanelTemplate>
-				<WrapPanel ItemWidth="250"
-						   ItemHeight="200"
+				<!--<ListBox.Styles>
+					<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+						<Setter Property="Background" Value="Red"/>
+					</Style>
+
+					<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+						<Setter Property="Background" Value="Red"/>
+					</Style>
+				</ListBox.Styles>-->
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel ItemWidth="250"
+								   ItemHeight="200"
 						   />
-				<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
-			</ItemsPanelTemplate>
-		</ListBox.ItemsPanel>
-	
-		<ListBox.DataTemplates>
-			<utils:MyTemplateSelector>
-				<DataTemplate x:Key="SongSlideState">
-					<!--<Viewbox>
+						<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+
+				<ListBox.DataTemplates>
+					<utils:MyTemplateSelector>
+						<DataTemplate x:Key="SongTitleSlideState">
+							<!--<Viewbox>
 								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
 							</Viewbox>-->
-					<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" />
-				</DataTemplate>
-				<DataTemplate x:Key="ImageSlideState">
-					<controls:SlideThumbnail MaxWidth="250">
-						<Grid>
-							<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
-							<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
-							<Image Stretch="Uniform" Source="{Binding Image}" />
-						</Grid>
-					</controls:SlideThumbnail>
-				</DataTemplate>
-				<DataTemplate x:Key="VideoSlideState">
-					<Border Padding="20">
-						<TextBlock>Video</TextBlock>
-					</Border>
-				</DataTemplate>
-				<DataTemplate x:Key="MyKey">
-					<TextBlock Background="Red" Text="{Binding Text}" />
-				</DataTemplate>
-				<DataTemplate x:Key="MyKey2">
-					<TextBlock Background="Green" Text="{Binding Text}"/>
-				</DataTemplate>
-				<DataTemplate x:Key="Fallback">
-					<TextBlock Background="Red" Text="{Binding}" />
-				</DataTemplate>
-			</utils:MyTemplateSelector>
-		</ListBox.DataTemplates>
-	</ListBox>
+							<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Title}" TextWrapping="Wrap" Foreground="White" FontWeight="SemiBold" Margin="10" />
+						</DataTemplate>
+						<DataTemplate x:Key="SongSlideState">
+							<!--<Viewbox>
+								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
+							</Viewbox>-->
+							<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" Foreground="White" Margin="10" />
+						</DataTemplate>
+						<DataTemplate x:Key="ImageSlideState">
+							<controls:SlideThumbnail MaxWidth="250">
+								<Grid>
+									<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
+									<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
+									<Image Stretch="Uniform" Source="{Binding Image}" />
+								</Grid>
+							</controls:SlideThumbnail>
+						</DataTemplate>
+						<DataTemplate x:Key="VideoSlideState">
+							<Border Padding="20">
+								<TextBlock>Video</TextBlock>
+							</Border>
+						</DataTemplate>
+						<DataTemplate x:Key="MyKey">
+							<TextBlock Background="Red" Text="{Binding Text}" />
+						</DataTemplate>
+						<DataTemplate x:Key="MyKey2">
+							<TextBlock Background="Green" Text="{Binding Text}"/>
+						</DataTemplate>
+						<DataTemplate x:Key="Fallback">
+							<TextBlock Background="Red" Text="{Binding}" />
+						</DataTemplate>
+					</utils:MyTemplateSelector>
+				</ListBox.DataTemplates>
+			</ListBox>
+
+		</StackPanel>
+	</Border>
 </UserControl>

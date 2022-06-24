@@ -1,6 +1,7 @@
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
-using HandsLiftedApp.Models.Render;
+using HandsLiftedApp.Models.SlideState;
+using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views;
 using ReactiveUI;
@@ -24,16 +25,16 @@ namespace HandsLiftedApp.ViewModels
 			while (true)
 			{
 				await Task.Delay(100);
-				OnPropertyChanged(nameof(CurrentTime));
+				this.RaisePropertyChanged(nameof(CurrentTime));
 			}
 		}
 
-		private ObservableCollection<SlideState>? _slides = new ObservableCollection<SlideState>();
-		public ObservableCollection<SlideState>? Slides
-		{
-			get => _slides;
-			private set => this.RaiseAndSetIfChanged(ref _slides, value);
-		}
+		//private ObservableCollection<SlideStateBase>? _slides = new ObservableCollection<SlideStateBase>();
+		//public ObservableCollection<SlideStateBase>? Slides
+		//{
+		//	get => _slides;
+		//	private set => this.RaiseAndSetIfChanged(ref _slides, value);
+		//}
 
 		public PlaylistState _playlistState;
 
@@ -43,22 +44,20 @@ namespace HandsLiftedApp.ViewModels
 			set
 			{
 				this.RaiseAndSetIfChanged(ref _playlistState, value);
-				OnPropertyChanged();
 			}
 		}
 
-		public int _slidesSelectedIndex;
-		public int SlidesSelectedIndex
-		{
-			get => _slidesSelectedIndex;
-			set
-			{
-				this.RaiseAndSetIfChanged(ref _slidesSelectedIndex, value);
-				OnPropertyChanged();
-			}
-		}
+		//public int _slidesSelectedIndex;
+		//public int SlidesSelectedIndex
+		//{
+		//	get => _slidesSelectedIndex;
+		//	set
+		//	{
+		//		this.RaiseAndSetIfChanged(ref _slidesSelectedIndex, value);
+		//	}
+		//}
 
-		SlideState _slidesSelectedItem;
+		//SlideStateBase _slidesSelectedItem;
 
 		//public SlideState SlidesSelectedItem
 		//{
@@ -73,26 +72,26 @@ namespace HandsLiftedApp.ViewModels
 		//	}
 		//}
 
-		public SlideState SlidesSelectedItem
+		public SlideStateBase SlidesSelectedItem
 		{
 			get => _playlistState?.SelectedItem?.SelectedItem;
 		}
 	
 
-        SlideState? _nextSlide;
+  //      SlideStateBase? _nextSlide;
 
-		public SlideState? NextSlide
-		{
-			get => _nextSlide;
-			set {
-				this.RaiseAndSetIfChanged(ref _nextSlide, value);
-			}
-		}
+		//public SlideStateBase? NextSlide
+		//{
+		//	get => _nextSlide;
+		//	set {
+		//		this.RaiseAndSetIfChanged(ref _nextSlide, value);
+		//	}
+		//}
 
-		public SlideState SlidesNextItem
-		{
-			get => _slidesSelectedItem;
-		}
+		//public SlideStateBase SlidesNextItem
+		//{
+		//	get => _slidesSelectedItem;
+		//}
 
 		public string Text
 		{
@@ -119,10 +118,10 @@ namespace HandsLiftedApp.ViewModels
 
 			PlaylistState = new PlaylistState(playlist);
 
-				var m = new ObservableCollection<Slide>();
+				//var m = new ObservableCollection<Slide>();
 
-				var xxx = m.Select(s => convertDataToState(s)).ToList();
-				Slides =  new ObservableCollection<SlideState>(xxx);
+				//var xxx = m.Select(s => convertDataToState(s)).ToList();
+				//Slides =  new ObservableCollection<SlideState>(xxx);
 
 			//});
 		}
@@ -146,21 +145,26 @@ namespace HandsLiftedApp.ViewModels
 
 			this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
 				this.RaisePropertyChanged("Text");
-				OnPropertyChanged("Text");
 				this.RaisePropertyChanged("SlidesSelectedItem");
-				OnPropertyChanged("SlidesSelectedItem");
 
-				var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
-				if (nextSlideState != null)
-					NextSlide = nextSlideState;
+				//var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
+				//if (nextSlideState != null)
+				//	NextSlide = nextSlideState;
 			});
 
 			MessageBus.Current.Listen<Class1>()
 				.Subscribe(x => {
+					var lastSelectedIndex = _playlistState.SelectedIndex;
+					
+					// update the selected item in the playlist
 					_playlistState.SelectedIndex = x.SourceItemStateIndex;
-				
-				});
 
+                    // notify the last deselected item in the playlist
+                    if (lastSelectedIndex > -1 && x.SourceItemStateIndex != lastSelectedIndex && _playlistState.ItemStates[lastSelectedIndex] != null)
+                    {
+						_playlistState.ItemStates[lastSelectedIndex].SelectedIndex = -1;
+					}
+				});
 			
 
 			LoadDemoSchedule();
@@ -170,26 +174,25 @@ namespace HandsLiftedApp.ViewModels
 				this.WhenAnyValue(tt => tt._playlistState.SelectedItem.SelectedItem).Subscribe(ss =>
 				{
                     this.RaisePropertyChanged("SlidesSelectedItem");
-                    OnPropertyChanged("SlidesSelectedItem");
 				});
 			});
 		}
 
-		SlideState convertDataToState(Slide slide)
-		{
-			switch (slide)
-			{
-				case SongSlide d:
-					return new SongSlideState(d);
-				case VideoSlide d:
-					return new VideoSlideState(d);
-				case ImageSlide d:
-					return new ImageSlideState(d);
-				default:
-					throw new Exception("error");
-					break;
-			}
-		}
+		//SlideState convertDataToState(Slide slide)
+		//{
+		//	switch (slide)
+		//	{
+		//		case SongSlide d:
+		//			return new SongSlideState(d);
+		//		case VideoSlide d:
+		//			return new VideoSlideState(d);
+		//		case ImageSlide d:
+		//			return new ImageSlideState(d);
+		//		default:
+		//			throw new Exception("error");
+		//			break;
+		//	}
+		//}
 
 		public void OnProjectorClickCommand()
 		{
@@ -198,14 +201,20 @@ namespace HandsLiftedApp.ViewModels
             p.Show();
 		}
 		
+		public void OnDebugClickCommand()
+		{
+			ObjectInspectorWindow p = new ObjectInspectorWindow() { DataContext = this };
+            p.Show();
+		}
+		
 		public void OnNextSlideClickCommand()
 		{
-			SlidesSelectedIndex += 1;
+			//SlidesSelectedIndex += 1;
 		}
 		
 		public void OnPrevSlideClickCommand()
 		{
-			SlidesSelectedIndex -= 1;
+			//SlidesSelectedIndex -= 1;
 		}
 	}
 }

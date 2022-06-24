@@ -40,7 +40,7 @@
 		</DockPanel>-->
 
 		<!-- Centre panel-->
-		<DockPanel Grid.Column = "0" >
+		<DockPanel Grid.Column="0" >
 			<Border
 				Height="50"
 				Padding="10,5,10,5"
@@ -79,20 +79,57 @@
 						FontSize="16"
 						IsCancel="True"
 						IsTabStop="False" />
-					</Grid>
+				</Grid>
 			</Border>
-			<ScrollViewer>
-				<StackPanel>
 
+			<ScrollViewer>
+				<ScrollViewer.Styles>
+
+					<Style Selector="ScrollBar">
+						<Setter Property="AllowAutoHide" Value="false" />
+					</Style>
+					<Style Selector="ScrollViewer">
+						<Setter Property="AllowAutoHide" Value="False"/>
+					</Style>
+				</ScrollViewer.Styles>
+
+				<StackPanel Margin="0 0 16 0">
+
+					<Menu DockPanel.Dock="Top">
+						<MenuItem Header="Load" />
+						<MenuItem Header="New" />
+						<MenuItem Header="Save" />
+						<Separator />
+						<Button>
+							<Button.Flyout>
+								<Flyout>
+									<Grid Width="200" Height="100">
+										<StackPanel>
+											<TextBox></TextBox>
+										</StackPanel>
+									</Grid>
+								</Flyout>
+							</Button.Flyout>
+							Add New Item
+						</Button>
+						<Separator />
+						<MenuItem Header="Debug">
+							<MenuItem Header="DEBUG Data Debug"  Command="{Binding OnDebugClickCommand}"/>
+							<MenuItem Header="SongEditor" />
+							<MenuItem Header="Import Google Slides" />
+							<MenuItem Header="Import PowerPoint" />
+						</MenuItem>
+					</Menu>
+					
 					<Border Padding="30 10" Background="#f2f2f2" DockPanel.Dock="Top" Height="90">
 						<StackPanel VerticalAlignment="Center">
 							<TextBlock HorizontalAlignment="Stretch" FontSize="22">Sunday 11am Service</TextBlock>
 							<TextBlock HorizontalAlignment="Stretch" Foreground="#8a8c8c">22 May 2022</TextBlock>
 						</StackPanel>
 					</Border>
-					
+
 					<controls:PlaylistStateView DataContext="{Binding PlaylistState}" />
-				
+
 				</StackPanel>
 			</ScrollViewer>
 		</DockPanel>
@@ -155,7 +192,7 @@
 			</UniformGrid>
 
 			<TextBlock Padding="5 5 5 10" FontSize="20" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
-			
+
 			<Grid></Grid>
 
 		</DockPanel>

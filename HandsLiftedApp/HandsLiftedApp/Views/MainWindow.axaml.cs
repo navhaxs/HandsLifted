@@ -31,8 +31,8 @@ namespace HandsLiftedApp.Views
 
             //this.DataContext = x;
 
-            SplashWindow v = new SplashWindow();
-            v.Show();
+            //SplashWindow v = new SplashWindow();
+            //v.Show();
 
             //WebBrowserWindow w = new WebBrowserWindow();
             //w.Show();

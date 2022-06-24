@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models.Render
+namespace HandsLiftedApp.Models.SlideState
 {
-    public class SongSlideState : SlideState
+    public class SongSlideState : SlideStateBase
     {
-        public SongSlideState(SongSlide data) : base(data)
+        public SongSlideState(SongSlide data, int index) : base(data, index)
         {
         }
     }

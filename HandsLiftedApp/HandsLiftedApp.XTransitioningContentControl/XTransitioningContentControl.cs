@@ -135,11 +135,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 _previousImageSite.Opacity = 1;
             }
 
+            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+
             _contentPresenterContainer.IsVisible = false;
 
             CurrentContent = content;
-
-            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
 
             clock.PlayState = PlayState.Run;
 

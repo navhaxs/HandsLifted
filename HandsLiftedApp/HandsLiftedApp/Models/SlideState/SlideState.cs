@@ -6,14 +6,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models.Render
+namespace HandsLiftedApp.Models.SlideState
 {
-    public class SlideState
+    public class SlideStateBase
         : ReactiveObject
     {
-        public SlideState(Slide data)
+
+        public int Index { get; set; }
+
+        public int SlideNumber { get => Index + 1; }
+
+        public SlideStateBase(Slide data, int index)
         {
             Data = data;
+            Index = index;
         }
 
         public Slide Data { get; set; }

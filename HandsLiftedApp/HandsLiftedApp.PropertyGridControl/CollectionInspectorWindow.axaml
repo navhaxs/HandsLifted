@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="HandsLiftedApp.PropertyGridControl.CollectionInspectorWindow"
+        xmlns:pg="using:HandsLiftedApp.PropertyGridControl"
+        Title="CollectionInspectorWindow">
+	<Window.Background>
+		<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+			<VisualBrush.Visual>
+				<Canvas Width="16" Height="16" Background="#1a1a1a">
+					<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+					<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+				</Canvas>
+			</VisualBrush.Visual>
+		</VisualBrush>
+	</Window.Background>
+	<StackPanel Background="#a4a4a4">
+		<TextBlock Text="{Binding $parent[Window].Title}" FontSize="22"/>
+		<DockPanel>
+			<ListBox x:Name="items" Background="#a4a4a4" DockPanel.Dock="Left">
+				<ListBoxItem>1</ListBoxItem>
+				<ListBoxItem>1</ListBoxItem>
+				<ListBoxItem>1</ListBoxItem>
+				<ListBoxItem>1</ListBoxItem>
+				<ListBoxItem>1</ListBoxItem>
+			</ListBox>
+			<pg:PropertyGrid x:Name="propertyGrid" Background="#a4a4a4" />
+		</DockPanel>
+	</StackPanel>
+</Window>

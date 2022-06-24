@@ -1,0 +1,164 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d">
+    <Design.PreviewWith>
+		<!-- Add Controls for Previewer Here -->
+		<ListBox Background="Red">
+			<ListBoxItem>ABC</ListBoxItem>
+			<ListBoxItem>AAAAAAAAAAAAAAAAAA</ListBoxItem>
+			<ListBoxItem>11111111111</ListBoxItem>
+			<ListBoxItem>22222222222</ListBoxItem>
+			<ListBoxItem>33333333333</ListBoxItem>
+		</ListBox>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+	<Style Selector="ListBox">
+		<Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/>
+		<Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}"/>
+		<Setter Property="Padding" Value="4"/>
+		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border Name="border" BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="{TemplateBinding CornerRadius}">
+					<!--<ScrollViewer Name="PART_ScrollViewer"
+								  Background="{TemplateBinding Background}"
+								  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+								  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+								  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}">-->
+						<ItemsPresenter Name="PART_ItemsPresenter"
+										Items="{TemplateBinding Items}"
+										ItemsPanel="{TemplateBinding ItemsPanel}"
+										ItemTemplate="{TemplateBinding ItemTemplate}"
+										Margin="{TemplateBinding Padding}"
+										VirtualizationMode="{TemplateBinding VirtualizationMode}"/>
+					<!--</ScrollViewer>-->
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+	
+	<Style Selector="ListBox:disabled /template/ Border#border">
+		<Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+	</Style>
+
+	<Style Selector="ListBoxItem">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Padding" Value="4 8"/>
+		<Setter Property="Margin" Value="4 8"/>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<DockPanel>
+					<TextBlock DockPanel.Dock="Bottom" Background="Transparent" Padding="2 0 2 2" Text="{Binding SlideNumber, FallbackValue='#'}" />
+					<Border CornerRadius="2">
+
+						<Grid>
+							<Border Name="PART_Border" DockPanel.Dock="Bottom" CornerRadius="2">
+								<Border.Background>
+									<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+										<VisualBrush.Visual>
+											<Canvas Width="16" Height="16" Background="#1a1a1a">
+												<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+												<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+											</Canvas>
+										</VisualBrush.Visual>
+									</VisualBrush>
+								</Border.Background>
+							</Border>
+
+							<ContentPresenter Name="PART_ContentPresenter"
+											  Margin="10"
+											  Background="{TemplateBinding Background}"
+											  BorderBrush="{TemplateBinding BorderBrush}"
+											  BorderThickness="{TemplateBinding BorderThickness}"
+											  CornerRadius="{TemplateBinding CornerRadius}"
+											  ContentTemplate="{TemplateBinding ContentTemplate}"
+											  Content="{TemplateBinding Content}"
+											  Padding="{TemplateBinding Padding}"
+											  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+											  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+						</Grid>
+					</Border>
+				</DockPanel>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+
+	<!--<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeControlHighlightMidBrush}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush4}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected:focus:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush2}"/>
+	</Style>
+	
+	<Style Selector="ListBoxItem:pointerover /template/ DockPanel > Border">
+		<Setter Property="BorderBrush" Value="Yellow"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:pointerover /template/ Border">
+		<Setter Property="BorderBrush" Value="Yellow"/>
+		<Setter Property="BorderThickness" Value="24"/>
+	</Style>-->
+ 
+	<!--<Style Selector="ListBoxItem:pointerover /template/ Border">
+	</Style>-->
+
+	<!--<Style Selector="Border:selected">
+		<Setter Property="BorderBrush" Value="Green"/>
+	</Style>-->
+
+
+	<!--<Style Selector="ListBoxItem:pointerover /template/ DockPanel TextBlock">
+		<Setter Property="Foreground" Value="#a92b1a"/>
+	</Style>-->
+	
+	<!--<Style Selector="ListBoxItem /template/ DockPanel">
+		<Setter Property="Background" Value="Red"/>
+	</Style>-->
+	
+	<Style Selector="ListBoxItem /template/ Border#PART_Border">
+		<Setter Property="BorderBrush" Value="#724bab"/>
+		<Setter Property="BorderThickness" Value="2" />
+	</Style>
+	
+	<Style Selector="ListBoxItem:selected /template/ Border#PART_Border">
+		<Setter Property="BorderBrush" Value="#c43e1c"/>
+		<Setter Property="BorderThickness" Value="4" />
+	</Style>
+	 
+	<Style Selector="ListBoxItem:selected /template/ TextBlock">
+		<Setter Property="Foreground" Value="#d24726"/>
+	</Style>
+	 
+	<Style Selector="ListBoxItem:pointerover /template/ Border#PART_Border">
+		<Setter Property="BorderBrush" Value="#a92b1a"/>
+		<Setter Property="BorderThickness" Value="4" />
+
+	</Style>
+	
+	<Style Selector="ListBoxItem:selected:pointerover /template/ Border#PART_Border">
+		<Setter Property="BorderBrush" Value="#a92b1a"/>
+	</Style>
+	
+</Styles>

@@ -44,6 +44,8 @@ namespace HandsLiftedApp.Data.Models.Items
               {
                   List<Slide> slides = new List<Slide>();
 
+                  slides.Add(new SongTitleSlide() { Title = Title, Copyright = Copyright });
+
                   foreach (var _datum in _data)
                   {
                       // break slides by newlines

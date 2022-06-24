@@ -3,7 +3,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Metadata;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Models.Render;
+using HandsLiftedApp.Models.SlideState;
 using System;
 using System.Collections.Generic;
 using System.Linq;

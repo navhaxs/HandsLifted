@@ -16,6 +16,9 @@
 
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
+			<DataTemplate x:Key="SongTitleSlideState">
+				<views:SimpleSlideTitle DataContext="{Binding Data}" Width="1920" Height="1080" />
+			</DataTemplate>
 			<DataTemplate x:Key="SongSlideState">
 				<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
 			</DataTemplate>

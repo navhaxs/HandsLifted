@@ -1,6 +1,6 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Models.Render;
+using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
@@ -15,13 +15,13 @@ namespace HandsLiftedApp.Models
     public class ItemState : ViewModelBase
     {
         private int selectedIndex;
-        private SlideState selectedItem;
+        private SlideStateBase selectedItem;
 
         public int Index { get; set; }
 
         public Item? Item { get; set; }
 
-        public List<SlideState> SlideStates => Item.Slides.Select(s => convertDataToState(s)).ToList();
+        public List<SlideStateBase> SlideStates => Item.Slides.Select((s, index) => convertDataToState(s, index)).ToList();
 
 
         // slide index here?
@@ -30,27 +30,34 @@ namespace HandsLiftedApp.Models
             get => selectedIndex; set
             {
                 selectedIndex = value;
+
+                if (selectedIndex > -1)
+                {
                 MessageBus.Current.SendMessage(new Class1() { SourceItemStateIndex = Index });
+
+                }
             }
         }
 
-        public SlideState SelectedItem { get => selectedItem; set
+        public SlideStateBase SelectedItem { get => selectedItem; set
             {
                 this.RaiseAndSetIfChanged(ref selectedItem, value);
-                OnPropertyChanged();
+                /*OnPropertyChanged()*/;
             }
         }
 
-        SlideState convertDataToState(Slide slide)
+        SlideStateBase convertDataToState(Slide slide, int index)
         {
             switch (slide)
             {
                 case SongSlide d:
-                    return new SongSlideState(d);
+                    return new SongSlideState(d, index);
+                case SongTitleSlide d:
+                    return new SongTitleSlideState(d, index);
                 case VideoSlide d:
-                    return new VideoSlideState(d);
+                    return new VideoSlideState(d, index);
                 case ImageSlide d:
-                    return new ImageSlideState(d);
+                    return new ImageSlideState(d, index);
                 default:
                     throw new Exception("error");
                     break;

@@ -13,6 +13,14 @@
 			 Items="{Binding ItemStates}"
 			 SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
 			 SelectedItem="{Binding SelectedItem}">
+		<ListBox.Styles>
+			<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+				<Setter Property="Background" Value="Transparent"/>
+			</Style>
+			<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+				<Setter Property="Background" Value="Transparent"/>
+			</Style>
+		</ListBox.Styles>
 		<ListBox.ItemsPanel>
 			<ItemsPanelTemplate>
 				<StackPanel />
@@ -20,12 +28,7 @@
 		</ListBox.ItemsPanel>
 		<ListBox.ItemTemplate>
 			<DataTemplate>
-				<Border Background="#f2f2f2" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch" BorderBrush="#eeeee2" BorderThickness="2">
-					<StackPanel>
-						<Label Padding="10 20" Content="{Binding Item.Title, FallbackValue=Item}" FontWeight="SemiBold" FontSize="24" />
-						<controls:ItemStateView />
-					</StackPanel>
-				</Border>
+				<controls:ItemStateView />
 			</DataTemplate>
 		</ListBox.ItemTemplate>
 		<!--<ListBox.DataTemplates>

@@ -12,7 +12,7 @@ namespace HandsLiftedApp.Models
 {
     public class PlaylistState : ViewModelBase
     {
-        private int selectedIndex;
+        private int selectedIndex = -1;
         private ItemState selectedItem;
 
         public PlaylistState(Playlist playlist)
@@ -26,18 +26,16 @@ namespace HandsLiftedApp.Models
             get => selectedIndex; set
             {
                 this.RaiseAndSetIfChanged(ref selectedIndex, value);
-                OnPropertyChanged();
             }
         }
 
         public ItemState SelectedItem { get => selectedItem; set
             {
                 this.RaiseAndSetIfChanged(ref selectedItem, value);
-                OnPropertyChanged();
             }
         }
 
-        List<ItemState> ItemStates => Playlist.Items.Select((item, index) => convertDataToState(item, index)).ToList();
+        public List<ItemState> ItemStates => Playlist.Items.Select((item, index) => convertDataToState(item, index)).ToList();
 
         // slide index here?
 

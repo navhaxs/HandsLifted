@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="CollectionInspectorWindow.axaml.cs">
+      <DependentUpon>CollectionInspectorWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="ObjectInspectorWindow.axaml.cs">
+      <DependentUpon>ObjectInspectorWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

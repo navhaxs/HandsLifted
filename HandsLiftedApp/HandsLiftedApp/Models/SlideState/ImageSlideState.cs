@@ -10,11 +10,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models.Render
+namespace HandsLiftedApp.Models.SlideState
 {
-    public class ImageSlideState : SlideState
+    public class ImageSlideState : SlideStateBase
     {
-        public ImageSlideState(ImageSlide data) : base(data)
+        public ImageSlideState(ImageSlide data, int index) : base(data, index)
         {
             _ = LoadImage();
         }

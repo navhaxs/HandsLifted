@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using HandsLiftedApp.Models.Render;
+using HandsLiftedApp.Models.SlideState;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
 using System;
@@ -64,7 +64,7 @@ namespace HandsLiftedApp.Views.Render
         private async Task sAsync()
         {
             await Task.Run(() => {
-                //Task.Delay(1 * 1000).Wait();
+                Task.Delay(100).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
                 Dispatcher.UIThread.InvokeAsync(() => {
                     if (!VideoView.MediaPlayer.IsPlaying)
                     {

@@ -20,7 +20,7 @@ namespace HandsLiftedApp.ViewModels.Editor
             get => _song;
             set {
                 this.RaiseAndSetIfChanged(ref _song, value);
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
         public SongEditorViewModel()

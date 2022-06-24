@@ -4,14 +4,14 @@ using LibVLCSharp.Shared;
 using ReactiveUI;
 using System;
 
-namespace HandsLiftedApp.Models.Render
+namespace HandsLiftedApp.Models.SlideState
 {
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
-    public class VideoSlideState : SlideState
+    public class VideoSlideState : SlideStateBase
     {
         private LibVLC _libVLC;
 
-        public VideoSlideState(VideoSlide data) : base(data)
+        public VideoSlideState(VideoSlide data, int index) : base(data, index)
         {
             VideoPath = data.VideoPath;
 
