@@ -5,6 +5,7 @@
 			 xmlns:controls="using:HandsLiftedApp.Controls"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 Background="Transparent"
              x:Class="HandsLiftedApp.Controls.ItemStateView">
 	<UserControl.Styles>
 		<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml"/>
@@ -25,9 +26,13 @@
 			</Setter>-->
 		</Style>
 	</UserControl.Styles>
-	<Border Background="#f2f2f2" CornerRadius="4" Padding="4" HorizontalAlignment="Stretch" BorderBrush="#A59DDB" BorderThickness="2">
-		<StackPanel>
-			<Label Padding="10 20" Content="{Binding Item.Title, FallbackValue=Item}" FontWeight="SemiBold" FontSize="24" />
+	<StackPanel>
+		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
+			<DockPanel>
+				<Button Padding="22 6" Command="{Binding EditCommand}" DockPanel.Dock="Right">Edit</Button>
+				<Label Padding="12 8" Content="{Binding Item.Title, FallbackValue=Item}" FontSize="16" />
+			</DockPanel>
+		</Border>
 
 			<ListBox Name="List"
 			 Background="Transparent"
@@ -94,5 +99,4 @@
 			</ListBox>
 
 		</StackPanel>
-	</Border>
 </UserControl>

@@ -41,7 +41,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         public static readonly StyledProperty<IPageTransition?> PageTransitionProperty =
             AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(nameof(PageTransition),
                 //new CrossFade(TimeSpan.FromSeconds(0.125)));
-                new XFade(TimeSpan.FromSeconds(0.800)));
+                new XFade(TimeSpan.FromSeconds(0.200)));
 
         /// <summary>
         /// Defines the <see cref="CurrentContent"/> property.

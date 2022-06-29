@@ -12,41 +12,30 @@ namespace HandsLiftedApp.Data
     public sealed class TrulyObservableCollection<T> : ObservableCollection<T>
         where T : INotifyPropertyChanged
     {
-        public TrulyObservableCollection()
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            CollectionChanged += FullObservableCollectionCollectionChanged;
-        }
-
-        public TrulyObservableCollection(IEnumerable<T> pItems) : this()
-        {
-            foreach (var item in pItems)
-            {
-                this.Add(item);
-            }
-        }
-
-        private void FullObservableCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
+            base.OnCollectionChanged(e);
             if (e.NewItems != null)
             {
-                foreach (Object item in e.NewItems)
-                {
-                    ((INotifyPropertyChanged)item).PropertyChanged += ItemPropertyChanged;
-                }
+                foreach (INotifyPropertyChanged inpc in e.NewItems)
+                    inpc.PropertyChanged += ItemPropertyChanged;
             }
             if (e.OldItems != null)
             {
-                foreach (Object item in e.OldItems)
-                {
-                    ((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged;
-                }
+                foreach (INotifyPropertyChanged inpc in e.OldItems)
+                    inpc.PropertyChanged -= ItemPropertyChanged;
             }
         }
 
         private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, sender, sender, IndexOf((T)sender));
-            OnCollectionChanged(args);
+            var index = IndexOf((T)sender);
+            var args = new NotifyCollectionChangedEventArgs(
+                action: NotifyCollectionChangedAction.Replace,
+                newItem: sender,
+                oldItem: sender,
+                index: index);
+            base.OnCollectionChanged(args);
         }
     }
 }

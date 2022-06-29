@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels.Editor;
+using System;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views.Editor
@@ -70,7 +71,7 @@ namespace HandsLiftedApp.Views.Editor
             if (result != null)
             {
                 //_wavFileSplitter.GetWavHeader(result, text => _textOutput.Text = text);
-                XmlSerialization.WriteToXmlFile<Song>(result, ((SongEditorViewModel)this.DataContext).song);
+                XmlSerialization.WriteToXmlFile<SongItem>(result, ((SongEditorViewModel)this.DataContext).song);
             }
         }
 
@@ -91,7 +92,7 @@ namespace HandsLiftedApp.Views.Editor
             if (result != null)
             {
                 //_wavFileSplitter.GetWavHeader(result, text => _textOutput.Text = text);
-                ((SongEditorViewModel)this.DataContext).song = XmlSerialization.ReadFromXmlFile<Song>(result[0]);
+                ((SongEditorViewModel)this.DataContext).song = XmlSerialization.ReadFromXmlFile<SongItem>(result[0]);
             }
         }
     }

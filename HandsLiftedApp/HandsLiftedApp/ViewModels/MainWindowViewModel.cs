@@ -105,7 +105,7 @@ namespace HandsLiftedApp.ViewModels
 
 		public Boolean IsFrozen { get; set; }
 
-		public SongSlide Slide { get; set; } = new SongSlide() { Text = "Path=slide from View Model" };
+		//public SongSlide Slide { get; set; } = new SongSlide() { Text = "Path=slide from View Model" };
 
 		//public String Slide { get; set; } = "hello this is my slide text set from the ViewModel";
 

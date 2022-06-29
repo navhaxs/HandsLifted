@@ -8,6 +8,7 @@
              x:Class="HandsLiftedApp.Controls.PlaylistStateView">
 
 	<ListBox Name="List"
+			 Background="White"
 			 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			 ScrollViewer.VerticalScrollBarVisibility="Disabled"
 			 Items="{Binding ItemStates}"
@@ -31,36 +32,5 @@
 				<controls:ItemStateView />
 			</DataTemplate>
 		</ListBox.ItemTemplate>
-		<!--<ListBox.DataTemplates>
-			<utils:MyTemplateSelector>
-				<DataTemplate x:Key="SongSlideState">
-					--><!--<Viewbox>
-								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
-							</Viewbox>--><!--
-					<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Data.Text}" TextWrapping="Wrap" />
-				</DataTemplate>
-				<DataTemplate x:Key="ImageSlideState">
-					<Grid>
-						<TextBlock Text="{Binding ImageName}" TextWrapping="Wrap" />
-						--><!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />--><!--
-						<Image Stretch="Uniform" Source="{Binding Image}" />
-					</Grid>
-				</DataTemplate>
-				<DataTemplate x:Key="VideoSlideState">
-					<Border Padding="20">
-						<TextBlock>Video</TextBlock>
-					</Border>
-				</DataTemplate>
-				<DataTemplate x:Key="MyKey">
-					<TextBlock Background="Red" Text="{Binding Text}" />
-				</DataTemplate>
-				<DataTemplate x:Key="MyKey2">
-					<TextBlock Background="Green" Text="{Binding Text}"/>
-				</DataTemplate>
-				<DataTemplate x:Key="Fallback">
-					<TextBlock Background="Red" Text="{Binding Text}" />
-				</DataTemplate>
-			</utils:MyTemplateSelector>
-		</ListBox.DataTemplates>-->
 	</ListBox>
 </UserControl>

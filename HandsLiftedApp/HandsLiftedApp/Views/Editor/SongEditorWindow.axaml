@@ -19,6 +19,7 @@
 			<MenuItem  Name="btnGetWavHeader" Header="Import TXT" />
 			<MenuItem  Name="btnFileLoad" Header="Load XML" />
 			<MenuItem  Name="btnFileSave" Header="Save XML" />
+			<MenuItem  Command="{Binding SongDataUpdateCommand}" Header="SYNC" />
 		</Menu>
 		<TabControl>
 			<TabItem Header="Edit Lyrics" VerticalContentAlignment="Center">
@@ -30,8 +31,8 @@
 									<Setter Property="BorderThickness" Value="0" />
 								</Style>
 							</DockPanel.Styles>
-							<TextBox Text="{Binding song.Title}" Watermark="Song Title" DockPanel.Dock="Top" FontWeight="Bold" FontSize="34" Padding="0 6 0 5" />
-							<TextBox Text="{Binding song.Copyright}" Watermark="Copyright" DockPanel.Dock="Top" Padding="0 6 0 5" />
+							<TextBox Text="{Binding song.Title, Mode=TwoWay}" Watermark="Song Title" DockPanel.Dock="Top" FontWeight="Bold" FontSize="34" Padding="0 6 0 5" />
+							<TextBox Text="{Binding song.Copyright}" Watermark="Copyright" DockPanel.Dock="Top" Padding="0 6 0 5" AcceptsReturn="True" />
 							<Rectangle DockPanel.Dock="Top" Height="12" />
 							<Button DockPanel.Dock="Bottom" Command="{Binding OnClickCommand}" HorizontalAlignment="Stretch">Add New Slide</Button>
 							<ItemsControl Items="{Binding song.Stanzas}">
@@ -39,7 +40,7 @@
 									<DataTemplate>
 										<Border Padding="0 12 0 18">
 											<StackPanel>
-												<!--<TextBox Text="{Binding Path=Uuid}"/>-->
+												<TextBox Text="{Binding Path=Uuid}" Padding="0" IsReadOnly="True"/>
 												<TextBox Text="{Binding Path=Name}" Watermark="Stanza Name" FontWeight="SemiBold" FontSize="22" Padding="0" />
 												<TextBox Text="{Binding Path=Lyrics}" Watermark="Stanza Lyrics" AcceptsReturn="True" FontSize="18" Padding="0" />
 											</StackPanel>

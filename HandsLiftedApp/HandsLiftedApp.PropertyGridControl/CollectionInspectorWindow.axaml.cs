@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using DynamicData.Binding;
 using HandsLiftedApp.PropertyGridControl;
+using System.Collections;
 using System.Collections.ObjectModel;
 
 namespace HandsLiftedApp.PropertyGridControl
@@ -28,7 +29,15 @@ namespace HandsLiftedApp.PropertyGridControl
             _propertyGrid.SelectedObject = new Hello();
             _listBox = this.Find<ListBox>("listBox");
 
+            //_listBox.SelectionChanged += _listBox_SelectionChanged;
+
             this.DataContextChanged += ObjectInspectorWindow_DataContextChanged;
+        }
+
+        private void _listBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            //Enum selected = ((Enum)DataContext).GetHashCode [_listBox.SelectedIndex];
+            _propertyGrid.SelectedObject = DataContext; //.At[_listBox.SelectedIndex];
         }
 
         private void ObjectInspectorWindow_DataContextChanged(object? sender, EventArgs e)

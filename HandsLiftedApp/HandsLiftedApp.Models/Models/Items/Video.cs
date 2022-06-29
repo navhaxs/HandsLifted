@@ -1,6 +1,7 @@
 ﻿using HandsLiftedApp.Data.Slides;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace HandsLiftedApp.Data.Models.Items
 {
     public class SlidesGroup : Item
     {
-        public List<Slide> _Slides { get; set; } = new List<Slide>();
-        public override IEnumerable<Slide> Slides => _Slides;
+        public ObservableCollection<Slide> _Slides { get; set; } = new ObservableCollection<Slide>();
+        public override ObservableCollection<Slide> Slides => _Slides;
     }
 }

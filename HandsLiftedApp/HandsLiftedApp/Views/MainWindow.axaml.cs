@@ -60,17 +60,6 @@ namespace HandsLiftedApp.Views
             //LowerThirdSlideTemplate nextPreview = this.FindControl<LowerThirdSlideTemplate>("NextPreview");
             //nextPreview.DataContext = DataContext; // new ProjectorViewModel();
 
-            // TODO: debug
-            // TODO: debug
-            // TODO: debug
-            // TODO: debug
-            // TODO: debug
-            // TODO: debug
-            SongEditorWindow songEditorWindow = new SongEditorWindow();
-            songEditorWindow.DataContext = new SongEditorViewModel();
-            songEditorWindow.Show();
-
-
             this.KeyDown += ZoomBorder_KeyDown;
         }
 

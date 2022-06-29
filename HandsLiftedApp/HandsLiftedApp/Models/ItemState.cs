@@ -2,12 +2,17 @@
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
+using HandsLiftedApp.ViewModels.Editor;
+using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
+using static HandsLiftedApp.ViewModels.Editor.SongEditorViewModel;
 
 namespace HandsLiftedApp.Models
 {
@@ -17,12 +22,29 @@ namespace HandsLiftedApp.Models
         private int selectedIndex;
         private SlideStateBase selectedItem;
 
+
+        public ItemState()
+        {
+            EditCommand = ReactiveCommand.Create(RunTheThing);
+
+            _SlideStates = this.WhenAnyValue(x => x.Item,
+                (item) =>
+                {
+                    if (item == null)
+                        return new List<SlideStateBase>();
+
+                    return item.Slides.Select((s, index) => convertDataToState(s, index)).ToList();
+                })
+                .ToProperty(this, x => x.SlideStates);
+        }
+
         public int Index { get; set; }
 
-        public Item? Item { get; set; }
+        private Item? _item;
+        public Item? Item { get => _item; set => this.RaiseAndSetIfChanged(ref _item, value); }
 
-        public List<SlideStateBase> SlideStates => Item.Slides.Select((s, index) => convertDataToState(s, index)).ToList();
-
+        private ObservableAsPropertyHelper<List<SlideStateBase>> _SlideStates;
+        public List<SlideStateBase> SlideStates { get => _SlideStates.Value; }
 
         // slide index here?
         public int SelectedIndex
@@ -64,5 +86,20 @@ namespace HandsLiftedApp.Models
             }
         }
 
+        public ReactiveCommand<Unit, Unit> EditCommand { get; }
+
+
+        void RunTheThing()
+        {
+            SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem) Item };
+            vm.SongDataUpdated += Vm_SongDataUpdated;
+            SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
+            seq.Show();
+        }
+
+        private void Vm_SongDataUpdated(object? sender, EventArgs e)
+        {
+            Item = ((ThresholdReachedEventArgs)e).UpdatedSongData;
+        }
     }
 }

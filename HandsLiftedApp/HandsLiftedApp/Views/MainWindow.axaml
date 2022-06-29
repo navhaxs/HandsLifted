@@ -27,114 +27,137 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width = "*" />
-			<ColumnDefinition Width = "1" />
-			<ColumnDefinition Width = "0.4 *" />
-		</Grid.ColumnDefinitions>
+	<Grid ColumnDefinitions="*, 1, 0.3*">
 
-		<!--<DockPanel>
-			<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
-			<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Add Item</Button>
-		</DockPanel>-->
+		<DockPanel Grid.Column="0">
 
-		<!-- Centre panel-->
-		<DockPanel Grid.Column="0" >
-			<Border
-				Height="50"
-				Padding="10,5,10,5"
-				VerticalAlignment="Bottom"
-				Background="#FFD6D6D6"
-				DockPanel.Dock="Bottom">
-				<Grid>
-					<Grid.Styles>
-						<Style Selector="Button">
-							<Setter Property="MinWidth" Value="250" />
-							<Setter Property="HorizontalContentAlignment" Value="Center" />
-						</Style>
-					</Grid.Styles>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="2*" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="2*" />
-					</Grid.ColumnDefinitions>
-					<Button
-						Command="{Binding OnPrevSlideClickCommand}"
-						Content="Prev"
-						FontSize="16"
-						IsCancel="True"
-						IsTabStop="False" />
-					<TextBlock
-						Grid.Column="1"
-						HorizontalAlignment="Center"
-						VerticalAlignment="Center"
-						Foreground="{DynamicResource ForegroundText}">
-					</TextBlock>
-					<Button
-						Command="{Binding OnNextSlideClickCommand}"
-						HorizontalAlignment="Right"
-						Grid.Column="2"
-						Content="Next"
-						FontSize="16"
-						IsCancel="True"
-						IsTabStop="False" />
-				</Grid>
+			<Menu DockPanel.Dock="Top">
+				<MenuItem Header="Load" />
+				<MenuItem Header="New" />
+				<MenuItem Header="Save" />
+				<Separator />
+				<Button>
+					<Button.Flyout>
+						<Flyout>
+							<Grid Width="200" Height="100">
+								<StackPanel>
+									<TextBox></TextBox>
+								</StackPanel>
+							</Grid>
+						</Flyout>
+					</Button.Flyout>
+					Add New Item
+				</Button>
+				<Separator />
+				<MenuItem Header="Debug">
+					<MenuItem Header="DEBUG Data Debug"  Command="{Binding OnDebugClickCommand}"/>
+					<MenuItem Header="SongEditor" />
+					<MenuItem Header="Import Google Slides" />
+					<MenuItem Header="Import PowerPoint" />
+				</MenuItem>
+			</Menu>
+
+			<Border Padding="10 20" Background="#eeeef2" DockPanel.Dock="Top">
+				<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+					<TextBlock FontSize="20" Margin="0 0 8 0">Sunday 11am</TextBlock>
+					<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
+				</StackPanel>
 			</Border>
 
-			<ScrollViewer>
-				<ScrollViewer.Styles>
 
-					<Style Selector="ScrollBar">
-						<Setter Property="AllowAutoHide" Value="false" />
-					</Style>
-					<Style Selector="ScrollViewer">
-						<Setter Property="AllowAutoHide" Value="False"/>
-					</Style>
-				</ScrollViewer.Styles>
+			<Grid>
 
-				<StackPanel Margin="0 0 16 0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width = "0.2 *" />
+					<ColumnDefinition Width = "1" />
+					<ColumnDefinition Width = "*" />
+				</Grid.ColumnDefinitions>
+				
+				<!-- Left panel -->
+				<DockPanel Grid.Column="0" Background="#eeeef2">
+					<!--<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>-->
+					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Add Item</Button>
+					<ListBox Items="{Binding PlaylistState.ItemStates}"
+							 SelectedIndex="{Binding PlaylistState.SelectedIndex, Mode=TwoWay}"
+							 Background="Transparent">
+						<ListBox.DataTemplates>
+							<DataTemplate>
+								<TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Item.Title, FallbackValue=Item}" />
+							</DataTemplate>
+						</ListBox.DataTemplates>
+					</ListBox>
+				</DockPanel>
 
-					<Menu DockPanel.Dock="Top">
-						<MenuItem Header="Load" />
-						<MenuItem Header="New" />
-						<MenuItem Header="Save" />
-						<Separator />
-						<Button>
-							<Button.Flyout>
-								<Flyout>
-									<Grid Width="200" Height="100">
-										<StackPanel>
-											<TextBox></TextBox>
-										</StackPanel>
-									</Grid>
-								</Flyout>
-							</Button.Flyout>
-							Add New Item
-						</Button>
-						<Separator />
-						<MenuItem Header="Debug">
-							<MenuItem Header="DEBUG Data Debug"  Command="{Binding OnDebugClickCommand}"/>
-							<MenuItem Header="SongEditor" />
-							<MenuItem Header="Import Google Slides" />
-							<MenuItem Header="Import PowerPoint" />
-						</MenuItem>
-					</Menu>
-					
-					<Border Padding="30 10" Background="#f2f2f2" DockPanel.Dock="Top" Height="90">
-						<StackPanel VerticalAlignment="Center">
-							<TextBlock HorizontalAlignment="Stretch" FontSize="22">Sunday 11am Service</TextBlock>
-							<TextBlock HorizontalAlignment="Stretch" Foreground="#8a8c8c">22 May 2022</TextBlock>
-						</StackPanel>
-					</Border>
+				<GridSplitter Grid.Column="1" Background="#eeeef2" />
 
-					<controls:PlaylistStateView DataContext="{Binding PlaylistState}" />
+				<!-- Centre panel-->
+				<Border Grid.Column="2" CornerRadius="2 0 0 0" HorizontalAlignment="Stretch" BorderBrush="#9a93cd" BorderThickness="1 1 0 0">
 
-				</StackPanel>
-			</ScrollViewer>
+					<DockPanel>
+					<!--<Border
+						Height="50"
+						Padding="10,5,10,5"
+						VerticalAlignment="Bottom"
+						Background="#FFD6D6D6"
+						DockPanel.Dock="Bottom">
+						<Grid>
+							<Grid.Styles>
+								<Style Selector="Button">
+									<Setter Property="MinWidth" Value="250" />
+									<Setter Property="HorizontalContentAlignment" Value="Center" />
+								</Style>
+							</Grid.Styles>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="2*" />
+							</Grid.ColumnDefinitions>
+							<Button
+								Command="{Binding OnPrevSlideClickCommand}"
+								Content="Prev"
+								FontSize="16"
+								IsCancel="True"
+								IsTabStop="False" />
+							<TextBlock
+								Grid.Column="1"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center"
+								Foreground="{DynamicResource ForegroundText}">
+							</TextBlock>
+							<Button
+								Command="{Binding OnNextSlideClickCommand}"
+								HorizontalAlignment="Right"
+								Grid.Column="2"
+								Content="Next"
+								FontSize="16"
+								IsCancel="True"
+								IsTabStop="False" />
+						</Grid>
+					</Border>-->
+
+					<ScrollViewer>
+						<ScrollViewer.Styles>
+
+							<Style Selector="ScrollBar">
+								<Setter Property="AllowAutoHide" Value="false" />
+							</Style>
+							<Style Selector="ScrollViewer">
+								<Setter Property="AllowAutoHide" Value="False"/>
+							</Style>
+						</ScrollViewer.Styles>
+
+
+						<!--<controls:PlaylistStateView DataContext="{Binding PlaylistState}" />-->
+						<controls:ItemStateView DataContext="{Binding PlaylistState.SelectedItem}" />
+
+					</ScrollViewer>
+				</DockPanel>
+				</Border>
+			</Grid>
+			
 		</DockPanel>
 
-		<GridSplitter Grid.Column = "1" Background="#eeeef2" />
+		<GridSplitter Grid.Column="1" ResizeDirection="Columns" />
 
 		<!-- Right panel -->
 		<DockPanel Grid.Column="2" Background="#eeeef2">

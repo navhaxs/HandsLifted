@@ -15,13 +15,13 @@ namespace HandsLiftedApp.Utils
     public static class SongImporter
     {
 
-        public static Song ImportSongFromTxt(string txtFilePath)
+        public static SongItem ImportSongFromTxt(string txtFilePath)
         {
             string text = File.ReadAllText(txtFilePath);
 
             List<string> parsed = new List<string>(text.Split("\r\n\r\n\r\n").Select(str => str.Trim()));
 
-            Song song = new Song()
+            SongItem song = new SongItem()
             {
                 Title = parsed.First().Trim(),
             };
@@ -48,7 +48,7 @@ namespace HandsLiftedApp.Utils
                     rest = songPart.Substring(partNameEOL).Trim();
                 }
 
-                song.Stanzas.Add(new Song.SongStanza(Guid.NewGuid(), partName, rest));
+                song.Stanzas.Add(new SongItem.SongStanza(Guid.NewGuid(), partName, rest));
 
             }
             return song;
