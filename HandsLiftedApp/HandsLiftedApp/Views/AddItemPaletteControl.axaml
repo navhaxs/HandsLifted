@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="HandsLiftedApp.Views.AddItemPaletteControl">
+	<DockPanel Margin="8">
+		<Label DockPanel.Dock="Top" FontSize="22">Add Item</Label>
+		<TextBox Watermark="Search songs, media, and more..." DockPanel.Dock="Top" />
+		<UniformGrid Columns="3">
+			<UniformGrid.Styles>
+				<Style Selector="Button">
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+					<Setter Property="VerticalAlignment" Value="Stretch" />
+					<Setter Property="HorizontalContentAlignment" Value="Center" />
+					<Setter Property="VerticalContentAlignment" Value="Center" />
+					<Setter Property="Background" Value="#f1f1ff" />
+				</Style>
+			</UniformGrid.Styles>
+			<Button Command="{Binding AddSongCommand}">
+				Add Song
+			</Button>
+			<Button Command="{Binding AddPresentationCommand}">
+				Add Presentation
+			</Button>
+			<Button Command="{Binding AddGraphicCommand}">
+				Add Graphic
+			</Button>
+			<Button Command="{Binding AddVideoCommand}">
+				Add Video
+			</Button>
+			<Button Command="{Binding AddCountdownCommand}">
+				Add Countdown
+			</Button>
+			<Button Command="{Binding AddGroupCommand}">
+				Add Group
+			</Button>
+		</UniformGrid>
+	</DockPanel>
+</UserControl>

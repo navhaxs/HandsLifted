@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -10,9 +11,9 @@ namespace HandsLiftedApp.PropertyGridControl
         public ObjectInspectorWindow()
         {
             InitializeComponent();
-//#if DEBUG
-//            this.AttachDevTools();
-//#endif
+#if DEBUG
+            this.AttachDevTools();
+#endif
 
             _propertyGrid = this.Find<PropertyGrid>("propertyGrid");
 
@@ -24,12 +25,6 @@ namespace HandsLiftedApp.PropertyGridControl
             _propertyGrid.SelectedObject = this.DataContext;
             this.Title = this.DataContext?.GetType().Name;
         }
-
-        //public void RefreshData(object info)
-        //{
-        //    _propertyGrid.SelectedObject = info; // this.DataContext;
-        //}
-
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

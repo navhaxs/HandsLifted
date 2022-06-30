@@ -82,7 +82,7 @@
 						</DataTemplate>
 						<DataTemplate x:Key="VideoSlideState">
 							<Border Padding="20">
-								<TextBlock>Video</TextBlock>
+								<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
 							</Border>
 						</DataTemplate>
 						<DataTemplate x:Key="MyKey">

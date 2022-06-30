@@ -22,10 +22,16 @@ namespace HandsLiftedApp.Models.SlideState
         {
             Image = await Task.Run(() => {
                 var path = ((ImageSlide)this.Data).ImagePath;
-                using (Stream imageStream = File.OpenRead(path))
+
+                if (File.Exists(path))
                 {
-                    return Bitmap.DecodeToWidth(imageStream, 1920);
+                    using (Stream imageStream = File.OpenRead(path))
+                    {
+                        return Bitmap.DecodeToWidth(imageStream, 1920);
+                    }
                 }
+
+                return null;
             });
         }
 

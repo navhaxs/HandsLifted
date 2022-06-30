@@ -162,7 +162,14 @@ namespace HandsLiftedApp.PropertyGridControl
 
         public object? GetValue()
         {
-            return _descriptor.GetValue(_hostObject);
+            try
+            {
+                return _descriptor.GetValue(_hostObject);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public void SetValue(object? value)

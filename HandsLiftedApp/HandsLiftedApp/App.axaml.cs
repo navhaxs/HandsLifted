@@ -15,6 +15,9 @@ namespace HandsLiftedApp
 
         public override void OnFrameworkInitializationCompleted()
         {
+
+            //AvaloniaLocator.CurrentMutable.BindToSelfSingleton<MyClass>();
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 var x = new MainWindowViewModel();

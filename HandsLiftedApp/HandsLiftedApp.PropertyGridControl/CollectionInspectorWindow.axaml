@@ -18,17 +18,18 @@
 	</Window.Background>
 	<StackPanel Background="#a4a4a4">
 		<TextBlock Text="{Binding $parent[Window].Title}" FontSize="22"/>
-		<DockPanel>
-			<ListBox x:Name="items" Background="#a4a4a4" DockPanel.Dock="Left"
-					 Items="{Binding}" SelectedIndex="0">
-				<ListBox.DataTemplates>
-					<DataTemplate>
+		<ListBox x:Name="items" Background="#a4a4a4"
+				 Items="{Binding}" SelectedIndex="0"
+				 VirtualizationMode="None">
+			<ListBox.DataTemplates>
+				<DataTemplate>
+					<StackPanel>
 						<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Index}" TextWrapping="Wrap" Foreground="White" FontWeight="SemiBold" Margin="10" />
-					</DataTemplate>
-				</ListBox.DataTemplates>
-			</ListBox>
-			<TextBlock Text="{Binding Path=#items.SelectedIndex, FallbackValue=test}" FontSize="22" />
-			<pg:PropertyGrid x:Name="propertyGrid" Background="#a4a4a4" />
-		</DockPanel>
+						<pg:PropertyGrid x:Name="propertyGrid" Background="#a4a4a4" SelectedObject="{Binding}" />
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.DataTemplates>
+		</ListBox>
+		<!--<TextBlock Text="{Binding Path=#items.SelectedIndex, FallbackValue=test}" FontSize="22" />-->
 	</StackPanel>
 </Window>

@@ -1,4 +1,3 @@
-using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.PropertyGridControl;
@@ -6,14 +5,15 @@ using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views;
 using ReactiveUI;
 using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
+using System.Reactive.Linq;
+using static HandsLiftedApp.Importer.PowerPoint.Main;
+using HandsLiftedApp.Data.Models;
 
 namespace HandsLiftedApp.ViewModels
 {
-	public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
 	{
 
 		public DateTime CurrentTime
@@ -29,13 +29,6 @@ namespace HandsLiftedApp.ViewModels
 			}
 		}
 
-		//private ObservableCollection<SlideStateBase>? _slides = new ObservableCollection<SlideStateBase>();
-		//public ObservableCollection<SlideStateBase>? Slides
-		//{
-		//	get => _slides;
-		//	private set => this.RaiseAndSetIfChanged(ref _slides, value);
-		//}
-
 		public PlaylistState _playlistState;
 
 		public PlaylistState PlaylistState
@@ -47,52 +40,11 @@ namespace HandsLiftedApp.ViewModels
 			}
 		}
 
-		//public int _slidesSelectedIndex;
-		//public int SlidesSelectedIndex
-		//{
-		//	get => _slidesSelectedIndex;
-		//	set
-		//	{
-		//		this.RaiseAndSetIfChanged(ref _slidesSelectedIndex, value);
-		//	}
-		//}
-
-		//SlideStateBase _slidesSelectedItem;
-
-		//public SlideState SlidesSelectedItem
-		//{
-		//	get => _slidesSelectedItem;
-		//	set {
-		//		this.RaiseAndSetIfChanged(ref _slidesSelectedItem, value);
-		//		this.RaisePropertyChanged("Text");
-		//		OnPropertyChanged("Text");
-
-		//		OnPropertyChanged("NextSlide");
-		//		OnPropertyChanged("SlidesNextItem");
-		//	}
-		//}
-
 		public SlideStateBase SlidesSelectedItem
 		{
 			get => _playlistState?.SelectedItem?.SelectedItem;
 		}
 	
-
-  //      SlideStateBase? _nextSlide;
-
-		//public SlideStateBase? NextSlide
-		//{
-		//	get => _nextSlide;
-		//	set {
-		//		this.RaiseAndSetIfChanged(ref _nextSlide, value);
-		//	}
-		//}
-
-		//public SlideStateBase SlidesNextItem
-		//{
-		//	get => _slidesSelectedItem;
-		//}
-
 		public string Text
 		{
 			get
@@ -105,41 +57,23 @@ namespace HandsLiftedApp.ViewModels
 
 		public Boolean IsFrozen { get; set; }
 
-		//public SongSlide Slide { get; set; } = new SongSlide() { Text = "Path=slide from View Model" };
-
-		//public String Slide { get; set; } = "hello this is my slide text set from the ViewModel";
-
 		public void LoadDemoSchedule()
 		{
-			// = await Task.Run(() =>
-			//{
-
 			var playlist = TestPlaylistDataGenerator.Generate();
 
 			PlaylistState = new PlaylistState(playlist);
-
-				//var m = new ObservableCollection<Slide>();
-
-				//var xxx = m.Select(s => convertDataToState(s)).ToList();
-				//Slides =  new ObservableCollection<SlideState>(xxx);
-
-			//});
 		}
- 	
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		// CONSTRUCTOR
-		public MainWindowViewModel()
+ 		public MainWindowViewModel()
 		{
+
+			// The OpenFile command is bound to a button/menu item in the UI.
+			AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPPTXFileAsync);
+			AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
+			SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
+			LoadServiceCommand = ReactiveCommand.Create(OnLoadService);
+
+			// The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
+			ShowOpenFileDialog = new Interaction<Unit, string?>();
 
 			_ = Update(); // calling an async function we do not want to await
 
@@ -215,6 +149,65 @@ namespace HandsLiftedApp.ViewModels
 		public void OnPrevSlideClickCommand()
 		{
 			//SlidesSelectedIndex -= 1;
+		}
+
+		public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
+		public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
+		public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
+		public ReactiveCommand<Unit, Unit> LoadServiceCommand { get; }
+
+		public Interaction<Unit, string?> ShowOpenFileDialog { get; }
+		private async Task OpenPPTXFileAsync()
+		{
+            try
+            {
+				var fileName = await ShowOpenFileDialog.Handle(Unit.Default);
+
+				if (fileName != null && fileName is string)
+				{
+                    ImportStats result = await PlaylistUtils.AddPowerPointToPlaylist((string) fileName);
+                    Data.Models.Items.SlidesGroup slidesGroup = PlaylistUtils.CreateSlidesGroup(result.Task.OutputDirectory);
+					slidesGroup.Title = result.FileName;
+					PlaylistState.Playlist.Items.Add(slidesGroup);
+                }
+
+			}
+			catch (Exception e)
+            {
+				System.Diagnostics.Debug.Print(e.Message);
+            }
+		}
+
+		public Interaction<Unit, string?> ShowSongOpenFileDialog { get; }
+
+		private async Task AddSongAsync()
+        {
+			try
+			{
+				var fileName = await ShowOpenFileDialog.Handle(Unit.Default);
+
+				if (fileName != null && fileName is string)
+				{
+					//var x = PlaylistUtils.CreateSong();
+					var songItem = SongImporter.ImportSongFromTxt((string) fileName);
+					PlaylistState.Playlist.Items.Add(songItem);
+				}
+
+			}
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.Print(e.Message);
+			}
+		}
+
+		const string TEST_SERVICE_FILE_PATH = @"C:\VisionScreens\service.xml";
+		void OnSaveService()
+		{
+			XmlSerialization.WriteToXmlFile<Playlist>(TEST_SERVICE_FILE_PATH, PlaylistState.Playlist);
+		}
+		void OnLoadService()
+		{
+			PlaylistState.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(TEST_SERVICE_FILE_PATH);
 		}
 	}
 }

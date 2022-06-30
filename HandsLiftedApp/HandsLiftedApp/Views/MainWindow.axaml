@@ -31,32 +31,6 @@
 
 		<DockPanel Grid.Column="0">
 
-			<Menu DockPanel.Dock="Top">
-				<MenuItem Header="Load" />
-				<MenuItem Header="New" />
-				<MenuItem Header="Save" />
-				<Separator />
-				<Button>
-					<Button.Flyout>
-						<Flyout>
-							<Grid Width="200" Height="100">
-								<StackPanel>
-									<TextBox></TextBox>
-								</StackPanel>
-							</Grid>
-						</Flyout>
-					</Button.Flyout>
-					Add New Item
-				</Button>
-				<Separator />
-				<MenuItem Header="Debug">
-					<MenuItem Header="DEBUG Data Debug"  Command="{Binding OnDebugClickCommand}"/>
-					<MenuItem Header="SongEditor" />
-					<MenuItem Header="Import Google Slides" />
-					<MenuItem Header="Import PowerPoint" />
-				</MenuItem>
-			</Menu>
-
 			<Border Padding="10 20" Background="#eeeef2" DockPanel.Dock="Top">
 				<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 					<TextBlock FontSize="20" Margin="0 0 8 0">Sunday 11am</TextBlock>
@@ -76,7 +50,32 @@
 				<!-- Left panel -->
 				<DockPanel Grid.Column="0" Background="#eeeef2">
 					<!--<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>-->
-					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Add Item</Button>
+					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+						<Button.Flyout>
+							<Flyout>
+								<Grid MinWidth="200" MinHeight="100">
+									<StackPanel>
+										<TextBox></TextBox>
+										<views:AddItemPaletteControl />
+									</StackPanel>
+								</Grid>
+							</Flyout>
+						</Button.Flyout>
+						Add Item</Button>
+					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+						<Button.Flyout>
+							<Flyout>
+								<StackPanel MinWidth="200">
+									<Button Content="Load" Command="{Binding LoadServiceCommand}" />
+									<Button Content="New" />
+									<Button Content="Save" Command="{Binding SaveServiceCommand}" />
+									<Separator />
+									<Label Content="Debug" />
+									<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
+								</StackPanel>
+							</Flyout>
+						</Button.Flyout>
+						DEBUG</Button>
 					<ListBox Items="{Binding PlaylistState.ItemStates}"
 							 SelectedIndex="{Binding PlaylistState.SelectedIndex, Mode=TwoWay}"
 							 Background="Transparent">
@@ -147,8 +146,8 @@
 						</ScrollViewer.Styles>
 
 
-						<!--<controls:PlaylistStateView DataContext="{Binding PlaylistState}" />-->
-						<controls:ItemStateView DataContext="{Binding PlaylistState.SelectedItem}" />
+						<controls:PlaylistStateView DataContext="{Binding PlaylistState}" />
+						<!--<controls:ItemStateView DataContext="{Binding PlaylistState.SelectedItem}" />-->
 
 					</ScrollViewer>
 				</DockPanel>

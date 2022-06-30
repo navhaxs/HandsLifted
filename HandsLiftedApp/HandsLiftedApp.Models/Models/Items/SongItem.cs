@@ -15,51 +15,44 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public class SongItem : Item
     {
-        public Guid Uuid { get; set; }
-
-        public string _title;
-        public string Title
-        {
-            get => _title; set
-            {
-                this.RaiseAndSetIfChanged(ref _title, value);
-                this.RaisePropertyChanged(nameof(Slides));
-            }
-        }
-
-        public string _copyright;
+        public string _copyright = "";
         public string Copyright
         {
             get => _copyright; set
 
             {
                 this.RaiseAndSetIfChanged(ref _copyright, value);
-                this.RaisePropertyChanged(nameof(Slides));
+                //this.RaisePropertyChanged(nameof(Slides));
             }
         }
 
-        private BindingList<SongStanza> _stanzas = new BindingList<SongStanza>();
-        public BindingList<SongStanza> Stanzas
+        private ObservableCollection<SongStanza> _stanzas = new ObservableCollection<SongStanza>();
+        public ObservableCollection<SongStanza> Stanzas
         {
             get => _stanzas;
             set
             {
                 this.RaiseAndSetIfChanged(ref _stanzas, value);
-                this.RaisePropertyChanged(nameof(Slides));
+                //this.RaisePropertyChanged(nameof(Slides));
             }
         }
+
         //public List<KeyValuePair<string, List<Guid>>> Arrangements { get; set; } = new List<KeyValuePair<string, List<Guid>>>();
 
-
         private ObservableAsPropertyHelper<Slide> _titleSlide;
+        [XmlIgnore]
+
         public Slide TitleSlide { get => _titleSlide.Value; }
 
 
         private ObservableAsPropertyHelper<List<Slide>> _stanzaSlides;
+        [XmlIgnore]
 
         public List<Slide> StanzaSlides { get => _stanzaSlides.Value; }
 
         private ObservableAsPropertyHelper<ObservableCollection<Slide>> _slides;
+
+        [XmlIgnore]
 
         public override ObservableCollection<Slide> Slides { get => _slides.Value; }
 
@@ -78,11 +71,15 @@ namespace HandsLiftedApp.Data.Models.Items
                 .ToProperty(this, c => c.TitleSlide)
             ;
 
-            _stanzaSlides = this.WhenAny(x => x.Stanzas,
-                (stanzas) =>
-                {
-                    return processSongStanzasToSlides(stanzas.Value);
-                })
+            _stanzaSlides = this.Stanzas
+                // Convert the collection to a stream of chunks,
+                // so we have IObservable<IChangeSet<TKey, TValue>>
+                // type also known as the DynamicData monad.
+                .ToObservableChangeSet(x => x)
+                // Each time the collection changes, we get
+                // all updated items at once.
+                .ToCollection()
+                .Select((collection) => processSongStanzasToSlides(collection))
                 .ToProperty(this, c => c.StanzaSlides)
             ;
 
@@ -101,8 +98,6 @@ namespace HandsLiftedApp.Data.Models.Items
                 })
                 .ToProperty(this, c => c.Slides)
             ;
-
-
         }
 
         public List<Slide> processSongStanzasToSlides(IReadOnlyCollection<SongStanza> stanzas)

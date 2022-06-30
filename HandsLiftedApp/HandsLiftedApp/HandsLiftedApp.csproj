@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
@@ -30,6 +30,9 @@
     <ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\AddItemPaletteControl.axaml.cs">
+      <DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Render\SongSlide\SimpleSlideTitle.axaml.cs">
       <DependentUpon>SimpleSlideTitle.axaml</DependentUpon>
     </Compile>

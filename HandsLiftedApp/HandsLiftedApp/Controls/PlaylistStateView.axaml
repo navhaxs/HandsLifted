@@ -15,6 +15,9 @@
 			 SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
 			 SelectedItem="{Binding SelectedItem}">
 		<ListBox.Styles>
+			<Style Selector="ListBoxItem">
+				<Setter Property="Padding" Value="0"/>
+			</Style>
 			<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
 			</Style>

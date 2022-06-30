@@ -6,11 +6,12 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.ViewModels;
-using HandsLiftedApp.ViewModels.Editor;
+using System.Linq;
 using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
+using System.Reactive;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
@@ -27,47 +28,31 @@ namespace HandsLiftedApp.Views
                 return;
 
             this.Closed += MainWindow_Closed;
-            //var x = new MainWindowViewModel();
-
-            //this.DataContext = x;
-
-            //SplashWindow v = new SplashWindow();
-            //v.Show();
-
-            //WebBrowserWindow w = new WebBrowserWindow();
-            //w.Show();
-
-            //LowerThirdSlideTemplate livePreview = this.FindControl<LowerThirdSlideTemplate>("LivePreview");
-            //livePreview.DataContext = x;
-            //new ProjectorViewModel();
-            // Setup the bindings.
-            // Note: We have to use WhenActivated here, since we need to dispose the
-            // bindings on XAML-based platforms, or else the bindings leak memory.
-            //this.Bind(ViewModel, x => x.UserName, x => x.Username.Text);
-            //    //this.Bind(ViewModel, x => x.Password, x => x.Password.Text)
-            //    //    .DisposeWith(disposable);
-            //    //this.Bind(ViewModel, x => x.Address, x => x.Address.Text)
-            //    //   .DisposeWith(disposable);
-            //    //this.Bind(ViewModel, x => x.Phone, x => x.Phone.Text)
-            //    //   .DisposeWith(disposable);
-            //    //this.BindCommand(ViewModel, x => x.RegisterCommand, x => x.Register)
-
-            //    //    .DisposeWith(disposable);
-            //    //this.Bind(ViewModel, x => x.Result, x => x.Result.Text)
-            //    //   .DisposeWith(disposable);
-            //});
-
-            //LowerThirdSlideTemplate nextPreview = this.FindControl<LowerThirdSlideTemplate>("NextPreview");
-            //nextPreview.DataContext = DataContext; // new ProjectorViewModel();
-
             this.KeyDown += ZoomBorder_KeyDown;
+
+            // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
+            this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
+
+        }
+
+        private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)
+        {
+            try
+            {
+                var dialog = new OpenFileDialog();
+                var fileNames = await dialog.ShowAsync(this);
+                interaction.SetOutput(fileNames.FirstOrDefault());
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+                interaction.SetOutput(null);
+            }
         }
 
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-
-
         }
 
         private void ZoomBorder_KeyDown(object? sender, KeyEventArgs e)
@@ -86,7 +71,7 @@ namespace HandsLiftedApp.Views
                         break;
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
 
                 throw;
@@ -103,12 +88,6 @@ namespace HandsLiftedApp.Views
         {
             ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
         }
-
-        private async Task OnLaunchProjector()
-        {
-
-        }
-
         
     }
 }
