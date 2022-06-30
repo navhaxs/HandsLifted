@@ -79,6 +79,12 @@
 					<ListBox Items="{Binding PlaylistState.ItemStates}"
 							 SelectedIndex="{Binding PlaylistState.SelectedIndex, Mode=TwoWay}"
 							 Background="Transparent">
+						<!-- TODO style ListBoxItems with a border -->
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+								<Setter Property="Background" Value="#edeafc"/>
+							</Style>
+						</ListBox.Styles>
 						<ListBox.DataTemplates>
 							<DataTemplate>
 								<TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Item.Title, FallbackValue=Item}" />
