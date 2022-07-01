@@ -10,5 +10,6 @@
         <FluentTheme Mode="Light"/>
 		<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />
 		<StyleInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml" />
+		<StyleInclude Source="avares://HandsLiftedApp/Styles/Styles1.axaml" />
 	</Application.Styles>
 </Application>

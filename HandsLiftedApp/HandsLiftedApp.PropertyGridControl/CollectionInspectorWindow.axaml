@@ -16,8 +16,8 @@
 			</VisualBrush.Visual>
 		</VisualBrush>
 	</Window.Background>
-	<StackPanel Background="#a4a4a4">
-		<TextBlock Text="{Binding $parent[Window].Title}" FontSize="22"/>
+	<DockPanel Background="#a4a4a4">
+		<TextBlock DockPanel.Dock="Top" Text="{Binding $parent[Window].Title}" FontSize="22"/>
 		<ListBox x:Name="items" Background="#a4a4a4"
 				 Items="{Binding}" SelectedIndex="0"
 				 VirtualizationMode="None">
@@ -31,5 +31,5 @@
 			</ListBox.DataTemplates>
 		</ListBox>
 		<!--<TextBlock Text="{Binding Path=#items.SelectedIndex, FallbackValue=test}" FontSize="22" />-->
-	</StackPanel>
+	</DockPanel>
 </Window>

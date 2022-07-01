@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Reactive.Linq;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
 using HandsLiftedApp.Data.Models;
+using System.Diagnostics;
+using DynamicData;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -71,6 +73,9 @@ namespace HandsLiftedApp.ViewModels
 			AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
 			SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
 			LoadServiceCommand = ReactiveCommand.Create(OnLoadService);
+			MoveUpItemCommand = ReactiveCommand.Create<object>(OnMoveUpItemCommand);
+			MoveDownItemCommand = ReactiveCommand.Create<object>(OnMoveDownItemCommand);
+			RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
 
 			// The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
 			ShowOpenFileDialog = new Interaction<Unit, string?>();
@@ -155,6 +160,9 @@ namespace HandsLiftedApp.ViewModels
 		public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
 		public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
 		public ReactiveCommand<Unit, Unit> LoadServiceCommand { get; }
+		public ReactiveCommand<object, Unit> MoveUpItemCommand { get; }
+		public ReactiveCommand<object, Unit> MoveDownItemCommand { get; }
+		public ReactiveCommand<object, Unit> RemoveItemCommand { get; }
 
 		public Interaction<Unit, string?> ShowOpenFileDialog { get; }
 		private async Task OpenPPTXFileAsync()
@@ -209,5 +217,39 @@ namespace HandsLiftedApp.ViewModels
 		{
 			PlaylistState.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(TEST_SERVICE_FILE_PATH);
 		}
+		void OnMoveUpItemCommand(object? itemState)
+        {
+			// get the index of itemState
+			// move the source "item" position (in the "item source")
+			// update the rest
+
+			int v = PlaylistState.ItemStates.IndexOf(itemState);
+
+			if (v > 0)
+            {
+                PlaylistState.Playlist.Items.Move(v, v - 1);
+            }
+			Debug.Print("up");
+        }
+		void OnMoveDownItemCommand(object? itemState)
+        {
+			int v = PlaylistState.ItemStates.IndexOf(itemState);
+
+			if (v + 1 < PlaylistState.Playlist.Items.Count)
+			{
+				PlaylistState.Playlist.Items.Move(v, v + 1);
+			}
+
+			Debug.Print("down");
+        }
+		
+		void OnRemoveItemCommand(object? itemState)
+        {
+			// TODO confirm dialog?
+			int v = PlaylistState.ItemStates.IndexOf(itemState);
+			PlaylistState.Playlist.Items.RemoveAt(v);
+			Debug.Print("remove");
+        }
+
 	}
 }
