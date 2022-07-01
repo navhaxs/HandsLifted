@@ -13,11 +13,15 @@ using System;
 using System.ComponentModel;
 using System.Reactive;
 using System.Threading.Tasks;
+using Avalonia.LogicalTree;
+using Avalonia.VisualTree;
 
 namespace HandsLiftedApp.Views
 {
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
+
+        ListBox OrderableListBox;
         public MainWindow()
         {
             InitializeComponent();
@@ -32,8 +36,27 @@ namespace HandsLiftedApp.Views
 
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
-
+            
+            //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
+            //OrderableListBox.PointerReleased += X_PointerReleased;
         }
+
+        //private void X_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        //{
+        //    var hoveredItem = (ListBoxItem)OrderableListBox.GetLogicalChildren().FirstOrDefault(x => this.GetVisualsAt(e.GetPosition(this)).Contains(((IVisual)x).GetVisualChildren().First()));
+        //    if (DragItem == null ||
+        //        hoveredItem == null ||
+        //        DragItem == hoveredItem)
+        //    {
+        //        return;
+        //    }
+
+        //    Items.Move(
+        //        OrderableListBox.GetLogicalChildren().ToList().IndexOf(DragItem),
+        //        OrderableListBox.GetLogicalChildren().ToList().IndexOf(hoveredItem));
+
+        //    DragItem = null;
+        //}
 
         private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)
         {

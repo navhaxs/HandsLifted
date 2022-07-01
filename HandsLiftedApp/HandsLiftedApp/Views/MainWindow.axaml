@@ -77,33 +77,9 @@
 						</Button.Flyout>
 						DEBUG</Button>
 
-					<ListBox Items="{Binding PlaylistState.Playlist.Items}" Background="White" DockPanel.Dock="Bottom" MinHeight="20">
-						<ListBox.Styles>
-							<Style Selector="ListBoxItem">
-								<Setter Property="ContextMenu">
-									<Setter.Value>
-										<ContextMenu>
-											<MenuItem Header="Move Up" Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" CommandParameter="{Binding}"/>
-											<MenuItem Header="Move Down" Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" CommandParameter="{Binding}"/>
-											<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
-										</ContextMenu>
-									</Setter.Value>
-								</Setter>
-							</Style>
-
-							<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-								<Setter Property="Background" Value="#edeafc"/>
-							</Style>
-						</ListBox.Styles>
-						<ListBox.DataTemplates>
-							<DataTemplate>
-								<TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Title, FallbackValue=Item}" />
-							</DataTemplate>
-						</ListBox.DataTemplates>
-					</ListBox>
-
-
-					<ListBox Items="{Binding PlaylistState.ItemStates}"
+					<ListBox 
+						x:Name="itemsListBox"
+						Items="{Binding PlaylistState.ItemStates}"
 							 SelectedIndex="{Binding PlaylistState.SelectedIndex, Mode=TwoWay}"
 							 Background="Transparent">
 						<!-- TODO style ListBoxItems with a border -->

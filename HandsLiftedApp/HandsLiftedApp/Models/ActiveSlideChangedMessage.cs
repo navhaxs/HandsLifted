@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models
 {
-    internal class Class1
+    internal class ActiveSlideChangedMessage
     {
         public int SourceItemStateIndex { get; set; }
     }

@@ -15,27 +15,11 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public class SongItem : Item
     {
-        public string _copyright = "";
-        public string Copyright
-        {
-            get => _copyright; set
+        private string _copyright = "";
+        public string Copyright { get => _copyright; set => this.RaiseAndSetIfChanged(ref _copyright, value); }
 
-            {
-                this.RaiseAndSetIfChanged(ref _copyright, value);
-                //this.RaisePropertyChanged(nameof(Slides));
-            }
-        }
-
-        private ObservableCollection<SongStanza> _stanzas = new ObservableCollection<SongStanza>();
-        public ObservableCollection<SongStanza> Stanzas
-        {
-            get => _stanzas;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _stanzas, value);
-                //this.RaisePropertyChanged(nameof(Slides));
-            }
-        }
+        private TrulyObservableCollection<SongStanza> _stanzas = new TrulyObservableCollection<SongStanza>();
+        public TrulyObservableCollection<SongStanza> Stanzas { get => _stanzas; set => this.RaiseAndSetIfChanged(ref _stanzas, value); }
 
         //public List<KeyValuePair<string, List<Guid>>> Arrangements { get; set; } = new List<KeyValuePair<string, List<Guid>>>();
 

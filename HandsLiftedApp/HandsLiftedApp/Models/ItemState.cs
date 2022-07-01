@@ -1,5 +1,6 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.ViewModels.Editor;
@@ -19,9 +20,8 @@ namespace HandsLiftedApp.Models
     // Move into PlaylistState
     public class ItemState : ViewModelBase
     {
-        private int selectedIndex;
+        private int _selectedIndex;
         private SlideStateBase selectedItem;
-
 
         public ItemState()
         {
@@ -31,11 +31,13 @@ namespace HandsLiftedApp.Models
                 (item) =>
                 {
                     if (item == null)
-                        return new List<SlideStateBase>();
+                        return new ObservableCollection<SlideStateBase>();
 
-                    return item.Slides.Select((s, index) => convertDataToState(s, index)).ToList();
+                    return new ObservableCollection<SlideStateBase>(item.Slides.Select((s, index) => convertDataToState(s, index)).ToList());
                 })
                 .ToProperty(this, x => x.SlideStates);
+
+            UpdateItemStates();
         }
 
         public int Index { get; set; }
@@ -43,20 +45,19 @@ namespace HandsLiftedApp.Models
         private Item? _item;
         public Item? Item { get => _item; set => this.RaiseAndSetIfChanged(ref _item, value); }
 
-        private ObservableAsPropertyHelper<List<SlideStateBase>> _SlideStates;
-        public List<SlideStateBase> SlideStates { get => _SlideStates.Value; }
+        private ObservableAsPropertyHelper<ObservableCollection<SlideStateBase>> _SlideStates;
+        public ObservableCollection<SlideStateBase> SlideStates { get => _SlideStates.Value; }
 
         // slide index here?
         public int SelectedIndex
         {
-            get => selectedIndex; set
+            get => _selectedIndex; set
             {
-                selectedIndex = value;
+                this.RaiseAndSetIfChanged(ref _selectedIndex, value);
 
-                if (selectedIndex > -1)
+                if (_selectedIndex > -1)
                 {
-                MessageBus.Current.SendMessage(new Class1() { SourceItemStateIndex = Index });
-
+                    MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItemStateIndex = Index });
                 }
             }
         }
@@ -97,9 +98,19 @@ namespace HandsLiftedApp.Models
             seq.Show();
         }
 
+        void UpdateItemStates()
+        {
+            if (Item == null)
+                return;
+
+            List<SlideStateBase> slideStateBases = Item.Slides.Select((s, index) => convertDataToState(s, index)).ToList(); ;
+            var x = new ObservableCollection<SlideStateBase>(slideStateBases);
+            SlideStates.UpdateCollection(x);
+        }
         private void Vm_SongDataUpdated(object? sender, EventArgs e)
         {
             Item = ((ThresholdReachedEventArgs)e).UpdatedSongData;
+            UpdateItemStates();
         }
     }
 }

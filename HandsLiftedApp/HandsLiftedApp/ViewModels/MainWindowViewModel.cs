@@ -91,7 +91,7 @@ namespace HandsLiftedApp.ViewModels
 				//	NextSlide = nextSlideState;
 			});
 
-			MessageBus.Current.Listen<Class1>()
+			MessageBus.Current.Listen<ActiveSlideChangedMessage>()
 				.Subscribe(x => {
 					var lastSelectedIndex = _playlistState.SelectedIndex;
 					
@@ -229,7 +229,6 @@ namespace HandsLiftedApp.ViewModels
             {
                 PlaylistState.Playlist.Items.Move(v, v - 1);
             }
-			Debug.Print("up");
         }
 		void OnMoveDownItemCommand(object? itemState)
         {
@@ -239,8 +238,6 @@ namespace HandsLiftedApp.ViewModels
 			{
 				PlaylistState.Playlist.Items.Move(v, v + 1);
 			}
-
-			Debug.Print("down");
         }
 		
 		void OnRemoveItemCommand(object? itemState)
@@ -248,7 +245,6 @@ namespace HandsLiftedApp.ViewModels
 			// TODO confirm dialog?
 			int v = PlaylistState.ItemStates.IndexOf(itemState);
 			PlaylistState.Playlist.Items.RemoveAt(v);
-			Debug.Print("remove");
         }
 
 	}
