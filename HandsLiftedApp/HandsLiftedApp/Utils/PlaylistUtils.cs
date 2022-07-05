@@ -40,7 +40,7 @@ namespace HandsLiftedApp.Utils
                 });
             staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start(); // IS THIS BLOCKING???
-            staThread.Join();
+            //staThread.Join();
 
             return value;
         }

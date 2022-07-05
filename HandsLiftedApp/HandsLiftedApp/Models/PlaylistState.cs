@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using Avalonia.Controls;
+using DynamicData;
 using DynamicData.Binding;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
@@ -58,6 +59,10 @@ namespace HandsLiftedApp.Models
             Playlist.Items.CollectionChanged += Items_CollectionChanged;
 
             UpdateItemStates();
+
+            if (Design.IsDesignMode) {
+                SelectedIndex = 0;
+            }
         }
 
         void UpdateItemStates()

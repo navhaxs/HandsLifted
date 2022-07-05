@@ -17,7 +17,7 @@
 		WindowState="Maximized"
 		WindowStartupLocation="CenterScreen"
 		DoubleTapped="MainWindow_DoubleTapped"
-		Title="VisionScreens">
+		Title="VisionScreens | Sunday 11am | 22 May 2022">
 
 	<Window.Resources>
 		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
@@ -43,13 +43,32 @@
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width = "0.2 *" />
-					<ColumnDefinition Width = "1" />
+					<ColumnDefinition Width = "0" />
 					<ColumnDefinition Width = "*" />
 				</Grid.ColumnDefinitions>
 				
 				<!-- Left panel -->
 				<DockPanel Grid.Column="0" Background="#eeeef2">
-					<!--<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>-->
+					<DockPanel.Styles>
+						<Style Selector="Button">
+							<Setter Property="BorderThickness" Value="1" />
+							<Setter Property="CornerRadius" Value="0" />
+							<Setter Property="BorderBrush" Value="#8e8e8e"/>
+							<Setter Property="Background" Value="#dddddd"/>
+						</Style>
+						<Style Selector="Button:pointerover /template/ ContentPresenter">
+							<Setter Property="BorderBrush" Value="#3c7fb1"/>
+							<Setter Property="Background" Value="#bee6fd"/>
+						</Style>
+						<Style Selector="Button:pressed /template/ ContentPresenter">
+							<Setter Property="BorderBrush" Value="#2c628b"/>
+							<Setter Property="Background" Value="#c4e5f6"/>
+						</Style>
+						<Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
+							<Setter Property="RenderTransform" Value="none" />
+						</Style>
+					</DockPanel.Styles>
+					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
 					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
 						<Button.Flyout>
 							<Flyout>
@@ -77,67 +96,22 @@
 						</Button.Flyout>
 						DEBUG</Button>
 
-					<ListBox 
-						x:Name="itemsListBox"
-						Items="{Binding PlaylistState.ItemStates}"
-							 SelectedIndex="{Binding PlaylistState.SelectedIndex, Mode=TwoWay}"
-							 Background="Transparent">
-						<!-- TODO style ListBoxItems with a border -->
-
-						<!--<ListBox.ItemTemplate>
-								<DataTemplate>
-									<Border Background="Red" CornerRadius="4" Padding="4">
-										<TextBlock Text="{Binding}"/>
-									</Border>
-								</DataTemplate>
-							</ListBox.ItemTemplate>-->
-						<!--<ListBox.ItemContainerStyle>
-							<Style TargetType="ListBoxItem">
-								<Setter Property="ContextMenu">
-									<Setter.Value>
-										<ContextMenu>
-											<MenuItem Header="Delete" Click="DeleteEvent"/>
-										</ContextMenu>
-									</Setter.Value>
-								</Setter>
-								<Setter Property="Content" Value="{Binding Path=EventName}"/>
-							</Style>
-						</ListBox.ItemContainerStyle>-->
-						<!--<ListBox.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Move Up" />
-								<MenuItem Header="Move Down" />
-							</ContextMenu>
-						</ListBox.ContextMenu>-->
-						<ListBox.Styles>
-							<Style Selector="ListBoxItem">
-								<Setter Property="ContextMenu">
-									<Setter.Value>
-										<ContextMenu>
-											<MenuItem Header="Move Up" Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" CommandParameter="{Binding}"/>
-											<MenuItem Header="Move Down" Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" CommandParameter="{Binding}"/>
-											<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
-										</ContextMenu>
-									</Setter.Value>
-								</Setter>
-							</Style>
-
-							<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-								<Setter Property="Background" Value="#edeafc"/>
-							</Style>
-						</ListBox.Styles>
-						<ListBox.DataTemplates>
-							<DataTemplate>
-								<TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Item.Title, FallbackValue=Item}" />
-							</DataTemplate>
-						</ListBox.DataTemplates>
-					</ListBox>
+					<controls:ItemOrderListView />
+					
 			</DockPanel>
 
-				<GridSplitter Grid.Column="1" Background="#eeeef2" />
+				<GridSplitter Grid.Column="1"
+							  Margin="-3,0"
+							  BorderThickness="3,0"
+			                  BorderBrush="Transparent"
+						      HorizontalAlignment="Stretch"
+							  ZIndex="9999"
+							  />
 
 				<!-- Centre panel-->
-				<Border Grid.Column="2" CornerRadius="2 0 0 0" HorizontalAlignment="Stretch" BorderBrush="#9a93cd" BorderThickness="1 1 0 0">
+				<Border Grid.Column="2" CornerRadius="2 0 0 0" HorizontalAlignment="Stretch" BorderBrush="#9a93cd" BorderThickness="1 1 0 0"
+						ZIndex="2"
+						>
 
 					<DockPanel>
 					<!--<Border
@@ -202,7 +176,14 @@
 			
 		</DockPanel>
 
-		<GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+		<GridSplitter Grid.Column="1"
+				Margin="-3,0"
+				BorderThickness="3,0"
+			    BorderBrush="Transparent"
+				HorizontalAlignment="Stretch"
+				Background="#9a93cd"
+				ZIndex="9999"
+			  />
 
 		<!-- Right panel -->
 		<DockPanel Grid.Column="2" Background="#eeeef2">

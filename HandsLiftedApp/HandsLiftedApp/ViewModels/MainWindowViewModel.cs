@@ -175,8 +175,8 @@ namespace HandsLiftedApp.ViewModels
 				{
                     ImportStats result = await PlaylistUtils.AddPowerPointToPlaylist((string) fileName);
                     Data.Models.Items.SlidesGroup slidesGroup = PlaylistUtils.CreateSlidesGroup(result.Task.OutputDirectory);
-					slidesGroup.Title = result.FileName;
 					PlaylistState.Playlist.Items.Add(slidesGroup);
+					slidesGroup.Title = result.FileName;
                 }
 
 			}
