@@ -8,9 +8,10 @@
 	<v:VideoView x:Name="VideoView" VlcRenderingOptions="Avalonia">
 		<!-- TODO implement fade out animation by opacity. (opacity works here!) -->
 		<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom">
-			<Button Content="PLAY" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click" />
-			<Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
-			<Button Content="Pause" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" />
+			<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="44" />
+			<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"
+					FontSize="44" Click="StopButton_Click" />
+			<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" Background="Red" FontSize="44" />
 		</StackPanel>
 	</v:VideoView >
 </UserControl>

@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.XTransitioningContentControl;
 using LibVLCSharp.Shared;
 using ReactiveUI;
 using System;
@@ -7,9 +8,10 @@ using System;
 namespace HandsLiftedApp.Models.SlideState
 {
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
-    public class VideoSlideState : SlideStateBase
+    public class VideoSlideState : SlideStateBase, ISlideRender
     {
         private LibVLC _libVLC;
+        public Media _media { get; set; }
 
         public VideoSlideState(VideoSlide data, int index) : base(data, index)
         {
@@ -17,14 +19,14 @@ namespace HandsLiftedApp.Models.SlideState
 
             try
             {
-                return;
                 _libVLC = new LibVLC();
                 MediaPlayer = new MediaPlayer(_libVLC);
 
 
                 string absolute = new Uri(VideoPath).AbsoluteUri;
                 bool isfile = absolute.StartsWith("file://");
-                MediaPlayer.Media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
+                _media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
+                MediaPlayer.Media = _media;
             }
             catch
             {
@@ -44,5 +46,9 @@ namespace HandsLiftedApp.Models.SlideState
         public string VideoPath { get; set; }
         public MediaPlayer MediaPlayer { get; }
 
+        public void OnLeaveSlide()
+        {
+            MediaPlayer?.Stop();
+        }
     }
 }

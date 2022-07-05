@@ -19,6 +19,7 @@
 	</Window.Background>
 	<StackPanel Background="#a4a4a4">
 		<TextBlock Text="{Binding $parent[Window].Title}" FontSize="22"/>
+		<Button Name="debugButton" Content="Debug in VS"/>
 		<pg:PropertyGrid x:Name="propertyGrid"/>
 	</StackPanel>
 </Window>

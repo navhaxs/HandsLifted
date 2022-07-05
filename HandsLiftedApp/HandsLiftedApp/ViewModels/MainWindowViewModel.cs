@@ -12,6 +12,7 @@ using static HandsLiftedApp.Importer.PowerPoint.Main;
 using HandsLiftedApp.Data.Models;
 using System.Diagnostics;
 using DynamicData;
+using System.IO;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -169,14 +170,30 @@ namespace HandsLiftedApp.ViewModels
 		{
             try
             {
-				var fileName = await ShowOpenFileDialog.Handle(Unit.Default);
+				var fullFilePath = await ShowOpenFileDialog.Handle(Unit.Default);
 
-				if (fileName != null && fileName is string)
+				if (fullFilePath != null && fullFilePath is string)
 				{
-                    ImportStats result = await PlaylistUtils.AddPowerPointToPlaylist((string) fileName);
-                    Data.Models.Items.SlidesGroup slidesGroup = PlaylistUtils.CreateSlidesGroup(result.Task.OutputDirectory);
-					PlaylistState.Playlist.Items.Add(slidesGroup);
-					slidesGroup.Title = result.FileName;
+					DateTime now = DateTime.Now;
+					string pptxFileName = Path.GetFileName(fullFilePath);
+					string targetDirectory = Path.Join(PlaylistState.PlaylistWorkingDirectory, pptxFileName, now.ToString("yyyy-MM-dd-HH-mm-ss"));
+					Directory.CreateDirectory(targetDirectory);
+
+					Data.Models.Items.SlidesGroup slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
+					slidesGroup.Title = pptxFileName;
+
+					//PlaylistState.Playlist.Items.Add(slidesGroup);
+
+
+					// kick off
+					ImportTask importTask = new ImportTask() { PPTXFilePath = (string) fullFilePath, OutputDirectory = targetDirectory };
+					PlaylistUtils.AddPowerPointToPlaylist(importTask)
+						.ContinueWith((s) =>
+                        {
+							PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
+							PlaylistState.Playlist.Items.Add(slidesGroup);
+						});
+
                 }
 
 			}

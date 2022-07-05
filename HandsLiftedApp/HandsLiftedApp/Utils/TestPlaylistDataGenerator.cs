@@ -15,9 +15,11 @@ namespace HandsLiftedApp.Utils
         public static Playlist Generate()
         {
 			Playlist playlist = new Playlist();
-
+			var rnd = new Random();
 			var songs = Directory.GetFiles(@"C:\VisionScreens\TestSongs", "*.*", SearchOption.AllDirectories)
-				.Where(s => s.ToLower().EndsWith(".txt"));
+				.Where(s => s.ToLower().EndsWith(".txt"))
+				.OrderBy(x => rnd.Next()).Take(4)
+				;
 			foreach (var f in songs)
 			{
 				playlist.Items.Add(SongImporter.ImportSongFromTxt(f));

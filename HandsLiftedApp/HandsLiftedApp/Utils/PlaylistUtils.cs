@@ -16,31 +16,33 @@ namespace HandsLiftedApp.Utils
     internal static class PlaylistUtils
     {
 
-        public async static Task<ImportStats?> AddPowerPointToPlaylist(string fileName)
+        public async static Task<ImportStats?> AddPowerPointToPlaylist(ImportTask importTask)
         {
-          
-            // example calling code:
-            var progress = new Progress<ImportStats>();
-            //progress.ProgressChanged += Progress_ProgressChanged;
-            var outDir = GetTempDirPath();
-
             ImportStats? value = null;
             Exception? threadEx = null;
-            Thread staThread = new Thread(
-                delegate ()
-                {
-                    try
+
+            await Task.Factory.StartNew(() => {
+                var progress = new Progress<ImportStats>();
+                //progress.ProgressChanged += Progress_ProgressChanged;
+                var outDir = GetTempDirPath();
+
+                Thread staThread = new Thread(
+                    delegate ()
                     {
-                        value = RunPowerPointImportTask(progress, new ImportTask() { PPTXFilePath = fileName, OutputDirectory = outDir });
-                    }
-                    catch (Exception ex)
-                    {
-                        threadEx = ex;
-                    }
-                });
-            staThread.SetApartmentState(ApartmentState.STA);
-            staThread.Start(); // IS THIS BLOCKING???
-            //staThread.Join();
+                        try
+                        {
+                            value = RunPowerPointImportTask(progress, importTask);
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            threadEx = ex;
+                        }
+                    });
+                staThread.SetApartmentState(ApartmentState.STA);
+                staThread.Start();
+                staThread.Join();
+            });
 
             return value;
         }
@@ -49,25 +51,31 @@ namespace HandsLiftedApp.Utils
         //    Debug.Print(e.ToString());
         //}
 
-        public static SlidesGroup CreateSlidesGroup(string filePath)
+        public static SlidesGroup CreateSlidesGroup(string directory)
         {
             SlidesGroup slidesGroup = new SlidesGroup();
-			try
-			{
-				var images = Directory.GetFiles(filePath, "*.*", SearchOption.AllDirectories)
+            UpdateSlidesGroup(slidesGroup, directory);
+            return slidesGroup;
+        }
+
+        public static SlidesGroup UpdateSlidesGroup(SlidesGroup slidesGroup, string directory)
+        {
+            try
+            {
+                var images = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories)
                                 .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"));
-				foreach (var f in images)
-				{
-					if (f.EndsWith(".mp4"))
-					{
-						slidesGroup._Slides.Add(new VideoSlide(f));
-					}
-					else
-					{
-						slidesGroup._Slides.Add(new ImageSlide(f));
-					}
-				}
-			}
+                foreach (var f in images)
+                {
+                    if (f.EndsWith(".mp4"))
+                    {
+                        slidesGroup._Slides.Add(new VideoSlide(f));
+                    }
+                    else
+                    {
+                        slidesGroup._Slides.Add(new ImageSlide(f));
+                    }
+                }
+            }
             catch { }
 
             return slidesGroup;

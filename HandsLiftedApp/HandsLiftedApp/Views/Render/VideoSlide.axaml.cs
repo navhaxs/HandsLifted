@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using HandsLiftedApp.Controls;
 using HandsLiftedApp.Models.SlideState;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
@@ -11,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views.Render
 {
-    public partial class VideoSlide : UserControl
+    public partial class VideoSlide : UserControl, ISlideRender
     {
 
         private VideoView VideoView;
-        private LibVLC _libVLC;
-        private MediaPlayer _mediaPlayer;
+        //private LibVLC _libVLC;
+        //private MediaPlayer _mediaPlayer;
 
         public VideoSlide()
         {
@@ -32,15 +33,14 @@ namespace HandsLiftedApp.Views.Render
 
             VideoView = this.Get<VideoView>("VideoView");
 
-            _libVLC = new LibVLC();
-            _mediaPlayer = new MediaPlayer(_libVLC);
+            //_libVLC = new LibVLC();
+            //_mediaPlayer = new MediaPlayer(_libVLC);
 
             VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia;
 
-            VideoView.MediaPlayer = _mediaPlayer;
-//#if DEBUG
-//            this.AttachDevTools();
-//#endif
+            //#if DEBUG
+            //            this.AttachDevTools();
+            //#endif
 
             //var VideoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4";
 
@@ -48,7 +48,14 @@ namespace HandsLiftedApp.Views.Render
             //bool isfile = absolute.StartsWith("file://");
             //_mediaPlayer.Media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
             ////
+            this.DataContextChanged += VideoSlide_DataContextChanged;
+        }
 
+        private void VideoSlide_DataContextChanged(object? sender, EventArgs e)
+        {
+
+            if (this.DataContext is VideoSlideState)
+                VideoView.MediaPlayer = ((VideoSlideState)this.DataContext).MediaPlayer; ;
         }
 
         private void VideoSlide_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
@@ -74,8 +81,7 @@ namespace HandsLiftedApp.Views.Render
                         }
                         //VideoView.MediaPlayer.Play(new Media(_libVLC,
                         //    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
-                        VideoView.MediaPlayer.Play(new Media(_libVLC,
-                            ((VideoSlideState) this.DataContext).VideoPath, FromType.FromPath));
+                         ((VideoSlideState)this.DataContext).MediaPlayer.Play();
                     }
                 });
             });
@@ -99,14 +105,17 @@ namespace HandsLiftedApp.Views.Render
         {
             if (!VideoView.MediaPlayer.IsPlaying)
             {
-                VideoView.MediaPlayer.Play(new Media(_libVLC,
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
+                ((VideoSlideState)this.DataContext).MediaPlayer.Play();
             }
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
             VideoView.MediaPlayer.Pause();
+        }
+
+        public void OnLeaveSlide()
+        {
         }
     }
 }

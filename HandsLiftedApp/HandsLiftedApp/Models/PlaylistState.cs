@@ -80,6 +80,9 @@ namespace HandsLiftedApp.Models
         public Playlist Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
 
 
+        public string _playlistWorkingDirectory = @"C:\VisionScreens\TestPlaylist";
+        public string PlaylistWorkingDirectory { get => _playlistWorkingDirectory; set => this.RaiseAndSetIfChanged(ref _playlistWorkingDirectory, value); }
+
         private int selectedIndex = -1;
         public int SelectedIndex { get => selectedIndex; set {
                 this.RaiseAndSetIfChanged(ref selectedIndex, value);

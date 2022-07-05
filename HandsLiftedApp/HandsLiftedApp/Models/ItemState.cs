@@ -27,8 +27,8 @@ namespace HandsLiftedApp.Models
         {
             EditCommand = ReactiveCommand.Create(RunTheThing);
 
-            _SlideStates = this.WhenAnyValue(x => x.Item,
-                (item) =>
+            _SlideStates = this.WhenAnyValue(x => x.Item, x => x.Item.Slides,
+                (item, slides) =>
                 {
                     if (item == null)
                         return new ObservableCollection<SlideStateBase>();
@@ -42,8 +42,8 @@ namespace HandsLiftedApp.Models
 
         public int Index { get; set; }
 
-        private Item? _item;
-        public Item? Item { get => _item; set => this.RaiseAndSetIfChanged(ref _item, value); }
+        private Item _item;
+        public Item Item { get => _item; set => this.RaiseAndSetIfChanged(ref _item, value); }
 
         private ObservableAsPropertyHelper<ObservableCollection<SlideStateBase>> _SlideStates;
         public ObservableCollection<SlideStateBase> SlideStates { get => _SlideStates.Value; }
@@ -92,6 +92,9 @@ namespace HandsLiftedApp.Models
 
         void RunTheThing()
         {
+            if (Item is not SongItem)
+                return;
+
             SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem) Item };
             vm.SongDataUpdated += Vm_SongDataUpdated;
             SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };

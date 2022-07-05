@@ -137,6 +137,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
 
+            if (CurrentContent is ISlideRender)
+            {
+                ((ISlideRender)CurrentContent).OnLeaveSlide();
+            }
+
             _contentPresenterContainer.IsVisible = false;
 
             CurrentContent = content;

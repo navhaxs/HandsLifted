@@ -208,7 +208,7 @@
 				</Grid.Background>
 				<Border>
 					<Viewbox>
-						<views:ActiveSlideOutput Width="1920" Height="1080" />
+						<!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
 						<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
 						<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
 					</Viewbox>
