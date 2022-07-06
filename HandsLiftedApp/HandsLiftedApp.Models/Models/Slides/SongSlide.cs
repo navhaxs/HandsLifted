@@ -10,7 +10,7 @@ namespace HandsLiftedApp.Data.Slides
     public class SongSlide<T> : Slide where T : ISongSlideState
     {
         T _state;
-        T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
+        public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
         public SongSlide(SongStanza ownerSongStanza)
         {

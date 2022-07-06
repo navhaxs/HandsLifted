@@ -17,8 +17,7 @@ namespace HandsLiftedApp.Views.Render
     {
 
         private VideoView VideoView;
-        //private LibVLC _libVLC;
-        //private MediaPlayer _mediaPlayer;
+        private MediaPlayer? MediaPlayer;
 
         public VideoSlideRenderer()
         {
@@ -32,12 +31,11 @@ namespace HandsLiftedApp.Views.Render
                 return;
 
 
+
             VideoView = this.Get<VideoView>("VideoView");
 
             //_libVLC = new LibVLC();
             //_mediaPlayer = new MediaPlayer(_libVLC);
-
-            VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia;
 
             //#if DEBUG
             //            this.AttachDevTools();
@@ -50,13 +48,29 @@ namespace HandsLiftedApp.Views.Render
             //_mediaPlayer.Media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
             ////
             this.DataContextChanged += VideoSlide_DataContextChanged;
+            this.AttachedToVisualTree += VideoSlideRenderer_AttachedToVisualTree;
+
+        }
+
+        private void VideoSlideRenderer_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+        {
+            if (this.VisualRoot as Window is ProjectorWindow)
+            {
+                if (this.DataContext is VideoSlide<VideoSlideStateImpl>)
+                    VideoView.MediaPlayer = MediaPlayer;
+            }
         }
 
         private void VideoSlide_DataContextChanged(object? sender, EventArgs e)
         {
-
-            if (this.DataContext is VideoSlide<VideoSlideStateImpl>)
-                VideoView.MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer; ;
+            if (this.DataContext == null)
+            {
+                MediaPlayer = null;
+            }
+            else
+            {
+                MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
+            }
         }
 
         private void VideoSlide_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
@@ -66,7 +80,7 @@ namespace HandsLiftedApp.Views.Render
 
         private void VideoSlide_DetachedFromLogicalTree(object? sender, Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs e)
         {
-            VideoView?.MediaPlayer?.Stop();
+            MediaPlayer?.Stop();
         }
 
         private async Task sAsync()
@@ -74,15 +88,9 @@ namespace HandsLiftedApp.Views.Render
             await Task.Run(() => {
                 Task.Delay(100).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
                 Dispatcher.UIThread.InvokeAsync(() => {
-                    if (VideoView.MediaPlayer != null && !VideoView.MediaPlayer.IsPlaying)
+                    if (MediaPlayer != null && !MediaPlayer.IsPlaying)
                     {
-                        if (this.DataContext == null)
-                        {
-                            return;
-                        }
-                        //VideoView.MediaPlayer.Play(new Media(_libVLC,
-                        //    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
-                        VideoView.MediaPlayer.Play();
+                        MediaPlayer.Play();
                     }
                 });
             });
@@ -96,27 +104,28 @@ namespace HandsLiftedApp.Views.Render
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (VideoView.MediaPlayer.IsPlaying)
+            if (MediaPlayer != null && MediaPlayer.IsPlaying)
             {
-                VideoView.MediaPlayer.Stop();
+                MediaPlayer.Stop();
             }
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!VideoView.MediaPlayer.IsPlaying)
+            if (MediaPlayer != null && !MediaPlayer.IsPlaying)
             {
-                VideoView.MediaPlayer.Play();
+                MediaPlayer.Play();
             }
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
-            VideoView.MediaPlayer.Pause();
+            MediaPlayer?.Pause();
         }
 
         public void OnLeaveSlide()
         {
+            MediaPlayer?.Stop();
         }
     }
 }

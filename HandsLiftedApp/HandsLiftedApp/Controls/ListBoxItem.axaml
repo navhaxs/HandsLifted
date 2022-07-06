@@ -57,7 +57,7 @@
 		<Setter Property="Template">
 			<ControlTemplate>
 				<DockPanel>
-					<TextBlock DockPanel.Dock="Bottom" Background="Transparent" Padding="2 0 2 2" Text="{Binding SlideNumber, FallbackValue='#'}" />
+					<TextBlock DockPanel.Dock="Bottom" Background="Transparent" Padding="2 0 2 2" Text="{Binding State.SlideNumber, FallbackValue='#'}" />
 					<Border CornerRadius="2">
 
 						<Grid>

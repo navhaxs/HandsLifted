@@ -29,8 +29,8 @@
 	<StackPanel>
 		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
 			<DockPanel>
-				<Button Padding="22 6" Command="{Binding EditCommand}" DockPanel.Dock="Right">Edit</Button>
-				<Label Padding="12 8" Content="{Binding Title, FallbackValue=Item}" FontSize="16" />
+				<Button Padding="22 6" Command="{Binding State.EditCommand}" DockPanel.Dock="Right">Edit</Button>
+				<Label Padding="12 8" Content="{Binding Title, FallbackValue='Untitled Item'}" FontSize="16" />
 			</DockPanel>
 		</Border>
 

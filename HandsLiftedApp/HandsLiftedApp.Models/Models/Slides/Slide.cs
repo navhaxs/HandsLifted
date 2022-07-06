@@ -14,12 +14,10 @@ namespace HandsLiftedApp.Data.Slides
         //public abstract string SlideLabel { get; }
 
         public abstract string SlideText { get; }
-
-        //// slide stage display message
-        //public abstract string SlideNumber { get; }
     }
 
     public interface ISlideState
     {
+        //public abstract int SlideNumber { get; set; }
     }
 }

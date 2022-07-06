@@ -26,23 +26,19 @@ namespace HandsLiftedApp.Data.Models
 
         private ObservableCollection<Item<I>> _items = new ObservableCollection<Item<I>>();
 
-        // for serialization
         public Playlist()
         {
-            try
-            {
-                State = (T)Activator.CreateInstance(typeof(T), this);
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.Print(e.ToString());
-            }
-            // new PlaylistStateImpl(Playlist);
+            State = (T)Activator.CreateInstance(typeof(T), this);
+            Items.CollectionChanged += Items_CollectionChanged;
         }
 
-        public Playlist(T state)
+        // update the item states
+        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            State = state;
+            foreach (var (item, index) in Items.Select((item, index) => (item, index)))
+            {
+                item.State.ItemIndex = index;
+            };
         }
 
         public ObservableCollection<Item<I>> Items { get => _items; set => this.RaiseAndSetIfChanged(ref _items, value); }

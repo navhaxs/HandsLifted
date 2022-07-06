@@ -21,13 +21,8 @@ namespace HandsLiftedApp.Data.Slides
             State = (T)Activator.CreateInstance(typeof(T), this);
         }
 
-        //
-
-        //public override string SlideLabel => throw new NotImplementedException();
-
         public override string SlideText => "image";
 
-        //public override string SlideNumber => throw new NotImplementedException();
     }
     public interface IImageSlideState : ISlideState { }
 

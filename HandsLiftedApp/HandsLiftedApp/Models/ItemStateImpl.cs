@@ -30,21 +30,23 @@ namespace HandsLiftedApp.Models
             EditCommand = ReactiveCommand.Create(RunTheThing);
 
             _selectedSlide = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) =>
-            {
-                if (selectedIndex != -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
-                    return parent.Slides[selectedIndex];
+                {
+                    if (selectedIndex != -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
+                        return parent.Slides[selectedIndex];
 
-                return null;
-            })
-            .ToProperty(this, x => x.SelectedSlide);
+                    return null;
+                })
+                .ToProperty(this, x => x.SelectedSlide);
 
+            _isSelected = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
+                .ToProperty(this, x => x.IsSelected);
         }
 
         //public int Index { get; set; }
 
         //private Item<ItemStateImpl> _item;
         //public Item<ItemStateImpl> Item { get => _item; set => this.RaiseAndSetIfChanged(ref _item, value); }
-        private int _selectedIndex;
+        private int _selectedIndex = -1;
 
         public int SelectedIndex
         {
@@ -59,10 +61,11 @@ namespace HandsLiftedApp.Models
             }
         }
 
+        private ObservableAsPropertyHelper<bool> _isSelected;
+        public bool IsSelected { get => _isSelected.Value; }
 
         private ObservableAsPropertyHelper<Slide> _selectedSlide;
         public Slide SelectedSlide { get => _selectedSlide.Value; }
-
 
         public ReactiveCommand<Unit, Unit> EditCommand { get; }
 
@@ -71,13 +74,13 @@ namespace HandsLiftedApp.Models
 
         void RunTheThing()
         {
-            //if (Item is not SongItem)
-            //    return;
+            if (parent is not SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)
+                return;
 
-            //SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem) Item };
+            SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>) parent};
             //vm.SongDataUpdated += Vm_SongDataUpdated;
-            //SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
-            //seq.Show();
+            SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
+            seq.Show();
         }
 
     }

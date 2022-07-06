@@ -54,6 +54,8 @@ namespace HandsLiftedApp.Data.Models.Items
                 if (stanzaSlides != null)
                     x.AddRange(stanzaSlides);
 
+          
+
                 return x;
             })
             .ToProperty(this, c => c.Slides)
@@ -101,6 +103,16 @@ namespace HandsLiftedApp.Data.Models.Items
                     slides.Add(new SongSlide<S>(_datum) { Text = line });
                 }
             }
+
+            // HACK
+            // HACK
+            // HACK
+            // HACK
+            foreach (var (item, index) in slides.Select((item, index) => (item, index)))
+            {
+                //((SongSlide<S>)item).State = index;
+            };
+
 
             return slides;
         }
