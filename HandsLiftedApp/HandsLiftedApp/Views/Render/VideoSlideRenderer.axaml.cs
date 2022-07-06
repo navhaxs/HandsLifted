@@ -33,6 +33,7 @@ namespace HandsLiftedApp.Views.Render
 
 
             VideoView = this.Get<VideoView>("VideoView");
+            //VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia;
 
             //_libVLC = new LibVLC();
             //_mediaPlayer = new MediaPlayer(_libVLC);
@@ -50,6 +51,7 @@ namespace HandsLiftedApp.Views.Render
             this.DataContextChanged += VideoSlide_DataContextChanged;
             this.AttachedToVisualTree += VideoSlideRenderer_AttachedToVisualTree;
 
+
         }
 
         private void VideoSlideRenderer_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -57,7 +59,13 @@ namespace HandsLiftedApp.Views.Render
             if (this.VisualRoot as Window is ProjectorWindow)
             {
                 if (this.DataContext is VideoSlide<VideoSlideStateImpl>)
-                    VideoView.MediaPlayer = MediaPlayer;
+            {
+
+                    MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
+
+                    if (this.VisualRoot as Window is ProjectorWindow)
+                        VideoView.MediaPlayer = MediaPlayer;
+            }
             }
         }
 
@@ -70,6 +78,9 @@ namespace HandsLiftedApp.Views.Render
             else
             {
                 MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
+
+                if (this.VisualRoot as Window is ProjectorWindow)
+                    VideoView.MediaPlayer = MediaPlayer;
             }
         }
 
@@ -86,7 +97,8 @@ namespace HandsLiftedApp.Views.Render
         private async Task sAsync()
         {
             await Task.Run(() => {
-                Task.Delay(100).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
+                // HACK waits for Video control to *fully* initialise first...
+                Task.Delay(200).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
                 Dispatcher.UIThread.InvokeAsync(() => {
                     if (MediaPlayer != null && !MediaPlayer.IsPlaying)
                     {
