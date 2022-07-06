@@ -31,7 +31,6 @@ namespace HandsLiftedApp.Models
                     }
                 });
 
-
             _selectedItem = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) =>
                 {
                     if (selectedIndex != -1)

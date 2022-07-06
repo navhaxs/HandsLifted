@@ -13,27 +13,6 @@ namespace HandsLiftedApp.Views
         public ActiveSlideOutput()
         {
             InitializeComponent();
-
-
-
-            t = new System.Timers.Timer();
-            t.AutoReset = false;
-            t.Elapsed += new System.Timers.ElapsedEventHandler(t_Elapsed);
-            t.Interval = 1000;
-            t.Start();
-        }
-
-        void t_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            Console.WriteLine(DateTime.Now.ToString("o"));
-
-            //Dispatcher.UIThread.InvokeAsync(() =>
-            //{
-            //    TransitioningContentControl root = this.FindControl<TransitioningContentControl>("root");
-            //    root.Content = DateTime.Now.ToString("o");
-            //});
-
-            t.Start();
         }
 
         private void InitializeComponent()

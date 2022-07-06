@@ -15,6 +15,51 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public class SongItem<T, S, I> : Item<I> where T : ISongTitleSlideState where S : ISongSlideState where I : IItemState
     {
+
+       public SongItem()
+    {
+        //Stanzas.CollectionChanged += Stanzas_CollectionChanged;
+
+        //StanzaSlides.
+
+        _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
+            (title, copyright) =>
+            {
+                return new SongTitleSlide<T>() { Title = Title, Copyright = Copyright };
+                ;
+            })
+            .ToProperty(this, c => c.TitleSlide)
+        ;
+
+        _stanzaSlides = this.Stanzas
+            // Convert the collection to a stream of chunks,
+            // so we have IObservable<IChangeSet<TKey, TValue>>
+            // type also known as the DynamicData monad.
+            .ToObservableChangeSet(x => x)
+            // Each time the collection changes, we get
+            // all updated items at once.
+            .ToCollection()
+            .Select((collection) => processSongStanzasToSlides(collection))
+            .ToProperty(this, c => c.StanzaSlides)
+        ;
+
+        _slides = this.WhenAnyValue(x => x.TitleSlide, x => x.StanzaSlides,
+            (titleSlide, stanzaSlides) =>
+            {
+                var x = new ObservableCollection<Slide>();
+
+                if (titleSlide != null)
+                    x.Add(titleSlide);
+
+                if (stanzaSlides != null)
+                    x.AddRange(stanzaSlides);
+
+                return x;
+            })
+            .ToProperty(this, c => c.Slides)
+        ;
+    }
+
         private string _copyright = "";
         public string Copyright { get => _copyright; set => this.RaiseAndSetIfChanged(ref _copyright, value); }
 
@@ -38,51 +83,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         [XmlIgnore]
 
-        public override ObservableCollection<Slide> Slides { get => _slides.Value; }
-
-        public SongItem()
-        {
-            //Stanzas.CollectionChanged += Stanzas_CollectionChanged;
-
-            //StanzaSlides.
-
-            _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
-                (title, copyright) =>
-                {
-                    return new SongTitleSlide<T>() { Title = Title, Copyright = Copyright };
-                    ;
-                })
-                .ToProperty(this, c => c.TitleSlide)
-            ;
-
-            _stanzaSlides = this.Stanzas
-                // Convert the collection to a stream of chunks,
-                // so we have IObservable<IChangeSet<TKey, TValue>>
-                // type also known as the DynamicData monad.
-                .ToObservableChangeSet(x => x)
-                // Each time the collection changes, we get
-                // all updated items at once.
-                .ToCollection()
-                .Select((collection) => processSongStanzasToSlides(collection))
-                .ToProperty(this, c => c.StanzaSlides)
-            ;
-
-            _slides = this.WhenAnyValue(x => x.TitleSlide, x => x.StanzaSlides,
-                (titleSlide, stanzaSlides) =>
-                {
-                    var x = new ObservableCollection<Slide>();
-
-                    if (titleSlide != null)
-                        x.Add(titleSlide);
-
-                    if (stanzaSlides != null)
-                        x.AddRange(stanzaSlides);
-
-                    return x;
-                })
-                .ToProperty(this, c => c.Slides)
-            ;
-        }
+        public override ObservableCollection<Slide> Slides { get => _slides?.Value; }
 
         public List<Slide> processSongStanzasToSlides(IReadOnlyCollection<SongStanza> stanzas)
         {

@@ -9,5 +9,5 @@
 			 xmlns:ext="using:HandsLiftedApp.Extensions"
              xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
              x:Class="HandsLiftedApp.Views.ActiveSlideOutput">
-	<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" IsLive="True" />
+	<viewsrender:SlideRenderer DataContext="{Binding Playlist.State.SelectedItem.State.SelectedSlide}" IsLive="True" />
 </UserControl>

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:v="using:LibVLCSharp.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="HandsLiftedApp.Views.Render.VideoSlide">
+             x:Class="HandsLiftedApp.Views.Render.VideoSlideRenderer">
 	<v:VideoView x:Name="VideoView" VlcRenderingOptions="Avalonia">
 		<!-- TODO implement fade out animation by opacity. (opacity works here!) -->
 		<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom">

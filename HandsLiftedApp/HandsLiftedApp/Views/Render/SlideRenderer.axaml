@@ -16,23 +16,22 @@
 
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
-			<DataTemplate x:Key="SongTitleSlideState">
-				<views:SimpleSlideTitle DataContext="{Binding Data}" Width="1920" Height="1080" />
+			<DataTemplate x:Key="SongTitleSlide">
+				<views:SimpleSlideTitle Width="1920" Height="1080" />
 			</DataTemplate>
-			<DataTemplate x:Key="SongSlideState">
-				<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
+			<DataTemplate x:Key="SongSlide">
+				<views:SimpleSlideTemplate Width="1920" Height="1080" />
 			</DataTemplate>
-			<DataTemplate x:Key="ImageSlideState">
+			<DataTemplate x:Key="ImageSlide">
 				<Grid>
-					<Image Stretch="Uniform" Source="{Binding Image}" RenderOptions.BitmapInterpolationMode="HighQuality" />
-					<TextBlock Text="{Binding ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />
-					<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
+					<Image Stretch="Uniform" Source="{Binding State.Image}" RenderOptions.BitmapInterpolationMode="HighQuality" />
+					<TextBlock Text="{Binding State.ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />
 				</Grid>
 			</DataTemplate>
-			<DataTemplate x:Key="VideoSlideState">
+			<DataTemplate x:Key="VideoSlide">
 				<Grid>
-					<TextBlock Text="{Binding Data.VideoPath}" TextWrapping="Wrap" />
-					<viewsrender:VideoSlide DataContext="{Binding}" />
+					<TextBlock Text="{Binding VideoPath}" TextWrapping="Wrap" />
+					<viewsrender:VideoSlideRenderer />
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="MyKey">

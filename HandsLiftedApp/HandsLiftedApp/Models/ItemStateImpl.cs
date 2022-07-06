@@ -22,19 +22,29 @@ namespace HandsLiftedApp.Models
     {
         private Item<ItemStateImpl> parent;
 
-        private int _selectedIndex;
         //private SlideStateBase selectedItem;
 
         public ItemStateImpl(ref Item<ItemStateImpl> item)
         {
             parent = item;
             EditCommand = ReactiveCommand.Create(RunTheThing);
+
+            _selectedSlide = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) =>
+            {
+                if (selectedIndex != -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
+                    return parent.Slides[selectedIndex];
+
+                return null;
+            })
+            .ToProperty(this, x => x.SelectedSlide);
+
         }
 
         //public int Index { get; set; }
 
         //private Item<ItemStateImpl> _item;
         //public Item<ItemStateImpl> Item { get => _item; set => this.RaiseAndSetIfChanged(ref _item, value); }
+        private int _selectedIndex;
 
         public int SelectedIndex
         {
@@ -42,13 +52,17 @@ namespace HandsLiftedApp.Models
             {
                 this.RaiseAndSetIfChanged(ref _selectedIndex, value);
 
-
                 if (_selectedIndex > -1)
                 {
                     MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItemStateIndex = ItemIndex });
                 }
             }
         }
+
+
+        private ObservableAsPropertyHelper<Slide> _selectedSlide;
+        public Slide SelectedSlide { get => _selectedSlide.Value; }
+
 
         public ReactiveCommand<Unit, Unit> EditCommand { get; }
 

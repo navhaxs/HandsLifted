@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using HandsLiftedApp.Controls;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
@@ -12,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views.Render
 {
-    public partial class VideoSlide : UserControl, ISlideRender
+    public partial class VideoSlideRenderer : UserControl, ISlideRender
     {
 
         private VideoView VideoView;
         //private LibVLC _libVLC;
         //private MediaPlayer _mediaPlayer;
 
-        public VideoSlide()
+        public VideoSlideRenderer()
         {
             InitializeComponent();
 
@@ -54,8 +55,8 @@ namespace HandsLiftedApp.Views.Render
         private void VideoSlide_DataContextChanged(object? sender, EventArgs e)
         {
 
-            if (this.DataContext is VideoSlideStateImpl)
-                VideoView.MediaPlayer = ((VideoSlideStateImpl)this.DataContext).MediaPlayer; ;
+            if (this.DataContext is VideoSlide<VideoSlideStateImpl>)
+                VideoView.MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer; ;
         }
 
         private void VideoSlide_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
@@ -65,7 +66,7 @@ namespace HandsLiftedApp.Views.Render
 
         private void VideoSlide_DetachedFromLogicalTree(object? sender, Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs e)
         {
-            VideoView.MediaPlayer.Stop();
+            VideoView?.MediaPlayer?.Stop();
         }
 
         private async Task sAsync()
@@ -73,7 +74,7 @@ namespace HandsLiftedApp.Views.Render
             await Task.Run(() => {
                 Task.Delay(100).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
                 Dispatcher.UIThread.InvokeAsync(() => {
-                    if (!VideoView.MediaPlayer.IsPlaying)
+                    if (VideoView.MediaPlayer != null && !VideoView.MediaPlayer.IsPlaying)
                     {
                         if (this.DataContext == null)
                         {
@@ -81,7 +82,7 @@ namespace HandsLiftedApp.Views.Render
                         }
                         //VideoView.MediaPlayer.Play(new Media(_libVLC,
                         //    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
-                         ((VideoSlideStateImpl)this.DataContext).MediaPlayer.Play();
+                        VideoView.MediaPlayer.Play();
                     }
                 });
             });
@@ -105,7 +106,7 @@ namespace HandsLiftedApp.Views.Render
         {
             if (!VideoView.MediaPlayer.IsPlaying)
             {
-                ((VideoSlideStateImpl)this.DataContext).MediaPlayer.Play();
+                VideoView.MediaPlayer.Play();
             }
         }
 

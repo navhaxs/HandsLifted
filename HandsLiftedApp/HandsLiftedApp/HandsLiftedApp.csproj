@@ -42,5 +42,8 @@
     <Compile Update="Views\Render\SongSlide\SimpleSlideTemplate.axaml.cs">
       <DependentUpon>SimpleSlideTemplate.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Render\VideoSlideRenderer.axaml.cs">
+      <DependentUpon>VideoSlideRenderer.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
