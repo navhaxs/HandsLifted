@@ -1,6 +1,8 @@
 ﻿using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.SlideState;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,9 +14,9 @@ namespace HandsLiftedApp.Utils
 {
     internal static class TestPlaylistDataGenerator
     {
-        public static Playlist Generate()
+        public static Playlist<PlaylistStateImpl, ItemStateImpl> Generate()
         {
-			Playlist playlist = new Playlist();
+			Playlist<PlaylistStateImpl, ItemStateImpl> playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
 			var rnd = new Random();
 			var songs = Directory.GetFiles(@"C:\VisionScreens\TestSongs", "*.*", SearchOption.AllDirectories)
 				.Where(s => s.ToLower().EndsWith(".txt"))
@@ -25,7 +27,7 @@ namespace HandsLiftedApp.Utils
 				playlist.Items.Add(SongImporter.ImportSongFromTxt(f));
 			}
 
-            SlidesGroup slidesGroup = new SlidesGroup();
+            SlidesGroup<ItemStateImpl> slidesGroup = new SlidesGroup<ItemStateImpl>();
 			try
 			{
 				var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
@@ -34,12 +36,12 @@ namespace HandsLiftedApp.Utils
 				{
 					if (f.EndsWith(".mp4"))
 					{
-						slidesGroup._Slides.Add(new VideoSlide(f));
+						slidesGroup._Slides.Add(new VideoSlide<VideoSlideStateImpl>(f));
 						//playlist.Items.Add(new SlidesGroup() { _Slides = new List<Slide> { new VideoSlide(f) } });
 					}
 					else
 					{
-						slidesGroup._Slides.Add(new ImageSlide(f));
+						slidesGroup._Slides.Add(new ImageSlide<ImageSlideStateImpl>(f));
 						//playlist.Items.Add(new SlidesGroup() { _Slides = new List<Slide> { new ImageSlide(f) } });
 					}
 				}

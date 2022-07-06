@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace HandsLiftedApp.Controls
 {
-    public partial class PlaylistStateView : UserControl
+    public partial class PlaylistSlidesView : UserControl
     {
-        public PlaylistStateView()
+        public PlaylistSlidesView()
         {
             InitializeComponent();
         }

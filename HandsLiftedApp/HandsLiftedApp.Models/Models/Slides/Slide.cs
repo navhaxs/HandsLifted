@@ -1,6 +1,8 @@
-﻿namespace HandsLiftedApp.Data.Slides
+﻿using ReactiveUI;
+
+namespace HandsLiftedApp.Data.Slides
 {
-    public abstract class Slide
+    public abstract class Slide : ReactiveObject
     {
         //// rendered slide graphics
         //public abstract UIElement RenderSlide { get; }
@@ -9,11 +11,15 @@
         //public abstract UIElement RenderThumbnail { get; }
 
         // meta - group labels, slide number, etc.
-        public abstract string SlideLabel { get; }
+        //public abstract string SlideLabel { get; }
 
         public abstract string SlideText { get; }
 
-        // slide stage display message
-        public abstract string SlideNumber { get; }
+        //// slide stage display message
+        //public abstract string SlideNumber { get; }
+    }
+
+    public interface ISlideState
+    {
     }
 }

@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 namespace HandsLiftedApp.Data.Models.Items
 {
     // TODO: need to define list of media, rather than Slide ??? for serialization
-    public class SlidesGroup : Item
+    public class SlidesGroup<I> : Item<I> where I : IItemState
     {
 
         private ObservableCollection<Slide> _internal_slides = new ObservableCollection<Slide>();

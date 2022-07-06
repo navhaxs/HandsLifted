@@ -30,6 +30,9 @@
     <ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\PlaylistSlidesView.axaml.cs">
+      <DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\AddItemPaletteControl.axaml.cs">
       <DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
     </Compile>

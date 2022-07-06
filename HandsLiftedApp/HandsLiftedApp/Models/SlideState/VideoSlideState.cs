@@ -8,14 +8,14 @@ using System;
 namespace HandsLiftedApp.Models.SlideState
 {
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
-    public class VideoSlideState : SlideStateBase, ISlideRender
+    public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, ISlideRender, IVideoSlideState
     {
         private LibVLC _libVLC;
         public Media _media { get; set; }
 
-        public VideoSlideState(VideoSlide data, int index) : base(data, index)
+        public VideoSlideStateImpl(ref VideoSlide<VideoSlideStateImpl> videoSlide) : base(ref videoSlide)
         {
-            VideoPath = data.VideoPath;
+            VideoPath = videoSlide.VideoPath;
 
             try
             {

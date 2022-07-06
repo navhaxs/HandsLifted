@@ -24,7 +24,7 @@ namespace HandsLiftedApp.Views
 
         private void Root_Tapped(object? sender, RoutedEventArgs e)
         {
-            string next = ((SongSlide)((Control)sender).DataContext).Text;
+            //string next = ((SongSlide)((Control)sender).DataContext).Text;
             //throw new System.NotImplementedException();
         }
     }

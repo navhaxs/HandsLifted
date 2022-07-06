@@ -1,27 +1,21 @@
-﻿using Avalonia;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
+﻿using Avalonia.Media.Imaging;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models.SlideState
 {
-    public class ImageSlideState : SlideStateBase
+    public class ImageSlideStateImpl : SlideStateBase<ImageSlide<ImageSlideStateImpl>>, IImageSlideState
     {
-        public ImageSlideState(ImageSlide data, int index) : base(data, index)
+        public ImageSlideStateImpl(ref ImageSlide<ImageSlideStateImpl> imageSlide) : base(ref imageSlide)
         {
             _ = LoadImage();
         }
         public async Task LoadImage()
         {
             Image = await Task.Run(() => {
-                var path = ((ImageSlide)this.Data).ImagePath;
+                var path = _slide.ImagePath;
 
                 if (File.Exists(path))
                 {
@@ -39,7 +33,7 @@ namespace HandsLiftedApp.Models.SlideState
         {
             get
             {
-                return Path.GetFileName(((ImageSlide) this.Data).ImagePath);
+                return Path.GetFileName(_slide.ImagePath);
             }
         }
 

@@ -13,7 +13,7 @@ namespace HandsLiftedApp.Data.Models.Items
 {
     [XmlRoot("Song", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
-    public class SongItem : Item
+    public class SongItem<T, S, I> : Item<I> where T : ISongTitleSlideState where S : ISongSlideState where I : IItemState
     {
         private string _copyright = "";
         public string Copyright { get => _copyright; set => this.RaiseAndSetIfChanged(ref _copyright, value); }
@@ -49,7 +49,7 @@ namespace HandsLiftedApp.Data.Models.Items
             _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
                 (title, copyright) =>
                 {
-                    return new SongTitleSlide() { Title = Title, Copyright = Copyright };
+                    return new SongTitleSlide<T>() { Title = Title, Copyright = Copyright };
                     ;
                 })
                 .ToProperty(this, c => c.TitleSlide)
@@ -97,7 +97,7 @@ namespace HandsLiftedApp.Data.Models.Items
                            StringSplitOptions.RemoveEmptyEntries);
                 foreach (string line in lines)
                 {
-                    slides.Add(new SongSlide(_datum) { Text = line });
+                    slides.Add(new SongSlide<S>(_datum) { Text = line });
                 }
             }
 
@@ -175,39 +175,37 @@ namespace HandsLiftedApp.Data.Models.Items
             //        //this.ReplaceAll(_synchronizedCollection.Items);
             //        break;
             //}
+        }
+    }
 
+    public class SongStanza : ReactiveObject
+    {
+        public Guid Uuid { get; set; }
+
+        private string name;
+        public string Name
+        {
+            get => name;
+            set => this.RaiseAndSetIfChanged(ref name, value);
         }
 
-
-        public class SongStanza : ReactiveObject
+        private string lyrics;
+        public string Lyrics
         {
-            public Guid Uuid { get; set; }
+            get => lyrics;
+            set => this.RaiseAndSetIfChanged(ref lyrics, value);
+        }
 
-            private string name;
-            public string Name
-            {
-                get => name;
-                set => this.RaiseAndSetIfChanged(ref name, value);
-            }
+        // parameter-less constructor required for serialization
+        public SongStanza()
+        {
+        }
 
-            private string lyrics;
-            public string Lyrics
-            {
-                get => lyrics;
-                set => this.RaiseAndSetIfChanged(ref lyrics, value);
-            }
-
-            // parameter-less constructor required for serialization
-            public SongStanza()
-            {
-            }
-
-            public SongStanza(Guid Uuid, string Name, string Lyrics)
-            {
-                this.Uuid = Uuid;
-                this.Name = Name;
-                this.Lyrics = Lyrics;
-            }
+        public SongStanza(Guid Uuid, string Name, string Lyrics)
+        {
+            this.Uuid = Uuid;
+            this.Name = Name;
+            this.Lyrics = Lyrics;
         }
     }
 }

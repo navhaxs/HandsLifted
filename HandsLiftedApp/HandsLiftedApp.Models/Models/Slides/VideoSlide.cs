@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class VideoSlide : Slide
+    public class VideoSlide<T> : Slide where T : IVideoSlideState
     {
         public string VideoPath { get; set; }
 
@@ -18,11 +18,12 @@ namespace HandsLiftedApp.Data.Slides
 
         //
 
-        public override string SlideLabel => throw new NotImplementedException();
 
-        public override string SlideText => throw new NotImplementedException();
+        public override string SlideText => "video";
 
-        public override string SlideNumber => throw new NotImplementedException();
 
     }
+
+    public interface IVideoSlideState : ISlideState { }
+
 }

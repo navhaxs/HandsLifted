@@ -54,8 +54,8 @@ namespace HandsLiftedApp.Views.Render
         private void VideoSlide_DataContextChanged(object? sender, EventArgs e)
         {
 
-            if (this.DataContext is VideoSlideState)
-                VideoView.MediaPlayer = ((VideoSlideState)this.DataContext).MediaPlayer; ;
+            if (this.DataContext is VideoSlideStateImpl)
+                VideoView.MediaPlayer = ((VideoSlideStateImpl)this.DataContext).MediaPlayer; ;
         }
 
         private void VideoSlide_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
@@ -81,7 +81,7 @@ namespace HandsLiftedApp.Views.Render
                         }
                         //VideoView.MediaPlayer.Play(new Media(_libVLC,
                         //    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
-                         ((VideoSlideState)this.DataContext).MediaPlayer.Play();
+                         ((VideoSlideStateImpl)this.DataContext).MediaPlayer.Play();
                     }
                 });
             });
@@ -105,7 +105,7 @@ namespace HandsLiftedApp.Views.Render
         {
             if (!VideoView.MediaPlayer.IsPlaying)
             {
-                ((VideoSlideState)this.DataContext).MediaPlayer.Play();
+                ((VideoSlideStateImpl)this.DataContext).MediaPlayer.Play();
             }
         }
 

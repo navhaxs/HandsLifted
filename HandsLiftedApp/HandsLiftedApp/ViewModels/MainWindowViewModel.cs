@@ -32,29 +32,27 @@ namespace HandsLiftedApp.ViewModels
 			}
 		}
 
-		public PlaylistState _playlistState;
+		public Playlist<PlaylistStateImpl, ItemStateImpl> _playlist;
 
-		public PlaylistState PlaylistState
-		{
-			get => _playlistState;
-			set
-			{
-				this.RaiseAndSetIfChanged(ref _playlistState, value);
-			}
-		}
+		public Playlist<PlaylistStateImpl, ItemStateImpl> Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
 
-		public SlideStateBase SlidesSelectedItem
-		{
-			get => _playlistState?.SelectedItem?.SelectedItem;
-		}
+		// TODO
+		// TODO
+		// TODO
+		// TODO
+		// TODO
+		//public SlideStateBase SlidesSelectedItem
+		//{
+		//	get => _playlist?.State?.SelectedItem?.SelectedItem;
+		//}
 	
-		public string Text
-		{
-			get
-			{
-				return SlidesSelectedItem is SongSlideState ? ((SongSlideState)SlidesSelectedItem).Data.SlideText : "No slide selected yet";
-			}
-		}
+		//public string Text
+		//{
+		//	get
+		//	{
+		//		return SlidesSelectedItem is SongSlideState ? ((SongSlideState)SlidesSelectedItem).Data.SlideText : "No slide selected yet";
+		//	}
+		//}
 
 		public OverlayState OverlayState { get; set; }
 
@@ -62,9 +60,7 @@ namespace HandsLiftedApp.ViewModels
 
 		public void LoadDemoSchedule()
 		{
-			var playlist = TestPlaylistDataGenerator.Generate();
-
-			PlaylistState = new PlaylistState(playlist);
+			Playlist = TestPlaylistDataGenerator.Generate();
 		}
  		public MainWindowViewModel()
 		{
@@ -83,39 +79,43 @@ namespace HandsLiftedApp.ViewModels
 
 			_ = Update(); // calling an async function we do not want to await
 
-			this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
-				this.RaisePropertyChanged("Text");
-				this.RaisePropertyChanged("SlidesSelectedItem");
+			// TODO
+			// TODO
+			// TODO
+			// TODO
+			//this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
+			//	this.RaisePropertyChanged("Text");
+			//	this.RaisePropertyChanged("SlidesSelectedItem");
 
-				//var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
-				//if (nextSlideState != null)
-				//	NextSlide = nextSlideState;
-			});
+			//	//var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
+			//	//if (nextSlideState != null)
+			//	//	NextSlide = nextSlideState;
+			//});
 
-			MessageBus.Current.Listen<ActiveSlideChangedMessage>()
-				.Subscribe(x => {
-					var lastSelectedIndex = _playlistState.SelectedIndex;
+			//MessageBus.Current.Listen<ActiveSlideChangedMessage>()
+			//	.Subscribe(x => {
+			//		var lastSelectedIndex = _playlist.State.SelectedIndex;
 					
-					// update the selected item in the playlist
-					_playlistState.SelectedIndex = x.SourceItemStateIndex;
+			//		// update the selected item in the playlist
+			//		_playlist.State.SelectedIndex = x.SourceItemStateIndex;
 
-                    // notify the last deselected item in the playlist
-                    if (lastSelectedIndex > -1 && x.SourceItemStateIndex != lastSelectedIndex && _playlistState.ItemStates[lastSelectedIndex] != null)
-                    {
-						_playlistState.ItemStates[lastSelectedIndex].SelectedIndex = -1;
-					}
-				});
+   //                 // notify the last deselected item in the playlist
+   //                 if (lastSelectedIndex > -1 && x.SourceItemStateIndex != lastSelectedIndex && _playlist.Items[lastSelectedIndex] != null)
+   //                 {
+			//			_playlist.Items[lastSelectedIndex].State.SelectedIndex = -1;
+			//		}
+			//	});
 			
 
 			LoadDemoSchedule();
 
-			this.WhenAnyValue(t => t._playlistState.SelectedItem).Subscribe(s =>
-			{
-				this.WhenAnyValue(tt => tt._playlistState.SelectedItem.SelectedItem).Subscribe(ss =>
-				{
-                    this.RaisePropertyChanged("SlidesSelectedItem");
-				});
-			});
+			//this.WhenAnyValue(t => t._playlist.State.SelectedItem).Subscribe(s =>
+			//{
+			//	this.WhenAnyValue(tt => tt._playlist.State.SelectedItem.SelectedItem).Subscribe(ss =>
+			//	{
+   //                 this.RaisePropertyChanged("SlidesSelectedItem");
+			//	});
+			//});
 		}
 
 		//SlideState convertDataToState(Slide slide)
@@ -176,10 +176,10 @@ namespace HandsLiftedApp.ViewModels
 				{
 					DateTime now = DateTime.Now;
 					string pptxFileName = Path.GetFileName(fullFilePath);
-					string targetDirectory = Path.Join(PlaylistState.PlaylistWorkingDirectory, pptxFileName, now.ToString("yyyy-MM-dd-HH-mm-ss"));
+					string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, pptxFileName, now.ToString("yyyy-MM-dd-HH-mm-ss"));
 					Directory.CreateDirectory(targetDirectory);
 
-					Data.Models.Items.SlidesGroup slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
+					Data.Models.Items.SlidesGroup<ItemStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
 					slidesGroup.Title = pptxFileName;
 
 					//PlaylistState.Playlist.Items.Add(slidesGroup);
@@ -191,7 +191,7 @@ namespace HandsLiftedApp.ViewModels
 						.ContinueWith((s) =>
                         {
 							PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
-							PlaylistState.Playlist.Items.Add(slidesGroup);
+							Playlist.Items.Add(slidesGroup);
 						});
 
                 }
@@ -215,7 +215,7 @@ namespace HandsLiftedApp.ViewModels
 				{
 					//var x = PlaylistUtils.CreateSong();
 					var songItem = SongImporter.ImportSongFromTxt((string) fileName);
-					PlaylistState.Playlist.Items.Add(songItem);
+					Playlist.Items.Add(songItem);
 				}
 
 			}
@@ -228,11 +228,11 @@ namespace HandsLiftedApp.ViewModels
 		const string TEST_SERVICE_FILE_PATH = @"C:\VisionScreens\service.xml";
 		void OnSaveService()
 		{
-			XmlSerialization.WriteToXmlFile<Playlist>(TEST_SERVICE_FILE_PATH, PlaylistState.Playlist);
+			XmlSerialization.WriteToXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH, Playlist);
 		}
 		void OnLoadService()
 		{
-			PlaylistState.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(TEST_SERVICE_FILE_PATH);
+			Playlist = XmlSerialization.ReadFromXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH);
 		}
 		void OnMoveUpItemCommand(object? itemState)
         {
@@ -240,28 +240,28 @@ namespace HandsLiftedApp.ViewModels
 			// move the source "item" position (in the "item source")
 			// update the rest
 
-			int v = PlaylistState.ItemStates.IndexOf(itemState);
+			int v = Playlist.Items.IndexOf(itemState);
 
 			if (v > 0)
             {
-                PlaylistState.Playlist.Items.Move(v, v - 1);
+                Playlist.Items.Move(v, v - 1);
             }
         }
 		void OnMoveDownItemCommand(object? itemState)
         {
-			int v = PlaylistState.ItemStates.IndexOf(itemState);
+			int v = Playlist.Items.IndexOf(itemState);
 
-			if (v + 1 < PlaylistState.Playlist.Items.Count)
+			if (v + 1 < Playlist.Items.Count)
 			{
-				PlaylistState.Playlist.Items.Move(v, v + 1);
+				Playlist.Items.Move(v, v + 1);
 			}
         }
 		
 		void OnRemoveItemCommand(object? itemState)
         {
 			// TODO confirm dialog?
-			int v = PlaylistState.ItemStates.IndexOf(itemState);
-			PlaylistState.Playlist.Items.RemoveAt(v);
+			int v = Playlist.Items.IndexOf(itemState);
+			Playlist.Items.RemoveAt(v);
         }
 
 	}

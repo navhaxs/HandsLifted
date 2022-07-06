@@ -5,15 +5,15 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:controls="using:HandsLiftedApp.Controls"
              xmlns:utils="using:HandsLiftedApp.Utils"
-             x:Class="HandsLiftedApp.Controls.PlaylistStateView">
+             x:Class="HandsLiftedApp.Controls.PlaylistSlidesView">
 
 	<ListBox Name="List"
 			 Background="White"
 			 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-			 Items="{Binding ItemStates}"
-			 SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
-			 SelectedItem="{Binding SelectedItem}">
+			 Items="{Binding Items}"
+			 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
+			 SelectedItem="{Binding State.SelectedItem}">
 		<ListBox.Styles>
 			<Style Selector="ListBoxItem">
 				<Setter Property="Padding" Value="0"/>

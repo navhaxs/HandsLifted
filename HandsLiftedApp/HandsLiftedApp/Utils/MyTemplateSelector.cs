@@ -3,6 +3,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Metadata;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.SlideState;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace HandsLiftedApp.Utils
         public IControl Build(object data)
         {
 
-            var dataType = data.GetType().Name;
+            var dataType = data.GetType().GetNameWithoutGenericArity();
 
             if (Templates.ContainsKey(dataType))
             {

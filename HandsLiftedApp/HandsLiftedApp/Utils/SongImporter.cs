@@ -3,6 +3,8 @@ using Avalonia.Platform;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
+using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.SlideState;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,13 +17,13 @@ namespace HandsLiftedApp.Utils
     public static class SongImporter
     {
 
-        public static SongItem ImportSongFromTxt(string txtFilePath)
+        public static SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> ImportSongFromTxt(string txtFilePath)
         {
             string text = File.ReadAllText(txtFilePath);
 
             List<string> parsed = new List<string>(text.Split("\r\n\r\n\r\n").Select(str => str.Trim()));
 
-            SongItem song = new SongItem()
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> song = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>()
             {
                 Title = parsed.First().Trim(),
             };
@@ -48,7 +50,7 @@ namespace HandsLiftedApp.Utils
                     rest = songPart.Substring(partNameEOL).Trim();
                 }
 
-                song.Stanzas.Add(new SongItem.SongStanza(Guid.NewGuid(), partName, rest));
+                song.Stanzas.Add(new SongStanza(Guid.NewGuid(), partName, rest));
 
             }
             return song;

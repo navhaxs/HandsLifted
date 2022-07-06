@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,22 +8,27 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class ImageSlide : Slide
+    public class ImageSlide<T> : Slide where T : IImageSlideState
     {
+        T _state;
+        T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
+
         public string ImagePath { get; set; }
 
         public ImageSlide(String imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png")
         {
             ImagePath = imagePath;
+            State = (T)Activator.CreateInstance(typeof(T), this);
         }
 
         //
 
-        public override string SlideLabel => throw new NotImplementedException();
+        //public override string SlideLabel => throw new NotImplementedException();
 
-        public override string SlideText => throw new NotImplementedException();
+        public override string SlideText => "image";
 
-        public override string SlideNumber => throw new NotImplementedException();
-
+        //public override string SlideNumber => throw new NotImplementedException();
     }
+    public interface IImageSlideState : ISlideState { }
+
 }
