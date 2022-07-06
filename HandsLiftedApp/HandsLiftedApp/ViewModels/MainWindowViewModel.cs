@@ -13,6 +13,7 @@ using HandsLiftedApp.Data.Models;
 using System.Diagnostics;
 using DynamicData;
 using System.IO;
+using Avalonia.Threading;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -176,7 +177,7 @@ namespace HandsLiftedApp.ViewModels
 						.ContinueWith((s) =>
                         {
 							PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
-							Playlist.Items.Add(slidesGroup);
+							Dispatcher.UIThread.Post(() => Playlist.Items.Add(slidesGroup));
 						});
 
                 }

@@ -50,6 +50,8 @@ namespace HandsLiftedApp.Utils
 			catch { }
 			playlist.Items.Add(slidesGroup);
 
+			slidesGroup.Title = "Announcements";
+
 			// is this okay?
 			foreach (var (item, index) in playlist.Items.WithIndex())
 			{
