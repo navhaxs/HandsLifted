@@ -79,35 +79,20 @@ namespace HandsLiftedApp.ViewModels
 
 			_ = Update(); // calling an async function we do not want to await
 
-			// TODO
-			// TODO
-			// TODO
-			// TODO
-			//this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
-			//	this.RaisePropertyChanged("Text");
-			//	this.RaisePropertyChanged("SlidesSelectedItem");
+            // TODO
+            // TODO
+            // TODO
+            // TODO
+            //this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
+            //	this.RaisePropertyChanged("Text");
+            //	this.RaisePropertyChanged("SlidesSelectedItem");
 
-			//	//var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
-			//	//if (nextSlideState != null)
-			//	//	NextSlide = nextSlideState;
-			//});
+            //	//var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
+            //	//if (nextSlideState != null)
+            //	//	NextSlide = nextSlideState;
+            //});
 
-			//MessageBus.Current.Listen<ActiveSlideChangedMessage>()
-			//	.Subscribe(x => {
-			//		var lastSelectedIndex = _playlist.State.SelectedIndex;
-					
-			//		// update the selected item in the playlist
-			//		_playlist.State.SelectedIndex = x.SourceItemStateIndex;
-
-   //                 // notify the last deselected item in the playlist
-   //                 if (lastSelectedIndex > -1 && x.SourceItemStateIndex != lastSelectedIndex && _playlist.Items[lastSelectedIndex] != null)
-   //                 {
-			//			_playlist.Items[lastSelectedIndex].State.SelectedIndex = -1;
-			//		}
-			//	});
-			
-
-			LoadDemoSchedule();
+            LoadDemoSchedule();
 
 			//this.WhenAnyValue(t => t._playlist.State.SelectedItem).Subscribe(s =>
 			//{

@@ -9,10 +9,6 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public abstract class Item<T> : ReactiveObject where T : IItemState
     {
-
-
-
-
         [XmlIgnore]
         public Guid Uuid { get; set; }
 
@@ -42,6 +38,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
     public interface IItemState
     {
+        public int ItemIndex { get; set; }
         public int SelectedIndex { get; set; }
     }
 }

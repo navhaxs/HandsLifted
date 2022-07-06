@@ -42,15 +42,18 @@ namespace HandsLiftedApp.Models
             {
                 this.RaiseAndSetIfChanged(ref _selectedIndex, value);
 
-                //if (_selectedIndex > -1)
-                //{
-                //    MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItemStateIndex = Index });
-                //}
+
+                if (_selectedIndex > -1)
+                {
+                    MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItemStateIndex = ItemIndex });
+                }
             }
         }
 
         public ReactiveCommand<Unit, Unit> EditCommand { get; }
 
+        private int _ItemIndex;
+        public int ItemIndex { get => _ItemIndex; set => _ItemIndex = value; }
 
         void RunTheThing()
         {

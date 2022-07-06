@@ -1,6 +1,7 @@
 ﻿using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
 using System;
@@ -48,6 +49,12 @@ namespace HandsLiftedApp.Utils
 			}
 			catch { }
 			playlist.Items.Add(slidesGroup);
+
+			// is this okay?
+			foreach (var (item, index) in playlist.Items.WithIndex())
+			{
+				item.State.ItemIndex = index;
+            }
 
 			return playlist;
 		}
