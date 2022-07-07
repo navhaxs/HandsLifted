@@ -6,7 +6,12 @@
 			 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 Background="Transparent"
+			 xmlns:converters="using:HandsLiftedApp.Converters"
              x:Class="HandsLiftedApp.Controls.ItemStateView">
+
+	<UserControl.Resources>
+		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
+	</UserControl.Resources>
 	<UserControl.Styles>
 		<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml"/>
 
@@ -31,6 +36,7 @@
 			<DockPanel>
 				<Button Padding="22 6" Command="{Binding State.EditCommand}" DockPanel.Dock="Right">Edit</Button>
 				<Label Padding="12 8" Content="{Binding Title, FallbackValue='Untitled Item'}" FontSize="16" />
+				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
 			</DockPanel>
 		</Border>
 
@@ -99,4 +105,5 @@
 			</ListBox>
 
 		</StackPanel>
+
 </UserControl>

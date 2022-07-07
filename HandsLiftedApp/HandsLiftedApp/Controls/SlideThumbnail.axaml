@@ -15,7 +15,7 @@
 	</UserControl.Styles>
 	<Grid>
 		<DockPanel>
-			<TextBlock DockPanel.Dock="Bottom" Background="Transparent" Padding="2 0 2 2" Text="{Binding SlideNumber}" />
+			<TextBlock DockPanel.Dock="Bottom" Background="Transparent" Padding="2 0 2 2" Text="#" />
 			<Border DockPanel.Dock="Bottom" BorderBrush="#724bab" BorderThickness="2" CornerRadius="2">
 				<Border.Background>
 					<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">

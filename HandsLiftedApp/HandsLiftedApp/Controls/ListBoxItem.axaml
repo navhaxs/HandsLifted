@@ -2,7 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="using:HandsLiftedApp.Converters"
 		mc:Ignorable="d">
+
+	<Styles.Resources>
+		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
+	</Styles.Resources>
+	
     <Design.PreviewWith>
 		<!-- Add Controls for Previewer Here -->
 		<ListBox Background="Red">
@@ -57,7 +63,7 @@
 		<Setter Property="Template">
 			<ControlTemplate>
 				<DockPanel>
-					<TextBlock DockPanel.Dock="Bottom" Background="Transparent" Padding="2 0 2 2" Text="{Binding State.SlideNumber, FallbackValue='#'}" />
+					<TextBlock DockPanel.Dock="Bottom" Padding="2 0 2 2" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" />
 					<Border CornerRadius="2">
 
 						<Grid>

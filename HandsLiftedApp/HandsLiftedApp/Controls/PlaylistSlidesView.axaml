@@ -7,11 +7,12 @@
              xmlns:utils="using:HandsLiftedApp.Utils"
              x:Class="HandsLiftedApp.Controls.PlaylistSlidesView">
 
-	<ItemsRepeater Name="List"
+	<ListBox Name="List"
 			 Background="White"
+			 VirtualizationMode="None"
 			 Items="{Binding Items}"
 			 >
-		<ItemsRepeater.Styles>
+		<ListBox.Styles>
 			<Style Selector="ListBoxItem">
 				<Setter Property="Padding" Value="0"/>
 			</Style>
@@ -21,11 +22,11 @@
 			<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
 			</Style>
-		</ItemsRepeater.Styles>
-		<ItemsRepeater.ItemTemplate>
+		</ListBox.Styles>
+		<ListBox.ItemTemplate>
 			<DataTemplate>
 				<controls:ItemStateView />
 			</DataTemplate>
-		</ItemsRepeater.ItemTemplate>
-	</ItemsRepeater>
+		</ListBox.ItemTemplate>
+	</ListBox>
 </UserControl>

@@ -31,7 +31,7 @@ namespace HandsLiftedApp.Models.SlideState
         // TODO add transition info 
         public int Index { get; set; }
 
-        public int SlideNumber { get => Index + 1; }
+        //public int SlideNumber { get => Index + 1; }
 
         //public SlideStateBase(Slide<ISlideState> data, int index)
         //{

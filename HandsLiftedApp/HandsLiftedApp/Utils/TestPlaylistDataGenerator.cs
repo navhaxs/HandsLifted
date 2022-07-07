@@ -53,10 +53,10 @@ namespace HandsLiftedApp.Utils
 			slidesGroup.Title = "Announcements";
 
 			// is this okay?
-			foreach (var (item, index) in playlist.Items.WithIndex())
-			{
-				item.State.ItemIndex = index;
-            }
+			//foreach (var (item, index) in playlist.Items.WithIndex())
+			//{
+			//	item.State.ItemIndex = index;
+   //         }
 
 			return playlist;
 		}

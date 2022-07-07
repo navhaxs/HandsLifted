@@ -9,6 +9,9 @@ namespace HandsLiftedApp.Controls
         public ItemOrderListView()
         {
             InitializeComponent();
+
+            //ListBox listBox = this.FindControl<ListBox>("itemsListBox");
+            //listBox.ItemContainerGenerator.IndexFromContainer(listBoxItem);
         }
 
         private void InitializeComponent()

@@ -170,6 +170,7 @@ namespace HandsLiftedApp.ViewModels
 
 					//PlaylistState.Playlist.Items.Add(slidesGroup);
 
+							Dispatcher.UIThread.Post(() => Playlist.Items.Add(slidesGroup));
 
 					// kick off
 					ImportTask importTask = new ImportTask() { PPTXFilePath = (string) fullFilePath, OutputDirectory = targetDirectory };
@@ -177,7 +178,6 @@ namespace HandsLiftedApp.ViewModels
 						.ContinueWith((s) =>
                         {
 							PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
-							Dispatcher.UIThread.Post(() => Playlist.Items.Add(slidesGroup));
 						});
 
                 }

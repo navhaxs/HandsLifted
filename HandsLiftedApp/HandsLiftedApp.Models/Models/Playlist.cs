@@ -35,10 +35,10 @@ namespace HandsLiftedApp.Data.Models
         // update the item states
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            foreach (var (item, index) in Items.Select((item, index) => (item, index)))
-            {
-                item.State.ItemIndex = index;
-            };
+            //foreach (var (item, index) in Items.Select((item, index) => (item, index)))
+            //{
+            //    item.State.ItemIndex = index;
+            //};
         }
 
         public ObservableCollection<Item<I>> Items { get => _items; set => this.RaiseAndSetIfChanged(ref _items, value); }
