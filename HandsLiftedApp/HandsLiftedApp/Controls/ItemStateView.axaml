@@ -41,6 +41,7 @@
 		</Border>
 
 			<ListBox Name="List"
+					 VirtualizationMode="None"
 			 Background="Transparent"
 			 Items="{Binding Slides}"
 			 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
@@ -52,8 +53,10 @@
 
 					<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
 						<Setter Property="Background" Value="Red"/>
-					</Style>
-				</ListBox.Styles>-->
+					</Style>-->
+
+
+				<!--ListBox.Styles-->
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
 						<WrapPanel ItemWidth="244"

@@ -18,6 +18,7 @@
 	<ListBox
 		x:Name="itemsListBox"
 		Items="{Binding Playlist.Items}"
+		VirtualizationMode="None"
 		Background="Transparent">
 		<ListBox.ContextMenu>
 			<ContextMenu>

@@ -189,6 +189,11 @@ namespace HandsLiftedApp.ViewModels
             }
 		}
 
+		private async Task AddAsync()
+        {
+
+        }
+
 		public Interaction<Unit, string?> ShowSongOpenFileDialog { get; }
 
 		private async Task AddSongAsync()

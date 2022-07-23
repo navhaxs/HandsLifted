@@ -10,7 +10,8 @@ namespace HandsLiftedApp.Controls
         {
             InitializeComponent();
 
-            //var livePreview = this.FindControl<List>("LivePreview");
+            var livePreview = this.FindControl<ListBox>("List");
+            
 
         }
 

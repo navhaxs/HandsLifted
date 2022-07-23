@@ -154,7 +154,7 @@
 						</Grid>
 					</Border>-->
 
-					<ScrollViewer VerticalScrollBarVisibility="Visible">
+					<!--<ScrollViewer VerticalScrollBarVisibility="Visible">
 						<ScrollViewer.Styles>
 							<Style Selector="ScrollBar">
 								<Setter Property="AllowAutoHide" Value="false" />
@@ -162,13 +162,13 @@
 							<Style Selector="ScrollViewer">
 								<Setter Property="AllowAutoHide" Value="false"/>
 							</Style>
-						</ScrollViewer.Styles>
+						</ScrollViewer.Styles>-->
 
 
 						<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
 						<!--<controls:ItemStateView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
-					</ScrollViewer>
+					<!--</ScrollViewer>-->
 				</DockPanel>
 				</Border>
 			</Grid>

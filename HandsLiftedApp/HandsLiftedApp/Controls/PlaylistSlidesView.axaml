@@ -7,12 +7,37 @@
              xmlns:utils="using:HandsLiftedApp.Utils"
              x:Class="HandsLiftedApp.Controls.PlaylistSlidesView">
 
+
+	<!--ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			 ScrollViewer.VerticalScrollBarVisibility="Disabled"-->
 	<ListBox Name="List"
 			 Background="White"
 			 VirtualizationMode="None"
 			 Items="{Binding Items}"
 			 >
 		<ListBox.Styles>
+			<!--<Style Selector="ListBox">
+				<Setter Property="Template">
+					<ControlTemplate>
+						<Border Name="border" BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="{TemplateBinding BorderThickness}"
+								CornerRadius="{TemplateBinding CornerRadius}">
+							<ScrollViewer Name="PART_ScrollViewer"
+										  Background="{TemplateBinding Background}"
+										  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+										  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+										  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}">
+								<ItemsPresenter Name="PART_ItemsPresenter"
+												Items="{TemplateBinding Items}"
+												ItemsPanel="{TemplateBinding ItemsPanel}"
+												ItemTemplate="{TemplateBinding ItemTemplate}"
+												Margin="{TemplateBinding Padding}"
+												VirtualizationMode="{TemplateBinding VirtualizationMode}"/>
+							</ScrollViewer>
+						</Border>
+					</ControlTemplate>
+				</Setter>
+			</Style>-->
 			<Style Selector="ListBoxItem">
 				<Setter Property="Padding" Value="0"/>
 			</Style>
@@ -21,6 +46,9 @@
 			</Style>
 			<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
+			</Style>
+			<Style Selector="ListBox /template/ ScrollViewer">
+				<Setter Property="AllowAutoHide" Value="false"/>
 			</Style>
 		</ListBox.Styles>
 		<ListBox.ItemTemplate>
