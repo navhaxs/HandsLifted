@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HandsLiftedApp.Data.Models.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace HandsLiftedApp.Models
 {
     internal class ActiveSlideChangedMessage
     {
-        public int SourceItemStateIndex { get; set; }
+        public Item<ItemStateImpl> SourceItem { get; set; }
     }
 }

@@ -21,11 +21,15 @@ namespace HandsLiftedApp.Models
                 {
                     var lastSelectedIndex = Playlist.State.SelectedIndex;
 
+                    var sourceIndex = Playlist.Items.IndexOf(x.SourceItem);
+
+
                     // update the selected item in the playlist
-                    Playlist.State.SelectedIndex = x.SourceItemStateIndex;
+                    Playlist.State.SelectedIndex = sourceIndex;
+
 
                     // notify the last deselected item in the playlist
-                    if (lastSelectedIndex > -1 && x.SourceItemStateIndex != lastSelectedIndex && Playlist != null)
+                    if (lastSelectedIndex > -1 && sourceIndex != lastSelectedIndex && Playlist != null)
                     {
                         Playlist.Items[lastSelectedIndex].State.SelectedIndex = -1;
                     }

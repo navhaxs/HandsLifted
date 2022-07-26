@@ -56,7 +56,7 @@ namespace HandsLiftedApp.Models
 
                 if (_selectedIndex > -1)
                 {
-                    MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItemStateIndex = ItemIndex });
+                    MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItem = parent });
                 }
             }
         }
