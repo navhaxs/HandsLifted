@@ -56,7 +56,7 @@
 				</ListBox.Styles>-->
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
-						<WrapPanel ItemWidth="250"
+						<WrapPanel ItemWidth="244"
 								   ItemHeight="200"
 						   />
 						<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
