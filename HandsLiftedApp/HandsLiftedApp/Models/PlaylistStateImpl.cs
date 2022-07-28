@@ -53,7 +53,14 @@ namespace HandsLiftedApp.Models
         public string PlaylistWorkingDirectory { get => _playlistWorkingDirectory; set => this.RaiseAndSetIfChanged(ref _playlistWorkingDirectory, value); }
 
         private int selectedIndex = -1;
-        public int SelectedIndex { get => selectedIndex; set => this.RaiseAndSetIfChanged(ref selectedIndex, value); }
+        public int SelectedIndex
+        {
+            get { return selectedIndex; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedIndex, value);
+            }
+        }
 
         private ObservableAsPropertyHelper<Item<ItemStateImpl>> _selectedItem;
         public Item<ItemStateImpl> SelectedItem { get => _selectedItem.Value; }

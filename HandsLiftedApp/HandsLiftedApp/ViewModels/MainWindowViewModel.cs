@@ -14,6 +14,7 @@ using System.Diagnostics;
 using DynamicData;
 using System.IO;
 using Avalonia.Threading;
+using Avalonia.Controls;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -65,6 +66,8 @@ namespace HandsLiftedApp.ViewModels
 		}
  		public MainWindowViewModel()
 		{
+			if (Design.IsDesignMode)
+				return;
 
 			// The OpenFile command is bound to a button/menu item in the UI.
 			AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPPTXFileAsync);

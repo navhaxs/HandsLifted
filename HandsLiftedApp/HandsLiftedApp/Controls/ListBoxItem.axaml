@@ -143,6 +143,7 @@
 		<Setter Property="Background" Value="Red"/>
 	</Style>-->
 	
+	
 	<Style Selector="ListBoxItem /template/ Border#PART_Border">
 		<Setter Property="BorderBrush" Value="#724bab"/>
 		<Setter Property="BorderThickness" Value="2" />
@@ -158,7 +159,7 @@
 	</Style>
 	 
 	<Style Selector="ListBoxItem:pointerover /template/ Border#PART_Border">
-		<Setter Property="BorderBrush" Value="#2f7dee"/>
+		<Setter Property="BorderBrush" Value="#e59400"/>
 		<Setter Property="BorderThickness" Value="4" />
 
 	</Style>

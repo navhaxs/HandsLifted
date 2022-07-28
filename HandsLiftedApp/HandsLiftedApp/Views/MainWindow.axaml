@@ -26,94 +26,195 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<Grid ColumnDefinitions="*, 1, 0.24*">
+	<DockPanel>
+		<Menu IsVisible="False" DockPanel.Dock="Top" FontSize="11" FontFamily="Segoe UI" Height="20" Background="#bbbbbf">
+			<MenuItem Header="_File">
+				<MenuItem Command="{Binding CommandNewService}" Header="_New Service" />
+				<MenuItem Command="{Binding CommandLoadService}" Header="_Open Service" />
+				<MenuItem Command="{Binding CommandLoadDemoService}" Header="Open _Demo Service" />
+				<MenuItem Command="{Binding CommandSaveService}" Header="_Save Service" />
+				<MenuItem Header="_Save Service As..." />
+				<Separator />
+				<MenuItem Header="_VisionScreen Preferences" />
+				<MenuItem Header="_Exit" />
+			</MenuItem>
+			<MenuItem Header="_Content">
+				<MenuItem Header="Current item:" IsEnabled="False" />
+				<MenuItem Header="Edit Song..." />
+				<MenuItem Header="_Edit Layout and Template..." />
+				<Separator />
+				<MenuItem Header="Add new item to service" />
+			</MenuItem>
+			<MenuItem Header="_View">
+				<MenuItem Header="Show Left Service Timeline Panel">
+					<MenuItem.Icon>
+						<CheckBox BorderThickness="0"
+								  IsHitTestVisible="False"
+								  Command="{Binding ToggleCommand}">
+							Toggle _Me
+						</CheckBox>
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem Header="Show Right Output Panel">
+					<MenuItem.Icon>
+						<CheckBox BorderThickness="0"
+								  IsHitTestVisible="False"
+								  Command="{Binding ToggleCommand}">
+							Toggle _Me
+						</CheckBox>
+					</MenuItem.Icon>
+				</MenuItem>
+			</MenuItem>
+			<MenuItem Header="_Output">
+				<MenuItem
+					Command="{Binding ProjectorOutputToggle}"
+					Header="Turn on _Projector output">
+					<MenuItem.Icon>
+						<CheckBox BorderThickness="0"
+								  IsHitTestVisible="False"
+								  Command="{Binding ToggleCommand}">
+							Toggle _Me
+						</CheckBox>
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem
+					Header="Turn on _Stage Display output"
+					>
+					<MenuItem.Icon>
+						<CheckBox BorderThickness="0"
+								  IsHitTestVisible="False"
+								  Command="{Binding ToggleCommand}">
+							Toggle _Me
+						</CheckBox>
+					</MenuItem.Icon>
+				</MenuItem>
 
-		<DockPanel Grid.Column="0">
+				<Separator />
+				<MenuItem
+					Header="_Blank display"
+					>
+					<MenuItem.Icon>
+						<CheckBox BorderThickness="0"
+								  IsHitTestVisible="False"
+								  Command="{Binding ToggleCommand}">
+							Toggle _Me
+						</CheckBox>
+					</MenuItem.Icon>
+				</MenuItem>
+					<MenuItem
+					Header="_Freeze display"
+					>
+						<MenuItem.Icon>
+							<CheckBox BorderThickness="0"
+									  IsHitTestVisible="False"
+									  Command="{Binding ToggleCommand}">
+								Toggle _Me
+							</CheckBox>
+						</MenuItem.Icon>
+					</MenuItem>
+						<Separator />
+				<MenuItem Header="_Configure Screens..." />
+			</MenuItem>
+			<MenuItem Header="_Library">
+				<MenuItem Header="Manage Song database..." />
+			</MenuItem>
+			<MenuItem Header="_Help">
+				<MenuItem Header="_Quick how-to" />
+				<MenuItem Header="_Help manual" />
+				<MenuItem Command="{Binding CommandDebugScreen}" Header="_Debug" />
+				<MenuItem Command="{Binding CommandAboutScreen}" Header="_About" />
+			</MenuItem>
+		</Menu>
+		<Grid ColumnDefinitions="*, 1, 0.24*">
 
-			<Border Padding="10 20" Background="#eeeef2" DockPanel.Dock="Top">
-				<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-					<TextBlock FontSize="20" Margin="0 0 8 0">Sunday 11am</TextBlock>
-					<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
-				</StackPanel>
-			</Border>
+			<DockPanel Grid.Column="0">
+
+				<Border Padding="10 20" Background="#eeeef2" DockPanel.Dock="Top">
+					<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+						<TextBlock FontSize="20" Margin="0 0 8 0">Sunday 11am</TextBlock>
+						<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
+					</StackPanel>
+				</Border>
 
 
-			<Grid>
+				<Grid>
 
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width = "0.2 *" />
-					<ColumnDefinition Width = "0" />
-					<ColumnDefinition Width = "*" />
-				</Grid.ColumnDefinitions>
-				
-				<!-- Left panel -->
-				<DockPanel Grid.Column="0" Background="#eeeef2">
-					<DockPanel.Styles>
-						<Style Selector="Button">
-							<Setter Property="BorderThickness" Value="1" />
-							<Setter Property="CornerRadius" Value="0" />
-							<Setter Property="BorderBrush" Value="#8e8e8e"/>
-							<Setter Property="Background" Value="#dddddd"/>
-						</Style>
-						<Style Selector="Button:pointerover /template/ ContentPresenter">
-							<Setter Property="BorderBrush" Value="#3c7fb1"/>
-							<Setter Property="Background" Value="#bee6fd"/>
-						</Style>
-						<Style Selector="Button:pressed /template/ ContentPresenter">
-							<Setter Property="BorderBrush" Value="#2c628b"/>
-							<Setter Property="Background" Value="#c4e5f6"/>
-						</Style>
-						<Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
-							<Setter Property="RenderTransform" Value="none" />
-						</Style>
-					</DockPanel.Styles>
-					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
-					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-						<Button.Flyout>
-							<Flyout>
-								<Grid MinWidth="200" MinHeight="100">
-									<StackPanel>
-										<TextBox></TextBox>
-										<views:AddItemPaletteControl />
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width = "0.2 *" />
+						<ColumnDefinition Width = "0" />
+						<ColumnDefinition Width = "*" />
+					</Grid.ColumnDefinitions>
+
+					<!-- Left panel -->
+					<DockPanel Grid.Column="0" Background="#eeeef2">
+						<DockPanel.Styles>
+							<Style Selector="Button">
+								<Setter Property="BorderThickness" Value="1" />
+								<Setter Property="CornerRadius" Value="0" />
+								<Setter Property="BorderBrush" Value="#8e8e8e"/>
+								<Setter Property="Background" Value="#dddddd"/>
+							</Style>
+							<Style Selector="Button:pointerover /template/ ContentPresenter">
+								<Setter Property="BorderBrush" Value="#3c7fb1"/>
+								<Setter Property="Background" Value="#bee6fd"/>
+							</Style>
+							<Style Selector="Button:pressed /template/ ContentPresenter">
+								<Setter Property="BorderBrush" Value="#2c628b"/>
+								<Setter Property="Background" Value="#c4e5f6"/>
+							</Style>
+							<Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
+								<Setter Property="RenderTransform" Value="none" />
+							</Style>
+						</DockPanel.Styles>
+						<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
+						<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+							<Button.Flyout>
+								<Flyout>
+									<Grid MinWidth="200" MinHeight="100">
+										<StackPanel>
+											<TextBox></TextBox>
+											<views:AddItemPaletteControl />
+										</StackPanel>
+									</Grid>
+								</Flyout>
+							</Button.Flyout>
+							Add Item
+						</Button>
+						<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+							<Button.Flyout>
+								<Flyout>
+									<StackPanel MinWidth="200">
+										<Button Content="Load" Command="{Binding LoadServiceCommand}" />
+										<Button Content="New" />
+										<Button Content="Save" Command="{Binding SaveServiceCommand}" />
+										<Separator />
+										<Label Content="Debug" />
+										<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
 									</StackPanel>
-								</Grid>
-							</Flyout>
-						</Button.Flyout>
-						Add Item</Button>
-					<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-						<Button.Flyout>
-							<Flyout>
-								<StackPanel MinWidth="200">
-									<Button Content="Load" Command="{Binding LoadServiceCommand}" />
-									<Button Content="New" />
-									<Button Content="Save" Command="{Binding SaveServiceCommand}" />
-									<Separator />
-									<Label Content="Debug" />
-									<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
-								</StackPanel>
-							</Flyout>
-						</Button.Flyout>
-						DEBUG</Button>
+								</Flyout>
+							</Button.Flyout>
+							DEBUG
+						</Button>
 
-					<controls:ItemOrderListView />
-					
-			</DockPanel>
+						<controls:ItemOrderListView />
 
-				<GridSplitter Grid.Column="1"
-							  Margin="-3,0"
-							  BorderThickness="3,0"
-			                  BorderBrush="Transparent"
-						      HorizontalAlignment="Stretch"
-							  ZIndex="9999"
+					</DockPanel>
+
+					<GridSplitter Grid.Column="1"
+								  Margin="-3,0"
+								  BorderThickness="3,0"
+								  BorderBrush="Transparent"
+								  HorizontalAlignment="Stretch"
+								  ZIndex="9999"
 							  />
 
-				<!-- Centre panel-->
-				<Border Grid.Column="2" CornerRadius="2 0 0 0" HorizontalAlignment="Stretch" BorderBrush="#9a93cd" BorderThickness="1 1 0 0"
-						ZIndex="2"
+					<!-- Centre panel-->
+					<Border Grid.Column="2" CornerRadius="2 0 0 0" HorizontalAlignment="Stretch" BorderBrush="#9a93cd" BorderThickness="1 1 0 0"
+							ZIndex="2"
 						>
 
-					<DockPanel>
-					<!--<Border
+						<DockPanel>
+							<!--<Border
 						Height="50"
 						Padding="10,5,10,5"
 						VerticalAlignment="Bottom"
@@ -154,7 +255,7 @@
 						</Grid>
 					</Border>-->
 
-					<!--<ScrollViewer VerticalScrollBarVisibility="Visible">
+							<!--<ScrollViewer VerticalScrollBarVisibility="Visible">
 						<ScrollViewer.Styles>
 							<Style Selector="ScrollBar">
 								<Setter Property="AllowAutoHide" Value="false" />
@@ -165,85 +266,86 @@
 						</ScrollViewer.Styles>-->
 
 
-						<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
-						<!--<controls:ItemStateView DataContext="{Binding Playlist.State.SelectedItem}" />-->
+							<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+							<!--<controls:ItemStateView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
-					<!--</ScrollViewer>-->
-				</DockPanel>
-				</Border>
-			</Grid>
-			
-		</DockPanel>
+							<!--</ScrollViewer>-->
+						</DockPanel>
+					</Border>
+				</Grid>
 
-		<GridSplitter Grid.Column="1"
-				Margin="-3,0"
-				BorderThickness="3,0"
-			    BorderBrush="Transparent"
-				HorizontalAlignment="Stretch"
-				Background="#9a93cd"
-				ZIndex="9999"
+			</DockPanel>
+
+			<GridSplitter Grid.Column="1"
+					Margin="-3,0"
+					BorderThickness="3,0"
+					BorderBrush="Transparent"
+					HorizontalAlignment="Stretch"
+					Background="#9a93cd"
+					ZIndex="9999"
 			  />
 
-		<!-- Right panel -->
-		<DockPanel Grid.Column="2" Background="#eeeef2">
+			<!-- Right panel -->
+			<DockPanel Grid.Column="2" Background="#eeeef2">
 
-			<Border Padding="10" DockPanel.Dock="Top" Height="70">
-				<DockPanel>
-					<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}">Projector</Button>
-					<TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18">Live</TextBlock>
-				</DockPanel>
-			</Border>
-
-			<Grid DockPanel.Dock="Top">
-				<Grid.Background>
-					<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
-						<VisualBrush.Visual>
-							<Canvas Width="16" Height="16" Background="#1a1a1a">
-								<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
-								<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
-							</Canvas>
-						</VisualBrush.Visual>
-					</VisualBrush>
-				</Grid.Background>
-				<Border>
-					<Viewbox>
-						<views:ActiveSlideOutput Width="1920" Height="1080" />
-						<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
-						<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
-					</Viewbox>
+				<Border Padding="10" DockPanel.Dock="Top" Height="70">
+					<DockPanel>
+						<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}">Projector</Button>
+						<TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18">Live</TextBlock>
+					</DockPanel>
 				</Border>
-			</Grid>
 
-			<Grid DockPanel.Dock="Top">
-				<Grid.Background>
-					<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
-						<VisualBrush.Visual>
-							<Canvas Width="16" Height="16" Background="#1a1a1a">
-								<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
-								<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
-							</Canvas>
-						</VisualBrush.Visual>
-					</VisualBrush>
-				</Grid.Background>
-				<Viewbox>
-					<!--<views:LowerThirdSlideTemplate Name="NextPreview"  Width="1920" Height="1080" />-->
-					<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" />-->
-					<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" IsLive="False" />-->
-				</Viewbox>
-			</Grid>
+				<Grid DockPanel.Dock="Top">
+					<Grid.Background>
+						<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+							<VisualBrush.Visual>
+								<Canvas Width="16" Height="16" Background="#1a1a1a">
+									<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+									<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+								</Canvas>
+							</VisualBrush.Visual>
+						</VisualBrush>
+					</Grid.Background>
+					<Border>
+						<Viewbox>
+							<views:ActiveSlideOutput Width="1920" Height="1080" />
+							<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
+							<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
+						</Viewbox>
+					</Border>
+				</Grid>
 
-			<UniformGrid DockPanel.Dock="Top" Columns="4" Rows="1" Height="35">
-				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-			</UniformGrid>
+				<Grid DockPanel.Dock="Top">
+					<Grid.Background>
+						<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+							<VisualBrush.Visual>
+								<Canvas Width="16" Height="16" Background="#1a1a1a">
+									<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+									<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+								</Canvas>
+							</VisualBrush.Visual>
+						</VisualBrush>
+					</Grid.Background>
+					<Viewbox>
+						<!--<views:LowerThirdSlideTemplate Name="NextPreview"  Width="1920" Height="1080" />-->
+						<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" />-->
+						<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" IsLive="False" />-->
+					</Viewbox>
+				</Grid>
 
-			<TextBlock Padding="5 5 5 10" FontSize="20" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
+				<UniformGrid DockPanel.Dock="Top" Columns="4" Rows="1" Height="35">
+					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				</UniformGrid>
 
-			<Grid></Grid>
+				<TextBlock Padding="5 5 5 10" FontSize="20" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
 
-		</DockPanel>
-	</Grid>
+				<Grid></Grid>
+
+			</DockPanel>
+		</Grid>
+	</DockPanel>
 
 </Window>

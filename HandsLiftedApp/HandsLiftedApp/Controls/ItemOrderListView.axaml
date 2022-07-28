@@ -19,8 +19,8 @@
 		x:Name="itemsListBox"
 		Items="{Binding Playlist.Items}"
 		VirtualizationMode="None"
-		Background="Transparent">
-		<ListBox.ContextMenu>
+	Background="Transparent">
+	<ListBox.ContextMenu>
 			<ContextMenu>
 				<MenuItem Header="Add Item" />
 			</ContextMenu>

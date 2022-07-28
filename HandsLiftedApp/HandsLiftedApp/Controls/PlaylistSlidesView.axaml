@@ -14,6 +14,7 @@
 			 Background="White"
 			 VirtualizationMode="None"
 			 Items="{Binding Items}"
+			 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
 			 >
 		<ListBox.Styles>
 			<!--<Style Selector="ListBox">
@@ -40,6 +41,8 @@
 			</Style>-->
 			<Style Selector="ListBoxItem">
 				<Setter Property="Padding" Value="0"/>
+				<!--<Setter Property="IsHitTestVisible" Value="False" />-->
+				<!--<Setter Property="Focusable" Value="False"/>-->
 			</Style>
 			<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
@@ -49,6 +52,9 @@
 			</Style>
 			<Style Selector="ListBox /template/ ScrollViewer">
 				<Setter Property="AllowAutoHide" Value="false"/>
+			</Style>
+			<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+				<Setter Property="Background" Value="#EFD7D7"/>
 			</Style>
 		</ListBox.Styles>
 		<ListBox.ItemTemplate>
