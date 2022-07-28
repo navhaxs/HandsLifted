@@ -67,7 +67,11 @@ namespace HandsLiftedApp.ViewModels
  		public MainWindowViewModel()
 		{
 			if (Design.IsDesignMode)
-				return;
+            {
+                Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
+                Playlist.Items.Add(PlaylistUtils.CreateSong());
+                return;
+            }
 
 			// The OpenFile command is bound to a button/menu item in the UI.
 			AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPPTXFileAsync);

@@ -24,8 +24,6 @@ namespace HandsLiftedApp.Controls
             MessageBus.Current.Listen<SpyScrollUpdateMessage>()
                .Subscribe(x =>
                {
-                   //var control = listBox.ItemContainerGenerator.ContainerFromIndex(x.Index);
-                   //listBox.Scroll.Offset = new Vector(0, control.Bounds.Top);
                    lock (syncSlidesLock)
                    {
                        listBox.SelectionChanged -= ListBox_SelectionChanged;
@@ -38,12 +36,6 @@ namespace HandsLiftedApp.Controls
 
         private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            var x = listBox;
-            //ListBoxItem item = e.Ite;// x.SelectedItem;
-            //listBox.ItemContainerGenerator.
-            //var control = listBox.ItemContainerGenerator.ContainerFromIndex(itemIndex);
-            //listBox.Scroll.Offset = new Vector(0, control.Bounds.Top);
-
             MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = listBox.SelectedIndex });
 
         }

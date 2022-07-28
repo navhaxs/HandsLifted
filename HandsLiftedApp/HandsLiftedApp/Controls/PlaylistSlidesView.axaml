@@ -7,16 +7,14 @@
              xmlns:utils="using:HandsLiftedApp.Utils"
              x:Class="HandsLiftedApp.Controls.PlaylistSlidesView">
 
-
+	<ScrollViewer Name="ScrollViewer">
 	<!--ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			 ScrollViewer.VerticalScrollBarVisibility="Disabled"-->
-	<ListBox Name="List"
+	<ItemsControl Name="List"
 			 Background="White"
-			 VirtualizationMode="None"
 			 Items="{Binding Items}"
-			 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
 			 >
-		<ListBox.Styles>
+		<ItemsControl.Styles>
 			<!--<Style Selector="ListBox">
 				<Setter Property="Template">
 					<ControlTemplate>
@@ -53,14 +51,15 @@
 			<Style Selector="ListBox /template/ ScrollViewer">
 				<Setter Property="AllowAutoHide" Value="false"/>
 			</Style>
-			<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+			<!--<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
 				<Setter Property="Background" Value="#EFD7D7"/>
-			</Style>
-		</ListBox.Styles>
-		<ListBox.ItemTemplate>
+			</Style>-->
+		</ItemsControl.Styles>
+		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<controls:ItemStateView />
 			</DataTemplate>
-		</ListBox.ItemTemplate>
-	</ListBox>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
+	</ScrollViewer>
 </UserControl>

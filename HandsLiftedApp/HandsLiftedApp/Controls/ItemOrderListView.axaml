@@ -10,7 +10,7 @@
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
-
+	
 	<UserControl.Resources>
 		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
 	</UserControl.Resources>
@@ -19,13 +19,18 @@
 		x:Name="itemsListBox"
 		Items="{Binding Playlist.Items}"
 		VirtualizationMode="None"
-	Background="Transparent">
+		Background="Transparent">
 	<ListBox.ContextMenu>
 			<ContextMenu>
 				<MenuItem Header="Add Item" />
 			</ContextMenu>
 		</ListBox.ContextMenu>
 		<ListBox.Styles>
+			<Style Selector="ListBox">
+				<Setter Property="Padding" Value="0" />
+				<Setter Property="Margin" Value="0" />
+			</Style>
+			
 			<Style Selector="ListBoxItem">
 				<Setter Property="ContextMenu">
 					<Setter.Value>
@@ -36,6 +41,7 @@
 						</ContextMenu>
 					</Setter.Value>
 				</Setter>
+				<Setter Property="Padding" Value="0" />
 			</Style>
 
 			<Style Selector="ListBoxItem">
@@ -51,15 +57,15 @@
 		</ListBox.Styles>
 		<ListBox.DataTemplates>
 			<DataTemplate>
-				<DockPanel>
+				<DockPanel VerticalAlignment="Stretch">
 					<Ellipse
-						DockPanel.Dock="Right"
-						IsVisible="{Binding State.IsSelected, FallbackValue=False}"
+						IsVisible="{Binding State.IsSelected}"
 						Width="8"
 						Height="8"
+						Margin="12 0 0 0"
 						Fill="#c43e1c"
-						/>
-					<TextBlock TextTrimming="CharacterEllipsis">
+					/>
+					<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
 						<TextBlock.Text>
 							<!--<MultiBinding StringFormat="{}{0}. {1}">
 								<Binding RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" Converter="{StaticResource itemToIndexConverter}" />-->

@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Data.Models.Items;
+﻿using Avalonia.Controls;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
@@ -28,6 +29,9 @@ namespace HandsLiftedApp.Data.Models
 
         public Playlist()
         {
+            if (Design.IsDesignMode)
+                return;
+
             State = (T)Activator.CreateInstance(typeof(T), this);
             Items.CollectionChanged += Items_CollectionChanged;
         }
