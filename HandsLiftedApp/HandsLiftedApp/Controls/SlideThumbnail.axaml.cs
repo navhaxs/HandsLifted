@@ -9,6 +9,12 @@ namespace HandsLiftedApp.Controls
         public SlideThumbnail()
         {
             InitializeComponent();
+            this.PointerPressed += SlideThumbnail_PointerPressed;
+        }
+
+        private void SlideThumbnail_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+        {
+            //e.Handled = false;
         }
 
         private void InitializeComponent()

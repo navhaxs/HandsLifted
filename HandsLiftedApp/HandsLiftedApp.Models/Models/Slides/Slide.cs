@@ -11,9 +11,9 @@ namespace HandsLiftedApp.Data.Slides
         //public abstract UIElement RenderThumbnail { get; }
 
         // meta - group labels, slide number, etc.
-        //public abstract string SlideLabel { get; }
+        public abstract string? SlideLabel { get; }
 
-        public abstract string SlideText { get; }
+        public abstract string? SlideText { get; }
     }
 
     public interface ISlideState

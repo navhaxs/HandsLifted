@@ -21,7 +21,9 @@ namespace HandsLiftedApp.Data.Slides
             State = (T)Activator.CreateInstance(typeof(T), this);
         }
 
-        public override string SlideText => "image";
+        public override string? SlideText => null;
+
+        public override string? SlideLabel => Path.GetFileName(ImagePath);
 
     }
     public interface IImageSlideState : ISlideState { }

@@ -69,6 +69,7 @@
 				<controls:ItemStateView />
 			</DataTemplate>
 		</ItemsControl.ItemTemplate>
-	</ItemsControl>
+	
+</ItemsControl>
 	</ScrollViewer>
 </UserControl>

@@ -91,28 +91,24 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             List<Slide> slides = new List<Slide>();
 
-            //slides.Add(new SongTitleSlide() { Title = Title, Copyright = Copyright });
-
-            foreach (var _datum in stanzas)
+            foreach (SongStanza _datum in stanzas)
             {
                 // break slides by newlines
                 string[] lines = _datum.Lyrics.Split(new string[] { Environment.NewLine + Environment.NewLine },
                            StringSplitOptions.RemoveEmptyEntries);
-                foreach (string line in lines)
+                foreach (var x in lines.Select((line, index) => new { line, index }))
+                //foreach (string line in lines)
                 {
-                    slides.Add(new SongSlide<S>(_datum) { Text = line });
+                    var slide = new SongSlide<S>(_datum) { Text = x.line };
+
+                    if (x.index == 0)
+                    {
+                        slide.Label = $"{_datum.Name}";
+                    }
+
+                    slides.Add(slide);
                 }
             }
-
-            // HACK
-            // HACK
-            // HACK
-            // HACK
-            foreach (var (item, index) in slides.Select((item, index) => (item, index)))
-            {
-                //((SongSlide<S>)item).State = index;
-            };
-
 
             return slides;
         }

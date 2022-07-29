@@ -10,22 +10,9 @@ namespace HandsLiftedApp.Data.Slides
         public string Title { get; set; } = "SongSlide.SongSlideText default value";
         public string Copyright { get; set; } = "SongSlide.SongSlideText default value";
 
-        // Slide interface accessors for rendering
-        //public override string SlideLabel
-        //{
-        //    get
-        //    {
-        //        return "Verse 1";
-        //    }
-        //}
+        public override string? SlideText => Title;
 
-        public override string SlideText
-        {
-            get
-            {
-                return Title;
-            }
-        }
+        public override string? SlideLabel => null;
     }
     public interface ISongTitleSlideState : ISlideState { }
 }

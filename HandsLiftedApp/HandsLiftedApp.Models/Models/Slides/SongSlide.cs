@@ -20,6 +20,7 @@ namespace HandsLiftedApp.Data.Slides
         }
 
         public string Text { get; set; } = "SongSlide.SongSlideText default value";
+        public string? Label { get; set; }
 
         // Slide interface accessors for rendering
         //public override string SlideLabel
@@ -30,13 +31,9 @@ namespace HandsLiftedApp.Data.Slides
         //    }
         //}
 
-        public override string SlideText
-        {
-            get
-            {
-                return Text;
-            }
-        }
+        public override string? SlideText => Text;
+
+        public override string? SlideLabel => Label;
 
         // ref
         public SongStanza OwnerSongStanza { get; }

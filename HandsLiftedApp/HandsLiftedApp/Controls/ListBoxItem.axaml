@@ -63,9 +63,16 @@
 		<Setter Property="Template">
 			<ControlTemplate>
 				<DockPanel>
-					<TextBlock DockPanel.Dock="Bottom" Padding="2 0 2 2" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" />
+					<TextBlock DockPanel.Dock="Bottom" Padding="2 0 2 2">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}{0}. {1}">
+								<!-- TODO in avalonia 0.11, make this bold -->
+								<Binding RelativeSource="{RelativeSource TemplatedParent}" Converter="{StaticResource itemToIndexConverter}" FallbackValue="#" />
+								<Binding Path="SlideLabel" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
 					<Border CornerRadius="2">
-
 						<Grid>
 							<Border Name="PART_Border" DockPanel.Dock="Bottom" CornerRadius="2">
 								<Border.Background>
