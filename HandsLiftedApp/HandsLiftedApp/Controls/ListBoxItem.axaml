@@ -81,7 +81,7 @@
 							</Border>
 
 							<ContentPresenter Name="PART_ContentPresenter"
-											  Margin="10"
+											  Margin="4"
 											  Background="{TemplateBinding Background}"
 											  BorderBrush="{TemplateBinding BorderBrush}"
 											  BorderThickness="{TemplateBinding BorderThickness}"

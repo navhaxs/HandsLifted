@@ -7,9 +7,18 @@
              xmlns:utils="using:HandsLiftedApp.Utils"
              x:Class="HandsLiftedApp.Controls.PlaylistSlidesView">
 
-	<ScrollViewer Name="ScrollViewer">
-	<!--ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-			 ScrollViewer.VerticalScrollBarVisibility="Disabled"-->
+	<ScrollViewer Name="ScrollViewer"
+				  HorizontalScrollBarVisibility="Disabled"
+				  VerticalScrollBarVisibility="Visible"
+				  >
+						<ScrollViewer.Styles>
+							<Style Selector="ScrollBar">
+								<Setter Property="AllowAutoHide" Value="false" />
+							</Style>
+							<Style Selector="ScrollViewer">
+								<Setter Property="AllowAutoHide" Value="false"/>
+							</Style>
+						</ScrollViewer.Styles>
 	<ItemsControl Name="List"
 			 Background="White"
 			 Items="{Binding Items}"

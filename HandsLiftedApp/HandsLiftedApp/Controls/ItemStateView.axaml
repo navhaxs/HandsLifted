@@ -65,6 +65,16 @@
 
 
 				<!--ListBox.Styles-->
+				<ListBox.Styles>
+					<Style Selector="ListBoxItem">
+						<Setter Property="Padding" Value="0"/>
+						<!--<Setter Property="IsHitTestVisible" Value="False" />-->
+						<!--<Setter Property="Focusable" Value="False"/>-->
+					</Style>
+					<!--<Style Selector="ListBoxItem /template/ ContentPresenter">
+						<Setter Property="Margin" Value="0"/>
+					</Style>-->
+				</ListBox.Styles>
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
 						<WrapPanel ItemWidth="244"
@@ -89,7 +99,7 @@
 							<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Text}" TextWrapping="Wrap" Foreground="White" Margin="10" />
 						</DataTemplate>
 						<DataTemplate x:Key="ImageSlide">
-							<controls:SlideThumbnail MaxWidth="250">
+							<controls:SlideThumbnail>
 								<Grid>
 									<TextBlock Text="{Binding State.ImageName}" TextWrapping="Wrap" />
 									<!--<Image Stretch="Uniform" Source="{Binding Data.ImagePath, Converter={StaticResource variableImage}}" />-->
