@@ -15,6 +15,7 @@ using DynamicData;
 using System.IO;
 using Avalonia.Threading;
 using Avalonia.Controls;
+using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -58,7 +59,13 @@ namespace HandsLiftedApp.ViewModels
 
 		public OverlayState OverlayState { get; set; }
 
+		public Slide LogoSlideInstance { get; } = new LogoSlide();
+		public Slide BlankSlideInstance { get; } = new BlankSlide();
 		public Boolean IsFrozen { get; set; }
+
+		private ObservableAsPropertyHelper<Slide> _activeSlide;
+
+		public Slide ActiveSlide { get => _activeSlide.Value; }
 
 		public void LoadDemoSchedule()
 		{
@@ -72,6 +79,25 @@ namespace HandsLiftedApp.ViewModels
                 Playlist.Items.Add(PlaylistUtils.CreateSong());
                 return;
             }
+
+			_activeSlide = this.WhenAnyValue(x => x.Playlist.State.ActiveItemSlide, x => x.Playlist.State.IsLogo, x => x.LogoSlideInstance,
+				 x => x.Playlist.State.IsBlank, x => x.BlankSlideInstance,
+				(active, isLogo, logoSlideInstance, isBlank, blankSlideInstance) =>
+                {
+                    if (isLogo)
+                    {
+                        return logoSlideInstance;
+                    }
+
+					if (isBlank)
+					{
+						return blankSlideInstance;
+					}
+
+                    return active;
+                })
+                .ToProperty(this, c => c.ActiveSlide)
+            ;
 
 			// The OpenFile command is bound to a button/menu item in the UI.
 			AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPPTXFileAsync);
@@ -106,9 +132,20 @@ namespace HandsLiftedApp.ViewModels
 			//{
 			//	this.WhenAnyValue(tt => tt._playlist.State.SelectedItem.SelectedItem).Subscribe(ss =>
 			//	{
-   //                 this.RaisePropertyChanged("SlidesSelectedItem");
+			//                 this.RaisePropertyChanged("SlidesSelectedItem");
 			//	});
 			//});
+
+			// Playlist.State.SelectedItem.State.SelectedSlide
+			// Playlist.State.SelectedItem.State.SelectedSlide
+			// Playlist.State.SelectedItem.State.SelectedSlide
+			// Playlist.State.SelectedItem.State.SelectedSlide
+			// Playlist.State.SelectedItem.State.SelectedSlide
+			// Playlist.State.SelectedItem.State.SelectedSlide
+			// Playlist.State.SelectedItem.State.SelectedSlide
+
+	
+
 		}
 
 		//SlideState convertDataToState(Slide slide)

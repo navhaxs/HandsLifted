@@ -119,6 +119,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 return;
             }
 
+            //if (Object.Equals(CurrentContent, content))
+            //{
+            //    return;
+            //}
+
             var clock = AvaloniaLocator.Current.GetService<IGlobalClock>();
             clock.PlayState = PlayState.Pause;
 

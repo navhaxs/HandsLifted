@@ -25,7 +25,12 @@
 			<DataTemplate x:Key="ImageSlide">
 				<Grid>
 					<Image Stretch="Uniform" Source="{Binding State.Image}" RenderOptions.BitmapInterpolationMode="HighQuality" />
-					<TextBlock Text="{Binding State.ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />
+					<!--<TextBlock Text="{Binding State.ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />-->
+				</Grid>
+			</DataTemplate>
+			<DataTemplate x:Key="LogoSlide">
+				<Grid>
+					<Image Stretch="Uniform" Source="/Assets/SWEC-ProPresenter-Logo-Slide.png" RenderOptions.BitmapInterpolationMode="HighQuality" />
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="VideoSlide">

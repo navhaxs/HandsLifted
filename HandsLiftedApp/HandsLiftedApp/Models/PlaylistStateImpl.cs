@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
@@ -44,6 +45,10 @@ namespace HandsLiftedApp.Models
                 })
                 .ToProperty(this, x => x.SelectedItem);
 
+            _activeItemSlide = this.WhenAnyValue(x => x.SelectedItem.State.SelectedSlide,
+                    (Slide selectedSlide) => selectedSlide)
+                    .ToProperty(this, c => c.ActiveItemSlide);
+
             if (Design.IsDesignMode) {
                 SelectedIndex = 0;
             }
@@ -64,13 +69,16 @@ namespace HandsLiftedApp.Models
 
         private ObservableAsPropertyHelper<Item<ItemStateImpl>> _selectedItem;
         public Item<ItemStateImpl> SelectedItem { get => _selectedItem.Value; }
-        void OnSelectedIndexChanged()
-        {
-            foreach (var (item, index) in Playlist.Items.WithIndex())
-            {
-                if (SelectedIndex != index)
-                    item.State.SelectedIndex = -1;
-            }
-        }
+
+        private ObservableAsPropertyHelper<Slide> _activeItemSlide;
+        public Slide ActiveItemSlide { get => _activeItemSlide.Value; }
+
+        // TODO: "Presentation State" can be moved out of playlist state.
+        private bool _isLogo = false;
+        public bool IsLogo { get => _isLogo; set => this.RaiseAndSetIfChanged(ref _isLogo, value); }
+
+         private bool _isBlank = false;
+        public bool IsBlank { get => _isBlank; set => this.RaiseAndSetIfChanged(ref _isBlank, value); }
+
     }
 }

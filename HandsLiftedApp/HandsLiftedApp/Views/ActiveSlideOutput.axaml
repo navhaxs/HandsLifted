@@ -8,6 +8,35 @@
 			 xmlns:reactiveUi="using:Avalonia.ReactiveUI"
 			 xmlns:ext="using:HandsLiftedApp.Extensions"
              xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+			 xmlns:i="using:Avalonia.Xaml.Interactivity"
+			 xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
              x:Class="HandsLiftedApp.Views.ActiveSlideOutput">
-	<viewsrender:SlideRenderer DataContext="{Binding Playlist.State.SelectedItem.State.SelectedSlide}" IsLive="True" />
+	<Grid>
+	
+		<viewsrender:SlideRenderer DataContext="{Binding ActiveSlide}" IsLive="True" />
+
+		<!-- good for freezing. bad for fading -->
+		<!--<Image
+			Name="DataTriggerRectangle"
+			IsVisible="False"
+			Source="/Assets/SWEC-ProPresenter-Logo-Slide.png">
+			<i:Interaction.Behaviors>
+				<ia:DataTriggerBehavior Binding="{Binding Playlist.State.IsLogo}"
+										ComparisonCondition="Equal"
+										Value="True">
+					<ia:ChangePropertyAction TargetObject="DataTriggerRectangle"
+											 PropertyName="IsVisible"
+											 Value="True" />
+				</ia:DataTriggerBehavior>
+				<ia:DataTriggerBehavior Binding="{Binding Playlist.State.IsLogo}"
+										ComparisonCondition="Equal"
+										Value="False">
+					<ia:ChangePropertyAction TargetObject="DataTriggerRectangle"
+											 PropertyName="IsVisible"
+											 Value="False" />
+				</ia:DataTriggerBehavior>
+			</i:Interaction.Behaviors>
+		</Image>-->
+		
+	</Grid>
 </UserControl>
