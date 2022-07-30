@@ -10,7 +10,7 @@
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
         Icon="/Assets/avalonia-logo.ico"
 		DoubleTapped="ProjectorWindow_DoubleTapped"
-        Title="HandsLiftedApp">
+        Title="Projector Output">
 
 	<Window.Background>
 		<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">

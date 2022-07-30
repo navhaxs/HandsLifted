@@ -59,13 +59,17 @@ namespace HandsLiftedApp.Views.Render
             if (this.VisualRoot as Window is ProjectorWindow)
             {
                 if (this.DataContext is VideoSlide<VideoSlideStateImpl>)
-            {
+                {
 
-                    MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
+                        MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
 
-                    if (this.VisualRoot as Window is ProjectorWindow)
-                        VideoView.MediaPlayer = MediaPlayer;
+                        if (this.VisualRoot as Window is ProjectorWindow)
+                            VideoView.MediaPlayer = MediaPlayer;
+                }
             }
+            else
+            {
+                VideoView.IsVisible = false;
             }
         }
 

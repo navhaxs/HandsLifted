@@ -54,7 +54,8 @@ namespace HandsLiftedApp.Data.Models.Items
                 if (stanzaSlides != null)
                     x.AddRange(stanzaSlides);
 
-          
+                // TODO: add bool value
+                x.Add(new SongSlide<S>(null));
 
                 return x;
             })

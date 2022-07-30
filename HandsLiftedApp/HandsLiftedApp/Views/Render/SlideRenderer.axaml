@@ -35,7 +35,7 @@
 			</DataTemplate>
 			<DataTemplate x:Key="VideoSlide">
 				<Grid>
-					<TextBlock Text="{Binding VideoPath}" TextWrapping="Wrap" />
+					<!--<TextBlock Text="{Binding VideoPath}" TextWrapping="Wrap" />-->
 					<viewsrender:VideoSlideRenderer />
 				</Grid>
 			</DataTemplate>
