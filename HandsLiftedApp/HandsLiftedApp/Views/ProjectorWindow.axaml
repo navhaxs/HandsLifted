@@ -1,11 +1,13 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="using:HandsLiftedApp.Views"
+        xmlns:render="using:HandsLiftedApp.Views.Render"
         xmlns:vm="using:HandsLiftedApp.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ndi="using:AvaloniaNDI"
 		xmlns:v="using:LibVLCSharp.Avalonia"
+		xmlns:utils="using:HandsLiftedApp.Utils"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -42,12 +44,21 @@
 	</DockPanel>-->
 
 	<Grid>
+		<!--<Viewbox>-->
+		<ndi:NDISendContainer DataContext="{Binding ActiveSlide}" NdiName="Lyrics" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
+			<render:AltSlideRenderer Width="1920" Height="1080"/>
+		</ndi:NDISendContainer>
+		<!--</Viewbox>-->
+
 		<Viewbox>
-			<ndi:NDISendContainer NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
-				 <!--<views:LowerThirdSlideTemplate Width="1920" Height="1080" />--> 
-				<views:ActiveSlideOutput Width="1920" Height="1080"/>
+			<ndi:NDISendContainer NdiName="Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
+				<Grid Background="Black">
+					<views:ActiveSlideOutput Width="1920" Height="1080"/>
+				</Grid>
 			</ndi:NDISendContainer>
 		</Viewbox>
+
+
 	</Grid>
 </Window>
 

@@ -67,7 +67,6 @@
 			</MenuItem>
 			<MenuItem Header="_Output">
 				<MenuItem
-					Command="{Binding ProjectorOutputToggle}"
 					Header="Turn on _Projector output">
 					<MenuItem.Icon>
 						<CheckBox BorderThickness="0"
@@ -101,18 +100,18 @@
 						</CheckBox>
 					</MenuItem.Icon>
 				</MenuItem>
-					<MenuItem
-					Header="_Freeze display"
+				<MenuItem
+				Header="_Freeze display"
 					>
-						<MenuItem.Icon>
-							<CheckBox BorderThickness="0"
-									  IsHitTestVisible="False"
+					<MenuItem.Icon>
+						<CheckBox BorderThickness="0"
+								  IsHitTestVisible="False"
 									>
-								Toggle _Me
-							</CheckBox>
-						</MenuItem.Icon>
-					</MenuItem>
-						<Separator />
+							Toggle _Me
+						</CheckBox>
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
 				<MenuItem Header="_Configure Screens..." />
 			</MenuItem>
 			<MenuItem Header="_Library">
@@ -335,25 +334,29 @@
 				</Grid>
 
 				<UniformGrid DockPanel.Dock="Top" Columns="3" Rows="1" Height="35">
-					<!-- TODO: implement radio-like group selection -->
-					<ToggleButton 
-						HorizontalContentAlignment="Center"
-						HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-						IsChecked="{Binding Playlist.State.IsLogo, Mode=TwoWay}"
-						Content="Logo" />
-					<ToggleButton 
-						HorizontalContentAlignment="Center"
-						HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-						IsChecked="{Binding Playlist.State.IsBlank, Mode=TwoWay}"
-						Content="Blank" />
-					<ToggleButton 
-						HorizontalContentAlignment="Center"
-						HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-						IsChecked="{Binding Playlist.State.IsFreeze, Mode=TwoWay}"
-						Content="Freeze" />
-					<!--<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-					<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />-->
+					<UniformGrid.Styles>
+						<Style Selector="RadioButton">
+							<Setter Property="HorizontalContentAlignment" Value="Center" />
+							<Setter Property="HorizontalAlignment" Value="Stretch" />
+							<Setter Property="VerticalAlignment" Value="Stretch" />
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate>
+										<ToggleButton
+											Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                            IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+											HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+											HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+											VerticalAlignment="{TemplateBinding VerticalAlignment}"
+													  />
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</UniformGrid.Styles>
+					<RadioButton IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton>
+					<RadioButton IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
+					<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>
 				</UniformGrid>
 
 				<TextBlock Padding="5 5 5 10" FontSize="20" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>

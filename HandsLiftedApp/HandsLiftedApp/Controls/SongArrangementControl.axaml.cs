@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace HandsLiftedApp.Views.Render.SongSlide
+namespace HandsLiftedApp.Controls
 {
-    public partial class LowerThirdSlideTemplate : UserControl
+    public partial class SongArrangementControl : UserControl
     {
-        public LowerThirdSlideTemplate()
+        public SongArrangementControl()
         {
             InitializeComponent();
         }

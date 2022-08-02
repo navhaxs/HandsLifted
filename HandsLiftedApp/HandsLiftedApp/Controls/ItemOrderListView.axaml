@@ -3,6 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:converters="using:HandsLiftedApp.Converters"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:idd="clr-namespace:Avalonia.Xaml.Interactions.DragAndDrop;assembly=Avalonia.Xaml.Interactions"
+			 xmlns:b="using:HandsLiftedApp.Behaviours"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
 			 xmlns:vm="using:HandsLiftedApp.ViewModels"
              x:Class="HandsLiftedApp.Controls.ItemOrderListView">
@@ -10,7 +13,7 @@
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
-	
+
 	<UserControl.Resources>
 		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
 	</UserControl.Resources>
@@ -19,8 +22,9 @@
 		x:Name="itemsListBox"
 		Items="{Binding Playlist.Items}"
 		VirtualizationMode="None"
+        Classes="ItemsDragAndDrop"
 		Background="Transparent">
-	<ListBox.ContextMenu>
+		<ListBox.ContextMenu>
 			<ContextMenu>
 				<MenuItem Header="Add Item" />
 			</ContextMenu>
@@ -30,7 +34,7 @@
 				<Setter Property="Padding" Value="0" />
 				<Setter Property="Margin" Value="0" />
 			</Style>
-			
+
 			<Style Selector="ListBoxItem">
 				<Setter Property="ContextMenu">
 					<Setter.Value>
@@ -54,6 +58,31 @@
 				<Setter Property="Background" Value="#edeafc"/>
 				<Setter Property="BorderBrush" Value="#9a93cd"/>
 			</Style>
+
+
+			<Style Selector="ListBox.ItemsDragAndDrop">
+				<Style.Resources>
+					<b:ItemsListBoxDropHandler x:Key="ItemsListBoxDropHandler" />
+				</Style.Resources>
+				<Setter Property="(i:Interaction.Behaviors)">
+					<i:BehaviorCollectionTemplate>
+						<i:BehaviorCollection>
+							<idd:ContextDropBehavior Handler="{StaticResource ItemsListBoxDropHandler}" />
+						</i:BehaviorCollection>
+					</i:BehaviorCollectionTemplate>
+				</Setter>
+			</Style>
+
+			<Style Selector="ListBox.ItemsDragAndDrop ListBoxItem">
+				<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				<Setter Property="(i:Interaction.Behaviors)">
+					<i:BehaviorCollectionTemplate>
+						<i:BehaviorCollection>
+							<idd:ContextDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
+						</i:BehaviorCollection>
+					</i:BehaviorCollectionTemplate>
+				</Setter>
+			</Style>
 		</ListBox.Styles>
 		<ListBox.DataTemplates>
 			<DataTemplate>
@@ -69,10 +98,10 @@
 						<TextBlock.Text>
 							<!--<MultiBinding StringFormat="{}{0}. {1}">
 								<Binding RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" Converter="{StaticResource itemToIndexConverter}" />-->
-								<Binding Path="Title" />
+							<Binding Path="Title" />
 							<!--</MultiBinding>-->
 						</TextBlock.Text>
-				</TextBlock>
+					</TextBlock>
 				</DockPanel>
 			</DataTemplate>
 		</ListBox.DataTemplates>

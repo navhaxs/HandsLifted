@@ -39,6 +39,9 @@
     <Compile Update="Views\AddItemPaletteControl.axaml.cs">
       <DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Render\AltSlideRenderer.axaml.cs">
+      <DependentUpon>AltSlideRenderer.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Render\SongSlide\SimpleSlideTitle.axaml.cs">
       <DependentUpon>SimpleSlideTitle.axaml</DependentUpon>
     </Compile>

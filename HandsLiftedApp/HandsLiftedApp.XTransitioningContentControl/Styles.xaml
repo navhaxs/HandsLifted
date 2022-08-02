@@ -9,7 +9,7 @@
 						Name="PART_Container"
 						HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
 						VerticalAlignment="{TemplateBinding VerticalAlignment}">
-					<Grid.Background>
+					<!--<Grid.Background>
 						<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
 							<LinearGradientBrush.GradientStops>
 								<GradientStop Offset="0" Color="Black"/>
@@ -17,7 +17,7 @@
 							</LinearGradientBrush.GradientStops>
 						</LinearGradientBrush>
 
-					</Grid.Background>
+					</Grid.Background>-->
 					<Image
 						Name="PART_PreviousImageSite"
 					Opacity="{Binding #BackgroundSlider.Value, Mode=TwoWay}"

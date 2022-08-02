@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace HandsLiftedApp.Views.Render.SongSlide
 {
-    public partial class LowerThirdSlideTemplate : UserControl
+    public partial class LowerThirdSlideContent : UserControl
     {
-        public LowerThirdSlideTemplate()
+        public LowerThirdSlideContent()
         {
             InitializeComponent();
         }

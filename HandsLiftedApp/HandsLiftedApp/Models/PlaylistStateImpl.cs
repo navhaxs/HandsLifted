@@ -49,7 +49,8 @@ namespace HandsLiftedApp.Models
                     (Slide selectedSlide) => selectedSlide)
                     .ToProperty(this, c => c.ActiveItemSlide);
 
-            if (Design.IsDesignMode) {
+            if (Design.IsDesignMode)
+            {
                 SelectedIndex = 0;
             }
         }
@@ -77,8 +78,11 @@ namespace HandsLiftedApp.Models
         private bool _isLogo = false;
         public bool IsLogo { get => _isLogo; set => this.RaiseAndSetIfChanged(ref _isLogo, value); }
 
-         private bool _isBlank = false;
+        private bool _isBlank = false;
         public bool IsBlank { get => _isBlank; set => this.RaiseAndSetIfChanged(ref _isBlank, value); }
+
+        private bool _isFreeze = false;
+        public bool IsFreeze { get => _isFreeze; set => this.RaiseAndSetIfChanged(ref _isFreeze, value); }
 
     }
 }

@@ -31,14 +31,22 @@ namespace HandsLiftedApp.Views
             if (Design.IsDesignMode)
                 return;
 
+            this.Closing += MainWindow_Closing;
             this.Closed += MainWindow_Closed;
             this.KeyDown += ZoomBorder_KeyDown;
 
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
-            
+
             //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
             //OrderableListBox.PointerReleased += X_PointerReleased;
+        }
+
+        private void MainWindow_Closing(object? sender, CancelEventArgs e)
+        {
+
+            // TODO confirm
+            //throw new NotImplementedException();
         }
 
         //private void X_PointerReleased(object? sender, PointerReleasedEventArgs e)
@@ -99,7 +107,7 @@ namespace HandsLiftedApp.Views
 
                 throw;
             }
-          
+
         }
 
         private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)
@@ -111,6 +119,6 @@ namespace HandsLiftedApp.Views
         {
             ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
         }
-        
+
     }
 }
