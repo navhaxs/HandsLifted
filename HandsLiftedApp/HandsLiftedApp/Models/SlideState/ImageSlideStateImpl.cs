@@ -14,7 +14,8 @@ namespace HandsLiftedApp.Models.SlideState
         }
         public async Task LoadImage()
         {
-            Image = await Task.Run(() => {
+            Image = await Task.Run(() =>
+            {
                 var path = _slide.ImagePath;
 
                 if (File.Exists(path))

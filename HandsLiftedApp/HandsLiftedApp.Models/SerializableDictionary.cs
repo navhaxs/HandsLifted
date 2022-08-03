@@ -256,5 +256,5 @@ namespace HandsLiftedApp.Data
                 writer.WriteEndElement();
             }
         }
-        }
+    }
 }

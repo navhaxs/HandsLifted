@@ -1,25 +1,19 @@
-﻿using System;
-using System.Reflection;
-using System.Threading;
-using System.Timers;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Skia;
 using Avalonia.Controls.Templates;
-using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Rendering;
-using Avalonia.Shared.PlatformSupport;
 using Avalonia.Skia;
 using Avalonia.Skia.Helpers;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using SkiaSharp;
+using System.Timers;
 
 namespace HandsLiftedApp.XTransitioningContentControl
 {
@@ -107,7 +101,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             _contentPresenterContainer = e.NameScope.Find<Grid>("PART_ContentPresenterContainer");
         }
 
-  
+
         /// <summary>
         /// Updates the content with transitions.
         /// </summary>

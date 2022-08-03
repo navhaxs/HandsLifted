@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using System.Text;
-using Avalonia.Input;
 //using FirLib.Core.Patterns.Mvvm;
 
 //using MessageCommunicator.TestGui.ViewServices;

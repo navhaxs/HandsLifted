@@ -61,10 +61,10 @@ namespace HandsLiftedApp.Views.Render
                 if (this.DataContext is VideoSlide<VideoSlideStateImpl>)
                 {
 
-                        MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
+                    MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
 
-                        if (this.VisualRoot as Window is ProjectorWindow)
-                            VideoView.MediaPlayer = MediaPlayer;
+                    if (this.VisualRoot as Window is ProjectorWindow)
+                        VideoView.MediaPlayer = MediaPlayer;
                 }
             }
             else
@@ -100,10 +100,12 @@ namespace HandsLiftedApp.Views.Render
 
         private async Task sAsync()
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 // HACK waits for Video control to *fully* initialise first...
                 Task.Delay(200).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
-                Dispatcher.UIThread.InvokeAsync(() => {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
                     if (MediaPlayer != null && !MediaPlayer.IsPlaying)
                     {
                         MediaPlayer.Play();

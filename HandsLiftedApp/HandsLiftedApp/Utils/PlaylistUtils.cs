@@ -1,14 +1,10 @@
-﻿using Avalonia.Controls;
-using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
@@ -23,7 +19,8 @@ namespace HandsLiftedApp.Utils
             ImportStats? value = null;
             Exception? threadEx = null;
 
-            await Task.Factory.StartNew(() => {
+            await Task.Factory.StartNew(() =>
+            {
                 var progress = new Progress<ImportStats>();
                 //progress.ProgressChanged += Progress_ProgressChanged;
                 var outDir = GetTempDirPath();
@@ -34,7 +31,7 @@ namespace HandsLiftedApp.Utils
                         try
                         {
                             value = RunPowerPointImportTask(progress, importTask);
-                            
+
                         }
                         catch (Exception ex)
                         {
@@ -86,7 +83,7 @@ namespace HandsLiftedApp.Utils
 
         public static SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> CreateSong()
         {
-            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> song = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> ()
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> song = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>()
             {
                 Title = "Rock Of Ages",
                 Copyright = @"“Hallelujah” words and music by John Doe

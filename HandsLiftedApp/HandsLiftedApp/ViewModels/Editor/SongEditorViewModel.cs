@@ -1,15 +1,10 @@
-using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive;
-using System.Text;
 
 namespace HandsLiftedApp.ViewModels.Editor
 {
@@ -21,7 +16,8 @@ namespace HandsLiftedApp.ViewModels.Editor
         public SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>? song
         {
             get => _song;
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref _song, value);
 
                 _song.PropertyChanged += _song_PropertyChanged;

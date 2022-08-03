@@ -14,7 +14,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         private T _state;
         [XmlIgnore]
-        public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value);  }
+        public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
         public string _title = "New Item";
 

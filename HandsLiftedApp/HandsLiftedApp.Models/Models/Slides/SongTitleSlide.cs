@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-namespace HandsLiftedApp.Data.Slides
+﻿namespace HandsLiftedApp.Data.Slides
 {
     public class SongTitleSlide<T> : Slide where T : ISongTitleSlideState
     {

@@ -34,7 +34,7 @@
 			</Setter>-->
 		</Style>
 	</UserControl.Styles>
-	
+
 	<StackPanel>
 		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
 			<DockPanel>
@@ -56,7 +56,7 @@
 				 Background="Transparent"
 				 Items="{Binding Slides}"
 				 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
-				 SelectedItem="{Binding State.SelectedItem}">
+				 >
 			<ListBox.Styles>
 				<Style Selector="ListBoxItem">
 					<Setter Property="Padding" Value="0"/>

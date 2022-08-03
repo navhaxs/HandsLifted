@@ -1,8 +1,7 @@
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
-using System;
 using LibVLCSharp.Avalonia;
+using System;
 using System.Threading;
 
 namespace HandsLiftedApp
@@ -16,7 +15,8 @@ namespace HandsLiftedApp
         // yet and stuff might break.
 
         [STAThread]
-        public static void Main(string[] args) {
+        public static void Main(string[] args)
+        {
 
             // Windows-only
             // https://stackoverflow.com/a/646500/

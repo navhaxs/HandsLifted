@@ -33,7 +33,8 @@ namespace HandsLiftedApp.Views.Render
         public bool IsLive
         {
             get { return _items; }
-            set {
+            set
+            {
                 SetAndRaise(IsLiveProperty, ref _items, value);
 
                 if (value == false)

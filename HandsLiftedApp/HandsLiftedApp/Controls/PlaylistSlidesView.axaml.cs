@@ -4,7 +4,6 @@ using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using System;
-using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Controls
@@ -13,6 +12,7 @@ namespace HandsLiftedApp.Controls
     {
         ItemsControl listBox;
         ScrollViewer scrollViewer;
+
 
         public PlaylistSlidesView()
         {
@@ -55,7 +55,7 @@ namespace HandsLiftedApp.Controls
                             lastIndex = i;
                         }
                     }
-                    
+
                     MessageBus.Current.SendMessage(new SpyScrollUpdateMessage() { Index = lastIndex });
                 });
         }

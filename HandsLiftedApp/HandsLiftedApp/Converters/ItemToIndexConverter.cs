@@ -1,15 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using Avalonia.LogicalTree;
-using Avalonia.VisualTree;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Converters
 {

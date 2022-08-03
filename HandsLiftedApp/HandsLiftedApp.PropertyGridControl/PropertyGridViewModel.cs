@@ -23,7 +23,7 @@ namespace HandsLiftedApp.PropertyGridControl
 
                     this.UpdatePropertyCollection();
                 }
-            } 
+            }
         }
 
         public List<ConfigurablePropertyMetadata> PropertyMetadata

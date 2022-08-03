@@ -1,11 +1,6 @@
-﻿using DynamicData.Binding;
-using ReactiveUI;
-using System;
-using System.Collections;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 
 namespace HandsLiftedApp.PropertyGridControl
 {
@@ -136,7 +131,7 @@ namespace HandsLiftedApp.PropertyGridControl
             //{
             //    this.ValueType = PropertyValueType.DetailSettings;
             //}
-            else if (propertyType.IsGenericType && 
+            else if (propertyType.IsGenericType &&
                 (propertyType.GetGenericTypeDefinition() == typeof(ObservableCollection<>) || propertyType.GetGenericTypeDefinition().IsAssignableFrom(typeof(List<>))))
             {
                 this.ValueType = PropertyValueType.Collection;

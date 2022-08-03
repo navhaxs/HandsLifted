@@ -1,23 +1,3 @@
-using HandsLiftedApp.Models;
-using HandsLiftedApp.Models.SlideState;
-using HandsLiftedApp.PropertyGridControl;
-using HandsLiftedApp.Utils;
-using HandsLiftedApp.Views;
-using ReactiveUI;
-using System;
-using System.Reactive;
-using System.Threading.Tasks;
-using System.Reactive.Linq;
-using static HandsLiftedApp.Importer.PowerPoint.Main;
-using HandsLiftedApp.Data.Models;
-using System.Diagnostics;
-using DynamicData;
-using System.IO;
-using Avalonia.Threading;
-using Avalonia.Controls;
-using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Views.App;
-
 namespace HandsLiftedApp.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
@@ -120,40 +100,32 @@ namespace HandsLiftedApp.ViewModels
 
             _ = Update(); // calling an async function we do not want to await
 
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            //this.WhenAnyValue(t => t.SlidesSelectedItem).Subscribe(s => {
-            //	this.RaisePropertyChanged("Text");
-            //	this.RaisePropertyChanged("SlidesSelectedItem");
-
-            //	//var nextSlideState = Slides != null && SlidesSelectedIndex + 1 < Slides.Count ? Slides[SlidesSelectedIndex + 1] : null;
-            //	//if (nextSlideState != null)
-            //	//	NextSlide = nextSlideState;
-            //});
-
             LoadDemoSchedule();
 
-            //this.WhenAnyValue(t => t._playlist.State.SelectedItem).Subscribe(s =>
-            //{
-            //	this.WhenAnyValue(tt => tt._playlist.State.SelectedItem.SelectedItem).Subscribe(ss =>
-            //	{
-            //                 this.RaisePropertyChanged("SlidesSelectedItem");
-            //	});
-            //});
+            MessageBus.Current.Listen<MoveItemMessage>()
+                       .Subscribe(x =>
+                       {
+                           var selectedItem = Playlist.State.SelectedItem;
 
-            // Playlist.State.SelectedItem.State.SelectedSlide
-            // Playlist.State.SelectedItem.State.SelectedSlide
-            // Playlist.State.SelectedItem.State.SelectedSlide
-            // Playlist.State.SelectedItem.State.SelectedSlide
-            // Playlist.State.SelectedItem.State.SelectedSlide
-            // Playlist.State.SelectedItem.State.SelectedSlide
-            // Playlist.State.SelectedItem.State.SelectedSlide
+                           //this.WhenAnyValue(t => t._playlist.State.SelectedItem).Subscribe(s =>
+                           //{
+                           //	this.WhenAnyValue(tt => tt._playlist.State.SelectedItem.SelectedItem).Subscribe(ss =>
+                           //	{
+                           //                 this.RaisePropertyChanged("SlidesSelectedItem");
+                           //	});
+                           //});
+
+                           // Playlist.State.SelectedItem.State.SelectedSlide
+                           // Playlist.State.SelectedItem.State.SelectedSlide
+                           // Playlist.State.SelectedItem.State.SelectedSlide
+                           // Playlist.State.SelectedItem.State.SelectedSlide
+                           // Playlist.State.SelectedItem.State.SelectedSlide
+                           // Playlist.State.SelectedItem.State.SelectedSlide
+                           // Playlist.State.SelectedItem.State.SelectedSlide
 
 
 
-        }
+                       }
 
         //SlideState convertDataToState(Slide slide)
         //{
@@ -172,27 +144,28 @@ namespace HandsLiftedApp.ViewModels
         //}
 
         public void OnProjectorClickCommand()
-        {
-            ProjectorWindow p = new ProjectorWindow();
-            p.DataContext = this;
-            p.Show();
-        }
+            {
+                ProjectorWindow p = new ProjectorWindow();
+                p.DataContext = this;
+                p.Show();
+            }
 
-        public void OnDebugClickCommand()
-        {
-            ObjectInspectorWindow p = new ObjectInspectorWindow() { DataContext = this };
-            p.Show();
-        }
+            public void OnDebugClickCommand()
+            {
+                ObjectInspectorWindow p = new ObjectInspectorWindow() { DataContext = this };
+                p.Show();
+            }
 
-        public void OnNextSlideClickCommand()
-        {
-            //SlidesSelectedIndex += 1;
-        }
+            public void OnNextSlideClickCommand()
+            {
+                //SlidesSelectedIndex += 1;
+            }
 
-        public void OnPrevSlideClickCommand()
-        {
-            //SlidesSelectedIndex -= 1;
-        }
+            public void OnPrevSlideClickCommand()
+            {
+                //SlidesSelectedIndex -= 1;
+            }
+
 
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
@@ -202,6 +175,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<object, Unit> MoveDownItemCommand { get; }
         public ReactiveCommand<object, Unit> RemoveItemCommand { get; }
         public ReactiveCommand<Unit, Unit> OnAboutWindowCommand { get; }
+
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
         private async Task OpenPPTXFileAsync()
         {

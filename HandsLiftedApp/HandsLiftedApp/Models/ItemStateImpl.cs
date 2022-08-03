@@ -1,19 +1,11 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.ViewModels.Editor;
 using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive;
-using System.Text;
-using System.Threading.Tasks;
-using static HandsLiftedApp.ViewModels.Editor.SongEditorViewModel;
 
 namespace HandsLiftedApp.Models
 {
@@ -77,7 +69,7 @@ namespace HandsLiftedApp.Models
             if (parent is not SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)
                 return;
 
-            SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>) parent};
+            SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)parent };
             //vm.SongDataUpdated += Vm_SongDataUpdated;
             SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
             seq.Show();

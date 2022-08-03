@@ -81,7 +81,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
 
                     if (thisPresentation != null)
                         thisPresentation.Close();
-                    
+
                     return stats;
                 }
 
@@ -97,7 +97,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
 
                     if (thisPresentation != null)
                         thisPresentation.Close();
-                    
+
                     return stats;
                 }
 

@@ -6,15 +6,12 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.ViewModels;
-using System.Linq;
-using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
-using Avalonia.LogicalTree;
-using Avalonia.VisualTree;
 
 namespace HandsLiftedApp.Views
 {

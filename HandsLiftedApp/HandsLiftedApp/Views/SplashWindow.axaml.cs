@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using System;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
@@ -25,7 +24,8 @@ namespace HandsLiftedApp.Views
 
         private async Task sAsync()
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 Task.Delay(3 * 1000).Wait();
                 Dispatcher.UIThread.InvokeAsync(() => Close());
             });

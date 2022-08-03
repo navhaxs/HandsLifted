@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using Avalonia.Input;
 using Avalonia.Layout;
-using DynamicData.Binding;
 using ReactiveUI;
 
 namespace HandsLiftedApp.PropertyGridControl
@@ -87,9 +78,9 @@ namespace HandsLiftedApp.PropertyGridControl
             return ctrlTextBox;
         }
 
-         protected virtual Control CreateObjectInspectorControl(
-            ConfigurablePropertyMetadata property,
-            IEnumerable<ConfigurablePropertyMetadata> allProperties)
+        protected virtual Control CreateObjectInspectorControl(
+           ConfigurablePropertyMetadata property,
+           IEnumerable<ConfigurablePropertyMetadata> allProperties)
         {
             var wrapper = new DockPanel();
 
@@ -115,7 +106,8 @@ namespace HandsLiftedApp.PropertyGridControl
 
             var btnInspectMe = new Button();
             btnInspectMe.Content = "Inspect";
-            btnInspectMe.Command = ReactiveCommand.Create(() => {
+            btnInspectMe.Command = ReactiveCommand.Create(() =>
+            {
                 var m = new ObjectInspectorWindow() { DataContext = property.GetValue() };
                 m.Show();
             });
@@ -126,9 +118,9 @@ namespace HandsLiftedApp.PropertyGridControl
 
             return wrapper;
         }
-   protected virtual Control CreateCollectionInspectorControl(
-            ConfigurablePropertyMetadata property,
-            IEnumerable<ConfigurablePropertyMetadata> allProperties)
+        protected virtual Control CreateCollectionInspectorControl(
+                 ConfigurablePropertyMetadata property,
+                 IEnumerable<ConfigurablePropertyMetadata> allProperties)
         {
             var wrapper = new DockPanel();
 
@@ -154,7 +146,8 @@ namespace HandsLiftedApp.PropertyGridControl
 
             var btnInspectMe = new Button();
             btnInspectMe.Content = "Inspect";
-            btnInspectMe.Command = ReactiveCommand.Create(() => {
+            btnInspectMe.Command = ReactiveCommand.Create(() =>
+            {
                 var m = new CollectionInspectorWindow() { DataContext = property.GetValue() };
                 m.Show();
             });

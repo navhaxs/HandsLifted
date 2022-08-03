@@ -3,7 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:converters="using:HandsLiftedApp.Converters"
+             xmlns:behaviours="using:HandsLiftedApp.Behaviours"
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:idd="clr-namespace:Avalonia.Xaml.Interactions.DragAndDrop;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:b="using:HandsLiftedApp.Behaviours"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
@@ -18,92 +20,117 @@
 		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
 	</UserControl.Resources>
 
-	<ListBox
+	<UserControl.Styles>
+		<Style Selector="ListBox">
+			<Setter Property="Padding" Value="0" />
+			<Setter Property="Margin" Value="0" />
+		</Style>
+
+		<Style Selector="ListBoxItem">
+			<Setter Property="ContextMenu">
+				<Setter.Value>
+					<ContextMenu>
+						<MenuItem Header="Move Up" Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" CommandParameter="{Binding}"/>
+						<MenuItem Header="Move Down" Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" CommandParameter="{Binding}"/>
+						<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
+					</ContextMenu>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Padding" Value="0" />
+		</Style>
+
+		<Style Selector="ListBoxItem">
+			<Setter Property="Margin" Value="4 0 0 0"/>
+			<Setter Property="BorderThickness" Value="1 1 0 1"/>
+			<Setter Property="CornerRadius" Value="3 0 0 3"/>
+			<Setter Property="(i:Interaction.Behaviors)">
+				<i:BehaviorCollectionTemplate>
+					<i:BehaviorCollection>
+						<behaviours:DragControlBehavior />
+					</i:BehaviorCollection>
+				</i:BehaviorCollectionTemplate>
+			</Setter>
+		</Style>
+
+		<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+			<Setter Property="Background" Value="#66edeafc"/>
+			<Setter Property="BorderBrush" Value="#9a93cd"/>
+		</Style>
+
+		<!--<Style Selector="ListBox.ItemsDragAndDrop">
+					<Style.Resources>
+						<b:ItemsListBoxDropHandler x:Key="ItemsListBoxDropHandler" />
+					</Style.Resources>
+					<Setter Property="(i:Interaction.Behaviors)">
+						<i:BehaviorCollectionTemplate>
+							<i:BehaviorCollection>
+								<idd:ContextDropBehavior Handler="{StaticResource ItemsListBoxDropHandler}" />
+							</i:BehaviorCollection>
+						</i:BehaviorCollectionTemplate>
+					</Setter>
+				</Style>
+
+				<Style Selector="ListBox.ItemsDragAndDrop ListBoxItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+					<Setter Property="(i:Interaction.Behaviors)">
+						<i:BehaviorCollectionTemplate>
+							<i:BehaviorCollection>
+								<idd:ContextDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
+							</i:BehaviorCollection>
+						</i:BehaviorCollectionTemplate>
+					</Setter>
+				</Style>-->
+	</UserControl.Styles>
+
+	<Grid
+		x:Name="Grid">
+
+		<ListBox
 		x:Name="itemsListBox"
-		Items="{Binding Playlist.Items}"
+		Items="{Binding Playlist.Items, Mode=OneWay}"
 		VirtualizationMode="None"
         Classes="ItemsDragAndDrop"
 		Background="Transparent">
-		<ListBox.ContextMenu>
-			<ContextMenu>
-				<MenuItem Header="Add Item" />
-			</ContextMenu>
-		</ListBox.ContextMenu>
-		<ListBox.Styles>
-			<Style Selector="ListBox">
-				<Setter Property="Padding" Value="0" />
-				<Setter Property="Margin" Value="0" />
-			</Style>
+			<ListBox.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Add Item" />
+				</ContextMenu>
+			</ListBox.ContextMenu>
+			<ListBox.DataTemplates>
+				<DataTemplate>
+					<DockPanel VerticalAlignment="Stretch">
+						<Ellipse
+							IsVisible="{Binding State.IsSelected}"
+							Width="8"
+							Height="8"
+							Margin="12 0 0 0"
+							Fill="#c43e1c" />
+						<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
+							<TextBlock.Text>
+								<MultiBinding StringFormat="{}{0}">
+									<!--<MultiBinding StringFormat="{}{0}. {1}">-->
+									<!--<Binding RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" Converter="{StaticResource itemToIndexConverter}" />-->
+									<Binding Path="Title" />
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</DockPanel>
+				</DataTemplate>
+			</ListBox.DataTemplates>
+		</ListBox>
 
-			<Style Selector="ListBoxItem">
-				<Setter Property="ContextMenu">
-					<Setter.Value>
-						<ContextMenu>
-							<MenuItem Header="Move Up" Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" CommandParameter="{Binding}"/>
-							<MenuItem Header="Move Down" Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" CommandParameter="{Binding}"/>
-							<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
-						</ContextMenu>
-					</Setter.Value>
-				</Setter>
-				<Setter Property="Padding" Value="0" />
-			</Style>
-
-			<Style Selector="ListBoxItem">
-				<Setter Property="Margin" Value="4 0 0 0"/>
-				<Setter Property="BorderThickness" Value="1 1 0 1"/>
-				<Setter Property="CornerRadius" Value="3 0 0 3"/>
-			</Style>
-
-			<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-				<Setter Property="Background" Value="#edeafc"/>
-				<Setter Property="BorderBrush" Value="#9a93cd"/>
-			</Style>
-
-
-			<Style Selector="ListBox.ItemsDragAndDrop">
-				<Style.Resources>
-					<b:ItemsListBoxDropHandler x:Key="ItemsListBoxDropHandler" />
-				</Style.Resources>
-				<Setter Property="(i:Interaction.Behaviors)">
-					<i:BehaviorCollectionTemplate>
-						<i:BehaviorCollection>
-							<idd:ContextDropBehavior Handler="{StaticResource ItemsListBoxDropHandler}" />
-						</i:BehaviorCollection>
-					</i:BehaviorCollectionTemplate>
-				</Setter>
-			</Style>
-
-			<Style Selector="ListBox.ItemsDragAndDrop ListBoxItem">
-				<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-				<Setter Property="(i:Interaction.Behaviors)">
-					<i:BehaviorCollectionTemplate>
-						<i:BehaviorCollection>
-							<idd:ContextDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
-						</i:BehaviorCollection>
-					</i:BehaviorCollectionTemplate>
-				</Setter>
-			</Style>
-		</ListBox.Styles>
-		<ListBox.DataTemplates>
-			<DataTemplate>
-				<DockPanel VerticalAlignment="Stretch">
-					<Ellipse
-						IsVisible="{Binding State.IsSelected}"
-						Width="8"
-						Height="8"
-						Margin="12 0 0 0"
-						Fill="#c43e1c"
-					/>
-					<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
-						<TextBlock.Text>
-							<!--<MultiBinding StringFormat="{}{0}. {1}">
-								<Binding RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" Converter="{StaticResource itemToIndexConverter}" />-->
-							<Binding Path="Title" />
-							<!--</MultiBinding>-->
-						</TextBlock.Text>
-					</TextBlock>
-				</DockPanel>
-			</DataTemplate>
-		</ListBox.DataTemplates>
-	</ListBox>
+		<!--<ListBoxItem x:Name="Hover" VerticalAlignment="Top" IsHitTestVisible="False">
+			-->
+		<!--<DockPanel VerticalAlignment="Stretch">
+				<Ellipse
+					IsVisible="{Binding State.IsSelected}"
+					Width="8"
+					Height="8"
+					Margin="12 0 0 0"
+					Fill="#c43e1c" />
+				<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10" Text="Aa" />
+			</DockPanel>-->
+		<!--	
+		</ListBoxItem>-->
+	</Grid>
 </UserControl>

@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Platform;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
@@ -9,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Utils
 {

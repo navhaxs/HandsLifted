@@ -1,21 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Metadata;
-using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
-using HandsLiftedApp.Models.SlideState;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Utils
 {
     public class MyTemplateSelector : IDataTemplate
     {
-  
+
         public bool SupportsRecycling => false;
         [Content]
         public Dictionary<string, IDataTemplate> Templates { get; } = new Dictionary<string, IDataTemplate>();

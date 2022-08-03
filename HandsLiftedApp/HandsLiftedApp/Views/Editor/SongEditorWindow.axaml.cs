@@ -2,12 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels.Editor;
-using System;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views.Editor
@@ -54,7 +52,7 @@ namespace HandsLiftedApp.Views.Editor
             if (result != null)
             {
                 //_wavFileSplitter.GetWavHeader(result, text => _textOutput.Text = text);
-                ((SongEditorViewModel) this.DataContext).song = SongImporter.ImportSongFromTxt(result[0]);
+                ((SongEditorViewModel)this.DataContext).song = SongImporter.ImportSongFromTxt(result[0]);
             }
         }
 
@@ -93,7 +91,7 @@ namespace HandsLiftedApp.Views.Editor
             var result = await dlg.ShowAsync(window);
             if (result != null)
             {
-                ((SongEditorViewModel)this.DataContext).song = XmlSerialization.ReadFromXmlFile<SongItem< SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>>(result[0]);
+                ((SongEditorViewModel)this.DataContext).song = XmlSerialization.ReadFromXmlFile<SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>>(result[0]);
             }
         }
     }

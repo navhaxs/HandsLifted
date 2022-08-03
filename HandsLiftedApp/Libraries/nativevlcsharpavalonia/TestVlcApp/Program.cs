@@ -1,6 +1,4 @@
-﻿using System;
-using LibVLCSharp.Shared;
-using System.Threading.Tasks;
+﻿using LibVLCSharp.Shared;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;

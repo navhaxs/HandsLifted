@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reactive.Disposables;
-using System.Threading;
-using System.Threading.Tasks;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using System.Reactive.Disposables;
 
 
 namespace HandsLiftedApp.XTransitioningContentControl
@@ -38,7 +34,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         {
             _fadeOutAnimation = new Animation
             {
-                Children = 
+                Children =
                 {
                     new KeyFrame()
                     {

@@ -1,8 +1,6 @@
-﻿using Avalonia.Media.Imaging;
-using HandsLiftedApp.Data.Slides;
+﻿using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.XTransitioningContentControl;
 using LibVLCSharp.Shared;
-using ReactiveUI;
 using System;
 
 namespace HandsLiftedApp.Models.SlideState
