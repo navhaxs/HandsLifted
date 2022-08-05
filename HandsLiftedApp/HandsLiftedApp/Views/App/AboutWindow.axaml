@@ -2,7 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="350"
+		Width="680" Height="350"
         x:Class="HandsLiftedApp.Views.App.AboutWindow"
 		Background="#5e4ecc"
 		Foreground="#f0edff"
@@ -12,27 +13,33 @@
             Height="60"
             Margin="10,0,10,10"
             DockPanel.Dock="Bottom">
+			<StackPanel>
+				<StackPanel.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="FontSize" Value="12" />
+					</Style>
+				</StackPanel.Styles>
+				<TextBlock FontWeight="Bold" Text="VisionScreens" />
+				<TextBlock Text="© Jeremy Wong 2015-2022" />
+				<TextBlock Text="This is pre-release software - Use at your own risk." />
+				<WrapPanel>
+					<TextBlock Text="Build " />
+					<TextBlock Text="{Binding GitHash, Mode=OneWay, FallbackValue='(unknown git hash)'}" />
+					<TextBlock Text=" " />
+					<TextBlock Text="{Binding BuildDate, Mode=OneWay, FallbackValue='(unknown build date)'}" />
+				</WrapPanel>
+			</StackPanel>
 			<Button
                 Width="160"
                 Height="40"
                 Margin="0,10,0,0"
+				Background="#EFEDFF"
+				HorizontalContentAlignment="Center"
+				VerticalContentAlignment="Center"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Content="Done"
                 IsDefault="True" />
-			<!--<TextBlock
-                Margin="0,0,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom">
-				<Bold>VisionScreens</Bold>
-				<Run Text="© Jeremy Wong 2016-2022" />
-				<LineBreak />
-				<Run Text="This is pre-release software - Use at your own risk." />
-				<LineBreak />
-				<Run Text="Build" />
-				<Run Text="{Binding GitHash, Mode=OneWay, FallbackValue='(unknown git hash)'}" />
-				<Run Text="{Binding BuildDate, Mode=OneWay, FallbackValue='(unknown build date)'}" />
-			</TextBlock>-->
 		</Grid>
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -45,7 +52,7 @@
                 Margin="0,40,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Source="/VisionScreens;component/logo.png" />
+                Source="avares://HandsLiftedApp/Assets/app_logo.png" />
 			<Border
                 Grid.Column="1"
                 Margin="0,10,10,0"
@@ -53,29 +60,38 @@
                 Background="#eee"
                 BorderThickness="1"
                 CornerRadius="5">
-				<!--<TextBlock
-                    Margin="15,15,35,0"
-                    Foreground="Black"
-                    TextWrapping="Wrap">
-					<Run FontSize="22" Text="Project lyrics and content with ease." />
-					<LineBreak />
-					<LineBreak />
-					<Run
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Text="VisionScreens" />
-					<Run FontSize="16" Text="is presentation software for church services and events," />
-					<Run FontSize="16" Text="designed to create and display effective visuals." />
-					<LineBreak />
-					<LineBreak />
-					<Run FontSize="16" Text="This copy of VisionScreens is licensed for" />
-					<Run
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Text="non-profit" />
-					<Run FontSize="16" Text="use only." />
-					<LineBreak />
-				</TextBlock>-->
+				<Border.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="Foreground"
+								Value="Black" />
+						<Setter Property="FontSize"
+								Value="16" />
+					</Style>
+				</Border.Styles>
+				<StackPanel Margin="15,15,35,0">
+					<TextBlock
+						Foreground="Black"
+						FontSize="22"
+						TextWrapping="Wrap">
+						Project lyrics and content with ease.
+					</TextBlock>
+					<WrapPanel
+						Margin="0 15 35 8">
+						<TextBlock
+							FontSize="16"
+							FontWeight="Bold"
+							Text="VisionScreens ">
+						</TextBlock>
+						<TextBlock Text="is presentation software for churches." />
+					</WrapPanel>
+					<WrapPanel>
+						<TextBlock Text="This copy of VisionScreens is licensed for" />
+						<TextBlock
+							FontWeight="Bold"
+							Text=" non-profit " />
+						<TextBlock Text="use only." />
+					</WrapPanel>
+				</StackPanel>
 			</Border>
 		</Grid>
 	</DockPanel>

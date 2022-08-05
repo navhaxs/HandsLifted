@@ -1,55 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Assets\King Of Kings.txt" />
-    <None Remove="Assets\splash.png" />
-    <None Remove="Assets\Test.png" />
-    <None Remove="Assets\test2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.17" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.17" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.17" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.17" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.17" />
-    <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.10.17" />
-    <PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.10.17" />
-    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.17.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
-    <ProjectReference Include="..\HandsLiftedApp.Models\HandsLiftedApp.Data.csproj" />
-    <ProjectReference Include="..\HandsLiftedApp.PowerPointImporter\HandsLiftedApp.Importer.PowerPoint.csproj" />
-    <ProjectReference Include="..\HandsLiftedApp.PropertyGridControl\HandsLiftedApp.PropertyGridControl.csproj" />
-    <ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
-    <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
-    <ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Controls\PlaylistSlidesView.axaml.cs">
-      <DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\AddItemPaletteControl.axaml.cs">
-      <DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Render\AltSlideRenderer.axaml.cs">
-      <DependentUpon>AltSlideRenderer.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Render\SongSlide\SimpleSlideTitle.axaml.cs">
-      <DependentUpon>SimpleSlideTitle.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Render\SongSlide\SimpleSlideTemplate.axaml.cs">
-      <DependentUpon>SimpleSlideTemplate.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Render\VideoSlideRenderer.axaml.cs">
-      <DependentUpon>VideoSlideRenderer.axaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Assets\app_logo - Copy.png" />
+		<None Remove="Assets\King Of Kings.txt" />
+		<None Remove="Assets\splash.png" />
+		<None Remove="Assets\Test.png" />
+		<None Remove="Assets\test2.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.17" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.17" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.17" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.17" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.17" />
+		<PackageReference Include="Avalonia.Xaml.Interactions" Version="0.10.17" />
+		<PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.10.17" />
+		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.17.4" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
+		<ProjectReference Include="..\HandsLiftedApp.Models\HandsLiftedApp.Data.csproj" />
+		<ProjectReference Include="..\HandsLiftedApp.PowerPointImporter\HandsLiftedApp.Importer.PowerPoint.csproj" />
+		<ProjectReference Include="..\HandsLiftedApp.PropertyGridControl\HandsLiftedApp.PropertyGridControl.csproj" />
+		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
+		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
+		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Controls\PlaylistSlidesView.axaml.cs">
+			<DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\AddItemPaletteControl.axaml.cs">
+			<DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Render\AltSlideRenderer.axaml.cs">
+			<DependentUpon>AltSlideRenderer.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Render\SongSlide\SimpleSlideTitle.axaml.cs">
+			<DependentUpon>SimpleSlideTitle.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Render\SongSlide\SimpleSlideTemplate.axaml.cs">
+			<DependentUpon>SimpleSlideTemplate.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Render\VideoSlideRenderer.axaml.cs">
+			<DependentUpon>VideoSlideRenderer.axaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
 </Project>
