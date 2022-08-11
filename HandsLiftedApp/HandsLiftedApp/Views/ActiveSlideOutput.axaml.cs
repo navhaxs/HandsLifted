@@ -5,7 +5,6 @@ namespace HandsLiftedApp.Views
 {
     public partial class ActiveSlideOutput : UserControl
     {
-        System.Timers.Timer t;
 
         public ActiveSlideOutput()
         {

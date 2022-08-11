@@ -1,3 +1,22 @@
+using Avalonia.Controls;
+using Avalonia.Threading;
+using DynamicData;
+using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.UI;
+using HandsLiftedApp.PropertyGridControl;
+using HandsLiftedApp.Utils;
+using HandsLiftedApp.Views;
+using HandsLiftedApp.Views.App;
+using ReactiveUI;
+using System;
+using System.IO;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using static HandsLiftedApp.Importer.PowerPoint.Main;
+
 namespace HandsLiftedApp.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
@@ -125,7 +144,8 @@ namespace HandsLiftedApp.ViewModels
 
 
 
-                       }
+                       });
+        }
 
         //SlideState convertDataToState(Slide slide)
         //{
@@ -144,27 +164,27 @@ namespace HandsLiftedApp.ViewModels
         //}
 
         public void OnProjectorClickCommand()
-            {
-                ProjectorWindow p = new ProjectorWindow();
-                p.DataContext = this;
-                p.Show();
-            }
+        {
+            ProjectorWindow p = new ProjectorWindow();
+            p.DataContext = this;
+            p.Show();
+        }
 
-            public void OnDebugClickCommand()
-            {
-                ObjectInspectorWindow p = new ObjectInspectorWindow() { DataContext = this };
-                p.Show();
-            }
+        public void OnDebugClickCommand()
+        {
+            ObjectInspectorWindow p = new ObjectInspectorWindow() { DataContext = this };
+            p.Show();
+        }
 
-            public void OnNextSlideClickCommand()
-            {
-                //SlidesSelectedIndex += 1;
-            }
+        public void OnNextSlideClickCommand()
+        {
+            //SlidesSelectedIndex += 1;
+        }
 
-            public void OnPrevSlideClickCommand()
-            {
-                //SlidesSelectedIndex -= 1;
-            }
+        public void OnPrevSlideClickCommand()
+        {
+            //SlidesSelectedIndex -= 1;
+        }
 
 
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
