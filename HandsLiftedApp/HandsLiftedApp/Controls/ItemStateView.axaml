@@ -51,29 +51,29 @@
 			</DockPanel>
 		</Border>
 
-		<ListBox Name="List"
+		<controls:ListBoxWithoutKey Name="List"
 				 VirtualizationMode="None"
 				 Background="Transparent"
 				 Items="{Binding Slides}"
 				 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
 				 >
-			<ListBox.Styles>
+			<controls:ListBoxWithoutKey.Styles>
 				<Style Selector="ListBoxItem">
 					<Setter Property="Padding" Value="0"/>
 					<!--<Setter Property="IsHitTestVisible" Value="False" />-->
 					<!--<Setter Property="Focusable" Value="False"/>-->
 				</Style>
-			</ListBox.Styles>
-			<ListBox.ItemsPanel>
+			</controls:ListBoxWithoutKey.Styles>
+			<controls:ListBoxWithoutKey.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel ItemWidth="244"
 							   ItemHeight="200"
 						   />
 					<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
 				</ItemsPanelTemplate>
-			</ListBox.ItemsPanel>
+			</controls:ListBoxWithoutKey.ItemsPanel>
 
-			<ListBox.DataTemplates>
+			<controls:ListBoxWithoutKey.DataTemplates>
 				<utils:MyTemplateSelector>
 					<DataTemplate x:Key="SongTitleSlide">
 						<!--<Viewbox>
@@ -111,7 +111,7 @@
 						<TextBlock TextWrapping="Wrap" Background="Red" Text="{Binding FallbackValue='Not good'}" />
 					</DataTemplate>
 				</utils:MyTemplateSelector>
-			</ListBox.DataTemplates>
-		</ListBox>
+			</controls:ListBoxWithoutKey.DataTemplates>
+		</controls:ListBoxWithoutKey>
 	</StackPanel>
 </UserControl>

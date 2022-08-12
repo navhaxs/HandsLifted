@@ -39,24 +39,6 @@ namespace HandsLiftedApp.ViewModels
 
         public Playlist<PlaylistStateImpl, ItemStateImpl> Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
 
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        //public SlideStateBase SlidesSelectedItem
-        //{
-        //	get => _playlist?.State?.SelectedItem?.SelectedItem;
-        //}
-
-        //public string Text
-        //{
-        //	get
-        //	{
-        //		return SlidesSelectedItem is SongSlideState ? ((SongSlideState)SlidesSelectedItem).Data.SlideText : "No slide selected yet";
-        //	}
-        //}
-
         public OverlayState OverlayState { get; set; }
 
         public Slide LogoSlideInstance { get; } = new LogoSlide();
@@ -121,47 +103,20 @@ namespace HandsLiftedApp.ViewModels
 
             LoadDemoSchedule();
 
-            MessageBus.Current.Listen<MoveItemMessage>()
-                       .Subscribe(x =>
-                       {
-                           var selectedItem = Playlist.State.SelectedItem;
-
-                           //this.WhenAnyValue(t => t._playlist.State.SelectedItem).Subscribe(s =>
-                           //{
-                           //	this.WhenAnyValue(tt => tt._playlist.State.SelectedItem.SelectedItem).Subscribe(ss =>
-                           //	{
-                           //                 this.RaisePropertyChanged("SlidesSelectedItem");
-                           //	});
-                           //});
-
-                           // Playlist.State.SelectedItem.State.SelectedSlide
-                           // Playlist.State.SelectedItem.State.SelectedSlide
-                           // Playlist.State.SelectedItem.State.SelectedSlide
-                           // Playlist.State.SelectedItem.State.SelectedSlide
-                           // Playlist.State.SelectedItem.State.SelectedSlide
-                           // Playlist.State.SelectedItem.State.SelectedSlide
-                           // Playlist.State.SelectedItem.State.SelectedSlide
-
-
-
-                       });
+            MessageBus.Current.Listen<NavigateSlideMessage>()
+               .Subscribe(x =>
+               {
+                   switch (x.Action)
+                   {
+                       case NavigateSlideMessage.NavigateSlideAction.NextSlide:
+                           OnNextSlideClickCommand();
+                           break;
+                       case NavigateSlideMessage.NavigateSlideAction.PreviousSlide:
+                           OnPrevSlideClickCommand();
+                           break;
+                   }
+               });
         }
-
-        //SlideState convertDataToState(Slide slide)
-        //{
-        //	switch (slide)
-        //	{
-        //		case SongSlide d:
-        //			return new SongSlideState(d);
-        //		case VideoSlide d:
-        //			return new VideoSlideState(d);
-        //		case ImageSlide d:
-        //			return new ImageSlideState(d);
-        //		default:
-        //			throw new Exception("error");
-        //			break;
-        //	}
-        //}
 
         public void OnProjectorClickCommand()
         {
@@ -179,13 +134,14 @@ namespace HandsLiftedApp.ViewModels
         public void OnNextSlideClickCommand()
         {
             //SlidesSelectedIndex += 1;
+            Playlist.State.NavigateNextSlide();
         }
 
         public void OnPrevSlideClickCommand()
         {
             //SlidesSelectedIndex -= 1;
+            Playlist.State.NavigatePreviousSlide();
         }
-
 
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
@@ -234,11 +190,6 @@ namespace HandsLiftedApp.ViewModels
             }
         }
 
-        private async Task AddAsync()
-        {
-
-        }
-
         public Interaction<Unit, string?> ShowSongOpenFileDialog { get; }
 
         private async Task AddSongAsync()
@@ -249,7 +200,6 @@ namespace HandsLiftedApp.ViewModels
 
                 if (fileName != null && fileName is string)
                 {
-                    //var x = PlaylistUtils.CreateSong();
                     var songItem = SongImporter.ImportSongFromTxt((string)fileName);
                     Playlist.Items.Add(songItem);
                 }

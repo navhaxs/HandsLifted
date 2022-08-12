@@ -23,13 +23,14 @@ namespace HandsLiftedApp.Models
 
             _selectedSlide = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) =>
                 {
-                    if (selectedIndex != -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
+                    if (selectedIndex > -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
                         return parent.Slides[selectedIndex];
 
                     return null;
                 })
                 .ToProperty(this, x => x.SelectedSlide);
 
+            // or really, "has selected?"
             _isSelected = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
                 .ToProperty(this, x => x.IsSelected);
         }

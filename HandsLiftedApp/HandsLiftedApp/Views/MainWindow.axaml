@@ -219,62 +219,51 @@
 						>
 
 						<DockPanel>
-							<!--<Border
+							<Border
 						Height="50"
 						Padding="10,5,10,5"
 						VerticalAlignment="Bottom"
 						Background="#FFD6D6D6"
 						DockPanel.Dock="Bottom">
-						<Grid>
-							<Grid.Styles>
-								<Style Selector="Button">
-									<Setter Property="MinWidth" Value="250" />
-									<Setter Property="HorizontalContentAlignment" Value="Center" />
-								</Style>
-							</Grid.Styles>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="2*" />
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="2*" />
-							</Grid.ColumnDefinitions>
-							<Button
-								Command="{Binding OnPrevSlideClickCommand}"
-								Content="Prev"
-								FontSize="16"
-								IsCancel="True"
-								IsTabStop="False" />
-							<TextBlock
-								Grid.Column="1"
-								HorizontalAlignment="Center"
-								VerticalAlignment="Center"
-								Foreground="{DynamicResource ForegroundText}">
-							</TextBlock>
-							<Button
-								Command="{Binding OnNextSlideClickCommand}"
-								HorizontalAlignment="Right"
-								Grid.Column="2"
-								Content="Next"
-								FontSize="16"
-								IsCancel="True"
-								IsTabStop="False" />
-						</Grid>
-					</Border>-->
-
-							<!--<ScrollViewer VerticalScrollBarVisibility="Visible">
-						<ScrollViewer.Styles>
-							<Style Selector="ScrollBar">
-								<Setter Property="AllowAutoHide" Value="false" />
-							</Style>
-							<Style Selector="ScrollViewer">
-								<Setter Property="AllowAutoHide" Value="false"/>
-							</Style>
-						</ScrollViewer.Styles>-->
+								<Grid>
+									<Grid.Styles>
+										<Style Selector="Button">
+											<Setter Property="MinWidth" Value="250" />
+											<Setter Property="HorizontalContentAlignment" Value="Center" />
+										</Style>
+									</Grid.Styles>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="2*" />
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="2*" />
+									</Grid.ColumnDefinitions>
+									<Button
+										Command="{Binding OnPrevSlideClickCommand}"
+										Content="Prev"
+										FontSize="16"
+										IsCancel="True"
+										IsTabStop="False" />
+									<TextBlock
+										Grid.Column="1"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"
+										Foreground="{DynamicResource ForegroundText}">
+									</TextBlock>
+									<Button
+										Command="{Binding OnNextSlideClickCommand}"
+										HorizontalAlignment="Right"
+										Grid.Column="2"
+										Content="Next"
+										FontSize="16"
+										IsCancel="True"
+										IsTabStop="False" />
+								</Grid>
+							</Border>
 
 
 							<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
 							<!--<controls:ItemStateView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
-							<!--</ScrollViewer>-->
 						</DockPanel>
 					</Border>
 				</Grid>

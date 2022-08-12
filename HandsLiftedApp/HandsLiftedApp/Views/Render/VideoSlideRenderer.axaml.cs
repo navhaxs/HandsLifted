@@ -100,13 +100,17 @@ namespace HandsLiftedApp.Views.Render
 
         private async Task sAsync()
         {
+
+            if (MediaPlayer == null || MediaPlayer != null && MediaPlayer.Hwnd == IntPtr.Zero)
+                return;
+
             await Task.Run(() =>
             {
                 // HACK waits for Video control to *fully* initialise first...
                 Task.Delay(200).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    if (MediaPlayer != null && !MediaPlayer.IsPlaying)
+                    if (!MediaPlayer.IsPlaying)
                     {
                         MediaPlayer.Play();
                     }

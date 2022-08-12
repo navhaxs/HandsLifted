@@ -5,6 +5,7 @@ using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
+using System.Linq;
 using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Models
@@ -82,6 +83,78 @@ namespace HandsLiftedApp.Models
 
         private bool _isFreeze = false;
         public bool IsFreeze { get => _isFreeze; set => this.RaiseAndSetIfChanged(ref _isFreeze, value); }
+
+        public void NavigateNextSlide()
+        {
+            // if no selected item, attempt to select the first item
+            if (SelectedItem == null)
+            {
+                if (Playlist.Items.Count > 0)
+                {
+                    SelectedIndex = 0;
+                    Playlist.Items[0].State.SelectedIndex = 0;
+                }
+            }
+            // for selected item, attempt to navigate slide forwards
+            // unless at last slide
+            else if (SelectedItem.Slides.ElementAtOrDefault(SelectedItem.State.SelectedIndex + 1) != null)
+            {
+                SelectedItem.State.SelectedIndex += 1;
+            }
+            // else attempt to navigate item forwards
+            else if (Playlist.Items.ElementAtOrDefault(SelectedIndex + 1) != null)
+            {
+                var lastSelectedIndex = SelectedIndex;
+
+                SelectedIndex += 1;
+
+                // select first slide of this next item
+                Playlist.Items[SelectedIndex].State.SelectedIndex = 0;
+
+                // deselect last item's slide
+                Playlist.Items[lastSelectedIndex].State.SelectedIndex = -1;
+            }
+        }
+
+        public void NavigatePreviousSlide()
+        {
+            // if no selected item, attempt to select the first item
+            if (SelectedItem == null)
+            {
+                if (Playlist.Items.Count > 0)
+                {
+                    SelectedIndex = 0;
+                }
+            }
+            // for selected item, attempt to navigate slide backwards
+            // unless at first slide
+            else if (SelectedItem.Slides.ElementAtOrDefault(SelectedItem.State.SelectedIndex - 1) != null)
+            {
+                SelectedItem.State.SelectedIndex -= 1;
+            }
+            // else attempt to navigate item backwards
+            else if (Playlist.Items.ElementAtOrDefault(SelectedIndex - 1) != null)
+            {
+                var lastSelectedIndex = SelectedIndex;
+
+                SelectedIndex -= 1;
+
+                // select last slide of this next item
+                Playlist.Items[SelectedIndex].State.SelectedIndex = Playlist.Items[SelectedIndex].Slides.Count - 1;
+
+                // deselect last item's slide
+                Playlist.Items[lastSelectedIndex].State.SelectedIndex = -1;
+            }
+            else
+            {
+                // deselect current slide
+                // and then deselect current item
+
+                Playlist.Items[SelectedIndex].State.SelectedIndex = -1;
+
+                SelectedIndex = -1;
+            }
+        }
 
     }
 }

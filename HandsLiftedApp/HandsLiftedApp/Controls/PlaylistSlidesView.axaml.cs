@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
@@ -58,6 +59,23 @@ namespace HandsLiftedApp.Controls
 
                     MessageBus.Current.SendMessage(new SpyScrollUpdateMessage() { Index = lastIndex });
                 });
+
+            this.KeyDown += PlaylistSlidesView_KeyDown;
+        }
+
+        private void PlaylistSlidesView_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Right:
+                case Key.Space:
+                    MessageBus.Current.SendMessage(new NavigateSlideMessage() { Action = NavigateSlideMessage.NavigateSlideAction.NextSlide });
+                    break;
+                case Key.Left:
+                    MessageBus.Current.SendMessage(new NavigateSlideMessage() { Action = NavigateSlideMessage.NavigateSlideAction.PreviousSlide });
+                    break;
+            }
+            e.Handled = true;
         }
 
         private void InitializeComponent()
