@@ -15,10 +15,6 @@ namespace HandsLiftedApp.Data.Models.Items
 
         public SongItem()
         {
-            //Stanzas.CollectionChanged += Stanzas_CollectionChanged;
-
-            //StanzaSlides.
-
             _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
                 (title, copyright) =>
                 {
@@ -66,7 +62,25 @@ namespace HandsLiftedApp.Data.Models.Items
         private TrulyObservableCollection<SongStanza> _stanzas = new TrulyObservableCollection<SongStanza>();
         public TrulyObservableCollection<SongStanza> Stanzas { get => _stanzas; set => this.RaiseAndSetIfChanged(ref _stanzas, value); }
 
-        //public List<KeyValuePair<string, List<Guid>>> Arrangements { get; set; } = new List<KeyValuePair<string, List<Guid>>>();
+        /*
+         * Arrangements
+         * 
+         * a dictionary of arrangements
+         * 
+         * e.g.
+         * "Standard" : ["Verse 1", "Chorus", "Verse 2", "Chorus", "Verse 3", "Chorus", "Verse 4", "Chorus", "Chorus"]
+         * "Special" : ["Verse 1", "Chorus", "Verse 2", "Chorus", "Verse 3", "Chorus", "Chorus"]
+         */
+        private Dictionary<string, List<Guid>> _arrangements = new Dictionary<string, List<Guid>>();
+        public Dictionary<string, List<Guid>> Arrangements { get => _arrangements; set => this.RaiseAndSetIfChanged(ref _arrangements, value); }
+
+        private string _selectedArrangement;
+        public string SelectedArrangement { get => _selectedArrangement; set => this.RaiseAndSetIfChanged(ref _selectedArrangement, value); }
+
+        //private ObservableAsPropertyHelper<Slide> _titleSlide;
+        //[XmlIgnore]
+
+        //public Slide TitleSlide { get => _titleSlide.Value; }
 
         private ObservableAsPropertyHelper<Slide> _titleSlide;
         [XmlIgnore]

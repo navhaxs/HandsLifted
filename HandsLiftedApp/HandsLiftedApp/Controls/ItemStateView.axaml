@@ -58,6 +58,9 @@
 				 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
 				 >
 			<controls:ListBoxWithoutKey.Styles>
+				<Style Selector="controls|ListBoxWithoutKey">
+					<Setter Property="BorderThickness" Value="0"/>
+				</Style>
 				<Style Selector="ListBoxItem">
 					<Setter Property="Padding" Value="0"/>
 					<!--<Setter Property="IsHitTestVisible" Value="False" />-->

@@ -22,6 +22,7 @@
 
 	<UserControl.Styles>
 		<Style Selector="ListBox">
+			<Setter Property="BorderThickness" Value="0" />
 			<Setter Property="Padding" Value="0" />
 			<Setter Property="Margin" Value="0" />
 		</Style>
@@ -58,28 +59,28 @@
 		</Style>
 
 		<!--<Style Selector="ListBox.ItemsDragAndDrop">
-					<Style.Resources>
-						<b:ItemsListBoxDropHandler x:Key="ItemsListBoxDropHandler" />
-					</Style.Resources>
-					<Setter Property="(i:Interaction.Behaviors)">
-						<i:BehaviorCollectionTemplate>
-							<i:BehaviorCollection>
-								<idd:ContextDropBehavior Handler="{StaticResource ItemsListBoxDropHandler}" />
-							</i:BehaviorCollection>
-						</i:BehaviorCollectionTemplate>
-					</Setter>
-				</Style>
+			<Style.Resources>
+				<b:ItemsListBoxDropHandler x:Key="ItemsListBoxDropHandler" />
+			</Style.Resources>
+			<Setter Property="(i:Interaction.Behaviors)">
+				<i:BehaviorCollectionTemplate>
+					<i:BehaviorCollection>
+						<idd:ContextDropBehavior Handler="{StaticResource ItemsListBoxDropHandler}" />
+					</i:BehaviorCollection>
+				</i:BehaviorCollectionTemplate>
+			</Setter>
+		</Style>
 
-				<Style Selector="ListBox.ItemsDragAndDrop ListBoxItem">
-					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-					<Setter Property="(i:Interaction.Behaviors)">
-						<i:BehaviorCollectionTemplate>
-							<i:BehaviorCollection>
-								<idd:ContextDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
-							</i:BehaviorCollection>
-						</i:BehaviorCollectionTemplate>
-					</Setter>
-				</Style>-->
+		<Style Selector="ListBox.ItemsDragAndDrop ListBoxItem">
+			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+			<Setter Property="(i:Interaction.Behaviors)">
+				<i:BehaviorCollectionTemplate>
+					<i:BehaviorCollection>
+						<idd:ContextDragBehavior HorizontalDragThreshold="3" VerticalDragThreshold="3" />
+					</i:BehaviorCollection>
+				</i:BehaviorCollectionTemplate>
+			</Setter>
+		</Style>-->
 	</UserControl.Styles>
 
 	<Grid

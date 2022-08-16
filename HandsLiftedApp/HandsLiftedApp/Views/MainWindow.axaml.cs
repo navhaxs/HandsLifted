@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.ViewModels;
+using HandsLiftedApp.Views.App;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
@@ -30,13 +31,20 @@ namespace HandsLiftedApp.Views
 
             this.Closing += MainWindow_Closing;
             this.Closed += MainWindow_Closed;
-            this.KeyDown += ZoomBorder_KeyDown;
 
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
 
             //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
             //OrderableListBox.PointerReleased += X_PointerReleased;
+
+            this.TemplateApplied += MainWindow_TemplateApplied;
+        }
+
+        private void MainWindow_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
+        {
+            StartWindow startWindow = new StartWindow();
+            startWindow.ShowDialog(this);
         }
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
@@ -81,30 +89,6 @@ namespace HandsLiftedApp.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        private void ZoomBorder_KeyDown(object? sender, KeyEventArgs e)
-        {
-            try
-            {
-                ListBox _list = this.Find<ListBox>("List");
-
-                switch (e.Key)
-                {
-                    case Key.Right:
-                        //_list.SelectedIndex += 1;
-                        break;
-                    case Key.Left:
-                        //_list.SelectedIndex -= 1;
-                        break;
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
         }
 
         private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)

@@ -4,17 +4,14 @@ using Avalonia.Markup.Xaml;
 
 namespace HandsLiftedApp.Views.App
 {
-    public partial class AboutWindow : Window
+    public partial class StartWindow : Window
     {
-        public AboutWindow()
+        public StartWindow()
         {
             InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
-
-            var buttonDone = this.FindControl<Button>("buttonDone");
-            buttonDone.Click += (o, e) => this.Close();
         }
 
         private void InitializeComponent()

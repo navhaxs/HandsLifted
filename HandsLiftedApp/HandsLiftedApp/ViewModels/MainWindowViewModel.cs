@@ -116,6 +116,12 @@ namespace HandsLiftedApp.ViewModels
                            break;
                    }
                });
+
+            MessageBus.Current.Listen<MoveItemMessage>()
+                .Subscribe(x =>
+                {
+                    Playlist.Items.Move(x.SourceIndex, x.DestinationIndex);
+                });
         }
 
         public void OnProjectorClickCommand()

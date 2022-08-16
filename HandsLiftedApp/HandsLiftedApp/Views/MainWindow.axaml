@@ -128,7 +128,7 @@
 
 			<DockPanel Grid.Column="0">
 
-				<Border Padding="10 20" Background="#eeeef2" DockPanel.Dock="Top">
+				<Border Padding="14 20" Background="#eeeef2" DockPanel.Dock="Top">
 					<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 						<TextBlock FontSize="20" Margin="0 0 8 0">Sunday 11am</TextBlock>
 						<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
@@ -239,6 +239,7 @@
 									</Grid.ColumnDefinitions>
 									<Button
 										Command="{Binding OnPrevSlideClickCommand}"
+										HorizontalAlignment="Left"
 										Content="Prev"
 										FontSize="16"
 										IsCancel="True"

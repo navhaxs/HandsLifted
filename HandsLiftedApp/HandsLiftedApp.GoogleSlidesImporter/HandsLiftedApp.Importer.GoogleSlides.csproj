@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Slides.v1" Version="1.57.0.2650" />
-    <PackageReference Include="Magick.NET-Q16-HDRI-AnyCPU" Version="11.2.1" />
+    <PackageReference Include="Google.Apis.Slides.v1" Version="1.57.0.2759" />
+    <PackageReference Include="Magick.NET-Q16-HDRI-AnyCPU" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>

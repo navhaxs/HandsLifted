@@ -107,6 +107,32 @@ namespace HandsLiftedApp.Behaviours
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
         {
             var target = TargetControl ?? AssociatedObject;
+            //args.Properties;
+            if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
+            {
+                UpdateCursor(false);
+                target.RenderTransform = new TranslateTransform();
+
+                _parent.PointerMoved -= Parent_PointerMoved;
+                _parent.PointerReleased -= Parent_PointerReleased;
+                _parent = null;
+
+                ListBox listBox = (ListBox)target.Parent;
+                foreach (var listBoxItem in listBox.ItemContainerGenerator.Containers)
+                {
+                    listBoxItem.ContainerControl.Classes.Remove("draggingover");
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItem.ContainerControl);
+
+                    if (adornerLayer != null)
+                    {
+                        adornerLayer.Children.Clear();
+                    }
+                }
+
+                return;
+            }
+
+            UpdateCursor(true);
             if (target is { })
             {
                 Point pos = args.GetPosition(_parent);
@@ -160,8 +186,18 @@ namespace HandsLiftedApp.Behaviours
             }
         }
 
+        private void UpdateCursor(bool show)
+        {
+            if (_parent is { })
+            {
+                Window? window = _parent.VisualRoot as Window;
+                window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;
+            }
+        }
+
         private void Parent_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
+            UpdateCursor(false);
             if (_parent is { })
             {
                 var target = TargetControl ?? AssociatedObject;

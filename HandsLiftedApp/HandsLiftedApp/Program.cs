@@ -36,13 +36,17 @@ namespace HandsLiftedApp
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()
+        {
+            // https://github.com/AvaloniaUI/AvaloniaVS/issues/250
+            GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
+            return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToTrace()
                 .UseReactiveUI()
                 .With(new SkiaOptions { MaxGpuResourceSizeBytes = 0x20000000 })
                 .UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.Avalonia)
             ;
+        }
     }
 }
 

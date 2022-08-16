@@ -12,7 +12,7 @@
 
 	<Design.PreviewWith>
 		<!-- Add Controls for Previewer Here -->
-		<ListBox Background="Red">
+		<ListBox>
 			<ListBoxItem>ABC</ListBoxItem>
 			<ListBoxItem>AAAAAAAAAAAAAAAAAA</ListBoxItem>
 			<ListBoxItem>11111111111</ListBoxItem>
