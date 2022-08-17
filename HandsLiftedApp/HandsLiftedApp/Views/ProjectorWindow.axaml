@@ -8,6 +8,7 @@
         xmlns:ndi="using:AvaloniaNDI"
 		xmlns:v="using:LibVLCSharp.Avalonia"
 		xmlns:utils="using:HandsLiftedApp.Utils"
+		xmlns:material="using:Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -35,51 +36,56 @@
 
 	<Grid>
 
-		<ndi:NDISendContainer DataContext="{Binding ActiveSlide}" NdiName="Lyrics" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
+		<ndi:NDISendContainer DataContext="{Binding ActiveSlide}" NdiName="Lyrics" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="True">
 			<render:AltSlideRenderer Width="1920" Height="1080"/>
 		</ndi:NDISendContainer>
 
 		<Viewbox>
-			<ndi:NDISendContainer NdiName="Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
+			<ndi:NDISendContainer NdiName="Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="True">
 				<Grid Background="Black">
 					<views:ActiveSlideOutput Width="1920" Height="1080"/>
 				</Grid>
 			</ndi:NDISendContainer>
 		</Viewbox>
 
-		<Grid VerticalAlignment="Bottom">
+		<Grid VerticalAlignment="Bottom" x:Name="OverlayControls" IsVisible="True">
 			<Grid.Styles>
 				<Style Selector="Button">
-					<Setter Property="MinWidth" Value="250" />
+					<Setter Property="Background" Value="Transparent" />
+					<Setter Property="BorderThickness" Value="0" />
+					<Setter Property="MinWidth" Value="80" />
 					<Setter Property="HorizontalContentAlignment" Value="Center" />
 				</Style>
 			</Grid.Styles>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="2*" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="2*" />
-			</Grid.ColumnDefinitions>
-			<Button
-				Command="{Binding OnPrevSlideClickCommand}"
-				HorizontalAlignment="Left"
-				Content="Prev"
-				FontSize="16"
-				IsCancel="True"
-				IsTabStop="False" />
-			<TextBlock
-				Grid.Column="1"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				Foreground="{DynamicResource ForegroundText}">
-			</TextBlock>
-			<Button
-				Command="{Binding OnNextSlideClickCommand}"
-				HorizontalAlignment="Right"
-				Grid.Column="2"
-				Content="Next"
-				FontSize="16"
-				IsCancel="True"
-				IsTabStop="False" />
+			<StackPanel Orientation="Horizontal">
+				<Button
+					Command="{Binding OnPrevSlideClickCommand}"
+					HorizontalAlignment="Left"
+					FontSize="16"
+					IsCancel="True"
+					IsTabStop="False">
+					<material:MaterialIcon
+						Kind="ChevronLeft"
+						Foreground="#eee"
+						Width="64"
+						Height="64"
+						/>
+				</Button>
+				<Button
+					Command="{Binding OnNextSlideClickCommand}"
+					HorizontalAlignment="Right"
+					Content="Next"
+					FontSize="16"
+					IsCancel="True"
+					IsTabStop="False">
+					<material:MaterialIcon
+						Foreground="#eee"
+						Kind="ChevronRight"
+						Width="64"
+						Height="64"
+					/>
+				</Button>
+			</StackPanel>
 		</Grid>
 
 	</Grid>

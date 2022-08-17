@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
+using HandsLiftedApp.Extensions;
 using System;
 using System.Globalization;
 
@@ -18,7 +19,7 @@ namespace HandsLiftedApp.Converters
             if (value is ListBoxItem)
             {
                 var item = ((ListBoxItem)value);
-                var itemsControl = ItemContainerToZIndexConverterExtensions.FindAncestor<ItemsControl>(item);
+                var itemsControl = IControlExtension.FindAncestor<ItemsControl>(item);
                 int index = itemsControl.ItemContainerGenerator.IndexFromContainer(item);
                 return (index + 1).ToString(); // add 1 for human friendly item position
             }
@@ -30,19 +31,6 @@ namespace HandsLiftedApp.Converters
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
-        }
-    }
-
-    public static class ItemContainerToZIndexConverterExtensions
-    {
-        public static T FindAncestor<T>(this IControl obj) where T : IControl
-        {
-            var tmp = obj.Parent;
-            while (tmp != null && !(tmp is T))
-            {
-                tmp = tmp.Parent;
-            }
-            return (T)tmp;
         }
     }
 }

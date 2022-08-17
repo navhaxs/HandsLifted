@@ -67,6 +67,8 @@
 				<!--<TextBox DockPanel.Dock="Top">[Title][Verse 1][Verse 2][Blank]</TextBox>-->
 
 				<ListBox Name="List"
+						 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+						 BorderThickness="0"
 						Items="{Binding song.Slides}">
 					<ListBox.Styles>
 						<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml" />

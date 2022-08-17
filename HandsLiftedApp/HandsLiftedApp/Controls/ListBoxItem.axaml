@@ -79,6 +79,7 @@
 						<TextBlock Padding="0 0 2 0">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0}.">
+									<!-- TODO: this breaks when rearranging items by using Move() on the source ObservableCollection -->
 									<Binding RelativeSource="{RelativeSource TemplatedParent}" Converter="{StaticResource itemToIndexConverter}" FallbackValue="#" />
 								</MultiBinding>
 							</TextBlock.Text>

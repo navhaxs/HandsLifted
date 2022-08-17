@@ -38,6 +38,7 @@
 	<StackPanel>
 		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
 			<DockPanel>
+				<Button x:Name="buttonTest" Padding="22 6" DockPanel.Dock="Right">Test</Button>
 				<Button Padding="22 6" Command="{Binding State.EditCommand}" DockPanel.Dock="Right">Edit</Button>
 				<Ellipse
 						IsVisible="{Binding State.IsSelected, FallbackValue=False}"

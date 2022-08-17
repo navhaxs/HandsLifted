@@ -2,9 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="80"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="120"
 	         xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:b="using:HandsLiftedApp.Behaviours"
 			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
              x:Class="HandsLiftedApp.Controls.SongArrangementControl">
 
@@ -12,57 +13,50 @@
 		<vme:SongEditorViewModel />
 	</Design.DataContext>
 
-	<WrapPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="4 4">
-		<ItemsControl Items="{Binding song.Arrangement}" MinHeight="20">
+	<StackPanel>
+		<Label Content="Stanzas" />
+		<ItemsControl Items="{Binding song.Stanzas}" MinHeight="20" Margin="4">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel />
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Button Click="OnButtonClick">
+						<Button.Template>
+							<ControlTemplate>
+								<Border Background="#EDF6FF" BorderBrush="#257BC6" BorderThickness="1" CornerRadius="12" Padding="6 2" Margin="0 0 3 6">
+									<!--<i:Interaction.Behaviors>
+										<iac:DragControlBehavior />
+									</i:Interaction.Behaviors>-->
+									<TextBlock Text="{Binding Name}" />
+								</Border>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+		<Label Content="Arrangement" />
+		<ItemsControl Items="{Binding song.Arrangement}" MinHeight="20" Margin="4">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel />
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Border Background="#EDF6FF" BorderBrush="#257BC6" BorderThickness="1" CornerRadius="12" Padding="6 2" Margin="0 0 3 6">
+						<i:Interaction.Behaviors>
+							<b:StanzaDragControlBehavior />
+						</i:Interaction.Behaviors>
+						<TextBlock Text="{Binding Value.Name}" />
+					</Border>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
 
 		</ItemsControl>
-		<Border Background="#EDF6FF" BorderBrush="#257BC6" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Title</TextBlock>
-		</Border>
-		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Verse 1</TextBlock>
-		</Border>
-		<Border Background="#FFFDED" BorderBrush="#D3BE1D" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Chorus</TextBlock>
-		</Border>
-		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Verse 2</TextBlock>
-		</Border>
-		<Border Background="#FFFDED" BorderBrush="#D3BE1D" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Chorus</TextBlock>
-		</Border>
-		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Verse 3</TextBlock>
-		</Border>
-		<Border Background="#FFFDED" BorderBrush="#D3BE1D" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Chorus</TextBlock>
-		</Border>
-		<Border Background="#f4f4f4" BorderBrush="#7F7F7F" BorderThickness="1" CornerRadius="12" Padding="6 2">
-			<i:Interaction.Behaviors>
-				<iac:DragControlBehavior />
-			</i:Interaction.Behaviors>
-			<TextBlock>Blank</TextBlock>
-		</Border>
-	</WrapPanel>
+
+	</StackPanel>
 </UserControl>

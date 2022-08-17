@@ -2,8 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
+using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
@@ -23,6 +26,17 @@ namespace HandsLiftedApp.Controls
             listBox = this.FindControl<ItemsControl>("List");
             scrollViewer = this.FindControl<ScrollViewer>("ScrollViewer");
 
+            this.DataContextChanged += PlaylistSlidesView_DataContextChanged;
+
+
+            this.AddHandler(RequestBringIntoViewEvent, (s, e) =>
+            {
+                //TODO write custom scroll handler
+                //which takes into account the whole item container (not just slide within the item's listbox)
+                //scrollViewer.Offset = new Vector(0, 0);
+                //e.Handled = true;
+            });
+
             MessageBus.Current.Listen<NavigateToItemMessage>()
                .Subscribe(x =>
                {
@@ -31,7 +45,6 @@ namespace HandsLiftedApp.Controls
                    if (control is not null)
                    {
                        scrollViewer.Offset = new Vector(0, control.Bounds.Top);
-
                    }
                });
 
@@ -62,6 +75,27 @@ namespace HandsLiftedApp.Controls
                 });
 
             this.KeyDown += PlaylistSlidesView_KeyDown;
+        }
+
+        private void PlaylistSlidesView_DataContextChanged(object? sender, EventArgs e)
+        {
+            var ctx = (Playlist<PlaylistStateImpl, ItemStateImpl>)this.DataContext;
+
+
+            // todo dispose old one
+            ctx.WhenAnyValue(x => x.State.SelectedIndex)
+                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .Select(x =>
+                        {
+                            return x == -1;
+                        })
+                        .Subscribe(x =>
+                        {
+                            if (x)
+                            {
+                                scrollViewer.Offset = new Vector(0, 0);
+                            }
+                        });
         }
 
         private void PlaylistSlidesView_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)

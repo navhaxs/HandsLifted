@@ -2,19 +2,21 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using HandsLiftedApp.Converters;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.ViewModels;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
+using System;
 using System.Linq;
 
 namespace HandsLiftedApp.Views
 {
     public partial class ProjectorWindow : Window
     {
-
-        private VideoView VideoView;
-        private LibVLC _libVLC;
-        private MediaPlayer _mediaPlayer;
+        DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+        Grid OverlayControls;
 
         public ProjectorWindow() : this(null)
         {
@@ -28,7 +30,27 @@ namespace HandsLiftedApp.Views
             this.AttachDevTools();
 #endif
 
-            this.DataContext = viewModel; // new ProjectorViewModel();
+
+            OverlayControls = this.FindControl<Grid>("OverlayControls");
+
+            if (Design.IsDesignMode)
+                return;
+
+            timer.Tick += (sender, e) =>
+            {
+                timer.Stop();
+                OverlayControls.IsVisible = false;
+            };
+
+            timer.Start();
+            this.PointerMoved += (o, e) =>
+            {
+                timer.Stop();
+                timer.Start();
+                OverlayControls.IsVisible = true;
+            };
+
+            this.DataContext = viewModel;
 
             if (this.Screens.ScreenCount > 1)
             {
@@ -38,7 +60,9 @@ namespace HandsLiftedApp.Views
                 //this.Width = this.Screens.All[1].Bounds.Width;
                 //this.Height= this.Screens.All[1].Bounds.Height;
             }
+
         }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
@@ -57,6 +81,10 @@ namespace HandsLiftedApp.Views
 
         private void ProjectorWindow_DoubleTapped(object? sender, RoutedEventArgs e)
         {
+            if (IControlExtension.FindAncestor<Button>((IControl)e.Source) != null)
+                return;
+
+
             this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
         }
 

@@ -15,6 +15,7 @@
 		<None Remove="Assets\splash.png" />
 		<None Remove="Assets\Test.png" />
 		<None Remove="Assets\test2.png" />
+		<None Remove="WebRoot\index.html" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.18" />
@@ -24,6 +25,7 @@
 		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.17" />
 		<PackageReference Include="Avalonia.Xaml.Interactions" Version="0.10.17" />
 		<PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.10.17" />
+		<PackageReference Include="EmbedIO" Version="3.4.3" />
 		<PackageReference Include="Material.Icons.Avalonia" Version="1.1.10" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.17.4" />
 	</ItemGroup>
@@ -35,6 +37,9 @@
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
 		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
 		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="WebRoot\index.html" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Controls\PlaylistSlidesView.axaml.cs">

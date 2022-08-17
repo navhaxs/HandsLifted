@@ -3,7 +3,10 @@ using Avalonia.Threading;
 using DynamicData;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Importer.PowerPoint;
+using HandsLiftedApp.Logic;
 using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
@@ -103,15 +106,15 @@ namespace HandsLiftedApp.ViewModels
 
             LoadDemoSchedule();
 
-            MessageBus.Current.Listen<NavigateSlideMessage>()
+            MessageBus.Current.Listen<ActionMessage>()
                .Subscribe(x =>
                {
                    switch (x.Action)
                    {
-                       case NavigateSlideMessage.NavigateSlideAction.NextSlide:
+                       case ActionMessage.NavigateSlideAction.NextSlide:
                            OnNextSlideClickCommand();
                            break;
-                       case NavigateSlideMessage.NavigateSlideAction.PreviousSlide:
+                       case ActionMessage.NavigateSlideAction.PreviousSlide:
                            OnPrevSlideClickCommand();
                            break;
                    }
@@ -122,6 +125,11 @@ namespace HandsLiftedApp.ViewModels
                 {
                     Playlist.Items.Move(x.SourceIndex, x.DestinationIndex);
                 });
+
+
+            // TODO initialise at the right place (tm)
+            var ws = new HandsLiftedWebServer();
+            ws.Start();
         }
 
         public void OnProjectorClickCommand()
