@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models.UI
+namespace HandsLiftedApp.Models.AppState
 {
-    internal class NavigateSlideMessage
+    internal class ActionMessage
     {
         public NavigateSlideAction Action { get; set; }
         public enum NavigateSlideAction
         {
             NextSlide,
-            PreviousSlide
+            PreviousSlide,
+            GotoLogo,
+            GotoBlank,
+            GotoFreeze,
         }
     }
 }

@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using System;
@@ -69,10 +70,10 @@ namespace HandsLiftedApp.Controls
             {
                 case Key.Right:
                 case Key.Space:
-                    MessageBus.Current.SendMessage(new NavigateSlideMessage() { Action = NavigateSlideMessage.NavigateSlideAction.NextSlide });
+                    MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
                     break;
                 case Key.Left:
-                    MessageBus.Current.SendMessage(new NavigateSlideMessage() { Action = NavigateSlideMessage.NavigateSlideAction.PreviousSlide });
+                    MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
                     break;
             }
             e.Handled = true;
