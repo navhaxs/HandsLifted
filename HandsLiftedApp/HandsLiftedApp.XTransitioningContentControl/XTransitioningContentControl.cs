@@ -35,7 +35,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         public static readonly StyledProperty<IPageTransition?> PageTransitionProperty =
             AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(nameof(PageTransition),
                 //new CrossFade(TimeSpan.FromSeconds(0.125)));
-                new XFade(TimeSpan.FromSeconds(0.200)));
+                new XFade(TimeSpan.FromSeconds(0.300)));
 
         /// <summary>
         /// Defines the <see cref="CurrentContent"/> property.
@@ -183,12 +183,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
         private Bitmap renderControlAsBitmap(IVisual visual)
         {
-            //var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            //string assemblyName = "HandsLiftedApp"; // Assembly.GetExecutingAssembly().GetName().Name!;
-            //var x = new Uri($"avares://{assemblyName}/Assets/test2.png");
-            //return new Bitmap(assets.Open(x));
-
-            // TODO check if alpha background
             SKBitmap bitmap = new SKBitmap(1920, 1080);
             using (SKCanvas canvas = new SKCanvas(bitmap))
             {
@@ -201,12 +195,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     ImmediateRenderer.Render(visual, context);
                 }
 
-                // encode the image (defaults to PNG)
-                SKData encoded = SKImage.FromBitmap(bitmap).Encode();
-                // get a stream over the encoded data
-                Stream stream = encoded.AsStream();
-
-                return new Bitmap(stream);
+                // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
+                // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563
+                BmpSharp.BitsPerPixelEnum bitsPerPixel = bitmap.BytesPerPixel == 4 ? BmpSharp.BitsPerPixelEnum.RGBA32 : BmpSharp.BitsPerPixelEnum.RGB24;
+                BmpSharp.Bitmap bmp = new BmpSharp.Bitmap(bitmap.Width, bitmap.Height, bitmap.Bytes, bitsPerPixel);
+                return new Bitmap(bmp.GetBmpStream(fliped: true));
             }
         }
     }

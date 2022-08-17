@@ -10,6 +10,7 @@
     <PackageReference Include="Avalonia" Version="0.10.18" />
     <PackageReference Include="Avalonia.Controls.Skia" Version="0.10.16" />
     <PackageReference Include="Avalonia.Skia" Version="0.10.18" />
+    <PackageReference Include="BmpSharp" Version="0.2.0" />
   </ItemGroup>
 
   <ItemGroup>
