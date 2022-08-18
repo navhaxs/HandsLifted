@@ -14,12 +14,6 @@ namespace HandsLiftedApp.Controls
             InitializeComponent();
 
             listBox = this.FindControl<ListBox>("List");
-
-            var buttonTest = this.FindControl<Button>("buttonTest");
-            buttonTest.Click += (s, e) =>
-            {
-                listBox.ScrollIntoView(1);
-            };
         }
 
         private void InitializeComponent()

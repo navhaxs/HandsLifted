@@ -24,7 +24,7 @@ namespace HandsLiftedApp.Data.Slides
             set
             {
                 this.RaiseAndSetIfChanged(ref _text, value);
-                this.RaisePropertyChanged(nameof(SlideText));
+                //this.RaisePropertyChanged(nameof(SlideText));
             }
         }
 
@@ -35,7 +35,7 @@ namespace HandsLiftedApp.Data.Slides
             set
             {
                 this.RaiseAndSetIfChanged(ref _label, value);
-                this.RaisePropertyChanged(nameof(SlideLabel));
+                //this.RaisePropertyChanged(nameof(SlideLabel));
             }
         }
 

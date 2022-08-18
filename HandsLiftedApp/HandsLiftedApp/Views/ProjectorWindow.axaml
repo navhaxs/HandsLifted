@@ -48,7 +48,7 @@
 			</ndi:NDISendContainer>
 		</Viewbox>
 
-		<Grid VerticalAlignment="Bottom" x:Name="OverlayControls" IsVisible="True">
+		<Grid VerticalAlignment="Bottom" x:Name="OverlayControls" IsVisible="False">
 			<Grid.Styles>
 				<Style Selector="Button">
 					<Setter Property="Background" Value="Transparent" />
@@ -58,6 +58,14 @@
 				</Style>
 			</Grid.Styles>
 			<StackPanel Orientation="Horizontal">
+				<StackPanel.Styles>
+					<Style Selector="Button:pointerover">
+						<Setter Property="Background" Value="Red" />
+					</Style>
+					<Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Background" Value="Purple" />
+					</Style>
+				</StackPanel.Styles>
 				<Button
 					Command="{Binding OnPrevSlideClickCommand}"
 					HorizontalAlignment="Left"

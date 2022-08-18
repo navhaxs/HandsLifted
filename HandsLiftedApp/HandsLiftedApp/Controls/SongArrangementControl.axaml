@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="120"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="220"
 	         xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
 			 xmlns:b="using:HandsLiftedApp.Behaviours"
@@ -26,7 +26,7 @@
 					<Button Click="OnButtonClick">
 						<Button.Template>
 							<ControlTemplate>
-								<Border Background="#EDF6FF" BorderBrush="#257BC6" BorderThickness="1" CornerRadius="12" Padding="6 2" Margin="0 0 3 6">
+								<Border Background="#EDF6FF" BorderThickness="1" CornerRadius="6" Padding="6 2" Margin="0 0 3 6">
 									<!--<i:Interaction.Behaviors>
 										<iac:DragControlBehavior />
 									</i:Interaction.Behaviors>-->
@@ -47,11 +47,26 @@
 			</ItemsControl.ItemsPanel>
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
-					<Border Background="#EDF6FF" BorderBrush="#257BC6" BorderThickness="1" CornerRadius="12" Padding="6 2" Margin="0 0 3 6">
+					<!--<Grid>
 						<i:Interaction.Behaviors>
 							<b:StanzaDragControlBehavior />
 						</i:Interaction.Behaviors>
-						<TextBlock Text="{Binding Value.Name}" />
+						<Path x:Name="Back" Data="M0,0 L 80,0 L100,20 L80,40 L0,40 L 20,20 "	Stretch="None" VerticalAlignment="Stretch"
+                              Stroke="#2C567F" StrokeThickness="1"
+                              Fill="Transparent"
+                              HorizontalAlignment="Stretch" Margin="-20,0,0,0"/>
+						<TextBlock FontSize="14" Text="{Binding Value.Name}" VerticalAlignment="Center" />
+					</Grid>-->
+					<Border Background="#9a93cd" BorderThickness="1" CornerRadius="6" Padding="12 2" Margin="0 0 3 6">
+						<Border.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Remove" />
+							</ContextMenu>
+						</Border.ContextMenu>
+						<i:Interaction.Behaviors>
+							<b:StanzaDragControlBehavior />
+						</i:Interaction.Behaviors>
+						<TextBlock Foreground="White" FontSize="14" Text="{Binding Value.Name}" />
 					</Border>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>

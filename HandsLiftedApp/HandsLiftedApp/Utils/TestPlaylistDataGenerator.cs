@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Data.Models;
+﻿using HandsLiftedApp.Comparer;
+using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
@@ -28,7 +29,8 @@ namespace HandsLiftedApp.Utils
             try
             {
                 var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
-                                .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"));
+                                .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"))
+                                .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
                 foreach (var f in images)
                 {
                     if (f.EndsWith(".mp4"))

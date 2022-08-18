@@ -7,6 +7,7 @@ using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels.Editor;
 using System.Threading.Tasks;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Views.Editor
 {
@@ -28,6 +29,10 @@ namespace HandsLiftedApp.Views.Editor
             _btnFileLoad.Click += async (sender, e) => await LoadFromXML();
             _btnFileSave = this.FindControl<MenuItem>("btnFileSave");
             _btnFileSave.Click += async (sender, e) => await SaveToXML();
+
+            // TODO skip caret between textbox
+            //TextBox tb = new TextBox();
+            //tb.WhenAny
         }
 
         private void InitializeComponent()

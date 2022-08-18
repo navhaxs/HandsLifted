@@ -19,6 +19,7 @@ namespace HandsLiftedApp.Logic
     using ReactiveUI;
     using System;
     using System.Diagnostics;
+    using System.Threading;
     using System.Threading.Tasks;
 
     internal class HandsLiftedWebSocketsModule : WebSocketModule
@@ -56,7 +57,6 @@ namespace HandsLiftedApp.Logic
             IWebSocketReceiveResult rxResult)
         {
             Debug.Print("OnMessageReceivedAsync");
-
             try
             {
                 // parse message
@@ -94,6 +94,7 @@ namespace HandsLiftedApp.Logic
         /// <inheritdoc />
         protected override Task OnClientConnectedAsync(IWebSocketContext context)
         {
+
             //Debug.Print("OnClientConnectedAsync");
             return SendAsync(context, "{\"hello\":\"there\"}");
             //return Task.CompletedTask;

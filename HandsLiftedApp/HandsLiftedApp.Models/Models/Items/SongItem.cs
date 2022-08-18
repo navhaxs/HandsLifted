@@ -26,7 +26,8 @@ namespace HandsLiftedApp.Data.Models.Items
             ;
 
             _stanzas.CollectionChanged += _stanzas_CollectionChanged;
-            Arrangement.CollectionChanged += Arrangement_CollectionChanged; ;
+            _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
+            Arrangement.CollectionChanged += Arrangement_CollectionChanged;
 
             // TODO 
             //_stanzaSlides = this.Stanzas
@@ -78,6 +79,7 @@ namespace HandsLiftedApp.Data.Models.Items
             foreach (var a in Arrangement)
             //foreach (SongStanza _datum in this.Stanzas)
             {
+                // todo match Stanzas by first match, so content is up to date. dont trust the cached copy in Arrangement
                 var _datum = a.Value;
 
                 stanzaSeenCount[_datum.Uuid] = stanzaSeenCount.ContainsKey(_datum.Uuid) ? stanzaSeenCount[_datum.Uuid] + 1 : 0;
@@ -121,7 +123,6 @@ namespace HandsLiftedApp.Data.Models.Items
                         this.StanzaSlides.Insert(i, slide);
                     }
 
-
                     i++;
                 }
             }
@@ -148,21 +149,31 @@ namespace HandsLiftedApp.Data.Models.Items
                 this.RaiseAndSetIfChanged(ref _stanzas, value);
                 _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
                 _stanzas.CollectionChanged += _stanzas_CollectionChanged;
+                _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
+                _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             }
+        }
+
+        private void _stanzas_CollectionItemChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            s();
         }
 
         private void _stanzas_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            s();
+        }
+
+        void s()
+        {
             UpdateStanzaSlides();
 
-            //if (Arrangement.Count == 0)
-            //{
-            Arrangement.Clear();
+            var a = new ObservableCollection<Ref<SongStanza>>();
             foreach (var stanza in Stanzas)
             {
-                Arrangement.Add(new SongItem<T, S, I>.Ref<SongStanza>() { Value = stanza });
+                a.Add(new SongItem<T, S, I>.Ref<SongStanza>() { Value = stanza });
             }
-            //}
+            Arrangement = a;
         }
 
         /*
@@ -182,7 +193,15 @@ namespace HandsLiftedApp.Data.Models.Items
 
         private ObservableCollection<Ref<SongStanza>> _arrangement = new ObservableCollection<Ref<SongStanza>>();
 
-        public ObservableCollection<Ref<SongStanza>> Arrangement { get => _arrangement; set => this.RaiseAndSetIfChanged(ref _arrangement, value); }
+        public ObservableCollection<Ref<SongStanza>> Arrangement
+        {
+            get => _arrangement; set
+            {
+                this.RaiseAndSetIfChanged(ref _arrangement, value);
+                _arrangement.CollectionChanged -= Arrangement_CollectionChanged;
+                _arrangement.CollectionChanged += Arrangement_CollectionChanged;
+            }
+        }
 
         public class Ref<X>
         {

@@ -7,6 +7,9 @@ namespace HandsLiftedApp.Data
     public sealed class TrulyObservableCollection<T> : ObservableCollection<T>
         where T : INotifyPropertyChanged
     {
+
+        public event EventHandler<PropertyChangedEventArgs> CollectionItemChanged;
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);
@@ -24,13 +27,15 @@ namespace HandsLiftedApp.Data
 
         private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var index = IndexOf((T)sender);
-            var args = new NotifyCollectionChangedEventArgs(
-                action: NotifyCollectionChangedAction.Replace,
-                newItem: sender,
-                oldItem: sender,
-                index: index);
-            base.OnCollectionChanged(args);
+            CollectionItemChanged?.Invoke(this, e);
+            // rather than marking entire collection as 'changed' which AvaloniaUI ListBox default behaviour does undesired things...
+            //var index = IndexOf((T)sender);
+            //var args = new NotifyCollectionChangedEventArgs(
+            //    action: NotifyCollectionChangedAction.Replace,
+            //    newItem: sender,
+            //    oldItem: sender,
+            //    index: index);
+            //base.OnCollectionChanged(args);
         }
     }
 }
