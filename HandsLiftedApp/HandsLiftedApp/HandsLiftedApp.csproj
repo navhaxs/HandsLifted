@@ -34,6 +34,7 @@
 		<ProjectReference Include="..\HandsLiftedApp.Models\HandsLiftedApp.Data.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.PowerPointImporter\HandsLiftedApp.Importer.PowerPoint.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.PropertyGridControl\HandsLiftedApp.PropertyGridControl.csproj" />
+		<ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Utils.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
 		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
 		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />

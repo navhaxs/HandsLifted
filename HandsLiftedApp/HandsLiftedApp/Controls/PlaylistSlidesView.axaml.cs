@@ -81,21 +81,20 @@ namespace HandsLiftedApp.Controls
         {
             var ctx = (Playlist<PlaylistStateImpl, ItemStateImpl>)this.DataContext;
 
-
             // todo dispose old one
             ctx.WhenAnyValue(x => x.State.SelectedIndex)
-                        .ObserveOn(RxApp.MainThreadScheduler)
-                        .Select(x =>
-                        {
-                            return x == -1;
-                        })
-                        .Subscribe(x =>
-                        {
-                            if (x)
-                            {
-                                scrollViewer.Offset = new Vector(0, 0);
-                            }
-                        });
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(x =>
+                {
+                    return x == -1;
+                })
+                .Subscribe(x =>
+                {
+                    if (x)
+                    {
+                        scrollViewer.Offset = new Vector(0, 0);
+                    }
+                });
         }
 
         private void PlaylistSlidesView_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)

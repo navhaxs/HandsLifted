@@ -1,13 +1,16 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using HandsLiftedApp.Converters;
 using HandsLiftedApp.Extensions;
+using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.ViewModels;
 using LibVLCSharp.Avalonia;
 using LibVLCSharp.Shared;
+using ReactiveUI;
 using System;
 using System.Linq;
 
@@ -35,6 +38,8 @@ namespace HandsLiftedApp.Views
 
             if (Design.IsDesignMode)
                 return;
+
+            this.KeyDown += OnKeyDown;
 
             timer.Tick += (sender, e) =>
             {
@@ -110,5 +115,20 @@ namespace HandsLiftedApp.Views
         //{
         //    VideoView.MediaPlayer.Pause();
         //}
+
+        private void OnKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Right:
+                case Key.Space:
+                    MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                    break;
+                case Key.Left:
+                    MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                    break;
+            }
+            e.Handled = true;
+        }
     }
 }

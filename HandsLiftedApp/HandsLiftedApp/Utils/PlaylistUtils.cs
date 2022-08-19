@@ -63,16 +63,18 @@ namespace HandsLiftedApp.Utils
             {
                 var images = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories)
                                 .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"));
+                int i = 0;
                 foreach (var f in images)
                 {
                     if (f.EndsWith(".mp4"))
                     {
-                        slidesGroup._Slides.Add(new VideoSlide<VideoSlideStateImpl>(f));
+                        slidesGroup._Slides.Add(new VideoSlide<VideoSlideStateImpl>(f) { Index = i });
                     }
                     else
                     {
-                        slidesGroup._Slides.Add(new ImageSlide<ImageSlideStateImpl>(f));
+                        slidesGroup._Slides.Add(new ImageSlide<ImageSlideStateImpl>(f) { Index = i });
                     }
+                    i++;
                 }
             }
             catch { }

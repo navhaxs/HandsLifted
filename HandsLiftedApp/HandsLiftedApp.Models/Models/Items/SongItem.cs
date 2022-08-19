@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using Avalonia.Controls;
+using DynamicData;
 using DynamicData.Binding;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
@@ -28,44 +29,12 @@ namespace HandsLiftedApp.Data.Models.Items
             _stanzas.CollectionChanged += _stanzas_CollectionChanged;
             _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             Arrangement.CollectionChanged += Arrangement_CollectionChanged;
-
-            // TODO 
-            //_stanzaSlides = this.Stanzas
-            //    // Convert the collection to a stream of chunks,
-            //    // so we have IObservable<IChangeSet<TKey, TValue>>
-            //    // type also known as the DynamicData monad.
-            //    .ToObservableChangeSet(x => x)
-            //    // Each time the collection changes, we get
-            //    // all updated items at once.
-            //    .ToCollection()
-            //    .Select((collection) => processSongStanzasToSlides(collection))
-            //    .ToProperty(this, c => c.StanzaSlides)
-            //;
-
-            //_slides = this.StanzaSlides.ToObservableChangeSet().ToCollection()
-            ////_slides = this.WhenAnyValue(x => x.TitleSlide, x => x.StanzaSlides,
-            ////    (titleSlide, stanzaSlides) =>
-            ////    {
-            ////        var x = new ObservableCollection<Slide>();
-
-            ////        if (titleSlide != null)
-            ////            x.Add(titleSlide);
-
-            ////        if (stanzaSlides != null)
-            ////            x.AddRange(stanzaSlides);
-
-            ////        // TODO: add bool value
-            ////        x.Add(new SongSlide<S>(null));
-
-            ////        return x;
-            ////    })
-            //    .ToProperty(this, c => c.Slides)
-            //;
         }
 
         private void Arrangement_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateStanzaSlides();
+            this.RaisePropertyChanged("Slides");
         }
 
         void UpdateStanzaSlides()
@@ -73,11 +42,26 @@ namespace HandsLiftedApp.Data.Models.Items
             int i = 0;
 
             // TODO add title slide
+            if (TitleSlide != null)
+            {
+                TitleSlide.Index = i;
+
+                if (this.StanzaSlides.ElementAtOrDefault(0) is SongTitleSlide<T>)
+                {
+                    ((SongTitleSlide<T>)this.StanzaSlides.ElementAt(0)).Title = Title;
+                    ((SongTitleSlide<T>)this.StanzaSlides.ElementAt(0)).Copyright = Copyright;
+                    //((SongTitleSlide<T>)this.StanzaSlides.ElementAt(0)).State = Copyright;
+                }
+                else
+                {
+                    this.StanzaSlides.Add(TitleSlide);
+                }
+                i++;
+            }
 
             Dictionary<Guid, int> stanzaSeenCount = new Dictionary<Guid, int>();
 
             foreach (var a in Arrangement)
-            //foreach (SongStanza _datum in this.Stanzas)
             {
                 // todo match Stanzas by first match, so content is up to date. dont trust the cached copy in Arrangement
                 var _datum = a.Value;
@@ -111,6 +95,8 @@ namespace HandsLiftedApp.Data.Models.Items
                             ((SongSlide<S>)prevIndex.data).Label = Label;
                         }
 
+                        prevIndex.data.Index = i;
+
                         if (prevIndex.index != i)
                         {
                             //re-order to index i
@@ -119,7 +105,7 @@ namespace HandsLiftedApp.Data.Models.Items
                     }
                     else
                     {
-                        var slide = new SongSlide<S>(_datum, slideId) { Text = Text, Label = Label };
+                        var slide = new SongSlide<S>(_datum, slideId) { Text = Text, Label = Label, Index = i };
                         this.StanzaSlides.Insert(i, slide);
                     }
 
@@ -127,7 +113,21 @@ namespace HandsLiftedApp.Data.Models.Items
                 }
             }
 
-            // TODO: add blank slide
+            // TODO add blank slide
+            if (EndOnBlankSlide == true)
+            {
+                var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index }).FirstOrDefault(s => (s.data) is (SongSlide<S>) && ((SongSlide<S>)s.data).Id == "BLANK");
+                if (prevIndex != null && prevIndex.index != i)
+                {
+                    prevIndex.data.Index = i;
+                    this.StanzaSlides.Move(prevIndex.index, i);
+                }
+                else
+                {
+                    this.StanzaSlides.Insert(i, new SongSlide<S>(null, "BLANK") { Index = i });
+                }
+                i++;
+            }
 
             // need to delete old items
             while (i < this.StanzaSlides.Count)
@@ -147,6 +147,7 @@ namespace HandsLiftedApp.Data.Models.Items
             set
             {
                 this.RaiseAndSetIfChanged(ref _stanzas, value);
+                UpdateStanzaSlides();
                 _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
                 _stanzas.CollectionChanged += _stanzas_CollectionChanged;
                 _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
@@ -208,16 +209,14 @@ namespace HandsLiftedApp.Data.Models.Items
             public X Value { get; set; }
         }
 
-
-        //private ObservableAsPropertyHelper<Slide> _titleSlide;
-        //[XmlIgnore]
-
-        //public Slide TitleSlide { get => _titleSlide.Value; }
-
         private ObservableAsPropertyHelper<Slide> _titleSlide;
         [XmlIgnore]
 
         public Slide TitleSlide { get => _titleSlide.Value; }
+
+        private Boolean _endOnBlankSlide = true;
+
+        public Boolean EndOnBlankSlide { get => _endOnBlankSlide; set => this.RaiseAndSetIfChanged(ref _endOnBlankSlide, value); }
 
         // Stanzas + Arrangement = _stanzaSlides
         private TrulyObservableCollection<Slide> _stanzaSlides = new TrulyObservableCollection<Slide>();
@@ -229,107 +228,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         [XmlIgnore]
 
-        public override ObservableCollection<Slide> Slides { get => _stanzaSlides; }
-
-        //public List<Slide> processSongStanzasToSlides(IReadOnlyCollection<SongStanza> stanzas)
-        //{
-        //    List<Slide> slides = new List<Slide>();
-
-        //    foreach (SongStanza _datum in stanzas)
-        //    {
-        //        // break slides by newlines
-        //        string[] lines = _datum.Lyrics.Split(new string[] { Environment.NewLine + Environment.NewLine },
-        //                   StringSplitOptions.RemoveEmptyEntries);
-        //        foreach (var x in lines.Select((line, index) => new { line, index }))
-        //        //foreach (string line in lines)
-        //        {
-        //            var slide = new SongSlide<S>(_datum) { Text = x.line };
-
-        //            if (x.index == 0)
-        //            {
-        //                slide.Label = $"{_datum.Name}";
-        //            }
-
-        //            slides.Add(slide);
-        //        }
-        //    }
-
-        //    return slides;
-        //}
-
-        private void Stanzas_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-
-            //List<Slide> slides = new List<Slide>();
-
-            //foreach (var _datum in Stanzas)
-            //{
-            //    // break slides by newlines
-            //    string[] lines = _datum.Lyrics.Split(new string[] { Environment.NewLine + Environment.NewLine },
-            //               StringSplitOptions.RemoveEmptyEntries);
-            //    foreach (string line in lines)
-            //    {
-            //        slides.Add(new SongSlide() { Text = line });
-            //    }
-            //}
-
-            //Slides = slides;
-            //this.RaisePropertyChanged(nameof(Slides));
-            //Slides.Clear();
-            //Slides.AddRange(processSongStanzasToSlides(this.Stanzas));
-
-
-            //switch (e.Action)
-            //{
-            //    case NotifyCollectionChangedAction.Add:
-            //        foreach (var item in e.NewItems)
-            //        {
-            //            //    // break slides by newlines
-            //            //    string[] lines = _datum.Lyrics.Split(new string[] { Environment.NewLine + Environment.NewLine },
-            //            //               StringSplitOptions.RemoveEmptyEntries);
-            //            //    foreach (string line in lines)
-            //            //    {
-            //            //        slides.Add(new SongSlide() { Text = line });
-            //            //    }
-
-            //            if (item is SongStanza)
-            //            {
-            //                string[] lines = ((SongStanza)item).Lyrics.Split(new string[] { Environment.NewLine + Environment.NewLine },
-            //                               StringSplitOptions.RemoveEmptyEntries);
-            //                foreach (string line in lines)
-            //                {
-            //                    Slides.Add(new SongSlide((SongStanza)item) { Text = line });
-            //                }
-            //            }
-            //        }
-            //        //Slides.AddRange(processSongStanzasToSlides(e.NewItems));
-            //        break;
-            //    case NotifyCollectionChangedAction.Move:
-            //        // implement...
-            //        break;
-            //    case NotifyCollectionChangedAction.Remove:
-            //        //this.RemoveItems(e.OldItems.OfType<T>());
-            //        break;
-            //    case NotifyCollectionChangedAction.Replace:
-            //        // implement...
-            //        foreach (var item in e.NewItems)
-            //        {
-            //            if (item is SongStanza)
-            //            {
-            //                string[] lines = ((SongStanza)item).Lyrics.Split(new string[] { Environment.NewLine + Environment.NewLine },
-            //                               StringSplitOptions.RemoveEmptyEntries);
-            //                foreach (string line in lines)
-            //                {
-            //                    Slides.Insert(e.NewStartingIndex, new SongSlide((SongStanza)item) { Text = line });
-            //                }
-            //            }
-            //        }
-            //        break;
-            //    case NotifyCollectionChangedAction.Reset:
-            //        //this.ReplaceAll(_synchronizedCollection.Items);
-            //        break;
-            //}
-        }
+        public override TrulyObservableCollection<Slide> Slides { get => _stanzaSlides; }
     }
 
     public class SongStanza : ReactiveObject

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Extensions
 {
-    internal static class IControlExtension
+    public static class IControlExtension
     {
         public static T FindAncestor<T>(this IControl obj) where T : IControl
         {

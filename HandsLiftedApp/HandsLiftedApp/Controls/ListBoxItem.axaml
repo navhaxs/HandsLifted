@@ -80,7 +80,11 @@
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0}.">
 									<!-- TODO: this breaks when rearranging items by using Move() on the source ObservableCollection -->
-									<Binding RelativeSource="{RelativeSource TemplatedParent}" Converter="{StaticResource itemToIndexConverter}" FallbackValue="#" />
+									<Binding Path="DataContext.SlideNumber" RelativeSource="{RelativeSource TemplatedParent}" />
+									<!--<MultiBinding Converter="{StaticResource itemToIndexConverter}" FallbackValue="#">
+										<Binding RelativeSource="{RelativeSource TemplatedParent}" />
+										<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}" />
+									</MultiBinding>-->
 								</MultiBinding>
 							</TextBlock.Text>
 						</TextBlock>

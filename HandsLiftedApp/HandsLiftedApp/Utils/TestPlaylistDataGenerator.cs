@@ -31,30 +31,24 @@ namespace HandsLiftedApp.Utils
                 var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
                                 .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"))
                                 .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
+                int i = 0;
                 foreach (var f in images)
                 {
                     if (f.EndsWith(".mp4"))
                     {
-                        slidesGroup._Slides.Add(new VideoSlide<VideoSlideStateImpl>(f));
-                        //playlist.Items.Add(new SlidesGroup() { _Slides = new List<Slide> { new VideoSlide(f) } });
+                        slidesGroup._Slides.Add(new VideoSlide<VideoSlideStateImpl>(f) { Index = i });
                     }
                     else
                     {
-                        slidesGroup._Slides.Add(new ImageSlide<ImageSlideStateImpl>(f));
-                        //playlist.Items.Add(new SlidesGroup() { _Slides = new List<Slide> { new ImageSlide(f) } });
+                        slidesGroup._Slides.Add(new ImageSlide<ImageSlideStateImpl>(f) { Index = i });
                     }
+                    i++;
                 }
             }
             catch { }
             playlist.Items.Add(slidesGroup);
 
             slidesGroup.Title = "Announcements";
-
-            // is this okay?
-            //foreach (var (item, index) in playlist.Items.WithIndex())
-            //{
-            //	item.State.ItemIndex = index;
-            //         }
 
             return playlist;
         }

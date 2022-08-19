@@ -28,7 +28,7 @@ namespace HandsLiftedApp.Data
         private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             CollectionItemChanged?.Invoke(this, e);
-            // rather than marking entire collection as 'changed' which AvaloniaUI ListBox default behaviour does undesired things...
+            //rather than marking entire collection as 'changed' which AvaloniaUI ListBox default behaviour does undesired things...
             //var index = IndexOf((T)sender);
             //var args = new NotifyCollectionChangedEventArgs(
             //    action: NotifyCollectionChangedAction.Replace,
