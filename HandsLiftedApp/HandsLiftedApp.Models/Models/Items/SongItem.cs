@@ -137,9 +137,11 @@ namespace HandsLiftedApp.Data.Models.Items
             }
         }
 
+        [XmlIgnore]
         private string _copyright = "";
         public string Copyright { get => _copyright; set => this.RaiseAndSetIfChanged(ref _copyright, value); }
 
+        [XmlIgnore]
         private TrulyObservableCollection<SongStanza> _stanzas = new TrulyObservableCollection<SongStanza>();
         public TrulyObservableCollection<SongStanza> Stanzas
         {
@@ -186,12 +188,14 @@ namespace HandsLiftedApp.Data.Models.Items
          * "Standard" : ["Verse 1", "Chorus", "Verse 2", "Chorus", "Verse 3", "Chorus", "Verse 4", "Chorus", "Chorus"]
          * "Special" : ["Verse 1", "Chorus", "Verse 2", "Chorus", "Verse 3", "Chorus", "Chorus"]
          */
-        private Dictionary<string, List<Guid>> _arrangements = new Dictionary<string, List<Guid>>();
-        public Dictionary<string, List<Guid>> Arrangements { get => _arrangements; set => this.RaiseAndSetIfChanged(ref _arrangements, value); }
+        [XmlIgnore]
+        private SerializableDictionary<string, List<Guid>> _arrangements = new SerializableDictionary<string, List<Guid>>();
+        public SerializableDictionary<string, List<Guid>> Arrangements { get => _arrangements; set => this.RaiseAndSetIfChanged(ref _arrangements, value); }
 
         private string _selectedArrangementId;
         public string SelectedArrangementId { get => _selectedArrangementId; set => this.RaiseAndSetIfChanged(ref _selectedArrangementId, value); }
 
+        [XmlIgnore]
         private ObservableCollection<Ref<SongStanza>> _arrangement = new ObservableCollection<Ref<SongStanza>>();
 
         public ObservableCollection<Ref<SongStanza>> Arrangement
@@ -209,25 +213,27 @@ namespace HandsLiftedApp.Data.Models.Items
             public X Value { get; set; }
         }
 
-        private ObservableAsPropertyHelper<Slide> _titleSlide;
         [XmlIgnore]
-
+        private ObservableAsPropertyHelper<Slide> _titleSlide;
+        
+        [XmlIgnore]
         public Slide TitleSlide { get => _titleSlide.Value; }
 
+        [XmlIgnore]
         private Boolean _endOnBlankSlide = true;
 
         public Boolean EndOnBlankSlide { get => _endOnBlankSlide; set => this.RaiseAndSetIfChanged(ref _endOnBlankSlide, value); }
 
         // Stanzas + Arrangement = _stanzaSlides
-        private TrulyObservableCollection<Slide> _stanzaSlides = new TrulyObservableCollection<Slide>();
         [XmlIgnore]
-
+        private TrulyObservableCollection<Slide> _stanzaSlides = new TrulyObservableCollection<Slide>();
+        
+        [XmlIgnore]
         public TrulyObservableCollection<Slide> StanzaSlides { get => _stanzaSlides; set => this.RaiseAndSetIfChanged(ref _stanzaSlides, value); }
 
         //private ObservableAsPropertyHelper<ObservableCollection<Slide>> _slides;
 
         [XmlIgnore]
-
         public override TrulyObservableCollection<Slide> Slides { get => _stanzaSlides; }
     }
 
