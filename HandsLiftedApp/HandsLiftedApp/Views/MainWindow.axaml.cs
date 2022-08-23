@@ -43,8 +43,8 @@ namespace HandsLiftedApp.Views
 
         private void MainWindow_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
         {
-            //StartWindow startWindow = new StartWindow();
-            //startWindow.ShowDialog(this);
+            StartWindow startWindow = new StartWindow();
+            startWindow.ShowDialog(this);
         }
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)

@@ -145,6 +145,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             CurrentContent = content;
 
+            // maybe what this could instead is take screenshot of existing (bitmap no alpha), then take screenshot of new (bitmap no alpha), then fade between the bitmaps. this way, there should be no alpha multiplier issues during the fade effect.
+
             clock.PlayState = PlayState.Run;
 
             if (PageTransition != null)
