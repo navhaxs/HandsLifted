@@ -15,7 +15,7 @@ namespace HandsLiftedApp.Utils
         public static Playlist<PlaylistStateImpl, ItemStateImpl> Generate()
         {
             Playlist<PlaylistStateImpl, ItemStateImpl> playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
-            return playlist;
+            //return playlist;
             var rnd = new Random();
             var songs = Directory.GetFiles(@"C:\VisionScreens\TestSongs", "*.*", SearchOption.AllDirectories)
                 .Where(s => s.ToLower().EndsWith(".txt"))

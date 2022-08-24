@@ -11,8 +11,8 @@
 			 xmlns:i="using:Avalonia.Xaml.Interactivity"
 			 xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
              x:Class="HandsLiftedApp.Views.ActiveSlideOutput">
-	<Grid>
-	
+	<Grid Background="Black">
+
 		<viewsrender:SlideRenderer DataContext="{Binding ActiveSlide}" IsLive="True" />
 
 		<!-- good for freezing. bad for fading -->
@@ -37,6 +37,6 @@
 				</ia:DataTriggerBehavior>
 			</i:Interaction.Behaviors>
 		</Image>-->
-		
+
 	</Grid>
 </UserControl>

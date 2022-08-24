@@ -18,5 +18,24 @@ namespace HandsLiftedApp.Extensions
             }
             return (T)tmp;
         }
+
+        // TODO test me
+        // TODO test me
+        // TODO test me
+        // TODO test me
+        // TODO test me
+        public static T? FindChild<T>(this IControl obj) where T : IControl
+        {
+            if (obj != null)
+            {
+                foreach (var child in obj.LogicalChildren)
+                {
+                    var res = FindChild<T>((IControl)child);
+                    if (res != null && (res is T))
+                        return res;
+                }
+            }
+            return (T)obj;
+        }
     }
 }
