@@ -1,6 +1,4 @@
-﻿using ImageMagick;
-using ImageMagick.Formats;
-using PDFiumCore;
+﻿using PDFiumCore;
 using SkiaSharp;
 using System.Diagnostics;
 
@@ -113,59 +111,6 @@ namespace HandsLiftedApp.Importer.PDF
                 Debug.Print(e.ToString());
             }
 
-        }
-
-        public static void Convert3(String inputPdfFile, String outputDir)
-        {
-            try
-            {
-
-
-                var pdfInfo = PdfInfo.Create(inputPdfFile);
-                for (var page = 0; page < pdfInfo.PageCount; page++)
-                {
-
-
-                    var settings = new MagickReadSettings()
-                    // Settings the density to 300 dpi will create an image with a better quality
-                    {
-                        FrameIndex = page,
-                        Density = new Density(300, 300),
-                        Height = 1080,
-                        Width = 1920,
-                        BackgroundColor = MagickColor.FromRgb(255, 255, 255)
-                    };
-
-                    using (var images = new MagickImageCollection())
-                    {
-                        // Add all the pages of the pdf file to the collection
-                        images.Read(inputPdfFile, settings);
-
-                        foreach (var image in images)
-                        {
-                            image.Format = MagickFormat.Bmp3;
-                            string v = Path.Join(outputDir, "Slide." + page + ".bmp");
-                            image.Write(v);
-                            Debug.Print($"wrote {page}");
-                        }
-                    }
-
-                }
-
-
-            }
-            catch (MagickDelegateErrorException e)
-            {
-                if (e.Message.StartsWith("FailedToExecuteCommand `\"gswin64c.exe\" "))
-                {
-                    Debug.Print("Download  Ghostscript 9.56.1 for Windows (64 bit) -  Ghostscript AGPL Release ");
-                    Debug.Print("https://ghostscript.com/releases/gsdnld.html");
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Print(e.ToString());
-            }
         }
     }
 }
