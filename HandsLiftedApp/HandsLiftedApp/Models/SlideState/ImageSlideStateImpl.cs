@@ -23,6 +23,7 @@ namespace HandsLiftedApp.Models.SlideState
                     using (Stream imageStream = File.OpenRead(path))
                     {
                         return Bitmap.DecodeToWidth(imageStream, 1920);
+                        //return new Bitmap(@"C:\Users\Jeremy\Desktop\blank.bmp");
                     }
                 }
 

@@ -23,6 +23,9 @@
 			<Button Command="{Binding AddPresentationCommand}">
 				Add Presentation
 			</Button>
+			<Button Command="{Binding AddGoogleSlidesCommand}">
+				Add Google Slides
+			</Button>
 			<Button Command="{Binding AddGraphicCommand}">
 				Add Graphic
 			</Button>

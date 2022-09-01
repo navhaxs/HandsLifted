@@ -1,8 +1,13 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using Google;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Slides.v1;
 using Google.Apis.Slides.v1.Data;
 using Google.Apis.Util.Store;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using static Google.Apis.Drive.v3.FilesResource;
 
 namespace HandsLiftedApp.Importer.GoogleSlides
 {
@@ -11,8 +16,10 @@ namespace HandsLiftedApp.Importer.GoogleSlides
     {
         /* Global instance of the scopes required by this quickstart.
          If modifying these scopes, delete your previously saved token.json/ folder. */
-        static string[] Scopes = { SlidesService.Scope.PresentationsReadonly };
+        static string[] Scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
         static string ApplicationName = "Google Slides API .NET Quickstart";
+
+        static string PDF_MIME_TYPE = "application/pdf";
 
         public static void Main(string[] args)
         {
@@ -43,8 +50,11 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                 });
 
                 // Define request parameters.
-                String presentationId = "1EAYk18WDjIG-zp_0vLm3CsfQh_i8eXc67Jo2O9C6Vuc";
-                PresentationsResource.GetRequest request = service.Presentations.Get(presentationId);
+                var regex = new Regex(@"[-\w]{25,}");
+                //String fileId = regex.Match("https://docs.google.com/presentation/d/1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0/edit?usp=sharing").Value;
+                //String fileId = regex.Match("https://docs.google.com/presentation/d/1IiBBcLgvc9YprZTpv9CdDHgO1p358j71KXbZj347V58/edit#slide=id.p1").Value;
+                String fileId = regex.Match("https://docs.google.com/presentation/d/1AjkGrL1NzOR5gVWeJ_YLlPtRd19OEaT4ZnW7Y2qkNPM/edit?usp=sharing").Value;
+                PresentationsResource.GetRequest request = service.Presentations.Get(fileId);
 
                 // Prints the number of slides and elements in a sample presentation:
                 // https://docs.google.com/presentation/d/1EAYk18WDjIG-zp_0vLm3CsfQh_i8eXc67Jo2O9C6Vuc/edit
@@ -54,11 +64,12 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                 for (var i = 0; i < slides.Count; i++)
                 {
                     var slide = slides[i];
-                    Console.WriteLine("- Slide #{0} contains {1} elements.", i + 1, slide.PageElements.Count);
+                    Debug.Print($"Slide {i}: ObjectId={slide.ObjectId}");
+                    Console.WriteLine("- Slide #{0} contains {1} elements.", i + 1, slide.PageElements?.Count);
                 }
 
                 //presentation.Title;
-                var x = service.HttpClient.GetAsync("https://docs.google.com/presentation/d/1EAYk18WDjIG-zp_0vLm3CsfQh_i8eXc67Jo2O9C6Vuc/export/png");
+                var x = service.HttpClient.GetAsync($"https://docs.google.com/presentation/d/{fileId}/export/png");
 
                 x.ContinueWith(t =>
                 {
@@ -67,8 +78,36 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 
                 //https://docs.google.com/presentation/d/<FileID>/export/<format>
 
+                var driveService = new DriveService(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = ApplicationName
+                });
+                ExportRequest response = driveService.Files.Export(fileId, PDF_MIME_TYPE);
+                using (var stream = new MemoryStream())
+                {
+                    var d = response.DownloadWithStatus(stream);
+
+                    if (d.Status == Google.Apis.Download.DownloadStatus.Failed)
+                    {
+                        Debug.Print(d.Exception.Message);
+                    }
+
+                    using (FileStream file = new FileStream("my-exported-slides.pdf", FileMode.Create, System.IO.FileAccess.Write))
+                    {
+                        stream.Position = 0;
+                        stream.CopyTo(file);
+                        file.Flush();
+                    }
+                    //using (FileStream file = new FileStream("file.bin", FileMode.Open, FileAccess.Read))
+                    //    file.CopyTo(stream);
+                }
             }
-            catch (FileNotFoundException e)
+            catch (GoogleApiException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }

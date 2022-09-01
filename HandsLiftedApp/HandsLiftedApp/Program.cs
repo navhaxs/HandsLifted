@@ -25,6 +25,7 @@ namespace HandsLiftedApp
                 EventResetMode.ManualReset, "HandsLiftedApp#startup", out created);
             if (created)
             {
+                // todo: handle unhandled, uncaught exceptions here
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
             }

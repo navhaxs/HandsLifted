@@ -2,7 +2,6 @@
 using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Styling;
-using Avalonia.Threading;
 using Avalonia.VisualTree;
 using System.Reactive.Disposables;
 
@@ -144,14 +143,21 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     disposables.Add(to.SetValue(Visual.OpacityProperty, 0, Avalonia.Data.BindingPriority.Animation));
                 }
 
-                if (from != null)
-                {
-                    from.IsVisible = true;
-                    from.Opacity = 1;
-                    Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+                // TODO: take a screenshot of the NEXT SLIDE
+                // TODO: take a screenshot of the NEXT SLIDE
+                // TODO: take a screenshot of the NEXT SLIDE
+                // TODO: take a screenshot of the NEXT SLIDE
+                // TODO: take a screenshot of the NEXT SLIDE
+                // then fade between two NON-Alpha images :)
 
-                    tasks.Add(_fadeOutAnimation.RunAsync(from, null, cancellationToken));
-                }
+                //if (from != null)
+                //{
+                //    from.PageTransitionIsVisible = true;
+                //    from.Opacity = 1;
+                //    Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+
+                //    tasks.Add(_fadeOutAnimation.RunAsync(from, null, cancellationToken));
+                //}
 
                 if (to != null)
                 {

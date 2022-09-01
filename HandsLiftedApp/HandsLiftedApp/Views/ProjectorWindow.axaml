@@ -9,7 +9,7 @@
 		xmlns:v="using:LibVLCSharp.Avalonia"
 		xmlns:utils="using:HandsLiftedApp.Utils"
 		xmlns:material="using:Material.Icons.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
         Icon="/Assets/avalonia-logo.ico"
 		DoubleTapped="ProjectorWindow_DoubleTapped"
@@ -39,6 +39,8 @@
 		<ndi:NDISendContainer DataContext="{Binding ActiveSlide}" NdiName="Lyrics" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
 			<render:AltSlideRenderer Width="1920" Height="1080"/>
 		</ndi:NDISendContainer>
+
+		<Grid Background="Black" />
 
 		<Viewbox>
 			<ndi:NDISendContainer NdiName="Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">

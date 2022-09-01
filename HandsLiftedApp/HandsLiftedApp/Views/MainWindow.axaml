@@ -9,18 +9,14 @@
 		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
 		xmlns:controls="using:HandsLiftedApp.Controls"
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:material="using:Material.Icons.Avalonia"
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="HandsLiftedApp.Views.MainWindow"
-		Icon="/Assets/avalonia-logo.ico"
-		Width="1800" Height="900"
-		WindowState="Maximized"
+		Icon="/Assets/visionscreens-app-logo.ico"
 		WindowStartupLocation="CenterScreen"
+		Width="1280" Height="720"
 		DoubleTapped="MainWindow_DoubleTapped"
 		Title="VisionScreens | Sunday 11am | 22 May 2022">
-
-	<Window.Resources>
-		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
-	</Window.Resources>
 
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
@@ -147,11 +143,23 @@
 					<!-- Left panel -->
 					<DockPanel Grid.Column="0" Background="#eeeef2">
 						<DockPanel.Styles>
-							<Style Selector="Button">
-								<Setter Property="BorderThickness" Value="1" />
+							<Style Selector="Button.MenuItem">
+								<Setter Property="BorderThickness" Value="0 1 0 0" />
 								<Setter Property="CornerRadius" Value="0" />
+								<Setter Property="Padding" Value="12 8 6 8" />
 								<Setter Property="BorderBrush" Value="#8e8e8e"/>
 								<Setter Property="Background" Value="#dddddd"/>
+								<Setter Property="HorizontalContentAlignment" Value="Left" />
+							</Style>
+							<Style Selector="Button DockPanel material|MaterialIcon">
+								<Setter Property="Height" Value="18" />
+								<Setter Property="Width" Value="18" />
+								<Setter Property="Foreground" Value="#383838" />
+							</Style>
+							<Style Selector="Button DockPanel TextBlock">
+								<Setter Property="Margin" Value="8 0 0 0"/>
+								<Setter Property="FontSize" Value="14"/>
+								<Setter Property="VerticalAlignment" Value="Center"/>
 							</Style>
 							<Style Selector="Button:pointerover /template/ ContentPresenter">
 								<Setter Property="BorderBrush" Value="#3c7fb1"/>
@@ -165,8 +173,13 @@
 								<Setter Property="RenderTransform" Value="none" />
 							</Style>
 						</DockPanel.Styles>
-						<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">Library</Button>
-						<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+						<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+							<DockPanel>
+								<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu" />
+								<TextBlock Text="Library" />
+							</DockPanel>
+						</Button>
+						<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
 							<Button.Flyout>
 								<Flyout>
 									<Grid MinWidth="200" MinHeight="100">
@@ -177,15 +190,19 @@
 									</Grid>
 								</Flyout>
 							</Button.Flyout>
-							Add Item
+							<DockPanel>
+								<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
+								<TextBlock Text="Add Item" />
+							</DockPanel>
 						</Button>
-						<Button HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+						<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
 							<Button.Flyout>
 								<Flyout>
 									<StackPanel MinWidth="200">
 										<StackPanel.Styles>
 											<Style Selector="Button">
 												<Setter Property="HorizontalAlignment" Value="Stretch" />
+												<Setter Property="HorizontalContentAlignment" Value="Left" />
 											</Style>
 										</StackPanel.Styles>
 										<Button Content="Load" Command="{Binding LoadServiceCommand}" />
@@ -198,7 +215,10 @@
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
-							DEBUG
+							<DockPanel>
+								<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />
+								<TextBlock Text="Debug" />
+							</DockPanel>
 						</Button>
 
 						<controls:ItemOrderListView />

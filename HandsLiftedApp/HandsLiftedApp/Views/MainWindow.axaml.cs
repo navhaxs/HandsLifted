@@ -1,12 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.ViewModels;
-using HandsLiftedApp.Views.App;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
@@ -43,8 +41,8 @@ namespace HandsLiftedApp.Views
 
         private void MainWindow_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
         {
-            StartWindow startWindow = new StartWindow();
-            startWindow.ShowDialog(this);
+            //StartWindow startWindow = new StartWindow();
+            //startWindow.ShowDialog(this);
         }
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
@@ -53,23 +51,6 @@ namespace HandsLiftedApp.Views
             // TODO confirm
             //throw new NotImplementedException();
         }
-
-        //private void X_PointerReleased(object? sender, PointerReleasedEventArgs e)
-        //{
-        //    var hoveredItem = (ListBoxItem)OrderableListBox.GetLogicalChildren().FirstOrDefault(x => this.GetVisualsAt(e.GetPosition(this)).Contains(((IVisual)x).GetVisualChildren().First()));
-        //    if (DragItem == null ||
-        //        hoveredItem == null ||
-        //        DragItem == hoveredItem)
-        //    {
-        //        return;
-        //    }
-
-        //    Items.Move(
-        //        OrderableListBox.GetLogicalChildren().ToList().IndexOf(DragItem),
-        //        OrderableListBox.GetLogicalChildren().ToList().IndexOf(hoveredItem));
-
-        //    DragItem = null;
-        //}
 
         private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)
         {

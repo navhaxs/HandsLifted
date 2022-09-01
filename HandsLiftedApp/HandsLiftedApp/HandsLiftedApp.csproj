@@ -31,6 +31,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
+		<ProjectReference Include="..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.Models\HandsLiftedApp.Data.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.PowerPointImporter\HandsLiftedApp.Importer.PowerPoint.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.PropertyGridControl\HandsLiftedApp.PropertyGridControl.csproj" />

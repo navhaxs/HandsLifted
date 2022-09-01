@@ -1,8 +1,9 @@
-﻿using ReactiveUI;
+﻿using HandsLiftedApp.XTransitioningContentControl;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public abstract class Slide : ReactiveObject
+    public abstract class Slide : ReactiveObject, ISlideRender
     {
 
         private int _index;
@@ -19,11 +20,26 @@ namespace HandsLiftedApp.Data.Slides
 
         // meta - group labels, slide number, etc.
         public abstract string? SlideLabel { get; }
-
         public abstract string? SlideText { get; }
+
+        public virtual void OnEnterSlide()
+        {
+        }
+
+        public virtual void OnLeaveSlide()
+        {
+        }
     }
 
     public interface ISlideState
     {
+        public virtual void OnSlideEnterEvent()
+        {
+
+        }
+        public virtual void OnSlideLeaveEvent()
+        {
+
+        }
     }
 }

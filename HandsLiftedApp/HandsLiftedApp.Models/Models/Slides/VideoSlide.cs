@@ -18,8 +18,22 @@ namespace HandsLiftedApp.Data.Slides
         public override string? SlideText => null;
 
         public override string? SlideLabel => Path.GetFileName(VideoPath);
+
+        public override void OnEnterSlide()
+        {
+            base.OnEnterSlide();
+            State.OnSlideEnterEvent();
+        }
+
+        public override void OnLeaveSlide()
+        {
+            base.OnLeaveSlide();
+            State.OnSlideLeaveEvent();
+        }
     }
 
-    public interface IVideoSlideState : ISlideState { }
+    public interface IVideoSlideState : ISlideState
+    {
+    }
 
 }

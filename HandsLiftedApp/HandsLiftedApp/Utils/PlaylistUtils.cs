@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Comparer;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
@@ -62,7 +63,9 @@ namespace HandsLiftedApp.Utils
             try
             {
                 var images = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories)
-                                .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"));
+                                .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"))
+                        .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
+
                 int i = 0;
                 foreach (var f in images)
                 {
@@ -87,7 +90,7 @@ namespace HandsLiftedApp.Utils
         {
             SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> song = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>()
             {
-                Title = "Rock Of Ages",
+                Title = "Rock Of Ages, A Really Long Title For An Item",
                 Copyright = @"“Hallelujah” words and music by John Doe
 © 2018 Good Music Co.
 Used by permission. CCLI Licence #12345"

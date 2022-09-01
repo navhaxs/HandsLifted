@@ -1,12 +1,11 @@
 ﻿using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.XTransitioningContentControl;
 using LibVLCSharp.Shared;
 using System;
 
 namespace HandsLiftedApp.Models.SlideState
 {
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
-    public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, ISlideRender, IVideoSlideState
+    public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, IVideoSlideState
     {
         private LibVLC _libVLC;
         public Media _media { get; set; }
@@ -44,7 +43,11 @@ namespace HandsLiftedApp.Models.SlideState
         public string VideoPath { get; set; }
         public MediaPlayer MediaPlayer { get; }
 
-        public void OnLeaveSlide()
+        public void OnSlideEnterEvent()
+        {
+
+        }
+        public void OnSlideLeaveEvent()
         {
             MediaPlayer?.Stop();
         }

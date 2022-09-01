@@ -3,7 +3,7 @@ using Avalonia.Threading;
 using DynamicData;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Importer.PowerPoint;
+using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Logic;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
@@ -85,7 +85,8 @@ namespace HandsLiftedApp.ViewModels
             ;
 
             // The OpenFile command is bound to a button/menu item in the UI.
-            AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPPTXFileAsync);
+            AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPresentationFileAsync);
+            AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
             AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
             LoadServiceCommand = ReactiveCommand.Create(OnLoadService);
@@ -158,6 +159,7 @@ namespace HandsLiftedApp.ViewModels
         }
 
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadServiceCommand { get; }
@@ -167,7 +169,11 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> OnAboutWindowCommand { get; }
 
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
-        private async Task OpenPPTXFileAsync()
+        private async Task OpenGoogleSlidesAsync()
+        {
+            Importer.GoogleSlides.Program.Main(new string[0]);
+        }
+        private async Task OpenPresentationFileAsync()
         {
             try
             {
@@ -175,25 +181,33 @@ namespace HandsLiftedApp.ViewModels
 
                 if (fullFilePath != null && fullFilePath is string)
                 {
+
                     DateTime now = DateTime.Now;
-                    string pptxFileName = Path.GetFileName(fullFilePath);
-                    string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, pptxFileName, now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    string fileName = Path.GetFileName(fullFilePath);
+
+                    string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, fileName, now.ToString("yyyy-MM-dd-HH-mm-ss"));
                     Directory.CreateDirectory(targetDirectory);
 
                     Data.Models.Items.SlidesGroup<ItemStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
-                    slidesGroup.Title = pptxFileName;
-
-                    //PlaylistState.Playlist.Items.Add(slidesGroup);
+                    slidesGroup.Title = fileName;
 
                     Dispatcher.UIThread.Post(() => Playlist.Items.Add(slidesGroup));
 
-                    // kick off
-                    ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
-                    PlaylistUtils.AddPowerPointToPlaylist(importTask)
-                        .ContinueWith((s) =>
-                        {
-                            PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
-                        });
+                    if (fileName.EndsWith(".pptx"))
+                    {
+                        // kick off
+                        ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
+                        PlaylistUtils.AddPowerPointToPlaylist(importTask)
+                            .ContinueWith((s) =>
+                            {
+                                PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
+                            });
+                    }
+                    else if (fileName.EndsWith(".pdf"))
+                    {
+                        ConvertPDF.Convert(fullFilePath, targetDirectory);
+                        PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
+                    }
 
                 }
 

@@ -30,8 +30,6 @@ namespace HandsLiftedApp.Views.Render
             if (Design.IsDesignMode)
                 return;
 
-
-
             VideoView = this.Get<VideoView>("VideoView");
             //VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia;
 
@@ -50,8 +48,6 @@ namespace HandsLiftedApp.Views.Render
             ////
             this.DataContextChanged += VideoSlide_DataContextChanged;
             this.AttachedToVisualTree += VideoSlideRenderer_AttachedToVisualTree;
-
-
         }
 
         private void VideoSlideRenderer_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -101,7 +97,7 @@ namespace HandsLiftedApp.Views.Render
         private async Task sAsync()
         {
 
-            if (MediaPlayer == null) // } || MediaPlayer != null && MediaPlayer.Hwnd == IntPtr.Zero)
+            if (MediaPlayer == null || VideoView.MediaPlayer == null) // } || MediaPlayer != null && MediaPlayer.Hwnd == IntPtr.Zero)
                 return;
 
             await Task.Run(() =>
