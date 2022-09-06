@@ -1,9 +1,13 @@
-﻿using HandsLiftedApp.Comparer;
+﻿using Avalonia.Threading;
+using HandsLiftedApp.Comparer;
+using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -14,8 +18,7 @@ namespace HandsLiftedApp.Utils
 {
     internal static class PlaylistUtils
     {
-
-        public async static Task<ImportStats?> AddPowerPointToPlaylist(ImportTask importTask)
+        public async static Task<ImportStats?> AddPowerPointToPlaylist(ImportTask importTaskAction, Action<ImportStats> onProgressUpdate)
         {
             ImportStats? value = null;
             Exception? threadEx = null;
@@ -23,7 +26,11 @@ namespace HandsLiftedApp.Utils
             await Task.Factory.StartNew(() =>
             {
                 var progress = new Progress<ImportStats>();
-                //progress.ProgressChanged += Progress_ProgressChanged;
+                progress.ProgressChanged += (object? sender, ImportStats e) =>
+                    {
+                        Debug.Print(e.JobPercentage.ToString());
+                        onProgressUpdate(e);
+                    };
                 var outDir = GetTempDirPath();
 
                 Thread staThread = new Thread(
@@ -31,7 +38,7 @@ namespace HandsLiftedApp.Utils
                     {
                         try
                         {
-                            value = RunPowerPointImportTask(progress, importTask);
+                            value = RunPowerPointImportTask(progress, importTaskAction);
 
                         }
                         catch (Exception ex)
@@ -46,19 +53,19 @@ namespace HandsLiftedApp.Utils
 
             return value;
         }
-        //private void Progress_ProgressChanged(object? sender, PowerpointImportProgress e)
-        //{
-        //    Debug.Print(e.ToString());
-        //}
 
-        public static SlidesGroup<ItemStateImpl> CreateSlidesGroup(string directory)
+        private static void Progress_ProgressChanged1(object? sender, ImportStats e)
         {
-            SlidesGroup<ItemStateImpl> slidesGroup = new SlidesGroup<ItemStateImpl>();
-            UpdateSlidesGroup(slidesGroup, directory);
+            Debug.Print(e.JobPercentage.ToString());
+        }
+        public static SlidesGroupItem<ItemStateImpl> CreateSlidesGroup(string directory)
+        {
+            SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>();
+            UpdateSlidesGroup(ref slidesGroup, directory);
             return slidesGroup;
         }
 
-        public static SlidesGroup<ItemStateImpl> UpdateSlidesGroup(SlidesGroup<ItemStateImpl> slidesGroup, string directory)
+        public static X UpdateSlidesGroup<X>(ref X slidesGroup, string directory) where X : SlidesGroupItem<ItemStateImpl>
         {
             try
             {

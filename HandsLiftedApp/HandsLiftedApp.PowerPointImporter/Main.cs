@@ -118,7 +118,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
                             Debug.Print(e.ToString());
                         }
 
-                        double progressPercentage = ((double)(slide.SlideIndex + 1) / (thisPresentation.Slides.Count) * 100);
+                        double progressPercentage = ((double)slide.SlideIndex / thisPresentation.Slides.Count * 100);
 
                         stats.JobStatus = ImportStats.JobStatusEnum.Running;
                         stats.JobPercentage = progressPercentage;
@@ -129,7 +129,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
 
                     // export job success
                     stats.JobStatus = ImportStats.JobStatusEnum.CompletionSuccess;
-                    stats.JobPercentage = 1.0d;
+                    stats.JobPercentage = 100.0d;
                     stats.CompletionTime = DateTime.Now;
 
                     if (progress != null)
@@ -142,7 +142,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
                 {
                     Debug.Print(e.Message);
                     stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
-                    stats.JobPercentage = 1.0d;
+                    stats.JobPercentage = 100.0d;
                     stats.CompletionTime = DateTime.Now;
 
                     if (progress != null)

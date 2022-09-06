@@ -26,7 +26,7 @@ namespace HandsLiftedApp.Utils
                 playlist.Items.Add(SongImporter.ImportSongFromTxt(f));
             }
 
-            SlidesGroup<ItemStateImpl> slidesGroup = new SlidesGroup<ItemStateImpl>();
+            SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>();
             try
             {
                 var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)

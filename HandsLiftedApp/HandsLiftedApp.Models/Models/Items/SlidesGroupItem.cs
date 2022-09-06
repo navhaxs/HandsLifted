@@ -6,12 +6,12 @@ using System.Xml.Serialization;
 namespace HandsLiftedApp.Data.Models.Items
 {
     // TODO: need to define list of media, rather than Slide ??? for serialization
-    public class SlidesGroup<I> : Item<I> where I : IItemState
+    public class SlidesGroupItem<I> : Item<I> where I : IItemState
     {
 
         private ObservableCollection<Slide> _internal_slides = new ObservableCollection<Slide>();
 
-        public SlidesGroup()
+        public SlidesGroupItem()
         {
             _Slides.CollectionChanged += (s, x) =>
             {
@@ -23,5 +23,7 @@ namespace HandsLiftedApp.Data.Models.Items
         public ObservableCollection<Slide> _Slides { get => _internal_slides; set => this.RaiseAndSetIfChanged(ref _internal_slides, value); }
         [XmlIgnore]
         public override ObservableCollection<Slide> Slides { get => _Slides; }
+
+
     }
 }

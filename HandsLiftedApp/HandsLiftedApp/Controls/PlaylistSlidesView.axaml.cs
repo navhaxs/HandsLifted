@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
@@ -9,6 +10,7 @@ using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
+using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Controls
@@ -45,6 +47,7 @@ namespace HandsLiftedApp.Controls
                    if (control is not null)
                    {
                        scrollViewer.Offset = new Vector(0, control.Bounds.Top);
+                       Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
                    }
                });
 

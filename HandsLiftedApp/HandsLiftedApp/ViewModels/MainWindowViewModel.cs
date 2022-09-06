@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using DynamicData;
 using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Logic;
@@ -17,8 +18,10 @@ using System;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -61,7 +64,8 @@ namespace HandsLiftedApp.ViewModels
             if (Design.IsDesignMode)
             {
                 Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
-                Playlist.Items.Add(PlaylistUtils.CreateSong());
+                var song = PlaylistUtils.CreateSong();
+                Playlist.Items.Add(song);
                 return;
             }
 
@@ -171,7 +175,9 @@ namespace HandsLiftedApp.ViewModels
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
         private async Task OpenGoogleSlidesAsync()
         {
-            Importer.GoogleSlides.Program.Main(new string[0]);
+            Importer.GoogleSlides.Program.Result result = Importer.GoogleSlides.Program.Run("https://docs.google.com/presentation/d/1AjkGrL1NzOR5gVWeJ_YLlPtRd19OEaT4ZnW7Y2qkNPM/edit?usp=sharing", Playlist.State.PlaylistWorkingDirectory);
+
+            ImportFromFile(result.OutputFullFilePath, Playlist.State.PlaylistWorkingDirectory);
         }
         private async Task OpenPresentationFileAsync()
         {
@@ -185,37 +191,83 @@ namespace HandsLiftedApp.ViewModels
                     DateTime now = DateTime.Now;
                     string fileName = Path.GetFileName(fullFilePath);
 
-                    string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, fileName, now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
                     Directory.CreateDirectory(targetDirectory);
 
-                    Data.Models.Items.SlidesGroup<ItemStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
-                    slidesGroup.Title = fileName;
+                    //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
+                    PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };
 
-                    Dispatcher.UIThread.Post(() => Playlist.Items.Add(slidesGroup));
+                    Playlist.Items.Add(slidesGroup);
 
-                    if (fileName.EndsWith(".pptx"))
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        // kick off
-                        ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
-                        PlaylistUtils.AddPowerPointToPlaylist(importTask)
-                            .ContinueWith((s) =>
+                        // wait for UI to update...
+                        Dispatcher.UIThread.RunJobs();
+                        // and now we can jump to view
+                        var count = Playlist.Items.Count;
+                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                    });
+
+                    //kick off
+                    ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
+                    PlaylistUtils.AddPowerPointToPlaylist(importTask, (ImportStats e) =>
+                        {
+                            slidesGroup.SyncState.Progress = e.JobPercentage;
+                        })
+                        .ContinueWith((s) =>
+                        {
+                            PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
+                            slidesGroup.SyncState.IsSyncBusy = false;
+
+                            Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
+                                var count = Playlist.Items.Count;
+                                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                             });
-                    }
-                    else if (fileName.EndsWith(".pdf"))
-                    {
-                        ConvertPDF.Convert(fullFilePath, targetDirectory);
-                        PlaylistUtils.UpdateSlidesGroup(slidesGroup, targetDirectory);
-                    }
-
+                        });
                 }
-
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.Print(e.Message);
             }
+        }
+
+
+        private void ImportFromFile(string fullFilePath, string playlistWorkingDirectory)
+        {
+            if (fullFilePath != null && fullFilePath is string)
+            {
+
+                DateTime now = DateTime.Now;
+                string fileName = Path.GetFileName(fullFilePath);
+
+                string targetDirectory = Path.Join(playlistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                Directory.CreateDirectory(targetDirectory);
+
+                Data.Models.Items.SlidesGroupItem<ItemStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
+                slidesGroup.Title = fileName;
+
+                Dispatcher.UIThread.InvokeAsync(() => Playlist.Items.Add(slidesGroup));
+
+                if (fileName.EndsWith(".pptx"))
+                {
+                    // kick off
+                    ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
+                    PlaylistUtils.AddPowerPointToPlaylist(importTask, (_) => { })
+                        .ContinueWith((s) =>
+                        {
+                            PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
+                        });
+                }
+                else if (fileName.EndsWith(".pdf"))
+                {
+                    ConvertPDF.Convert(fullFilePath, targetDirectory);
+                    PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
+                }
+
+            }
+
         }
 
         public Interaction<Unit, string?> ShowSongOpenFileDialog { get; }

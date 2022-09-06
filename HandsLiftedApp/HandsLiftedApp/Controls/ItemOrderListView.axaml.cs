@@ -33,9 +33,6 @@ namespace HandsLiftedApp.Controls
 
         }
 
-        ListBoxItem DragItem;
-        double offsetY = 0;
-
         private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (listBox.SelectedIndex > -1)

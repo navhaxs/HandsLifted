@@ -59,7 +59,7 @@ namespace HandsLiftedApp.Views
 
             if (this.Screens.ScreenCount > 1)
             {
-                var secondaryScreen = this.Screens.All.Where(screen => screen.Primary == false).First();
+                var secondaryScreen = this.Screens.All.Where(screen => screen.Primary == false).Last();
                 this.Position = new PixelPoint(secondaryScreen.Bounds.X, secondaryScreen.Bounds.Y);
                 this.WindowState = WindowState.FullScreen;
                 //this.Width = this.Screens.All[1].Bounds.Width;

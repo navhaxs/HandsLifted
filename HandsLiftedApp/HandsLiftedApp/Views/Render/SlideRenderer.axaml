@@ -10,9 +10,6 @@
 			 xmlns:controls="using:HandsLiftedApp.Controls"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="HandsLiftedApp.Views.Render.SlideRenderer">
-	<UserControl.Resources>
-		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
-	</UserControl.Resources>
 
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
@@ -52,12 +49,14 @@
 	<hla:XTransitioningContentControl Content="{Binding}">
 		<!--<hla:XTransitioningContentControl.PageTransition>
 			<CrossFade Duration="1.00" />
-			--><!--<CompositePageTransition>
+			-->
+		<!--<CompositePageTransition>
 				<CrossFade Duration="0:00:00.500" />
 				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
 				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
 				<ext:CustomTransition Duration="0:00:00.250" />
-			</CompositePageTransition>--><!--
+			</CompositePageTransition>-->
+		<!--
 		</hla:XTransitioningContentControl.PageTransition>-->
 	</hla:XTransitioningContentControl>
 	<!--<TransitioningContentControl Name="root" Content="{Binding}" >

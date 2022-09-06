@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="150"
+             x:Class="HandsLiftedApp.Views.Item.GoogleSlidesInfo">
+	<Border Background="#f1f1f7" CornerRadius="5" Padding="5">
+		<StackPanel HorizontalAlignment="Left">
+			<StackPanel>
+				<TextBlock Text="Google Slide Presentation Id" />
+				<TextBox Watermark="e.g. https://docs.google.com/presentation/d/1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0/edit" />
+			</StackPanel>
+			<TextBlock Text="Last sync: 4:44am Today ('Sunday Post-roll', 8 Slides)" />
+			<Button Content="Edit in web browser" HorizontalAlignment="Left" />
+			<Button Content="Sync now" HorizontalAlignment="Left" />
+		</StackPanel>
+	</Border>
+</UserControl>

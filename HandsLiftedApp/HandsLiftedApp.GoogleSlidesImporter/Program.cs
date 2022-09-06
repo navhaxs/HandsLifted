@@ -6,6 +6,7 @@ using Google.Apis.Slides.v1;
 using Google.Apis.Slides.v1.Data;
 using Google.Apis.Util.Store;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using static Google.Apis.Drive.v3.FilesResource;
 
@@ -21,7 +22,19 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 
         static string PDF_MIME_TYPE = "application/pdf";
 
-        public static void Main(string[] args)
+        public class Result
+        {
+            public String Title;
+            public String OutputFileName;
+            public String OutputFullFilePath;
+        }
+
+        public static string ReplaceInvalidChars(string filename)
+        {
+            return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+        }
+
+        public static Result Run(String googleSlideUrl, String playlistWorkingDirectory)
         {
             try
             {
@@ -53,12 +66,20 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                 var regex = new Regex(@"[-\w]{25,}");
                 //String fileId = regex.Match("https://docs.google.com/presentation/d/1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0/edit?usp=sharing").Value;
                 //String fileId = regex.Match("https://docs.google.com/presentation/d/1IiBBcLgvc9YprZTpv9CdDHgO1p358j71KXbZj347V58/edit#slide=id.p1").Value;
-                String fileId = regex.Match("https://docs.google.com/presentation/d/1AjkGrL1NzOR5gVWeJ_YLlPtRd19OEaT4ZnW7Y2qkNPM/edit?usp=sharing").Value;
+                String fileId = regex.Match(googleSlideUrl).Value;
                 PresentationsResource.GetRequest request = service.Presentations.Get(fileId);
 
-                // Prints the number of slides and elements in a sample presentation:
-                // https://docs.google.com/presentation/d/1EAYk18WDjIG-zp_0vLm3CsfQh_i8eXc67Jo2O9C6Vuc/edit
                 Presentation presentation = request.Execute();
+
+                var outputFileName = ReplaceInvalidChars(presentation.Title) + ".pdf";
+
+                Result result = new Result()
+                {
+                    Title = presentation.Title,
+                    OutputFileName = outputFileName,
+                    OutputFullFilePath = Path.Join(playlistWorkingDirectory, outputFileName)
+                };
+
                 IList<Page> slides = presentation.Slides;
                 Console.WriteLine("The presentation contains {0} slides:", slides.Count);
                 for (var i = 0; i < slides.Count; i++)
@@ -68,7 +89,6 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                     Console.WriteLine("- Slide #{0} contains {1} elements.", i + 1, slide.PageElements?.Count);
                 }
 
-                //presentation.Title;
                 var x = service.HttpClient.GetAsync($"https://docs.google.com/presentation/d/{fileId}/export/png");
 
                 x.ContinueWith(t =>
@@ -93,24 +113,31 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                         Debug.Print(d.Exception.Message);
                     }
 
-                    using (FileStream file = new FileStream("my-exported-slides.pdf", FileMode.Create, System.IO.FileAccess.Write))
+                    using (FileStream file = new FileStream(result.OutputFullFilePath, FileMode.Create, FileAccess.Write))
                     {
                         stream.Position = 0;
                         stream.CopyTo(file);
                         file.Flush();
                     }
-                    //using (FileStream file = new FileStream("file.bin", FileMode.Open, FileAccess.Read))
-                    //    file.CopyTo(stream);
                 }
+
+                return result;
             }
             catch (GoogleApiException e)
             {
                 Console.WriteLine(e.Message);
+                throw new ImportFailureException();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                throw new ImportFailureException();
             }
+        }
+
+        public static void Main(string[] args)
+        {
+            Run("https://docs.google.com/presentation/d/1AjkGrL1NzOR5gVWeJ_YLlPtRd19OEaT4ZnW7Y2qkNPM/edit?usp=sharing", Directory.GetCurrentDirectory());
         }
     }
 }

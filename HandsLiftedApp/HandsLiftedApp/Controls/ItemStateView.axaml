@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:controls="using:HandsLiftedApp.Controls"
+			 xmlns:item="using:HandsLiftedApp.Views.Item"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 MinHeight="200"
@@ -50,6 +51,8 @@
 				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
 			</DockPanel>
 		</Border>
+
+		<item:ItemInfo VerticalAlignment="Top" />
 
 		<controls:ListBoxWithoutKey Name="List"
 				 VirtualizationMode="None"
@@ -115,5 +118,6 @@
 				</utils:MyTemplateSelector>
 			</controls:ListBoxWithoutKey.DataTemplates>
 		</controls:ListBoxWithoutKey>
+
 	</StackPanel>
 </UserControl>

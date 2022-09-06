@@ -50,6 +50,15 @@
 		<Compile Update="Views\AddItemPaletteControl.axaml.cs">
 			<DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\Item\GoogleSlidesInfo.axaml.cs">
+			<DependentUpon>GoogleSlidesInfo.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Item\PowerPointInfo.axaml.cs">
+			<DependentUpon>PowerPointInfo.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Item\ItemInfo.axaml.cs">
+			<DependentUpon>ItemInfo.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Render\AltSlideRenderer.axaml.cs">
 			<DependentUpon>AltSlideRenderer.axaml</DependentUpon>
 		</Compile>

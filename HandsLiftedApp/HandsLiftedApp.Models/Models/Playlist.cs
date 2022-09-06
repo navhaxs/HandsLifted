@@ -10,7 +10,7 @@ namespace HandsLiftedApp.Data.Models
     [XmlRoot("Playlist", Namespace = Constants.Namespace, IsNullable = false)]
     // todo: see https://stackoverflow.com/questions/11886290/use-the-xmlinclude-or-soapinclude-attribute-to-specify-types-that-are-not-known
     [XmlInclude(typeof(SongItem<ISongTitleSlideState, ISongSlideState, IItemState>))]
-    [XmlInclude(typeof(SlidesGroup<IItemState>))]
+    [XmlInclude(typeof(SlidesGroupItem<IItemState>))]
     [Serializable]
     public class Playlist<T, I> : ReactiveObject where T : IPlaylistState where I : IItemState
     {
