@@ -5,7 +5,7 @@ namespace HandsLiftedApp.Data.Slides
     public class ImageSlide<T> : Slide where T : IImageSlideState
     {
         T _state;
-        T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
+        public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
         public string ImagePath { get; set; }
 
@@ -18,6 +18,18 @@ namespace HandsLiftedApp.Data.Slides
         public override string? SlideText => null;
 
         public override string? SlideLabel => Path.GetFileName(ImagePath);
+
+        public override void OnEnterSlide()
+        {
+            base.OnEnterSlide();
+            State.OnSlideEnterEvent();
+        }
+
+        public override void OnLeaveSlide()
+        {
+            base.OnLeaveSlide();
+            State.OnSlideLeaveEvent();
+        }
 
     }
     public interface IImageSlideState : ISlideState { }

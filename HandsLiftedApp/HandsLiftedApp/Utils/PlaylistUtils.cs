@@ -1,4 +1,5 @@
 ﻿using Avalonia.Threading;
+using DynamicData;
 using HandsLiftedApp.Comparer;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
@@ -65,33 +66,59 @@ namespace HandsLiftedApp.Utils
             return slidesGroup;
         }
 
-        public static X UpdateSlidesGroup<X>(ref X slidesGroup, string directory) where X : SlidesGroupItem<ItemStateImpl>
+        public static void UpdateSlidesGroup<X>(ref X slidesGroup, string directory) where X : SlidesGroupItem<ItemStateImpl>
         {
+            int i = 0;
+            var prevCount = slidesGroup._Slides.Count;
+
+
+            slidesGroup.State.LockSelectionIndex = true;
+            var lastSelectedIndex = slidesGroup.State.SelectedIndex;
+
             try
             {
+
                 var images = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories)
                                 .Where(s => s.ToLower().EndsWith(".bmp") || s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"))
                         .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
 
-                int i = 0;
                 foreach (var f in images)
                 {
-                    if (f.EndsWith(".mp4"))
+
+                    Slide x = (f.EndsWith(".mp4")) ? new VideoSlide<VideoSlideStateImpl>(f) { Index = i } : new ImageSlide<ImageSlideStateImpl>(f) { Index = i };
+
+                    if (slidesGroup._Slides.ElementAtOrDefault(i) == null)
                     {
-                        slidesGroup._Slides.Add(new VideoSlide<VideoSlideStateImpl>(f) { Index = i });
+                        slidesGroup._Slides.Add(x);
                     }
                     else
                     {
-                        slidesGroup._Slides.Add(new ImageSlide<ImageSlideStateImpl>(f) { Index = i });
+                        slidesGroup._Slides[i] = x;
                     }
+
                     i++;
                 }
+
+
+                while (i < prevCount)
+                {
+                    // keep removing last slide
+                    slidesGroup._Slides.RemoveAt(slidesGroup._Slides.Count - 1);
+                    i++;
+                }
+
+
+                Thread.Sleep(500);
+
+                slidesGroup.State.LockSelectionIndex = false;
+                //slidesGroup.State.SelectedIndex = lastSelectedIndex;
             }
-            catch { }
-
-            return slidesGroup;
+            catch (Exception e)
+            {
+                Debug.Print(e.Message);
+            }
+            //return slidesGroup;
         }
-
 
         public static SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> CreateSong()
         {

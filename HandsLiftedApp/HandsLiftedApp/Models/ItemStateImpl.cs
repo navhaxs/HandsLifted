@@ -21,7 +21,7 @@ namespace HandsLiftedApp.Models
             parent = item;
             EditCommand = ReactiveCommand.Create(RunTheThing);
 
-            _selectedSlide = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) =>
+            _selectedSlide = this.WhenAnyValue(x => x.SelectedIndex, x => x.LockSelectionIndex, (selectedIndex, lockSelectionIndex) =>
                 {
                     if (selectedIndex > -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
                         return parent.Slides[selectedIndex];
@@ -39,16 +39,32 @@ namespace HandsLiftedApp.Models
 
         //private Item<ItemStateImpl> _item;
         //public Item<ItemStateImpl> Item { get => _item; set => this.RaiseAndSetIfChanged(ref _item, value); }
+        private bool _manualSelectionIndex = false;
+
+        public bool LockSelectionIndex
+        {
+            get => _manualSelectionIndex; set
+            {
+                this.RaiseAndSetIfChanged(ref _manualSelectionIndex, value);
+            }
+        }
+
         private int _selectedIndex = -1;
 
         public int SelectedIndex
         {
             get => _selectedIndex; set
             {
+                if (LockSelectionIndex)
+                {
+                    return;
+                }
+
                 this.RaiseAndSetIfChanged(ref _selectedIndex, value);
 
                 if (_selectedIndex > -1)
                 {
+
                     MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItem = parent });
                 }
             }

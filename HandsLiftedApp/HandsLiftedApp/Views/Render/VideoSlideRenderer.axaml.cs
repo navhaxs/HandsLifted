@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views.Render
 {
-    public partial class VideoSlideRenderer : UserControl, ISlideRender
+    public partial class VideoSlideRenderer : UserControl
     {
 
         private VideoView VideoView;
@@ -141,9 +141,9 @@ namespace HandsLiftedApp.Views.Render
             MediaPlayer?.Pause();
         }
 
-        public void OnLeaveSlide()
-        {
-            MediaPlayer?.Stop();
-        }
+        //public void OnLeaveSlide()
+        //{
+        //    MediaPlayer?.Stop();
+        //}
     }
 }

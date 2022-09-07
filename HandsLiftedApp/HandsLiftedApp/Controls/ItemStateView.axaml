@@ -97,7 +97,7 @@
 					<DataTemplate x:Key="ImageSlide">
 						<controls:SlideThumbnail>
 							<Grid>
-								<Image Stretch="Uniform" Source="{Binding State.Image}" />
+								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" />
 							</Grid>
 						</controls:SlideThumbnail>
 					</DataTemplate>

@@ -197,6 +197,7 @@ namespace HandsLiftedApp.ViewModels
                     //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
                     PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };
 
+
                     Playlist.Items.Add(slidesGroup);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -208,23 +209,24 @@ namespace HandsLiftedApp.ViewModels
                         MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                     });
 
-                    //kick off
-                    ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
-                    PlaylistUtils.AddPowerPointToPlaylist(importTask, (ImportStats e) =>
-                        {
-                            slidesGroup.SyncState.Progress = e.JobPercentage;
-                        })
-                        .ContinueWith((s) =>
-                        {
-                            PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
-                            slidesGroup.SyncState.IsSyncBusy = false;
+                    slidesGroup.SyncState.SyncCommand();
+                    ////kick off
+                    //ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
+                    //PlaylistUtils.AddPowerPointToPlaylist(importTask, (ImportStats e) =>
+                    //    {
+                    //        slidesGroup.SyncState.Progress = e.JobPercentage;
+                    //    })
+                    //    .ContinueWith((s) =>
+                    //    {
+                    //        PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
+                    //        slidesGroup.SyncState.IsSyncBusy = false;
 
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                var count = Playlist.Items.Count;
-                                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
-                            });
-                        });
+                    //        Dispatcher.UIThread.InvokeAsync(() =>
+                    //        {
+                    //            var count = Playlist.Items.Count;
+                    //            MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                    //        });
+                    //    });
                 }
             }
             catch (Exception e)

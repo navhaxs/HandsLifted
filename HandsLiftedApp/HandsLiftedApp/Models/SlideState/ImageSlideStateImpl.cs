@@ -2,6 +2,7 @@
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models.SlideState
@@ -10,11 +11,54 @@ namespace HandsLiftedApp.Models.SlideState
     {
         public ImageSlideStateImpl(ref ImageSlide<ImageSlideStateImpl> imageSlide) : base(ref imageSlide)
         {
-            _ = LoadImage();
+            _ = LoadThumbnail();
         }
+
+        private const int IMAGE_WIDTH = 1920;
+        private const int THUMBNAIL_WIDTH = 300;
+
+        private static readonly object loadImageLock = new object();
+
         public async Task LoadImage()
         {
-            Image = await Task.Run(() =>
+            if (Image is not null)
+            {
+                return;
+            }
+
+            // skip if already running
+            if (Monitor.TryEnter(loadImageLock))
+            {
+                try
+                {
+
+                    Image = await Task.Run(() =>
+                    {
+                        var path = _slide.ImagePath;
+
+                        if (File.Exists(path))
+                        {
+                            using (Stream imageStream = File.OpenRead(path))
+                            {
+                                return Bitmap.DecodeToWidth(imageStream, IMAGE_WIDTH);
+                            }
+                        }
+
+                        return null;
+                    });
+                }
+                finally
+                {
+                    Monitor.Exit(loadImageLock);
+                }
+            }
+
+
+        }
+        public async Task LoadThumbnail()
+        {
+            // todo skip if already running
+            Thumbnail = await Task.Run(() =>
             {
                 var path = _slide.ImagePath;
 
@@ -22,8 +66,7 @@ namespace HandsLiftedApp.Models.SlideState
                 {
                     using (Stream imageStream = File.OpenRead(path))
                     {
-                        return Bitmap.DecodeToWidth(imageStream, 1920);
-                        //return new Bitmap(@"C:\Users\Jeremy\Desktop\blank.bmp");
+                        return Bitmap.DecodeToWidth(imageStream, THUMBNAIL_WIDTH);
                     }
                 }
 
@@ -39,11 +82,28 @@ namespace HandsLiftedApp.Models.SlideState
             }
         }
 
+        // note: on low memory scenarios, this can be unloaded for the not currently-active slide
         private Bitmap? _image;
         public Bitmap? Image
         {
             get => _image;
             private set => this.RaiseAndSetIfChanged(ref _image, value);
+        }
+
+        private Bitmap? _thumbnail;
+        public Bitmap? Thumbnail
+        {
+            get => _thumbnail;
+            private set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
+        }
+        public void OnSlideEnterEvent()
+        {
+            LoadImage();
+        }
+        public void OnSlideLeaveEvent()
+        {
+            // low memory mode
+            //Image = null;
         }
     }
 }

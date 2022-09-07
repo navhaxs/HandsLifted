@@ -21,7 +21,8 @@
 			</DataTemplate>
 			<DataTemplate x:Key="ImageSlide">
 				<Grid>
-					<Image Stretch="Uniform" Source="{Binding State.Image}" RenderOptions.BitmapInterpolationMode="HighQuality" />
+					<viewsrender:ImageRenderer />
+					<!--<Image Stretch="Uniform" Source="{Binding State.Image}" RenderOptions.BitmapInterpolationMode="HighQuality" />-->
 					<!--<TextBlock Text="{Binding State.ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />-->
 				</Grid>
 			</DataTemplate>

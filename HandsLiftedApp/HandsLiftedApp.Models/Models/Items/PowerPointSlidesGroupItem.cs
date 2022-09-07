@@ -21,6 +21,10 @@ namespace HandsLiftedApp.Data.Models.Items
 
         public string SourcePresentationFile { get => _sourcePresentationFile; set => this.RaiseAndSetIfChanged(ref _sourcePresentationFile, value); }
 
+        private string _sourceSlidesExportDirectory;
+
+        public string SourceSlidesExportDirectory { get => _sourceSlidesExportDirectory; set => this.RaiseAndSetIfChanged(ref _sourceSlidesExportDirectory, value); }
+
     }
     public interface IPowerPointSlidesGroupItemState
     {

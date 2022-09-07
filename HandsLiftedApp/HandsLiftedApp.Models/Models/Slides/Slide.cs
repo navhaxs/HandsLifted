@@ -29,6 +29,10 @@ namespace HandsLiftedApp.Data.Slides
         public virtual void OnLeaveSlide()
         {
         }
+
+        public virtual void OnPreloadSlide()
+        {
+        }
     }
 
     public interface ISlideState

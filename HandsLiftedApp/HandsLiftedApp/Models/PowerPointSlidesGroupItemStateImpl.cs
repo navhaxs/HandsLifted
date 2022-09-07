@@ -50,8 +50,6 @@ namespace HandsLiftedApp.Models
             DateTime now = DateTime.Now;
             string fileName = Path.GetFileName(parentSlidesGroup.SourcePresentationFile);
 
-            parentSlidesGroup._Slides.Clear();
-
             string targetDirectory = Path.Join(@"R:\" + FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
             //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
 
@@ -63,6 +61,11 @@ namespace HandsLiftedApp.Models
             {
                 PlaylistUtils.UpdateSlidesGroup(ref parentSlidesGroup, targetDirectory);
                 IsSyncBusy = false;
+
+                //// TODO cleanup: delete old dir after completion
+                var old = parentSlidesGroup.SourceSlidesExportDirectory;
+                parentSlidesGroup.SourceSlidesExportDirectory = targetDirectory;
+                Directory.Delete(old, true);
             });
         }
     }

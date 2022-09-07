@@ -115,8 +115,11 @@ namespace HandsLiftedApp.Importer.PowerPoint
                         }
                         catch (Exception e)
                         {
+                            // possible: out of disk space
                             Debug.Print(e.ToString());
                         }
+
+                        Debug.Print($"slide.SlideIndex={slide.SlideIndex} slide.SlideID={slide.SlideID}");
 
                         double progressPercentage = ((double)slide.SlideIndex / thisPresentation.Slides.Count * 100);
 

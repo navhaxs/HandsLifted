@@ -113,6 +113,12 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 return;
             }
 
+            if (content is ISlideRender)
+            {
+                // well, pre-enter slide
+                ((ISlideRender)content).OnEnterSlide();
+            }
+
             //if (Object.Equals(CurrentContent, content))
             //{
             //    return;
