@@ -1,19 +1,11 @@
-﻿using HandsLiftedApp.Data.Models;
+﻿using Avalonia.Threading;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Utils;
-using HandsLiftedApp.ViewModels;
-using HandsLiftedApp.ViewModels.Editor;
-using HandsLiftedApp.Views.Editor;
-using NetOffice.PowerPointApi;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reactive;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace HandsLiftedApp.Models
 {
@@ -25,6 +17,25 @@ namespace HandsLiftedApp.Models
         public PowerPointSlidesGroupItemStateImpl(ref PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> parent)
         {
             parentSlidesGroup = parent;
+
+
+            timer.Tick += (sender, e) =>
+            {
+                if (!parentSlidesGroup.State.IsSelected)
+                    return;
+
+                parentSlidesGroup.State.SelectedIndex = (parentSlidesGroup.State.SelectedIndex + 1) % parentSlidesGroup.Slides.Count;
+            };
+            timer.Start();
+
+            //parentSlidesGroup.WhenAnyValue(s => s.State.SelectedIndex, (int s) =>
+            //{
+            //    timer.Stop();
+            //    timer.Start();
+            //    return s;
+            //});
+            //parentSlidesGroup.State.PageTransition = new XTransitioningContentControl.XFade(TimeSpan.FromSeconds(2.300));
+
         }
 
         private bool _isSyncBusy = true;
@@ -65,8 +76,16 @@ namespace HandsLiftedApp.Models
                 //// TODO cleanup: delete old dir after completion
                 var old = parentSlidesGroup.SourceSlidesExportDirectory;
                 parentSlidesGroup.SourceSlidesExportDirectory = targetDirectory;
-                Directory.Delete(old, true);
+
+                if (old != null)
+                {
+                    Directory.Delete(old, true);
+                }
             });
         }
+
+
+        // how to make this generic?
+        DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
     }
 }

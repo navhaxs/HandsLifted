@@ -1,6 +1,9 @@
 ﻿using Avalonia.Media.Imaging;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +21,6 @@ namespace HandsLiftedApp.Models.SlideState
         private const int THUMBNAIL_WIDTH = 300;
 
         private static readonly object loadImageLock = new object();
-
         public async Task LoadImage()
         {
             if (Image is not null)
@@ -31,6 +33,8 @@ namespace HandsLiftedApp.Models.SlideState
             {
                 try
                 {
+                    Debug.Print($"[enter monitor]");
+
 
                     Image = await Task.Run(() =>
                     {
@@ -38,6 +42,8 @@ namespace HandsLiftedApp.Models.SlideState
 
                         if (File.Exists(path))
                         {
+                            Debug.Print($"loaded image to memory: {path}");
+
                             using (Stream imageStream = File.OpenRead(path))
                             {
                                 return Bitmap.DecodeToWidth(imageStream, IMAGE_WIDTH);
@@ -49,11 +55,10 @@ namespace HandsLiftedApp.Models.SlideState
                 }
                 finally
                 {
+                    Debug.Print($"[exit monitor]");
                     Monitor.Exit(loadImageLock);
                 }
             }
-
-
         }
         public async Task LoadThumbnail()
         {
@@ -96,11 +101,11 @@ namespace HandsLiftedApp.Models.SlideState
             get => _thumbnail;
             private set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
         }
-        public void OnSlideEnterEvent()
+        public async Task OnSlideEnterEvent()
         {
-            LoadImage();
+            await LoadImage();
         }
-        public void OnSlideLeaveEvent()
+        public async Task OnSlideLeaveEvent()
         {
             // low memory mode
             //Image = null;

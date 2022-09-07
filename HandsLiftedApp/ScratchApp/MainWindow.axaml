@@ -29,6 +29,10 @@
 			</Rectangle.Transitions>
 		</Rectangle>
 
+		<Viewbox>
+			<CheckBox IsChecked="True" />
+		</Viewbox>
+
 		<StackPanel Margin="30">
 			<StackPanel.Styles>
 				<Style Selector="ProgressBar">

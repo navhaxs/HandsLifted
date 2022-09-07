@@ -113,11 +113,19 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 return;
             }
 
+            IPageTransition transition = PageTransition;
             if (content is ISlideRender)
             {
-                // well, pre-enter slide
-                ((ISlideRender)content).OnEnterSlide();
+                // call enter slide (e.g. ensure image will load here)
+                Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
+
+                // if slide has page transition override
+                if (((ISlideRender)content).PageTransition != null)
+                {
+                    transition = ((ISlideRender)content).PageTransition;
+                }
             }
+
 
             //if (Object.Equals(CurrentContent, content))
             //{
@@ -155,13 +163,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             clock.PlayState = PlayState.Run;
 
-            if (PageTransition != null)
+            if (transition != null)
             {
-                //aTimer.Start();
-
-                await PageTransition.Start(_previousImageSite, _contentPresenterContainer, true, _lastTransitionCts.Token);
-
-
+                await transition.Start(_previousImageSite, _contentPresenterContainer, true, _lastTransitionCts.Token);
+            }
+            else
+            {
+                _contentPresenterContainer.IsVisible = true;
+                _previousImageSite.Opacity = 0;
             }
 
             //if (_previousImageSite != null)

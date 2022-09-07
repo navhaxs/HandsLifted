@@ -1,3 +1,4 @@
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using DynamicData;
@@ -16,12 +17,12 @@ using HandsLiftedApp.Views.App;
 using ReactiveUI;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -55,6 +56,9 @@ namespace HandsLiftedApp.ViewModels
 
         public Slide ActiveSlide { get => _activeSlide.Value; }
 
+        private ObservableAsPropertyHelper<IPageTransition?> _activeItemPageTransition;
+        public IPageTransition? ActiveItemPageTransition { get => _activeItemPageTransition.Value; }
+
         public void LoadDemoSchedule()
         {
             Playlist = TestPlaylistDataGenerator.Generate();
@@ -83,10 +87,37 @@ namespace HandsLiftedApp.ViewModels
                         return blankSlideInstance;
                     }
 
+                    // HACK
+                    var selectedItem = this.Playlist.State.SelectedItem;
+                    if (selectedItem != null)
+                    {
+                        var selectedIndex = this.Playlist.State.SelectedItem.State.SelectedIndex;
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            if (selectedItem.Slides.ElementAtOrDefault(selectedIndex + 1) != null)
+                                selectedItem.Slides[selectedIndex + 1].OnPreloadSlide();
+                            if (selectedItem.Slides.ElementAtOrDefault(selectedIndex - 1) != null)
+                                selectedItem.Slides[selectedIndex - 1].OnPreloadSlide();
+                        });
+                    }
+
                     return active;
                 })
                 .ToProperty(this, c => c.ActiveSlide)
             ;
+
+            _activeItemPageTransition = this.WhenAnyValue(
+                x => x.Playlist.State.SelectedItem.State.PageTransition,
+                (IPageTransition? pageTransition) =>
+                {
+                    if (pageTransition != null)
+                        return pageTransition;
+
+                    return null;
+                })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, c => c.ActiveItemPageTransition);
 
             // The OpenFile command is bound to a button/menu item in the UI.
             AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPresentationFileAsync);
@@ -129,6 +160,17 @@ namespace HandsLiftedApp.ViewModels
                 .Subscribe(x =>
                 {
                     Playlist.Items.Move(x.SourceIndex, x.DestinationIndex);
+
+                    // HACK run me from different thread. gives time for UI to update first
+                    new Thread(() =>
+                    {
+                        Thread.CurrentThread.IsBackground = true;
+                        Thread.Sleep(100);
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = x.DestinationIndex });
+                        });
+                    }).Start();
                 });
 
 

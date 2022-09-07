@@ -15,7 +15,7 @@ namespace HandsLiftedApp.Behaviours
     /// <summary>
     /// A behavior that allows controls to be moved around the canvas using RenderTransform of <see cref="Behavior.AssociatedObject"/>.
     /// </summary>
-    public sealed class DragControlBehavior : Behavior<Control>
+    public sealed class ListBoxItemBehavior : Behavior<Control>
     {
         /// <summary>
         /// Identifies the <seealso cref="TargetControl"/> avalonia property.
@@ -202,6 +202,9 @@ namespace HandsLiftedApp.Behaviours
             {
                 var target = TargetControl ?? AssociatedObject;
                 target.RenderTransform = new TranslateTransform();
+
+                // TODO: this is probably a slide click event
+                // Reset the slideshow auto-advance timer!!
 
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;

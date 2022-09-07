@@ -5,7 +5,7 @@
 			 xmlns:ext="using:HandsLiftedApp.Extensions"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
 			 xmlns:views="using:HandsLiftedApp.Views"
-			 xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+			 xmlns:viewsrender="clr-namespace:HandsLiftedApp.Views.Render"
 			 xmlns:hla="using:HandsLiftedApp.XTransitioningContentControl"
 			 xmlns:controls="using:HandsLiftedApp.Controls"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -22,8 +22,6 @@
 			<DataTemplate x:Key="ImageSlide">
 				<Grid>
 					<viewsrender:ImageRenderer />
-					<!--<Image Stretch="Uniform" Source="{Binding State.Image}" RenderOptions.BitmapInterpolationMode="HighQuality" />-->
-					<!--<TextBlock Text="{Binding State.ImageName}" Foreground="White" TextWrapping="Wrap" Background="#000000dd" />-->
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="LogoSlide">
@@ -33,7 +31,6 @@
 			</DataTemplate>
 			<DataTemplate x:Key="VideoSlide">
 				<Grid>
-					<!--<TextBlock Text="{Binding VideoPath}" TextWrapping="Wrap" />-->
 					<viewsrender:VideoSlideRenderer />
 				</Grid>
 			</DataTemplate>
@@ -47,30 +44,13 @@
 		</utils:MyTemplateSelector>
 	</UserControl.DataTemplates>
 
-	<hla:XTransitioningContentControl Content="{Binding}">
-		<!--<hla:XTransitioningContentControl.PageTransition>
-			<CrossFade Duration="1.00" />
-			-->
-		<!--<CompositePageTransition>
-				<CrossFade Duration="0:00:00.500" />
-				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
-				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
-				<ext:CustomTransition Duration="0:00:00.250" />
-			</CompositePageTransition>-->
-		<!--
-		</hla:XTransitioningContentControl.PageTransition>-->
-	</hla:XTransitioningContentControl>
-	<!--<TransitioningContentControl Name="root" Content="{Binding}" >
-		<TransitioningContentControl.PageTransition>
-			<CrossFade Duration="0.25" />
-			-->
-	<!--<CompositePageTransition>
-				<CrossFade Duration="0:00:00.500" />
-				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
-				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
-				<ext:CustomTransition Duration="0:00:00.250" />
-			</CompositePageTransition>-->
-	<!--
-		</TransitioningContentControl.PageTransition>
-	</TransitioningContentControl>-->
+	<Grid>
+
+		<!-- https://github.com/AvaloniaUI/Avalonia/issues/5382 -->
+		<hla:XTransitioningContentControl
+			Content="{Binding $parent[viewsrender:SlideRenderer].ActiveSlide}"
+			PageTransition="{Binding $parent[viewsrender:SlideRenderer].PageTransition}"
+			 />
+
+	</Grid>
 </UserControl>

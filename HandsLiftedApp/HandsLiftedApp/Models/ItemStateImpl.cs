@@ -1,10 +1,13 @@
-﻿using HandsLiftedApp.Data.Models.Items;
+﻿using Avalonia.Animation;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.ViewModels.Editor;
 using HandsLiftedApp.Views.Editor;
+using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
+using System;
 using System.Reactive;
 
 namespace HandsLiftedApp.Models
@@ -33,6 +36,8 @@ namespace HandsLiftedApp.Models
             // or really, "has selected?"
             _isSelected = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
                 .ToProperty(this, x => x.IsSelected);
+
+            PageTransition = new XFade(TimeSpan.FromSeconds(0.300));
         }
 
         //public int Index { get; set; }
@@ -80,6 +85,12 @@ namespace HandsLiftedApp.Models
 
         private int _ItemIndex;
         public int ItemIndex { get => _ItemIndex; set => _ItemIndex = value; }
+
+        private IPageTransition? _pageTransition;
+        public IPageTransition? PageTransition { get => _pageTransition; set => this.RaiseAndSetIfChanged(ref _pageTransition, value); }
+
+        private string? _test;
+        public string? Test { get => _test; set => this.RaiseAndSetIfChanged(ref _test, value); }
 
         void RunTheThing()
         {

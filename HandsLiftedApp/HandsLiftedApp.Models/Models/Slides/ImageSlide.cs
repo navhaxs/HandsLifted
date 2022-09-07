@@ -19,16 +19,22 @@ namespace HandsLiftedApp.Data.Slides
 
         public override string? SlideLabel => Path.GetFileName(ImagePath);
 
-        public override void OnEnterSlide()
+        public override async Task OnPreloadSlide()
         {
-            base.OnEnterSlide();
-            State.OnSlideEnterEvent();
+            // does not need to be async
+            await base.OnEnterSlide();
+            await State.OnSlideEnterEvent();
+        }
+        public override async Task OnEnterSlide()
+        {
+            await base.OnEnterSlide();
+            await State.OnSlideEnterEvent();
         }
 
-        public override void OnLeaveSlide()
+        public override async Task OnLeaveSlide()
         {
-            base.OnLeaveSlide();
-            State.OnSlideLeaveEvent();
+            await base.OnLeaveSlide();
+            await State.OnSlideLeaveEvent();
         }
 
     }

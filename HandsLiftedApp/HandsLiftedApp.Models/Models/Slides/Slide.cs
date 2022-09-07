@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.XTransitioningContentControl;
+﻿using Avalonia.Animation;
+using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
@@ -22,26 +23,30 @@ namespace HandsLiftedApp.Data.Slides
         public abstract string? SlideLabel { get; }
         public abstract string? SlideText { get; }
 
-        public virtual void OnEnterSlide()
+        // slide-override: page transition
+        private IPageTransition? _pageTransition;
+        public IPageTransition? PageTransition { get => _pageTransition; set => this.RaiseAndSetIfChanged(ref _pageTransition, value); }
+
+        public virtual async Task OnEnterSlide()
         {
         }
 
-        public virtual void OnLeaveSlide()
+        public virtual async Task OnLeaveSlide()
         {
         }
 
-        public virtual void OnPreloadSlide()
+        public virtual async Task OnPreloadSlide()
         {
         }
     }
 
     public interface ISlideState
     {
-        public virtual void OnSlideEnterEvent()
+        public virtual async Task OnSlideEnterEvent()
         {
 
         }
-        public virtual void OnSlideLeaveEvent()
+        public virtual async Task OnSlideLeaveEvent()
         {
 
         }

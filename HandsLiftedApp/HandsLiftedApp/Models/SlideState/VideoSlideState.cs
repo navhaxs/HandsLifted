@@ -1,6 +1,7 @@
 ﻿using HandsLiftedApp.Data.Slides;
 using LibVLCSharp.Shared;
 using System;
+using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models.SlideState
 {
@@ -43,11 +44,11 @@ namespace HandsLiftedApp.Models.SlideState
         public string VideoPath { get; set; }
         public MediaPlayer MediaPlayer { get; }
 
-        public void OnSlideEnterEvent()
+        public async Task OnSlideEnterEvent()
         {
 
         }
-        public void OnSlideLeaveEvent()
+        public async Task OnSlideLeaveEvent()
         {
             MediaPlayer?.Stop();
         }

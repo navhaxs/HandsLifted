@@ -5,6 +5,9 @@
 			 xmlns:controls="using:HandsLiftedApp.Controls"
 			 xmlns:item="using:HandsLiftedApp.Views.Item"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
+             xmlns:behaviours="using:HandsLiftedApp.Behaviours"
+
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 MinHeight="200"
 			 Background="Transparent"
@@ -33,6 +36,13 @@
 					</Grid>
 				</ControlTemplate>
 			</Setter>-->
+			<Setter Property="(i:Interaction.Behaviors)">
+				<i:BehaviorCollectionTemplate>
+					<i:BehaviorCollection>
+						<behaviours:ListBoxItemBehavior />
+					</i:BehaviorCollection>
+				</i:BehaviorCollectionTemplate>
+			</Setter>
 		</Style>
 	</UserControl.Styles>
 

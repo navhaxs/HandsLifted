@@ -115,7 +115,6 @@ namespace HandsLiftedApp.Models
                 Playlist.Items[lastSelectedIndex].State.SelectedIndex = -1;
             }
         }
-
         public void NavigatePreviousSlide()
         {
             // if no selected item, attempt to select the first item

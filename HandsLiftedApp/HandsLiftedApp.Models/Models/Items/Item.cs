@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Data.Slides;
+﻿using Avalonia.Animation;
+using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
@@ -39,5 +40,7 @@ namespace HandsLiftedApp.Data.Models.Items
     {
         //public int ItemIndex { get; set; }
         public int SelectedIndex { get; set; }
+
+        public IPageTransition? PageTransition { get; set; }
     }
 }

@@ -87,7 +87,7 @@ namespace HandsLiftedApp.Importer.PDF
 
                         skBitmap.InstallPixels(info, scan0, info.RowBytes, delegate { }, null);
 
-                        string slideOutFile = Path.Join(outputDir, "Slide." + i + ".bmp");
+                        string slideOutFile = Path.Join(outputDir, "Slide." + (i + 1) + ".bmp");
 
                         using (Stream s = File.Create(slideOutFile))
                         {

@@ -1,9 +1,13 @@
-﻿namespace HandsLiftedApp.XTransitioningContentControl
+﻿using Avalonia.Animation;
+
+namespace HandsLiftedApp.XTransitioningContentControl
 {
     public interface ISlideRender
     {
-        public void OnPreloadSlide();
-        public void OnEnterSlide();
-        public void OnLeaveSlide();
+        public Task OnPreloadSlide();
+        public Task OnEnterSlide();
+        public Task OnLeaveSlide();
+
+        public IPageTransition? PageTransition { get; set; }
     }
 }

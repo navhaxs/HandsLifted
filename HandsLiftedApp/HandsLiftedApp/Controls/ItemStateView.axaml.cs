@@ -7,13 +7,9 @@ namespace HandsLiftedApp.Controls
 {
     public partial class ItemStateView : UserControl
     {
-        ListBox listBox;
-
         public ItemStateView()
         {
             InitializeComponent();
-
-            listBox = this.FindControl<ListBox>("List");
         }
 
         private void InitializeComponent()
