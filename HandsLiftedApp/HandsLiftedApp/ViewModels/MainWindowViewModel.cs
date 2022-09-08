@@ -217,9 +217,46 @@ namespace HandsLiftedApp.ViewModels
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
         private async Task OpenGoogleSlidesAsync()
         {
-            Importer.GoogleSlides.Program.Result result = Importer.GoogleSlides.Program.Run("https://docs.google.com/presentation/d/1AjkGrL1NzOR5gVWeJ_YLlPtRd19OEaT4ZnW7Y2qkNPM/edit?usp=sharing", Playlist.State.PlaylistWorkingDirectory);
+            string SourceGooglePresentationId = "1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0";
+            //Importer.GoogleSlides.Program.Result result = Importer.GoogleSlides.Program.Run("https://docs.google.com/presentation/d/1AjkGrL1NzOR5gVWeJ_YLlPtRd19OEaT4ZnW7Y2qkNPM/edit?usp=sharing", Playlist.State.PlaylistWorkingDirectory);
 
-            ImportFromFile(result.OutputFullFilePath, Playlist.State.PlaylistWorkingDirectory);
+            //ImportFromFile(result.OutputFullFilePath, Playlist.State.PlaylistWorkingDirectory);
+
+
+            try
+            {
+                //var fullFilePath = await ShowOpenFileDialog.Handle(Unit.Default);
+
+                //if (fullFilePath != null && fullFilePath is string)
+                //{
+
+                    DateTime now = DateTime.Now;
+                string fileName = SourceGooglePresentationId; // Path.GetFileName(fullFilePath);
+
+                    string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    Directory.CreateDirectory(targetDirectory);
+
+                    GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> slidesGroup = new GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl>() { Title = fileName, SourceGooglePresentationId = SourceGooglePresentationId };
+
+                    Playlist.Items.Add(slidesGroup);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        // wait for UI to update...
+                        Dispatcher.UIThread.RunJobs();
+                        // and now we can jump to view
+                        var count = Playlist.Items.Count;
+                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                    });
+
+                    slidesGroup.SyncState.SyncCommand();
+                //}
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+            }
+            //////////
         }
         private async Task OpenPresentationFileAsync()
         {
@@ -252,23 +289,6 @@ namespace HandsLiftedApp.ViewModels
                     });
 
                     slidesGroup.SyncState.SyncCommand();
-                    ////kick off
-                    //ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
-                    //PlaylistUtils.AddPowerPointToPlaylist(importTask, (ImportStats e) =>
-                    //    {
-                    //        slidesGroup.SyncState.Progress = e.JobPercentage;
-                    //    })
-                    //    .ContinueWith((s) =>
-                    //    {
-                    //        PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
-                    //        slidesGroup.SyncState.IsSyncBusy = false;
-
-                    //        Dispatcher.UIThread.InvokeAsync(() =>
-                    //        {
-                    //            var count = Playlist.Items.Count;
-                    //            MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
-                    //        });
-                    //    });
                 }
             }
             catch (Exception e)

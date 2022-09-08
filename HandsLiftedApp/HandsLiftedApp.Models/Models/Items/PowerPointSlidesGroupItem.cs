@@ -5,7 +5,6 @@ using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
-    // TODO: need to define list of media, rather than Slide ??? for serialization
     public class PowerPointSlidesGroupItem<I, J> : SlidesGroupItem<I> where I : IItemState where J : IPowerPointSlidesGroupItemState
     {
         private J _syncstate;
@@ -24,6 +23,10 @@ namespace HandsLiftedApp.Data.Models.Items
         private string _sourceSlidesExportDirectory;
 
         public string SourceSlidesExportDirectory { get => _sourceSlidesExportDirectory; set => this.RaiseAndSetIfChanged(ref _sourceSlidesExportDirectory, value); }
+
+        // <"PowerPoint Slide ID", exported slide image filename> in order of slide index 
+        private Dictionary<string, string> _slideIdMap = new Dictionary<string, string>();
+        public Dictionary<string, string> SlideIdMap { get => _slideIdMap; set => this.RaiseAndSetIfChanged(ref _slideIdMap, value); }
 
     }
     public interface IPowerPointSlidesGroupItemState

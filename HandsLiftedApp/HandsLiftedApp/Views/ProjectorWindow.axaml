@@ -29,7 +29,12 @@
 			</VisualBrush.Visual>
 		</VisualBrush>
 	</Window.Background>
-
+	<Window.ContextMenu>
+		<ContextMenu>
+			<MenuItem x:Name="toggleFullscreen" Header="Toggle Fullscreen" />
+			<MenuItem x:Name="close" Header="Close" />
+		</ContextMenu>
+	</Window.ContextMenu>
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>

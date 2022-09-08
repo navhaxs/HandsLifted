@@ -14,7 +14,7 @@
 				</DockPanel>
 			</StackPanel>
 			<TextBlock Text="Last sync: 4:44am Today ('Sunday Post-roll', 8 Slides)" />
-			<Button Content="Edit in PowerPoint" HorizontalAlignment="Left" Command="{Binding SyncState.EditInPowerPointCommand}" />
+			<Button Content="Edit in PowerPoint" HorizontalAlignment="Left" Command="{Binding SyncState.EditInExternalCommand}" />
 			<ProgressBar Value="{Binding SyncState.Progress}" Maximum="100" />
 			<Button Content="Sync now" HorizontalAlignment="Left" Command="{Binding SyncState.SyncCommand}" />
 		</StackPanel>

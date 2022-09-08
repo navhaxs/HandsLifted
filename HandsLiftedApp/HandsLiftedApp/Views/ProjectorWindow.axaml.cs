@@ -33,8 +33,15 @@ namespace HandsLiftedApp.Views
             this.AttachDevTools();
 #endif
 
-
             OverlayControls = this.FindControl<Grid>("OverlayControls");
+            this.FindControl<MenuItem>("toggleFullscreen").Click += (s, e) =>
+            {
+                toggleFullscreen();
+            };
+            this.FindControl<MenuItem>("close").Click += (s, e) =>
+            {
+                Close();
+            };
 
             if (Design.IsDesignMode)
                 return;
@@ -57,11 +64,19 @@ namespace HandsLiftedApp.Views
 
             this.DataContext = viewModel;
 
+
             if (this.Screens.ScreenCount > 1)
             {
-                var secondaryScreen = this.Screens.All.Where(screen => screen.Primary == false).Last();
+                var secondaryScreen = this.Screens.All.Where(screen => screen.Primary == false).First();
                 this.Position = new PixelPoint(secondaryScreen.Bounds.X, secondaryScreen.Bounds.Y);
                 this.WindowState = WindowState.FullScreen;
+
+                // perhaps a bug, the WindowState.FullScreen needs to be set again for it to stick
+                // bug observable in toggle
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    this.WindowState = WindowState.FullScreen;
+                });
                 //this.Width = this.Screens.All[1].Bounds.Width;
                 //this.Height= this.Screens.All[1].Bounds.Height;
             }
@@ -71,17 +86,6 @@ namespace HandsLiftedApp.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-
-
-            //if (Design.IsDesignMode)
-            //    return;
-
-
-            //VideoView = this.Get<VideoView>("VideoView");
-
-            //_libVLC = new LibVLC();
-            //_mediaPlayer = new MediaPlayer(_libVLC);
-            //VideoView.MediaPlayer = _mediaPlayer;
         }
 
         private void ProjectorWindow_DoubleTapped(object? sender, RoutedEventArgs e)
@@ -89,33 +93,13 @@ namespace HandsLiftedApp.Views
             if (IControlExtension.FindAncestor<Button>((IControl)e.Source) != null)
                 return;
 
-
-            this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
+            toggleFullscreen();
         }
 
-
-        //private void StopButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (VideoView.MediaPlayer.IsPlaying)
-        //    {
-        //        VideoView.MediaPlayer.Stop();
-        //    }
-        //}
-
-        //private void PlayButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (!VideoView.MediaPlayer.IsPlaying)
-        //    {
-        //        VideoView.MediaPlayer.Play(new Media(_libVLC,
-        //            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
-        //    }
-        //}
-
-        //private void PauseButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    VideoView.MediaPlayer.Pause();
-        //}
-
+        public void toggleFullscreen()
+        {
+            this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
+        }
         private void OnKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
             switch (e.Key)

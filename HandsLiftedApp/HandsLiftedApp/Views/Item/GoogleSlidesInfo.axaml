@@ -8,11 +8,12 @@
 		<StackPanel HorizontalAlignment="Left">
 			<StackPanel>
 				<TextBlock Text="Google Slide Presentation Id" />
-				<TextBox Watermark="e.g. https://docs.google.com/presentation/d/1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0/edit" />
+				<TextBox Watermark="e.g. https://docs.google.com/presentation/d/1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0/edit" Text="{Binding SourceGooglePresentationId}" />
 			</StackPanel>
 			<TextBlock Text="Last sync: 4:44am Today ('Sunday Post-roll', 8 Slides)" />
-			<Button Content="Edit in web browser" HorizontalAlignment="Left" />
-			<Button Content="Sync now" HorizontalAlignment="Left" />
+			<Button Content="Edit in web browser" HorizontalAlignment="Left" Command="{Binding SyncState.EditInExternalCommand}" />
+			<ProgressBar Value="{Binding SyncState.Progress}" Maximum="100" IsIndeterminate="{Binding SyncState.IsProgressIndeterminate}" />
+			<Button Content="Sync now" HorizontalAlignment="Left" Command="{Binding SyncState.SyncCommand}" />
 		</StackPanel>
 	</Border>
 </UserControl>

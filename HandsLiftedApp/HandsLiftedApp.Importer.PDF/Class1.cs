@@ -14,7 +14,7 @@ namespace HandsLiftedApp.Importer.PDF
         const int VIEWPORT_X = 0;
         const int VIEWPORT_Y = 0;
 
-        public static void Convert(string inputPdfFile, string outputDir)
+        public static void Convert(string inputPdfFile, string outputDir, Action<double>? onProgressUpdate = null)
         {
             try
             {
@@ -101,10 +101,16 @@ namespace HandsLiftedApp.Importer.PDF
                     }
 
                     fpdfview.FPDF_ClosePage(page);
+
+                    if (onProgressUpdate != null)
+                        onProgressUpdate((double)i / pageCount * 100);
                 }
                 fpdfview.FPDF_CloseDocument(document);
                 fpdfview.FPDF_DestroyLibrary();
                 GC.Collect();
+
+                if (onProgressUpdate != null)
+                    onProgressUpdate(100d);
             }
             catch (Exception e)
             {

@@ -84,8 +84,8 @@
 					<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
 						<TextBlock.Text>
 							<MultiBinding StringFormat="{}{0}">
-								<!--<MultiBinding StringFormat="{}{0}. {1}">-->
-								<!--<Binding RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" Converter="{StaticResource itemToIndexConverter}" />-->
+							<!--<MultiBinding StringFormat="{}{0}. {1}">-->
+								<!--<Binding Path="State.ItemIndex" />-->
 								<Binding Path="Title" />
 							</MultiBinding>
 						</TextBlock.Text>

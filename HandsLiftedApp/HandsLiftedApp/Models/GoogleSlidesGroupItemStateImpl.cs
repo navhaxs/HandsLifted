@@ -1,20 +1,21 @@
 ﻿using Avalonia.Threading;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.IO;
-using static HandsLiftedApp.Importer.PowerPoint.Main;
+using static HandsLiftedApp.Importer.GoogleSlides.Main;
 
 namespace HandsLiftedApp.Models
 {
-    public class PowerPointSlidesGroupItemStateImpl : ReactiveObject, IPowerPointSlidesGroupItemState
+    public class GoogleSlidesGroupItemStateImpl : ReactiveObject, IGoogleSlidesGroupItemState
     {
-        PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> parentSlidesGroup;
+        GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> parentSlidesGroup;
 
         // required for Activator
-        public PowerPointSlidesGroupItemStateImpl(ref PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> parent)
+        public GoogleSlidesGroupItemStateImpl(ref GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> parent)
         {
             parentSlidesGroup = parent;
 
@@ -40,7 +41,7 @@ namespace HandsLiftedApp.Models
 
         private bool _isSyncBusy = true;
 
-        public bool IsSyncBusy { get => _isSyncBusy; set => this.RaiseAndSetIfChanged(ref _isSyncBusy, value); }
+        public bool IsProgressIndeterminate { get => _isSyncBusy; set => this.RaiseAndSetIfChanged(ref _isSyncBusy, value); }
 
         public double _progress = 0;
 
@@ -49,29 +50,31 @@ namespace HandsLiftedApp.Models
 
         public void EditInExternalCommand()
         {
-            using Process fileopener = new Process();
-
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + parentSlidesGroup.SourcePresentationFile + "\"";
-            fileopener.Start();
+            //#slide=id.g150f86ebac7_0_0
+            UrlUtils.OpenUrl($"https://docs.google.com/presentation/d/{parentSlidesGroup.SourceGooglePresentationId}/edit");
         }
 
         public void SyncCommand()
         {
             DateTime now = DateTime.Now;
-            string fileName = Path.GetFileName(parentSlidesGroup.SourcePresentationFile);
+            string fileName = parentSlidesGroup.SourceGooglePresentationId;
 
             string targetDirectory = Path.Join(@"R:\" + FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
             //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
-
-            ImportTask importTask = new ImportTask() { PPTXFilePath = parentSlidesGroup.SourcePresentationFile, OutputDirectory = targetDirectory };
-            PlaylistUtils.AddPowerPointToPlaylist(importTask, (ImportStats e) =>
+            IsProgressIndeterminate = true;
+            ImportTask importTask = new ImportTask() { GoogleSlidesPresentationId = parentSlidesGroup.SourceGooglePresentationId, OutputDirectory = targetDirectory };
+            PlaylistUtils.AddGoogleSlidesToPlaylist(importTask, (ImportStats e) =>
             {
-                Progress = e.JobPercentage;
+                //Progress = e.JobPercentage;
             }).ContinueWith((s) =>
             {
+                IsProgressIndeterminate = false;
+
+                parentSlidesGroup.Title = s.Result.Title;
+
+                ConvertPDF.Convert(s.Result.OutputFullFilePath, targetDirectory, (progress) => Progress = progress);
+
                 PlaylistUtils.UpdateSlidesGroup(ref parentSlidesGroup, targetDirectory);
-                IsSyncBusy = false;
 
                 //// TODO cleanup: delete old dir after completion
                 var old = parentSlidesGroup.SourceSlidesExportDirectory;

@@ -55,6 +55,41 @@ namespace HandsLiftedApp.Utils
             return value;
         }
 
+        public async static Task<Importer.GoogleSlides.Main.ImportStats?> AddGoogleSlidesToPlaylist(Importer.GoogleSlides.Main.ImportTask importTaskAction, Action<Importer.GoogleSlides.Main.ImportStats> onProgressUpdate)
+        {
+            Importer.GoogleSlides.Main.ImportStats? value = null;
+            Exception? threadEx = null;
+
+            await Task.Factory.StartNew(() =>
+            {
+                var progress = new Progress<Importer.GoogleSlides.Main.ImportStats>();
+                progress.ProgressChanged += (object? sender, Importer.GoogleSlides.Main.ImportStats e) =>
+                {
+                    Debug.Print(e.JobPercentage.ToString());
+                    onProgressUpdate(e);
+                };
+                var outDir = GetTempDirPath();
+
+                Thread staThread = new Thread(
+                    delegate ()
+                    {
+                        try
+                        {
+                            value = Importer.GoogleSlides.Main.RunGoogleSlidesImportTask(progress, importTaskAction);
+                        }
+                        catch (Exception ex)
+                        {
+                            threadEx = ex;
+                        }
+                    });
+                staThread.SetApartmentState(ApartmentState.STA);
+                staThread.Start();
+                staThread.Join();
+            });
+
+            return value;
+        }
+
         private static void Progress_ProgressChanged1(object? sender, ImportStats e)
         {
             Debug.Print(e.JobPercentage.ToString());

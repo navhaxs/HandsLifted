@@ -10,7 +10,7 @@
 		xmlns:controls="using:HandsLiftedApp.Controls"
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:material="using:Material.Icons.Avalonia"
-		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/visionscreens-app-logo.ico"
 		WindowStartupLocation="CenterScreen"
@@ -331,23 +331,6 @@
 					</Border>
 				</Grid>
 
-				<Grid DockPanel.Dock="Top">
-					<Grid.Background>
-						<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
-							<VisualBrush.Visual>
-								<Canvas Width="16" Height="16" Background="#1a1a1a">
-									<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
-									<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
-								</Canvas>
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</Grid.Background>
-					<Viewbox>
-						<!--<views:LowerThirdSlideTemplate Name="NextPreview"  Width="1920" Height="1080" />-->
-						<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" />-->
-						<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" IsLive="False" />-->
-					</Viewbox>
-				</Grid>
 
 				<UniformGrid DockPanel.Dock="Top" Columns="3" Rows="1" Height="35">
 					<UniformGrid.Styles>
@@ -375,7 +358,27 @@
 					<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>
 				</UniformGrid>
 
-				<TextBlock Padding="5 5 5 10" FontSize="20" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
+				<Rectangle DockPanel.Dock="Top" Fill="Red" Height="20" />
+				
+				<Grid DockPanel.Dock="Top">
+					<Grid.Background>
+						<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+							<VisualBrush.Visual>
+								<Canvas Width="16" Height="16" Background="#1a1a1a">
+									<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+									<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+								</Canvas>
+							</VisualBrush.Visual>
+						</VisualBrush>
+					</Grid.Background>
+					<Viewbox>
+						<!--<views:LowerThirdSlideTemplate Name="NextPreview"  Width="1920" Height="1080" />-->
+						<viewsrender:SlideRenderer ActiveSlide="{Binding NextSlide}" Width="1920" Height="1080" />
+						<!--<viewsrender:SlideRenderer DataContext="{Binding NextSlide}" Width="1920" Height="1080" IsLive="False" />-->
+					</Viewbox>
+				</Grid>
+				
+				<TextBlock Padding="5 5 5 10" FontSize="24" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
 
 				<Grid></Grid>
 

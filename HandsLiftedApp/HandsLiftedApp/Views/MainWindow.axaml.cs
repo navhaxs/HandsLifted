@@ -58,7 +58,7 @@ namespace HandsLiftedApp.Views
             {
                 var dialog = new OpenFileDialog();
                 var fileNames = await dialog.ShowAsync(this);
-                interaction.SetOutput(fileNames.FirstOrDefault());
+                interaction.SetOutput(fileNames != null ? fileNames.FirstOrDefault() : null);
             }
             catch (Exception e)
             {
