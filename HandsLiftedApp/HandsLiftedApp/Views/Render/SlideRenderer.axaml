@@ -9,6 +9,7 @@
 			 xmlns:hla="using:HandsLiftedApp.XTransitioningContentControl"
 			 xmlns:controls="using:HandsLiftedApp.Controls"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 Background="Black"
 			 x:Class="HandsLiftedApp.Views.Render.SlideRenderer">
 
 	<UserControl.DataTemplates>

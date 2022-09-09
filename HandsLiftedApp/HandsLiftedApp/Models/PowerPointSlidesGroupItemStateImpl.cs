@@ -24,7 +24,7 @@ namespace HandsLiftedApp.Models
                 if (!parentSlidesGroup.State.IsSelected)
                     return;
 
-                parentSlidesGroup.State.SelectedIndex = (parentSlidesGroup.State.SelectedIndex + 1) % parentSlidesGroup.Slides.Count;
+                parentSlidesGroup.State.SelectedSlideIndex = (parentSlidesGroup.State.SelectedSlideIndex + 1) % parentSlidesGroup.Slides.Count;
             };
             timer.Start();
 

@@ -56,6 +56,18 @@ namespace HandsLiftedApp.ViewModels
 
         public Slide ActiveSlide { get => _activeSlide.Value; }
 
+        private ObservableAsPropertyHelper<Slide> _previousSlide;
+
+        public Slide PreviousSlide { get => _previousSlide.Value; }
+
+        private ObservableAsPropertyHelper<Slide> _nextSlide;
+
+        public Slide NextSlide { get => _nextSlide.Value; }
+
+        private ObservableAsPropertyHelper<Slide> _nextSlideWithinItem;
+
+        public Slide NextSlideWithinItem { get => _nextSlideWithinItem.Value; }
+
         private ObservableAsPropertyHelper<IPageTransition?> _activeItemPageTransition;
         public IPageTransition? ActiveItemPageTransition { get => _activeItemPageTransition.Value; }
 
@@ -73,7 +85,7 @@ namespace HandsLiftedApp.ViewModels
                 return;
             }
 
-            _activeSlide = this.WhenAnyValue(x => x.Playlist.State.ActiveItemSlide, x => x.Playlist.State.IsLogo, x => x.LogoSlideInstance,
+            _activeSlide = this.WhenAnyValue(x => x.Playlist.State.ActiveSlide, x => x.Playlist.State.IsLogo, x => x.LogoSlideInstance,
                  x => x.Playlist.State.IsBlank, x => x.BlankSlideInstance,
                 (active, isLogo, logoSlideInstance, isBlank, blankSlideInstance) =>
                 {
@@ -87,11 +99,14 @@ namespace HandsLiftedApp.ViewModels
                         return blankSlideInstance;
                     }
 
+
+                    // TODO Implement nextSlide and previousSlide properly
+                    // which will load slides from NEXT and PREV *item* into consideration!!
                     // HACK
                     var selectedItem = this.Playlist.State.SelectedItem;
                     if (selectedItem != null)
                     {
-                        var selectedIndex = this.Playlist.State.SelectedItem.State.SelectedIndex;
+                        var selectedIndex = this.Playlist.State.SelectedItem.State.SelectedSlideIndex;
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -106,6 +121,33 @@ namespace HandsLiftedApp.ViewModels
                 })
                 .ToProperty(this, c => c.ActiveSlide)
             ;
+
+            _previousSlide = this.WhenAnyValue(x => x.Playlist.State.PreviousSlide, x => x.Playlist.State.IsLogo, x => x.LogoSlideInstance,
+                x => x.Playlist.State.IsBlank, x => x.BlankSlideInstance,
+               (previous, isLogo, logoSlideInstance, isBlank, blankSlideInstance) =>
+               {
+                   return previous;
+               })
+               .ToProperty(this, c => c.PreviousSlide)
+           ;
+
+            _nextSlide = this.WhenAnyValue(x => x.Playlist.State.NextSlide, x => x.Playlist.State.IsLogo, x => x.LogoSlideInstance,
+                x => x.Playlist.State.IsBlank, x => x.BlankSlideInstance,
+               (next, isLogo, logoSlideInstance, isBlank, blankSlideInstance) =>
+               {
+                   return next;
+               })
+               .ToProperty(this, c => c.NextSlide)
+           ;
+
+            _nextSlideWithinItem = this.WhenAnyValue(x => x.Playlist.State.NextSlideWithinItem, x => x.Playlist.State.IsLogo, x => x.LogoSlideInstance,
+                x => x.Playlist.State.IsBlank, x => x.BlankSlideInstance,
+               (next, isLogo, logoSlideInstance, isBlank, blankSlideInstance) =>
+               {
+                   return next;
+               })
+               .ToProperty(this, c => c.NextSlideWithinItem)
+           ;
 
             _activeItemPageTransition = this.WhenAnyValue(
                 x => x.Playlist.State.SelectedItem.State.PageTransition,
@@ -181,6 +223,9 @@ namespace HandsLiftedApp.ViewModels
 
         public void OnProjectorClickCommand()
         {
+            StageDisplayWindow s = new StageDisplayWindow();
+            s.DataContext = this;
+            s.Show();
             ProjectorWindow p = new ProjectorWindow();
             p.DataContext = this;
             p.Show();

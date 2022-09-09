@@ -108,7 +108,7 @@ namespace HandsLiftedApp.Utils
 
 
             slidesGroup.State.LockSelectionIndex = true;
-            var lastSelectedIndex = slidesGroup.State.SelectedIndex;
+            var lastSelectedIndex = slidesGroup.State.SelectedSlideIndex;
 
             try
             {

@@ -69,7 +69,7 @@
 				 Background="Transparent"
 				 Items="{Binding Slides}"
 			     SelectionMode="Single"
-				 SelectedIndex="{Binding State.SelectedIndex, Mode=TwoWay}"
+				 SelectedIndex="{Binding State.SelectedSlideIndex}"
 				 >
 			<controls:ListBoxWithoutKey.Styles>
 				<Style Selector="controls|ListBoxWithoutKey">

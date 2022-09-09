@@ -85,7 +85,7 @@ namespace HandsLiftedApp.Controls
             var ctx = (Playlist<PlaylistStateImpl, ItemStateImpl>)this.DataContext;
 
             // todo dispose old one
-            ctx.WhenAnyValue(x => x.State.SelectedIndex)
+            ctx.WhenAnyValue(x => x.State.SelectedItemIndex)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(x =>
                 {

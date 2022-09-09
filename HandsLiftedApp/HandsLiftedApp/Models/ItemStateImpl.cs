@@ -24,7 +24,7 @@ namespace HandsLiftedApp.Models
             parent = item;
             EditCommand = ReactiveCommand.Create(RunTheThing);
 
-            _selectedSlide = this.WhenAnyValue(x => x.SelectedIndex, x => x.LockSelectionIndex, (selectedIndex, lockSelectionIndex) =>
+            _selectedSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.LockSelectionIndex, (selectedIndex, lockSelectionIndex) =>
                 {
                     if (selectedIndex > -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
                         return parent.Slides[selectedIndex];
@@ -34,7 +34,7 @@ namespace HandsLiftedApp.Models
                 .ToProperty(this, x => x.SelectedSlide);
 
             // or really, "has selected?"
-            _isSelected = this.WhenAnyValue(x => x.SelectedIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
+            _isSelected = this.WhenAnyValue(x => x.SelectedSlideIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
                 .ToProperty(this, x => x.IsSelected);
 
             PageTransition = new XFade(TimeSpan.FromSeconds(0.300));
@@ -56,7 +56,7 @@ namespace HandsLiftedApp.Models
 
         private int _selectedIndex = -1;
 
-        public int SelectedIndex
+        public int SelectedSlideIndex
         {
             get => _selectedIndex; set
             {

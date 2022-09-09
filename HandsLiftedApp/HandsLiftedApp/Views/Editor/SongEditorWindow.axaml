@@ -5,7 +5,7 @@
         xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
 		xmlns:utils="using:HandsLiftedApp.Utils"
 		xmlns:controls="using:HandsLiftedApp.Controls"
-        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="1850"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="650"
         x:Class="HandsLiftedApp.Views.Editor.SongEditorWindow"
 		Icon="/Assets/avalonia-logo.ico"
         Title="SongEditorWindow">
@@ -30,16 +30,22 @@
 								<Setter Property="BorderThickness" Value="0" />
 							</Style>
 						</StackPanel.Styles>
-						<TextBox Text="{Binding song.Title, Mode=TwoWay}" Watermark="Song Title" FontWeight="Bold" FontSize="30" Padding="0 6 0 5" TextWrapping="Wrap" />
+						<TextBox Text="{Binding song.Title}" Watermark="Song Title" FontWeight="Bold" FontSize="30" Padding="0 6 0 5" TextWrapping="Wrap" />
 						<Rectangle Height="12" />
 						<ItemsControl Items="{Binding song.Stanzas}">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<Border Padding="0 12 0 18">
-										<StackPanel>
+									<Border Padding="0 12 0 18" BorderBrush="#ddd" BorderThickness="1" CornerRadius="4" Margin="0 0 0 5">
+										<StackPanel Margin="8 0">
 											<TextBox IsVisible="False" Text="{Binding Path=Uuid}" Padding="0" IsReadOnly="True" TextWrapping="Wrap" />
 											<DockPanel>
-												<Button DockPanel.Dock="Right" Content="-" Background="Transparent" />
+												<Button DockPanel.Dock="Right" Content="x" Background="Transparent">
+													<Button.Styles>
+														<Style Selector="Button">
+															<Setter Property="BorderThickness" Value="0" />
+														</Style>
+													</Button.Styles>
+												</Button>
 												<TextBox Text="{Binding Path=Name}" MinHeight="0" Watermark="Stanza Name" FontWeight="SemiBold" FontSize="18" Padding="0 0 0 8" TextWrapping="Wrap" />
 											</DockPanel>
 											<TextBox Text="{Binding Path=Lyrics}" Watermark="Stanza Lyrics" AcceptsReturn="True" FontSize="16" TextWrapping="Wrap" Padding="0" />

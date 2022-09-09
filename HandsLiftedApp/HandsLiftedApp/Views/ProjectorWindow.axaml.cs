@@ -23,7 +23,6 @@ namespace HandsLiftedApp.Views
 
         public ProjectorWindow() : this(null)
         {
-
         }
 
         public ProjectorWindow(ViewModelBase? viewModel)
