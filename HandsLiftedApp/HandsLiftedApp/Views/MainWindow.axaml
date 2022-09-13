@@ -183,10 +183,7 @@
 							<Button.Flyout>
 								<Flyout>
 									<Grid MinWidth="200" MinHeight="100">
-										<StackPanel>
-											<TextBox></TextBox>
-											<views:AddItemPaletteControl />
-										</StackPanel>
+										<views:AddItemPaletteControl />
 									</Grid>
 								</Flyout>
 							</Button.Flyout>
@@ -260,10 +257,20 @@
 									<Button
 										Command="{Binding OnPrevSlideClickCommand}"
 										HorizontalAlignment="Left"
-										Content="Prev"
+										HorizontalContentAlignment="Stretch"
 										FontSize="16"
 										IsCancel="True"
-										IsTabStop="False" />
+										IsTabStop="False">
+										<Grid>
+											<material:MaterialIcon
+												Margin="10 0"
+												Foreground="#383838"
+												HorizontalAlignment="Left"
+												Kind="ArrowLeft" />
+											<TextBlock Text="Previous"
+													   TextAlignment="Center" />
+										</Grid>
+									</Button>
 									<TextBlock
 										Grid.Column="1"
 										HorizontalAlignment="Center"
@@ -273,11 +280,21 @@
 									<Button
 										Command="{Binding OnNextSlideClickCommand}"
 										HorizontalAlignment="Right"
+										HorizontalContentAlignment="Stretch"
 										Grid.Column="2"
-										Content="Next"
 										FontSize="16"
 										IsCancel="True"
-										IsTabStop="False" />
+										IsTabStop="False">
+										<Grid>
+											<material:MaterialIcon
+												Margin="10 0"
+												Foreground="#383838"
+												HorizontalAlignment="Right"
+												Kind="ArrowRight" />
+											<TextBlock Text="Next"
+													   TextAlignment="Center" />
+										</Grid>
+									</Button>
 								</Grid>
 							</Border>
 

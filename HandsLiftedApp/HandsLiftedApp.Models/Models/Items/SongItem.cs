@@ -1,11 +1,14 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media;
 using DynamicData;
 using DynamicData.Binding;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
@@ -253,6 +256,58 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             get => lyrics;
             set => this.RaiseAndSetIfChanged(ref lyrics, value);
+        }
+
+        private string colour;
+        public string Colour
+        {
+            get {
+                if (colour != null)
+                {
+                    return colour;
+                }
+                else if (Name.ToLower().StartsWith("intro"))
+                {
+                    return "#d5c317";
+                }
+                else if (Name.ToLower().StartsWith("chorus"))
+                {
+                    return maybeStepDown(Color.Parse("#ded9fa")).ToString();
+                }
+                else if (Name.ToLower().StartsWith("verse"))
+                {
+                    return maybeStepDown(Color.Parse("#d9ecff")).ToString();
+                }
+                else if (Name.ToLower().StartsWith("bridge"))
+                {
+                    return maybeStepDown(Color.Parse("#F7D7E3")).ToString();
+                }
+                else 
+                {
+                    return "#9a93cd";
+                }
+
+            }
+            set => this.RaiseAndSetIfChanged(ref colour, value);
+        }
+
+        private Color maybeStepDown(Color c)
+        {
+            Regex regex = new Regex(@"(\d+)$",
+                        RegexOptions.Compiled |
+                        RegexOptions.CultureInvariant);
+
+            Match match = regex.Match(Name);
+            if (match.Success)
+            {
+                int verseNumber = Int32.Parse(match.Groups.Values.Last().Value);
+                for (int i = 1; i < verseNumber; i++)
+                {
+                    c = c.Darken(0.04f);
+                }
+
+            }
+            return c;
         }
 
         // parameter-less constructor required for serialization

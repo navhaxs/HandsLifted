@@ -15,18 +15,25 @@ namespace HandsLiftedApp.Utils
 
         public IControl Build(object data)
         {
-
-            var dataType = data.GetType().GetNameWithoutGenericArity();
-
-            if (Templates.ContainsKey(dataType))
+            try
             {
-                return Templates[dataType].Build(data);
-            }
+                var dataType = data.GetType().GetNameWithoutGenericArity();
 
-            else if (Templates.ContainsKey("Fallback"))
-            {
-                return Templates["Fallback"].Build(data);
+                if (Templates.ContainsKey(dataType))
+                {
+                    return Templates[dataType].Build(data);
+                }
+
+                else if (Templates.ContainsKey("Fallback"))
+                {
+                    return Templates["Fallback"].Build(data);
+                }
             }
+            catch (System.Exception)
+            {
+                return null;
+            }
+            
 
             return null;
         }

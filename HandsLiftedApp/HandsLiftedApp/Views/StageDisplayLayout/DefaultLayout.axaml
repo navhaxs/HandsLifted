@@ -8,7 +8,7 @@
              x:Class="HandsLiftedApp.Views.StageDisplayLayout.DefaultLayout">
 	<Grid ColumnDefinitions="0.7* 0.3*">
 		<StackPanel>
-			<Border Grid.Column="0" Background="Red" BorderBrush="Red" BorderThickness="1" VerticalAlignment="Top">
+			<Border Grid.Column="0" Background="White" BorderBrush="White" BorderThickness="1" VerticalAlignment="Top">
 				<StackPanel>
 					<TextBlock Text="Live" HorizontalAlignment="Center" Margin="0 2" />
 
@@ -46,7 +46,7 @@
 						   Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"
 					/>
 			</Viewbox>
-			<Border Background="White" BorderBrush="White" BorderThickness="1" VerticalAlignment="Top">
+			<Border Background="#af7b05" BorderBrush="#af7b05" BorderThickness="1" VerticalAlignment="Top">
 				<StackPanel>
 					<TextBlock Text="Next" HorizontalAlignment="Center" Margin="0 2" />
 					<Grid>

@@ -163,6 +163,8 @@ namespace HandsLiftedApp.ViewModels
 
             // The OpenFile command is bound to a button/menu item in the UI.
             AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPresentationFileAsync);
+            AddGroupCommand = ReactiveCommand.CreateFromTask(OpenGroupAsync);
+            AddTestEmptyGroupCommand = ReactiveCommand.CreateFromTask(OpenTestEmptyGroupAsync);
             AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
             AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
@@ -179,6 +181,7 @@ namespace HandsLiftedApp.ViewModels
 
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
             ShowOpenFileDialog = new Interaction<Unit, string?>();
+            ShowOpenFolderDialog = new Interaction<Unit, string?>();
 
             _ = Update(); // calling an async function we do not want to await
 
@@ -250,6 +253,8 @@ namespace HandsLiftedApp.ViewModels
         }
 
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddGroupCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddTestEmptyGroupCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
@@ -260,6 +265,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> OnAboutWindowCommand { get; }
 
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
+        public Interaction<Unit, string?> ShowOpenFolderDialog { get; }
         private async Task OpenGoogleSlidesAsync()
         {
             string SourceGooglePresentationId = "1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0";
@@ -275,26 +281,26 @@ namespace HandsLiftedApp.ViewModels
                 //if (fullFilePath != null && fullFilePath is string)
                 //{
 
-                    DateTime now = DateTime.Now;
+                DateTime now = DateTime.Now;
                 string fileName = SourceGooglePresentationId; // Path.GetFileName(fullFilePath);
 
-                    string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                    Directory.CreateDirectory(targetDirectory);
+                string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                Directory.CreateDirectory(targetDirectory);
 
-                    GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> slidesGroup = new GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl>() { Title = fileName, SourceGooglePresentationId = SourceGooglePresentationId };
+                GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> slidesGroup = new GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl>() { Title = fileName, SourceGooglePresentationId = SourceGooglePresentationId };
 
-                    Playlist.Items.Add(slidesGroup);
+                Playlist.Items.Add(slidesGroup);
 
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        // wait for UI to update...
-                        Dispatcher.UIThread.RunJobs();
-                        // and now we can jump to view
-                        var count = Playlist.Items.Count;
-                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
-                    });
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    // wait for UI to update...
+                    Dispatcher.UIThread.RunJobs();
+                    // and now we can jump to view
+                    var count = Playlist.Items.Count;
+                    MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                });
 
-                    slidesGroup.SyncState.SyncCommand();
+                slidesGroup.SyncState.SyncCommand();
                 //}
             }
             catch (Exception e)
@@ -341,7 +347,53 @@ namespace HandsLiftedApp.ViewModels
                 System.Diagnostics.Debug.Print(e.Message);
             }
         }
+        private async Task OpenGroupAsync()
+        {
+            try
+            {
+                var fullPath = await ShowOpenFolderDialog.Handle(Unit.Default);
 
+                if (fullPath != null && fullPath is string)
+                {
+
+                    DateTime now = DateTime.Now;
+                    string folderName = Path.GetDirectoryName(fullPath);
+
+                    SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>() { Title = folderName };
+
+                    Playlist.Items.Add(slidesGroup);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        // wait for UI to update...
+                        Dispatcher.UIThread.RunJobs();
+                        // and now we can jump to view
+                        var count = Playlist.Items.Count;
+                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                    });
+
+                    //slidesGroup.SyncState.SyncCommand();
+                    PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, fullPath);
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+            }
+        }
+
+        private async Task OpenTestEmptyGroupAsync()
+        {
+            try
+            {
+                SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>() { Title = "(Blank)" };
+                Playlist.Items.Add(slidesGroup);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+            }
+        }
 
         private void ImportFromFile(string fullFilePath, string playlistWorkingDirectory)
         {

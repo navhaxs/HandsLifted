@@ -7,12 +7,9 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models;
-using HandsLiftedApp.Models.SlideState;
-using HandsLiftedApp.Models.UI;
-using HandsLiftedApp.ViewModels.Editor;
-using ReactiveUI;
+using HandsLiftedApp.Extensions;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -93,21 +90,61 @@ namespace HandsLiftedApp.Behaviours
                 {
                     _parent.PointerMoved += Parent_PointerMoved;
                     _parent.PointerReleased += Parent_PointerReleased;
+
+                    var m = _parent.VisualRoot;
+                    Debug.Print(m.ToString());
+                    if (m is Window)
+                    {
+                        (m as Window).LostFocus += StanzaDragControlBehavior_LostFocus;
+                        (m as Window).PointerPressed += StanzaDragControlBehavior_PointerPressed;
+                    }
                 }
 
-                ItemsControl listBox = (ItemsControl)target.Parent.Parent;
+                ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
                 var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target.Parent);
             }
         }
 
+        private void StanzaDragControlBehavior_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (e.MouseButton.HasFlag(MouseButton.Right))
+                ResetDraggingState();
+        }
+
+        private void StanzaDragControlBehavior_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            ResetDraggingState();
+        }
+
         private ContentPresenter GetHoveredItem(ItemsControl listBox, Point pos, IControl? target)
         {
-            return (ContentPresenter)listBox.GetLogicalChildren()
+            var x = (ContentPresenter)listBox.GetLogicalChildren()
                .Where(listBoxItem => listBoxItem != target)
-               .FirstOrDefault(x => listBox.GetVisualsAt(pos)
-                   .Contains(
-                       ((IVisual)x).GetVisualChildren().First())
-               );
+               .FirstOrDefault(x =>
+               {
+                   var nn = ((IVisual)x).GetVisualChildren(); // DockPanel
+                   IEnumerable<IVisual> m = listBox.GetVisualsAt(pos); // children
+
+                   if (m.Count() > 0)
+                   {
+                       return nn.Any(source => {
+                           var mm = source.GetVisualDescendants();
+                           return mm.Any(targetDecendant => m.Contains(targetDecendant));
+                       });
+
+                   }
+                   return false;
+               });
+
+            return x;
+        }
+
+        bool match(IVisual target, IVisual source)
+        {
+            if (target == source)
+                return true;
+
+            return target.GetVisualDescendants().Any(targetDescendant => match(targetDescendant, source));
         }
 
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
@@ -116,14 +153,10 @@ namespace HandsLiftedApp.Behaviours
             //args.Properties;
             if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
             {
-                UpdateCursor(false);
-                target.RenderTransform = new TranslateTransform();
 
-                _parent.PointerMoved -= Parent_PointerMoved;
-                _parent.PointerReleased -= Parent_PointerReleased;
-                _parent = null;
+                ResetDraggingState();
 
-                ItemsControl listBox = (ItemsControl)target.Parent.Parent;
+                ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
                 foreach (var listBoxItem in listBox.ItemContainerGenerator.Containers)
                 {
                     listBoxItem.ContainerControl.Classes.Remove("draggingover");
@@ -141,16 +174,19 @@ namespace HandsLiftedApp.Behaviours
             UpdateCursor(true);
             if (target is { })
             {
+                ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
+
                 Point pos = args.GetPosition(_parent.Parent);
                 Point pos1 = args.GetPosition(_parent);
                 if (target.RenderTransform is TranslateTransform tr)
                 {
                     tr.X += pos1.X - _previous.X;
-                    //tr.Y += pos.Y - _previous.Y;
+                    tr.Y += pos1.Y - _previous.Y;
+                    // TODO FIXME for multiple rows where negative Y may actually be appropriate
+                    //tr.Y = Math.Clamp(tr.Y + pos1.Y - _previous.Y, 0, listBox.Bounds.Bottom - target.Bounds.Height);
                 }
                 _previous = pos1;
 
-                ItemsControl listBox = (ItemsControl)target.Parent.Parent;
                 ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, target.Parent);
 
                 // check if dragging past the last item
@@ -183,7 +219,7 @@ namespace HandsLiftedApp.Behaviours
                         var adornedElement = new Border()
                         {
                             CornerRadius = new CornerRadius(3, 0, 0, 3),
-                            BorderThickness = new Thickness(2, 2, 0, 2),
+                            BorderThickness = new Thickness(2, 2, 2, 2),
                             BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd"))
                         };
                         adornerLayer.Children.Add(adornedElement);
@@ -193,18 +229,18 @@ namespace HandsLiftedApp.Behaviours
             }
         }
 
-        private void UpdateCursor(bool show)
+        private void UpdateCursor(bool show, IControl? p = null)
         {
-            if (_parent is { })
-            {
-                Window? window = _parent.VisualRoot as Window;
-                window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;
-            }
+            if (p == null)
+                p = _parent;
+
+             Window? window = p.VisualRoot as Window;
+             window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;
         }
 
-        private void Parent_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        private void ResetDraggingState()
         {
-            UpdateCursor(false);
+
             if (_parent is { })
             {
                 var target = TargetControl ?? AssociatedObject;
@@ -212,9 +248,20 @@ namespace HandsLiftedApp.Behaviours
 
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
+                
+                UpdateCursor(false, _parent);
                 _parent = null;
 
-                ItemsControl listBox = (ItemsControl)target.Parent.Parent;
+            }
+        }
+
+        private void Parent_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
+            if (_parent is { })
+            {
+                var target = TargetControl ?? AssociatedObject;
+
+                ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
                 Point pos = e.GetPosition(listBox);
                 ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, target.Parent);
 
@@ -236,11 +283,12 @@ namespace HandsLiftedApp.Behaviours
                     }
                 }
 
+                ResetDraggingState();
                 if (SourceIndex != DestinationIndex && DestinationIndex > -1)
                 {
                     Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
-                    SongEditorViewModel ctx = (SongEditorViewModel)listBox.DataContext;
-                    ctx.song.Arrangement.Move(SourceIndex, DestinationIndex);
+                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl>)listBox.DataContext;
+                    ctx.Arrangement.Move(SourceIndex, DestinationIndex);
                     //var ctx = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)target.DataContext;
                     //SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> a = ctx.Value;
                     //MessageBus.Current.SendMessage(new MoveItemMessage()
@@ -249,6 +297,8 @@ namespace HandsLiftedApp.Behaviours
                     //    DestinationIndex = DestinationIndex
                     //});
                 }
+
+
             }
         }
     }

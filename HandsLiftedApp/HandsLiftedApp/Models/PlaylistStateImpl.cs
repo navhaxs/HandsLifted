@@ -101,7 +101,7 @@ namespace HandsLiftedApp.Models
                 // select first slide of this next item
                 return new SlideReference()
                 {
-                    Slide = Playlist.Items[nextItemIndex].Slides[0],
+                    Slide = Playlist.Items[nextItemIndex].Slides.ElementAtOrDefault(0),
                     SlideIndex = 0,
                     ItemIndex = nextItemIndex
                 };
@@ -147,7 +147,7 @@ namespace HandsLiftedApp.Models
 
                 return new SlideReference()
                 {
-                    Slide = Playlist.Items[nextItemIndex].Slides[nextSlideIndex - 1],
+                    Slide = Playlist.Items[nextItemIndex].Slides.ElementAtOrDefault(nextSlideIndex),
                     SlideIndex = nextSlideIndex,
                     ItemIndex = nextItemIndex
                 };

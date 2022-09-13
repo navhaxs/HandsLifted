@@ -69,7 +69,7 @@
 					ZIndex="9999" />
 
 			<DockPanel Grid.Column="2">
-				<controls:SongArrangementControl DockPanel.Dock="Top" />
+				<controls:SongArrangementControl DockPanel.Dock="Top" DataContext="{Binding song}" />
 				<!--<TextBox DockPanel.Dock="Top">[Title][Verse 1][Verse 2][Blank]</TextBox>-->
 
 				<ListBox Name="List"

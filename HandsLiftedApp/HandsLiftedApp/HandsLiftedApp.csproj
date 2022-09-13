@@ -53,6 +53,9 @@
 		<Compile Update="Views\Item\GoogleSlidesInfo.axaml.cs">
 			<DependentUpon>GoogleSlidesInfo.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\Item\SongItemInfo.axaml.cs">
+		  <DependentUpon>SongItemInfo.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Item\PowerPointInfo.axaml.cs">
 			<DependentUpon>PowerPointInfo.axaml</DependentUpon>
 		</Compile>

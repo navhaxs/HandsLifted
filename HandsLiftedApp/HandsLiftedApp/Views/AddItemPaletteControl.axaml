@@ -38,6 +38,9 @@
 			<Button Command="{Binding AddGroupCommand}">
 				Add Group
 			</Button>
+			<Button Command="{Binding AddTestEmptyGroupCommand}">
+				Add Test Blank Group
+			</Button>
 		</UniformGrid>
 	</DockPanel>
 </UserControl>

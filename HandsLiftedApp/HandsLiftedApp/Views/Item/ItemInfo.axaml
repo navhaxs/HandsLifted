@@ -15,15 +15,15 @@
 		<ContentControl.ContentTemplate>
 			<utils:MyTemplateSelector>
 				<DataTemplate x:Key="SongItem">
+					<item:SongItemInfo />
 				</DataTemplate>
 				<DataTemplate x:Key="GoogleSlidesGroupItem">
-					<item:GoogleSlidesInfo VerticalAlignment="Top" />
+					<item:GoogleSlidesInfo />
 				</DataTemplate>
 				<DataTemplate x:Key="PowerPointSlidesGroupItem">
-					<item:PowerPointInfo VerticalAlignment="Top" />
+					<item:PowerPointInfo />
 				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
-					<Border Height="40" Background="Red" />
 				</DataTemplate>
 			</utils:MyTemplateSelector>
 		</ContentControl.ContentTemplate>

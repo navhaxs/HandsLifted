@@ -70,20 +70,28 @@ namespace HandsLiftedApp.Models
             {
                 IsProgressIndeterminate = false;
 
-                parentSlidesGroup.Title = s.Result.Title;
-
-                ConvertPDF.Convert(s.Result.OutputFullFilePath, targetDirectory, (progress) => Progress = progress);
-
-                PlaylistUtils.UpdateSlidesGroup(ref parentSlidesGroup, targetDirectory);
-
-                //// TODO cleanup: delete old dir after completion
-                var old = parentSlidesGroup.SourceSlidesExportDirectory;
-                parentSlidesGroup.SourceSlidesExportDirectory = targetDirectory;
-
-                if (old != null)
-                {
-                    Directory.Delete(old, true);
+                if (s.Result == null) {
+                    // log error message
+                    // show error message
                 }
+                else
+                {
+                    parentSlidesGroup.Title = s.Result.Title;
+
+                    ConvertPDF.Convert(s.Result.OutputFullFilePath, targetDirectory, (progress) => Progress = progress);
+
+                    PlaylistUtils.UpdateSlidesGroup(ref parentSlidesGroup, targetDirectory);
+
+                    //// TODO cleanup: delete old dir after completion
+                    var old = parentSlidesGroup.SourceSlidesExportDirectory;
+                    parentSlidesGroup.SourceSlidesExportDirectory = targetDirectory;
+
+                    if (old != null)
+                    {
+                        Directory.Delete(old, true);
+                    }
+                }
+
             });
         }
 
