@@ -11,7 +11,7 @@
 		xmlns:material="using:Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
-        Icon="/Assets/avalonia-logo.ico"
+		Icon="/Assets/app.ico"
 		DoubleTapped="ProjectorWindow_DoubleTapped"
         Title="Projector Output">
 

@@ -9,39 +9,18 @@
 	 		 xmlns:material="using:Material.Icons.Avalonia"
 			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
              xmlns:controls="using:HandsLiftedApp.Controls"
+             xmlns:converters="using:HandsLiftedApp.Converters"
              x:Class="HandsLiftedApp.Controls.SongArrangementControl">
 
+	<UserControl.Resources>
+		<converters:StanzaSortConverter x:Key="stanzaSortConverter"/>
+	</UserControl.Resources>
+	
 	<Design.DataContext>
 		<vme:ExampleSongViewModel />
 	</Design.DataContext>
 
 	<StackPanel>
-		<!--<Label Content="Stanzas" />
-		<ItemsControl Items="{Binding Stanzas}" MinHeight="20" Margin="4">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<WrapPanel />
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Button Click="OnButtonClick">
-						<Button.Template>
-							<ControlTemplate>
-								<Border Background="#EDF6FF" BorderThickness="1" CornerRadius="6" Padding="6 2" Margin="0 0 3 0">
-									-->
-		<!--<i:Interaction.Behaviors>
-										<iac:DragControlBehavior />
-									</i:Interaction.Behaviors>-->
-		<!--
-									<TextBlock Text="{Binding Name}" />
-								</Border>
-							</ControlTemplate>
-						</Button.Template>
-					</Button>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>-->
 		<DockPanel>
 			<Button Content="Arrangement" DockPanel.Dock="Left" Padding="16 8"
 													Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}" />
@@ -73,14 +52,15 @@
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<DockPanel Name="PART_Container">
+							<DockPanel.ContextMenu>
+								<ContextMenu PlacementAnchor="Bottom" PlacementMode="Bottom" PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
+									<MenuItem Header="Repeat" Click="OnRepeatPartClick" />
+									<MenuItem Header="Remove" Click="OnRemovePartClick" />
+								</ContextMenu>
+							</DockPanel.ContextMenu>
+
 							<Path Name="PART_Before" Data="M0,0 10,0 10,20 0,20 10,10" Fill="{Binding Value.Colour}" />
 							<Border Name="PART_Content" Background="{Binding Value.Colour}" BorderBrush="#aaaaaa">
-								<Border.ContextMenu>
-									<ContextMenu>
-										<MenuItem Header="Repeat" />
-										<MenuItem Header="Remove" />
-									</ContextMenu>
-								</Border.ContextMenu>
 								<TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="12" Text="{Binding Value.Name}" />
 							</Border>
 							<Path Name="PART_After" Data="M0,0 8,10 0,20" Fill="{Binding Value.Colour}" />
@@ -92,11 +72,11 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 
-			<Button HorizontalAlignment="Left" BorderThickness="0" Click="OnAddPartClick" Background="Transparent" VerticalContentAlignment="Center">
+			<Button HorizontalAlignment="Left" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center">
 				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
 				<Button.Flyout>
 					<Flyout Placement="BottomEdgeAlignedLeft">
-						<ItemsControl Items="{Binding Stanzas}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+						<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<StackPanel />
@@ -106,7 +86,7 @@
 								<DataTemplate>
 									<Button Content="{Binding Name}"
 											Background="{Binding Colour}"
-											Click="OnButtonClick"
+											Click="OnAddPartClick"
 												/>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>

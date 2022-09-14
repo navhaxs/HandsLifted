@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using HandsLiftedApp.Data.Models.Items;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
@@ -7,6 +9,14 @@ namespace HandsLiftedApp.Data
     public sealed class TrulyObservableCollection<T> : ObservableCollection<T>
         where T : INotifyPropertyChanged
     {
+
+        public TrulyObservableCollection() : base()
+        {
+        }
+
+        public TrulyObservableCollection(List<T> x) : base(x)
+        {
+        }
 
         public event EventHandler<PropertyChangedEventArgs> CollectionItemChanged;
 

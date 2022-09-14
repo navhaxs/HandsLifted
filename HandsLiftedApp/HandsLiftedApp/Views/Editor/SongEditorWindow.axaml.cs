@@ -8,6 +8,7 @@ using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels.Editor;
 using System.Threading.Tasks;
 using ReactiveUI;
+using Avalonia.Interactivity;
 
 namespace HandsLiftedApp.Views.Editor
 {
@@ -99,5 +100,12 @@ namespace HandsLiftedApp.Views.Editor
                 ((SongEditorViewModel)this.DataContext).song = XmlSerialization.ReadFromXmlFile<SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>>(result[0]);
             }
         }
+
+        public void DeleteThisPartClick(object? sender, RoutedEventArgs args)
+        {
+            SongStanza stanza = (SongStanza)((Control)sender).DataContext;
+            ((SongEditorViewModel)this.DataContext).song.Stanzas.Remove(stanza);
+        }
+
     }
 }

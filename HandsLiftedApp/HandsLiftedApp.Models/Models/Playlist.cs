@@ -18,6 +18,8 @@ namespace HandsLiftedApp.Data.Models
         public SerializableDictionary<String, String> Meta { get; set; } = new SerializableDictionary<String, String>();
 
         private T _state;
+
+        [XmlIgnore]
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
         private ObservableCollection<Item<I>> _items = new ObservableCollection<Item<I>>();

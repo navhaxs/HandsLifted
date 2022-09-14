@@ -1,7 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using HandsLiftedApp.ViewModels.Editor;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
 using System.Diagnostics;
 using System.Reactive;
@@ -38,22 +40,30 @@ namespace HandsLiftedApp.Controls
         }
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
         {
-            //(sender as Button)!.Content = "Ginger";
-            //(sender as Button)!.ContextMenu!.Open(null);
-        }
-        public void BtnConvoContact_Click(object? sender, RoutedEventArgs args)
-        {
-            //(sender as Button)!.Content = "Ginger";
-            //(sender as Button)!.ContextMenu!.Open(null);
+            var stanza = (SongStanza)((Control)sender).DataContext;
+            var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<Data.Models.Items.SongStanza>() { Value = stanza };
+            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Add(m);
         }
 
-        private void OnButtonClick(object sender, RoutedEventArgs e)
+        //insert clone
+        public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
         {
-            //(sender as Button)!.Content = "Ginger";
-            var stanza = (Data.Models.Items.SongStanza)((Control)sender).DataContext;
-            var m = new Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl>.Ref<Data.Models.Items.SongStanza>() { Value = stanza };
-            ((Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl>)this.DataContext).Arrangement.Add(m);
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> stanza = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)((Control)sender).DataContext;
+
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> clonedStanza = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> { Value = stanza.Value };
+
+            var lastIndex = ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.IndexOf(stanza);
+
+            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Insert(lastIndex + 1, clonedStanza);
         }
+
+        public void OnRemovePartClick(object? sender, RoutedEventArgs args)
+        {
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> stanza = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)((Control)sender).DataContext;
+
+            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Remove(stanza);
+        }
+
 
     }
 }

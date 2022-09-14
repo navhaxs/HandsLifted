@@ -3,11 +3,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
+		xmlns:material="using:Material.Icons.Avalonia"
 		xmlns:utils="using:HandsLiftedApp.Utils"
 		xmlns:controls="using:HandsLiftedApp.Controls"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="650"
         x:Class="HandsLiftedApp.Views.Editor.SongEditorWindow"
-		Icon="/Assets/avalonia-logo.ico"
+		Icon="/Assets/app.ico"
         Title="SongEditorWindow">
 
 	<Design.DataContext>
@@ -32,19 +33,31 @@
 						</StackPanel.Styles>
 						<TextBox Text="{Binding song.Title}" Watermark="Song Title" FontWeight="Bold" FontSize="30" Padding="0 6 0 5" TextWrapping="Wrap" />
 						<Rectangle Height="12" />
+						
 						<ItemsControl Items="{Binding song.Stanzas}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<WrapPanel Orientation="Vertical" />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<Border Padding="0 12 0 18" BorderBrush="#ddd" BorderThickness="1" CornerRadius="4" Margin="0 0 0 5">
+									<Border Padding="0 6 0 12" BorderBrush="#ddd" BorderThickness="1" CornerRadius="4" Margin="0 0 0 5">
 										<StackPanel Margin="8 0">
 											<TextBox IsVisible="False" Text="{Binding Path=Uuid}" Padding="0" IsReadOnly="True" TextWrapping="Wrap" />
 											<DockPanel>
-												<Button DockPanel.Dock="Right" Content="x" Background="Transparent">
+												<Button DockPanel.Dock="Right" Background="Transparent">
 													<Button.Styles>
 														<Style Selector="Button">
 															<Setter Property="BorderThickness" Value="0" />
 														</Style>
 													</Button.Styles>
+													<Button.Flyout>
+														<Flyout>
+															<Button Content="Confirm: delete this part? This cannot be undone" Click="DeleteThisPartClick" />
+														</Flyout>
+													</Button.Flyout>
+													<material:MaterialIcon DockPanel.Dock="Right" VerticalAlignment="Top" Height="18" Width="18" Foreground="#777777" Kind="Close" Margin="0" Padding="0" />
 												</Button>
 												<TextBox Text="{Binding Path=Name}" MinHeight="0" Watermark="Stanza Name" FontWeight="SemiBold" FontSize="18" Padding="0 0 0 8" TextWrapping="Wrap" />
 											</DockPanel>

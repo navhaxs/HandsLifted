@@ -12,7 +12,7 @@
 		xmlns:material="using:Material.Icons.Avalonia"
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
-		Icon="/Assets/visionscreens-app-logo.ico"
+		Icon="/Assets/app.ico"
 		WindowStartupLocation="CenterScreen"
 		Width="1280" Height="720"
 		DoubleTapped="MainWindow_DoubleTapped"

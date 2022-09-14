@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
+using System;
 using System.Linq;
 
 namespace HandsLiftedApp.Behaviours
@@ -25,6 +26,7 @@ namespace HandsLiftedApp.Behaviours
 
         private IControl? _parent;
         private Point _previous;
+        private bool isDragging = false;
 
         /// <summary>
         /// Gets or sets the target control to be moved around instead of <see cref="IBehavior.AssociatedObject"/>. This is a avalonia property.
@@ -108,34 +110,54 @@ namespace HandsLiftedApp.Behaviours
         {
             var target = TargetControl ?? AssociatedObject;
             //args.Properties;
-            if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
+            if (target is { })
             {
-                UpdateCursor(false);
-                target.RenderTransform = new TranslateTransform();
 
-                _parent.PointerMoved -= Parent_PointerMoved;
-                _parent.PointerReleased -= Parent_PointerReleased;
-                _parent = null;
 
-                ListBox listBox = (ListBox)target.Parent;
-                foreach (var listBoxItem in listBox.ItemContainerGenerator.Containers)
+                if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
                 {
-                    listBoxItem.ContainerControl.Classes.Remove("draggingover");
-                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItem.ContainerControl);
+                    UpdateCursor(false);
+                    target.RenderTransform = new TranslateTransform();
 
-                    if (adornerLayer != null)
+                    _parent.PointerMoved -= Parent_PointerMoved;
+                    _parent.PointerReleased -= Parent_PointerReleased;
+                    _parent = null;
+                    isDragging = false;
+
+                    ListBox listBox = (ListBox)target.Parent;
+                    foreach (var listBoxItem in listBox.ItemContainerGenerator.Containers)
                     {
-                        adornerLayer.Children.Clear();
+                        listBoxItem.ContainerControl.Classes.Remove("draggingover");
+                        var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItem.ContainerControl);
+
+                        if (adornerLayer != null)
+                        {
+                            adornerLayer.Children.Clear();
+                        }
                     }
+
+                    return;
                 }
-
-                return;
             }
-
-            UpdateCursor(true);
+            if (isDragging)
+            {
+                UpdateCursor(true);
+            }
             if (target is { })
             {
                 Point pos = args.GetPosition(_parent);
+
+
+                if (!isDragging && Math.Abs(pos.Y - _previous.Y) > 4)
+                {
+                    isDragging = true;
+                }
+
+                if (!isDragging)
+                {
+                    return;
+                }
+
                 if (target.RenderTransform is TranslateTransform tr)
                 {
                     //tr.X += pos.X - _previous.X;
@@ -206,6 +228,7 @@ namespace HandsLiftedApp.Behaviours
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
                 _parent = null;
+                isDragging = false;
 
                 ListBox listBox = (ListBox)target.Parent;
                 Point pos = e.GetPosition(listBox);
@@ -236,7 +259,7 @@ namespace HandsLiftedApp.Behaviours
                     }
                 }
 
-                if (SourceIndex != DestinationIndex && DestinationIndex > -1)
+                if (isDragging && SourceIndex != DestinationIndex && DestinationIndex > -1)
                 {
                     //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItemBounds: {isPastLastItemBounds}");
 
