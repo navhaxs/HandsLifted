@@ -1,8 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
@@ -11,7 +14,10 @@ using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
+using Rect = Avalonia.Rect;
+using RequestBringIntoViewEventArgs = Avalonia.Controls.RequestBringIntoViewEventArgs;
 
 namespace HandsLiftedApp.Controls
 {
@@ -38,6 +44,36 @@ namespace HandsLiftedApp.Controls
                 //scrollViewer.Offset = new Vector(0, 0);
                 //e.Handled = true;
             });
+
+            MessageBus.Current.Listen<FocusSelectedItem>()
+               .Subscribe(x =>
+               {
+
+                   // TODO add a flag so this can be conditionally skipped
+                   // e.g. user can disable "auto follow mode" if they are busy editing elsewhere in the playlist
+
+                   Avalonia.Controls.Generators.ItemContainerInfo itemContainerInfo = listBox.ItemContainerGenerator.Containers.FirstOrDefault(container =>
+                    {
+                        var xb = container.ContainerControl;
+                        ListBoxWithoutKey listBoxWithoutKey = xb.FindDescendantOfType<ListBoxWithoutKey>();
+                        return (listBoxWithoutKey.SelectedIndex > -1);
+                    });
+
+                   if (itemContainerInfo == null)
+                   {
+                       return;
+                   }
+
+                   var xb = itemContainerInfo.ContainerControl;
+
+                   ListBoxWithoutKey listBoxWithoutKey = xb.FindDescendantOfType<ListBoxWithoutKey>();
+
+                   if (listBoxWithoutKey.SelectedIndex > -1)
+                   {
+                       IControl control = listBoxWithoutKey.ItemContainerGenerator.ContainerFromIndex(listBoxWithoutKey.SelectedIndex);
+                       BringDescendantIntoView(control, new Rect(control.Bounds.Size));
+                   }
+               });
 
             MessageBus.Current.Listen<NavigateToItemMessage>()
                .Subscribe(x =>
@@ -118,6 +154,74 @@ namespace HandsLiftedApp.Controls
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        // <summary>
+        /// Attempts to bring a portion of the target visual into view by scrolling the content.
+        /// </summary>
+        /// <param name="target">The target visual.</param>
+        /// <param name="targetRect">The portion of the target visual to bring into view.</param>
+        /// <returns>True if the scroll offset was changed; otherwise false.</returns>
+        public bool BringDescendantIntoView(IVisual target, Rect targetRect)
+        {
+            ScrollContentPresenter presenter = (ScrollContentPresenter) scrollViewer.Presenter;
+
+            if (presenter.Child?.IsEffectivelyVisible != true)
+            {
+                return false;
+            }
+
+            var scrollable = presenter.Child as ILogicalScrollable;
+            var control = target as IControl;
+
+            if (scrollable?.IsLogicalScrollEnabled == true && control != null)
+            {
+                return scrollable.BringIntoView(control, targetRect);
+            }
+
+            var transform = target.TransformToVisual(presenter.Child);
+
+            if (transform == null)
+            {
+                return false;
+            }
+
+            var rect = targetRect.TransformToAABB(transform.Value);
+            var offset = presenter.Offset;
+            var result = false;
+
+            var Ypadding = target.Bounds.Height * 1.1;
+
+            if (rect.Bottom + Ypadding > offset.Y + presenter.Viewport.Height)
+            {
+                offset = offset.WithY((rect.Bottom + Ypadding - presenter.Viewport.Height) + presenter.Child.Margin.Top);
+                result = true;
+            }
+
+            if (rect.Y - Ypadding < offset.Y)
+            {
+                offset = offset.WithY(rect.Y - Ypadding);
+                result = true;
+            }
+
+            if (rect.Right > offset.X + presenter.Viewport.Width)
+            {
+                offset = offset.WithX((rect.Right - presenter.Viewport.Width) + presenter.Child.Margin.Left);
+                result = true;
+            }
+
+            if (rect.X < offset.X)
+            {
+                offset = offset.WithX(rect.X);
+                result = true;
+            }
+
+            if (result)
+            {
+                presenter.Offset = offset;
+            }
+
+            return result;
         }
     }
 }

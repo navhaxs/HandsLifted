@@ -5,7 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="150"
 			 xmlns:controls="using:HandsLiftedApp.Controls"
              x:Class="HandsLiftedApp.Views.Item.SongItemInfo">
-	<Border Background="#f1f1f7" CornerRadius="5" Padding="5">
+	<Border Background="#f1f1f7">
 		<controls:SongArrangementControl />
 	</Border>
 </UserControl>

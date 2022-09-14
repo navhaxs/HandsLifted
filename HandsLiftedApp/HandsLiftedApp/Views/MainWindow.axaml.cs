@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.Views.App;
 using ReactiveUI;
@@ -18,7 +19,6 @@ namespace HandsLiftedApp.Views
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
 
-        ListBox OrderableListBox;
         public MainWindow()
         {
             InitializeComponent();
@@ -86,6 +86,11 @@ namespace HandsLiftedApp.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private void OnScrollToItemClick(object? sender, RoutedEventArgs e)
+        {
+            MessageBus.Current.SendMessage(new FocusSelectedItem());
         }
 
         private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)

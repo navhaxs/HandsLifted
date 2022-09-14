@@ -21,32 +21,8 @@
 				 Background="White"
 				 Items="{Binding Items}">
 			<ItemsControl.Styles>
-				<!--<Style Selector="ListBox">
-					<Setter Property="Template">
-						<ControlTemplate>
-							<Border Name="border" BorderBrush="{TemplateBinding BorderBrush}"
-									BorderThickness="{TemplateBinding BorderThickness}"
-									CornerRadius="{TemplateBinding CornerRadius}">
-								<ScrollViewer Name="PART_ScrollViewer"
-											  Background="{TemplateBinding Background}"
-											  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
-											  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
-											  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}">
-									<ItemsPresenter Name="PART_ItemsPresenter"
-													Items="{TemplateBinding Items}"
-													ItemsPanel="{TemplateBinding ItemsPanel}"
-													ItemTemplate="{TemplateBinding ItemTemplate}"
-													Margin="{TemplateBinding Padding}"
-													VirtualizationMode="{TemplateBinding VirtualizationMode}"/>
-								</ScrollViewer>
-							</Border>
-						</ControlTemplate>
-					</Setter>
-				</Style>-->
 				<Style Selector="ListBoxItem">
 					<Setter Property="Padding" Value="0"/>
-					<!--<Setter Property="IsHitTestVisible" Value="False" />-->
-					<!--<Setter Property="Focusable" Value="False"/>-->
 				</Style>
 				<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
 					<Setter Property="Background" Value="Transparent"/>
@@ -57,9 +33,6 @@
 				<Style Selector="ListBox /template/ ScrollViewer">
 					<Setter Property="AllowAutoHide" Value="false"/>
 				</Style>
-				<!--<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-					<Setter Property="Background" Value="#EFD7D7"/>
-				</Style>-->
 			</ItemsControl.Styles>
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>

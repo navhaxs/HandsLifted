@@ -22,8 +22,34 @@
 
 	<StackPanel>
 		<DockPanel>
-			<Button Content="Arrangement" DockPanel.Dock="Left" Padding="16 8"
-													Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}" />
+			<Button Content="Arrangement" DockPanel.Dock="Left" Padding="12 0 6 0"
+													Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}"
+					BorderThickness="0"
+					Background="Transparent"
+					/>
+
+			<Button HorizontalAlignment="Left" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10">
+				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
+				<Button.Flyout>
+					<Flyout Placement="Bottom">
+						<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Button Content="{Binding Name}"
+											Background="{Binding Colour}"
+											Click="OnAddPartClick"
+												/>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Flyout>
+				</Button.Flyout>
+			</Button>
 
 			<ItemsControl Items="{Binding Arrangement}" MinHeight="20" Margin="4" VerticalAlignment="Center" Name="PART_ArrangementTokens">
 				<ItemsControl.Styles>
@@ -72,56 +98,6 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 
-			<Button HorizontalAlignment="Left" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center">
-				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
-				<Button.Flyout>
-					<Flyout Placement="BottomEdgeAlignedLeft">
-						<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Button Content="{Binding Name}"
-											Background="{Binding Colour}"
-											Click="OnAddPartClick"
-												/>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
-						<!--StackPanel>
-							<Path Data="M0,0 10,0 10,20 0,20 10,10" Fill="Black"/>
-							<Grid MinWidth="200" MinHeight="100">
-								<ItemsControl Items="{Binding Stanzas}">
-									<ItemsControl.ItemTemplate>
-										<DataTemplate>
-											<Button Content="{Binding Name}" />
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-								</ItemsControl>
-							</Grid>
-						</StackPanel>-->
-					</Flyout>
-				</Button.Flyout>
-				<!--<Button.ContextMenu>
-						<TextBlock Text="{Binding Name}" />
-									<Button Content="Hello"	Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}" />
-								</StackPanel>
-							</DataTemplate>
-						</ContextMenu.DataTemplates>
-						-->
-				<!--<ContextMenu.DataTemplates>
-							<DataTemplate>
-								<Button Background="Pink" Content="{Binding Name}"
-											Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}" />
-							</DataTemplate>
-						</ContextMenu.DataTemplates>-->
-				<!--
-					</ContextMenu>
-				</Button.ContextMenu>-->
-			</Button>
 		</DockPanel>
 
 	</StackPanel>

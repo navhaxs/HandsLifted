@@ -70,6 +70,8 @@
 				 Items="{Binding Slides}"
 			     SelectionMode="Single"
 				 SelectedIndex="{Binding State.SelectedSlideIndex}"
+			    	AutoScrollToSelectedItem="False"
+									SelectionChanged="OnSelectionChanged"
 				 >
 			<controls:ListBoxWithoutKey.Styles>
 				<Style Selector="controls|ListBoxWithoutKey">

@@ -80,6 +80,20 @@ namespace HandsLiftedApp.Behaviours
             {
                 _parent = target.Parent;
 
+
+
+
+                if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
+                {
+                    ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
+                    int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target.Parent);
+
+                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl>)listBox.DataContext;
+                    ctx.Arrangement.RemoveAt(SourceIndex);
+                    return;
+                }
+
+
                 if (!(target.RenderTransform is TranslateTransform))
                 {
                     target.RenderTransform = new TranslateTransform();
@@ -92,23 +106,22 @@ namespace HandsLiftedApp.Behaviours
                     _parent.PointerReleased += Parent_PointerReleased;
 
                     var m = _parent.VisualRoot;
-                    Debug.Print(m.ToString());
                     if (m is Window)
                     {
                         (m as Window).LostFocus += StanzaDragControlBehavior_LostFocus;
                         (m as Window).PointerPressed += StanzaDragControlBehavior_PointerPressed;
                     }
                 }
-
-                ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
-                var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target.Parent);
             }
         }
 
         private void StanzaDragControlBehavior_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (e.MouseButton.HasFlag(MouseButton.Right))
+            {
                 ResetDraggingState();
+                return;
+            }
         }
 
         private void StanzaDragControlBehavior_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

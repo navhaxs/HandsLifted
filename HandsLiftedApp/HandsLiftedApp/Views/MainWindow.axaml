@@ -271,12 +271,14 @@
 													   TextAlignment="Center" />
 										</Grid>
 									</Button>
-									<TextBlock
+									<!--<Button
 										Grid.Column="1"
 										HorizontalAlignment="Center"
 										VerticalAlignment="Center"
+										Click="OnScrollToItemClick"
+										Content="Scroll"
 										Foreground="{DynamicResource ForegroundText}">
-									</TextBlock>
+									</Button>-->
 									<Button
 										Command="{Binding OnNextSlideClickCommand}"
 										HorizontalAlignment="Right"
@@ -323,7 +325,6 @@
 
 				<Border Padding="10" DockPanel.Dock="Top" Height="70">
 					<DockPanel>
-						<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}">Projector</Button>
 						<TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18">Live</TextBlock>
 					</DockPanel>
 				</Border>
@@ -347,6 +348,15 @@
 							<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
 						</Viewbox>
 					</Border>
+					<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}"
+							BorderThickness="0" Background="Transparent">
+						<material:MaterialIcon Kind="ExternalLink" Foreground="White"
+											   VerticalAlignment="Stretch"
+											   HorizontalAlignment="Stretch"
+											   Height="40"
+											   Width="40"
+											   />
+					</Button>
 				</Grid>
 	
 

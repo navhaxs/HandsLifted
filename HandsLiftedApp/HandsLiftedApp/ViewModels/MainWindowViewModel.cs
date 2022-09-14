@@ -406,7 +406,7 @@ namespace HandsLiftedApp.ViewModels
                 string targetDirectory = Path.Join(playlistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
                 Directory.CreateDirectory(targetDirectory);
 
-                Data.Models.Items.SlidesGroupItem<ItemStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
+                SlidesGroupItem<ItemStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
                 slidesGroup.Title = fileName;
 
                 Dispatcher.UIThread.InvokeAsync(() => Playlist.Items.Add(slidesGroup));

@@ -34,18 +34,12 @@
 				<Border Name="border" BorderBrush="{TemplateBinding BorderBrush}"
 						BorderThickness="{TemplateBinding BorderThickness}"
 						CornerRadius="{TemplateBinding CornerRadius}">
-					<!--<ScrollViewer Name="PART_ScrollViewer"
-								  Background="{TemplateBinding Background}"
-								  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
-								  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
-								  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}">-->
 					<ItemsPresenter Name="PART_ItemsPresenter"
 									Items="{TemplateBinding Items}"
 									ItemsPanel="{TemplateBinding ItemsPanel}"
 									ItemTemplate="{TemplateBinding ItemTemplate}"
 									Margin="{TemplateBinding Padding}"
 									VirtualizationMode="{TemplateBinding VirtualizationMode}"/>
-					<!--</ScrollViewer>-->
 				</Border>
 			</ControlTemplate>
 		</Setter>

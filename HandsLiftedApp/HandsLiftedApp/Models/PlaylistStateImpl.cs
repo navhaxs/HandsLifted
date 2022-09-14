@@ -82,8 +82,7 @@ namespace HandsLiftedApp.Models
                     };
                 }
             }
-            // for selected item, attempt to navigate slide forwards
-            // unless at last slide
+            // for selected item, attempt to navigate slide forwards (unless at last slide of this item)
             else if (SelectedItem.Slides.ElementAtOrDefault(SelectedItem.State.SelectedSlideIndex + 1) != null)
             {
                 var nextSlideIndex = SelectedItem.State.SelectedSlideIndex + 1;
@@ -94,7 +93,7 @@ namespace HandsLiftedApp.Models
                     ItemIndex = SelectedItemIndex
                 };
             }
-            // else attempt to navigate item forwards
+            // else attempt to navigate to next item
             else if (allowItemLookAhead && Playlist.Items.ElementAtOrDefault(SelectedItemIndex + 1) != null)
             {
                 var nextItemIndex = SelectedItemIndex + 1;
@@ -107,6 +106,8 @@ namespace HandsLiftedApp.Models
                 };
 
             }
+            // no more next slide.
+            // NOTE: do not want to navigate to "unselected" as this actually goes back to initial slide before all items!!
             return new SlideReference()
             {
                 Slide = null,
@@ -206,7 +207,13 @@ namespace HandsLiftedApp.Models
         public void NavigateNextSlide()
         {
             SlideReference slideReference = GetNextSlide();
-            NavigateToReference(slideReference);
+
+            // the next slide is NEVER itemIndex > -1
+            // that -1 is however used for StageDisplay and Previews
+            if (slideReference.ItemIndex > -1)
+            {
+                NavigateToReference(slideReference);
+            }
         }
         public void NavigatePreviousSlide()
         {
