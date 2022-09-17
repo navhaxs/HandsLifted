@@ -13,7 +13,6 @@
              x:Class="HandsLiftedApp.Views.ActiveSlideOutput">
 	<Grid Background="Black">
 
-
 		<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="True" PageTransition="{Binding ActiveItemPageTransition}" />
 
 		<!-- good for freezing. bad for fading -->

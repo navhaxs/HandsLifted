@@ -41,14 +41,15 @@
 
 	<Grid>
 
-		<ndi:NDISendContainer DataContext="{Binding ActiveSlide}" NdiName="Lyrics" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
+		<!--<ndi:NDISendContainer DataContext="{Binding ActiveSlide}" NdiName="Lyrics" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False" >
 			<render:AltSlideRenderer Width="1920" Height="1080"/>
-		</ndi:NDISendContainer>
+		</ndi:NDISendContainer>-->
 
 		<Grid Background="Black" />
 
 		<Viewbox>
-			<ndi:NDISendContainer NdiName="Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False">
+			<ndi:NDISendContainer NdiName="Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="False"
+								  IsContentHighResCheckFunc="IsContentHighResCheckFunc" >
 				<Grid Background="Black">
 					<views:ActiveSlideOutput Width="1920" Height="1080"/>
 				</Grid>

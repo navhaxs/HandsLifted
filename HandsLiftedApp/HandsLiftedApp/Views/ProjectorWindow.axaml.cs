@@ -4,12 +4,12 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using HandsLiftedApp.Converters;
+using AvaloniaNDI;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.AppState;
+using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
-using LibVLCSharp.Avalonia;
-using LibVLCSharp.Shared;
 using ReactiveUI;
 using System;
 using System.Linq;
@@ -98,6 +98,14 @@ namespace HandsLiftedApp.Views
         public void toggleFullscreen()
         {
             this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
+        }
+
+        public bool IsContentHighResCheckFunc(NDISendContainer sendContainer)
+        {
+            if (((MainWindowViewModel)this.DataContext).ActiveSlide is VideoSlide<VideoSlideStateImpl>)
+                return true;
+
+            return false;
         }
         private void OnKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {

@@ -8,6 +8,8 @@
 			 xmlns:viewsrender="clr-namespace:HandsLiftedApp.Views.Render"
 			 xmlns:hla="using:HandsLiftedApp.XTransitioningContentControl"
 			 xmlns:controls="using:HandsLiftedApp.Controls"
+			 Width="1920"
+			 Height="1080"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 Background="Black"
 			 x:Class="HandsLiftedApp.Views.Render.SlideRenderer">
@@ -46,12 +48,11 @@
 	</UserControl.DataTemplates>
 
 	<Grid>
-
 		<!-- https://github.com/AvaloniaUI/Avalonia/issues/5382 -->
 		<hla:XTransitioningContentControl
 			Content="{Binding $parent[viewsrender:SlideRenderer].ActiveSlide}"
 			PageTransition="{Binding $parent[viewsrender:SlideRenderer].PageTransition}"
-			 />
-
+			EnableSlideEvents="{Binding $parent[viewsrender:SlideRenderer].IsLive}"
+		 />
 	</Grid>
 </UserControl>

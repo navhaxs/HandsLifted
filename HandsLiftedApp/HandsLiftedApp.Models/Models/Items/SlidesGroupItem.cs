@@ -24,6 +24,8 @@ namespace HandsLiftedApp.Data.Models.Items
         [XmlIgnore]
         public override ObservableCollection<Slide> Slides { get => _Slides; }
 
-
+        private ItemAutoAdvanceTimer _AutoAdvanceTimer = new ItemAutoAdvanceTimer();
+        public ItemAutoAdvanceTimer AutoAdvanceTimer { get => _AutoAdvanceTimer; set => this.RaiseAndSetIfChanged(ref _AutoAdvanceTimer, value); }
     }
+
 }

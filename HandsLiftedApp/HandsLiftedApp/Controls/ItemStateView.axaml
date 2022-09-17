@@ -57,7 +57,7 @@
 						Margin="12 0 0 0"
 						Fill="#c43e1c"
 						/>
-				<Label Padding="12 8" Content="{Binding Title, FallbackValue='Untitled Item'}" FontSize="16" />
+				<TextBlock Padding="12 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
 				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
 			</DockPanel>
 		</Border>

@@ -3,8 +3,6 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.XTransitioningContentControl;
-using System;
 
 namespace HandsLiftedApp.Views.Render
 {
@@ -57,14 +55,14 @@ namespace HandsLiftedApp.Views.Render
                 o => o.IsLive,
                 (o, v) => o.IsLive = v);
 
-        private bool _items = true;
+        private bool _isLive = true;
 
         public bool IsLive
         {
-            get { return _items; }
+            get { return _isLive; }
             set
             {
-                SetAndRaise(IsLiveProperty, ref _items, value);
+                SetAndRaise(IsLiveProperty, ref _isLive, value);
             }
         }
 

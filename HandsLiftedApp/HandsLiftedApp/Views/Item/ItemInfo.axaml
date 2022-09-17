@@ -23,6 +23,9 @@
 				<DataTemplate x:Key="PowerPointSlidesGroupItem">
 					<item:PowerPointInfo />
 				</DataTemplate>
+				<DataTemplate x:Key="SlidesGroupItem">
+					<item:SlidesGroupItemInfo/>
+				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
 				</DataTemplate>
 			</utils:MyTemplateSelector>

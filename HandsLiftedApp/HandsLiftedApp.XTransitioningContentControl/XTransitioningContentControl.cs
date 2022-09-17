@@ -24,16 +24,27 @@ namespace HandsLiftedApp.XTransitioningContentControl
     public class XTransitioningContentControl : ContentControl
     {
         private CancellationTokenSource? _lastTransitionCts;
+        private bool _enableSlideEvents = true;
         private object? _currentContent;
         Image _previousImageSite;
         ContentPresenter _contentPresenter;
         Grid _contentPresenterContainer;
 
         /// <summary>
+        /// Defines the <see cref="EnableSlideEvents"/> property.
+        /// </summary>
+        public static readonly DirectProperty<XTransitioningContentControl, bool> EnableSlideEventsProperty =
+            AvaloniaProperty.RegisterDirect<XTransitioningContentControl, bool>(
+                nameof(EnableSlideEvents),
+                o => o.EnableSlideEvents,
+                (o, v) => o.EnableSlideEvents = v);
+
+        /// <summary>
         /// Defines the <see cref="PageTransition"/> property.
         /// </summary>
         public static readonly StyledProperty<IPageTransition?> PageTransitionProperty =
-            AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(nameof(PageTransition),
+            AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(
+                nameof(PageTransition),
                 //new CrossFade(TimeSpan.FromSeconds(0.125)));
                 new XFade(TimeSpan.FromSeconds(0.300)));
 
@@ -41,7 +52,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
         /// Defines the <see cref="CurrentContent"/> property.
         /// </summary>
         public static readonly DirectProperty<XTransitioningContentControl, object?> CurrentContentProperty =
-            AvaloniaProperty.RegisterDirect<XTransitioningContentControl, object?>(nameof(CurrentContent),
+            AvaloniaProperty.RegisterDirect<XTransitioningContentControl, object?>(
+                nameof(CurrentContent),
                 o => o.CurrentContent);
 
         //System.Timers.Timer aTimer = new System.Timers.Timer();
@@ -67,6 +79,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
         {
             get => _currentContent;
             private set => SetAndRaise(CurrentContentProperty, ref _currentContent, value);
+        }
+
+        /// <summary>
+        /// </summary>
+        public bool EnableSlideEvents
+        {
+            get => _enableSlideEvents;
+            private set => SetAndRaise(EnableSlideEventsProperty, ref _enableSlideEvents, value);
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -116,8 +136,12 @@ namespace HandsLiftedApp.XTransitioningContentControl
             IPageTransition transition = PageTransition;
             if (content is ISlideRender)
             {
+
+                //if (EnableSlideEvents)
+                //{
                 // call enter slide (e.g. ensure image will load here)
                 Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
+                //}
 
                 // if slide has page transition override
                 if (((ISlideRender)content).PageTransition != null)
@@ -150,7 +174,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
 
-            if (CurrentContent is ISlideRender)
+            if (CurrentContent is ISlideRender && EnableSlideEvents)
             {
                 ((ISlideRender)CurrentContent).OnLeaveSlide();
             }

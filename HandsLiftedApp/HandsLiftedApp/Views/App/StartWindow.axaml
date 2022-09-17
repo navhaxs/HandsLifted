@@ -52,7 +52,7 @@
 
 			<Border Background="White" CornerRadius="5">
 				
-			<UniformGrid Rows="1" Margin="0 0 0 0">
+			<UniformGrid Rows="1" Margin="24">
 				<UniformGrid.Styles>
 					<Style Selector="Border">
 						<!--<Setter Property="CornerRadius" Value="4" />

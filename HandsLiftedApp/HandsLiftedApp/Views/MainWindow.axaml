@@ -126,7 +126,7 @@
 
 				<Border Padding="14 20" Background="#eeeef2" DockPanel.Dock="Top">
 					<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-						<TextBlock FontSize="20" Margin="0 0 8 0">Sunday 11am</TextBlock>
+						<TextBlock FontSize="20" Margin="0 0 10 0">Sunday 11am</TextBlock>
 						<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
 					</StackPanel>
 				</Border>
@@ -325,7 +325,36 @@
 
 				<Border Padding="10" DockPanel.Dock="Top" Height="70">
 					<DockPanel>
-						<TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" FontSize="18">Live</TextBlock>
+						<Button VerticalAlignment="Center" HorizontalContentAlignment="Left" DockPanel.Dock="Left" FontSize="18"
+								BorderThickness="0"
+								Background="Transparent">
+							<DockPanel>
+								<material:MaterialIcon DockPanel.Dock="Right" 
+													   VerticalAlignment="Bottom" 
+													   Height="22" Width="26" 
+													   Foreground="Black" 
+													   Kind="ChevronRight" 
+													   Margin="0" Padding="0" />
+								<TextBlock Text="Live" VerticalAlignment="Bottom" />
+							</DockPanel>
+							<Button.Flyout>
+								<Flyout Placement="BottomEdgeAlignedLeft">
+									<StackPanel>
+										<Button>Projector</Button>
+										<Button>Stage Display</Button>
+										<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}"
+		BorderThickness="0" Background="Transparent"
+	   VerticalAlignment="Top"
+	   HorizontalAlignment="Right">
+											<material:MaterialIcon Kind="ExternalLink"
+																   Height="30"
+																   Width="30"
+					   />
+										</Button>
+									</StackPanel>
+								</Flyout>
+							</Button.Flyout>
+						</Button>
 					</DockPanel>
 				</Border>
 
@@ -343,22 +372,16 @@
 					</Grid.Background>
 					<Border>
 						<Viewbox>
-							<views:ActiveSlideOutput Width="1920" Height="1080" />
+
+							<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="False" PageTransition="{Binding ActiveItemPageTransition}" />
+
+							<!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
 							<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
 							<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
 						</Viewbox>
 					</Border>
-					<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}"
-							BorderThickness="0" Background="Transparent">
-						<material:MaterialIcon Kind="ExternalLink" Foreground="White"
-											   VerticalAlignment="Stretch"
-											   HorizontalAlignment="Stretch"
-											   Height="40"
-											   Width="40"
-											   />
-					</Button>
 				</Grid>
-	
+
 
 				<UniformGrid DockPanel.Dock="Top" Columns="3" Rows="1" Height="35">
 					<UniformGrid.Styles>
@@ -386,7 +409,17 @@
 					<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>
 				</UniformGrid>
 
-				<TextBlock Padding="5 5 5 10" FontSize="24" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
+				<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
+				
+				<Border DockPanel.Dock="Bottom" Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
+					<DockPanel Margin="10 8">
+						<material:MaterialIcon DockPanel.Dock="Right" Kind="Record" Foreground="#c43e1c" />
+						<StackPanel>
+							<TextBlock Text="Audio Recording" FontWeight="Medium" />
+							<TextBlock Text="00:00:00" FontSize="18" />
+						</StackPanel>
+					</DockPanel>
+				</Border>
 
 				<Grid></Grid>
 

@@ -50,6 +50,9 @@
 		<Compile Update="Views\AddItemPaletteControl.axaml.cs">
 			<DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\Item\SlidesGroupItemInfo.axaml.cs">
+		  <DependentUpon>SlidesGroupItemInfo.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Item\GoogleSlidesInfo.axaml.cs">
 			<DependentUpon>GoogleSlidesInfo.axaml</DependentUpon>
 		</Compile>
