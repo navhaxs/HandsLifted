@@ -11,12 +11,12 @@
 			<TextBlock Text="{Binding VideoPath}" TextWrapping="Wrap" Foreground="Yellow" FontSize="72" />
 		</DockPanel>
 		<v:VideoView x:Name="VideoView" VlcRenderingOptions="Avalonia">
-			<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
+			<!--<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
 				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="44" />
 				<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"
 						FontSize="44" Click="StopButton_Click" />
 				<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" Background="Red" FontSize="44" />
-			</StackPanel>
+			</StackPanel>-->
 		</v:VideoView >
 	</Grid>
 </UserControl>

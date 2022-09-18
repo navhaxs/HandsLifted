@@ -25,7 +25,7 @@ namespace HandsLiftedApp
                 EventResetMode.ManualReset, "HandsLiftedApp#startup", out created);
             if (created)
             {
-                // todo: handle unhandled, uncaught exceptions here
+                // todo: globally handle unhandled, uncaught exceptions here
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
             }
@@ -38,8 +38,9 @@ namespace HandsLiftedApp
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
         {
-            // https://github.com/AvaloniaUI/AvaloniaVS/issues/250
+            // workaround for https://github.com/AvaloniaUI/AvaloniaVS/issues/250
             GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
+
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToTrace()

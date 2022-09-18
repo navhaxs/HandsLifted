@@ -9,5 +9,7 @@ namespace HandsLiftedApp.Controls
         {
             // do nothing instead of the default behaviour!
         }
+
+        // TODO: bug
     }
 }

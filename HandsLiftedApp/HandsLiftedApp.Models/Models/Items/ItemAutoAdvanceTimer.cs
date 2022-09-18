@@ -25,4 +25,10 @@ namespace HandsLiftedApp.Data.Models.Items
         /// </summary>
         public int IntervalMs { get => _IntervalMs; set => this.RaiseAndSetIfChanged(ref _IntervalMs, value); }
     }
+
+    // instance
+    public interface IItemAutoAdvanceTimerState
+    {
+
+    }
 }

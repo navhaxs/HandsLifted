@@ -4,6 +4,12 @@
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<PropertyGroup>
+			<CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd))</CurrentDate>
+		</PropertyGroup>
+		<Exec Command="echo Configuration: $(Configuration)&#xD;&#xA;echo DevEnvDir: $(DevEnvDir)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo VisualStudioVersion: $(VisualStudioVersion)&#xD;&#xA;echo AssemblySearchPaths: $(AssemblySearchPaths)&#xD;&#xA;echo AssemblyName: $(AssemblyName)&#xD;&#xA;echo BaseIntermediateOutputPath: $(BaseIntermediateOutputPath)&#xD;&#xA;echo CscToolPath: $(CscToolPath)&#xD;&#xA;&#xD;&#xA;cd &quot;$(SolutionDir)&quot;&#xD;&#xA;git rev-parse --short HEAD &gt; &quot;$(ProjectDir)\BuildInfo\GitHash.txt&quot;&#xD;&#xA;echo $(CurrentDate) &gt; &quot;$(ProjectDir)\BuildInfo\BuildDate.txt&quot;" />
+	</Target>
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
@@ -15,6 +21,8 @@
 		<None Remove="Assets\splash.png" />
 		<None Remove="Assets\Test.png" />
 		<None Remove="Assets\test2.png" />
+		<None Remove="builddate.txt" />
+		<None Remove="version.txt" />
 		<None Remove="WebRoot\index.html" />
 	</ItemGroup>
 	<ItemGroup>
@@ -41,6 +49,8 @@
 		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="BuildInfo\BuildDate.txt" />
+		<EmbeddedResource Include="BuildInfo\GitHash.txt" />
 		<Resource Include="WebRoot\index.html" />
 	</ItemGroup>
 	<ItemGroup>
@@ -49,6 +59,9 @@
 		</Compile>
 		<Compile Update="Views\AddItemPaletteControl.axaml.cs">
 			<DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\ControlModules\AutoAdvanceControlView.axaml.cs">
+		  <DependentUpon>AutoAdvanceControlView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Item\SlidesGroupItemInfo.axaml.cs">
 		  <DependentUpon>SlidesGroupItemInfo.axaml</DependentUpon>
@@ -64,6 +77,9 @@
 		</Compile>
 		<Compile Update="Views\Item\ItemInfo.axaml.cs">
 			<DependentUpon>ItemInfo.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Preferences\PreferencesWindow.axaml.cs">
+		  <DependentUpon>PreferencesWindow.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Render\AltSlideRenderer.axaml.cs">
 			<DependentUpon>AltSlideRenderer.axaml</DependentUpon>

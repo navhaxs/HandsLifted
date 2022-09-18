@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
 using System.Diagnostics;
@@ -43,6 +43,18 @@ namespace HandsLiftedApp.Controls
             var stanza = (SongStanza)((Control)sender).DataContext;
             var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<Data.Models.Items.SongStanza>() { Value = stanza };
             ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Add(m);
+        }
+        public void OnFillerButtonClick(object? sender, RoutedEventArgs args)
+        {
+            Button button = this.FindControl<Button>("AddPartFlyoutToggleButton");
+            if (button.Flyout.IsOpen)
+            {
+                button.Flyout.Hide();
+            }
+            else
+            {
+                button.Flyout.ShowAt(button);
+            }
         }
 
         //insert clone

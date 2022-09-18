@@ -6,6 +6,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
+using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using System.Linq;
@@ -77,20 +78,23 @@ namespace HandsLiftedApp.Behaviours
             {
                 _parent = target.Parent;
 
-                if (!(target.RenderTransform is TranslateTransform))
-                {
-                    target.RenderTransform = new TranslateTransform();
-                }
+                //if (!(target.RenderTransform is TranslateTransform))
+                //{
+                //    target.RenderTransform = new TranslateTransform();
+                //}
 
-                _previous = e.GetPosition(_parent);
-                if (_parent != null)
-                {
-                    _parent.PointerMoved += Parent_PointerMoved;
-                    _parent.PointerReleased += Parent_PointerReleased;
-                }
+                MessageBus.Current.SendMessage(new UserChangedSlideMessage());
 
-                ListBox listBox = (ListBox)target.Parent;
-                var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
+
+                //_previous = e.GetPosition(_parent);
+                //if (_parent != null)
+                //{
+                //    _parent.PointerMoved += Parent_PointerMoved;
+                //    _parent.PointerReleased += Parent_PointerReleased;
+                //}
+
+                //ListBox listBox = (ListBox)target.Parent;
+                //var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
             }
         }
 

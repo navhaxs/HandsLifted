@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:material="using:Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="80"
+             x:Class="HandsLiftedApp.Views.ControlModules.AudioRecorderControlView">
+	<Border Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
+		<DockPanel Margin="10 8" VerticalAlignment="Top">
+			<material:MaterialIcon DockPanel.Dock="Right" Kind="Record" Foreground="#c43e1c" />
+			<StackPanel>
+				<TextBlock Text="Audio Recording" FontWeight="Medium" />
+				<TextBlock Text="00:00:00" FontSize="18" />
+			</StackPanel>
+		</DockPanel>
+	</Border>
+</UserControl>

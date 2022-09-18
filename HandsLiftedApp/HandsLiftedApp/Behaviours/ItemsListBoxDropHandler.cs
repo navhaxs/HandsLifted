@@ -3,7 +3,7 @@ using Avalonia.Input;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactions.DragAndDrop;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;

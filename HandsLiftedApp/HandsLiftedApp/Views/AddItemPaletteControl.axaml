@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+ 	 		 xmlns:material="using:Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="216" d:DesignHeight="430"
              x:Class="HandsLiftedApp.Views.AddItemPaletteControl">
 	<DockPanel Margin="8">
 		<Label DockPanel.Dock="Top" FontSize="22">Add Item</Label>
@@ -16,30 +17,71 @@
 					<Setter Property="VerticalContentAlignment" Value="Center" />
 					<Setter Property="Background" Value="#f1f1ff" />
 				</Style>
+				<Style Selector="Button StackPanel">
+					<Setter Property="HorizontalAlignment" Value="Center" />
+				</Style>
+				<Style Selector="Button TextBlock">
+					<Setter Property="FontSize" Value="14" />
+					<Setter Property="Padding" Value="0 8 0 8" />
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+					<Setter Property="TextAlignment" Value="Center" />
+					<Setter Property="TextWrapping" Value="Wrap" />
+				</Style>
+				<Style Selector="Button material|MaterialIcon">
+					<Setter Property="Foreground" Value="#888888" />
+					<Setter Property="Height" Value="32" />
+					<Setter Property="Width" Value="32" />
+					<Setter Property="Margin" Value="0 8 0 0" />
+					<Setter Property="HorizontalAlignment" Value="Center" />
+				</Style>
 			</UniformGrid.Styles>
 			<Button Command="{Binding AddSongCommand}">
-				Add Song
+				<StackPanel>
+					<material:MaterialIcon Kind="Music" />
+					<TextBlock Text="Song" />
+				</StackPanel>
 			</Button>
 			<Button Command="{Binding AddPresentationCommand}">
-				Add Presentation
+				<StackPanel>
+					<material:MaterialIcon Kind="Presentation" />
+					<TextBlock Text="PowerPoint" />
+				</StackPanel>
 			</Button>
 			<Button Command="{Binding AddGoogleSlidesCommand}">
-				Add Google Slides
-			</Button>
-			<Button Command="{Binding AddGraphicCommand}">
-				Add Graphic
-			</Button>
-			<Button Command="{Binding AddVideoCommand}">
-				Add Video
-			</Button>
-			<Button Command="{Binding AddCountdownCommand}">
-				Add Countdown
+				<StackPanel>
+					<material:MaterialIcon Kind="Slideshow" />
+					<TextBlock Text="Google Slides" />
+				</StackPanel>
 			</Button>
 			<Button Command="{Binding AddGroupCommand}">
-				Add Group
+				<StackPanel>
+					<material:MaterialIcon Kind="Archive" />
+					<TextBlock Text="Media Group" />
+				</StackPanel>
+			</Button>
+			<Button Command="{Binding AddVideoCommand}">
+				<StackPanel>
+					<material:MaterialIcon Kind="Video" />
+					<TextBlock Text="Video" />
+				</StackPanel>
+			</Button>
+			<Button Command="{Binding AddGraphicCommand}">
+				<StackPanel>
+					<material:MaterialIcon Kind="Image" />
+					<TextBlock Text="Graphic" />
+				</StackPanel>
+			</Button>
+			<Button Command="{Binding AddLogoCommand}">
+				<StackPanel>
+					<material:MaterialIcon Kind="Star" />
+					<TextBlock Text="Logo" />
+				</StackPanel>
+			</Button>
+			<Button Command="{Binding AddCountdownCommand}">
+				Countdown
 			</Button>
 			<Button Command="{Binding AddTestEmptyGroupCommand}">
-				Add Test Blank Group
+				Test Blank Group
 			</Button>
 		</UniformGrid>
 	</DockPanel>

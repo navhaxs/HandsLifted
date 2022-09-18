@@ -13,23 +13,16 @@ namespace HandsLiftedApp
             AvaloniaXamlLoader.Load(this);
         }
 
+        MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
+
         public override void OnFrameworkInitializationCompleted()
         {
-
-            //AvaloniaLocator.CurrentMutable.BindToSelfSingleton<MyClass>();
-
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var x = new MainWindowViewModel();
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = x,
+                    DataContext = mainWindowViewModel,
                 };
-
-                //ProjectorWindow p = new ProjectorWindow();
-                //p.DataContext = x;
-                //p.Show();
-
             }
 
             base.OnFrameworkInitializationCompleted();

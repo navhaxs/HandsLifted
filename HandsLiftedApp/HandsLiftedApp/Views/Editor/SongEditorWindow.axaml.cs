@@ -2,13 +2,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels.Editor;
 using System.Threading.Tasks;
 using ReactiveUI;
 using Avalonia.Interactivity;
+using HandsLiftedApp.Models.ItemState;
 
 namespace HandsLiftedApp.Views.Editor
 {

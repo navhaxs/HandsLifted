@@ -1,6 +1,7 @@
 ﻿using Avalonia.Threading;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Importer.PDF;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
@@ -8,34 +9,16 @@ using System.Diagnostics;
 using System.IO;
 using static HandsLiftedApp.Importer.GoogleSlides.Main;
 
-namespace HandsLiftedApp.Models
+namespace HandsLiftedApp.Models.ItemExtensionState
 {
     public class GoogleSlidesGroupItemStateImpl : ReactiveObject, IGoogleSlidesGroupItemState
     {
-        GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> parentSlidesGroup;
+        GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl> parentSlidesGroup;
 
         // required for Activator
-        public GoogleSlidesGroupItemStateImpl(ref GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> parent)
+        public GoogleSlidesGroupItemStateImpl(ref GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl> parent)
         {
             parentSlidesGroup = parent;
-
-
-            timer.Tick += (sender, e) =>
-            {
-                if (!parentSlidesGroup.State.IsSelected)
-                    return;
-
-                parentSlidesGroup.State.SelectedSlideIndex = (parentSlidesGroup.State.SelectedSlideIndex + 1) % parentSlidesGroup.Slides.Count;
-            };
-            timer.Start();
-
-            //parentSlidesGroup.WhenAnyValue(s => s.State.SelectedIndex, (int s) =>
-            //{
-            //    timer.Stop();
-            //    timer.Start();
-            //    return s;
-            //});
-            //parentSlidesGroup.State.PageTransition = new XTransitioningContentControl.XFade(TimeSpan.FromSeconds(2.300));
 
         }
 
@@ -63,14 +46,15 @@ namespace HandsLiftedApp.Models
             //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
             IsProgressIndeterminate = true;
             ImportTask importTask = new ImportTask() { GoogleSlidesPresentationId = parentSlidesGroup.SourceGooglePresentationId, OutputDirectory = targetDirectory };
-            PlaylistUtils.AddGoogleSlidesToPlaylist(importTask, (ImportStats e) =>
+            PlaylistUtils.AddGoogleSlidesToPlaylist(importTask, (e) =>
             {
                 //Progress = e.JobPercentage;
             }).ContinueWith((s) =>
             {
                 IsProgressIndeterminate = false;
 
-                if (s.Result == null) {
+                if (s.Result == null)
+                {
                     // log error message
                     // show error message
                 }
@@ -94,9 +78,5 @@ namespace HandsLiftedApp.Models
 
             });
         }
-
-
-        // how to make this generic?
-        DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
     }
 }

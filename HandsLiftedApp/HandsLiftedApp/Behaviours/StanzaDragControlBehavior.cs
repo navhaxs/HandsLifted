@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Extensions;
+using HandsLiftedApp.Models.ItemState;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -88,7 +89,7 @@ namespace HandsLiftedApp.Behaviours
                     ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
                     int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target.Parent);
 
-                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl>)listBox.DataContext;
+                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
                     ctx.Arrangement.RemoveAt(SourceIndex);
                     return;
                 }
@@ -300,8 +301,10 @@ namespace HandsLiftedApp.Behaviours
                 if (SourceIndex != DestinationIndex && DestinationIndex > -1)
                 {
                     Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
-                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemStateImpl>)listBox.DataContext;
+                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
                     ctx.Arrangement.Move(SourceIndex, DestinationIndex);
+
+                    //ctx.Slides.ElementAt(0)
                     //var ctx = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)target.DataContext;
                     //SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> a = ctx.Value;
                     //MessageBus.Current.SendMessage(new MoveItemMessage()

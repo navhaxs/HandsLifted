@@ -1,6 +1,6 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
-using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using System;
 using System.Collections.Generic;

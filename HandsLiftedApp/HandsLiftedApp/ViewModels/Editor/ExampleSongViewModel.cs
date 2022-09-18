@@ -1,7 +1,7 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.SlideState;
-using HandsLiftedApp.Models;
 using System;
+using HandsLiftedApp.Models.ItemState;
 
 namespace HandsLiftedApp.ViewModels.Editor
 {

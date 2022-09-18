@@ -1,19 +1,17 @@
-﻿using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
-using System.Collections.ObjectModel;
+﻿using ReactiveUI;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
-    public class PowerPointSlidesGroupItem<I, J> : SlidesGroupItem<I> where I : IItemState where J : IPowerPointSlidesGroupItemState
+    public class PowerPointSlidesGroupItem<I, J, K> : SlidesGroupItem<I, J> where I : IItemState where J : IItemAutoAdvanceTimerState where K : IPowerPointSlidesGroupItemState
     {
-        private J _syncstate;
+        private K _syncstate;
         [XmlIgnore]
-        public J SyncState { get => _syncstate; set => this.RaiseAndSetIfChanged(ref _syncstate, value); }
+        public K SyncState { get => _syncstate; set => this.RaiseAndSetIfChanged(ref _syncstate, value); }
 
         public PowerPointSlidesGroupItem()
         {
-            SyncState = (J)Activator.CreateInstance(typeof(J), this);
+            SyncState = (K)Activator.CreateInstance(typeof(K), this);
         }
 
         private string _sourcePresentationFile;

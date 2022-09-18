@@ -1,9 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.Views.App;
@@ -30,6 +32,7 @@ namespace HandsLiftedApp.Views
 
             this.Closing += MainWindow_Closing;
             this.Closed += MainWindow_Closed;
+            this.KeyDown += MainWindow_KeyDown;
 
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
@@ -52,6 +55,16 @@ namespace HandsLiftedApp.Views
 
             // TODO confirm
             //throw new NotImplementedException();
+        }
+        private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.F12:
+                    ((MainWindowViewModel)this.DataContext).Playlist.State.IsLogo = !((MainWindowViewModel)this.DataContext).Playlist.State.IsLogo;
+            break;
+            }
+            e.Handled = true;
         }
 
         private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)

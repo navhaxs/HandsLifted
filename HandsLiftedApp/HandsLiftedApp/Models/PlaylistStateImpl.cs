@@ -2,6 +2,8 @@
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models.ItemExtensionState;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
@@ -93,6 +95,19 @@ namespace HandsLiftedApp.Models
                     ItemIndex = SelectedItemIndex
                 };
             }
+            // for selected item, if slide group that is loopable, then loop back to first slide of this item
+            else if (SelectedItem is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> &&
+                ((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)SelectedItem).IsLooping == true &&
+                (SelectedItem.Slides.Count == SelectedItem.State.SelectedSlideIndex + 1))
+            {
+                var nextSlideIndex = 0;
+                return new SlideReference()
+                {
+                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    SlideIndex = nextSlideIndex,
+                    ItemIndex = SelectedItemIndex
+                };
+            }
             // else attempt to navigate to next item
             else if (allowItemLookAhead && Playlist.Items.ElementAtOrDefault(SelectedItemIndex + 1) != null)
             {
@@ -138,6 +153,19 @@ namespace HandsLiftedApp.Models
                     Slide = SelectedItem.Slides[nextSlideIndex],
                     SlideIndex = nextSlideIndex,
                     ItemIndex = SelectedItemIndex 
+                };
+            }
+            // for selected item, if slide group that is loopable, then loop back to last slide of this item
+            else if (SelectedItem is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> &&
+                ((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)SelectedItem).IsLooping == true &&
+                (SelectedItem.State.SelectedSlideIndex == 0))
+            {
+                var nextSlideIndex = SelectedItem.Slides.Count - 1;
+                return new SlideReference()
+                {
+                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    SlideIndex = nextSlideIndex,
+                    ItemIndex = SelectedItemIndex
                 };
             }
             // else attempt to navigate item backwards to last slide of previous item

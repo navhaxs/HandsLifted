@@ -5,7 +5,8 @@ using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.PDF;
-using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.ItemExtensionState;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using System;
 using System.Diagnostics;
@@ -94,14 +95,14 @@ namespace HandsLiftedApp.Utils
         {
             Debug.Print(e.JobPercentage.ToString());
         }
-        public static SlidesGroupItem<ItemStateImpl> CreateSlidesGroup(string directory)
+        public static SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> CreateSlidesGroup(string directory)
         {
-            SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>();
+            SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>();
             UpdateSlidesGroup(ref slidesGroup, directory);
             return slidesGroup;
         }
 
-        public static void UpdateSlidesGroup<X>(ref X slidesGroup, string directory) where X : SlidesGroupItem<ItemStateImpl>
+        public static void UpdateSlidesGroup<X>(ref X slidesGroup, string directory) where X : SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>
         {
             int i = 0;
             var prevCount = slidesGroup._Slides.Count;

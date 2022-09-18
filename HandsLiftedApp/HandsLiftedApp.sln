@@ -65,7 +65,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Tests", "Han
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PDFTestApp", "PDFTestApp\PDFTestApp.csproj", "{B4D43327-E734-41E7-B1C6-68F64B10A6AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLifted.FetchBible", "HandsLifted.FetchBible\HandsLifted.FetchBible.csproj", "{C1BE8C6D-96BF-4418-B896-4A410F46CA53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLifted.FetchBible", "HandsLifted.FetchBible\HandsLifted.FetchBible.csproj", "{C1BE8C6D-96BF-4418-B896-4A410F46CA53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.AudacityPipe.ConsoleApp1", "Demo.AudacityPipe.ConsoleApp1\Demo.AudacityPipe.ConsoleApp1.csproj", "{80FDB146-2567-439D-8403-5FF3B08F331F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -341,6 +343,18 @@ Global
 		{C1BE8C6D-96BF-4418-B896-4A410F46CA53}.Release|x64.Build.0 = Release|Any CPU
 		{C1BE8C6D-96BF-4418-B896-4A410F46CA53}.Release|x86.ActiveCfg = Release|Any CPU
 		{C1BE8C6D-96BF-4418-B896-4A410F46CA53}.Release|x86.Build.0 = Release|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Debug|x64.Build.0 = Debug|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Debug|x86.Build.0 = Debug|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Release|x64.ActiveCfg = Release|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Release|x64.Build.0 = Release|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Release|x86.ActiveCfg = Release|Any CPU
+		{80FDB146-2567-439D-8403-5FF3B08F331F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

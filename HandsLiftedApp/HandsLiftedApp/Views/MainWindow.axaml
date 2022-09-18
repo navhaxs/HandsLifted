@@ -10,6 +10,7 @@
 		xmlns:controls="using:HandsLiftedApp.Controls"
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:material="using:Material.Icons.Avalonia"
+		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
@@ -325,9 +326,8 @@
 
 				<Border Padding="10" DockPanel.Dock="Top" Height="70">
 					<DockPanel>
-						<Button VerticalAlignment="Center" HorizontalContentAlignment="Left" DockPanel.Dock="Left" FontSize="18"
-								BorderThickness="0"
-								Background="Transparent">
+						<Button VerticalAlignment="Center" HorizontalContentAlignment="Left" DockPanel.Dock="Left" FontSize="18" 
+								BorderThickness="0">
 							<DockPanel>
 								<material:MaterialIcon DockPanel.Dock="Right" 
 													   VerticalAlignment="Bottom" 
@@ -339,22 +339,31 @@
 							</DockPanel>
 							<Button.Flyout>
 								<Flyout Placement="BottomEdgeAlignedLeft">
-									<StackPanel>
-										<Button>Projector</Button>
-										<Button>Stage Display</Button>
-										<Button DockPanel.Dock="Right" Command="{Binding OnProjectorClickCommand}"
-		BorderThickness="0" Background="Transparent"
-	   VerticalAlignment="Top"
-	   HorizontalAlignment="Right">
-											<material:MaterialIcon Kind="ExternalLink"
-																   Height="30"
-																   Width="30"
-					   />
-										</Button>
-									</StackPanel>
+									<Grid MinWidth="200">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="Auto"/>
+											<ColumnDefinition Width="*"/>
+										</Grid.ColumnDefinitions>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition Height="Auto"/>
+										</Grid.RowDefinitions>
+										<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding ProjectorWindow.IsVisible, FallbackValue=False}"
+												IsHitTestVisible="False"
+												Focusable="False"/>
+
+										<Button Grid.Row="0" Grid.Column="1" Command="{Binding OnProjectorClickCommand}">Projector</Button>
+										<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding StageDisplayWindow.IsVisible, FallbackValue=False}"
+												IsHitTestVisible="False"
+												Focusable="False"/>
+										<Button Grid.Row="1" Grid.Column="1" Command="{Binding OnStageDisplayClickCommand}">Stage Display</Button>
+									</Grid>
 								</Flyout>
 							</Button.Flyout>
 						</Button>
+						<Grid></Grid>
 					</DockPanel>
 				</Border>
 
@@ -410,8 +419,12 @@
 				</UniformGrid>
 
 				<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
-				
-				<Border DockPanel.Dock="Bottom" Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
+
+				<!-- controlmodules -->
+				<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />
+				<controlmodules:VideoSlideControlView DockPanel.Dock="Bottom" DataContext="{Binding ActiveSlide}" />
+				<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />
+				<!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
 					<DockPanel Margin="10 8">
 						<material:MaterialIcon DockPanel.Dock="Right" Kind="Record" Foreground="#c43e1c" />
 						<StackPanel>
@@ -419,7 +432,7 @@
 							<TextBlock Text="00:00:00" FontSize="18" />
 						</StackPanel>
 					</DockPanel>
-				</Border>
+				</Border>-->
 
 				<Grid></Grid>
 

@@ -1,5 +1,6 @@
 ﻿using Avalonia.Threading;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
@@ -7,44 +8,22 @@ using System.Diagnostics;
 using System.IO;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
 
-namespace HandsLiftedApp.Models
+namespace HandsLiftedApp.Models.ItemExtensionState
 {
     public class PowerPointSlidesGroupItemStateImpl : ReactiveObject, IPowerPointSlidesGroupItemState
     {
-        PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> parentSlidesGroup;
+        PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> parentSlidesGroup;
 
         // required for Activator
-        public PowerPointSlidesGroupItemStateImpl(ref PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> parent)
+        public PowerPointSlidesGroupItemStateImpl(ref PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> parent)
         {
             parentSlidesGroup = parent;
-
-
-            timer.Tick += (sender, e) =>
-            {
-                if (!parentSlidesGroup.State.IsSelected)
-                    return;
-
-                parentSlidesGroup.State.SelectedSlideIndex = (parentSlidesGroup.State.SelectedSlideIndex + 1) % parentSlidesGroup.Slides.Count;
-            };
-            timer.Start();
-
-            //parentSlidesGroup.WhenAnyValue(s => s.State.SelectedIndex, (int s) =>
-            //{
-            //    timer.Stop();
-            //    timer.Start();
-            //    return s;
-            //});
-            //parentSlidesGroup.State.PageTransition = new XTransitioningContentControl.XFade(TimeSpan.FromSeconds(2.300));
-
         }
 
         private bool _isSyncBusy = true;
-
         public bool IsSyncBusy { get => _isSyncBusy; set => this.RaiseAndSetIfChanged(ref _isSyncBusy, value); }
 
         public double _progress = 0;
-
-
         public double Progress { get => _progress; set => this.RaiseAndSetIfChanged(ref _progress, value); }
 
         public void EditInExternalCommand()
@@ -65,7 +44,7 @@ namespace HandsLiftedApp.Models
             //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
 
             ImportTask importTask = new ImportTask() { PPTXFilePath = parentSlidesGroup.SourcePresentationFile, OutputDirectory = targetDirectory };
-            PlaylistUtils.AddPowerPointToPlaylist(importTask, (ImportStats e) =>
+            PlaylistUtils.AddPowerPointToPlaylist(importTask, (e) =>
             {
                 Progress = e.JobPercentage;
             }).ContinueWith((s) =>
@@ -83,9 +62,5 @@ namespace HandsLiftedApp.Models
                 }
             });
         }
-
-
-        // how to make this generic?
-        DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
     }
 }

@@ -21,7 +21,9 @@ namespace HandsLiftedApp.Controls
 
         public void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MessageBus.Current.SendMessage(new FocusSelectedItem());
+            // TODO: if follow mode enabled
+            // (and have UI to "recentre" like in google maps)
+            //MessageBus.Current.SendMessage(new FocusSelectedItem());
         }
     }
 }

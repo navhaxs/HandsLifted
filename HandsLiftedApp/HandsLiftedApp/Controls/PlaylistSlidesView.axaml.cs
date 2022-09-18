@@ -9,6 +9,7 @@ using Avalonia.VisualTree;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
@@ -143,9 +144,13 @@ namespace HandsLiftedApp.Controls
                 case Key.Right:
                 case Key.Space:
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                    MessageBus.Current.SendMessage(new FocusSelectedItem());
+
                     break;
                 case Key.Left:
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                    MessageBus.Current.SendMessage(new FocusSelectedItem());
+
                     break;
             }
             e.Handled = true;

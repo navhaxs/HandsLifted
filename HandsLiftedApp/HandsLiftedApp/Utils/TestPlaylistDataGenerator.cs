@@ -3,6 +3,8 @@ using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
+using HandsLiftedApp.Models.ItemExtensionState;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using System;
 using System.IO;
@@ -26,7 +28,7 @@ namespace HandsLiftedApp.Utils
                 playlist.Items.Add(SongImporter.ImportSongFromTxt(f));
             }
 
-            SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>();
+            SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>();
             try
             {
                 var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)

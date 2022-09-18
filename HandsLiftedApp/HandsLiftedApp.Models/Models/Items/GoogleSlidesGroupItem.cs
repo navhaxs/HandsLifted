@@ -1,18 +1,17 @@
 ﻿using ReactiveUI;
 using System.Xml.Serialization;
 
-
 namespace HandsLiftedApp.Data.Models.Items
 {
-    public class GoogleSlidesGroupItem<I, J> : SlidesGroupItem<I> where I : IItemState where J : IGoogleSlidesGroupItemState
+    public class GoogleSlidesGroupItem<I, J, K> : SlidesGroupItem<I, J> where I : IItemState where J : IItemAutoAdvanceTimerState where K : IGoogleSlidesGroupItemState
     {
-        private J _syncstate;
+        private K _syncstate;
         [XmlIgnore]
-        public J SyncState { get => _syncstate; set => this.RaiseAndSetIfChanged(ref _syncstate, value); }
+        public K SyncState { get => _syncstate; set => this.RaiseAndSetIfChanged(ref _syncstate, value); }
 
         public GoogleSlidesGroupItem()
         {
-            SyncState = (J)Activator.CreateInstance(typeof(J), this);
+            SyncState = (K)Activator.CreateInstance(typeof(K), this);
         }
 
         private string _sourceGooglePresentationId;

@@ -28,8 +28,8 @@
 					Background="Transparent"
 					/>
 
-			<Button HorizontalAlignment="Left" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10">
-				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
+			<Button x:Name="AddPartFlyoutToggleButton" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10">
+				<material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
 				<Button.Flyout>
 					<Flyout Placement="Bottom">
 						<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
@@ -97,6 +97,8 @@
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
+
+			<Button Background="Transparent" BorderThickness="0" Click="OnFillerButtonClick" />
 
 		</DockPanel>
 

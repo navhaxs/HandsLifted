@@ -9,6 +9,8 @@ using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Logic;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
+using HandsLiftedApp.Models.ItemExtensionState;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
@@ -174,7 +176,7 @@ namespace HandsLiftedApp.ViewModels
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
             OnAboutWindowCommand = ReactiveCommand.Create(() =>
             {
-                AboutWindow p = new AboutWindow() { DataContext = this };
+                AboutWindow p = new AboutWindow() {};
                 // set parent window?
                 p.Show();
             });
@@ -193,10 +195,10 @@ namespace HandsLiftedApp.ViewModels
                    switch (x.Action)
                    {
                        case ActionMessage.NavigateSlideAction.NextSlide:
-                           OnNextSlideClickCommand();
+                           Playlist.State.NavigateNextSlide();
                            break;
                        case ActionMessage.NavigateSlideAction.PreviousSlide:
-                           OnPrevSlideClickCommand();
+                           Playlist.State.NavigatePreviousSlide();
                            break;
                    }
                });
@@ -224,14 +226,37 @@ namespace HandsLiftedApp.ViewModels
             ws.Start();
         }
 
+        private ProjectorWindow _projectorWindow;
+        public ProjectorWindow ProjectorWindow { get => _projectorWindow; set => this.RaiseAndSetIfChanged(ref _projectorWindow, value); }
         public void OnProjectorClickCommand()
         {
-            StageDisplayWindow s = new StageDisplayWindow();
-            s.DataContext = this;
-            s.Show();
-            ProjectorWindow p = new ProjectorWindow();
-            p.DataContext = this;
-            p.Show();
+            if (ProjectorWindow != null && ProjectorWindow.IsVisible)
+            {
+                ProjectorWindow.Close();
+            }
+            else
+            {
+                ProjectorWindow = new ProjectorWindow();
+                ProjectorWindow.DataContext = this;
+                ProjectorWindow.Show();
+            }
+        }
+
+        private StageDisplayWindow _stageDisplayWindow;
+        public StageDisplayWindow StageDisplayWindow { get => _stageDisplayWindow; set => this.RaiseAndSetIfChanged(ref _stageDisplayWindow, value); }
+
+        public void OnStageDisplayClickCommand()
+        {
+            if (StageDisplayWindow != null && StageDisplayWindow.IsVisible)
+            {
+                StageDisplayWindow.Close();
+            }
+            else
+            {
+                StageDisplayWindow = new StageDisplayWindow();
+                StageDisplayWindow.DataContext = this;
+                StageDisplayWindow.Show();
+            }
         }
 
         public void OnDebugClickCommand()
@@ -244,12 +269,14 @@ namespace HandsLiftedApp.ViewModels
         {
             //SlidesSelectedIndex += 1;
             Playlist.State.NavigateNextSlide();
+            MessageBus.Current.SendMessage(new FocusSelectedItem());
         }
 
         public void OnPrevSlideClickCommand()
         {
             //SlidesSelectedIndex -= 1;
             Playlist.State.NavigatePreviousSlide();
+            MessageBus.Current.SendMessage(new FocusSelectedItem());
         }
 
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
@@ -269,25 +296,16 @@ namespace HandsLiftedApp.ViewModels
         private async Task OpenGoogleSlidesAsync()
         {
             string SourceGooglePresentationId = "1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0";
-            //Importer.GoogleSlides.Program.Result result = Importer.GoogleSlides.Program.Run("https://docs.google.com/presentation/d/1AjkGrL1NzOR5gVWeJ_YLlPtRd19OEaT4ZnW7Y2qkNPM/edit?usp=sharing", Playlist.State.PlaylistWorkingDirectory);
-
-            //ImportFromFile(result.OutputFullFilePath, Playlist.State.PlaylistWorkingDirectory);
-
 
             try
             {
-                //var fullFilePath = await ShowOpenFileDialog.Handle(Unit.Default);
-
-                //if (fullFilePath != null && fullFilePath is string)
-                //{
-
                 DateTime now = DateTime.Now;
                 string fileName = SourceGooglePresentationId; // Path.GetFileName(fullFilePath);
 
                 string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
                 Directory.CreateDirectory(targetDirectory);
 
-                GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl> slidesGroup = new GoogleSlidesGroupItem<ItemStateImpl, GoogleSlidesGroupItemStateImpl>() { Title = fileName, SourceGooglePresentationId = SourceGooglePresentationId };
+                GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl> slidesGroup = new GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl>() { Title = fileName, SourceGooglePresentationId = SourceGooglePresentationId };
 
                 Playlist.Items.Add(slidesGroup);
 
@@ -301,14 +319,13 @@ namespace HandsLiftedApp.ViewModels
                 });
 
                 slidesGroup.SyncState.SyncCommand();
-                //}
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.Print(e.Message);
             }
-            //////////
         }
+
         private async Task OpenPresentationFileAsync()
         {
             try
@@ -325,7 +342,7 @@ namespace HandsLiftedApp.ViewModels
                     Directory.CreateDirectory(targetDirectory);
 
                     //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
-                    PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };
+                    PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };
 
 
                     Playlist.Items.Add(slidesGroup);
@@ -359,7 +376,7 @@ namespace HandsLiftedApp.ViewModels
                     DateTime now = DateTime.Now;
                     string folderName = Path.GetDirectoryName(fullPath);
 
-                    SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>() { Title = folderName };
+                    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = folderName };
 
                     Playlist.Items.Add(slidesGroup);
 
@@ -386,7 +403,7 @@ namespace HandsLiftedApp.ViewModels
         {
             try
             {
-                SlidesGroupItem<ItemStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl>() { Title = "(Blank)" };
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = "(Blank)" };
                 Playlist.Items.Add(slidesGroup);
             }
             catch (Exception e)
@@ -406,7 +423,7 @@ namespace HandsLiftedApp.ViewModels
                 string targetDirectory = Path.Join(playlistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
                 Directory.CreateDirectory(targetDirectory);
 
-                SlidesGroupItem<ItemStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = PlaylistUtils.CreateSlidesGroup(targetDirectory);
                 slidesGroup.Title = fileName;
 
                 Dispatcher.UIThread.InvokeAsync(() => Playlist.Items.Add(slidesGroup));

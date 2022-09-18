@@ -8,14 +8,16 @@ using HandsLiftedApp.Views.Editor;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 using System;
+using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Reactive.Linq;
 
-namespace HandsLiftedApp.Models
+namespace HandsLiftedApp.Models.ItemState
 {
     // Move into PlaylistState
     public class ItemStateImpl : ViewModelBase, IItemState
     {
-        private Item<ItemStateImpl> parent;
+        public Item<ItemStateImpl> parent { get; set; }
 
         //private SlideStateBase selectedItem;
 
@@ -24,7 +26,7 @@ namespace HandsLiftedApp.Models
             parent = item;
             EditCommand = ReactiveCommand.Create(RunTheThing);
 
-            _selectedSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.LockSelectionIndex, (selectedIndex, lockSelectionIndex) =>
+            _selectedSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, (selectedIndex) =>
                 {
                     if (selectedIndex > -1 && parent.Slides != null && parent.Slides.Count > selectedIndex)
                         return parent.Slides[selectedIndex];
@@ -37,7 +39,17 @@ namespace HandsLiftedApp.Models
             _isSelected = this.WhenAnyValue(x => x.SelectedSlideIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
                 .ToProperty(this, x => x.IsSelected);
 
+
             PageTransition = new XFade(TimeSpan.FromSeconds(0.300));
+
+            Observable.CombineLatest(
+                this.WhenAnyValue(o => o.SelectedSlideIndex),
+                this.WhenAnyValue(o => o.parent.Slides),
+                (a, b) => {
+
+                    return Unit.Default;
+                }
+            );
         }
 
         //public int Index { get; set; }
@@ -78,8 +90,8 @@ namespace HandsLiftedApp.Models
         private ObservableAsPropertyHelper<bool> _isSelected;
         public bool IsSelected { get => _isSelected.Value; }
 
-        private ObservableAsPropertyHelper<Slide> _selectedSlide;
-        public Slide SelectedSlide { get => _selectedSlide.Value; }
+        private ObservableAsPropertyHelper<Slide?> _selectedSlide;
+        public Slide? SelectedSlide { get => _selectedSlide.Value; }
 
         public ReactiveCommand<Unit, Unit> EditCommand { get; }
 
