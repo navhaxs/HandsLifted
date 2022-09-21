@@ -20,7 +20,7 @@
 		<vme:ExampleSongViewModel />
 	</Design.DataContext>
 
-	<StackPanel>
+	<StackPanel Cursor="No">
 		<DockPanel>
 			<Button Content="Arrangement" DockPanel.Dock="Left" Padding="12 0 6 0"
 													Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}"
@@ -43,7 +43,7 @@
 									<Button Content="{Binding Name}"
 											Background="{Binding Colour}"
 											Click="OnAddPartClick"
-												/>
+											ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}" />
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>

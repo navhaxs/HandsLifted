@@ -3,6 +3,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.UI;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
@@ -13,14 +14,14 @@ namespace HandsLiftedApp.Models.ItemExtensionState
     {
         SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> parentSlidesGroup;
 
-        DispatcherTimer timer;
+        public CountdownTimer Timer { get; set; }
 
         // required for Activator
         public ItemAutoAdvanceTimerStateImpl(ref SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> parent)
         {
             parentSlidesGroup = parent;
 
-            timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(parent.AutoAdvanceTimer.IntervalMs) };
+            Timer = new CountdownTimer();
 
             parentSlidesGroup.AutoAdvanceTimer.WhenAnyValue(config => config.IsEnabled, config => config.IntervalMs)
                 .Subscribe(x =>
@@ -28,17 +29,16 @@ namespace HandsLiftedApp.Models.ItemExtensionState
                     ApplyTimerConfig(x.Item1, x.Item2);
                 });
 
-
             // already handled
-             //parentSlidesGroup.WhenAnyValue(p => p.State.IsSelected)
-             //   .Subscribe(x =>
-             //   {
-             //       if (x == false) {
-             //           timer.Stop();
-             //       }
-             //   });
+            //parentSlidesGroup.WhenAnyValue(p => p.State.IsSelected)
+            //   .Subscribe(x =>
+            //   {
+            //       if (x == false) {
+            //           timer.Stop();
+            //       }
+            //   });
 
-            timer.Tick += (sender, e) =>
+            Timer.OnElapsed += (sender, e) =>
             {
                 if (!parentSlidesGroup.State.IsSelected)
                     return;
@@ -67,26 +67,23 @@ namespace HandsLiftedApp.Models.ItemExtensionState
         private void ApplyTimerConfig(bool isEnabled, int intervalMs)
         {
             // stop timer
-            timer.Stop();
-
-            // update interval
-            timer.Interval = TimeSpan.FromMilliseconds(intervalMs);
+            Timer.Stop();
 
             // restart timer if enabled
             if (isEnabled)
             {
-                timer.Start();
+                Timer.Start(intervalMs);
             }
         }    
         private void ResetTimer()
         {
             // stop timer
-            timer.Stop();
+            Timer.Stop();
 
             // restart timer if enabled and item is active
             if (parentSlidesGroup.State.IsSelected == true && parentSlidesGroup.AutoAdvanceTimer.IsEnabled)
             {
-                timer.Start();
+                Timer.Start(parentSlidesGroup.AutoAdvanceTimer.IntervalMs);
             }
         }
     }

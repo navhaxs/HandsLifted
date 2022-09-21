@@ -3,13 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
  	 		 xmlns:material="using:Material.Icons.Avalonia"
+ 	 		 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="150"
              x:Class="HandsLiftedApp.Views.Item.SlidesGroupItemInfo">
 	<Border Background="#f1f1f7" CornerRadius="5" Padding="5">
 
 		<StackPanel>
 			
-		<HeaderedContentControl Header="Auto-advance Timer" BorderBrush="Red">
+		<HeaderedContentControl Header="Auto-advance Timer" BorderBrush="#a2a2a4">
 			<HeaderedContentControl.Styles>
 				<Style Selector="HeaderedContentControl">
 					<Setter Property="Template">
@@ -24,10 +25,11 @@
 										<ColumnDefinition Width="Auto"/>
 										<ColumnDefinition Width="*"/>
 									</Grid.ColumnDefinitions>
-									<Border ZIndex="1" Padding="5,0,5,0" Background="White" Margin="5,0,0,0">
+									<Border ZIndex="1" Padding="5,0,5,0" Background="#f1f1f7" Margin="5,0,0,0">
 										<TextBlock TextBlock.FontWeight="Bold" Text="{TemplateBinding Header}" />
 									</Border>
 									<Border Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="0,10,0,0"
+											Padding="0 2 0 0"
 										BorderBrush="{TemplateBinding BorderBrush}"
 										BorderThickness="1">
 										<ContentPresenter Content="{TemplateBinding Content}" />
@@ -61,7 +63,7 @@
 				<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding AutoAdvanceTimer.IsEnabled}" />
 				<TextBlock Grid.Row="1" Grid.Column="0" Text="Interval (ms)" />
 				<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AutoAdvanceTimer.IntervalMs}" />
-				<TextBlock Grid.Row="2" Grid.Column="0" Text="Loop Timer-only" />
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="Loop" />
 				<CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding AutoAdvanceTimer.IsLooping}" />
 			</Grid>
 		</HeaderedContentControl>
@@ -88,7 +90,21 @@
 			<TextBlock Grid.Row="1" Grid.Column="0" Text="Loop incl. slide navigation" />
 			<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsLooping}" />
 		</Grid>
-			
+
+			<!--<ProgressBar utils:ProgressBarWorkaround.Value="{Binding TimerState.Timer.RemainingTime}"
+						 Maximum="{Binding TimerState.Timer.TotalTime}">
+			<ProgressBar.Styles>
+			<Style Selector="ProgressBar">
+					<Setter Property="Transitions">
+						<Transitions>
+							<DoubleTransition
+								  Property="(utils:ProgressBarWorkaround.Value)"
+								  Duration="0:0:0.1"/>
+						</Transitions>
+					</Setter>
+				</Style>
+			</ProgressBar.Styles>
+			</ProgressBar>-->
 		</StackPanel>
 	</Border>
 </UserControl>
