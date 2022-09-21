@@ -326,7 +326,7 @@
 
 				<Border Padding="10" DockPanel.Dock="Top" Height="70">
 					<DockPanel>
-						<Button VerticalAlignment="Center" HorizontalContentAlignment="Left" DockPanel.Dock="Left" FontSize="18" 
+						<Button VerticalAlignment="Center" HorizontalContentAlignment="Left" DockPanel.Dock="Left" FontSize="18" Background="Transparent" 
 								BorderThickness="0">
 							<DockPanel>
 								<material:MaterialIcon DockPanel.Dock="Right" 
@@ -421,9 +421,9 @@
 				<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
 
 				<!-- controlmodules -->
-				<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />
-				<controlmodules:VideoSlideControlView DockPanel.Dock="Bottom" DataContext="{Binding ActiveSlide}" />
-				<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />
+				<!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
+				<controlmodules:VideoSlideControlViewWrapper DockPanel.Dock="Bottom" DataContext="{Binding ActiveSlide}" />
+				<!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
 				<!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
 					<DockPanel Margin="10 8">
 						<material:MaterialIcon DockPanel.Dock="Right" Kind="Record" Foreground="#c43e1c" />

@@ -4,10 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
-	<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
-				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="33" />
+	<StackPanel>
+		
+	<Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
+		<TextBlock Text="{Binding State.CurrentTime}" Grid.Column="0" />
+		<TextBlock Text="{Binding State.Duration}" Grid.Column="2" />
+		<Slider Minimum="0" Maximum="100" Value="{Binding State.Position}" Grid.Column="1" />
+	</Grid>
+	<StackPanel Orientation="Horizontal" x:Name="test" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
+				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="24" />
 				<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"
-						FontSize="33" Click="StopButton_Click" />
-				<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" Background="Red" FontSize="33" />
+						FontSize="24" Click="StopButton_Click" />
+				<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" Background="Red" FontSize="24" />
 			</StackPanel>
+	</StackPanel>
 </UserControl>

@@ -15,6 +15,9 @@ namespace HandsLiftedApp.Utils
 
         public IControl Build(object data)
         {
+            if (data == null)
+                return null;
+
             try
             {
                 var dataType = data.GetType().GetNameWithoutGenericArity();
