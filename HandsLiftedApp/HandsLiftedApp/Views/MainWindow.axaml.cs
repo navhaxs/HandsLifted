@@ -52,9 +52,10 @@ namespace HandsLiftedApp.Views
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
         {
+            e.Cancel = true;
 
-            // TODO confirm
-            //throw new NotImplementedException();
+            ExitConfirmationWindow w = new ExitConfirmationWindow();
+            w.ShowDialog(this);
         }
         private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
@@ -105,7 +106,6 @@ namespace HandsLiftedApp.Views
         {
             MessageBus.Current.SendMessage(new FocusSelectedItem());
         }
-
         private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)
         {
             //if (e.Source is Border)

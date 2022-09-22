@@ -56,14 +56,14 @@ namespace HandsLiftedApp.Logic
             byte[] rxBuffer,
             IWebSocketReceiveResult rxResult)
         {
-            Debug.Print("OnMessageReceivedAsync");
+            //Debug.Print("OnMessageReceivedAsync");
             try
             {
                 // parse message
                 string buffer = Encoding.GetString(rxBuffer);
                 JObject jsonData = JObject.Parse(buffer);
 
-                Debug.Print(jsonData.ToString());
+                //Debug.Print(jsonData.ToString());
                 switch (jsonData["action"].ToString())
                 {
                     case nameof(ActionMessage.NavigateSlideAction.NextSlide):

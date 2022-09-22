@@ -49,6 +49,18 @@
 		</StackPanel>
 
 		<TextBox Height="20" Width="200" Background="Red" Name="Hello" Text="100" />
+
+		<WrapPanel Orientation="Vertical" Height="80">
+			<Button />
+			<Button />
+			<Button />
+			<Button />
+			<Button />
+			<Button />
+			<Button />
+			<Button />
+			<Button />
+		</WrapPanel>
 	</Grid>
 
 </Window>

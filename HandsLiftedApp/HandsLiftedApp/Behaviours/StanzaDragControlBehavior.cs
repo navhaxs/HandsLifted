@@ -185,7 +185,8 @@ namespace HandsLiftedApp.Behaviours
                 return;
             }
 
-            UpdateCursor(true);
+            UpdateCursor(new Cursor(StandardCursorType.DragMove));
+
             if (target is { })
             {
                 ItemsControl listBox = IControlExtension.FindAncestor<ItemsControl>(target);
@@ -243,13 +244,13 @@ namespace HandsLiftedApp.Behaviours
             }
         }
 
-        private void UpdateCursor(bool show, IControl? p = null)
+        private void UpdateCursor(Cursor? cursor = null, IControl? p = null)
         {
             if (p == null)
                 p = _parent;
 
-             Window? window = p.VisualRoot as Window;
-             window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;
+            Window? window = p.VisualRoot as Window;
+            window.Cursor = (cursor == null) ? Cursor.Default : cursor;
         }
 
         private void ResetDraggingState()
@@ -263,7 +264,8 @@ namespace HandsLiftedApp.Behaviours
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
                 
-                UpdateCursor(false, _parent);
+                UpdateCursor();
+
                 _parent = null;
 
             }
@@ -300,7 +302,7 @@ namespace HandsLiftedApp.Behaviours
                 ResetDraggingState();
                 if (SourceIndex != DestinationIndex && DestinationIndex > -1)
                 {
-                    Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
+                    //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
                     Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
                     ctx.Arrangement.Move(SourceIndex, DestinationIndex);
 

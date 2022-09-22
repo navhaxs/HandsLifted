@@ -10,6 +10,7 @@ using System.Reactive.Subjects;
 using System.Reactive;
 using System.Linq;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace HandsLiftedApp.Models.SlideState
 {
@@ -25,10 +26,13 @@ namespace HandsLiftedApp.Models.SlideState
         {
             VideoPath = videoSlide.VideoPath;
 
+            // TODO init only when actually needed (on slide enter)
             try
             {
+                Debug.Print("init VLC");
                 _libVLC = new LibVLC();
                 MediaPlayer = new MediaPlayer(_libVLC);
+                Debug.Print("init VLC - DONE");
 
 
                 string absolute = new Uri(VideoPath).AbsoluteUri;

@@ -5,8 +5,10 @@
         mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="350"
 		Width="680" Height="350"
         x:Class="HandsLiftedApp.Views.App.AboutWindow"
-		Background="#5e4ecc"
-		Foreground="#f0edff"
+		ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        HasSystemDecorations="False"
+		WindowStartupLocation="CenterScreen"
         Title="AboutWindow">
 	<DockPanel>
 		<Grid

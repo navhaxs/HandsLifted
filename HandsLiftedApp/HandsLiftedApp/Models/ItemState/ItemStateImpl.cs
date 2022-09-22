@@ -50,6 +50,18 @@ namespace HandsLiftedApp.Models.ItemState
                     return Unit.Default;
                 }
             );
+
+
+
+            //this.WhenAnyValue(x => x.parent.Slides)
+            //    .Subscribe(x => { 
+                
+            //        foreach (var c in x)
+            //        {
+            //            c.Sele
+            //        }
+            //    });
+
         }
 
         //public int Index { get; set; }

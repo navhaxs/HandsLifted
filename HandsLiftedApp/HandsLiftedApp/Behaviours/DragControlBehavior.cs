@@ -259,7 +259,7 @@ namespace HandsLiftedApp.Behaviours
                     }
                 }
 
-                if (isDragging && SourceIndex != DestinationIndex && DestinationIndex > -1)
+                if (SourceIndex != DestinationIndex && DestinationIndex > -1)
                 {
                     //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItemBounds: {isPastLastItemBounds}");
 

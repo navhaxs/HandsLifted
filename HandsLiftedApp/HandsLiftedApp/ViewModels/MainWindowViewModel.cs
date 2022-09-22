@@ -166,6 +166,9 @@ namespace HandsLiftedApp.ViewModels
             // The OpenFile command is bound to a button/menu item in the UI.
             AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPresentationFileAsync);
             AddGroupCommand = ReactiveCommand.CreateFromTask(OpenGroupAsync);
+            AddVideoCommand = ReactiveCommand.CreateFromTask(AddVideoCommandAsync);
+            AddGraphicCommand = ReactiveCommand.CreateFromTask(AddGraphicCommandAsync);
+            AddLogoCommand = ReactiveCommand.CreateFromTask(AddLogoCommandAsync);
             AddTestEmptyGroupCommand = ReactiveCommand.CreateFromTask(OpenTestEmptyGroupAsync);
             AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
             AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
@@ -177,7 +180,7 @@ namespace HandsLiftedApp.ViewModels
             OnAboutWindowCommand = ReactiveCommand.Create(() =>
             {
                 AboutWindow p = new AboutWindow() {};
-                // set parent window?
+                // TODO: solve MVVM to set parent window
                 p.Show();
             });
 
@@ -206,7 +209,15 @@ namespace HandsLiftedApp.ViewModels
             MessageBus.Current.Listen<MoveItemMessage>()
                 .Subscribe(x =>
                 {
+
+
                     Playlist.Items.Move(x.SourceIndex, x.DestinationIndex);
+
+                    //
+                    if (x.SourceIndex == Playlist.State.SelectedItemIndex)
+                    {
+                        Playlist.State.SelectedItemIndex = x.DestinationIndex;
+                    }
 
                     // HACK run me from different thread. gives time for UI to update first
                     new Thread(() =>
@@ -281,6 +292,9 @@ namespace HandsLiftedApp.ViewModels
 
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGroupCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddVideoCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddGraphicCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddLogoCommand { get; }
         public ReactiveCommand<Unit, Unit> AddTestEmptyGroupCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
@@ -397,6 +411,87 @@ namespace HandsLiftedApp.ViewModels
             {
                 System.Diagnostics.Debug.Print(e.Message);
             }
+        }
+        private async Task AddVideoCommandAsync()
+        {
+            try
+            {
+                var fullPath = await ShowOpenFileDialog.Handle(Unit.Default);
+
+                if (fullPath != null && fullPath is string)
+                {
+
+                    DateTime now = DateTime.Now;
+                    string fileName = Path.GetFileName(fullPath);
+                    string folderName = Path.GetDirectoryName(fullPath);
+
+                    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
+
+                    Playlist.Items.Add(slidesGroup);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        // wait for UI to update...
+                        Dispatcher.UIThread.RunJobs();
+                        // and now we can jump to view
+                        var count = Playlist.Items.Count;
+                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                    });
+
+                    slidesGroup._Slides.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath, 0));
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+            }
+        }
+        private async Task AddGraphicCommandAsync()
+        {
+            try
+            {
+                var fullPath = await ShowOpenFileDialog.Handle(Unit.Default);
+
+                if (fullPath != null && fullPath is string)
+                {
+
+                    DateTime now = DateTime.Now;
+                    string fileName = Path.GetFileName(fullPath);
+                    string folderName = Path.GetDirectoryName(fullPath);
+
+                    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
+
+                    Playlist.Items.Add(slidesGroup);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        // wait for UI to update...
+                        Dispatcher.UIThread.RunJobs();
+                        // and now we can jump to view
+                        var count = Playlist.Items.Count;
+                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                    });
+
+                    slidesGroup._Slides.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath, 0));
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+            }
+        }
+        private async Task AddLogoCommandAsync()
+        {
+            Playlist.Items.Add(new LogoItem<ItemStateImpl>());
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // wait for UI to update...
+                Dispatcher.UIThread.RunJobs();
+                // and now we can jump to view
+                var count = Playlist.Items.Count;
+                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+            });
         }
 
         private async Task OpenTestEmptyGroupAsync()

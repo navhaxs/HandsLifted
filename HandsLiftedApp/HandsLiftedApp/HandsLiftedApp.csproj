@@ -35,6 +35,8 @@
 		<PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.10.17" />
 		<PackageReference Include="EmbedIO" Version="3.4.3" />
 		<PackageReference Include="Material.Icons.Avalonia" Version="1.1.10" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.17.4" />
 	</ItemGroup>
 	<ItemGroup>

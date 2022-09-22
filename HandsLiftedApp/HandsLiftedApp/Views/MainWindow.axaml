@@ -118,7 +118,7 @@
 				<MenuItem Header="_Quick how-to" />
 				<MenuItem Header="_Help manual" />
 				<MenuItem Header="_Debug" />
-				<MenuItem Header="_About" Command="{Binding OnAboutWindow}" />
+				<MenuItem Header="_About" Command="{Binding OnAboutWindow}" CommandParameter="{Binding $parent[Window]}" />
 			</MenuItem>
 		</Menu>
 		<Grid ColumnDefinitions="*, 1, 0.24*">
@@ -183,7 +183,7 @@
 						<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
 							<Button.Flyout>
 								<Flyout>
-									<Grid MinWidth="200" MinHeight="100">
+									<Grid MinWidth="400" MinHeight="100">
 										<views:AddItemPaletteControl />
 									</Grid>
 								</Flyout>

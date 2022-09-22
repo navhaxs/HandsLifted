@@ -20,7 +20,7 @@
 		<vme:ExampleSongViewModel />
 	</Design.DataContext>
 
-	<StackPanel Cursor="No">
+	<StackPanel>
 		<DockPanel>
 			<Button Content="Arrangement" DockPanel.Dock="Left" Padding="12 0 6 0"
 													Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}"
@@ -77,7 +77,7 @@
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<DockPanel Name="PART_Container">
+						<DockPanel Name="PART_Container" Cursor="Hand">
 							<DockPanel.ContextMenu>
 								<ContextMenu PlacementAnchor="Bottom" PlacementMode="Bottom" PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
 									<MenuItem Header="Repeat" Click="OnRepeatPartClick" />

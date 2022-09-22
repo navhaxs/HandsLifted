@@ -20,6 +20,10 @@ namespace HandsLiftedApp.Utils
 {
     internal static class PlaylistUtils
     {
+
+        public static readonly string[] SUPPORTED_VIDEO = { "mp4", "flv", "mov", "mkv", "avi", "wmv" };
+        public static readonly string[] SUPPORTED_IMAGE = { "bmp", "png", "jpg", "jpeg" };
+
         public async static Task<ImportStats?> AddPowerPointToPlaylist(ImportTask importTaskAction, Action<ImportStats> onProgressUpdate)
         {
             ImportStats? value = null;
@@ -154,6 +158,17 @@ namespace HandsLiftedApp.Utils
                 Debug.Print(e.Message);
             }
             //return slidesGroup;
+        }
+
+        public static Slide GenerateMediaContentSlide(string filename, int index)
+        {
+            string _filename = filename.ToLower();
+
+            if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x))) {
+                return new VideoSlide<VideoSlideStateImpl>(filename) { Index = index };
+            }
+
+            return new ImageSlide<ImageSlideStateImpl>(filename) { Index = index };
         }
 
         public static SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> CreateSong()

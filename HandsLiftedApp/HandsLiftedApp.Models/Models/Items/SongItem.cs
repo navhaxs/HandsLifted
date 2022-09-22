@@ -29,6 +29,11 @@ namespace HandsLiftedApp.Data.Models.Items
                 .ToProperty(this, c => c.TitleSlide)
             ;
 
+            this.WhenAnyValue(x => x.EndOnBlankSlide, x => x.StartOnTitleSlide).Subscribe((d) =>
+            {
+                s();
+            });
+
             _stanzas.CollectionChanged += _stanzas_CollectionChanged;
             _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             Arrangement.CollectionChanged += Arrangement_CollectionChanged;
@@ -37,6 +42,15 @@ namespace HandsLiftedApp.Data.Models.Items
         private void Arrangement_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateStanzaSlides();
+
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)
+            {
+                // deselect last slide
+                //StanzaSlides.ElementAt(e.OldStartingIndex).State
+                //Slides.Ele
+            }
+
             this.RaisePropertyChanged("Slides");
         }
 
@@ -45,7 +59,7 @@ namespace HandsLiftedApp.Data.Models.Items
             int i = 0;
 
             // TODO add title slide
-            if (TitleSlide != null)
+            if (StartOnTitleSlide && TitleSlide != null)
             {
                 TitleSlide.Index = i;
 
@@ -53,11 +67,10 @@ namespace HandsLiftedApp.Data.Models.Items
                 {
                     ((SongTitleSlide<T>)this.StanzaSlides.ElementAt(0)).Title = Title;
                     ((SongTitleSlide<T>)this.StanzaSlides.ElementAt(0)).Copyright = Copyright;
-                    //((SongTitleSlide<T>)this.StanzaSlides.ElementAt(0)).State = Copyright;
                 }
                 else
                 {
-                    this.StanzaSlides.Add(TitleSlide);
+                    this.StanzaSlides.Insert(i, TitleSlide);
                 }
                 i++;
             }
@@ -226,6 +239,12 @@ namespace HandsLiftedApp.Data.Models.Items
         private Boolean _endOnBlankSlide = true;
 
         public Boolean EndOnBlankSlide { get => _endOnBlankSlide; set => this.RaiseAndSetIfChanged(ref _endOnBlankSlide, value); }
+
+        [XmlIgnore]
+        private Boolean _startOnTitleSlide = true;
+
+        public Boolean StartOnTitleSlide { get => _startOnTitleSlide; set => this.RaiseAndSetIfChanged(ref _startOnTitleSlide, value); }
+
 
         // Stanzas + Arrangement = _stanzaSlides
         [XmlIgnore]

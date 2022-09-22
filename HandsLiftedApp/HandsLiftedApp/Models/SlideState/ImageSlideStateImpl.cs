@@ -33,17 +33,12 @@ namespace HandsLiftedApp.Models.SlideState
             {
                 try
                 {
-                    Debug.Print($"[enter monitor]");
-
-
                     Image = await Task.Run(() =>
                     {
                         var path = _slide.ImagePath;
 
                         if (File.Exists(path))
                         {
-                            Debug.Print($"loaded image to memory: {path}");
-
                             using (Stream imageStream = File.OpenRead(path))
                             {
                                 return Bitmap.DecodeToWidth(imageStream, IMAGE_WIDTH);
@@ -55,7 +50,6 @@ namespace HandsLiftedApp.Models.SlideState
                 }
                 finally
                 {
-                    Debug.Print($"[exit monitor]");
                     Monitor.Exit(loadImageLock);
                 }
             }

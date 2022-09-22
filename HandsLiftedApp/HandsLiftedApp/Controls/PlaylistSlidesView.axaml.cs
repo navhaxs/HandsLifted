@@ -84,7 +84,7 @@ namespace HandsLiftedApp.Controls
                    if (control is not null)
                    {
                        scrollViewer.Offset = new Vector(0, control.Bounds.Top);
-                       Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
+                       //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
                    }
                });
 

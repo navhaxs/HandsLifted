@@ -15,6 +15,7 @@
 
 	<StackPanel>
 		<TextBlock Text="{Binding Playlist.State.SelectedItem.State.SelectedSlideIndex, FallbackValue='0'}" Foreground="White" FontSize="70" />
+		<TextBlock Text="{Binding Playlist.State.SelectedItem.Slides.Count, FallbackValue='0'}" Foreground="White" FontSize="70" />
 		<Grid ColumnDefinitions="0.7* 0.3*">
 			<StackPanel>
 				<Border Grid.Column="0" Background="White" BorderBrush="White" BorderThickness="1" VerticalAlignment="Top">

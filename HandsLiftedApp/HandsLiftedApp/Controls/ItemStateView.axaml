@@ -70,8 +70,8 @@
 				 Items="{Binding Slides}"
 			     SelectionMode="Single"
 				 SelectedIndex="{Binding State.SelectedSlideIndex}"
-			    	AutoScrollToSelectedItem="False"
-									SelectionChanged="OnSelectionChanged"
+		    	AutoScrollToSelectedItem="False"
+				SelectionChanged="OnSelectionChanged"
 				 >
 			<controls:ListBoxWithoutKey.Styles>
 				<Style Selector="controls|ListBoxWithoutKey">
@@ -117,6 +117,11 @@
 						<Border Padding="20">
 							<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
 						</Border>
+					</DataTemplate>
+					<DataTemplate x:Key="LogoSlide">
+						<Grid>
+							<Image Stretch="Uniform" Source="/Assets/SWEC-ProPresenter-Logo-Slide.png" RenderOptions.BitmapInterpolationMode="HighQuality" />
+						</Grid>
 					</DataTemplate>
 					<DataTemplate x:Key="MyKey">
 						<TextBlock Background="Red" Text="{Binding Text}" />
