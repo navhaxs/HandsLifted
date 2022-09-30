@@ -29,15 +29,15 @@ namespace HandsLiftedApp.Controls
         {
             AvaloniaXamlLoader.Load(this);
         }
-        private void X_Click(object? sender, RoutedEventArgs e)
-        {
-            (sender as Button)!.Content = "Ginger";
-        }
+        //private void X_Click(object? sender, RoutedEventArgs e)
+        //{
+        //    (sender as Button)!.Content = "Ginger";
+        //}
 
-        public void btn_OnClick(object? sender, RoutedEventArgs args)
-        {
-            (sender as Button)!.Content = "Ginger";
-        }
+        //public void btn_OnClick(object? sender, RoutedEventArgs args)
+        //{
+        //    (sender as Button)!.Content = "Ginger";
+        //}
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
         {
             var stanza = (SongStanza)((Control)sender).DataContext;
@@ -46,15 +46,15 @@ namespace HandsLiftedApp.Controls
         }
         public void OnFillerButtonClick(object? sender, RoutedEventArgs args)
         {
-            Button button = this.FindControl<Button>("AddPartFlyoutToggleButton");
-            if (button.Flyout.IsOpen)
-            {
-                button.Flyout.Hide();
-            }
-            else
-            {
-                button.Flyout.ShowAt(button);
-            }
+            //Button button = this.FindControl<Button>("AddPartFlyoutToggleButton");
+            //if (button.Flyout.IsOpen)
+            //{
+            //    button.Flyout.Hide();
+            //}
+            //else
+            //{
+            //    button.Flyout.ShowAt(button);
+            //}
         }
 
         //insert clone

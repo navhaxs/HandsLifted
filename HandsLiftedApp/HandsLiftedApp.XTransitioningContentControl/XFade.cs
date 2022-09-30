@@ -72,7 +72,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
                         Cue = new Cue(1d)
                     },
                 },
-                Easing = new XEasingIn()
+                Easing = new XEaseInOutExpo()
                 //, Delay = new TimeSpan(0,0,0,0, 500)
                 //Easing = new CubicEaseIn()
             };
@@ -95,7 +95,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
                 },
                 //Easing = new CubicEaseOut()
-                Easing = new XEasingIn()
+                Easing = new XEaseInOutExpo()
             };
             _fadeOutAnimation.Duration = _fadeInAnimation.Duration = duration;
         }

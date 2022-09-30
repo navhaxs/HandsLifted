@@ -4,21 +4,17 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Avalonia.Threading;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.UI;
-using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using Rect = Avalonia.Rect;
-using RequestBringIntoViewEventArgs = Avalonia.Controls.RequestBringIntoViewEventArgs;
 
 namespace HandsLiftedApp.Controls
 {
@@ -141,12 +137,14 @@ namespace HandsLiftedApp.Controls
         {
             switch (e.Key)
             {
+                case Key.PageDown:
                 case Key.Right:
                 case Key.Space:
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
                     MessageBus.Current.SendMessage(new FocusSelectedItem());
 
                     break;
+                case Key.PageUp:
                 case Key.Left:
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
                     MessageBus.Current.SendMessage(new FocusSelectedItem());
@@ -169,7 +167,7 @@ namespace HandsLiftedApp.Controls
         /// <returns>True if the scroll offset was changed; otherwise false.</returns>
         public bool BringDescendantIntoView(IVisual target, Rect targetRect)
         {
-            ScrollContentPresenter presenter = (ScrollContentPresenter) scrollViewer.Presenter;
+            ScrollContentPresenter presenter = (ScrollContentPresenter)scrollViewer.Presenter;
 
             if (presenter.Child?.IsEffectivelyVisible != true)
             {

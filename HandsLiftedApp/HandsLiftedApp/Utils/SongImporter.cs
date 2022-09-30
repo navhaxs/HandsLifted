@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace HandsLiftedApp.Utils
 {
@@ -36,7 +37,12 @@ namespace HandsLiftedApp.Utils
                 {
                     string doubleNewLine = Environment.NewLine + Environment.NewLine;
                     var copyrightStart = songPart.LastIndexOf(doubleNewLine);
-                    song.Copyright = songPart.Substring(copyrightStart).Trim();
+                    song.Copyright = songPart.Substring(copyrightStart)
+                        .Replace("For use solely with the SongSelect® Terms of Use. All rights reserved. www.ccli.com\r\nNote: Reproduction of this sheet music requires a CCLI Music Reproduction License.  Please report all copies.\r\n", "")
+                        .Trim();
+
+                    var regex = new Regex(@" \(Admin. by(.*)\)\r\n");
+                    song.Copyright = regex.Replace(song.Copyright, "\r\n");
 
                     rest = songPart.Substring(partNameEOL, copyrightStart - partNameEOL).Trim();
                 }

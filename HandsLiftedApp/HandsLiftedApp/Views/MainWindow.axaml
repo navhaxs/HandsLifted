@@ -204,7 +204,7 @@
 											</Style>
 										</StackPanel.Styles>
 										<Button Content="Load" Command="{Binding LoadServiceCommand}" />
-										<Button Content="New" />
+										<Button Content="New" Command="{Binding NewServiceCommand}" />
 										<Button Content="Save" Command="{Binding SaveServiceCommand}" />
 										<Separator />
 										<Label Content="Debug" />

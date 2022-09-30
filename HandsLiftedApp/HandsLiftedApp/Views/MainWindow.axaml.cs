@@ -63,7 +63,22 @@ namespace HandsLiftedApp.Views
             {
                 case Key.F12:
                     ((MainWindowViewModel)this.DataContext).Playlist.State.IsLogo = !((MainWindowViewModel)this.DataContext).Playlist.State.IsLogo;
-            break;
+                    break;
+
+                case Key.PageDown:
+                case Key.Right:
+                case Key.Space:
+                    MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                    MessageBus.Current.SendMessage(new FocusSelectedItem());
+
+                    break;
+                case Key.PageUp:
+                case Key.Left:
+                    MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                    MessageBus.Current.SendMessage(new FocusSelectedItem());
+
+                    break;
+
             }
             e.Handled = true;
         }
@@ -81,7 +96,7 @@ namespace HandsLiftedApp.Views
                 System.Diagnostics.Debug.Print(e.Message);
                 interaction.SetOutput(null);
             }
-        } 
+        }
         private async Task ShowOpenFolderDialog(InteractionContext<Unit, string?> interaction)
         {
             try

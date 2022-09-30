@@ -6,6 +6,9 @@ using System.Xml.Serialization;
 namespace HandsLiftedApp.Data.Models.Items
 {
     // TODO: need to define list of media, rather than Slide ??? for serialization
+    //[XmlType(TypeName = "SlidesGroupItemX")]
+    [XmlRoot("SlidesGroupItem", Namespace = Constants.Namespace, IsNullable = false)]
+
     public class SlidesGroupItem<I, J> : Item<I> where I : IItemState where J : IItemAutoAdvanceTimerState
     {
 
@@ -19,7 +22,7 @@ namespace HandsLiftedApp.Data.Models.Items
         public SlidesGroupItem()
         {
             TimerState = (J)Activator.CreateInstance(typeof(J), this);
-        
+
             _Slides.CollectionChanged += (s, x) =>
             {
                 this.RaisePropertyChanged(nameof(Slides));

@@ -1,7 +1,12 @@
 ﻿using ReactiveUI;
+using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
+
+    // TODO: need to define list of media, rather than Slide ??? for serialization
+    //[XmlType(TypeName = "SlidesGroupItemX")]
+    [XmlRoot("ItemAutoAdvanceTimer", Namespace = Constants.Namespace, IsNullable = false)]
     public class ItemAutoAdvanceTimer : ReactiveObject
     {
 

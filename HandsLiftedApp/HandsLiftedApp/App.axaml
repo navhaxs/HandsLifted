@@ -13,6 +13,7 @@
 		<!--<FluentTheme Mode="Light"/>-->
 		<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />
 		<StyleInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml" />
+		<StyleInclude Source="avares://HandsLiftedApp/Controls/ScrollViewer.axaml" />
 		<StyleInclude Source="avares://HandsLiftedApp/Styles/Styles1.axaml" />
 		<StyleInclude Source="avares://HandsLiftedApp/Icons.axaml" />
 		<StyleInclude Source="avares://Material.Icons.Avalonia/App.xaml"></StyleInclude>

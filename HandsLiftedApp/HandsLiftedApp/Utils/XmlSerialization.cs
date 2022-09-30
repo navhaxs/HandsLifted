@@ -1,4 +1,10 @@
-﻿using System.IO;
+﻿using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models.ItemExtensionState;
+using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Models.SlideState;
+using System;
+using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Utils
@@ -26,9 +32,22 @@ namespace HandsLiftedApp.Utils
             TextWriter writer = null;
             try
             {
-                var serializer = new XmlSerializer(typeof(T));
+                var serializer = new XmlSerializer(typeof(T),
+    new Type[] { typeof(SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>), typeof(SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>) });
+
+
+
+                var settings = new XmlWriterSettings
+                {
+                    NewLineChars = "\r\n",
+                    NewLineHandling = NewLineHandling.Replace
+                };
                 writer = new StreamWriter(filePath, append);
-                serializer.Serialize(writer, objectToWrite);
+                using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
+                {
+                    serializer.Serialize(xmlWriter, objectToWrite);
+
+                }
             }
             finally
             {
@@ -49,7 +68,9 @@ namespace HandsLiftedApp.Utils
             TextReader reader = null;
             try
             {
-                var serializer = new XmlSerializer(typeof(T));
+                var serializer = new XmlSerializer(typeof(T),
+                  new Type[] { typeof(SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>), typeof(SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>) });
+
                 reader = new StreamReader(filePath);
                 return (T)serializer.Deserialize(reader);
             }

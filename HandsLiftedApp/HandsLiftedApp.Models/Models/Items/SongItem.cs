@@ -1,18 +1,15 @@
-﻿using Avalonia.Controls;
-using Avalonia.Media;
-using DynamicData;
-using DynamicData.Binding;
+﻿using Avalonia.Media;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
+    //[XmlType(TypeName = "SongX")]
     [XmlRoot("Song", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
     public class SongItem<T, S, I> : Item<I> where T : ISongTitleSlideState where S : ISongSlideState where I : IItemState
@@ -29,10 +26,17 @@ namespace HandsLiftedApp.Data.Models.Items
                 .ToProperty(this, c => c.TitleSlide)
             ;
 
+
+            this.WhenAnyValue(x => x.TitleSlide).Subscribe((d) =>
+            {
+                UpdateStanzaSlides();
+            });
+
             this.WhenAnyValue(x => x.EndOnBlankSlide, x => x.StartOnTitleSlide).Subscribe((d) =>
             {
-                s();
+                UpdateStanzaSlides();
             });
+
 
             _stanzas.CollectionChanged += _stanzas_CollectionChanged;
             _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
@@ -148,7 +152,8 @@ namespace HandsLiftedApp.Data.Models.Items
             // need to delete old items
             while (i < this.StanzaSlides.Count)
             {
-                this.StanzaSlides.RemoveAt(i);
+                //this.StanzaSlides.RemoveAt(i); -- BUG: wont remove unless index remove from last backwards. think about it!
+                this.StanzaSlides.RemoveAt(this.StanzaSlides.Count - 1); // remove last
                 i++;
             }
         }
@@ -187,12 +192,12 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             UpdateStanzaSlides();
 
-            var a = new ObservableCollection<Ref<SongStanza>>();
-            foreach (var stanza in Stanzas)
-            {
-                a.Add(new SongItem<T, S, I>.Ref<SongStanza>() { Value = stanza });
-            }
-            Arrangement = a;
+            //var a = new ObservableCollection<Ref<SongStanza>>();
+            //foreach (var stanza in Stanzas)
+            //{
+            //    a.Add(new SongItem<T, S, I>.Ref<SongStanza>() { Value = stanza });
+            //}
+            //Arrangement = a;
         }
 
         /*
@@ -231,7 +236,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         [XmlIgnore]
         private ObservableAsPropertyHelper<Slide> _titleSlide;
-        
+
         [XmlIgnore]
         public Slide TitleSlide { get => _titleSlide.Value; }
 
@@ -249,7 +254,7 @@ namespace HandsLiftedApp.Data.Models.Items
         // Stanzas + Arrangement = _stanzaSlides
         [XmlIgnore]
         private TrulyObservableCollection<Slide> _stanzaSlides = new TrulyObservableCollection<Slide>();
-        
+
         [XmlIgnore]
         public TrulyObservableCollection<Slide> StanzaSlides { get => _stanzaSlides; set => this.RaiseAndSetIfChanged(ref _stanzaSlides, value); }
 
@@ -280,7 +285,8 @@ namespace HandsLiftedApp.Data.Models.Items
         private string colour;
         public string Colour
         {
-            get {
+            get
+            {
                 if (colour != null)
                 {
                     return colour;
@@ -301,7 +307,7 @@ namespace HandsLiftedApp.Data.Models.Items
                 {
                     return maybeStepDown(Color.Parse("#F7D7E3")).ToString();
                 }
-                else 
+                else
                 {
                     return "#9a93cd";
                 }

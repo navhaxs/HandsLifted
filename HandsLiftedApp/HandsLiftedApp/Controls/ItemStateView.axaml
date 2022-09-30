@@ -120,7 +120,7 @@
 					</DataTemplate>
 					<DataTemplate x:Key="LogoSlide">
 						<Grid>
-							<Image Stretch="Uniform" Source="/Assets/SWEC-ProPresenter-Logo-Slide.png" RenderOptions.BitmapInterpolationMode="HighQuality" />
+							<Image Stretch="Uniform" Source="/Assets/SWEC-ProPresenter-Logo-Slide.jpg" RenderOptions.BitmapInterpolationMode="HighQuality" />
 						</Grid>
 					</DataTemplate>
 					<DataTemplate x:Key="MyKey">

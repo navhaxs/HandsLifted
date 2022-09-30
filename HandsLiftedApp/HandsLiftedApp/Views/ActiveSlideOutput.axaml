@@ -19,7 +19,7 @@
 		<!--<Image
 			Name="DataTriggerRectangle"
 			IsVisible="False"
-			Source="/Assets/SWEC-ProPresenter-Logo-Slide.png">
+			Source="/Assets/SWEC-ProPresenter-Logo-Slide.jpg">
 			<i:Interaction.Behaviors>
 				<ia:DataTriggerBehavior Binding="{Binding Playlist.State.IsLogo}"
 										ComparisonCondition="Equal"

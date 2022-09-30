@@ -11,6 +11,7 @@ using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
@@ -173,13 +174,14 @@ namespace HandsLiftedApp.ViewModels
             AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
             AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
+            NewServiceCommand = ReactiveCommand.Create(OnNewService);
             LoadServiceCommand = ReactiveCommand.Create(OnLoadService);
             MoveUpItemCommand = ReactiveCommand.Create<object>(OnMoveUpItemCommand);
             MoveDownItemCommand = ReactiveCommand.Create<object>(OnMoveDownItemCommand);
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
             OnAboutWindowCommand = ReactiveCommand.Create(() =>
             {
-                AboutWindow p = new AboutWindow() {};
+                AboutWindow p = new AboutWindow() { };
                 // TODO: solve MVVM to set parent window
                 p.Show();
             });
@@ -299,6 +301,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
+        public ReactiveCommand<Unit, Unit> NewServiceCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadServiceCommand { get; }
         public ReactiveCommand<object, Unit> MoveUpItemCommand { get; }
         public ReactiveCommand<object, Unit> MoveDownItemCommand { get; }
@@ -569,9 +572,29 @@ namespace HandsLiftedApp.ViewModels
         {
             XmlSerialization.WriteToXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH, Playlist);
         }
+
+        void OnNewService()
+        {
+            Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
+            Playlist = TestPlaylistDataGenerator.Generate();
+        }
+
         void OnLoadService()
         {
             Playlist = XmlSerialization.ReadFromXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH);
+
+            // fixup
+            foreach (var i in Playlist.Items)
+            {
+                if (i is SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> s)
+                {
+                    foreach (var a in s.Arrangement)
+                    {
+                        var mapped = s.Stanzas.First(stanza => stanza.Name == a.Value.Name);
+                        a.Value = mapped;
+                    }
+                }
+            }
         }
         void OnMoveUpItemCommand(object? itemState)
         {

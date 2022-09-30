@@ -98,7 +98,30 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 
-			<Button Background="Transparent" BorderThickness="0" Click="OnFillerButtonClick" />
+			<Button Background="Transparent" BorderThickness="0">
+
+				<!-- duplicate of above -->
+				<Button.Flyout>
+					<Flyout Placement="BottomEdgeAlignedLeft"> 
+						<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Button Content="{Binding Name}"
+											Background="{Binding Colour}"
+											Click="OnAddPartClick"
+											ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}" />
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Flyout>
+				</Button.Flyout>
+				
+			</Button>
 
 		</DockPanel>
 
