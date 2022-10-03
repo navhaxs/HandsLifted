@@ -339,27 +339,7 @@
 							</DockPanel>
 							<Button.Flyout>
 								<Flyout Placement="BottomEdgeAlignedLeft">
-									<Grid MinWidth="200">
-										<Grid.ColumnDefinitions>
-											<ColumnDefinition Width="Auto"/>
-											<ColumnDefinition Width="*"/>
-										</Grid.ColumnDefinitions>
-										<Grid.RowDefinitions>
-											<RowDefinition Height="Auto"/>
-											<RowDefinition Height="Auto"/>
-											<RowDefinition Height="Auto"/>
-											<RowDefinition Height="Auto"/>
-										</Grid.RowDefinitions>
-										<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding ProjectorWindow.IsVisible, FallbackValue=False}"
-												IsHitTestVisible="False"
-												Focusable="False"/>
-
-										<Button Grid.Row="0" Grid.Column="1" Command="{Binding OnProjectorClickCommand}">Projector</Button>
-										<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding StageDisplayWindow.IsVisible, FallbackValue=False}"
-												IsHitTestVisible="False"
-												Focusable="False"/>
-										<Button Grid.Row="1" Grid.Column="1" Command="{Binding OnStageDisplayClickCommand}">Stage Display</Button>
-									</Grid>
+									<controls:LiveOutputsFlyoutContent Margin="0" />
 								</Flyout>
 							</Button.Flyout>
 						</Button>

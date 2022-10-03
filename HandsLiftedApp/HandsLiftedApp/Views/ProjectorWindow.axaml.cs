@@ -37,6 +37,10 @@ namespace HandsLiftedApp.Views
             {
                 toggleFullscreen();
             };
+            this.FindControl<MenuItem>("toggleTopmost").Click += (s, e) =>
+            {
+                this.Topmost = !this.Topmost;
+            };
             this.FindControl<MenuItem>("close").Click += (s, e) =>
             {
                 Close();
@@ -68,7 +72,7 @@ namespace HandsLiftedApp.Views
             {
                 var secondaryScreen = this.Screens.All.Where(screen => screen.Primary == false).First();
                 this.Position = new PixelPoint(secondaryScreen.Bounds.X, secondaryScreen.Bounds.Y);
-                this.WindowState = WindowState.FullScreen;
+                toggleFullscreen(true);
 
                 // perhaps a bug, the WindowState.FullScreen needs to be set again for it to stick
                 // bug observable in toggle
@@ -95,9 +99,11 @@ namespace HandsLiftedApp.Views
             toggleFullscreen();
         }
 
-        public void toggleFullscreen()
+        public void toggleFullscreen(bool? fullscreen = null)
         {
-            this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
+            bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
+            this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
+            this.Topmost = isFullScreenNext;
         }
 
         public bool IsContentHighResCheckFunc(NDISendContainer sendContainer)

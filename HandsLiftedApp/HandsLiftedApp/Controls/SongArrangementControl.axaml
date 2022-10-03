@@ -14,6 +14,30 @@
 
 	<UserControl.Resources>
 		<converters:StanzaSortConverter x:Key="stanzaSortConverter"/>
+
+		<Flyout Placement="BottomEdgeAlignedLeft" x:Key="MySharedFlyout">
+			<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Content="{Binding Name}"
+								Background="{Binding Colour}"
+								Click="OnAddPartClick"
+								ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}">
+							<Button.Styles>
+								<Style Selector="ToolTip">
+									<Setter Property="IsHitTestVisible" Value="False" />
+								</Style>
+							</Button.Styles>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Flyout>
 	</UserControl.Resources>
 	
 	<Design.DataContext>
@@ -28,27 +52,8 @@
 					Background="Transparent"
 					/>
 
-			<Button x:Name="AddPartFlyoutToggleButton" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10">
+			<Button x:Name="AddPartFlyoutToggleButton" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10" Flyout="{StaticResource MySharedFlyout}">
 				<material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
-				<Button.Flyout>
-					<Flyout Placement="Bottom">
-						<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Button Content="{Binding Name}"
-											Background="{Binding Colour}"
-											Click="OnAddPartClick"
-											ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}" />
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
-					</Flyout>
-				</Button.Flyout>
 			</Button>
 
 			<ItemsControl Items="{Binding Arrangement}" MinHeight="20" Margin="4" VerticalAlignment="Center" Name="PART_ArrangementTokens">
@@ -98,30 +103,7 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 
-			<Button Background="Transparent" BorderThickness="0">
-
-				<!-- duplicate of above -->
-				<Button.Flyout>
-					<Flyout Placement="BottomEdgeAlignedLeft"> 
-						<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Button Content="{Binding Name}"
-											Background="{Binding Colour}"
-											Click="OnAddPartClick"
-											ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}" />
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
-					</Flyout>
-				</Button.Flyout>
-				
-			</Button>
+			<Button Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
 
 		</DockPanel>
 

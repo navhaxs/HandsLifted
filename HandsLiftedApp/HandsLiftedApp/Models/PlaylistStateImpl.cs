@@ -1,4 +1,6 @@
 ﻿using Avalonia.Controls;
+using DynamicData;
+using DynamicData.Binding;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -7,7 +9,9 @@ using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Models
@@ -38,15 +42,39 @@ namespace HandsLiftedApp.Models
                     }
                 });
 
-            _selectedItem = this.WhenAnyValue(x => x.SelectedItemIndex, (selectedIndex) =>
-                {
+            //_selectedItem = this.WhenAnyValue(x => x.SelectedItemIndex, (selectedIndex) =>
+            //    {
+            //        if (selectedIndex != -1)
+            //            return Playlist.Items[selectedIndex];
+
+            //        return null;
+            //    })
+            //    .ToProperty(this, x => x.SelectedItem);
+
+            //var ingredientsObservables = new[]
+            //{
+            //    this.WhenAnyValue(x => x.SelectedItemIndex),
+            //    this.WhenAnyValue(x => x.Playlist.Items)
+            //};
+
+
+
+            _selectedItem = Observable.CombineLatest(
+            this.WhenAnyValue(x => x.SelectedItemIndex),
+                Playlist.Items.ObserveCollectionChanges(),
+                (selectedIndex, items) => {
                     if (selectedIndex != -1)
-                        return Playlist.Items[selectedIndex];
+                    {
+                        return Playlist.Items.ElementAtOrDefault(selectedIndex);
+                    }
 
                     return null;
-                })
-                .ToProperty(this, x => x.SelectedItem);
+                }
+            ).ToProperty(this, x => x.SelectedItem);
 
+
+            // TODO: null https://www.reactiveui.net/docs/handbook/when-any/#watching-a-nested-property
+            // "If either Foo or Bar are null then the value of Baz won't be emitted."
             _activeSlide = this.WhenAnyValue(x => x.SelectedItem.State.SelectedSlide,
                     (Slide selectedSlide) => selectedSlide)
                     .ToProperty(this, c => c.ActiveSlide);
@@ -66,6 +94,30 @@ namespace HandsLiftedApp.Models
             if (Design.IsDesignMode)
             {
                 SelectedItemIndex = 0;
+            }
+
+            Playlist.Items.CollectionChanged += Items_CollectionChanged;
+
+            this.WhenAnyValue(x => x.SelectedItem).Subscribe((Item<ItemStateImpl>? c) =>
+            {
+                if (c == null)
+                {
+                    Debug.Print("null");
+                    return;
+                }
+
+                
+                Debug.Print(c.ToString());
+            });
+        }
+
+        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action ==System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                //if ()
+                //e.OldItems
+                //SelectedItemIndex = -1;
             }
         }
 
@@ -260,7 +312,7 @@ namespace HandsLiftedApp.Models
                 Playlist.Items[slideReference.ItemIndex].State.SelectedSlideIndex = (int)slideReference.SlideIndex;
             }
 
-            if (lastSelectedItemIndex != slideReference.ItemIndex && lastSelectedItemIndex > -1)
+            if (lastSelectedItemIndex != slideReference.ItemIndex && lastSelectedItemIndex > -1 && Playlist.Items.ElementAtOrDefault(lastSelectedItemIndex) != null)
             {
                 // deselect the slide within the previous item
                 Playlist.Items[lastSelectedItemIndex].State.SelectedSlideIndex = -1;

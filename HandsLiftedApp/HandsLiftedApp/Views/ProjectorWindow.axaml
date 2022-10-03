@@ -11,6 +11,7 @@
 		xmlns:material="using:Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
+        x:Name="window"
 		Icon="/Assets/app.ico"
 		DoubleTapped="ProjectorWindow_DoubleTapped"
         Title="Projector Output">
@@ -31,7 +32,16 @@
 	</Window.Background>
 	<Window.ContextMenu>
 		<ContextMenu>
+			<MenuItem Header="{Binding #window.Title}" IsEnabled="False" />
 			<MenuItem x:Name="toggleFullscreen" Header="Toggle Fullscreen" />
+			<MenuItem x:Name="toggleTopmost" Header="Topmost">
+				<MenuItem.Icon>
+					<CheckBox BorderThickness="0"
+							  IsHitTestVisible="False"
+							  IsChecked="{Binding #window.Topmost}" />
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator />
 			<MenuItem x:Name="close" Header="Close" />
 		</ContextMenu>
 	</Window.ContextMenu>
