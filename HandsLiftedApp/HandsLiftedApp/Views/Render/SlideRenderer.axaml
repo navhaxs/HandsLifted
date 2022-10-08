@@ -20,7 +20,7 @@
 				<views:SimpleSlideTitle Width="1920" Height="1080" />
 			</DataTemplate>
 			<DataTemplate x:Key="SongSlide">
-				<views:SimpleSlideTemplate Width="1920" Height="1080" />
+				<views:PlainSlideTemplate Width="1920" Height="1080" />
 			</DataTemplate>
 			<DataTemplate x:Key="ImageSlide">
 				<Grid>

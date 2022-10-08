@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             x:Class="HandsLiftedApp.Views.BibleReadingSlideTemplate">
+	<Grid Width="1920" Height="1080">
+		<Image Source="/Assets/passagebg.png" />
+		<Border BorderThickness="20" Margin="80">
+			<StackPanel VerticalAlignment="Center">
+					<Viewbox StretchDirection="DownOnly" Margin="40">
+						<Border Background="#e4e6e3" Padding="80 20">
+							<TextBlock Text="{Binding Heading, FallbackValue='Bible Reading'}"
+									   FontFamily="Open Sans"
+									   FontWeight="SemiBold"
+									   HorizontalAlignment="Center"
+									   VerticalAlignment="Center"
+									   RenderOptions.BitmapInterpolationMode="HighQuality"
+									   Foreground="#6bbce8" FontSize="70" TextAlignment="Center"/>
+						</Border>
+					</Viewbox>
+				<Viewbox StretchDirection="DownOnly" Margin="40 40 40 240">
+					<TextBlock Text="{Binding Text, FallbackValue='Luke 14'}"
+							   FontFamily="Open Sans"
+							   FontWeight="Bold"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"
+							   Foreground="White" FontSize="80" TextAlignment="Center"/>
+				</Viewbox>
+			</StackPanel>
+		</Border>
+		<Border Background="#18678a" VerticalAlignment="Bottom">
+			<DockPanel Margin="40 0">
+				<Image Source="/Assets/bible_app_logo.png" Height="120" />
+				<Viewbox StretchDirection="DownOnly" Margin="40" HorizontalAlignment="Left">
+					<TextBlock Text="{Binding Link, FallbackValue='go.swec.org.au/outline'}"
+							   FontFamily="Open Sans"
+							   FontWeight="SemiBold"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"
+							   Foreground="White" FontSize="60" TextAlignment="Center"/>
+				</Viewbox>
+			</DockPanel>
+		</Border>
+	</Grid>
+</UserControl>
