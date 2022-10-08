@@ -87,11 +87,17 @@
 		<Compile Update="Views\Render\AltSlideRenderer.axaml.cs">
 			<DependentUpon>AltSlideRenderer.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\Render\CustomSlide\BibleReadingSlideTemplate.axaml.cs">
+		  <DependentUpon>BibleReadingSlideTemplate.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Render\SongSlide\FancySlideTemplate.axaml.cs">
 		  <DependentUpon>FancySlideTemplate.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Render\SongSlide\FancySlideTitle.axaml.cs">
 		  <DependentUpon>FancySlideTitle.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Render\SongSlide\PlainSlideTemplate.axaml.cs">
+		  <DependentUpon>PlainSlideTemplate.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Render\SongSlide\SimpleSlideTitle.axaml.cs">
 			<DependentUpon>SimpleSlideTitle.axaml</DependentUpon>
