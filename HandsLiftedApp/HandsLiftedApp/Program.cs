@@ -24,7 +24,7 @@ namespace HandsLiftedApp
                 Log.Logger = new LoggerConfiguration()
                        .MinimumLevel.Debug()
                        .WriteTo.Console()
-                       .WriteTo.File("logs/myapp.txt")
+                       .WriteTo.File("logs/visionscreens_app_log.txt")
                        .CreateLogger();
 
 
