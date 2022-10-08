@@ -47,10 +47,15 @@
 	<StackPanel>
 		<DockPanel>
 			<Button Content="Arrangement" DockPanel.Dock="Left" Padding="12 0 6 0"
-													Command="{Binding EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SongArrangementControl}}"
 					BorderThickness="0"
 					Background="Transparent"
-					/>
+					Click="ArrangementButtonClick">
+				<Button.Flyout>
+					<MenuFlyout>
+						
+					</MenuFlyout>
+				</Button.Flyout>
+			</Button>
 
 			<Button x:Name="AddPartFlyoutToggleButton" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10" Flyout="{StaticResource MySharedFlyout}">
 				<material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />

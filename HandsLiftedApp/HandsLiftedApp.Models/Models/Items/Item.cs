@@ -8,7 +8,7 @@ namespace HandsLiftedApp.Data.Models.Items
 {
     [XmlRoot("Item", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
-    public abstract class Item<T> : ReactiveObject where T : IItemState
+    public abstract class Item<T> : ReactiveObject, IDisposable where T : IItemState
     {
         [XmlIgnore]
         public Guid Uuid { get; set; }
@@ -34,6 +34,10 @@ namespace HandsLiftedApp.Data.Models.Items
 
         [XmlIgnore]
         public abstract ObservableCollection<Slide> Slides { get; }
+
+        public void Dispose()
+        {
+        }
     }
 
     public interface IItemState

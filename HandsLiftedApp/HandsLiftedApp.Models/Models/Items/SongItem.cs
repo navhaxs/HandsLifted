@@ -58,6 +58,16 @@ namespace HandsLiftedApp.Data.Models.Items
             this.RaisePropertyChanged("Slides");
         }
 
+        public void ResetArrangement()
+        {
+            var a = new ObservableCollection<SongItem<T, S, I>.Ref<SongStanza>>();
+            foreach (var stanza in Stanzas)
+            {
+                a.Add(new SongItem<T, S, I>.Ref<SongStanza>() { Value = stanza });
+            }
+            Arrangement = a;
+        }
+
         void UpdateStanzaSlides()
         {
             int i = 0;
@@ -133,7 +143,6 @@ namespace HandsLiftedApp.Data.Models.Items
                 }
             }
 
-            // TODO add blank slide
             if (EndOnBlankSlide == true)
             {
                 var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index }).FirstOrDefault(s => (s.data) is (SongSlide<S>) && ((SongSlide<S>)s.data).Id == "BLANK");
@@ -192,12 +201,6 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             UpdateStanzaSlides();
 
-            //var a = new ObservableCollection<Ref<SongStanza>>();
-            //foreach (var stanza in Stanzas)
-            //{
-            //    a.Add(new SongItem<T, S, I>.Ref<SongStanza>() { Value = stanza });
-            //}
-            //Arrangement = a;
         }
 
         /*
@@ -226,6 +229,9 @@ namespace HandsLiftedApp.Data.Models.Items
                 this.RaiseAndSetIfChanged(ref _arrangement, value);
                 _arrangement.CollectionChanged -= Arrangement_CollectionChanged;
                 _arrangement.CollectionChanged += Arrangement_CollectionChanged;
+
+                UpdateStanzaSlides();
+                this.RaisePropertyChanged("Slides");
             }
         }
 

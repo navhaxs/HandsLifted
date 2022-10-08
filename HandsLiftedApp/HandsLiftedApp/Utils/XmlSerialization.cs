@@ -2,6 +2,7 @@
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
+using SkiaSharp;
 using System;
 using System.IO;
 using System.Xml;
@@ -39,14 +40,14 @@ namespace HandsLiftedApp.Utils
 
                 var settings = new XmlWriterSettings
                 {
-                    NewLineChars = "\r\n",
-                    NewLineHandling = NewLineHandling.Replace
+                    NewLineChars = "\n",
+                    NewLineHandling = NewLineHandling.Replace,
+                    Indent = true,
                 };
                 writer = new StreamWriter(filePath, append);
                 using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
                 {
                     serializer.Serialize(xmlWriter, objectToWrite);
-
                 }
             }
             finally
@@ -65,19 +66,33 @@ namespace HandsLiftedApp.Utils
         /// <returns>Returns a new instance of the object read from the XML file.</returns>
         public static T ReadFromXmlFile<T>(string filePath) where T : new()
         {
-            TextReader reader = null;
+            TextReader stream = null;
             try
             {
+
+
+
+
                 var serializer = new XmlSerializer(typeof(T),
                   new Type[] { typeof(SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>), typeof(SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>) });
 
-                reader = new StreamReader(filePath);
-                return (T)serializer.Deserialize(reader);
+                stream = new StreamReader(filePath);
+
+                XmlReaderSettings settings = new XmlReaderSettings()
+                {
+                    //Norm = false // for unix-newlines. may be undesired 
+                };
+                settings.Async = true;
+
+                using (XmlReader xmlReader = XmlReader.Create(stream, settings))
+                {
+                    return (T)serializer.Deserialize(xmlReader);
+                }
             }
             finally
             {
-                if (reader != null)
-                    reader.Close();
+                if (stream != null)
+                    stream.Close();
             }
         }
     }

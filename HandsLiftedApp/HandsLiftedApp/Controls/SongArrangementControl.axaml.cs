@@ -5,6 +5,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive;
 
@@ -29,10 +30,11 @@ namespace HandsLiftedApp.Controls
         {
             AvaloniaXamlLoader.Load(this);
         }
-        //private void X_Click(object? sender, RoutedEventArgs e)
-        //{
-        //    (sender as Button)!.Content = "Ginger";
-        //}
+        private void ArrangementButtonClick(object? sender, RoutedEventArgs e)
+        {
+            //(sender as Button)!.Content = "Ginger";
+            a();
+        }
 
         //public void btn_OnClick(object? sender, RoutedEventArgs args)
         //{
@@ -76,6 +78,12 @@ namespace HandsLiftedApp.Controls
             ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Remove(stanza);
         }
 
+        public void a()
+        {
+            using (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> songItem = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext) {
+                songItem.ResetArrangement();
+            }
+        }
 
     }
 }

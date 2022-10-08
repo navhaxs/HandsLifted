@@ -54,6 +54,9 @@ namespace HandsLiftedApp.Utils
                 song.Stanzas.Add(new SongStanza(Guid.NewGuid(), partName, rest));
 
             }
+
+            song.ResetArrangement();
+
             return song;
         }
     }

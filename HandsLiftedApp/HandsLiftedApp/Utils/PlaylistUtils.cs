@@ -234,6 +234,8 @@ In His freedom I am free
 For the love of Jesus Christ
 Who has resurrected me"));
 
+            song.ResetArrangement();
+
             return song;
         }
 
