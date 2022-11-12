@@ -3,6 +3,7 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
+		<ApplicationIcon>Assets\app.ico</ApplicationIcon>
 	</PropertyGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<PropertyGroup>
@@ -24,6 +25,9 @@
 		<None Remove="builddate.txt" />
 		<None Remove="version.txt" />
 		<None Remove="WebRoot\index.html" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Assets\app.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.18" />
