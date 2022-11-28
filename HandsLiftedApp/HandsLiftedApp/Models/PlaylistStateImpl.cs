@@ -305,12 +305,12 @@ namespace HandsLiftedApp.Models
         {
             var lastSelectedItemIndex = SelectedItemIndex;
 
-            SelectedItemIndex = slideReference.ItemIndex;
-
             if (slideReference.SlideIndex != null)
             {
                 Playlist.Items[slideReference.ItemIndex].State.SelectedSlideIndex = (int)slideReference.SlideIndex;
             }
+
+            SelectedItemIndex = slideReference.ItemIndex;
 
             if (lastSelectedItemIndex != slideReference.ItemIndex && lastSelectedItemIndex > -1 && Playlist.Items.ElementAtOrDefault(lastSelectedItemIndex) != null)
             {

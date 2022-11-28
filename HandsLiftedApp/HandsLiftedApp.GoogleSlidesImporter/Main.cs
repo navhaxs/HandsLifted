@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static Google.Apis.Drive.v3.FilesResource;
 using static HandsLiftedApp.Importer.GoogleSlides.Program;
+using Google.Apis.Auth.OAuth2.Responses;
 
 namespace HandsLiftedApp.Importer.GoogleSlides
 {
@@ -152,6 +153,13 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                 }
                 catch (GoogleApiException e)
                 {
+                    // fails for pptx
+                    Console.WriteLine(e.Message);
+                    throw new ImportFailureException();
+                }
+                catch (TokenResponseException e)
+                {
+                    // fails here if token is expired. solution: retry calling this method
                     Console.WriteLine(e.Message);
                     throw new ImportFailureException();
                 }

@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using DynamicData;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Models.Slides;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Logic;
@@ -171,6 +172,7 @@ namespace HandsLiftedApp.ViewModels
             AddGraphicCommand = ReactiveCommand.CreateFromTask(AddGraphicCommandAsync);
             AddLogoCommand = ReactiveCommand.CreateFromTask(AddLogoCommandAsync);
             AddTestEmptyGroupCommand = ReactiveCommand.CreateFromTask(OpenTestEmptyGroupAsync);
+            AddCustomSlideCommand = ReactiveCommand.CreateFromTask(AddCustomSlideCommandAsync);
             AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
             AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
@@ -298,6 +300,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> AddGraphicCommand { get; }
         public ReactiveCommand<Unit, Unit> AddLogoCommand { get; }
         public ReactiveCommand<Unit, Unit> AddTestEmptyGroupCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddCustomSlideCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
@@ -496,12 +499,24 @@ namespace HandsLiftedApp.ViewModels
                 MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
             });
         }
-
         private async Task OpenTestEmptyGroupAsync()
         {
             try
             {
                 SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = "(Blank)" };
+                Playlist.Items.Add(slidesGroup);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+            }
+        }
+        private async Task AddCustomSlideCommandAsync()
+        {
+            try
+            {
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = "(Blank)" };
+                slidesGroup.Slides.Add(new CustomSlide());
                 Playlist.Items.Add(slidesGroup);
             }
             catch (Exception e)

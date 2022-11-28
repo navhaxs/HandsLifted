@@ -20,17 +20,17 @@
 	</Window.Styles>
 
 	<Grid>
-		<Rectangle Classes="red">
+		<!--<Rectangle Classes="red">
 			<Rectangle.Transitions>
 				<Transitions>
 					<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
 					<BrushTransition Property="Fill" Duration="0:0:1.0"/>
 				</Transitions>
 			</Rectangle.Transitions>
-		</Rectangle>
+		</Rectangle>-->
 
 		<Viewbox>
-			<CheckBox IsChecked="True" />
+			<CheckBox IsChecked="{Binding IsChecked}" />
 		</Viewbox>
 
 		<StackPanel Margin="30">
@@ -48,7 +48,7 @@
 			<ProgressBar local:ProgressBarWorkaround.Value="{Binding #Hello.Text}" />
 		</StackPanel>
 
-		<TextBox Height="20" Width="200" Background="Red" Name="Hello" Text="100" />
+		<!--<TextBox Height="20" Width="200" Background="Red" Name="Hello" Text="100" />-->
 
 		<WrapPanel Orientation="Vertical" Height="80">
 			<Button />
@@ -61,6 +61,10 @@
 			<Button />
 			<Button />
 		</WrapPanel>
+
+		<!--<TextBlock Text="{Binding People, FallbackValue='2'}" FontSize="20" Foreground="Red" />-->
+		<DataGrid Name="DataGrid" Items="{Binding People}"  AutoGenerateColumns="True" />
+
 	</Grid>
 
 </Window>

@@ -1,4 +1,5 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides

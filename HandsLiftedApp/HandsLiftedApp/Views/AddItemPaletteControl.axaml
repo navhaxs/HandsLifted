@@ -88,6 +88,9 @@
 				<Button Command="{Binding AddTestEmptyGroupCommand}">
 					Test Blank Group
 				</Button>	
+				<Button Command="{Binding AddCustomSlideCommand}">
+					Test Custom Group
+				</Button>	
 			</UniformGrid>
 		</Grid>
 	</DockPanel>

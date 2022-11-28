@@ -23,6 +23,9 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
+	<Grid>
+		
+	
 	<DockPanel>
 		<Menu IsVisible="False" DockPanel.Dock="Top" FontSize="11" FontFamily="Segoe UI" Height="20" Background="#bbbbbf">
 			<MenuItem Header="_File">
@@ -420,4 +423,8 @@
 		</Grid>
 	</DockPanel>
 
+	<!--<Rectangle IsHitTestVisible="False" Fill="#30000000" />-->
+
+	</Grid>
+	
 </Window>

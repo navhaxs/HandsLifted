@@ -17,8 +17,16 @@
 	<ItemGroup>
 		<None Remove="Assets\app_logo - Copy.png" />
 		<None Remove="Assets\avalonia.png" />
+		<None Remove="Assets\homeBASE\image1.png" />
+		<None Remove="Assets\homeBASE\image2.png" />
+		<None Remove="Assets\homeBASE\image3.png" />
+		<None Remove="Assets\homeBASE\image4.png" />
+		<None Remove="Assets\homeBASE\image5.png" />
+		<None Remove="Assets\homeBASE\Snipaste_2022-11-26_20-12-02 - Copy.jpg" />
+		<None Remove="Assets\homeBASE\Snipaste_2022-11-26_20-12-02.jpg" />
 		<None Remove="Assets\King Of Kings.txt" />
 		<None Remove="Assets\rainbow.png" />
+		<None Remove="Assets\songtitle.jpg" />
 		<None Remove="Assets\splash.png" />
 		<None Remove="Assets\Test.png" />
 		<None Remove="Assets\test2.png" />
@@ -31,6 +39,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.18" />
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.18" />
 		<PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.18" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.18" />
@@ -118,5 +127,8 @@
 		<Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
 		  <DependentUpon>DefaultLayout.axaml</DependentUpon>
 		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Views\Render\NewFolder\" />
 	</ItemGroup>
 </Project>

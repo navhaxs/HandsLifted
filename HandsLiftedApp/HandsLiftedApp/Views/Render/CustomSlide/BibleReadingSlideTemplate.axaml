@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
-             x:Class="HandsLiftedApp.Views.BibleReadingSlideTemplate">
+             x:Class="HandsLiftedApp.Views.Render.CustomSlide.BibleReadingSlideTemplate">
 	<Grid Width="1920" Height="1080">
 		<Image Source="/Assets/passagebg.png" />
 		<Border BorderThickness="20" Margin="80">

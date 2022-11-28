@@ -27,6 +27,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         private bool _enableSlideEvents = true;
         private object? _currentContent;
         Image _previousImageSite;
+        Image _currentImageSite;
         ContentPresenter _contentPresenter;
         Grid _contentPresenterContainer;
 
@@ -117,8 +118,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
         {
             base.OnApplyTemplate(e);
             _previousImageSite = e.NameScope.Find<Image>("PART_PreviousImageSite");
+            _currentImageSite = e.NameScope.Find<Image>("PART_CurrentImageSite");
             _contentPresenter = e.NameScope.Find<ContentPresenter>("PART_ContentPresenter");
             _contentPresenterContainer = e.NameScope.Find<Grid>("PART_ContentPresenterContainer");
+
+            // todo: if this fails, did you forget to add Styles?
         }
 
 
@@ -140,8 +144,9 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 //if (EnableSlideEvents)
                 //{
                 // call enter slide (e.g. ensure image will load here)
-                Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
+                //Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
                 //}
+                await Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
 
                 // if slide has page transition override
                 if (((ISlideRender)content).PageTransition != null)
@@ -156,46 +161,68 @@ namespace HandsLiftedApp.XTransitioningContentControl
             //    return;
             //}
 
-            var clock = AvaloniaLocator.Current.GetService<IGlobalClock>();
-            clock.PlayState = PlayState.Pause;
+            //var clock = AvaloniaLocator.Current.GetService<IGlobalClock>();
+            //clock.PlayState = PlayState.Pause;
 
             _lastTransitionCts?.Cancel();
             _lastTransitionCts = new CancellationTokenSource();
 
             if (_previousImageSite != null)
             {
-                //_contentPresenterContainer.IsVisible = true;
-                //_contentPresenterContainer.Opacity = 1;
-
                 _previousImageSite.Source = renderControlAsBitmap(_contentPresenter);
                 _previousImageSite.IsVisible = true;
                 _previousImageSite.Opacity = 1;
             }
 
-            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
 
             if (CurrentContent is ISlideRender && EnableSlideEvents)
             {
                 ((ISlideRender)CurrentContent).OnLeaveSlide();
             }
 
-            _contentPresenterContainer.IsVisible = false;
 
+            //_contentPresenterContainer.IsVisible = true;
             CurrentContent = content;
+            _contentPresenterContainer.ZIndex = (CurrentContent is IDynamicSlideRender) ? 999 : 0;
+            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+            //_contentPresenterContainer.IsVisible = false;
+
+            //if (content is IStaticSlideRender)
+            //{
+            _currentImageSite.IsVisible = true;
+            _currentImageSite.Opacity = 0;
+            _currentImageSite.Source = renderControlAsBitmap(_contentPresenter);
+            //}
+            //else
+            //{
+            //    _currentImageSite.IsVisible = false;
+            //}
 
             // maybe what this could instead is take screenshot of existing (bitmap no alpha), then take screenshot of new (bitmap no alpha), then fade between the bitmaps. this way, there should be no alpha multiplier issues during the fade effect.
 
-            clock.PlayState = PlayState.Run;
+            //clock.PlayState = PlayState.Run;
 
             if (transition != null)
             {
-                await transition.Start(_previousImageSite, _contentPresenterContainer, true, _lastTransitionCts.Token);
+                if (CurrentContent is IDynamicSlideRender)
+                {
+                    await transition.Start(_previousImageSite, null, true, _lastTransitionCts.Token);
+                }
+                else
+                {
+                    await transition.Start(_previousImageSite, _currentImageSite, true, _lastTransitionCts.Token);
+
+                }
             }
             else
             {
-                _contentPresenterContainer.IsVisible = true;
+                //_contentPresenterContainer.IsVisible = true;
                 _previousImageSite.Opacity = 0;
             }
+
+            //_contentPresenterContainer.IsVisible = false;
+            _currentImageSite.IsVisible = true;
+            _currentImageSite.Opacity = 1;
 
             //if (_previousImageSite != null)
             //{
@@ -218,8 +245,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
             //        System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenterContainer.Opacity}={_previousImageSite.Opacity + _contentPresenterContainer.Opacity}");
             //    }
             //});
-
-
         }
 
         private Bitmap renderControlAsBitmap(IVisual visual)

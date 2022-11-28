@@ -5,6 +5,7 @@
 			 xmlns:ext="using:HandsLiftedApp.Extensions"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
 			 xmlns:views="using:HandsLiftedApp.Views"
+			 xmlns:customSlide="using:HandsLiftedApp.Views.Render.CustomSlide"
 			 xmlns:viewsrender="clr-namespace:HandsLiftedApp.Views.Render"
 			 xmlns:hla="using:HandsLiftedApp.XTransitioningContentControl"
 			 xmlns:controls="using:HandsLiftedApp.Controls"
@@ -17,10 +18,10 @@
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
 			<DataTemplate x:Key="SongTitleSlide">
-				<views:SimpleSlideTitle Width="1920" Height="1080" />
+				<views:FancySlideTitle />
 			</DataTemplate>
 			<DataTemplate x:Key="SongSlide">
-				<views:PlainSlideTemplate Width="1920" Height="1080" />
+				<views:FancySlideTemplate/>
 			</DataTemplate>
 			<DataTemplate x:Key="ImageSlide">
 				<Grid>
@@ -28,14 +29,17 @@
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="LogoSlide">
-				<Grid>
-					<Image Stretch="Uniform" Source="/Assets/SWEC-ProPresenter-Logo-Slide.jpg" RenderOptions.BitmapInterpolationMode="HighQuality" />
+				<Grid Background="#b7d1d8">
+					<Image Stretch="Uniform" Source="/Assets/homeBASE/image5.png" RenderOptions.BitmapInterpolationMode="HighQuality" />
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="VideoSlide">
 				<Grid>
 					<viewsrender:VideoSlideRenderer />
 				</Grid>
+			</DataTemplate>
+			<DataTemplate x:Key="CustomSlide">
+				<customSlide:BibleReadingSlideTemplate />
 			</DataTemplate>
 			<DataTemplate x:Key="MyKey">
 				<TextBlock Background="Red" Text="{Binding Text}"/>

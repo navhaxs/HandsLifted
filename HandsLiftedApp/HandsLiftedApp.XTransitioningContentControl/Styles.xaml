@@ -6,9 +6,10 @@
 		<Setter Property="Template">
 			<ControlTemplate>
 				<Grid
-						Name="PART_Container"
-						HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-						VerticalAlignment="{TemplateBinding VerticalAlignment}">
+					Name="PART_Container"
+					HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+					VerticalAlignment="{TemplateBinding VerticalAlignment}">
+					
 					<!--<Grid.Background>
 						<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
 							<LinearGradientBrush.GradientStops>
@@ -16,24 +17,9 @@
 								<GradientStop Offset="1" Color="Black"/>
 							</LinearGradientBrush.GradientStops>
 						</LinearGradientBrush>
-
 					</Grid.Background>-->
-					<Image
-						Name="PART_PreviousImageSite"
-					Opacity="{Binding #BackgroundSlider.Value, Mode=TwoWay}"
-
-						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-						VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-						<!--<Image.RenderTransform>
-							<TransformGroup>
-								<TransformGroup.Children>
-									<ScaleTransform ScaleX="1" ScaleY="1" />
-									<TranslateTransform X="0" Y="0" />
-								</TransformGroup.Children>
-							</TransformGroup>
-						</Image.RenderTransform>-->
-					</Image>
-					<Grid Name="PART_ContentPresenterContainer" Opacity="{Binding #ForegroundSlider.Value, Mode=TwoWay}">
+					
+					<Grid Name="PART_ContentPresenterContainer">
 						<ContentPresenter Name="PART_ContentPresenter"
 						  Background="{TemplateBinding Background}"
 						  BorderBrush="{TemplateBinding BorderBrush}"
@@ -45,10 +31,25 @@
 						  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
 						  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
 					</Grid>
+					
+					<Grid Background="Black" />
+					
+					<Image
+						Name="PART_PreviousImageSite"
+						Opacity="{Binding #BackgroundSlider.Value, Mode=TwoWay}"
+						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+					
+					<Image
+						Name="PART_CurrentImageSite"
+						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
 					<!--<StackPanel>
 						<Slider Minimum="0" Maximum="1" Name="ForegroundSlider" />
 						<Slider Minimum="0" Maximum="1" Name="BackgroundSlider" Value="0" />
 					</StackPanel>-->
+					
 				</Grid>
 			</ControlTemplate>
 		</Setter>

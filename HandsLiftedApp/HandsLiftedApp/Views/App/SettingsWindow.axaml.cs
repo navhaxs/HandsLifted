@@ -1,13 +1,17 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace HandsLiftedApp.Views.Render.CustomSlide
+namespace HandsLiftedApp.Views.App
 {
-    public partial class BibleReadingSlideTemplate : UserControl
+    public partial class SettingsWindow : Window
     {
-        public BibleReadingSlideTemplate()
+        public SettingsWindow()
         {
             InitializeComponent();
+#if DEBUG
+            this.AttachDevTools();
+#endif
         }
 
         private void InitializeComponent()

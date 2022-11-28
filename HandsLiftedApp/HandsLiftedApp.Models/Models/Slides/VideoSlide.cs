@@ -1,8 +1,9 @@
-﻿using ReactiveUI;
+﻿using HandsLiftedApp.XTransitioningContentControl;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class VideoSlide<T> : Slide where T : IVideoSlideState
+    public class VideoSlide<T> : Slide, IDynamicSlideRender where T : IVideoSlideState
     {
         T _state;
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }

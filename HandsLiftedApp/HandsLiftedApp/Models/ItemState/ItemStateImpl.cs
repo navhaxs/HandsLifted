@@ -1,16 +1,20 @@
 ﻿using Avalonia.Animation;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.ViewModels.Editor;
+using HandsLiftedApp.Views;
 using HandsLiftedApp.Views.Editor;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace HandsLiftedApp.Models.ItemState
 {
@@ -118,13 +122,22 @@ namespace HandsLiftedApp.Models.ItemState
 
         void RunTheThing()
         {
-            if (parent is not SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)
-                return;
+            if (parent is SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)
+            {
+                SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)parent };
+                //vm.SongDataUpdated += Vm_SongDataUpdated;
+                SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
+                seq.Show();
+            }
 
-            SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)parent };
-            //vm.SongDataUpdated += Vm_SongDataUpdated;
-            SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
-            seq.Show();
+            if (parent is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)
+            {
+                //SongEditorViewModel vm = new SongEditorViewModel() { song = (SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent };
+                //vm.SongDataUpdated += Vm_SongDataUpdated;
+              
+                GroupItemsEditorWindow seq = new GroupItemsEditorWindow() { DataContext = ((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent).Slides };
+                seq.Show();
+            }
         }
 
     }

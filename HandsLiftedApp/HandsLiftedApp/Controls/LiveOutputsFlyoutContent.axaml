@@ -17,7 +17,7 @@
 				<Setter Property="Margin" Value="0 0 6 0" />
 			</Style>
 		</StackPanel.Styles>
-		<Button Grid.Row="0" Grid.Column="1" Command="{Binding OnProjectorClickCommand}" Background="Green">
+		<Button Grid.Row="0" Grid.Column="1" Command="{Binding OnProjectorClickCommand}">
 			<DockPanel>
 				<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding ProjectorWindow.IsVisible, FallbackValue=False}"
 			IsHitTestVisible="False"
