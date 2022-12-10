@@ -54,33 +54,39 @@ namespace HandsLiftedApp.Views
         {
             e.Cancel = true;
 
+            this.FindControl<Control>("shade").IsVisible = true;
+
             ExitConfirmationWindow w = new ExitConfirmationWindow();
+            w.callback = () =>
+            {
+                this.FindControl<Control>("shade").IsVisible = false;
+            };
+
             w.ShowDialog(this);
         }
+
         private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.F12:
                     ((MainWindowViewModel)this.DataContext).Playlist.State.IsLogo = !((MainWindowViewModel)this.DataContext).Playlist.State.IsLogo;
+                    e.Handled = true;
                     break;
-
                 case Key.PageDown:
                 case Key.Right:
                 case Key.Space:
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
                     MessageBus.Current.SendMessage(new FocusSelectedItem());
-
+                    e.Handled = true;
                     break;
                 case Key.PageUp:
                 case Key.Left:
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
                     MessageBus.Current.SendMessage(new FocusSelectedItem());
-
+                    e.Handled = true;
                     break;
-
             }
-            e.Handled = true;
         }
 
         private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)
