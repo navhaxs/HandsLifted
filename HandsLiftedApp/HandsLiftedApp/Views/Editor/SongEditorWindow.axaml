@@ -22,7 +22,7 @@
 			<MenuItem Name="btnFileSave" Header="Save XML" />
 			<MenuItem Command="{Binding SongDataUpdateCommand}" Header="SYNC" />
 		</Menu>
-		<Grid ColumnDefinitions="*, 1, 0.5*">
+		<Grid ColumnDefinitions="*, 1, 2*">
 			<Grid>
 				<DockPanel>
 					<DockPanel.Styles>
@@ -39,13 +39,13 @@
 
 						<TextBox Text="{Binding song.Title}" Watermark="Song Title" FontWeight="Bold" FontSize="30" Padding="0 6 0 5" TextWrapping="Wrap" Margin="12 12 12 12" />
 					</DockPanel>
-					<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-						<ItemsControl Items="{Binding song.Stanzas}" Margin="0 0 15 0">
-							<ItemsControl.ItemsPanel>
+					<ScrollViewer HorizontalScrollBarVisibility="Auto">
+						<ItemsControl Items="{Binding song.Stanzas}" Margin="0 0 5 0">
+							<!--<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<WrapPanel Orientation="Vertical" ItemWidth="360" />
 								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
+							</ItemsControl.ItemsPanel>-->
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
 									<Border BorderBrush="#ddd" BorderThickness="1" CornerRadius="4" Margin="12 0 0 12">

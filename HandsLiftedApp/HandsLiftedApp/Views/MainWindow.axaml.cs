@@ -4,6 +4,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Media.Fonts;
+using Avalonia.Platform;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
@@ -42,6 +45,53 @@ namespace HandsLiftedApp.Views
             //OrderableListBox.PointerReleased += X_PointerReleased;
 
             this.TemplateApplied += MainWindow_TemplateApplied;
+
+            // test font loading
+
+            //var fontManagerImpl = AvaloniaLocator.Current.GetService<IFontManagerImpl>();
+
+            //if (fontManagerImpl == null)
+            //    throw new InvalidOperationException("No font manager implementation was registered.");
+
+            //var m = new FontManager(fontManagerImpl);
+
+            //var source = new Uri("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf");
+            //var key = new FontFamilyKey(source);
+            //var fontFamily = FontFamily.Parse(source.OriginalString);
+
+            //Debug.Print(fontFamily.Name);
+            //Debug.Print(fontFamily.Name);
+            //Debug.Print(fontFamily.Name);
+            //Debug.Print(fontFamily.Name);
+            //Debug.Print(fontFamily.Name);
+            //Debug.Print(fontFamily.Name);
+            //var typeface = new Typeface(fontFamily);
+            //m.GetOrAddGlyphTypeface(typeface);
+
+            //fontManagerImpl.CreateGlyphTypeface(typeface);
+
+            //Debug.Print(fontFamily.Name);
+            //Debug.Print(fontFamily.Name);
+
+
+            //var u = new Uri("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf");
+
+
+
+            var assetLoader = AvaloniaLocator.Current.GetService<IAssetLoader>();
+
+            var fontFamily = new FontFamily("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf#League Gothic");
+
+            var fontAssets = FontFamilyLoader.LoadFontAssets(fontFamily.Key).ToArray();
+
+            foreach (var fontAsset in fontAssets)
+            {
+                var stream = assetLoader.Open(fontAsset);
+            }
+
+
+
+
         }
 
         private void MainWindow_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)

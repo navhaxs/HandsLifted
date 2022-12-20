@@ -15,6 +15,12 @@
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <AvaloniaXaml Remove="Views\Render\NewFolder\**" />
+	  <Compile Remove="Views\Render\NewFolder\**" />
+	  <EmbeddedResource Remove="Views\Render\NewFolder\**" />
+	  <None Remove="Views\Render\NewFolder\**" />
+	</ItemGroup>
+	<ItemGroup>
 		<None Remove="Assets\app_logo - Copy.png" />
 		<None Remove="Assets\avalonia.png" />
 		<None Remove="Assets\homeBASE\image1.png" />
@@ -52,6 +58,7 @@
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.17.4" />
+		<PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
@@ -127,8 +134,5 @@
 		<Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
 		  <DependentUpon>DefaultLayout.axaml</DependentUpon>
 		</Compile>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Views\Render\NewFolder\" />
 	</ItemGroup>
 </Project>

@@ -10,11 +10,8 @@ using HandsLiftedApp.Views.Editor;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace HandsLiftedApp.Models.ItemState
 {
@@ -44,12 +41,13 @@ namespace HandsLiftedApp.Models.ItemState
                 .ToProperty(this, x => x.IsSelected);
 
 
-            PageTransition = new XFade(TimeSpan.FromSeconds(0.300));
+            PageTransition = new XFade(TimeSpan.FromSeconds(0.500));
 
             Observable.CombineLatest(
                 this.WhenAnyValue(o => o.SelectedSlideIndex),
                 this.WhenAnyValue(o => o.parent.Slides),
-                (a, b) => {
+                (a, b) =>
+                {
 
                     return Unit.Default;
                 }
@@ -59,7 +57,7 @@ namespace HandsLiftedApp.Models.ItemState
 
             //this.WhenAnyValue(x => x.parent.Slides)
             //    .Subscribe(x => { 
-                
+
             //        foreach (var c in x)
             //        {
             //            c.Sele
@@ -134,7 +132,7 @@ namespace HandsLiftedApp.Models.ItemState
             {
                 //SongEditorViewModel vm = new SongEditorViewModel() { song = (SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent };
                 //vm.SongDataUpdated += Vm_SongDataUpdated;
-              
+
                 GroupItemsEditorWindow seq = new GroupItemsEditorWindow() { DataContext = ((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent).Slides };
                 seq.Show();
             }

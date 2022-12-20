@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using HandsLiftedApp.Controls;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
 using LibVLCSharp.Avalonia;
@@ -16,7 +15,7 @@ namespace HandsLiftedApp.Views.Render
     public partial class VideoSlideRenderer : UserControl
     {
 
-        private VideoView VideoView;
+        //private VideoView VideoView;
         private MediaPlayer? MediaPlayer;
 
         public VideoSlideRenderer()
@@ -30,7 +29,7 @@ namespace HandsLiftedApp.Views.Render
             if (Design.IsDesignMode)
                 return;
 
-            VideoView = this.Get<VideoView>("VideoView");
+            //VideoView = this.Get<VideoView>("VideoView");
             //VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia;
 
             //_libVLC = new LibVLC();

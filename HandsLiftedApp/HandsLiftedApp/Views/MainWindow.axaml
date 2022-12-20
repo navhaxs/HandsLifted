@@ -125,7 +125,7 @@
 			<Grid ColumnDefinitions="*, 1, 0.24*">
 
 				<DockPanel Grid.Column="0">
-
+				
 					<Border Background="#eeeef2" DockPanel.Dock="Top">
 
 
@@ -135,36 +135,33 @@
 								<TextBlock Text="Library" />
 							</DockPanel>
 						</Button>-->
-						<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom"
+					
+						<ToggleButton Name="AppMenuButton" IsChecked="{Binding #flyout.IsOpen, Mode=TwoWay}" ClickMode="Press"  Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom"
 								HorizontalContentAlignment="Left"
-								
 								Background="Transparent"
 								BorderThickness="0"
 								Margin="0"
-								Padding="14 20"
-								>
-							<Button.Flyout>
-								<Flyout Placement="BottomEdgeAlignedLeft">
-									<StackPanel MinWidth="200">
-										<StackPanel.Styles>
-											<Style Selector="Button">
-												<Setter Property="HorizontalAlignment" Value="Stretch" />
-												<Setter Property="HorizontalContentAlignment" Value="Left" />
-											</Style>
-										</StackPanel.Styles>
-										<Button Content="Load" Command="{Binding LoadServiceCommand}" />
-										<Button Content="New" Command="{Binding NewServiceCommand}" />
-										<Button Content="Save" Command="{Binding SaveServiceCommand}" />
-										<Separator />
-										<Label Content="Debug" />
-										<Button Content="About" Command="{Binding OnAboutWindowCommand}" />
-										<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
-									</StackPanel>
-								</Flyout>
-							</Button.Flyout>
-							<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-								<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu"
-													   Margin="0 0 8 0"/>
+								Padding="14 20">
+							<ToggleButton.Styles>
+								<Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="#9a93cd" />
+								</Style>
+								<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+									<Setter Property="Background" Value="#9a93cd" />
+								</Style>
+								<Style Selector="ToggleButton:checked TextBlock">
+									<Setter Property="Foreground" Value="White" />
+								</Style>
+								<Style Selector="ToggleButton:checked material|MaterialIcon">
+									<Setter Property="Foreground" Value="White" />
+									<Setter Property="Background" Value="#5E3593" />
+								</Style>
+							</ToggleButton.Styles>
+							<StackPanel VerticalAlignment="Stretch" Orientation="Horizontal">
+								<Border VerticalAlignment="Stretch">
+									<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu"
+														   Margin="2 0 12 0"/>
+								</Border>
 								<TextBlock FontSize="20" Margin="0 0 10 0">Sunday 11am</TextBlock>
 								<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
 							</StackPanel>
@@ -172,11 +169,22 @@
 								<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />
 								<TextBlock Text="Debug" />
 							</DockPanel>-->
-						</Button>
+						</ToggleButton>
 
 
 					</Border>
 
+					<Popup Name="flyout" StaysOpen="False" 
+						   PlacementMode="Bottom"
+						   PlacementTarget="{Binding #AppMenuButton}">
+						<views:AppMainMenuControl />
+					</Popup>
+
+
+					<!--<Button.Flyout>
+						<Flyout Placement="BottomEdgeAlignedLeft">
+						</Flyout>
+					</Button.Flyout>-->
 
 					<Grid>
 

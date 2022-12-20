@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+			 Background="#edeafc"
+			 MinWidth="200"             x:Class="HandsLiftedApp.Views.AppMainMenuControl">
+	<UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Padding" Value="12 8" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="HorizontalContentAlignment" Value="Left" />
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="Background" Value="#ffffff" />
+		</Style>
+		
+		<Style Selector="Button:pointerover">
+			<Setter Property="Background" Value="#F9F7F7" />
+		</Style>
+
+		<Style Selector="Button:nth-child(1)">
+			<Setter Property="CornerRadius" Value="6 6 0 0" />
+		</Style>
+		<Style Selector="Button:nth-last-child(1)">
+			<Setter Property="CornerRadius" Value="0 0 6 6" />
+		</Style>
+		<Style Selector="Button:nth-child(1):nth-last-child(1)">
+			<Setter Property="CornerRadius" Value="6 6 6 6" />
+		</Style>
+	</UserControl.Styles>
+
+	<Border BorderBrush="#9a93cd" BorderThickness="1">
+
+		<Grid >
+			<StackPanel Grid.Column="0">
+
+				<StackPanel Margin="4">
+					<Button Content="New" Command="{Binding NewServiceCommand}" />
+					<Button Content="Open" Command="{Binding LoadServiceCommand}" />
+					<Button Content="Save" Command="{Binding SaveServiceCommand}" />
+				</StackPanel>
+				<StackPanel Margin="4">
+					<Button Content="Sync" Command="{Binding SyncServiceCommand}" />
+				</StackPanel>
+				<StackPanel VerticalAlignment="Bottom" Margin="4">
+					<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
+					<Button Content="Options" Command="{Binding OnDebugClickCommand}"/>
+					<Button Content="About" Command="{Binding OnAboutWindowCommand}" />
+					<Button Content="Exit" Command="{Binding OnDebugClickCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+		</Grid>
+
+	</Border>
+</UserControl>

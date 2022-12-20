@@ -19,7 +19,7 @@ namespace HandsLiftedApp.Views
     public partial class ProjectorWindow : Window
     {
         DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
-        Grid OverlayControls;
+        //Grid OverlayControls;
 
         public ProjectorWindow() : this(null)
         {
@@ -32,10 +32,10 @@ namespace HandsLiftedApp.Views
             this.AttachDevTools();
 #endif
 
-            OverlayControls = this.FindControl<Grid>("OverlayControls");
+            //OverlayControls = this.FindControl<Grid>("OverlayControls");
             this.FindControl<MenuItem>("toggleFullscreen").Click += (s, e) =>
             {
-                toggleFullscreen();
+                onToggleFullscreen();
             };
             this.FindControl<MenuItem>("toggleTopmost").Click += (s, e) =>
             {
@@ -72,7 +72,7 @@ namespace HandsLiftedApp.Views
             {
                 var secondaryScreen = this.Screens.All.Where(screen => screen.Primary == false).First();
                 this.Position = new PixelPoint(secondaryScreen.Bounds.X, secondaryScreen.Bounds.Y);
-                toggleFullscreen(true);
+                onToggleFullscreen(true);
 
                 // perhaps a bug, the WindowState.FullScreen needs to be set again for it to stick
                 // bug observable in toggle
@@ -96,10 +96,10 @@ namespace HandsLiftedApp.Views
             if (IControlExtension.FindAncestor<Button>((IControl)e.Source) != null)
                 return;
 
-            toggleFullscreen();
+            onToggleFullscreen();
         }
 
-        public void toggleFullscreen(bool? fullscreen = null)
+        public void onToggleFullscreen(bool? fullscreen = null)
         {
             bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
             this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
