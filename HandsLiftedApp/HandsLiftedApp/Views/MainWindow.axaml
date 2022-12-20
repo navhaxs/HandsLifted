@@ -126,11 +126,55 @@
 
 				<DockPanel Grid.Column="0">
 
-					<Border Padding="14 20" Background="#eeeef2" DockPanel.Dock="Top">
-						<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-							<TextBlock FontSize="20" Margin="0 0 10 0">Sunday 11am</TextBlock>
-							<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
-						</StackPanel>
+					<Border Background="#eeeef2" DockPanel.Dock="Top">
+
+
+						<!--<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+							<DockPanel>
+								<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu" />
+								<TextBlock Text="Library" />
+							</DockPanel>
+						</Button>-->
+						<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom"
+								HorizontalContentAlignment="Left"
+								
+								Background="Transparent"
+								BorderThickness="0"
+								Margin="0"
+								Padding="14 20"
+								>
+							<Button.Flyout>
+								<Flyout Placement="BottomEdgeAlignedLeft">
+									<StackPanel MinWidth="200">
+										<StackPanel.Styles>
+											<Style Selector="Button">
+												<Setter Property="HorizontalAlignment" Value="Stretch" />
+												<Setter Property="HorizontalContentAlignment" Value="Left" />
+											</Style>
+										</StackPanel.Styles>
+										<Button Content="Load" Command="{Binding LoadServiceCommand}" />
+										<Button Content="New" Command="{Binding NewServiceCommand}" />
+										<Button Content="Save" Command="{Binding SaveServiceCommand}" />
+										<Separator />
+										<Label Content="Debug" />
+										<Button Content="About" Command="{Binding OnAboutWindowCommand}" />
+										<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
+									</StackPanel>
+								</Flyout>
+							</Button.Flyout>
+							<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+								<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu"
+													   Margin="0 0 8 0"/>
+								<TextBlock FontSize="20" Margin="0 0 10 0">Sunday 11am</TextBlock>
+								<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
+							</StackPanel>
+							<!--<DockPanel>
+								<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />
+								<TextBlock Text="Debug" />
+							</DockPanel>-->
+						</Button>
+
+
 					</Border>
 
 
@@ -175,12 +219,7 @@
 									<Setter Property="RenderTransform" Value="none" />
 								</Style>
 							</DockPanel.Styles>
-							<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-								<DockPanel>
-									<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu" />
-									<TextBlock Text="Library" />
-								</DockPanel>
-							</Button>
+							
 							<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
 								<Button.Flyout>
 									<Flyout>
@@ -192,31 +231,6 @@
 								<DockPanel>
 									<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
 									<TextBlock Text="Add Item" />
-								</DockPanel>
-							</Button>
-							<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-								<Button.Flyout>
-									<Flyout>
-										<StackPanel MinWidth="200">
-											<StackPanel.Styles>
-												<Style Selector="Button">
-													<Setter Property="HorizontalAlignment" Value="Stretch" />
-													<Setter Property="HorizontalContentAlignment" Value="Left" />
-												</Style>
-											</StackPanel.Styles>
-											<Button Content="Load" Command="{Binding LoadServiceCommand}" />
-											<Button Content="New" Command="{Binding NewServiceCommand}" />
-											<Button Content="Save" Command="{Binding SaveServiceCommand}" />
-											<Separator />
-											<Label Content="Debug" />
-											<Button Content="About" Command="{Binding OnAboutWindowCommand}" />
-											<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
-										</StackPanel>
-									</Flyout>
-								</Button.Flyout>
-								<DockPanel>
-									<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />
-									<TextBlock Text="Debug" />
 								</DockPanel>
 							</Button>
 
