@@ -89,9 +89,6 @@ namespace HandsLiftedApp.Views
                 var stream = assetLoader.Open(fontAsset);
             }
 
-
-
-
         }
 
         private void MainWindow_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)

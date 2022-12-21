@@ -50,14 +50,29 @@
 		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
 			<DockPanel>
 				<Button Padding="22 6" Command="{Binding State.EditCommand}" DockPanel.Dock="Right">Edit</Button>
-				<Ellipse
+				<!--<Ellipse
 						IsVisible="{Binding State.IsSelected, FallbackValue=False}"
 						Width="8"
 						Height="8"
 						Margin="12 0 0 0"
 						Fill="#c43e1c"
-						/>
-				<TextBlock Padding="12 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
+						/>-->
+				<TextBlock Padding="12 8 0 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
+
+				<Border
+					HorizontalAlignment="Left"
+					IsVisible="{Binding State.IsSelected}"
+					VerticalAlignment="Center"
+					Margin="10 2 0 0"
+					CornerRadius="3"
+					Background="#c43e1c">
+					<TextBlock
+						Margin="8 0 8 1"
+						FontWeight="Bold"
+						Foreground="White"
+						FontSize="12">LIVE</TextBlock>
+				</Border>
+				
 				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
 			</DockPanel>
 		</Border>

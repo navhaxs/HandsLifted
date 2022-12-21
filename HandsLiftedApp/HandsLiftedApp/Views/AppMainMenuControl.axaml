@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 	 		 xmlns:material="using:Material.Icons.Avalonia"
              mc:Ignorable="d"
 			 Background="#edeafc"
 			 MinWidth="200"             x:Class="HandsLiftedApp.Views.AppMainMenuControl">
@@ -27,6 +28,9 @@
 		<Style Selector="Button:nth-child(1):nth-last-child(1)">
 			<Setter Property="CornerRadius" Value="6 6 6 6" />
 		</Style>
+		<Style Selector="material|MaterialIcon">
+			<Setter Property="Margin" Value="0 0 10 0" />
+		</Style>
 	</UserControl.Styles>
 
 	<Border BorderBrush="#9a93cd" BorderThickness="1">
@@ -35,12 +39,32 @@
 			<StackPanel Grid.Column="0">
 
 				<StackPanel Margin="4">
-					<Button Content="New" Command="{Binding NewServiceCommand}" />
-					<Button Content="Open" Command="{Binding LoadServiceCommand}" />
-					<Button Content="Save" Command="{Binding SaveServiceCommand}" />
+					<Button Command="{Binding NewServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Shimmer" Foreground="#888888" />
+							<TextBlock>New</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding LoadServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="FolderOpen" Foreground="#888888" />
+							<TextBlock>Load</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button Content="Save" Command="{Binding SaveServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="ContentSave" Foreground="#888888" />
+							<TextBlock>Save</TextBlock>
+						</DockPanel>
+					</Button>
 				</StackPanel>
 				<StackPanel Margin="4">
-					<Button Content="Sync" Command="{Binding SyncServiceCommand}" />
+					<Button Command="{Binding SyncServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Sync" Foreground="#888888" />
+							<TextBlock>Sync</TextBlock>
+						</DockPanel>
+					</Button>
 				</StackPanel>
 				<StackPanel VerticalAlignment="Bottom" Margin="4">
 					<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>

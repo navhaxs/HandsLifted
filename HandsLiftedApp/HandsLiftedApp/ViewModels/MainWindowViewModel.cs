@@ -86,6 +86,9 @@ namespace HandsLiftedApp.ViewModels
                 Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
                 var song = PlaylistUtils.CreateSong();
                 Playlist.Items.Add(song);
+                // not working...
+                //Playlist.State.NavigateNextSlide();
+                //Playlist.State.NavigateNextSlide();
                 return;
             }
 

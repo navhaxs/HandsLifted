@@ -66,7 +66,7 @@
 			</ndi:NDISendContainer>
 		</Viewbox>
 
-		<Grid VerticalAlignment="Bottom" x:Name="OverlayControls" IsVisible="False">
+		<Grid VerticalAlignment="Bottom" Name="OverlayControls" IsVisible="False">
 			<Grid.Styles>
 				<Style Selector="Button">
 					<Setter Property="Background" Value="Transparent" />

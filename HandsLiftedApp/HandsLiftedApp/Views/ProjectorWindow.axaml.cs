@@ -86,11 +86,6 @@ namespace HandsLiftedApp.Views
 
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
         private void ProjectorWindow_DoubleTapped(object? sender, RoutedEventArgs e)
         {
             if (IControlExtension.FindAncestor<Button>((IControl)e.Source) != null)
