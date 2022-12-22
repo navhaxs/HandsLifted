@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.VisualTree;
 
 namespace HandsLiftedApp.Views
 {
@@ -7,6 +9,10 @@ namespace HandsLiftedApp.Views
         public AppMainMenuControl()
         {
             InitializeComponent();
+        }
+
+        private void CloseWindow(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
         }
     }
 }

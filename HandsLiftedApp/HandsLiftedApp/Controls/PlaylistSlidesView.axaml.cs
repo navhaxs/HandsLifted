@@ -84,31 +84,31 @@ namespace HandsLiftedApp.Controls
                    }
                });
 
-            //scrollViewer.GetObservable(ScrollViewer.OffsetProperty)
-            //    .Subscribe(offset =>
-            //    {
-            //        var lastIndex = 0;
+            scrollViewer.GetObservable(Avalonia.Controls.ScrollViewer.OffsetProperty)
+                .Subscribe(offset =>
+                {
+                    var lastIndex = 0;
 
-            //        if (offset.Y > Double.Epsilon)
-            //        {
-            //            for (int i = 0; i < listBox.ItemCount; i++)
-            //            {
-            //                var c = listBox.ItemContainerGenerator.ContainerFromIndex(i);
+                    if (offset.Y > Double.Epsilon)
+                    {
+                        for (int i = 0; i < listBox.ItemCount; i++)
+                        {
+                            var c = listBox.ItemContainerGenerator.ContainerFromIndex(i);
 
-            //                if (c is null)
-            //                    break;
+                            if (c is null)
+                                break;
 
-            //                if (c.Bounds.Top > offset.Y)
-            //                {
-            //                    break;
-            //                }
+                            if (c.Bounds.Top > offset.Y)
+                            {
+                                break;
+                            }
 
-            //                lastIndex = i;
-            //            }
-            //        }
+                            lastIndex = i;
+                        }
+                    }
 
-            //        MessageBus.Current.SendMessage(new SpyScrollUpdateMessage() { Index = lastIndex });
-            //    });
+                    MessageBus.Current.SendMessage(new SpyScrollUpdateMessage() { Index = lastIndex });
+                });
 
             this.KeyDown += PlaylistSlidesView_KeyDown;
         }

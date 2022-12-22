@@ -11,6 +11,12 @@
 		WindowStartupLocation="CenterScreen"
         Title="AboutWindow">
 	<DockPanel>
+		<Grid Background="#6033ab" DockPanel.Dock="Top">
+			<TextBlock
+				Foreground="White"
+				Margin="14 14"
+				FontSize="18">About VisionScreens</TextBlock>
+		</Grid>
 		<Grid
             Height="60"
             Margin="10,0,10,10"
@@ -23,9 +29,8 @@
 				</StackPanel.Styles>
 				<WrapPanel>
 					<TextBlock Text="VisionScreens" FontWeight="Bold" Padding="0 0 4 0" />
-					<TextBlock Text="© Jeremy Wong 2015-2022" />
+					<TextBlock Text="© Jeremy Wong 2015-2023" />
 				</WrapPanel>
-				<TextBlock Text="This is pre-release software - use at your own risk." />
 				<WrapPanel>
 					<TextBlock Text="Build " />
 					<TextBlock Text="{Binding GitHash, Mode=OneWay, FallbackValue='(unknown git hash)'}" />
@@ -38,6 +43,7 @@
                 Width="160"
                 Height="40"
                 Margin="0,10,0,0"
+				CornerRadius="4"
 				HorizontalContentAlignment="Center"
 				VerticalContentAlignment="Center"
                 HorizontalAlignment="Right"
@@ -63,13 +69,13 @@
                 HorizontalAlignment="Stretch"
                 Background="#eee"
                 BorderThickness="1"
-                CornerRadius="5">
+                CornerRadius="6">
 				<Border.Styles>
 					<Style Selector="TextBlock">
 						<Setter Property="Foreground"
 								Value="Black" />
 						<Setter Property="FontSize"
-								Value="16" />
+								Value="14" />
 					</Style>
 				</Border.Styles>
 				<StackPanel Margin="15,15,35,0">
@@ -78,17 +84,19 @@
 						Foreground="Black"
 						FontSize="20"
 						TextWrapping="Wrap">
-						Present lyrics and content with ease.
+						Present lyrics and content with ease
 					</TextBlock>
 					<WrapPanel>
 						<TextBlock Text="This copy of VisionScreens is licensed for non-profit use only." TextWrapping="Wrap" />
-						<TextBlock Text="This is a test copy of VisionScreens. Expect bugs!" TextWrapping="Wrap" />
-						<TextBlock Text="This is a test copy of VisionScreens. Expect bugs!" TextWrapping="Wrap" />
-						<TextBlock Text="This is a test copy of VisionScreens. Expect bugs!" TextWrapping="Wrap" />
-						<TextBlock Text="This is a test copy of VisionScreens. Expect bugs!" TextWrapping="Wrap" />
+					</WrapPanel>
+					<WrapPanel>
+						<TextBlock 
+							Text="Development build for testing. Expect bugs!" TextWrapping="Wrap"
+							FontWeight="SemiBold"
+							Foreground="Red"/>
 					</WrapPanel>
 					<StackPanel Orientation="Horizontal" Margin="0 20 0 0">
-						<TextBlock Text="Powered by " VerticalAlignment="Center" />
+						<TextBlock FontWeight="Bold" Text="Powered by " VerticalAlignment="Center" />
 						<DockPanel ToolTip.ShowDelay="0" ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS.">
 							<Image Height="32" Source="avares://HandsLiftedApp/Assets/avalonia.png" />
 							<TextBlock Text="Avalonia" FontWeight="Bold" VerticalAlignment="Center" />

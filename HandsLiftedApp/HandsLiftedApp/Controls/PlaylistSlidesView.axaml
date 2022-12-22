@@ -48,7 +48,7 @@
 			</ItemsControl>
 
 
-				<Grid VerticalAlignment="Top">
+				<!--<Grid VerticalAlignment="Top">
 
 					<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
 						<DockPanel>
@@ -61,11 +61,11 @@
 									Fill="#c43e1c"
 						/>
 							<TextBlock Padding="12 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
-							<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
+							--><!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />--><!--
 						</DockPanel>
 					</Border>
 
-				</Grid>
+				</Grid>-->
 
 			</Grid>
 		</controls:CustomScrollViewer>

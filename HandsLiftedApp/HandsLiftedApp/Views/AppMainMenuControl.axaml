@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 	 		 xmlns:material="using:Material.Icons.Avalonia"
+			 xmlns:material="using:Material.Icons.Avalonia"
              mc:Ignorable="d"
-			 Background="#edeafc"
-			 MinWidth="200"             x:Class="HandsLiftedApp.Views.AppMainMenuControl">
+			 Background="Transparent"
+			 MinWidth="200"
+			 x:Class="HandsLiftedApp.Views.AppMainMenuControl">
 	<UserControl.Styles>
 		<Style Selector="Button">
 			<Setter Property="Padding" Value="12 8" />
@@ -13,6 +14,7 @@
 			<Setter Property="HorizontalContentAlignment" Value="Left" />
 			<Setter Property="FontSize" Value="14" />
 			<Setter Property="Background" Value="#ffffff" />
+			<Setter Property="BorderThickness" Value="0" />
 		</Style>
 		
 		<Style Selector="Button:pointerover">
@@ -33,12 +35,10 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Border BorderBrush="#9a93cd" BorderThickness="1">
-
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#f2f2f2">
 		<Grid >
 			<StackPanel Grid.Column="0">
-
-				<StackPanel Margin="4">
+				<StackPanel>
 					<Button Command="{Binding NewServiceCommand}">
 						<DockPanel>
 							<material:MaterialIcon Kind="Shimmer" Foreground="#888888" />
@@ -58,7 +58,8 @@
 						</DockPanel>
 					</Button>
 				</StackPanel>
-				<StackPanel Margin="4">
+				<Grid Height="8" />
+				<StackPanel>
 					<Button Command="{Binding SyncServiceCommand}">
 						<DockPanel>
 							<material:MaterialIcon Kind="Sync" Foreground="#888888" />
@@ -66,11 +67,12 @@
 						</DockPanel>
 					</Button>
 				</StackPanel>
-				<StackPanel VerticalAlignment="Bottom" Margin="4">
+				<Grid Height="8" />
+				<StackPanel VerticalAlignment="Bottom">
 					<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
-					<Button Content="Options" Command="{Binding OnDebugClickCommand}"/>
-					<Button Content="About" Command="{Binding OnAboutWindowCommand}" />
-					<Button Content="Exit" Command="{Binding OnDebugClickCommand}"/>
+					<Button Content="Setup" Command="{Binding OnPreferencesWindowCommand}"/>
+					<Button Content="About" Command="{Binding OnAboutWindowCommand}"/>
+					<Button Content="Exit" Click="CloseWindow"/>
 				</StackPanel>
 			</StackPanel>
 

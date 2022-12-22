@@ -14,8 +14,13 @@
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
+		xmlns:titlebars="using:HandsLiftedApp.Views.CustomTitleBars"
+ExtendClientAreaToDecorationsHint="True"
+ExtendClientAreaChromeHints="PreferSystemChrome"
+ExtendClientAreaTitleBarHeightHint="90"
 		WindowStartupLocation="CenterScreen"
 		Width="1280" Height="720"
+		Background="#eeeef2"
 		DoubleTapped="MainWindow_DoubleTapped"
 		Title="VisionScreens | Sunday 11am | 22 May 2022">
 
@@ -25,108 +30,18 @@
 
 	<Grid>
 		<DockPanel>
-			<Menu IsVisible="False" DockPanel.Dock="Top" FontSize="11" FontFamily="Segoe UI" Height="20" Background="#bbbbbf">
-				<MenuItem Header="_File">
-					<MenuItem Header="_New Service" />
-					<MenuItem Header="_Open Service" />
-					<MenuItem Header="Open _Demo Service" />
-					<MenuItem Header="_Save Service" />
-					<MenuItem Header="_Save Service As..." />
-					<Separator />
-					<MenuItem Header="_VisionScreen Preferences" />
-					<MenuItem Header="_Exit" />
-				</MenuItem>
-				<MenuItem Header="_Content">
-					<MenuItem Header="Current item:" IsEnabled="False" />
-					<MenuItem Header="Edit Song..." />
-					<MenuItem Header="_Edit Layout and Template..." />
-					<Separator />
-					<MenuItem Header="Add new item to service" />
-				</MenuItem>
-				<MenuItem Header="_View">
-					<MenuItem Header="Show Left Service Timeline Panel">
-						<MenuItem.Icon>
-							<CheckBox BorderThickness="0"
-									  IsHitTestVisible="False"
-								>
-								Toggle _Me
-							</CheckBox>
-						</MenuItem.Icon>
-					</MenuItem>
-					<MenuItem Header="Show Right Output Panel">
-						<MenuItem.Icon>
-							<CheckBox BorderThickness="0"
-									  IsHitTestVisible="False"
-									>
-								Toggle _Me
-							</CheckBox>
-						</MenuItem.Icon>
-					</MenuItem>
-				</MenuItem>
-				<MenuItem Header="_Output">
-					<MenuItem
-						Header="Turn on _Projector output">
-						<MenuItem.Icon>
-							<CheckBox BorderThickness="0"
-									  IsHitTestVisible="False"
-									 >
-								Toggle _Me
-							</CheckBox>
-						</MenuItem.Icon>
-					</MenuItem>
-					<MenuItem
-						Header="Turn on _Stage Display output"
-						>
-						<MenuItem.Icon>
-							<CheckBox BorderThickness="0"
-									  IsHitTestVisible="False"
-									>
-								Toggle _Me
-							</CheckBox>
-						</MenuItem.Icon>
-					</MenuItem>
+			
+			<Grid>
 
-					<Separator />
-					<MenuItem
-						Header="_Blank display"
-						>
-						<MenuItem.Icon>
-							<CheckBox BorderThickness="0"
-									  IsHitTestVisible="False"
-									 >
-								Toggle _Me
-							</CheckBox>
-						</MenuItem.Icon>
-					</MenuItem>
-					<MenuItem
-					Header="_Freeze display"
-						>
-						<MenuItem.Icon>
-							<CheckBox BorderThickness="0"
-									  IsHitTestVisible="False"
-										>
-								Toggle _Me
-							</CheckBox>
-						</MenuItem.Icon>
-					</MenuItem>
-					<Separator />
-					<MenuItem Header="_Configure Screens..." />
-				</MenuItem>
-				<MenuItem Header="_Library">
-					<MenuItem Header="Manage Song database..." />
-				</MenuItem>
-				<MenuItem Header="_Help">
-					<MenuItem Header="_Quick how-to" />
-					<MenuItem Header="_Help manual" />
-					<MenuItem Header="_Debug" />
-					<MenuItem Header="_About" Command="{Binding OnAboutWindow}" CommandParameter="{Binding $parent[Window]}" />
-				</MenuItem>
-			</Menu>
-			<Grid ColumnDefinitions="*, 1, 0.24*">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="1"/>
+					<ColumnDefinition Width="0.24*" MinWidth="200"/>
+				</Grid.ColumnDefinitions>
 
 				<DockPanel Grid.Column="0">
 
-					<Border Background="#eeeef2" DockPanel.Dock="Top">
+					<Border DockPanel.Dock="Top">
 
 
 						<!--<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
@@ -151,9 +66,9 @@
 								HorizontalContentAlignment="Left"
 						  VerticalContentAlignment="Stretch"
 						  VerticalAlignment="Stretch"
+											  Margin="8"
 								  Padding="0"
 							BorderThickness="0"
-							Margin="0"
 								>
 									<ToggleButton.Styles>
 										<Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
@@ -180,7 +95,7 @@
 											<Setter Property="Foreground" Value="White" />
 										</Style>
 									</ToggleButton.Styles>
-									<Border Classes="AppButtonBorder" CornerRadius="6" Margin="8">
+									<Border Classes="AppButtonBorder" CornerRadius="6">
 										<material:MaterialIcon
 											Height="20"
 											Width="20"
@@ -189,6 +104,14 @@
 											/>
 									</Border>
 								</ToggleButton>
+
+
+								<Popup Name="flyout" StaysOpen="False"
+									   PlacementMode="Bottom"
+									   PlacementTarget="{Binding #AppMenuButton}">
+									<views:AppMainMenuControl />
+								</Popup>
+
 
 								<StackPanel Orientation="Horizontal" Margin="2 20 14 20">
 									<!--<controls:EditableLabelControl />-->
@@ -205,13 +128,6 @@
 
 					</Border>
 
-					<Popup Name="flyout" StaysOpen="False"
-						   PlacementMode="Bottom"
-						   PlacementTarget="{Binding #AppMenuButton}">
-						<views:AppMainMenuControl />
-					</Popup>
-
-
 					<!--<Button.Flyout>
 						<Flyout Placement="BottomEdgeAlignedLeft">
 						</Flyout>
@@ -220,9 +136,9 @@
 					<Grid>
 
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width = "0.2 *" />
-							<ColumnDefinition Width = "0" />
-							<ColumnDefinition Width = "*" />
+							<ColumnDefinition Width="0.2 *" MinWidth="12" />
+							<ColumnDefinition Width="0" />
+							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
 						<!-- Left panel -->
@@ -375,8 +291,7 @@
 				  />
 
 				<!-- Right panel -->
-				<DockPanel Grid.Column="2" Background="#eeeef2">
-
+				<DockPanel Grid.Column="2">
 
 					<Border Padding="10" DockPanel.Dock="Top" Height="70">
 						<DockPanel>

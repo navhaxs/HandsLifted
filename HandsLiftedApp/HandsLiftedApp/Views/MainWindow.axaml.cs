@@ -30,8 +30,11 @@ namespace HandsLiftedApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+
             if (Design.IsDesignMode)
                 return;
+
+            SubscribeToWindowState();
 
             this.Closing += MainWindow_Closing;
             this.Closed += MainWindow_Closed;
@@ -78,17 +81,25 @@ namespace HandsLiftedApp.Views
 
 
 
-            var assetLoader = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            //var assetLoader = AvaloniaLocator.Current.GetService<IAssetLoader>();
 
-            var fontFamily = new FontFamily("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf#League Gothic");
+            //var fontFamily = new FontFamily("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf#League Gothic");
 
-            var fontAssets = FontFamilyLoader.LoadFontAssets(fontFamily.Key).ToArray();
+            //var fontAssets = FontFamilyLoader.LoadFontAssets(fontFamily.Key).ToArray();
 
-            foreach (var fontAsset in fontAssets)
-            {
-                var stream = assetLoader.Open(fontAsset);
-            }
+            //foreach (var fontAsset in fontAssets)
+            //{
+            //    var stream = assetLoader.Open(fontAsset);
+            //}
 
+        }
+
+
+        private void Exit(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            MainWindow hostWindow = (MainWindow)this.VisualRoot;
+            hostWindow.Close();
+            //this.Close();
         }
 
         private void MainWindow_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
@@ -183,6 +194,37 @@ namespace HandsLiftedApp.Views
         {
             ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
         }
+
+        private async void SubscribeToWindowState()
+        {
+            Window hostWindow = (Window)this.VisualRoot;
+
+            while (hostWindow == null)
+            {
+                hostWindow = (Window)this.VisualRoot;
+                await Task.Delay(50);
+            }
+
+            hostWindow.GetObservable(Window.WindowStateProperty).Subscribe(s =>
+            {
+                if (s != WindowState.Maximized)
+                {
+                    hostWindow.Padding = new Thickness(0, 0, 0, 0);
+                }
+                if (s == WindowState.Maximized)
+                {
+                    hostWindow.Padding = new Thickness(7, 7, 7, 7);
+
+                    // This should be a more universal approach in both cases, but I found it to be less reliable, when for example double-clicking the title bar.
+                    /*hostWindow.Padding = new Thickness(
+                            hostWindow.OffScreenMargin.Left,
+                            hostWindow.OffScreenMargin.Top,
+                            hostWindow.OffScreenMargin.Right,
+                            hostWindow.OffScreenMargin.Bottom);*/
+                }
+            });
+        }
+
 
     }
 }

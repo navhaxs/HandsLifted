@@ -18,6 +18,7 @@ using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views;
 using HandsLiftedApp.Views.App;
+using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using System;
 using System.IO;
@@ -184,6 +185,12 @@ namespace HandsLiftedApp.ViewModels
             MoveUpItemCommand = ReactiveCommand.Create<object>(OnMoveUpItemCommand);
             MoveDownItemCommand = ReactiveCommand.Create<object>(OnMoveDownItemCommand);
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
+            OnPreferencesWindowCommand = ReactiveCommand.Create(() =>
+            {
+                PreferencesWindow p = new PreferencesWindow() { };
+                // TODO: solve MVVM to set parent window
+                p.Show();
+            });
             OnAboutWindowCommand = ReactiveCommand.Create(() =>
             {
                 AboutWindow p = new AboutWindow() { };
@@ -313,6 +320,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<object, Unit> MoveDownItemCommand { get; }
         public ReactiveCommand<object, Unit> RemoveItemCommand { get; }
         public ReactiveCommand<Unit, Unit> OnAboutWindowCommand { get; }
+        public ReactiveCommand<Unit, Unit> OnPreferencesWindowCommand { get; }
 
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
         public Interaction<Unit, string?> ShowOpenFolderDialog { get; }
