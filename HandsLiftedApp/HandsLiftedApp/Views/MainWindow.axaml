@@ -11,13 +11,14 @@
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:material="using:Material.Icons.Avalonia"
 		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
+		xmlns:appControls="using:HandsLiftedApp.Views.App.Controls"
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
 		xmlns:titlebars="using:HandsLiftedApp.Views.CustomTitleBars"
-ExtendClientAreaToDecorationsHint="True"
-ExtendClientAreaChromeHints="PreferSystemChrome"
-ExtendClientAreaTitleBarHeightHint="90"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="PreferSystemChrome"
+		ExtendClientAreaTitleBarHeightHint="90"
 		WindowStartupLocation="CenterScreen"
 		Width="1280" Height="720"
 		Background="#eeeef2"
@@ -30,7 +31,7 @@ ExtendClientAreaTitleBarHeightHint="90"
 
 	<Grid>
 		<DockPanel>
-			
+
 			<Grid>
 
 				<Grid.ColumnDefinitions>
@@ -41,7 +42,7 @@ ExtendClientAreaTitleBarHeightHint="90"
 
 				<DockPanel Grid.Column="0">
 
-					<Border DockPanel.Dock="Top">
+					<Border DockPanel.Dock="Top" Height="70">
 
 
 						<!--<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
@@ -51,79 +52,94 @@ ExtendClientAreaTitleBarHeightHint="90"
 							</DockPanel>
 						</Button>-->
 
-						
-						
-							<StackPanel Orientation="Horizontal">
 
 
-								<ToggleButton Name="AppMenuButton"
-								  IsChecked="{Binding #flyout.IsOpen, Mode=TwoWay}"
-								  ClickMode="Press"
-								  Classes="MenuItem"
-								  HorizontalAlignment="Stretch"
-								  DockPanel.Dock="Bottom"
-								  Background="Transparent"
-								HorizontalContentAlignment="Left"
-						  VerticalContentAlignment="Stretch"
-						  VerticalAlignment="Stretch"
-											  Margin="8"
-								  Padding="0"
-							BorderThickness="0"
+						<StackPanel Orientation="Horizontal">
+
+
+							<ToggleButton Name="AppMenuButton"
+							  IsChecked="{Binding #flyout.IsOpen, Mode=TwoWay}"
+							  ClickMode="Press"
+							  Classes="MenuItem"
+							  HorizontalAlignment="Stretch"
+							  DockPanel.Dock="Bottom"
+							  Background="Transparent"
+							HorizontalContentAlignment="Left"
+					  VerticalContentAlignment="Stretch"
+					  VerticalAlignment="Stretch"
+										  Margin="8"
+							  Padding="0"
+						BorderThickness="0"
 								>
-									<ToggleButton.Styles>
-										<Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
-											<!--<Setter Property="Background" Value="#9a93cd" />-->
-											<Setter Property="Background" Value="#d0d0d0" />
-										</Style>
-										<Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-											<!--<Setter Property="Background" Value="#9a93cd" />-->
-											<Setter Property="Background" Value="Transparent" />
-										</Style>
-										<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-											<Setter Property="Background" Value="Transparent" />
-										</Style>
-										<!--<Style Selector="ToggleButton:checked TextBlock">
+								<ToggleButton.Styles>
+									<Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
+										<!--<Setter Property="Background" Value="#9a93cd" />-->
+										<Setter Property="Background" Value="#d0d0d0" />
+									</Style>
+									<Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+										<!--<Setter Property="Background" Value="#9a93cd" />-->
+										<Setter Property="Background" Value="Transparent" />
+									</Style>
+									<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+										<Setter Property="Background" Value="Transparent" />
+									</Style>
+									<!--<Style Selector="ToggleButton:checked TextBlock">
 									<Setter Property="Foreground" Value="White" />
 								</Style>-->
-										<Style Selector="ToggleButton:pressed Border.AppButtonBorder">
-											<Setter Property="Background" Value="#9a93cd" />
-										</Style>
-										<Style Selector="ToggleButton:checked Border.AppButtonBorder">
-											<Setter Property="Background" Value="#5E3593" />
-										</Style>
-										<Style Selector="ToggleButton:checked material|MaterialIcon">
-											<Setter Property="Foreground" Value="White" />
-										</Style>
-									</ToggleButton.Styles>
-									<Border Classes="AppButtonBorder" CornerRadius="6">
-										<material:MaterialIcon
-											Height="20"
-											Width="20"
-											Kind="Menu"
-											Margin="12 0"
+									<Style Selector="ToggleButton:pressed Border.AppButtonBorder">
+										<Setter Property="Background" Value="#9a93cd" />
+									</Style>
+									<Style Selector="ToggleButton:checked Border.AppButtonBorder">
+										<Setter Property="Background" Value="#5E3593" />
+									</Style>
+									<Style Selector="ToggleButton:checked material|MaterialIcon">
+										<Setter Property="Foreground" Value="White" />
+									</Style>
+								</ToggleButton.Styles>
+								<Border Classes="AppButtonBorder" CornerRadius="6">
+									<material:MaterialIcon
+										Height="20"
+										Width="20"
+										Kind="Menu"
+										Margin="12 0"
 											/>
-									</Border>
-								</ToggleButton>
+								</Border>
+							</ToggleButton>
 
 
-								<Popup Name="flyout" StaysOpen="False"
-									   PlacementMode="Bottom"
-									   PlacementTarget="{Binding #AppMenuButton}">
-									<views:AppMainMenuControl />
-								</Popup>
+							<Popup Name="flyout" StaysOpen="False"
+								   PlacementMode="Bottom"
+								   PlacementTarget="{Binding #AppMenuButton}">
+								<views:AppMainMenuControl />
+							</Popup>
 
 
-								<StackPanel Orientation="Horizontal" Margin="2 20 14 20">
-									<!--<controls:EditableLabelControl />-->
-									<TextBlock FontSize="20" Margin="0 0 12 0">Sunday 11am</TextBlock>
-									<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
-								</StackPanel>
+							<StackPanel Orientation="Horizontal" Margin="2 20 14 20"
+										VerticalAlignment="Center"
+										IsHitTestVisible="False">
+								<!--<controls:EditableLabelControl />-->
+								<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Meta[Title], FallbackValue='Untitled'}" />
+								<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
 							</StackPanel>
-							<!--<DockPanel>
+							<ToggleButton
+								Name="EditTitleButton" VerticalAlignment="Center"
+								Background="Transparent"
+								BorderThickness="0"
+								IsChecked="{Binding #editTitleFlyout.IsOpen, Mode=TwoWay}"
+								CornerRadius="12">
+								<material:MaterialIcon Kind="Edit" Foreground="#8f9090" />
+							</ToggleButton>
+							<Popup Name="editTitleFlyout" StaysOpen="False"
+							   PlacementMode="Bottom"
+							   PlacementTarget="{Binding #EditTitleButton}">
+								<appControls:PlaylistTitleDateEditor />
+							</Popup>
+						</StackPanel>
+						<!--<DockPanel>
 								<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />
 								<TextBlock Text="Debug" />
 							</DockPanel>-->
-					
+
 
 
 					</Border>
@@ -175,7 +191,7 @@ ExtendClientAreaTitleBarHeightHint="90"
 								</Style>
 							</DockPanel.Styles>
 
-							<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
+							<!--<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
 								<Button.Flyout>
 									<Flyout>
 										<Grid MinWidth="400" MinHeight="100">
@@ -187,7 +203,69 @@ ExtendClientAreaTitleBarHeightHint="90"
 									<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
 									<TextBlock Text="Add Item" />
 								</DockPanel>
-							</Button>
+							</Button>-->
+
+
+							<ToggleButton
+								DockPanel.Dock="Bottom"
+								Name="AddItemButton"
+							  IsChecked="{Binding #addItemFlyout.IsOpen, Mode=TwoWay}"
+							  ClickMode="Press"
+							  Classes="MenuItem"
+							  HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+					  VerticalContentAlignment="Stretch"
+					  VerticalAlignment="Stretch"
+								BorderBrush="#bebebe"
+								BorderThickness="0 1"
+								Background="#f5f5f5"
+							   FontSize="14"
+								>
+								<ToggleButton.Styles>
+									<!--<Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
+										-->
+									<!--<Setter Property="Background" Value="#9a93cd" />-->
+									<!--
+										<Setter Property="Background" Value="#d0d0d0" />
+									</Style>
+									<Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+										-->
+									<!--<Setter Property="Background" Value="#9a93cd" />-->
+									<!--
+										<Setter Property="Background" Value="Transparent" />
+									</Style>
+									<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+										<Setter Property="Background" Value="Transparent" />
+									</Style>
+									-->
+									<!--<Style Selector="ToggleButton:checked TextBlock">
+									<Setter Property="Foreground" Value="White" />
+								</Style>-->
+									<!--
+									<Style Selector="ToggleButton:pressed">
+										<Setter Property="Background" Value="#9a93cd" />
+									</Style>
+									<Style Selector="ToggleButton:checked Border.AppButtonBorder">
+										<Setter Property="Background" Value="#5E3593" />
+									</Style>
+									<Style Selector="ToggleButton:checked material|MaterialIcon">
+										<Setter Property="Foreground" Value="White" />
+									</Style>-->
+								</ToggleButton.Styles>
+								<DockPanel Margin="4">
+									<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Margin="0 0 6 0" />
+									<TextBlock Text="Add Item" />
+								</DockPanel>
+							</ToggleButton>
+
+
+							<Popup Name="addItemFlyout" StaysOpen="False"
+								   PlacementMode="Bottom"
+								   PlacementTarget="{Binding #AddItemButton}">
+								<Grid MaxWidth="560" MinHeight="100">
+									<views:AddItemPaletteControl />
+								</Grid>
+							</Popup>
 
 							<controls:ItemOrderListView />
 
@@ -293,26 +371,57 @@ ExtendClientAreaTitleBarHeightHint="90"
 				<!-- Right panel -->
 				<DockPanel Grid.Column="2">
 
-					<Border Padding="10" DockPanel.Dock="Top" Height="70">
+					<Border DockPanel.Dock="Top" Height="70" VerticalAlignment="Center">
 						<DockPanel>
-							<Button VerticalAlignment="Center" HorizontalContentAlignment="Left" DockPanel.Dock="Left" FontSize="18" Background="Transparent"
-									BorderThickness="0">
-								<DockPanel>
-									<material:MaterialIcon DockPanel.Dock="Right"
-														   VerticalAlignment="Bottom"
-														   Height="22" Width="26"
-														   Foreground="Black"
-														   Kind="ChevronRight"
-														   Margin="0" Padding="0" />
-									<TextBlock Text="Live" VerticalAlignment="Bottom" />
-								</DockPanel>
-								<Button.Flyout>
-									<Flyout Placement="BottomEdgeAlignedLeft">
-										<controls:LiveOutputsFlyoutContent Margin="0" />
-									</Flyout>
-								</Button.Flyout>
-							</Button>
-							<Grid></Grid>
+
+							<ToggleButton
+								Name="LiveButton"
+							  IsChecked="{Binding #liveFlyout.IsOpen, Mode=TwoWay}"
+							  ClickMode="Press"
+							  DockPanel.Dock="Left"
+							  Background="Transparent"
+								Padding="0"
+								VerticalAlignment="Center"
+								Margin="2 0 0 0"
+						BorderThickness="0"
+							   FontSize="18"
+								>
+								<ToggleButton.Styles>
+									<!-- override default styles -->
+									<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+										<Setter Property="Background" Value="Transparent" />
+									</Style>
+									<!-- custom styles -->
+									<Style Selector="ToggleButton:pointerover Border">
+										<Setter Property="Background" Value="#d0d0d0" />
+									</Style>
+									<Style Selector="ToggleButton:pressed Border">
+										<Setter Property="Background" Value="#9a93cd" />
+									</Style>
+									<Style Selector="ToggleButton:checked Border">
+										<Setter Property="Background" Value="#c1bbe2" />
+									</Style>
+								</ToggleButton.Styles>
+								<Border CornerRadius="6" Padding="12 6">
+									<DockPanel>
+										<material:MaterialIcon DockPanel.Dock="Right"
+															   VerticalAlignment="Bottom"
+															   Height="22" Width="26"
+															   Foreground="Black"
+															   Kind="ChevronRight"
+															   Margin="0" Padding="0" />
+										<TextBlock Text="Live" VerticalAlignment="Bottom" />
+									</DockPanel>
+								</Border>
+							</ToggleButton>
+
+
+							<Popup Name="liveFlyout" StaysOpen="False"
+								   PlacementMode="Bottom"
+								   PlacementTarget="{Binding #LiveButton}">
+								<controls:LiveOutputsFlyoutContent Margin="0" />
+							</Popup>
+
 						</DockPanel>
 					</Border>
 

@@ -58,7 +58,7 @@
 						</DockPanel>
 					</Button>
 				</StackPanel>
-				<Grid Height="8" />
+				<Grid Height="4" />
 				<StackPanel>
 					<Button Command="{Binding SyncServiceCommand}">
 						<DockPanel>
@@ -67,7 +67,7 @@
 						</DockPanel>
 					</Button>
 				</StackPanel>
-				<Grid Height="8" />
+				<Grid Height="4" />
 				<StackPanel VerticalAlignment="Bottom">
 					<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
 					<Button Content="Setup" Command="{Binding OnPreferencesWindowCommand}"/>

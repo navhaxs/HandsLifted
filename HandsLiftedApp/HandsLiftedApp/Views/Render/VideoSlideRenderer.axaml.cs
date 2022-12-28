@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
@@ -112,12 +111,6 @@ namespace HandsLiftedApp.Views.Render
                     });
                 });
         }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {

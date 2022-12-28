@@ -17,6 +17,10 @@ namespace HandsLiftedApp.Utils
         public static Playlist<PlaylistStateImpl, ItemStateImpl> Generate()
         {
             Playlist<PlaylistStateImpl, ItemStateImpl> playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
+
+            playlist.Meta.Add("Title", "My Generated Playlist");
+            playlist.Meta.Add("Date", DateTime.Now);
+
             //return playlist;
             var rnd = new Random();
 
@@ -34,7 +38,7 @@ namespace HandsLiftedApp.Utils
                 SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>();
                 try
                 {
-                    var images = Directory.GetFiles(@"C:\VisionScreens\TestImages", "*.*", SearchOption.AllDirectories)
+                    var images = Directory.GetFiles(@"C:\VisionScreens\Announcements", "*.*", SearchOption.AllDirectories)
                                     .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"))
                                     .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
                     int i = 0;

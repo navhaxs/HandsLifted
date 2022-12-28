@@ -3,10 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:converters="using:HandsLiftedApp.Converters"
              xmlns:controls="using:HandsLiftedApp.Controls"
              xmlns:utils="using:HandsLiftedApp.Utils"
              x:Class="HandsLiftedApp.Controls.PlaylistSlidesView">
-	<Grid>
+
+	<UserControl.Resources>
+		<converters:LastItemHeightConverter x:Key="lastItemHeightConverter"/>
+	</UserControl.Resources>
+	
+	<Grid Name="parentWrapper">
 	
 		<controls:CustomScrollViewer Name="ScrollViewer"
 					  HorizontalScrollBarVisibility="Disabled"
@@ -20,9 +26,18 @@
 				</Style>
 			</controls:CustomScrollViewer.Styles>
 
+			<DockPanel>
 
-			<Grid>
-				
+				<!-- "fill" the height with the last item -->
+				<Grid DockPanel.Dock="Bottom" Background="White">
+					<!-- TODO this would be a good place to put a 'add item' button -->
+					<Grid.Height>
+						<MultiBinding Converter="{StaticResource lastItemHeightConverter}">
+							<Binding ElementName="parentWrapper" Path="Bounds.Height"/>
+							<Binding ElementName="List"/>
+						</MultiBinding>
+					</Grid.Height>
+				</Grid>
 			<ItemsControl Name="List"
 					 Background="White"
 					 Items="{Binding Items}">
@@ -61,13 +76,13 @@
 									Fill="#c43e1c"
 						/>
 							<TextBlock Padding="12 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
-							--><!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />--><!--
+							-->
+					<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />--><!--
 						</DockPanel>
 					</Border>
 
 				</Grid>-->
-
-			</Grid>
+			</DockPanel>
 		</controls:CustomScrollViewer>
 
 	</Grid>

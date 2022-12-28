@@ -51,7 +51,7 @@ namespace HandsLiftedApp
             catch (Exception e)
             {
                 // here we can work with the exception, for example add it to our log file
-                Log.Fatal(e, "Something very bad happened");
+                Log.Fatal(e, "Unhanled exception (Something very bad happened. Please report this error.)");
             }
             finally
             {

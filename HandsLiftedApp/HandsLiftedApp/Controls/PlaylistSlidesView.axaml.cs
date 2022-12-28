@@ -143,15 +143,16 @@ namespace HandsLiftedApp.Controls
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
                     MessageBus.Current.SendMessage(new FocusSelectedItem());
 
+                    e.Handled = true;
                     break;
                 case Key.PageUp:
                 case Key.Left:
                     MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
                     MessageBus.Current.SendMessage(new FocusSelectedItem());
 
+                    e.Handled = true;
                     break;
             }
-            e.Handled = true;
         }
 
         private void InitializeComponent()

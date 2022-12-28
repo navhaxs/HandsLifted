@@ -39,10 +39,5 @@ namespace HandsLiftedApp.Controls
                 MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = listBox.SelectedIndex });
 
         }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
     }
 }

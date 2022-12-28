@@ -125,6 +125,12 @@ namespace HandsLiftedApp.Views
 
         private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
+            // TODO: if a textbox, datepicker etc is selected - then skip this func.
+            var m = FocusManager.Instance?.Current;
+
+            if (m is TextBox || m is DatePicker)
+                return;
+
             switch (e.Key)
             {
                 case Key.F12:

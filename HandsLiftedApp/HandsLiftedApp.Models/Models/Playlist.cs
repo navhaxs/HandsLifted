@@ -15,7 +15,7 @@ namespace HandsLiftedApp.Data.Models
     public class Playlist<T, I> : ReactiveObject where T : IPlaylistState where I : IItemState
     {
 
-        public SerializableDictionary<String, String> Meta { get; set; } = new SerializableDictionary<String, String>();
+        public SerializableDictionary<String, Object> Meta { get; set; } = new SerializableDictionary<String, Object>();
 
         private T _state;
 

@@ -51,7 +51,17 @@ namespace HandsLiftedApp.Behaviours
             if (source is { })
             {
                 source.PointerPressed += Source_PointerPressed;
+
+                if (source.ContextMenu != null)
+                {
+                    source.ContextMenu.MenuOpened += ContextMenu_MenuOpened;
+                }
             }
+        }
+
+        private void ContextMenu_MenuOpened(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            CancelDrag();
         }
 
         protected override void OnDetaching()
@@ -62,6 +72,11 @@ namespace HandsLiftedApp.Behaviours
             if (source is { })
             {
                 source.PointerPressed -= Source_PointerPressed;
+
+                if (source.ContextMenu != null)
+                {
+                    source.ContextMenu.MenuOpened -= ContextMenu_MenuOpened;
+                }
             }
 
             _parent = null;
@@ -106,6 +121,39 @@ namespace HandsLiftedApp.Behaviours
                );
         }
 
+
+        private void CancelDrag()
+        {
+            var target = TargetControl ?? AssociatedObject;
+
+            UpdateCursor(false);
+
+            if (_parent != null)
+            {
+                _parent.PointerMoved -= Parent_PointerMoved;
+                _parent.PointerReleased -= Parent_PointerReleased;
+                _parent = null;
+            }
+
+            isDragging = false;
+
+            if (target != null)
+            {
+                target.RenderTransform = new TranslateTransform();
+                ListBox listBox = (ListBox)target.Parent;
+                foreach (var listBoxItem in listBox.ItemContainerGenerator.Containers)
+                {
+                    listBoxItem.ContainerControl.Classes.Remove("draggingover");
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItem.ContainerControl);
+
+                    if (adornerLayer != null)
+                    {
+                        adornerLayer.Children.Clear();
+                    }
+                }
+            }
+        }
+
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
         {
             var target = TargetControl ?? AssociatedObject;
@@ -116,26 +164,7 @@ namespace HandsLiftedApp.Behaviours
 
                 if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
                 {
-                    UpdateCursor(false);
-                    target.RenderTransform = new TranslateTransform();
-
-                    _parent.PointerMoved -= Parent_PointerMoved;
-                    _parent.PointerReleased -= Parent_PointerReleased;
-                    _parent = null;
-                    isDragging = false;
-
-                    ListBox listBox = (ListBox)target.Parent;
-                    foreach (var listBoxItem in listBox.ItemContainerGenerator.Containers)
-                    {
-                        listBoxItem.ContainerControl.Classes.Remove("draggingover");
-                        var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItem.ContainerControl);
-
-                        if (adornerLayer != null)
-                        {
-                            adornerLayer.Children.Clear();
-                        }
-                    }
-
+                    CancelDrag();
                     return;
                 }
             }

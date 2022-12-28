@@ -21,6 +21,7 @@ using HandsLiftedApp.Views.App;
 using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -76,17 +77,33 @@ namespace HandsLiftedApp.ViewModels
         private ObservableAsPropertyHelper<IPageTransition?> _activeItemPageTransition;
         public IPageTransition? ActiveItemPageTransition { get => _activeItemPageTransition.Value; }
 
+        //test
+        //test
+        //test
+        private String _TestString = "Test String";
+        public String TestString { get => _TestString; set => this.RaiseAndSetIfChanged(ref _TestString, value); }
+
+        private Dictionary<String, String> _TestDictionary = new Dictionary<String, String>();
+        public Dictionary<String, String> TestDictionary { get => _TestDictionary; set => this.RaiseAndSetIfChanged(ref _TestDictionary, value); }
+        //test
+        //test
+        //test
+
         public void LoadDemoSchedule()
         {
             Playlist = TestPlaylistDataGenerator.Generate();
         }
         public MainWindowViewModel()
         {
+            TestDictionary.Add("Title", "Test Title");
+
             if (Design.IsDesignMode)
             {
                 Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
                 var song = PlaylistUtils.CreateSong();
                 Playlist.Items.Add(song);
+
+                
                 // not working...
                 //Playlist.State.NavigateNextSlide();
                 //Playlist.State.NavigateNextSlide();

@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
  	 		 xmlns:material="using:Material.Icons.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="460" d:DesignHeight="240"
+             mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="200"
              x:Class="HandsLiftedApp.Views.AddItemPaletteControl">
 	<UserControl.Styles>
 		<Style Selector="Button">
@@ -11,7 +11,8 @@
 			<Setter Property="VerticalAlignment" Value="Stretch" />
 			<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 			<Setter Property="VerticalContentAlignment" Value="Center" />
-			<Setter Property="Background" Value="#f1f1ff" />
+			<Setter Property="Background" Value="White" />
+			<Setter Property="CornerRadius" Value="6" />
 		</Style>
 		<Style Selector="Button DockPanel">
 			<Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -19,8 +20,7 @@
 		</Style>
 		<Style Selector="Button TextBlock">
 			<Setter Property="FontSize" Value="14" />
-			<Setter Property="Padding" Value="12 0 0 0" />
-			<Setter Property="HorizontalAlignment" Value="Left" />
+			<Setter Property="HorizontalAlignment" Value="Center" />
 			<Setter Property="TextWrapping" Value="Wrap" />
 		</Style>
 		<Style Selector="Button material|MaterialIcon">
@@ -30,68 +30,88 @@
 			<Setter Property="Margin" Value="0" />
 			<Setter Property="HorizontalAlignment" Value="Center" />
 		</Style>
+
+		<Style Selector="Button">
+			<Setter Property="Margin" Value="0 0 6 0" />
+		</Style>
+		<Style Selector="Button:nth-last-child(1)">
+			<Setter Property="Margin" Value="0 0 0 0" />
+		</Style>
+		<Style Selector="Button:nth-child(1):nth-last-child(1)">
+			<Setter Property="Margin" Value="0 0 0 0" />
+		</Style>
 	</UserControl.Styles>
-	<DockPanel Margin="8">
-		<Label DockPanel.Dock="Top" FontSize="22">Add Item</Label>
-		<!--<Label DockPanel.Dock="Bottom">Ctrl + Click to append to selected item? Default - end of playlist</Label>-->
-		<!--<TextBox Watermark="Search songs, media, and more..." DockPanel.Dock="Top" />-->
-		<Grid ColumnDefinitions="* *">
-			<UniformGrid Columns="1">
-				<Button Command="{Binding AddSongCommand}">
-					<DockPanel>
-						<material:MaterialIcon Kind="Music" />
-						<TextBlock Text="Song" />
-					</DockPanel>
-				</Button>
-				<Button Command="{Binding AddVideoCommand}">
-					<DockPanel>
-						<material:MaterialIcon Kind="Video" />
-						<TextBlock Text="Video" />
-					</DockPanel>
-				</Button>
-				<Button Command="{Binding AddPresentationCommand}">
-					<DockPanel>
-						<material:MaterialIcon Kind="Presentation" />
-						<TextBlock Text="PowerPoint" />
-					</DockPanel>
-				</Button>
-				<Button Command="{Binding AddGoogleSlidesCommand}">
-					<DockPanel>
-						<material:MaterialIcon Kind="Slideshow" />
-						<TextBlock Text="Google Slides" />
-					</DockPanel>
-				</Button>
-			
-			</UniformGrid>
-			<UniformGrid Columns="1" Grid.Column="1">
-				<Button Command="{Binding AddGroupCommand}">
-					<DockPanel>
-						<material:MaterialIcon Kind="Archive" />
-						<TextBlock Text="Media Group" />
-					</DockPanel>
-				</Button>
-				<Button Command="{Binding AddGraphicCommand}">
-					<DockPanel>
-						<material:MaterialIcon Kind="Image" />
-						<TextBlock Text="Graphic" />
-					</DockPanel>
-				</Button>
-				<Button Command="{Binding AddLogoCommand}">
-					<DockPanel>
-						<material:MaterialIcon Kind="Star" />
-						<TextBlock Text="Logo" />
-					</DockPanel>
-				</Button>
-				<!--<Button Command="{Binding AddCountdownCommand}">
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="White">
+
+		<DockPanel Margin="8">
+		<Label DockPanel.Dock="Top" FontSize="20" Margin="0 0 0 6">Add item to service</Label>
+
+			<ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
+				
+				<!--<Label DockPanel.Dock="Bottom">Ctrl + Click to append to selected item? Default - end of playlist</Label>-->
+				<!--<TextBox Watermark="Search songs, media, and more..." DockPanel.Dock="Top" />-->
+				<UniformGrid Rows="1">
+					<Button Command="{Binding AddSongCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Music"
+												   DockPanel.Dock="Top" />
+							<TextBlock Text="Song" />
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding AddVideoCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Video"
+												   DockPanel.Dock="Top" />
+							<TextBlock Text="Video" />
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding AddPresentationCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Presentation"
+												   DockPanel.Dock="Top" />
+							<TextBlock Text="PowerPoint" />
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding AddGoogleSlidesCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Slideshow"
+												   DockPanel.Dock="Top" />
+							<TextBlock Text="Google Slides" />
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding AddGroupCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Archive"
+												   DockPanel.Dock="Top" />
+							<TextBlock Text="Media Group" />
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding AddGraphicCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Image"
+												   DockPanel.Dock="Top" />
+							<TextBlock Text="Graphic" />
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding AddLogoCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Star"
+												   DockPanel.Dock="Top" />
+							<TextBlock Text="Logo" />
+						</DockPanel>
+					</Button>
+					<!--<Button Command="{Binding AddCountdownCommand}">
 					Countdown
 				</Button>-->
-				<Button Command="{Binding AddTestEmptyGroupCommand}">
-					Test Blank Group
-				</Button>	
-				<Button Command="{Binding AddCustomSlideCommand}">
-					Test Custom Group
-				</Button>	
-			</UniformGrid>
-		</Grid>
-	</DockPanel>
+					<Button Command="{Binding AddTestEmptyGroupCommand}">
+						Test Blank Group
+					</Button>
+					<Button Command="{Binding AddCustomSlideCommand}">
+						Test Custom Group
+					</Button>
+				</UniformGrid>
+
+			</ScrollViewer>
+		</DockPanel>
+	</Border>
 </UserControl>

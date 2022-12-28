@@ -3,35 +3,62 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 MinWidth="200"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
-			 Background="Red"
+             mc:Ignorable="d" d:DesignWidth="200" 
              x:Class="HandsLiftedApp.Controls.LiveOutputsFlyoutContent">
-	<StackPanel Background="Yellow">
-		<StackPanel.Styles>
-			<Style Selector="Button">
-				<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-				<Setter Property="MinHeight" Value="50" />
-				<Setter Property="VerticalContentAlignment" Value="Top" />
-			</Style>
-			<Style Selector="Button > DockPanel > CheckBox">
-				<Setter Property="Margin" Value="0 0 6 0" />
-			</Style>
-		</StackPanel.Styles>
-		<Button Grid.Row="0" Grid.Column="1" Command="{Binding OnProjectorClickCommand}">
-			<DockPanel>
-				<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding ProjectorWindow.IsVisible, FallbackValue=False}"
-			IsHitTestVisible="False"
-			Focusable="False"/>
-				<TextBlock Text="Projector" FontSize="16" />
-			</DockPanel>
-		</Button>
-		<Button Grid.Row="1" Grid.Column="1" Command="{Binding OnStageDisplayClickCommand}">
-			<DockPanel>
-				<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding StageDisplayWindow.IsVisible, FallbackValue=False}"
-			IsHitTestVisible="False"
-			Focusable="False"/>
-				<TextBlock Text="Stage Display" FontSize="16" />
-			</DockPanel>
-		</Button>
-	</StackPanel>
+	<UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Padding" Value="12 8" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="HorizontalContentAlignment" Value="Left" />
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="Background" Value="#ffffff" />
+			<Setter Property="BorderThickness" Value="0" />
+		</Style>
+
+		<Style Selector="Button:pointerover">
+			<Setter Property="Background" Value="#F9F7F7" />
+		</Style>
+
+		<Style Selector="Button:nth-child(1)">
+			<Setter Property="CornerRadius" Value="6 6 0 0" />
+		</Style>
+		<Style Selector="Button:nth-last-child(1)">
+			<Setter Property="CornerRadius" Value="0 0 6 6" />
+		</Style>
+		<Style Selector="Button:nth-child(1):nth-last-child(1)">
+			<Setter Property="CornerRadius" Value="6 6 6 6" />
+		</Style>
+	</UserControl.Styles>
+
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#f2f2f2">
+		<StackPanel>
+			<StackPanel.Styles>
+				<Style Selector="Button">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+					<Setter Property="MinHeight" Value="50" />
+					<Setter Property="VerticalContentAlignment" Value="Top" />
+					<Setter Property="Background" Value="White" />
+				</Style>
+				<Style Selector="Button > DockPanel > CheckBox">
+					<Setter Property="Margin" Value="0 0 6 0" />
+				</Style>
+			</StackPanel.Styles>
+			<Button Grid.Row="0" Grid.Column="1" Command="{Binding OnProjectorClickCommand}">
+				<DockPanel>
+					<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding ProjectorWindow.IsVisible, FallbackValue=False}"
+				IsHitTestVisible="False"
+				Focusable="False"/>
+					<TextBlock Text="Projector" FontSize="16" />
+				</DockPanel>
+			</Button>
+			<Button Grid.Row="1" Grid.Column="1" Command="{Binding OnStageDisplayClickCommand}">
+				<DockPanel>
+					<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding StageDisplayWindow.IsVisible, FallbackValue=False}"
+				IsHitTestVisible="False"
+				Focusable="False"/>
+					<TextBlock Text="Stage Display" FontSize="16" />
+				</DockPanel>
+			</Button>
+		</StackPanel>
+	</Border>
 </UserControl>
