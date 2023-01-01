@@ -22,6 +22,7 @@ using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -29,6 +30,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -241,13 +243,28 @@ namespace HandsLiftedApp.ViewModels
                 .Subscribe(x =>
                 {
 
+                    var theSelectedItem = Playlist.State.SelectedItem;
 
                     Playlist.Items.Move(x.SourceIndex, x.DestinationIndex);
 
-                    //
+                    // Is this working??
+                    var theSelectedIndex = Playlist.Items.IndexOf(theSelectedItem);
+
+                    Debug.Print($"Moving playlist item {x.SourceIndex} to {x.DestinationIndex}");
+
+                    // TODO we MUST update SelectedItemIndex
+
                     if (x.SourceIndex == Playlist.State.SelectedItemIndex)
                     {
+                        Debug.Print($"Updating the SelectedItemIndex from {Playlist.State.SelectedItemIndex} to {x.DestinationIndex}");
                         Playlist.State.SelectedItemIndex = x.DestinationIndex;
+                    }
+                    else
+                    {
+                        Debug.Print($"Updating the SelectedItemIndex to {theSelectedIndex}");
+
+                        // the selected item index is now incorrect because the list has been shuffled.
+                        Playlist.State.SelectedItemIndex = theSelectedIndex;
                     }
 
                     // HACK run me from different thread. gives time for UI to update first

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
@@ -12,7 +13,11 @@ namespace HandsLiftedApp.Controls
         private static readonly object syncSlidesLock = new object();
 
         ListBox listBox;
-
+        private void OnScrollToItemClick(object? sender, RoutedEventArgs e)
+        {
+            //TODO actually want behaviour to be top-aligned/anchored
+            //MessageBus.Current.SendMessage(new FocusSelectedItem());
+        }
         public ItemOrderListView()
         {
             InitializeComponent();

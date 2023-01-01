@@ -76,19 +76,25 @@
 		<ListBox.DataTemplates>
 			<DataTemplate>
 				<DockPanel VerticalAlignment="Stretch">
-					<Border	HorizontalAlignment="Left"
+
+
+					<Button
 							DockPanel.Dock="Right"
+							Click="OnScrollToItemClick"
+							Margin="1 0 8 0"
+							CornerRadius="3"
+							BorderThickness="0"
 							IsVisible="{Binding State.IsSelected}"
-				VerticalAlignment="Center"
-				Margin="1 0 8 0"
-				CornerRadius="3"
-				Background="#c43e1c">
-						<TextBlock
-							Margin="8 0 8 1"
-							FontWeight="Bold"
-							Foreground="White"
-							FontSize="12">LIVE</TextBlock>
-					</Border>
+							VerticalAlignment="Center"
+							Background="#c43e1c">
+							<TextBlock
+								Margin="8 0 8 1"
+								FontWeight="Bold"
+								Foreground="White"
+								FontSize="12">LIVE</TextBlock>
+					</Button>
+
+					
 					<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
 						<TextBlock.Text>
 							<MultiBinding StringFormat="{}{0}">

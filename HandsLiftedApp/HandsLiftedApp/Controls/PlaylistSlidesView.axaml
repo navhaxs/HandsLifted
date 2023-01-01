@@ -34,7 +34,9 @@
 					<Grid.Height>
 						<MultiBinding Converter="{StaticResource lastItemHeightConverter}">
 							<Binding ElementName="parentWrapper" Path="Bounds.Height"/>
+							<!-- TODO this below binding does not update when items changes. Fix this. -->
 							<Binding ElementName="List"/>
+							<Binding ElementName="List" Path="Items"/>
 						</MultiBinding>
 					</Grid.Height>
 				</Grid>

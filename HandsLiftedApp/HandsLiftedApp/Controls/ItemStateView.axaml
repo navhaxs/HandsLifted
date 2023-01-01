@@ -136,9 +136,14 @@
 						</controls:SlideThumbnail>
 					</DataTemplate>
 					<DataTemplate x:Key="VideoSlide">
-						<Border Padding="20">
+						<controls:SlideThumbnail>
+							<Grid>
+								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" />
+							</Grid>
+						</controls:SlideThumbnail>
+						<!--<Border Padding="20">
 							<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
-						</Border>
+						</Border>-->
 					</DataTemplate>
 					<DataTemplate x:Key="LogoSlide">
 						<Grid>

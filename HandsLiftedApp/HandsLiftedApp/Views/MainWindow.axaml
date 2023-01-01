@@ -37,7 +37,7 @@
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="1"/>
-					<ColumnDefinition Width="0.24*" MinWidth="200"/>
+					<ColumnDefinition Width="0.24*" MinWidth="200" MaxWidth="800" />
 				</Grid.ColumnDefinitions>
 
 				<DockPanel Grid.Column="0">
@@ -152,7 +152,7 @@
 					<Grid>
 
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="0.2 *" MinWidth="12" />
+							<ColumnDefinition Width="0.2 *" MinWidth="12" MaxWidth="700" />
 							<ColumnDefinition Width="0" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>

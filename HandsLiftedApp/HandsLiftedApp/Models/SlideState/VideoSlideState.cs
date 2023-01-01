@@ -1,6 +1,9 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Utils;
 using LibVLCSharp.Shared;
+using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
@@ -107,6 +110,17 @@ namespace HandsLiftedApp.Models.SlideState
             // commands here ...
             // commands here ...
 
+
+            ShellFile shellFile = ShellFile.FromFilePath(VideoPath);
+            var bm = shellFile.Thumbnail.Bitmap;
+            Thumbnail = bm.ConvertToAvaloniaBitmap();
+        }
+
+        private Bitmap? _thumbnail;
+        public Bitmap? Thumbnail
+        {
+            get => _thumbnail;
+            private set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
         }
 
         // TODO: thumbnail
