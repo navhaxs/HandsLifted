@@ -4,9 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using Avalonia.Media.Fonts;
-using Avalonia.Platform;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
@@ -43,6 +40,12 @@ namespace HandsLiftedApp.Views
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
             this.WhenActivated(d => d(ViewModel.ShowOpenFolderDialog.RegisterHandler(ShowOpenFolderDialog)));
+
+            MessageBus.Current.Listen<MainWindowMessage>()
+             .Subscribe(x =>
+             {
+                 Close();
+             });
 
             //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
             //OrderableListBox.PointerReleased += X_PointerReleased;

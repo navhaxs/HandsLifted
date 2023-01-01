@@ -1,6 +1,6 @@
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.VisualTree;
+using HandsLiftedApp.Models.UI;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Views
 {
@@ -13,6 +13,7 @@ namespace HandsLiftedApp.Views
 
         private void CloseWindow(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
+            MessageBus.Current.SendMessage(new MainWindowMessage());
         }
     }
 }
