@@ -126,6 +126,6 @@
 			</DataTemplate>
 		</ListBox.DataTemplates>
 	</ListBox>
-		<TextBlock Name="DropState" />
+		<TextBlock Name="DropState" IsHitTestVisible="False" />
 	</Grid>
 </UserControl>
