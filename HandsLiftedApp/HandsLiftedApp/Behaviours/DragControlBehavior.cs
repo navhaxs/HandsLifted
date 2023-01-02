@@ -199,7 +199,8 @@ namespace HandsLiftedApp.Behaviours
 
                 // check if dragging past the last item
                 ListBoxItem? lastItem = (ListBoxItem)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
-                bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
+                bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom)
+                    && pos.X > 0 && pos.X < listBox.Bounds.Width;
 
                 foreach (var listBoxItem in listBox.ItemContainerGenerator.Containers)
                 {
@@ -261,6 +262,14 @@ namespace HandsLiftedApp.Behaviours
 
                 ListBox listBox = (ListBox)target.Parent;
                 Point pos = e.GetPosition(listBox);
+
+
+                // check if dragging outside left/right bounds
+                if (pos.X < 0 || pos.X > listBox.Bounds.Width)
+                {
+                    return;
+                }
+
                 ListBoxItem hoveredItem = GetHoveredItem(listBox, pos, target);
 
                 // check if dragging past the last item

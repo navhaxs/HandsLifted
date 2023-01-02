@@ -5,13 +5,19 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
 	<StackPanel>
-		
-	<Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
-		<TextBlock Text="{Binding State.CurrentTime}" Grid.Column="0" />
-		<TextBlock Text="{Binding State.Duration}" Grid.Column="2" />
+		<DockPanel Margin="6 0">
+			<TextBlock DockPanel.Dock="Right" Text="{Binding State.PrettyRemainingTime}" />
+			<TextBlock>
+				<TextBlock.Text>
+					<MultiBinding StringFormat="{}{0} / {1}">
+						<Binding Path="State.PrettyCurrentTime" />
+						<Binding Path="State.PrettyDuration" />
+					</MultiBinding>
+				</TextBlock.Text>
+			</TextBlock>
+		</DockPanel>
 		<Slider Minimum="0" Maximum="100" Value="{Binding State.Position}" Grid.Column="1" />
-	</Grid>
-	<StackPanel Orientation="Horizontal" x:Name="test" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
+		<StackPanel Orientation="Horizontal" x:Name="test" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
 				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="24" />
 				<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"
 						FontSize="24" Click="StopButton_Click" />

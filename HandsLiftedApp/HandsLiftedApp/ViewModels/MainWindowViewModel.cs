@@ -17,9 +17,8 @@ using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views;
-using HandsLiftedApp.Views.App;
-using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +29,6 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -93,7 +91,9 @@ namespace HandsLiftedApp.ViewModels
 
         public void LoadDemoSchedule()
         {
+            Log.Information("Loading demo schedule");
             Playlist = TestPlaylistDataGenerator.Generate();
+            Log.Information("Loading demo schedule done");
         }
         public MainWindowViewModel()
         {
@@ -105,7 +105,7 @@ namespace HandsLiftedApp.ViewModels
                 var song = PlaylistUtils.CreateSong();
                 Playlist.Items.Add(song);
 
-                
+
                 // not working...
                 //Playlist.State.NavigateNextSlide();
                 //Playlist.State.NavigateNextSlide();
@@ -206,15 +206,11 @@ namespace HandsLiftedApp.ViewModels
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
             OnPreferencesWindowCommand = ReactiveCommand.Create(() =>
             {
-                PreferencesWindow p = new PreferencesWindow() { };
-                // TODO: solve MVVM to set parent window
-                p.Show();
+                MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.PreferencesWindow));
             });
             OnAboutWindowCommand = ReactiveCommand.Create(() =>
             {
-                AboutWindow p = new AboutWindow() { };
-                // TODO: solve MVVM to set parent window
-                p.Show();
+                MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.AboutWindow));
             });
 
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
@@ -283,22 +279,19 @@ namespace HandsLiftedApp.ViewModels
             // TODO initialise at the right place (tm)
             var ws = new HandsLiftedWebServer();
             ws.Start();
+
+            if (Globals.preferencesViewModel.OnStartupShowOutput)
+                ToggleProjectorWindow(true);
+
+            if (Globals.preferencesViewModel.OnStartupShowStage)
+                ToggleStageDisplayWindow(true);
         }
 
         private ProjectorWindow _projectorWindow;
         public ProjectorWindow ProjectorWindow { get => _projectorWindow; set => this.RaiseAndSetIfChanged(ref _projectorWindow, value); }
         public void OnProjectorClickCommand()
         {
-            if (ProjectorWindow != null && ProjectorWindow.IsVisible)
-            {
-                ProjectorWindow.Close();
-            }
-            else
-            {
-                ProjectorWindow = new ProjectorWindow();
-                ProjectorWindow.DataContext = this;
-                ProjectorWindow.Show();
-            }
+            ToggleProjectorWindow();
         }
 
         private StageDisplayWindow _stageDisplayWindow;
@@ -306,15 +299,38 @@ namespace HandsLiftedApp.ViewModels
 
         public void OnStageDisplayClickCommand()
         {
-            if (StageDisplayWindow != null && StageDisplayWindow.IsVisible)
+            ToggleStageDisplayWindow();
+        }
+
+        public void ToggleProjectorWindow(bool? shouldShow = null)
+        {
+            shouldShow = shouldShow ?? (ProjectorWindow != null && !ProjectorWindow.IsVisible);
+            if (shouldShow == true)
             {
-                StageDisplayWindow.Close();
+                ProjectorWindow = new ProjectorWindow();
+                ProjectorWindow.DataContext = this;
+                ProjectorWindow.Show();
             }
             else
+            {
+                if (ProjectorWindow != null)
+                    ProjectorWindow.Close();
+            }
+        }
+
+        public void ToggleStageDisplayWindow(bool? shouldShow = null)
+        {
+            shouldShow = shouldShow ?? (StageDisplayWindow != null && !StageDisplayWindow.IsVisible);
+            if (shouldShow == true)
             {
                 StageDisplayWindow = new StageDisplayWindow();
                 StageDisplayWindow.DataContext = this;
                 StageDisplayWindow.Show();
+            }
+            else
+            {
+                if (StageDisplayWindow != null)
+                    StageDisplayWindow.Close();
             }
         }
 

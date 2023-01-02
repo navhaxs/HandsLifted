@@ -38,7 +38,7 @@
 				</Setter.Value>
 			</Setter>
 			<Setter Property="Padding" Value="0" />
-			<Setter Property="FontSize" Value="14" />
+			<Setter Property="FontSize" Value="13" />
 		</Style>
 
 		<Style Selector="ListBoxItem">
@@ -55,19 +55,29 @@
 		</Style>
 
 		<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-			<Setter Property="Background" Value="#66edeafc"/>
-			<Setter Property="BorderBrush" Value="#9a93cd"/>
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+		
+		<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="#9a93cd"/>
+		</Style>
+		
+		<Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
+			<Setter Property="Background" Value="#6259A5"/>
 		</Style>
 
 	</UserControl.Styles>
 
+	<Grid>
+		
 	<ListBox
 		x:Name="itemsListBox"
 		Items="{Binding Playlist.Items, Mode=OneWay}"
 		VirtualizationMode="None"
 		ScrollViewer.HorizontalScrollBarVisibility="Disabled"
         Classes="ItemsDragAndDrop"
-		Background="Transparent">
+		Background="Transparent"
+		DragDrop.AllowDrop="True">
 		<ListBox.ContextMenu>
 			<ContextMenu>
 				<MenuItem Header="Add Item" />
@@ -87,11 +97,19 @@
 							IsVisible="{Binding State.IsSelected}"
 							VerticalAlignment="Center"
 							Background="#c43e1c">
-							<TextBlock
-								Margin="8 0 8 1"
-								FontWeight="Bold"
-								Foreground="White"
-								FontSize="12">LIVE</TextBlock>
+						<Button.Styles>
+							<Style Selector="Button:pointerover">
+								<Setter Property="Background" Value="#C1634B" />
+							</Style>
+							<Style Selector="Button:pressed">
+								<Setter Property="Background" Value="#913C27" />
+							</Style>
+						</Button.Styles>
+						<TextBlock
+							Margin="8 0 8 1"
+							FontWeight="Bold"
+							Foreground="White"
+							FontSize="12">LIVE</TextBlock>
 					</Button>
 
 					
@@ -108,4 +126,6 @@
 			</DataTemplate>
 		</ListBox.DataTemplates>
 	</ListBox>
+		<TextBlock Name="DropState" />
+	</Grid>
 </UserControl>

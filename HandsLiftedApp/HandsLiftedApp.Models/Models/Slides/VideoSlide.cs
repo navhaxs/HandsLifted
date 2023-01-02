@@ -8,7 +8,11 @@ namespace HandsLiftedApp.Data.Slides
         T _state;
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
-        public string VideoPath { get; set; }
+        private string _videoPath;
+        public string VideoPath { get => _videoPath; set => this.RaiseAndSetIfChanged(ref _videoPath, value); }
+
+        private bool _isLoop = false;
+        public bool IsLoop { get => _isLoop; set => this.RaiseAndSetIfChanged(ref _isLoop, value); }
 
         public VideoSlide(String videoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4")
         {

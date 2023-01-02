@@ -1,7 +1,14 @@
 ﻿namespace HandsLiftedApp.Models.UI
 {
-    // TODO add enum
+    public enum ActionType
+    {
+        CloseWindow,
+        AboutWindow,
+        PreferencesWindow
+    }
     public class MainWindowMessage
     {
+        public MainWindowMessage(ActionType actionType) { Action = actionType; }
+        public ActionType Action { get; set; }
     }
 }

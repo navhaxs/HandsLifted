@@ -1,11 +1,10 @@
-﻿using Avalonia.Threading;
-using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
+using Serilog;
 using System;
-using System.Diagnostics;
 using System.IO;
 using static HandsLiftedApp.Importer.GoogleSlides.Main;
 
@@ -55,6 +54,7 @@ namespace HandsLiftedApp.Models.ItemExtensionState
 
                 if (s.Result == null)
                 {
+                    Log.Error("Google Slides import fail!");
                     // log error message
                     // show error message
                 }

@@ -8,7 +8,8 @@
 		ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         HasSystemDecorations="False"
-		WindowStartupLocation="CenterScreen"
+		WindowStartupLocation="CenterOwner"
+		ShowInTaskbar="False"
         Title="AboutWindow">
 	<DockPanel>
 		<Grid Background="#6033ab" DockPanel.Dock="Top">

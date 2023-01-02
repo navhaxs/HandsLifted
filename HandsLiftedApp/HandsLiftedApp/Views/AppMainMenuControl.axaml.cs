@@ -13,7 +13,7 @@ namespace HandsLiftedApp.Views
 
         private void CloseWindow(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            MessageBus.Current.SendMessage(new MainWindowMessage());
+            MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
         }
     }
 }

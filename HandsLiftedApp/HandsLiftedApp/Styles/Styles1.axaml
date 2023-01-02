@@ -62,4 +62,13 @@
 		</Setter>
 	</Style>
 
+	<!-- Wrap ToolTips -->
+	<Style Selector="ToolTip">
+		<Setter Property="MaxWidth"
+				Value="500" />
+	</Style>
+	<Style Selector="ToolTip TextBlock">
+		<Setter Property="TextWrapping"
+				Value="Wrap" />
+	</Style>
 </Styles>

@@ -9,6 +9,7 @@ using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.Views.App;
+using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
@@ -44,7 +45,30 @@ namespace HandsLiftedApp.Views
             MessageBus.Current.Listen<MainWindowMessage>()
              .Subscribe(x =>
              {
-                 Close();
+                 switch (x.Action)
+                 {
+                     case ActionType.CloseWindow:
+                         Close();
+                         break;
+                     case ActionType.AboutWindow:
+                         AboutWindow a = new AboutWindow() { };
+                         this.FindControl<Control>("shade").IsVisible = true;
+                         a.ShowDialog(this);
+                         a.Closed += (object? sender, EventArgs e) =>
+                         {
+                             this.FindControl<Control>("shade").IsVisible = false;
+                         };
+                         break;
+                     case ActionType.PreferencesWindow:
+                         PreferencesWindow p = new PreferencesWindow() { };
+                         this.FindControl<Control>("shade").IsVisible = true;
+                         p.ShowDialog(this);
+                         p.Closed += (object? sender, EventArgs e) =>
+                         {
+                             this.FindControl<Control>("shade").IsVisible = false;
+                         };
+                         break;
+                 }
              });
 
             //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
@@ -97,7 +121,6 @@ namespace HandsLiftedApp.Views
 
         }
 
-
         private void Exit(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             MainWindow hostWindow = (MainWindow)this.VisualRoot;
@@ -118,7 +141,7 @@ namespace HandsLiftedApp.Views
             this.FindControl<Control>("shade").IsVisible = true;
 
             ExitConfirmationWindow w = new ExitConfirmationWindow();
-            w.callback = () =>
+            w.Closed += (object? sender, EventArgs e) =>
             {
                 this.FindControl<Control>("shade").IsVisible = false;
             };

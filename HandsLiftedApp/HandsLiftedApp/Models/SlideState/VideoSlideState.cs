@@ -5,13 +5,14 @@ using HandsLiftedApp.Utils;
 using LibVLCSharp.Shared;
 using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
+using Serilog;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -32,10 +33,12 @@ namespace HandsLiftedApp.Models.SlideState
             // TODO init only when actually needed (on slide enter)
             try
             {
-                Debug.Print("init VLC");
+                Log.Debug("init VLC");
                 _libVLC = new LibVLC();
                 MediaPlayer = new MediaPlayer(_libVLC);
-                Debug.Print("init VLC - DONE");
+                Log.Debug("init VLC - DONE");
+
+                MediaPlayer.EndReached += MediaPlayer_EndReached;
 
 
                 string absolute = new Uri(VideoPath).AbsoluteUri;
@@ -85,7 +88,10 @@ namespace HandsLiftedApp.Models.SlideState
             {
                 Wrap(positionChanged).DistinctUntilChanged(_ => Position).Subscribe(_ => this.RaisePropertyChanged(nameof(Position))),
                 Wrap(timeChanged).DistinctUntilChanged(_ => CurrentTime).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentTime))),
+                Wrap(timeChanged).DistinctUntilChanged(_ => PrettyCurrentTime).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyCurrentTime))),
+                Wrap(timeChanged).DistinctUntilChanged(_ => PrettyRemainingTime).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyRemainingTime))),
                 Wrap(lengthChanged).DistinctUntilChanged(_ => Duration).Subscribe(_ => this.RaisePropertyChanged(nameof(Duration))),
+                Wrap(lengthChanged).DistinctUntilChanged(_ => PrettyDuration).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyDuration))),
                 Wrap(muteChanged).DistinctUntilChanged(_ => IsMuted).Subscribe(_ => this.RaisePropertyChanged(nameof(IsMuted))),
                 Wrap(fullState).DistinctUntilChanged(_ => State).Subscribe(_ => this.RaisePropertyChanged(nameof(State))),
                 Wrap(volumeChanged).DistinctUntilChanged(_ => Volume).Subscribe(_ => this.RaisePropertyChanged(nameof(Volume))),
@@ -121,6 +127,16 @@ namespace HandsLiftedApp.Models.SlideState
         {
             get => _thumbnail;
             private set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
+        }
+
+        private void MediaPlayer_EndReached(object? sender, EventArgs e)
+        {
+            ThreadPool.QueueUserWorkItem((object state) =>
+            {
+                // loop this media
+                this.MediaPlayer.Stop();
+                this.MediaPlayer.Play();
+            });
         }
 
         // TODO: thumbnail
@@ -160,7 +176,11 @@ namespace HandsLiftedApp.Models.SlideState
         }
 
         public TimeSpan CurrentTime => TimeSpan.FromMilliseconds(MediaPlayer?.Time > -1 ? MediaPlayer.Time : 0);
+        public String PrettyCurrentTime => CurrentTime.ToString(@"hh\:mm\:ss");
+        public String PrettyRemainingTime => $"-{Duration.Subtract(CurrentTime).ToString(@"hh\:mm\:ss")}";
         public TimeSpan Duration => TimeSpan.FromMilliseconds(MediaPlayer?.Length > -1 ? MediaPlayer.Length : 0);
+        public String PrettyDuration => Duration.ToString(@"hh\:mm\:ss");
+
         public VLCState State => MediaPlayer.State;
 
         public string MediaInfo

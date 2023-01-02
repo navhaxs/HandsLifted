@@ -87,8 +87,10 @@
 			<!--<StackPanel>
 				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
 			</StackPanel>-->
-			<TextBlock Grid.Row="1" Grid.Column="0" Text="Loop incl. slide navigation" />
-			<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsLooping}" />
+			<TextBlock Grid.Row="1" Grid.Column="0" Text="" />
+			<!-- Tooltip: (navigating past the last slides goes back to the first) -->
+			<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsLooping}" Content="Looping slide navigation"
+					  />
 		</Grid>
 
 			<!--<ProgressBar utils:ProgressBarWorkaround.Value="{Binding TimerState.Timer.RemainingTime}"

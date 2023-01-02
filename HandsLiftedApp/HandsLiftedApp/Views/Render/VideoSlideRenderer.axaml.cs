@@ -61,7 +61,7 @@ namespace HandsLiftedApp.Views.Render
                         VideoView.MediaPlayer = MediaPlayer;
                 }
             }
-            else
+            else if (VideoView != null)
             {
                 VideoView.IsVisible = false;
             }
@@ -95,7 +95,7 @@ namespace HandsLiftedApp.Views.Render
         private async Task sAsync()
         {
 
-            if (MediaPlayer == null || VideoView.MediaPlayer == null) // } || MediaPlayer != null && MediaPlayer.Hwnd == IntPtr.Zero)
+            if (MediaPlayer == null || VideoView == null || VideoView.MediaPlayer == null) // } || MediaPlayer != null && MediaPlayer.Hwnd == IntPtr.Zero)
                 return;
 
             await Task.Run(() =>
@@ -106,6 +106,7 @@ namespace HandsLiftedApp.Views.Render
                     {
                         if (MediaPlayer != null && !MediaPlayer.IsPlaying)
                         {
+                            MediaPlayer.Mute = true;
                             MediaPlayer.Play();
                         }
                     });

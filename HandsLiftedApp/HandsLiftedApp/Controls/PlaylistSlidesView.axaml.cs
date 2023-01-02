@@ -4,8 +4,10 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemState;
@@ -68,7 +70,10 @@ namespace HandsLiftedApp.Controls
                    if (listBoxWithoutKey.SelectedIndex > -1)
                    {
                        IControl control = listBoxWithoutKey.ItemContainerGenerator.ContainerFromIndex(listBoxWithoutKey.SelectedIndex);
-                       BringDescendantIntoView(control, new Rect(control.Bounds.Size));
+                       Dispatcher.UIThread.InvokeAsync(() =>
+                       {
+                           BringDescendantIntoView(control, new Rect(control.Bounds.Size));
+                       });
                    }
                });
 
@@ -190,6 +195,9 @@ namespace HandsLiftedApp.Controls
                 return false;
             }
 
+
+            ContentPresenter controlParent = IControlExtension.FindAncestor<ContentPresenter>(control);
+
             var rect = targetRect.TransformToAABB(transform.Value);
             var offset = presenter.Offset;
             var result = false;
@@ -198,13 +206,27 @@ namespace HandsLiftedApp.Controls
 
             if (rect.Bottom + Ypadding > offset.Y + presenter.Viewport.Height)
             {
-                offset = offset.WithY((rect.Bottom + Ypadding - presenter.Viewport.Height) + presenter.Child.Margin.Top);
+                if (Ypadding < scrollViewer.Bounds.Height)
+                {
+                    offset = offset.WithY(controlParent.Bounds.Y);
+                }
+                else
+                {
+                    offset = offset.WithY((rect.Bottom + Ypadding - presenter.Viewport.Height) + presenter.Child.Margin.Top);
+                }
                 result = true;
             }
 
             if (rect.Y - Ypadding < offset.Y)
             {
-                offset = offset.WithY(rect.Y - Ypadding);
+                if (Ypadding < scrollViewer.Bounds.Height)
+                {
+                    offset = offset.WithY(controlParent.Bounds.Y);
+                }
+                else
+                {
+                    offset = offset.WithY(rect.Y - Ypadding);
+                }
                 result = true;
             }
 

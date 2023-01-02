@@ -2,10 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using HandsLiftedApp.Models.UI;
-using ReactiveUI;
-using System;
 
 namespace HandsLiftedApp.Views.App
 {
@@ -17,20 +13,6 @@ namespace HandsLiftedApp.Views.App
 #if DEBUG
             this.AttachDevTools();
 #endif
-
-            this.Closed += ExitConfirmationWindow_Closed;
-         
-        }
-
-        private void ExitConfirmationWindow_Closed(object? sender, EventArgs e)
-        {
-                if (callback != null)
-                    callback();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void OnExit(object? sender, RoutedEventArgs e)
@@ -45,8 +27,6 @@ namespace HandsLiftedApp.Views.App
         {
             Close();
         }
-
-        public Action callback = null;
 
     }
 }

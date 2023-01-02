@@ -323,10 +323,9 @@
 										<!--<Button
 											Grid.Column="1"
 											HorizontalAlignment="Center"
-											VerticalAlignment="Center"
 											Click="OnScrollToItemClick"
 											Content="Scroll"
-											Foreground="{DynamicResource ForegroundText}">
+											FontSize="16">
 										</Button>-->
 										<Button
 											Command="{Binding OnNextSlideClickCommand}"

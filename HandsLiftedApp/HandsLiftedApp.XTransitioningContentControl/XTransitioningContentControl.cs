@@ -167,7 +167,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             _lastTransitionCts?.Cancel();
             _lastTransitionCts = new CancellationTokenSource();
 
-            if (_previousImageSite != null)
+            if (_previousImageSite != null && CurrentContent is not IDynamicSlideRender)
             {
                 _previousImageSite.Source = renderControlAsBitmap(_contentPresenter);
                 _previousImageSite.IsVisible = true;

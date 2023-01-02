@@ -13,12 +13,10 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<StackPanel>
-		<Grid ColumnDefinitions="0.7* 0.3*">
-			<StackPanel>
+	<Grid ColumnDefinitions="0.7* 0.3*">
 				<Border Grid.Column="0" Background="White" BorderBrush="White" BorderThickness="1" VerticalAlignment="Top">
 					<StackPanel>
-						<TextBlock Text="Live" HorizontalAlignment="Center" Margin="0 2" />
+						<TextBlock Text="Live" HorizontalAlignment="Center" Margin="0 2"  FontSize="30" FontWeight="Bold" />
 
 						<Grid DockPanel.Dock="Top">
 							<Grid.Background>
@@ -42,7 +40,6 @@
 						</Grid>
 					</StackPanel>
 				</Border>
-			</StackPanel>
 			<DockPanel Grid.Column="2">
 
 				<Viewbox DockPanel.Dock="Bottom">
@@ -57,7 +54,7 @@
 				</Viewbox>
 				<Border Background="#af7b05" BorderBrush="#af7b05" BorderThickness="1" VerticalAlignment="Top">
 					<StackPanel>
-						<TextBlock Text="Next" HorizontalAlignment="Center" Margin="0 2" />
+						<TextBlock Text="Next" HorizontalAlignment="Center" Margin="0 2" FontSize="30" FontWeight="Bold" />
 						<Grid>
 							<Grid.Background>
 								<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
@@ -80,5 +77,4 @@
 
 			</DockPanel>
 		</Grid>
-	</StackPanel>
 </UserControl>

@@ -1,25 +1,13 @@
-﻿using EmbedIO.WebSockets;
-using HandsLiftedApp.Importer.PowerPoint;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Text;
 
 namespace HandsLiftedApp.Logic
 {
     using EmbedIO.WebSockets;
-    using HandsLiftedApp.Data.Models;
     using HandsLiftedApp.Models.AppState;
-    using Newtonsoft.Json;
+    using HandsLiftedApp.Models.UI;
     using Newtonsoft.Json.Linq;
     using ReactiveUI;
     using System;
-    using System.Diagnostics;
-    using System.Threading;
     using System.Threading.Tasks;
 
     internal class HandsLiftedWebSocketsModule : WebSocketModule
@@ -68,11 +56,13 @@ namespace HandsLiftedApp.Logic
                 {
                     case nameof(ActionMessage.NavigateSlideAction.NextSlide):
                         MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                        MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
                         SendAsync(context, "{\"action\":\"NextSlide\", \"status\": \"ok\"}");
                         break;
 
                     case nameof(ActionMessage.NavigateSlideAction.PreviousSlide):
                         MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                        MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
                         SendAsync(context, "{\"action\":\"PreviousSlide\", \"status\": \"ok\"}");
                         break;
 
