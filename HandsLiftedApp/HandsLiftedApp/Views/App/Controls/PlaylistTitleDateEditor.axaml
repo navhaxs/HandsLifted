@@ -4,14 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vm="using:HandsLiftedApp.ViewModels"
+			 Background="#e8e8ec" 
              x:Class="HandsLiftedApp.Views.App.Controls.PlaylistTitleDateEditor">
 
 	<Design.DataContext>
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<StackPanel>
-		<TextBox Watermark="Playlist Title" FontSize="22" Text="{Binding Playlist.Meta[Title]}" />
-		<DatePicker SelectedDate="{Binding Playlist.Meta[Date]}" />
-	</StackPanel>
+	<Border BorderBrush="#b0abd7" BorderThickness="1" CornerRadius="6">
+		<StackPanel Margin="8">
+			<TextBox Watermark="Playlist Title" FontSize="22" Text="{Binding Playlist.Meta[Title]}" />
+			<DatePicker SelectedDate="{Binding Playlist.Meta[Date]}" />
+		</StackPanel>
+	</Border>
 </UserControl>

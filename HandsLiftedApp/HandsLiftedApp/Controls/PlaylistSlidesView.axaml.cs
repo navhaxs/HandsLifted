@@ -80,13 +80,22 @@ namespace HandsLiftedApp.Controls
             MessageBus.Current.Listen<NavigateToItemMessage>()
                .Subscribe(x =>
                {
-                   var control = listBox.ItemContainerGenerator.ContainerFromIndex(x.Index);
 
-                   if (control is not null)
+                   Dispatcher.UIThread.InvokeAsync(() =>
                    {
-                       scrollViewer.Offset = new Vector(0, control.Bounds.Top);
-                       //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
-                   }
+                       // wait for UI to update...
+                       Dispatcher.UIThread.RunJobs();
+
+                       // and now we can jump to view
+                       var control = listBox.ItemContainerGenerator.ContainerFromIndex(x.Index);
+                       if (control is not null)
+                       {
+                           scrollViewer.Offset = new Vector(0, control.Bounds.Top);
+                           //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
+                       }
+
+                   });
+
                });
 
             scrollViewer.GetObservable(Avalonia.Controls.ScrollViewer.OffsetProperty)

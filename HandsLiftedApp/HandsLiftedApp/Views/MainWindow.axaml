@@ -64,12 +64,13 @@
 							  HorizontalAlignment="Stretch"
 							  DockPanel.Dock="Bottom"
 							  Background="Transparent"
-							HorizontalContentAlignment="Left"
-					  VerticalContentAlignment="Stretch"
-					  VerticalAlignment="Stretch"
-										  Margin="8"
+							  HorizontalContentAlignment="Left"
+							  VerticalContentAlignment="Stretch"
+							  VerticalAlignment="Stretch"
+							  Margin="8"
 							  Padding="0"
-						BorderThickness="0"
+										  BorderThickness="0"
+										  HotKey="Alt+M"
 								>
 								<ToggleButton.Styles>
 									<Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
@@ -119,7 +120,7 @@
 										IsHitTestVisible="False">
 								<!--<controls:EditableLabelControl />-->
 								<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Meta[Title], FallbackValue='Untitled'}" />
-								<TextBlock VerticalAlignment="Bottom" Foreground="#8a8c8c" FontSize="20">22 May 2022</TextBlock>
+								<TextBlock FontSize="20" Margin="0 0 12 0" Foreground="#8a8c8c" Text="{Binding Playlist.Meta[Date], FallbackValue='22 May 2022'}" />
 							</StackPanel>
 							<ToggleButton
 								Name="EditTitleButton" VerticalAlignment="Center"
@@ -262,7 +263,7 @@
 							<Popup Name="addItemFlyout" StaysOpen="False"
 								   PlacementMode="Bottom"
 								   PlacementTarget="{Binding #AddItemButton}">
-								<Grid MaxWidth="560" MinHeight="100">
+								<Grid MinWidth="860" MinHeight="400">
 									<views:AddItemPaletteControl />
 								</Grid>
 							</Popup>
@@ -308,7 +309,6 @@
 											HorizontalAlignment="Left"
 											HorizontalContentAlignment="Stretch"
 											FontSize="16"
-											IsCancel="True"
 											IsTabStop="False">
 											<Grid>
 												<material:MaterialIcon
@@ -333,7 +333,6 @@
 											HorizontalContentAlignment="Stretch"
 											Grid.Column="2"
 											FontSize="16"
-											IsCancel="True"
 											IsTabStop="False">
 											<Grid>
 												<material:MaterialIcon
@@ -384,6 +383,7 @@
 								Margin="2 0 0 0"
 						BorderThickness="0"
 							   FontSize="18"
+								HotKey="Ctrl+L"
 								>
 								<ToggleButton.Styles>
 									<!-- override default styles -->

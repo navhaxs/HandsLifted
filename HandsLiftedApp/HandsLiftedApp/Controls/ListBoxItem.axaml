@@ -121,6 +121,15 @@
 				</DockPanel>
 			</ControlTemplate>
 		</Setter>
+		<Setter Property="ContextMenu">
+			<Setter.Value>
+				<ContextMenu>
+					<MenuItem Header="Move Up" Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" CommandParameter="{Binding}"/>
+					<MenuItem Header="Move Down" Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" CommandParameter="{Binding}"/>
+					<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
+				</ContextMenu>
+			</Setter.Value>
+		</Setter>
 	</Style>
 
 	<!--<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
@@ -186,8 +195,13 @@
 	<Style Selector="ListBoxItem:pointerover /template/ Border#PART_Border">
 		<Setter Property="BorderBrush" Value="#e59400"/>
 		<Setter Property="BorderThickness" Value="4" />
-
 	</Style>
+
+	<!-- TODO see https://github.com/AvaloniaUI/Avalonia/issues/2427#issuecomment-827659511 -->
+ 	<!--<Style Selector="ListBoxItem[ContextMenu.IsOpen=true] /template/ Border#PART_Border">
+		<Setter Property="BorderBrush" Value="#e59400"/>
+		<Setter Property="BorderThickness" Value="4" />
+	</Style>-->
 
 	<Style Selector="ListBoxItem:selected:pointerover /template/ Border#PART_Border">
 		<Setter Property="BorderBrush" Value="#a92b1a"/>

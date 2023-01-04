@@ -13,7 +13,7 @@ namespace HandsLiftedApp.Utils
     public static class SongImporter
     {
 
-        public static SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> ImportSongFromTxt(string txtFilePath)
+        public static SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> createSongItemFromTxt(string txtFilePath)
         {
             string text = File.ReadAllText(txtFilePath);
 

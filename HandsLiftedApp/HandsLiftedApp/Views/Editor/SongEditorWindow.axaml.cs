@@ -58,7 +58,7 @@ namespace HandsLiftedApp.Views.Editor
             if (result != null)
             {
                 //_wavFileSplitter.GetWavHeader(result, text => _textOutput.Text = text);
-                ((SongEditorViewModel)this.DataContext).song = SongImporter.ImportSongFromTxt(result[0]);
+                ((SongEditorViewModel)this.DataContext).song = SongImporter.createSongItemFromTxt(result[0]);
             }
         }
 

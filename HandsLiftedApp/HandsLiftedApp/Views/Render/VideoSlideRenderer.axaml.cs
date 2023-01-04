@@ -48,6 +48,14 @@ namespace HandsLiftedApp.Views.Render
             this.AttachedToVisualTree += VideoSlideRenderer_AttachedToVisualTree;
         }
 
+        private VideoSlide<VideoSlideStateImpl> GetVideoSlide()
+        {
+            if (this.DataContext is VideoSlide<VideoSlideStateImpl>)
+                return ((VideoSlide<VideoSlideStateImpl>)this.DataContext);
+
+            return null;
+        }
+
         private void VideoSlideRenderer_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
             if (this.VisualRoot as Window is ProjectorWindow)
@@ -106,8 +114,13 @@ namespace HandsLiftedApp.Views.Render
                     {
                         if (MediaPlayer != null && !MediaPlayer.IsPlaying)
                         {
-                            MediaPlayer.Mute = true;
                             MediaPlayer.Play();
+
+                            VideoSlide<VideoSlideStateImpl> videoSlide = GetVideoSlide();
+                            if (videoSlide != null)
+                            {
+                                MediaPlayer.Mute = videoSlide.IsMute;
+                            }
                         }
                     });
                 });

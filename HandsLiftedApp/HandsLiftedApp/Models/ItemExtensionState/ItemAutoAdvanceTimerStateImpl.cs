@@ -1,12 +1,9 @@
-﻿using Avalonia.Threading;
-using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemState;
-using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
-using System.Diagnostics;
 
 namespace HandsLiftedApp.Models.ItemExtensionState
 {
@@ -74,7 +71,7 @@ namespace HandsLiftedApp.Models.ItemExtensionState
             {
                 Timer.Start(intervalMs);
             }
-        }    
+        }
         private void ResetTimer()
         {
             // stop timer

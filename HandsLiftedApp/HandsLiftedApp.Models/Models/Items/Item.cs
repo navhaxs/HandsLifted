@@ -19,6 +19,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         protected Item()
         {
+            Uuid = Guid.NewGuid();
             State = (T)Activator.CreateInstance(typeof(T), this);
         }
 

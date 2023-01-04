@@ -1,6 +1,10 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
+using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using System;
@@ -39,8 +43,7 @@ namespace HandsLiftedApp.Controls
                });
 
 
-            SetupDnd("Text", d => d.Set(DataFormats.Text,
-          $"Text was dragged"), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
+            //SetupDnd("Text", d => d.Set(DataFormats.Text, $"Text was dragged"), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 
             //SetupDnd("Custom", d => d.Set(CustomFormat, "Test123"), DragDropEffects.Move);
             SetupDnd("Files", d => d.Set(DataFormats.FileNames, new[] { Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName }), DragDropEffects.Copy);
@@ -53,6 +56,7 @@ namespace HandsLiftedApp.Controls
 
         }
 
+        Control lastAdornerElement;
 
         void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)
         {
@@ -102,6 +106,37 @@ namespace HandsLiftedApp.Controls
                     )
                     //&& !e.Data.Contains(CustomFormat))
                     e.DragEffects = DragDropEffects.None;
+
+
+                var point = e.GetPosition(sender as Control);
+                clearLastAdornerLayer();
+                var found = listBox.ItemContainerGenerator.Containers.LastOrDefault(info =>
+                {
+                    var x = info.ContainerControl;
+                    return point.Y >= x.Bounds.Top && point.Y <= x.Bounds.Bottom;
+                }, listBox.ItemContainerGenerator.Containers.Last());
+
+
+                if (found == null)
+                {
+                    return;
+                }
+
+                lastAdornerElement = found.ContainerControl as Control; //(Visual)sender;
+                var adornerLayer = AdornerLayer.GetAdornerLayer(lastAdornerElement);
+
+                if (adornerLayer != null)
+                {
+                    var adornedElement = new Border()
+                    {
+                        CornerRadius = new CornerRadius(3, 0, 0, 3),
+                        BorderThickness = new Thickness(2, 2, 0, 2),
+                        BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd")),
+                        IsHitTestVisible = false
+                    };
+                    adornerLayer.Children.Add(adornedElement);
+                    AdornerLayer.SetAdornedElement(adornedElement, lastAdornerElement);
+                }
             }
 
             void Drop(object? sender, DragEventArgs e)
@@ -115,19 +150,41 @@ namespace HandsLiftedApp.Controls
                     e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
                 }
 
-                if (e.Data.Contains(DataFormats.Text))
-                    DropState.Text = e.Data.GetText();
-                else if (e.Data.Contains(DataFormats.FileNames))
-                    DropState.Text = string.Join(Environment.NewLine, e.Data.GetFileNames() ?? Array.Empty<string>());
+                //if (e.Data.Contains(DataFormats.Text))
+                //DropState.Text = e.Data.GetText();
+                if (e.Data.Contains(DataFormats.FileNames))
+                {
+                    MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(e.Data.GetFileNames().ToList()));
+
+                    //DropState.Text = string.Join(Environment.NewLine, e.Data.GetFileNames() ?? Array.Empty<string>());
+                }
                 //else if (e.Data.Contains(CustomFormat))
                 //    DropState.Text = "Custom: " + e.Data.Get(DropState);
+
+                clearLastAdornerLayer();
+            }
+
+            void DragLeave(object? sender, RoutedEventArgs e)
+            {
+                clearLastAdornerLayer();
+            }
+
+
+            void clearLastAdornerLayer()
+            {
+                if (lastAdornerElement != null)
+                {
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(lastAdornerElement);
+                    adornerLayer?.Children.Clear();
+                    lastAdornerElement = null;
+                }
             }
 
             //dragMe.PointerPressed += DoDrag;
 
             AddHandler(DragDrop.DropEvent, Drop);
             AddHandler(DragDrop.DragOverEvent, DragOver);
+            AddHandler(DragDrop.DragLeaveEvent, DragLeave);
         }
-
     }
 }

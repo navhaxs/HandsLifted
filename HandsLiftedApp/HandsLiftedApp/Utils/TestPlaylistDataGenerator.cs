@@ -19,7 +19,7 @@ namespace HandsLiftedApp.Utils
             Playlist<PlaylistStateImpl, ItemStateImpl> playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
 
             playlist.Meta.Add("Title", "My Generated Playlist");
-            playlist.Meta.Add("Date", DateTime.Now);
+            playlist.Meta.Add("Date", DateTimeOffset.Now);
 
             //return playlist;
             var rnd = new Random();
@@ -32,7 +32,7 @@ namespace HandsLiftedApp.Utils
                 ;
                 foreach (var f in songs)
                 {
-                    playlist.Items.Add(SongImporter.ImportSongFromTxt(f));
+                    playlist.Items.Add(SongImporter.createSongItemFromTxt(f));
                 }
 
                 SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>();

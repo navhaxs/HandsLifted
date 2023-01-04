@@ -9,6 +9,7 @@
         ExtendClientAreaChromeHints="NoChrome"
         HasSystemDecorations="False"
 		WindowStartupLocation="CenterOwner"
+		CanResize="False"
 		ShowInTaskbar="False"
         Title="AboutWindow">
 	<DockPanel>
@@ -38,6 +39,12 @@
 					<TextBlock Text=" " />
 					<TextBlock Text="{Binding BuildDate, Mode=OneWay, FallbackValue='(unknown build date)'}" />
 				</WrapPanel>
+				<WrapPanel>
+				<TextBlock
+	Text="Development build for testing. Expect bugs!" TextWrapping="Wrap"
+	FontWeight="SemiBold"
+	Foreground="Red"/>
+				</WrapPanel>
 			</StackPanel>
 			<Button
 				x:Name="buttonDone"
@@ -50,6 +57,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Content="Done"
+				IsCancel="True"
                 IsDefault="True" />
 		</Grid>
 		<Grid>
@@ -89,12 +97,6 @@
 					</TextBlock>
 					<WrapPanel>
 						<TextBlock Text="This copy of VisionScreens is licensed for non-profit use only." TextWrapping="Wrap" />
-					</WrapPanel>
-					<WrapPanel>
-						<TextBlock 
-							Text="Development build for testing. Expect bugs!" TextWrapping="Wrap"
-							FontWeight="SemiBold"
-							Foreground="Red"/>
 					</WrapPanel>
 					<StackPanel Orientation="Horizontal" Margin="0 20 0 0">
 						<TextBlock FontWeight="Bold" Text="Powered by " VerticalAlignment="Center" />

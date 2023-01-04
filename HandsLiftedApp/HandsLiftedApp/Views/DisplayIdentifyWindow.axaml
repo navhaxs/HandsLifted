@@ -34,6 +34,19 @@
 						   />
 		</Border>
 
+		<!--TODO Monitor identification preview -->
+		<!--<Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 70 70 0"
+	Background="{DynamicResource FrameColor}"
+	MinWidth="150"
+	Padding="20">
+			<TextBlock Name="ScreenAssignment" Text="Main Output" Foreground="#f3ebf9" FontSize="62"
+					   FontWeight="Bold"
+					   TextAlignment="Center"
+					   MinWidth="160"
+					   HorizontalAlignment="Center"
+						   />
+		</Border>-->
+
 
 		<Border VerticalAlignment="Top" HorizontalAlignment="Left"
 	Background="{DynamicResource FrameColor}"
@@ -44,7 +57,6 @@
 					   HorizontalAlignment="Center"
 						   />
 		</Border>
-
 
 		<Border VerticalAlignment="Bottom" HorizontalAlignment="Right"
 				Margin="0 0 20 20"

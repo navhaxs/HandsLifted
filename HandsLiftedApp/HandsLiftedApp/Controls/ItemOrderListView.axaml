@@ -8,6 +8,7 @@
              xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:idd="clr-namespace:Avalonia.Xaml.Interactions.DragAndDrop;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:b="using:HandsLiftedApp.Behaviours"
+			 xmlns:item="using:HandsLiftedApp.Views.Item"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
 			 xmlns:vm="using:HandsLiftedApp.ViewModels"
              x:Class="HandsLiftedApp.Controls.ItemOrderListView">
@@ -55,77 +56,77 @@
 		</Style>
 
 		<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Background" Value="#66edeafc"/>
+			<Setter Property="BorderBrush" Value="#9a93cd"/>
 		</Style>
-		
+
 		<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="#9a93cd"/>
+			<!--<Setter Property="Background" Value="#9a93cd"/>-->
 		</Style>
-		
+
 		<Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
-			<Setter Property="Background" Value="#6259A5"/>
+			<!--<Setter Property="Background" Value="#6259A5"/>-->
 		</Style>
 
 	</UserControl.Styles>
 
 	<Grid>
-		
-	<ListBox
-		x:Name="itemsListBox"
-		Items="{Binding Playlist.Items, Mode=OneWay}"
-		VirtualizationMode="None"
-		ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-        Classes="ItemsDragAndDrop"
-		Background="Transparent"
-		DragDrop.AllowDrop="True">
-		<ListBox.ContextMenu>
-			<ContextMenu>
-				<MenuItem Header="Add Item" />
-			</ContextMenu>
-		</ListBox.ContextMenu>
-		<ListBox.DataTemplates>
-			<DataTemplate>
-				<DockPanel VerticalAlignment="Stretch">
 
+		<ListBox
+			x:Name="itemsListBox"
+			Items="{Binding Playlist.Items, Mode=OneWay}"
+			VirtualizationMode="None"
+			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			Classes="ItemsDragAndDrop"
+			Background="Transparent"
+			DragDrop.AllowDrop="True">
+			<ListBox.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Add Item" />
+				</ContextMenu>
+			</ListBox.ContextMenu>
+			<ListBox.DataTemplates>
+				<DataTemplate>
+					<DockPanel VerticalAlignment="Stretch">
+						
+						<item:ItemIcon DockPanel.Dock="Left" />
 
-					<Button
-							DockPanel.Dock="Right"
-							Click="OnScrollToItemClick"
-							Margin="1 0 8 0"
-							CornerRadius="3"
-							BorderThickness="0"
-							IsVisible="{Binding State.IsSelected}"
-							VerticalAlignment="Center"
-							Background="#c43e1c">
-						<Button.Styles>
-							<Style Selector="Button:pointerover">
-								<Setter Property="Background" Value="#C1634B" />
-							</Style>
-							<Style Selector="Button:pressed">
-								<Setter Property="Background" Value="#913C27" />
-							</Style>
-						</Button.Styles>
-						<TextBlock
-							Margin="8 0 8 1"
-							FontWeight="Bold"
-							Foreground="White"
-							FontSize="12">LIVE</TextBlock>
-					</Button>
+						<Button
+								DockPanel.Dock="Right"
+								Click="OnScrollToItemClick"
+								Margin="1 0 8 0"
+								CornerRadius="3"
+								BorderThickness="0"
+								IsVisible="{Binding State.IsSelected}"
+								VerticalAlignment="Center"
+								Background="#c43e1c">
+							<Button.Styles>
+								<Style Selector="Button:pointerover">
+									<Setter Property="Background" Value="#C1634B" />
+								</Style>
+								<Style Selector="Button:pressed">
+									<Setter Property="Background" Value="#913C27" />
+								</Style>
+							</Button.Styles>
+							<TextBlock
+								Margin="8 0 8 1"
+								FontWeight="Bold"
+								Foreground="White"
+								FontSize="12">LIVE</TextBlock>
+						</Button>
 
-					
-					<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
-						<TextBlock.Text>
-							<MultiBinding StringFormat="{}{0}">
-							<!--<MultiBinding StringFormat="{}{0}. {1}">-->
-								<!--<Binding Path="State.ItemIndex" />-->
-								<Binding Path="Title" />
-							</MultiBinding>
-						</TextBlock.Text>
-					</TextBlock>
-				</DockPanel>
-			</DataTemplate>
-		</ListBox.DataTemplates>
-	</ListBox>
-		<TextBlock Name="DropState" IsHitTestVisible="False" />
+						<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
+							<TextBlock.Text>
+								<MultiBinding StringFormat="{}{0}">
+									<!--<MultiBinding StringFormat="{}{0}. {1}">-->
+									<!--<Binding Path="State.ItemIndex" />-->
+									<Binding Path="Title" />
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</DockPanel>
+				</DataTemplate>
+			</ListBox.DataTemplates>
+		</ListBox>
 	</Grid>
 </UserControl>

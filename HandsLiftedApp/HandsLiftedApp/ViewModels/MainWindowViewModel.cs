@@ -12,6 +12,7 @@ using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.PropertyGridControl;
@@ -235,6 +236,12 @@ namespace HandsLiftedApp.ViewModels
                    }
                });
 
+            MessageBus.Current.Listen<AddItemToPlaylistMessage>()
+                .Subscribe(x =>
+                {
+                    PlaylistUtils.AddItemFromFile(ref _playlist, x.filenames);
+                });
+
             MessageBus.Current.Listen<MoveItemMessage>()
                 .Subscribe(x =>
                 {
@@ -304,7 +311,7 @@ namespace HandsLiftedApp.ViewModels
 
         public void ToggleProjectorWindow(bool? shouldShow = null)
         {
-            shouldShow = shouldShow ?? (ProjectorWindow != null && !ProjectorWindow.IsVisible);
+            shouldShow = shouldShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
             if (shouldShow == true)
             {
                 ProjectorWindow = new ProjectorWindow();
@@ -320,7 +327,7 @@ namespace HandsLiftedApp.ViewModels
 
         public void ToggleStageDisplayWindow(bool? shouldShow = null)
         {
-            shouldShow = shouldShow ?? (StageDisplayWindow != null && !StageDisplayWindow.IsVisible);
+            shouldShow = shouldShow ?? (StageDisplayWindow == null || !StageDisplayWindow.IsVisible);
             if (shouldShow == true)
             {
                 StageDisplayWindow = new StageDisplayWindow();
@@ -632,7 +639,7 @@ namespace HandsLiftedApp.ViewModels
 
                 if (fileName != null && fileName is string)
                 {
-                    var songItem = SongImporter.ImportSongFromTxt((string)fileName);
+                    var songItem = SongImporter.createSongItemFromTxt((string)fileName);
                     Playlist.Items.Add(songItem);
                 }
 

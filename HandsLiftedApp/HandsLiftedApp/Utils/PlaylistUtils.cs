@@ -1,14 +1,16 @@
-﻿using Avalonia.Threading;
-using DynamicData;
+﻿using DynamicData;
 using HandsLiftedApp.Comparer;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Importer.PDF;
+using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
+using HandsLiftedApp.Models.UI;
+using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,9 +23,93 @@ namespace HandsLiftedApp.Utils
     internal static class PlaylistUtils
     {
 
+        public static readonly string[] SUPPORTED_SONG = { "txt", "xml" };
+        public static readonly string[] SUPPORTED_POWERPOINT = { "ppt", "pptx", "odp" };
         public static readonly string[] SUPPORTED_VIDEO = { "mp4", "flv", "mov", "mkv", "avi", "wmv" };
         public static readonly string[] SUPPORTED_IMAGE = { "bmp", "png", "jpg", "jpeg" };
 
+        public static void AddItemFromFile(ref Playlist<PlaylistStateImpl, ItemStateImpl> playlist, List<string> fileNames, int? insertAtIndex = null)
+        {
+            List<Item<ItemStateImpl>> addedItems = new List<Item<ItemStateImpl>>();
+
+            foreach (string fileName in fileNames)
+            {
+                string ext = Path.GetExtension(fileName).ToLower();
+
+                string extNoDot = Path.GetExtension(fileName).ToLower().Replace(".", "");
+
+                if (SUPPORTED_SONG.Contains(extNoDot))
+                {
+                    var songItem = SongImporter.createSongItemFromTxt(fileName);
+
+                    if (songItem != null)
+                        addedItems.Add(songItem);
+                }
+                else if (SUPPORTED_POWERPOINT.Contains(extNoDot))
+                {
+                    PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> powerPointSlidesGroupItem = createPresentationItem(fileName, playlist.State);
+
+                    if (powerPointSlidesGroupItem != null)
+                        addedItems.Add(powerPointSlidesGroupItem);
+                }
+                // TODO generate individual items, or a single group of items?
+                else if (SUPPORTED_VIDEO.Contains(extNoDot) || SUPPORTED_IMAGE.Contains(extNoDot))
+                {
+                    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroupItem = createMediaGroupItem(fileName);
+
+                    if (slidesGroupItem != null)
+                        addedItems.Add(slidesGroupItem);
+                }
+            }
+
+            int idx = insertAtIndex ?? playlist.Items.Count - 1;
+
+            playlist.Items.AddRange(addedItems, idx);
+
+            // UI: navigate to the head of the newly-inserted items
+            MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = idx + 1 });
+        }
+
+        private static SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> createMediaGroupItem(string fullPath)
+        {
+            DateTime now = DateTime.Now;
+            string fileName = Path.GetFileName(fullPath);
+            string folderName = Path.GetDirectoryName(fullPath);
+
+            SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
+
+            slidesGroup._Slides.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath, 0));
+
+            return slidesGroup;
+        }
+
+        private static PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> createPresentationItem(string fullFilePath, PlaylistStateImpl state)
+        {
+            try
+            {
+                if (fullFilePath != null && fullFilePath is string)
+                {
+
+                    DateTime now = DateTime.Now;
+                    string fileName = Path.GetFileName(fullFilePath);
+
+                    string targetDirectory = Path.Join(state.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    Directory.CreateDirectory(targetDirectory);
+
+                    //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
+                    PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };
+
+                    slidesGroup.SyncState.SyncCommand();
+
+                    return slidesGroup;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Print(e.Message);
+            }
+            return null;
+        }
         public async static Task<ImportStats?> AddPowerPointToPlaylist(ImportTask importTaskAction, Action<ImportStats> onProgressUpdate)
         {
             ImportStats? value = null;
@@ -164,7 +250,8 @@ namespace HandsLiftedApp.Utils
         {
             string _filename = filename.ToLower();
 
-            if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x))) {
+            if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x)))
+            {
                 return new VideoSlide<VideoSlideStateImpl>(filename) { Index = index };
             }
 

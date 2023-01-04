@@ -26,8 +26,11 @@ namespace HandsLiftedApp.Models.SlideState
 
         private CompositeDisposable _subscriptions;
 
+        private VideoSlide<VideoSlideStateImpl> parentVideoSlide;
+
         public VideoSlideStateImpl(ref VideoSlide<VideoSlideStateImpl> videoSlide) : base(ref videoSlide)
         {
+            parentVideoSlide = videoSlide;
             VideoPath = videoSlide.VideoPath;
 
             // TODO init only when actually needed (on slide enter)
@@ -133,9 +136,12 @@ namespace HandsLiftedApp.Models.SlideState
         {
             ThreadPool.QueueUserWorkItem((object state) =>
             {
-                // loop this media
-                this.MediaPlayer.Stop();
-                this.MediaPlayer.Play();
+                if (parentVideoSlide.IsLoop)
+                {
+                    // loop this media
+                    this.MediaPlayer.Stop();
+                    this.MediaPlayer.Play();
+                }
             });
         }
 

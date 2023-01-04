@@ -5,14 +5,23 @@ namespace HandsLiftedApp.Data.Slides
 {
     public class VideoSlide<T> : Slide, IDynamicSlideRender where T : IVideoSlideState
     {
-        T _state;
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
+        T _state;
 
-        private string _videoPath;
         public string VideoPath { get => _videoPath; set => this.RaiseAndSetIfChanged(ref _videoPath, value); }
+        private string _videoPath;
 
-        private bool _isLoop = false;
+        /// <summary>
+        /// Loop the playback of this video item
+        /// </summary>
         public bool IsLoop { get => _isLoop; set => this.RaiseAndSetIfChanged(ref _isLoop, value); }
+        private bool _isLoop = false;
+
+        /// <summary>
+        /// Mute the playback of this video item
+        /// </summary>
+        public bool IsMute { get => _isMute; set => this.RaiseAndSetIfChanged(ref _isMute, value); }
+        private bool _isMute = false;
 
         public VideoSlide(String videoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4")
         {

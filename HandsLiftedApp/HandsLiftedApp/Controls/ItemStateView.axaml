@@ -6,7 +6,6 @@
 			 xmlns:item="using:HandsLiftedApp.Views.Item"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
              xmlns:behaviours="using:HandsLiftedApp.Behaviours"
-
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
 			 MinHeight="200"
@@ -49,6 +48,9 @@
 	<StackPanel Margin="0 0 0 0">
 		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
 			<DockPanel>
+
+				<item:ItemIcon DockPanel.Dock="Left" />
+
 				<Button Padding="22 6"
 						Command="{Binding State.EditCommand}"
 						DockPanel.Dock="Right"

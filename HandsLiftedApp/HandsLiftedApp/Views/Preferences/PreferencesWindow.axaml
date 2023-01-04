@@ -43,6 +43,8 @@
 					</Style>
 				</StackPanel.Styles>
 				<StackPanel>
+					<Label>Playlist</Label>
+					
 					<Label>Output Display (Projector)</Label>
 					<ComboBox SelectedItem="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=OutputDisplayBounds}"
 							  							  Items="{Binding AllAvailableScreens}" />

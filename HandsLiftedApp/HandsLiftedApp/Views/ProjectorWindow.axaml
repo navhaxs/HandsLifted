@@ -88,7 +88,6 @@
 					Command="{Binding OnPrevSlideClickCommand}"
 					HorizontalAlignment="Left"
 					FontSize="16"
-					IsCancel="True"
 					IsTabStop="False">
 					<material:MaterialIcon
 						Kind="ChevronLeft"
@@ -102,7 +101,6 @@
 					HorizontalAlignment="Right"
 					Content="Next"
 					FontSize="16"
-					IsCancel="True"
 					IsTabStop="False">
 					<material:MaterialIcon
 						Foreground="#eee"
