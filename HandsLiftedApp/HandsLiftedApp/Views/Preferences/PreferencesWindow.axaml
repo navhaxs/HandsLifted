@@ -43,8 +43,6 @@
 					</Style>
 				</StackPanel.Styles>
 				<StackPanel>
-					<Label>Playlist</Label>
-					
 					<Label>Output Display (Projector)</Label>
 					<ComboBox SelectedItem="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=OutputDisplayBounds}"
 							  							  Items="{Binding AllAvailableScreens}" />
@@ -70,6 +68,10 @@
 						<TextBox Text="1080" />
 					</StackPanel>
 				</StackPanel>
+				<Label>NDI</Label>
+				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=EnableOutputNDI}">Enable Main Output NDI</CheckBox>
+				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=EnableLyricsOutputNDI}">Enable Lyrics Output NDI</CheckBox>
+				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=EnableStageDisplayNDI}">Enable Stage Display NDI</CheckBox>
 			</StackPanel>
 		</ScrollViewer>
 	</DockPanel>

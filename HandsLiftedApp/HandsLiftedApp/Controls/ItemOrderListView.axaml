@@ -89,7 +89,7 @@
 				<DataTemplate>
 					<DockPanel VerticalAlignment="Stretch">
 						
-						<item:ItemIcon DockPanel.Dock="Left" />
+						<!--<item:ItemIcon DockPanel.Dock="Left" Margin="5 0 8 0" Background="Red" />-->
 
 						<Button
 								DockPanel.Dock="Right"
@@ -115,7 +115,7 @@
 								FontSize="12">LIVE</TextBlock>
 						</Button>
 
-						<TextBlock TextTrimming="CharacterEllipsis" Padding="10 10 0 10">
+						<TextBlock TextTrimming="CharacterEllipsis" Padding="6 10 0 10">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0}">
 									<!--<MultiBinding StringFormat="{}{0}. {1}">-->

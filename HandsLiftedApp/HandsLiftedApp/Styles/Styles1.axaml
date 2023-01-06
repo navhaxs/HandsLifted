@@ -7,6 +7,35 @@
     </Design.PreviewWith>
 
     <!-- Add Styles Here -->
+	<Style Selector="Button">
+		<Setter Property="CornerRadius" Value="4" />
+	</Style>
+
+	<!--https://github.com/AvaloniaUI/Avalonia/issues/7640#issuecomment-1043865206-->
+	<Style Selector="Button.link">
+		<Setter Property="Foreground" Value="#0074cc" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Cursor" Value="Hand" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="Template">
+			<ControlTemplate>
+				<ContentPresenter Content="{TemplateBinding Content}">
+					<ContentPresenter.Styles>
+						<Style Selector="TextBlock">
+							<Setter Property="Foreground" Value="{TemplateBinding Foreground}"/>
+							<Setter Property="FontSize" Value="{TemplateBinding FontSize}"/>
+							<Setter Property="TextDecorations" Value="Underline"/>
+						</Style>
+					</ContentPresenter.Styles>
+				</ContentPresenter>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+	<Style Selector="Button.link:pointerover TextBlock">
+		<Setter Property="TextDecorations" Value="Underline" />
+	</Style>
+
 	<!-- https://github.com/AvaloniaUI/Avalonia/issues/6825#issuecomment-962925283 -->
 	<Style Selector="ScrollViewer">
 		<Setter Property="Background"

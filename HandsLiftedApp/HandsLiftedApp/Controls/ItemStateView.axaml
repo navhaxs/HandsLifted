@@ -49,7 +49,7 @@
 		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
 			<DockPanel>
 
-				<item:ItemIcon DockPanel.Dock="Left" />
+				<item:ItemIcon DockPanel.Dock="Left" Margin="6 0 4 0" />
 
 				<Button Padding="22 6"
 						Command="{Binding State.EditCommand}"
@@ -66,7 +66,7 @@
 						Margin="12 0 0 0"
 						Fill="#c43e1c"
 						/>-->
-				<TextBlock Padding="12 8 0 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
+				<TextBlock Padding="0 8 0 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
 
 				<Border
 					HorizontalAlignment="Left"

@@ -51,10 +51,16 @@
 							<TextBlock>Load</TextBlock>
 						</DockPanel>
 					</Button>
-					<Button Content="Save" Command="{Binding SaveServiceCommand}">
+					<Button Command="{Binding SaveServiceCommand}">
 						<DockPanel>
 							<material:MaterialIcon Kind="ContentSave" Foreground="#888888" />
 							<TextBlock>Save</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding EditPlaylistInfoCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Abc" Foreground="#888888" />
+							<TextBlock>Rename</TextBlock>
 						</DockPanel>
 					</Button>
 				</StackPanel>

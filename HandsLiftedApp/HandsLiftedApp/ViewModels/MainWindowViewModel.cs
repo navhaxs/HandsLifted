@@ -18,6 +18,7 @@ using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views;
+using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 using Serilog;
 using System;
@@ -202,6 +203,7 @@ namespace HandsLiftedApp.ViewModels
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
             NewServiceCommand = ReactiveCommand.Create(OnNewService);
             LoadServiceCommand = ReactiveCommand.Create(OnLoadService);
+            EditPlaylistInfoCommand = ReactiveCommand.Create(OnEditPlaylistInfo);
             MoveUpItemCommand = ReactiveCommand.Create<object>(OnMoveUpItemCommand);
             MoveDownItemCommand = ReactiveCommand.Create<object>(OnMoveDownItemCommand);
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
@@ -373,6 +375,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
         public ReactiveCommand<Unit, Unit> NewServiceCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadServiceCommand { get; }
+        public ReactiveCommand<Unit, Unit> EditPlaylistInfoCommand { get; }
         public ReactiveCommand<object, Unit> MoveUpItemCommand { get; }
         public ReactiveCommand<object, Unit> MoveDownItemCommand { get; }
         public ReactiveCommand<object, Unit> RemoveItemCommand { get; }
@@ -679,6 +682,14 @@ namespace HandsLiftedApp.ViewModels
                 }
             }
         }
+
+        void OnEditPlaylistInfo()
+        {
+            //MessageBus.Current.SendMessage(new MainWindowModalMessage(typeof(PlaylistInfoEditorWindow));
+            MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
+            //PlaylistInfoEditorWindow 
+        }
+
         void OnMoveUpItemCommand(object? itemState)
         {
             // get the index of itemState

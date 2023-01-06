@@ -71,6 +71,19 @@ namespace HandsLiftedApp.Views
                  }
              });
 
+            MessageBus.Current.Listen<MainWindowModalMessage>()
+             .Subscribe(x =>
+             {
+                 this.FindControl<Control>("shade").IsVisible = true;
+                 x.window.DataContext = this.DataContext;
+                 x.window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                 x.window.Closed += (object? sender, EventArgs e) =>
+                     {
+                         this.FindControl<Control>("shade").IsVisible = false;
+                     };
+                 x.window.ShowDialog(this);
+             });
+
             //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
             //OrderableListBox.PointerReleased += X_PointerReleased;
 
@@ -118,7 +131,6 @@ namespace HandsLiftedApp.Views
             //{
             //    var stream = assetLoader.Open(fontAsset);
             //}
-
         }
 
         private void Exit(object sender, Avalonia.Interactivity.RoutedEventArgs e)

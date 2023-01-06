@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:HandsLiftedApp.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="250"
+		Width="400" Height="250"
+        x:Class="HandsLiftedApp.Views.Editor.PlaylistInfoEditorWindow"
+        Title="PlaylistInfoEditorWindow">
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<Border BorderBrush="#b0abd7" BorderThickness="1" CornerRadius="6">
+
+		<DockPanel>
+
+			<Button DockPanel.Dock="Bottom">Done</Button>
+		
+			<StackPanel Margin="8">
+				<TextBox Watermark="Playlist Title" FontSize="22" Text="{Binding Playlist.Title}" />
+				<DatePicker SelectedDate="{Binding Playlist.Date}" />
+			</StackPanel>
+			
+		</DockPanel>
+			
+	</Border>
+	
+</Window>

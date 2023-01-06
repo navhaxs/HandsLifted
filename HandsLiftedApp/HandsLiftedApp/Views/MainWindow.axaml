@@ -119,10 +119,10 @@
 										VerticalAlignment="Center"
 										IsHitTestVisible="False">
 								<!--<controls:EditableLabelControl />-->
-								<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Meta[Title], FallbackValue='Untitled'}" />
-								<TextBlock FontSize="20" Margin="0 0 12 0" Foreground="#8a8c8c" Text="{Binding Playlist.Meta[Date], FallbackValue='22 May 2022'}" />
+								<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Title, FallbackValue='Untitled'}" />
+								<TextBlock FontSize="20" Margin="0 0 12 0" Foreground="#8a8c8c" Text="{Binding Playlist.Date, FallbackValue='22 May 2022'}" />
 							</StackPanel>
-							<ToggleButton
+							<!--<ToggleButton
 								Name="EditTitleButton" VerticalAlignment="Center"
 								Background="Transparent"
 								BorderThickness="0"
@@ -133,8 +133,7 @@
 							<Popup Name="editTitleFlyout" StaysOpen="False"
 							   PlacementMode="Bottom"
 							   PlacementTarget="{Binding #EditTitleButton}">
-								<appControls:PlaylistTitleDateEditor />
-							</Popup>
+							</Popup>-->
 						</StackPanel>
 						<!--<DockPanel>
 								<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />

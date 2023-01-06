@@ -6,6 +6,8 @@
 		xmlns:vm="using:HandsLiftedApp.ViewModels"
 		xmlns:sdl="using:HandsLiftedApp.Views.StageDisplayLayout"
 		xmlns:basewindows="using:HandsLiftedApp.Views.BaseWindows"
+        xmlns:ndi="using:AvaloniaNDI"
+        xmlns:app="using:HandsLiftedApp"
         x:Class="HandsLiftedApp.Views.StageDisplayWindow"
         Title="StageDisplayOutput" Background="Black">
 
@@ -13,6 +15,8 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
+	<!--<ndi:NDISendContainer NdiName="VisionScreeens Stage Display" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=!EnableStageDisplayNDI}" >-->
+	<!--<TabControl Height="1080" Width="1920">-->
 	<TabControl>
 		<TabControl.Styles>
 			<Style Selector="TabControl /template/ ItemsPresenter#PART_ItemsPresenter WrapPanel">
@@ -27,5 +31,6 @@
 			<sdl:SongLayout />
 		</TabItem>
 	</TabControl>
+<!--</ndi:NDISendContainer>-->
 
 </basewindows:BaseOutputWindow>

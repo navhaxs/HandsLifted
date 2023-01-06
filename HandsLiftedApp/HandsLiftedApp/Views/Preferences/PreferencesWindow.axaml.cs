@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.ViewModels;
+using HandsLiftedApp.Views.Editor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,9 @@ namespace HandsLiftedApp.Views.Preferences
 
             if (Design.IsDesignMode)
                 return;
+
+            SlideDesignerWindow slideDesignerWindow = new SlideDesignerWindow();
+            slideDesignerWindow.Show();
 
             preferencesViewModel = Globals.preferencesViewModel;
             AllAvailableScreens = this.Screens.All.Select(i => new DisplayModel(i.Bounds)).ToList();

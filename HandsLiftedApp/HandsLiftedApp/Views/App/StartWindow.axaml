@@ -15,29 +15,6 @@
 		<CornerRadius x:Key="CornerRadius1">2</CornerRadius>
 	</Window.Resources>
 
-	<Window.Styles>
-		<Style Selector="Button.link">
-			<Setter Property="Foreground" Value="Blue" />
-			<Setter Property="Padding" Value="0" />
-			<Setter Property="Cursor" Value="Hand" />
-			<Setter Property="BorderThickness" Value="0" />
-			<Setter Property="Background" Value="Transparent" />
-			<Setter Property="Template">
-				<ControlTemplate>
-					<ContentPresenter Content="{TemplateBinding Content}">
-						<ContentPresenter.Styles>
-							<Style Selector="TextBlock">
-								<Setter Property="Foreground" Value="{TemplateBinding Foreground}"/>
-								<Setter Property="FontSize" Value="{TemplateBinding FontSize}"/>
-								<Setter Property="TextDecorations" Value="Underline"/>
-							</Style>
-						</ContentPresenter.Styles>
-					</ContentPresenter>
-				</ControlTemplate>
-			</Setter>
-		</Style>
-	</Window.Styles>
-
 	<!--<Border Margin="0 80" Padding="20 20 20 40" Background="White" CornerRadius="6">-->
 	<Grid Margin="40 20">
 

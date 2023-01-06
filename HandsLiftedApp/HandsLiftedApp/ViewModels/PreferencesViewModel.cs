@@ -20,8 +20,33 @@ namespace HandsLiftedApp.ViewModels
             //    canSearch);
         }
 
-        [IgnoreDataMember]
-        public ReactiveCommand<Unit, Unit> Search { get; }
+        //[IgnoreDataMember]
+        //public ReactiveCommand<Unit, Unit> Search { get; }
+
+
+        private bool _enableOutputNDI;
+        [DataMember]
+        public bool EnableOutputNDI
+        {
+            get => _enableOutputNDI;
+            set => this.RaiseAndSetIfChanged(ref _enableOutputNDI, value);
+        }
+
+        private bool _enableLyricsOutputNDI;
+        [DataMember]
+        public bool EnableLyricsOutputNDI
+        {
+            get => _enableLyricsOutputNDI;
+            set => this.RaiseAndSetIfChanged(ref _enableLyricsOutputNDI, value);
+        }
+
+        private bool _enableStageDisplayNDI;
+        [DataMember]
+        public bool EnableStageDisplayNDI
+        {
+            get => _enableStageDisplayNDI;
+            set => this.RaiseAndSetIfChanged(ref _enableStageDisplayNDI, value);
+        }
 
         private bool _onStartupShowOutput;
         [DataMember]
