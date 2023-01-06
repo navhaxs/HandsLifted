@@ -3,6 +3,7 @@ using Avalonia.ReactiveUI;
 using LibVLCSharp.Avalonia;
 using Serilog;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,36 +35,36 @@ namespace HandsLiftedApp
 
                 // Windows-only
                 // https://stackoverflow.com/a/646500/
-                bool created;
-                s_event = new EventWaitHandle(false,
-                    EventResetMode.ManualReset, "HandsLiftedApp#startup", out created);
-                if (created)
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    // todo: globally handle unhandled, uncaught exceptions here
-                    BuildAvaloniaApp()
-                        .StartWithClassicDesktopLifetime(args);
+                    bool windowEventResult;
+                    s_event = new EventWaitHandle(false,
+                        EventResetMode.ManualReset, "HandsLiftedApp#startup", out windowEventResult);
+
+                    if (!windowEventResult)
+                    {
+                        // TODO: Focus already running app instance
+                        return;
+                    }
                 }
-                else
-                {
-                    // TODO: Focus already running app instance
-                }
+
+                BuildAvaloniaApp()
+                    .StartWithClassicDesktopLifetime(args);
             }
             catch (Exception e)
             {
-                // here we can work with the exception, for example add it to our log file
-                Log.Fatal(e, "Unhanled exception (Something very bad happened. Please report this error.)");
+                // globally handle uncaught exceptions end up here
+                Log.Fatal(e, "Global fatal exception. Please report this error.");
             }
             finally
             {
-                // This block is optional. 
-                // Use the finally-block if you need to clean things up or similar
                 Log.CloseAndFlush();
             }
         }
 
         private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
-            Log.Fatal(e.ToString(), "TaskScheduler_UnobservedTaskException");
+            Log.Fatal(e.ToString(), "TaskScheduler_UnobservedTaskException. Please report this error.");
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
@@ -76,7 +77,9 @@ namespace HandsLiftedApp
                 .UsePlatformDetect()
                 .LogToTrace()
                 .UseReactiveUI()
+                // customised MaxGpuResourceSizeBytes value (TODO: move to config file or ENV variable)
                 .With(new SkiaOptions { MaxGpuResourceSizeBytes = 0x20000000 })
+                // configure VLC to render within Avalonia - so we then have the pixels which we can send to NDI :)
                 .UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.Avalonia)
             ;
         }

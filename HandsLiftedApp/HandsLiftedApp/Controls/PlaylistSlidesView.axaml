@@ -59,7 +59,7 @@
 				</ItemsControl.Styles>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<controls:ItemStateView />
+						<controls:ItemSlidesView />
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>

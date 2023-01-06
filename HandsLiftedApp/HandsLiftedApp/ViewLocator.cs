@@ -5,6 +5,9 @@ using System;
 
 namespace HandsLiftedApp
 {
+/// <summary>
+/// Boilerplate Avalonia code
+/// </summary>
     public class ViewLocator : IDataTemplate
     {
         public bool SupportsRecycling => false;

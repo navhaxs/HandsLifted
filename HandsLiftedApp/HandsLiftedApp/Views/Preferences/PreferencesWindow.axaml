@@ -44,7 +44,7 @@
 				</StackPanel.Styles>
 				<StackPanel>
 					<Label>Output Display (Projector)</Label>
-					<ComboBox SelectedItem="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=OutputDisplayBounds}"
+					<ComboBox SelectedItem="{Binding Source={x:Static app:Globals.Preferences}, Path=OutputDisplayBounds}"
 							  							  Items="{Binding AllAvailableScreens}" />
 					<Label>Stage Display</Label>
 					<ComboBox Name="StageDisplayComboBox" SelectedItem="{Binding preferencesViewModel.StageDisplayBounds}"
@@ -69,9 +69,9 @@
 					</StackPanel>
 				</StackPanel>
 				<Label>NDI</Label>
-				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=EnableOutputNDI}">Enable Main Output NDI</CheckBox>
-				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=EnableLyricsOutputNDI}">Enable Lyrics Output NDI</CheckBox>
-				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=EnableStageDisplayNDI}">Enable Stage Display NDI</CheckBox>
+				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableOutputNDI}">Enable Main Output NDI</CheckBox>
+				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableLyricsOutputNDI}">Enable Lyrics Output NDI</CheckBox>
+				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableStageDisplayNDI}">Enable Stage Display NDI</CheckBox>
 			</StackPanel>
 		</ScrollViewer>
 	</DockPanel>

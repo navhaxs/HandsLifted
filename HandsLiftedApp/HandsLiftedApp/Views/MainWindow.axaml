@@ -348,7 +348,7 @@
 
 
 								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
-								<!--<controls:ItemStateView DataContext="{Binding Playlist.State.SelectedItem}" />-->
+								<!--<controls:ItemSlidesView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
 							</DockPanel>
 						</Border>

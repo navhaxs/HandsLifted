@@ -11,7 +11,7 @@
 			 MinHeight="200"
 			 Background="Transparent"
 			 xmlns:converters="using:HandsLiftedApp.Converters"
-             x:Class="HandsLiftedApp.Controls.ItemStateView">
+             x:Class="HandsLiftedApp.Controls.ItemSlidesView">
 
 	<UserControl.Resources>
 		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>

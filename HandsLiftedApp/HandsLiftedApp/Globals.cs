@@ -4,9 +4,7 @@ namespace HandsLiftedApp
 {
     public static class Globals
     {
-
-
-
-        public static PreferencesViewModel preferencesViewModel; // = new PreferencesViewModel(); // for design mode
+        // note: this is initialized by App.axaml.cs on program start up
+        public static PreferencesViewModel Preferences;
     }
 }

@@ -66,6 +66,8 @@ By His blood and in His Name
 In His freedom I am free
 For the love of Jesus Christ
 Who has resurrected me"));
+
+            this.ResetArrangement();
         }
     }
 }

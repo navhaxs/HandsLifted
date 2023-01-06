@@ -15,7 +15,7 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<!--<ndi:NDISendContainer NdiName="VisionScreeens Stage Display" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="{Binding Source={x:Static app:Globals.preferencesViewModel}, Path=!EnableStageDisplayNDI}" >-->
+	<!--<ndi:NDISendContainer NdiName="VisionScreeens Stage Display" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="{Binding Source={x:Static app:Globals.Preferences}, Path=!EnableStageDisplayNDI}" >-->
 	<!--<TabControl Height="1080" Width="1920">-->
 	<TabControl>
 		<TabControl.Styles>

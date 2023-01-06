@@ -8,9 +8,9 @@ using System.Windows;
 
 namespace HandsLiftedApp.Controls
 {
-    public partial class ItemStateView : UserControl
+    public partial class ItemSlidesView : UserControl
     {
-        public ItemStateView()
+        public ItemSlidesView()
         {
             InitializeComponent();
         }

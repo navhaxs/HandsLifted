@@ -32,9 +32,9 @@ namespace HandsLiftedApp.Views.Preferences
             SlideDesignerWindow slideDesignerWindow = new SlideDesignerWindow();
             slideDesignerWindow.Show();
 
-            preferencesViewModel = Globals.preferencesViewModel;
+            preferencesViewModel = Globals.Preferences;
             AllAvailableScreens = this.Screens.All.Select(i => new DisplayModel(i.Bounds)).ToList();
-            AllAvailableScreens.Add(new DisabledDisplayModel());
+            AllAvailableScreens.Add(new UnsetDisplay());
             foreach (var (i, index) in AllAvailableScreens.WithIndex())
             {
                 i.Label = $"Display {index + 1}";

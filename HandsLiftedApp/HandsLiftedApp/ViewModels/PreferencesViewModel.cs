@@ -177,11 +177,11 @@ namespace HandsLiftedApp.ViewModels
         }
 
         [DataContract]
-        public class DisabledDisplayModel : DisplayModel
+        public class UnsetDisplay : DisplayModel
         {
             public override string? ToString()
             {
-                return "(Disabled)";
+                return "(Unset)";
             }
         }
     }

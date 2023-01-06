@@ -16,6 +16,8 @@ namespace HandsLiftedApp
         MainWindowViewModel mainWindowViewModel;
         public override void OnFrameworkInitializationCompleted()
         {
+            // Initialize app preferences state here
+
             // Create the AutoSuspendHelper.
             var suspension = new AutoSuspendHelper(ApplicationLifetime);
             RxApp.SuspensionHost.CreateNewAppState = () => new PreferencesViewModel();
@@ -23,9 +25,9 @@ namespace HandsLiftedApp
             suspension.OnFrameworkInitializationCompleted();
 
             // Load the saved view model state.
-            Globals.preferencesViewModel = RxApp.SuspensionHost.GetAppState<PreferencesViewModel>();
+            Globals.Preferences = RxApp.SuspensionHost.GetAppState<PreferencesViewModel>();
 
-            // Normal Avalonia init
+            // The rest of the normal Avalonia init
             mainWindowViewModel = new MainWindowViewModel();
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

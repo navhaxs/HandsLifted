@@ -289,10 +289,10 @@ namespace HandsLiftedApp.ViewModels
             var ws = new HandsLiftedWebServer();
             ws.Start();
 
-            if (Globals.preferencesViewModel.OnStartupShowOutput)
+            if (Globals.Preferences.OnStartupShowOutput)
                 ToggleProjectorWindow(true);
 
-            if (Globals.preferencesViewModel.OnStartupShowStage)
+            if (Globals.Preferences.OnStartupShowStage)
                 ToggleStageDisplayWindow(true);
         }
 

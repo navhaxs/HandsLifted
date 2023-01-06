@@ -78,6 +78,9 @@
 		<Resource Include="WebRoot\index.html" />
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Update="Controls\ItemSlidesView.axaml.cs">
+		  <DependentUpon>ItemSlidesView.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Controls\PlaylistSlidesView.axaml.cs">
 			<DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
 		</Compile>

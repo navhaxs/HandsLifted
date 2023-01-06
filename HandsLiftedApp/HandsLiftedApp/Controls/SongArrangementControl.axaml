@@ -10,7 +10,16 @@
 			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
              xmlns:controls="using:HandsLiftedApp.Controls"
              xmlns:converters="using:HandsLiftedApp.Converters"
+			 xmlns:vm="using:HandsLiftedApp.ViewModels"
              x:Class="HandsLiftedApp.Controls.SongArrangementControl">
+
+	<!--<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>-->
+
+	<Design.DataContext>
+		<vme:ExampleSongViewModel />
+	</Design.DataContext>
 
 	<UserControl.Resources>
 		<converters:StanzaSortConverter x:Key="stanzaSortConverter"/>
@@ -39,10 +48,7 @@
 			</ItemsControl>
 		</Flyout>
 	</UserControl.Resources>
-	
-	<Design.DataContext>
-		<vme:ExampleSongViewModel />
-	</Design.DataContext>
+
 
 	<StackPanel>
 		<DockPanel>
