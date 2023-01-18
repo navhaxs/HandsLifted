@@ -1,4 +1,7 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using DynamicData;
 using DynamicData.Binding;
 using HandsLiftedApp.Data.Models;
@@ -109,6 +112,28 @@ namespace HandsLiftedApp.Models
                 
                 Debug.Print(c.ToString());
             });
+
+            Playlist.WhenAnyValue(p => p.LogoGraphicFile).Subscribe(_ =>
+            {
+
+                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+                if (assets.Exists(new Uri(Playlist.LogoGraphicFile)))
+                {
+                    this.RaisePropertyChanged(nameof(LogoBitmap));
+                    this.RaisePropertyChanged("LogoBitmap");
+                }
+
+            });
+
+        }
+
+        public Bitmap LogoBitmap
+        {
+            get
+            {
+                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+                return new Bitmap(assets.Open(new Uri(Playlist.LogoGraphicFile)));
+            }
         }
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

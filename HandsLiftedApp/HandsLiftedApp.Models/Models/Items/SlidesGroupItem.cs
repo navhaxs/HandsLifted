@@ -42,6 +42,38 @@ namespace HandsLiftedApp.Data.Models.Items
 
         private ItemAutoAdvanceTimer _AutoAdvanceTimer = new ItemAutoAdvanceTimer();
         public ItemAutoAdvanceTimer AutoAdvanceTimer { get => _AutoAdvanceTimer; set => this.RaiseAndSetIfChanged(ref _AutoAdvanceTimer, value); }
+
+        /// <summary>
+        /// mutates *this* SlidesGroupItem and then returns a *new* SlidesGroupItem
+        /// </summary>
+        /// <param name="start"></param>
+        /// <returns></returns>
+        public SlidesGroupItem<I, J>? slice(int start)
+        {
+            if (start == 0)
+            {
+                return null;
+            }
+
+            SlidesGroupItem<I, J> slidesGroup = new SlidesGroupItem<I, J>() { Title = $"{Title} (Split copy)" };
+
+            // TODO optimise below to a single loop
+            // tricky bit: ensure index logic works whilst removing at the same time
+
+            for (int i = start; i < _Slides.Count; i++)
+            {
+                slidesGroup._Slides.Add(_Slides[i]);
+            }
+
+            var count = _Slides.Count;
+            for (int i = start; i < count; i++)
+            {
+                _Slides.RemoveAt(_Slides.Count - 1);
+            }
+
+
+            return slidesGroup;
+        }
     }
 
 }

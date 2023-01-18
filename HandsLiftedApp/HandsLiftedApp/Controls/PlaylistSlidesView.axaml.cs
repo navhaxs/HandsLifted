@@ -44,6 +44,26 @@ namespace HandsLiftedApp.Controls
                 //e.Handled = true;
             });
 
+            //MessageBus.Current.Listen<Test>()
+            //    .Subscribe(x =>
+            //    {
+            //        //listBox.LayoutUpdated
+            //        scrollViewer.InvalidateMeasure();
+            //        scrollViewer.InvalidateArrange();
+            //        scrollViewer.InvalidateVisual();
+            //        scrollViewer.InvalidateMeasure();
+            //        scrollViewer.InvalidateArrange();
+            //        scrollViewer.InvalidateVisual();
+            //        scrollViewer.InvalidateMeasure();
+            //        listBox.InvalidateArrange();
+            //        listBox.InvalidateVisual();
+            //        listBox.InvalidateMeasure();
+            //        listBox.InvalidateArrange();
+            //        ((Window)this.VisualRoot).LayoutManager.InvalidateMeasure(listBox);
+            //        Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
+            //    })
+            //;
+
             MessageBus.Current.Listen<FocusSelectedItem>()
                .Subscribe(x =>
                {

@@ -124,9 +124,21 @@
 		<Setter Property="ContextMenu">
 			<Setter.Value>
 				<ContextMenu>
+					<MenuItem Header="Edit / Slide / Info" Command="{Binding $parent[Window].DataContext.EditSlideInfoCommand}" CommandParameter="{Binding}"/>
 					<MenuItem Header="Move Up" Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" CommandParameter="{Binding}"/>
 					<MenuItem Header="Move Down" Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" CommandParameter="{Binding}"/>
 					<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
+					<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
+					<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
+					<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
+					<MenuItem Header="Split group from here" Command="{Binding $parent[Window].DataContext.SlideSplitFromHere}">
+						<MenuItem.CommandParameter>
+							<MultiBinding>
+								<Binding />
+								<Binding Path="$parent[ListBox].DataContext"/>
+							</MultiBinding>
+						</MenuItem.CommandParameter>
+					</MenuItem>
 				</ContextMenu>
 			</Setter.Value>
 		</Setter>

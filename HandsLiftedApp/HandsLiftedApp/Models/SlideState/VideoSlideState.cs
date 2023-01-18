@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls.Shapes;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
@@ -7,6 +8,7 @@ using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
 using Serilog;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -110,19 +112,22 @@ namespace HandsLiftedApp.Models.SlideState
             {
 
             }
-            //MediaPlayer.Play();
 
+            // do I also need to check for file is on disk (e.g. GOogle Drive File Stream - will this hang here....)loading?
 
+            if (!File.Exists(VideoPath))
+            {
+                // ??
+            }
 
-            // commands here ...
-            // commands here ...
-            // commands here ...
-            // commands here ...
+            try
+            {
 
-
-            ShellFile shellFile = ShellFile.FromFilePath(VideoPath);
-            var bm = shellFile.Thumbnail.Bitmap;
-            Thumbnail = bm.ConvertToAvaloniaBitmap();
+                ShellFile shellFile = ShellFile.FromFilePath(VideoPath);
+                var bm = shellFile.Thumbnail.Bitmap;
+                Thumbnail = bm.ConvertToAvaloniaBitmap();
+            }
+            catch { }
         }
 
         private Bitmap? _thumbnail;

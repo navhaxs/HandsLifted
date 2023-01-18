@@ -12,6 +12,7 @@
 		xmlns:material="using:Material.Icons.Avalonia"
 		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
 		xmlns:appControls="using:HandsLiftedApp.Views.App.Controls"
+		xmlns:library="using:HandsLiftedApp.Views.Library"
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
@@ -43,15 +44,6 @@
 				<DockPanel Grid.Column="0">
 
 					<Border DockPanel.Dock="Top" Height="70">
-
-
-						<!--<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-							<DockPanel>
-								<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu" />
-								<TextBlock Text="Library" />
-							</DockPanel>
-						</Button>-->
-
 
 
 						<StackPanel Orientation="Horizontal">
@@ -120,7 +112,7 @@
 										IsHitTestVisible="False">
 								<!--<controls:EditableLabelControl />-->
 								<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Title, FallbackValue='Untitled'}" />
-								<TextBlock FontSize="20" Margin="0 0 12 0" Foreground="#8a8c8c" Text="{Binding Playlist.Date, FallbackValue='22 May 2022'}" />
+								<TextBlock FontSize="20" Margin="0 0 12 0" Foreground="#8a8c8c" Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}" />
 							</StackPanel>
 							<!--<ToggleButton
 								Name="EditTitleButton" VerticalAlignment="Center"
@@ -160,15 +152,27 @@
 						<!-- Left panel -->
 						<DockPanel Grid.Column="0" Background="#eeeef2">
 							<DockPanel.Styles>
-								<Style Selector="Button.MenuItem">
-									<Setter Property="BorderThickness" Value="0 1 0 0" />
-									<Setter Property="CornerRadius" Value="0" />
-									<Setter Property="Padding" Value="12 8 6 8" />
-									<Setter Property="BorderBrush" Value="#8e8e8e"/>
-									<Setter Property="Background" Value="#dddddd"/>
+								<Style Selector="ToggleButton.MenuItem">
+									<Setter Property="Padding" Value="8 8 6 8" />
+									<Setter Property="Background" Value="#f5f5f5" />
 									<Setter Property="HorizontalContentAlignment" Value="Left" />
+									<Setter Property="BorderBrush" Value="#bebebe"/>
+									<Setter Property="FontSize" Value="14" />
 								</Style>
-								<Style Selector="Button DockPanel material|MaterialIcon">
+								<Style Selector="ToggleButton">
+									<Setter Property="BorderThickness" Value="0 1 0 1" />
+								</Style>
+								<!--<Style Selector="ToggleButton:nth-child(1)">
+									<Setter Property="BorderThickness" Value="1 0 1 0" />
+								</Style>
+								<Style Selector="ToggleButton:nth-child(1):nth-last-child(1)">
+									<Setter Property="BorderThickness" Value="1 0 1 0" />
+								</Style>-->
+								<Style Selector="ToggleButton:nth-last-child(1)">
+									<Setter Property="BorderThickness" Value="1 0 1 0" />
+								</Style>
+								<Style Selector="ToggleButton.MenuItem DockPanel material|MaterialIcon">
+									<Setter Property="Margin" Value="0 0 8 0" />
 									<Setter Property="Height" Value="18" />
 									<Setter Property="Width" Value="18" />
 									<Setter Property="Foreground" Value="#383838" />
@@ -190,21 +194,15 @@
 									<Setter Property="RenderTransform" Value="none" />
 								</Style>
 							</DockPanel.Styles>
+							
+							<Grid Height="2" DockPanel.Dock="Bottom" />
 
-							<!--<Button Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-								<Button.Flyout>
-									<Flyout>
-										<Grid MinWidth="400" MinHeight="100">
-											<views:AddItemPaletteControl />
-										</Grid>
-									</Flyout>
-								</Button.Flyout>
+							<ToggleButton Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Name="LibraryToggleButton">
 								<DockPanel>
-									<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
-									<TextBlock Text="Add Item" />
+									<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu" />
+									<TextBlock Text="Library" />
 								</DockPanel>
-							</Button>-->
-
+							</ToggleButton>
 
 							<ToggleButton
 								DockPanel.Dock="Bottom"
@@ -212,48 +210,9 @@
 							  IsChecked="{Binding #addItemFlyout.IsOpen, Mode=TwoWay}"
 							  ClickMode="Press"
 							  Classes="MenuItem"
-							  HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-					  VerticalContentAlignment="Stretch"
-					  VerticalAlignment="Stretch"
-								BorderBrush="#bebebe"
-								BorderThickness="0 1"
-								Background="#f5f5f5"
-							   FontSize="14"
 								>
-								<ToggleButton.Styles>
-									<!--<Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
-										-->
-									<!--<Setter Property="Background" Value="#9a93cd" />-->
-									<!--
-										<Setter Property="Background" Value="#d0d0d0" />
-									</Style>
-									<Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-										-->
-									<!--<Setter Property="Background" Value="#9a93cd" />-->
-									<!--
-										<Setter Property="Background" Value="Transparent" />
-									</Style>
-									<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-										<Setter Property="Background" Value="Transparent" />
-									</Style>
-									-->
-									<!--<Style Selector="ToggleButton:checked TextBlock">
-									<Setter Property="Foreground" Value="White" />
-								</Style>-->
-									<!--
-									<Style Selector="ToggleButton:pressed">
-										<Setter Property="Background" Value="#9a93cd" />
-									</Style>
-									<Style Selector="ToggleButton:checked Border.AppButtonBorder">
-										<Setter Property="Background" Value="#5E3593" />
-									</Style>
-									<Style Selector="ToggleButton:checked material|MaterialIcon">
-										<Setter Property="Foreground" Value="White" />
-									</Style>-->
-								</ToggleButton.Styles>
-								<DockPanel Margin="4">
-									<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Margin="0 0 6 0" />
+								<DockPanel>
+									<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
 									<TextBlock Text="Add Item" />
 								</DockPanel>
 							</ToggleButton>
@@ -319,13 +278,13 @@
 														   TextAlignment="Center" />
 											</Grid>
 										</Button>
-										<!--<Button
+										<Button
 											Grid.Column="1"
 											HorizontalAlignment="Center"
 											Click="OnScrollToItemClick"
 											Content="Scroll"
 											FontSize="16">
-										</Button>-->
+										</Button>
 										<Button
 											Command="{Binding OnNextSlideClickCommand}"
 											HorizontalAlignment="Right"
@@ -346,8 +305,11 @@
 									</Grid>
 								</Border>
 
+								<library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}" />
 
-								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" IsVisible="{Binding !#LibraryToggleButton.IsChecked}" />
+								
+								<!-- non contiguous view -->
 								<!--<controls:ItemSlidesView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
 							</DockPanel>
@@ -473,6 +435,9 @@
 						<RadioButton IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
 						<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>
 					</UniformGrid>
+
+					<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />
+
 
 					<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
 

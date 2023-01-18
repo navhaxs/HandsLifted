@@ -8,6 +8,7 @@ namespace HandsLiftedApp.Logic
     using Newtonsoft.Json.Linq;
     using ReactiveUI;
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     internal class HandsLiftedWebSocketsModule : WebSocketModule
@@ -55,15 +56,25 @@ namespace HandsLiftedApp.Logic
                 switch (jsonData["action"].ToString())
                 {
                     case nameof(ActionMessage.NavigateSlideAction.NextSlide):
-                        MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
-                        MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
-                        SendAsync(context, "{\"action\":\"NextSlide\", \"status\": \"ok\"}");
+                        new Thread(() =>
+                        {
+                            Thread.CurrentThread.IsBackground = true;
+                            /* run your code here */
+                            MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                            MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
+                        }).Start();
+                        return SendAsync(context, "{\"action\":\"NextSlide\", \"status\": \"ok\"}");
                         break;
 
                     case nameof(ActionMessage.NavigateSlideAction.PreviousSlide):
-                        MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
-                        MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
-                        SendAsync(context, "{\"action\":\"PreviousSlide\", \"status\": \"ok\"}");
+                        new Thread(() =>
+                        {
+                            Thread.CurrentThread.IsBackground = true;
+                            /* run your code here */
+                            MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                            MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
+                        }).Start();
+                        return SendAsync(context, "{\"action\":\"PreviousSlide\", \"status\": \"ok\"}");
                         break;
 
                     default:

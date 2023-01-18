@@ -30,7 +30,8 @@
 			</DataTemplate>
 			<DataTemplate x:Key="LogoSlide">
 				<Grid Background="#b7d1d8">
-					<Image Stretch="Uniform" Source="/Assets/homeBASE/image5.png" RenderOptions.BitmapInterpolationMode="HighQuality" />
+					<Image Stretch="Uniform" Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" />
+					<TextBlock Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
 				</Grid>
 			</DataTemplate>
 			<DataTemplate x:Key="VideoSlide">

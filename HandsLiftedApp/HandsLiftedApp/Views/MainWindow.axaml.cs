@@ -74,14 +74,21 @@ namespace HandsLiftedApp.Views
             MessageBus.Current.Listen<MainWindowModalMessage>()
              .Subscribe(x =>
              {
-                 this.FindControl<Control>("shade").IsVisible = true;
-                 x.window.DataContext = this.DataContext;
-                 x.window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                 x.window.Closed += (object? sender, EventArgs e) =>
+
+                 if (x.ShowAsDialog)
+                     this.FindControl<Control>("shade").IsVisible = true;
+
+                 x.Window.DataContext = x.DataContext ?? this.DataContext;
+                 x.Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                 x.Window.Closed += (object? sender, EventArgs e) =>
                      {
                          this.FindControl<Control>("shade").IsVisible = false;
                      };
-                 x.window.ShowDialog(this);
+
+                 if (x.ShowAsDialog)
+                     x.Window.ShowDialog(this);
+                 else
+                     x.Window.Show(this);
              });
 
             //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
@@ -227,7 +234,8 @@ namespace HandsLiftedApp.Views
 
         private void OnScrollToItemClick(object? sender, RoutedEventArgs e)
         {
-            MessageBus.Current.SendMessage(new FocusSelectedItem());
+            //MessageBus.Current.SendMessage(new FocusSelectedItem());
+            MessageBus.Current.SendMessage(new Test());
         }
         private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)
         {

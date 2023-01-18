@@ -35,7 +35,8 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#f2f2f2">
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#f2f2f2"
+			BoxShadow="2 2 10 -4 #ff000000" Margin="0 6 6 6">
 		<Grid >
 			<StackPanel Grid.Column="0">
 				<StackPanel>

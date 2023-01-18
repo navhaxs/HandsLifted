@@ -18,11 +18,14 @@ using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views;
+using HandsLiftedApp.Views.App;
 using HandsLiftedApp.Views.Editor;
+using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -203,18 +206,30 @@ namespace HandsLiftedApp.ViewModels
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
             NewServiceCommand = ReactiveCommand.Create(OnNewService);
             LoadServiceCommand = ReactiveCommand.Create(OnLoadService);
-            EditPlaylistInfoCommand = ReactiveCommand.Create(OnEditPlaylistInfo);
+            EditPlaylistInfoCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow())));
             MoveUpItemCommand = ReactiveCommand.Create<object>(OnMoveUpItemCommand);
             MoveDownItemCommand = ReactiveCommand.Create<object>(OnMoveDownItemCommand);
+            EditSlideInfoCommand = ReactiveCommand.Create<object>((ac) =>
+            {
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SlideInfoWindow(), false, ac));
+            });
+
+            SlideSplitFromHere = ReactiveCommand.Create<object>((ac) =>
+            {
+                // todo edge cases: active selected index?
+                ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
+
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> a = args[1] as SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>;
+
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> newSlidesGroupItem = a.slice(a._Slides.IndexOf(args[0]));
+
+                if (newSlidesGroupItem != null)
+                    Playlist.Items.Insert(Playlist.Items.IndexOf(a) + 1, newSlidesGroupItem);
+            });
+
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
-            OnPreferencesWindowCommand = ReactiveCommand.Create(() =>
-            {
-                MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.PreferencesWindow));
-            });
-            OnAboutWindowCommand = ReactiveCommand.Create(() =>
-            {
-                MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.AboutWindow));
-            });
+            OnPreferencesWindowCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new PreferencesWindow())));
+            OnAboutWindowCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new AboutWindow())));
 
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
             ShowOpenFileDialog = new Interaction<Unit, string?>();
@@ -379,6 +394,8 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<object, Unit> MoveUpItemCommand { get; }
         public ReactiveCommand<object, Unit> MoveDownItemCommand { get; }
         public ReactiveCommand<object, Unit> RemoveItemCommand { get; }
+        public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
+        public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
         public ReactiveCommand<Unit, Unit> OnAboutWindowCommand { get; }
         public ReactiveCommand<Unit, Unit> OnPreferencesWindowCommand { get; }
 
@@ -682,14 +699,6 @@ namespace HandsLiftedApp.ViewModels
                 }
             }
         }
-
-        void OnEditPlaylistInfo()
-        {
-            //MessageBus.Current.SendMessage(new MainWindowModalMessage(typeof(PlaylistInfoEditorWindow));
-            MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
-            //PlaylistInfoEditorWindow 
-        }
-
         void OnMoveUpItemCommand(object? itemState)
         {
             // get the index of itemState

@@ -3,6 +3,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models
@@ -15,7 +16,23 @@ namespace HandsLiftedApp.Data.Models
     public class Playlist<T, I> : ReactiveObject where T : IPlaylistState where I : IItemState
     {
 
+        // TODO can this Dictionary have elements that can have bindings to?
         public SerializableDictionary<String, Object> Meta { get; set; } = new SerializableDictionary<String, Object>();
+
+        private String _title = "Untitled Playlist";
+        public String Title { get => _title; set => this.RaiseAndSetIfChanged(ref _title, value); }
+
+        // TODO move into Dictionary
+
+        //private String _logoGraphicFile = "/Assets/homeBASE/image5.png";
+        private String _logoGraphicFile = "avares://HandsLiftedApp/Assets/homeBASE/image5.png";
+        public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
+
+        public DateTimeOffset _date = DateTimeOffset.Now;
+        public DateTimeOffset Date { get => _date; set => this.RaiseAndSetIfChanged(ref _date, value); }
+
+        [XmlIgnore]
+        public String PrettyDate => Date.ToString("dd MMM yyyy", CultureInfo.InvariantCulture);
 
         private T _state;
 
