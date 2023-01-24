@@ -190,6 +190,8 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                 {
                     // fails here if token is expired. solution: retry calling this method
                     Console.WriteLine(e.Message);
+                    // TODO: prompt re-auth instead of aborting workflow
+                    //if (e.Error.Error == "invalid_grant" && e.Error.ErrorDescription == "Bad Request" && e.Error.ErrorUri == null)
                     throw new ImportFailureException();
                 }
                 catch (Exception e)
