@@ -1,5 +1,6 @@
 ﻿using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Data.Slides
 {
@@ -26,7 +27,15 @@ namespace HandsLiftedApp.Data.Slides
         public VideoSlide(String videoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4")
         {
             VideoPath = videoPath;
-            State = (T)Activator.CreateInstance(typeof(T), this);
+
+            try
+            {
+                State = (T)Activator.CreateInstance(typeof(T), this);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
         }
 
         public override string? SlideText => null;

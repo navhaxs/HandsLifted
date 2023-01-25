@@ -85,7 +85,7 @@
 					<MenuItem Header="Add Item" />
 				</ContextMenu>
 			</ListBox.ContextMenu>
-			<ListBox.DataTemplates>
+			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<DockPanel VerticalAlignment="Stretch">
 						
@@ -126,7 +126,7 @@
 						</TextBlock>
 					</DockPanel>
 				</DataTemplate>
-			</ListBox.DataTemplates>
+			</ListBox.ItemTemplate>
 		</ListBox>
 	</Grid>
 </UserControl>

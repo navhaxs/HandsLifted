@@ -3,11 +3,7 @@ using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Data;
 using Avalonia.Styling;
-using System;
-using System.Collections.Generic;
 using System.Reactive.Disposables;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Extensions
 {

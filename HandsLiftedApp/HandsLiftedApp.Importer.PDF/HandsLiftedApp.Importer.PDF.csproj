@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Skia" Version="0.10.18" />
+    <PackageReference Include="Avalonia" Version="11.0.0-preview4" />
+    <PackageReference Include="Avalonia.Skia" Version="11.0.0-preview4" />
     <PackageReference Include="PDFiumCore" Version="107.0.5268" />
   </ItemGroup>
 

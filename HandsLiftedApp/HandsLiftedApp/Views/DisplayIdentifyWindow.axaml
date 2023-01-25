@@ -9,7 +9,6 @@
         TransparencyLevelHint="Transparent"
         Topmost="True"
 		SystemDecorations="None"
-		HasSystemDecorations="False"
 		ShowInTaskbar="False"
 		Title="DisplayIdentifyWindow">
 	<Window.Resources>

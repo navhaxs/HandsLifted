@@ -162,7 +162,7 @@ namespace HandsLiftedApp.Behaviours
             {
 
 
-                if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
+                if (args.GetCurrentPoint(target).Properties.IsRightButtonPressed)
                 {
                     CancelDrag();
                     return;

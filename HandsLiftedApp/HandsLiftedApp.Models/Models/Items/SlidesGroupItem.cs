@@ -30,7 +30,12 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         [XmlIgnore] // TODO
-        public ObservableCollection<Slide> _Slides { get => _internal_slides; set => this.RaiseAndSetIfChanged(ref _internal_slides, value); }
+        public ObservableCollection<Slide> _Slides { get => _internal_slides; set
+            {
+                this.RaiseAndSetIfChanged(ref _internal_slides, value);
+                this.RaisePropertyChanged(nameof(Slides));
+            }
+        }
         [XmlIgnore]
         public override ObservableCollection<Slide> Slides { get => _Slides; }
 

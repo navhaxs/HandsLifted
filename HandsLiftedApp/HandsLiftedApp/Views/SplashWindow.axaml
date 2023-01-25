@@ -9,7 +9,6 @@
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
-        HasSystemDecorations="False"
         SystemDecorations="None"
         CanResize="False"
         Height="450" Width="600"

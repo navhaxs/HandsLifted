@@ -8,7 +8,6 @@
         x:Class="HandsLiftedApp.Views.App.AboutWindow"
 		ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
-        HasSystemDecorations="False"
 		WindowStartupLocation="CenterOwner"
 		CanResize="False"
 		ShowInTaskbar="False"

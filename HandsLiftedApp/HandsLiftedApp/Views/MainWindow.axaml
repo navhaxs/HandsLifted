@@ -16,14 +16,15 @@
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
-		xmlns:titlebars="using:HandsLiftedApp.Views.CustomTitleBars"
+		
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaChromeHints="PreferSystemChrome"
 		ExtendClientAreaTitleBarHeightHint="90"
+
+		
 		WindowStartupLocation="CenterScreen"
 		Width="1280" Height="720"
 		Background="#eeeef2"
-		DoubleTapped="MainWindow_DoubleTapped"
 		Title="VisionScreens | Sunday 11am | 22 May 2022">
 
 	<Design.DataContext>
@@ -100,7 +101,8 @@
 							</ToggleButton>
 
 
-							<Popup Name="flyout" StaysOpen="False"
+							<Popup Name="flyout"
+								   IsLightDismissEnabled="True"
 								   PlacementMode="Bottom"
 								   PlacementTarget="{Binding #AppMenuButton}">
 								<views:AppMainMenuControl />
@@ -218,7 +220,10 @@
 							</ToggleButton>
 
 
-							<Popup Name="addItemFlyout" StaysOpen="False"
+							<Popup Name="addItemFlyout"
+								   								   IsLightDismissEnabled="True"
+
+								   
 								   PlacementMode="Bottom"
 								   PlacementTarget="{Binding #AddItemButton}">
 								<Grid MinWidth="860" MinHeight="400">
@@ -278,13 +283,13 @@
 														   TextAlignment="Center" />
 											</Grid>
 										</Button>
-										<Button
+										<!--<Button
 											Grid.Column="1"
 											HorizontalAlignment="Center"
 											Click="OnScrollToItemClick"
 											Content="Scroll"
 											FontSize="16">
-										</Button>
+										</Button>-->
 										<Button
 											Command="{Binding OnNextSlideClickCommand}"
 											HorizontalAlignment="Right"
@@ -376,7 +381,9 @@
 							</ToggleButton>
 
 
-							<Popup Name="liveFlyout" StaysOpen="False"
+							<Popup Name="liveFlyout"
+								   								   IsLightDismissEnabled="True"
+
 								   PlacementMode="Bottom"
 								   PlacementTarget="{Binding #LiveButton}">
 								<controls:LiveOutputsFlyoutContent Margin="0" />

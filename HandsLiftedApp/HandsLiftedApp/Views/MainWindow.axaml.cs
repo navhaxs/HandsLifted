@@ -32,6 +32,7 @@ namespace HandsLiftedApp.Views
             if (Design.IsDesignMode)
                 return;
 
+
             SubscribeToWindowState();
 
             this.Closing += MainWindow_Closing;
@@ -236,11 +237,6 @@ namespace HandsLiftedApp.Views
         {
             //MessageBus.Current.SendMessage(new FocusSelectedItem());
             MessageBus.Current.SendMessage(new Test());
-        }
-        private void MainWindow_DoubleTapped(object? sender, RoutedEventArgs e)
-        {
-            //if (e.Source is Border)
-            //    this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
         }
         private void MainWindow_Closed(object sender, EventArgs e)
         {

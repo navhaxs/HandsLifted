@@ -16,7 +16,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace HandsLiftedApp.Models.SlideState
 {
@@ -122,7 +121,6 @@ namespace HandsLiftedApp.Models.SlideState
 
             try
             {
-
                 ShellFile shellFile = ShellFile.FromFilePath(VideoPath);
                 var bm = shellFile.Thumbnail.Bitmap;
                 Thumbnail = bm.ConvertToAvaloniaBitmap();
@@ -232,13 +230,13 @@ namespace HandsLiftedApp.Models.SlideState
             set => MediaPlayer.Volume = value;
         }
 
-        public ICommand PlayCommand { get; }
-        public ICommand StopCommand { get; }
-        public ICommand PauseCommand { get; }
-        public ICommand ForwardCommand { get; }
-        public ICommand BackwardCommand { get; }
-        public ICommand NextFrameCommand { get; }
-        public ICommand OpenCommand { get; }
+        //public ICommand PlayCommand { get; }
+        //public ICommand StopCommand { get; }
+        //public ICommand PauseCommand { get; }
+        //public ICommand ForwardCommand { get; }
+        //public ICommand BackwardCommand { get; }
+        //public ICommand NextFrameCommand { get; }
+        //public ICommand OpenCommand { get; }
 
         public void Dispose()
         {

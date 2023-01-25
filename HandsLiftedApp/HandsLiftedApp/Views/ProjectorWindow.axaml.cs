@@ -86,7 +86,7 @@ namespace HandsLiftedApp.Views
 
         }
 
-        private void ProjectorWindow_DoubleTapped(object? sender, RoutedEventArgs e)
+        private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
         {
             if (IControlExtension.FindAncestor<Button>((IControl)e.Source) != null)
                 return;

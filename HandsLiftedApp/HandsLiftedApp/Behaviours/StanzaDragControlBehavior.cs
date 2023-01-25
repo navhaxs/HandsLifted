@@ -118,7 +118,7 @@ namespace HandsLiftedApp.Behaviours
 
         private void StanzaDragControlBehavior_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            if (e.MouseButton.HasFlag(MouseButton.Right))
+            if (e.GetCurrentPoint(sender as IVisual).Properties.IsRightButtonPressed)
             {
                 ResetDraggingState();
                 return;
@@ -165,7 +165,7 @@ namespace HandsLiftedApp.Behaviours
         {
             var target = TargetControl ?? AssociatedObject;
             //args.Properties;
-            if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
+            if (args.GetCurrentPoint(target).Properties.IsRightButtonPressed)
             {
 
                 ResetDraggingState();

@@ -8,7 +8,6 @@
 		WindowStartupLocation="CenterOwner"
 		ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
-        HasSystemDecorations="False"
         SystemDecorations="None"        
 		ShowInTaskbar="False"
 		CanResize="False"

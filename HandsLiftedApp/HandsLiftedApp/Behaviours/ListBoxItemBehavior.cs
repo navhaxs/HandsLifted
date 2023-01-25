@@ -112,7 +112,8 @@ namespace HandsLiftedApp.Behaviours
         {
             var target = TargetControl ?? AssociatedObject;
             //args.Properties;
-            if (args.InputModifiers.HasFlag(InputModifiers.RightMouseButton))
+
+            if (args.GetCurrentPoint(target).Properties.IsRightButtonPressed)
             {
                 UpdateCursor(false);
                 target.RenderTransform = new TranslateTransform();

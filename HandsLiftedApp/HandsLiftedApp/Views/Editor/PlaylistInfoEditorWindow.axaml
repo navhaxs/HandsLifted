@@ -9,7 +9,6 @@
 		
 		ShowInTaskbar="False"
 		CanResize="False"
-		HasSystemDecorations="False"
 		
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaChromeHints="NoChrome"

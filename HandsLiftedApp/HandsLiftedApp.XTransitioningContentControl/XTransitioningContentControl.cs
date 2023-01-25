@@ -104,7 +104,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             _lastTransitionCts?.Cancel();
         }
 
-        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             base.OnPropertyChanged(change);
 
@@ -183,7 +183,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             //_contentPresenterContainer.IsVisible = true;
             CurrentContent = content;
-            _contentPresenterContainer.ZIndex = (CurrentContent is IDynamicSlideRender) ? 999 : 0;
+            if (_contentPresenterContainer != null)
+                _contentPresenterContainer.ZIndex = (CurrentContent is IDynamicSlideRender) ? 999 : 0;
             Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
             //_contentPresenterContainer.IsVisible = false;
 

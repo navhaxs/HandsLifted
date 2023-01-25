@@ -1,20 +1,23 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:HandsLiftedApp"
+			 xmlns:material="using:Material.Icons.Avalonia"
              x:Class="HandsLiftedApp.App">
 	<Application.DataTemplates>
 		<local:ViewLocator/>
 	</Application.DataTemplates>
 
 	<Application.Styles>
+		<SimpleTheme Mode="Light" />
 		<!-- import styles from libraries here -->
-		<StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml" />
-		<StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
 
-		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
 		<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />
+
 		<StyleInclude Source="avares://Material.Icons.Avalonia/App.xaml" />
-		
+
+		<!--<material:MaterialIconStyles />-->
+
 		<StyleInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml" />
 		<StyleInclude Source="avares://HandsLiftedApp/Controls/ScrollViewer.axaml" />
 		<StyleInclude Source="avares://HandsLiftedApp/Styles/AppStyles.axaml" />
