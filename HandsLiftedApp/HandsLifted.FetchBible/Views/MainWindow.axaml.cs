@@ -3,6 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace HandsLifted.FetchBible.Views
 {
@@ -16,8 +19,8 @@ namespace HandsLifted.FetchBible.Views
 #endif
 
 
-            var _textEditor = this.FindControl<TextEditor>("Editor");
-            _textEditor.Document = new TextDocument("hello");
+            //var _textEditor = this.FindControl<TextEditor>("Editor");
+            //_textEditor.Document = new TextDocument("hello");
         }
 
         private void InitializeComponent()
@@ -25,10 +28,13 @@ namespace HandsLifted.FetchBible.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        public void x()
+        public async void x()
         {
             var x = "https://collection.fetch.bible/bibles/manifest.json";
             var y = "https://collection.fetch.bible/bibles/{id}/usx/{book}.usx";
+
+            HttpClient httpClient = new HttpClient();
+            //await httpClient.GetFromJsonAsync<IList<WeatherForecast>>(y);
         }
     }
 }

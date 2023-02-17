@@ -8,6 +8,6 @@
 
     <Application.Styles>
         <SimpleTheme Mode="Light" />
-		<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
+		<!--<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />-->
 	</Application.Styles>
 </Application>

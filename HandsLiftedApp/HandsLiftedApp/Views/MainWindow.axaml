@@ -18,13 +18,13 @@
 		Icon="/Assets/app.ico"
 		
 		ExtendClientAreaToDecorationsHint="True"
-		ExtendClientAreaChromeHints="PreferSystemChrome"
+		ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
 		ExtendClientAreaTitleBarHeightHint="90"
-
+		
+		Background="#eeeef2"
 		
 		WindowStartupLocation="CenterScreen"
 		Width="1280" Height="720"
-		Background="#eeeef2"
 		Title="VisionScreens | Sunday 11am | 22 May 2022">
 
 	<Design.DataContext>
@@ -311,7 +311,7 @@
 								</Border>
 
 								<library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}" />
-
+								
 								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" IsVisible="{Binding !#LibraryToggleButton.IsChecked}" />
 								
 								<!-- non contiguous view -->
@@ -443,8 +443,7 @@
 						<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>
 					</UniformGrid>
 
-					<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />
-
+					<!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
 
 					<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
 

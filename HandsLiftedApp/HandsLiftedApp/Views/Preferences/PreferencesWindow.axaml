@@ -52,6 +52,7 @@
 					<Label>Startup</Label>
 					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowOutput}">Show output display on startup</CheckBox>
 					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowStage}">Show stage display on startup</CheckBox>
+					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowLogo}">Show logo on startup</CheckBox>
 				</StackPanel>
 				<Label>Render</Label>
 				<StackPanel>

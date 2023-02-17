@@ -64,6 +64,14 @@ namespace HandsLiftedApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref _onStartupShowStage, value);
         }
 
+        private bool _onStartupShowLogo;
+        [DataMember]
+        public bool OnStartupShowLogo
+        {
+            get => _onStartupShowLogo;
+            set => this.RaiseAndSetIfChanged(ref _onStartupShowLogo, value);
+        }
+
         private DisplayModel _stageDisplayBounds;
         [DataMember]
         public DisplayModel StageDisplayBounds

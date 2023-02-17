@@ -4,10 +4,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.Editor.SlideDesignerWindow"
+		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
         Title="SlideDesignerWindow">
 
+	<Grid ColumnDefinitions="2* *">
+		<Viewbox Grid.Column="0" VerticalAlignment="Top">
+			<viewsrender:SlideRenderer 
+				ActiveSlide="{Binding ActiveSlide}" IsLive="True" PageTransition="{Binding ActiveItemPageTransition}" />
+		</Viewbox>
 
-		<StackPanel>
+		<StackPanel Margin="8"
+					Grid.Column="1">
+
+			<StackPanel.Styles>
+				<Style Selector="ColorPicker">
+					<Setter Property="HorizontalAlignment" Value="Left" />
+				</Style>
+			</StackPanel.Styles>
+			
+			<TextBlock Text="Font" />
 			<ComboBox x:Name="fontComboBox"  SelectedIndex="0">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
@@ -15,5 +30,15 @@
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
+			
+			<Grid Height="10" />
+
+			<TextBlock Text="Colour" />
+			<ColorPicker />
+			
+			<TextBlock Text="Background" />
+			<ColorPicker />
+			
 		</StackPanel>
+	</Grid>
 </Window>

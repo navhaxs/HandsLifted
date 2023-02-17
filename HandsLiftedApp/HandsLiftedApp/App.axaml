@@ -21,5 +21,7 @@
 		<StyleInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml" />
 		<StyleInclude Source="avares://HandsLiftedApp/Controls/ScrollViewer.axaml" />
 		<StyleInclude Source="avares://HandsLiftedApp/Styles/AppStyles.axaml" />
+
+		<StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
 	</Application.Styles>
 </Application>

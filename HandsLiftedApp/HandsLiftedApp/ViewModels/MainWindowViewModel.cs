@@ -309,6 +309,9 @@ namespace HandsLiftedApp.ViewModels
 
             if (Globals.Preferences.OnStartupShowStage)
                 ToggleStageDisplayWindow(true);
+
+            if (Globals.Preferences.OnStartupShowLogo)
+                Playlist.State.IsLogo = true;
         }
 
         private ProjectorWindow _projectorWindow;

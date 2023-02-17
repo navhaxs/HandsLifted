@@ -45,6 +45,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="11.0.0-preview4" />
+		<PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.0-preview4" />
 		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview4" />
 		<PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview4" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-preview4" />
@@ -61,6 +62,7 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.18" />
 		<PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
+		<PackageReference Include="YamlDotNet" Version="12.3.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />

@@ -15,24 +15,29 @@
 		xmlns:appControls="using:HandsLiftedApp.Views.App.Controls"
 		xmlns:dataSlides="using:HandsLiftedApp.Data.Slides"
 			 
+          
              x:Class="HandsLiftedApp.Views.Library.LibraryView">
 
 	<Design.DataContext>
 		<!--<vm:MainWindowViewModel/>-->
 		<dataSlides:LogoSlide/>
 	</Design.DataContext>
+
+	<!--<UserControl.Resources>
+		<pc:ThirdComponentConverter x:Key="ThirdComponent" />
+	</UserControl.Resources>-->
 	
-	<Grid ColumnDefinitions="* *">
-		<Viewbox>
-			<viewsrender:SlideRenderer ActiveSlide="{Binding}" Width="1920" Height="1080" IsLive="False" />
-		</Viewbox>
-		<StackPanel>
-			
-		</StackPanel>
-			
-		<TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}"  
-				 VerticalAlignment="Center"
-				 Grid.Column="1" />
-		<TextBlock Text="Logo" Grid.Column="1" />
-	</Grid>
+	<StackPanel>
+		<Grid ColumnDefinitions="* *">
+				<Viewbox>
+					<viewsrender:SlideRenderer ActiveSlide="{Binding}" Width="1920" Height="1080" IsLive="False" />
+				</Viewbox>
+				<StackPanel Grid.Column="1">
+					<TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
+
+				</StackPanel>
+
+		</Grid>
+	</StackPanel>
+	
 </UserControl>

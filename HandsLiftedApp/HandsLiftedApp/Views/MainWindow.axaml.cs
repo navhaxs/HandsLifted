@@ -139,6 +139,7 @@ namespace HandsLiftedApp.Views
             //{
             //    var stream = assetLoader.Open(fontAsset);
             //}
+
         }
 
         private void Exit(object sender, Avalonia.Interactivity.RoutedEventArgs e)
