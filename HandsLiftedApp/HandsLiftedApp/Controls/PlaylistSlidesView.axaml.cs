@@ -132,7 +132,7 @@ namespace HandsLiftedApp.Controls
                             if (c is null)
                                 break;
 
-                            if (c.Bounds.Top > offset.Y)
+                            if (c.Bounds.Top > Math.Round(offset.Y, 1))
                             {
                                 break;
                             }
