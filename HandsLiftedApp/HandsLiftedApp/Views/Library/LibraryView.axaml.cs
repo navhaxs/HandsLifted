@@ -9,7 +9,7 @@ namespace HandsLiftedApp.Views.Library
         {
             InitializeComponent();
 
-            this.DataContext = new LogoSlide();
+            //this.DataContext = new LogoSlide();
         }
     }
 }

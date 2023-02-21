@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+
+             x:Class="HandsLiftedApp.Views.Editor.SlideDesigner">
+	<Grid ColumnDefinitions="2* *">
+		<Viewbox Grid.Column="0" VerticalAlignment="Top">
+			<viewsrender:SlideRenderer
+				ActiveSlide="{Binding ActiveSlide}" IsLive="True" PageTransition="{Binding ActiveItemPageTransition}" />
+		</Viewbox>
+
+		<StackPanel Margin="8"
+					Grid.Column="1">
+
+			<StackPanel.Styles>
+				<Style Selector="ColorPicker">
+					<Setter Property="HorizontalAlignment" Value="Left" />
+				</Style>
+			</StackPanel.Styles>
+
+			<TextBlock Text="Font" />
+			<ComboBox x:Name="fontComboBox"  SelectedIndex="0">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<Grid Height="10" />
+
+			<TextBlock Text="Colour" />
+			<ColorPicker />
+
+			<TextBlock Text="Background" />
+			<ColorPicker />
+
+		</StackPanel>
+	</Grid>
+</UserControl>

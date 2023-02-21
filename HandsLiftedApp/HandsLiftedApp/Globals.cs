@@ -7,6 +7,7 @@ using ReactiveUI;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
 using System.IO;
+using System.Diagnostics;
 
 namespace HandsLiftedApp
 {
@@ -31,20 +32,29 @@ namespace HandsLiftedApp
             // Load the saved view model state.
             Globals.Preferences = RxApp.SuspensionHost.GetAppState<PreferencesViewModel>();
 
+            Debug.Print(Preferences.ToString());
         }
 
         private static void LoadEnv()
         {
-            var yml = File.ReadAllText("env.yml");
+            //TODO
+            if (File.Exists("env.yml"))
+            {
+                var yml = File.ReadAllText("env.yml");
 
-            var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
-                .Build();
+                var deserializer = new DeserializerBuilder()
+                    .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
+                    .Build();
 
-            //yml contains a string containing your YAML
-            var p = deserializer.Deserialize<Env>(yml);
+                //yml contains a string containing your YAML
+                var p = deserializer.Deserialize<Env>(yml);
 
-            Globals.Env = p;
+                Globals.Env = p;
+            }
+            else
+            {
+                Globals.Env = new Env();
+            }
         }
 
 

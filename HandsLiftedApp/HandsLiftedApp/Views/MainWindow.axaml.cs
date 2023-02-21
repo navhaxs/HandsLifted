@@ -13,8 +13,10 @@ using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Reactive;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
@@ -79,7 +81,10 @@ namespace HandsLiftedApp.Views
                  if (x.ShowAsDialog)
                      this.FindControl<Control>("shade").IsVisible = true;
 
-                 x.Window.DataContext = x.DataContext ?? this.DataContext;
+                 //TODO do not always want to set DataContext if object has set it itself
+                 if (x.Window.DataContext == null)
+                     x.Window.DataContext = x.DataContext ?? this.DataContext;
+
                  x.Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                  x.Window.Closed += (object? sender, EventArgs e) =>
                      {
@@ -140,7 +145,50 @@ namespace HandsLiftedApp.Views
             //    var stream = assetLoader.Open(fontAsset);
             //}
 
+
+            this.Loaded += (e, s) =>
+            {
+                updateWin32Border(this.WindowState);
+            };
+
+            this.GetObservable(Window.WindowStateProperty)
+                .Subscribe(v =>
+                {
+                    updateWin32Border(v);
+                });
+
         }
+
+
+        void updateWin32Border(WindowState v)
+        {
+            if (v != WindowState.Maximized)
+            {
+
+                var margins = new MARGINS
+                {
+                    cyBottomHeight = 1,
+                    cxRightWidth = 1,
+                    cxLeftWidth = 1,
+                    cyTopHeight = 1
+                };
+
+                DwmExtendFrameIntoClientArea(this.PlatformImpl.Handle.Handle, ref margins);
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct MARGINS
+        {
+            public int cxLeftWidth;
+            public int cxRightWidth;
+            public int cyTopHeight;
+            public int cyBottomHeight;
+        }
+
+        [DllImport("dwmapi.dll")]
+        internal static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
+
 
         private void Exit(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {

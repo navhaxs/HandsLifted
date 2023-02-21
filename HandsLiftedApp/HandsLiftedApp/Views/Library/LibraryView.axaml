@@ -15,7 +15,6 @@
 		xmlns:appControls="using:HandsLiftedApp.Views.App.Controls"
 		xmlns:dataSlides="using:HandsLiftedApp.Data.Slides"
 			 
-          
              x:Class="HandsLiftedApp.Views.Library.LibraryView">
 
 	<Design.DataContext>
@@ -28,6 +27,14 @@
 	</UserControl.Resources>-->
 	
 	<StackPanel>
+		<ListBox Items="{Binding Library.Items}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+			
+		</ListBox>
 		<Grid ColumnDefinitions="* *">
 				<Viewbox>
 					<viewsrender:SlideRenderer ActiveSlide="{Binding}" Width="1920" Height="1080" IsLive="False" />

@@ -13,6 +13,7 @@
 		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
 		xmlns:appControls="using:HandsLiftedApp.Views.App.Controls"
 		xmlns:library="using:HandsLiftedApp.Views.Library"
+		xmlns:editor="using:HandsLiftedApp.Views.Editor"
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
@@ -310,7 +311,8 @@
 									</Grid>
 								</Border>
 
-								<library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}" />
+								<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />
+								<!--<library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
 								
 								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" IsVisible="{Binding !#LibraryToggleButton.IsChecked}" />
 								

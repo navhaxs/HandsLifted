@@ -12,6 +12,7 @@ using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Models.LibraryModel;
 using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Models.UI;
@@ -81,6 +82,8 @@ namespace HandsLiftedApp.ViewModels
 
         private ObservableAsPropertyHelper<IPageTransition?> _activeItemPageTransition;
         public IPageTransition? ActiveItemPageTransition { get => _activeItemPageTransition.Value; }
+
+        public Library Library { get; } = new Library();
 
         //test
         //test

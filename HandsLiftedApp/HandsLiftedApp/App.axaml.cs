@@ -19,13 +19,15 @@ namespace HandsLiftedApp
             // Initialize app preferences state here
 
             // Create the AutoSuspendHelper.
-            var suspension = new AutoSuspendHelper(ApplicationLifetime);
-            RxApp.SuspensionHost.CreateNewAppState = () => new PreferencesViewModel();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
-            suspension.OnFrameworkInitializationCompleted();
+            //var suspension = new AutoSuspendHelper(ApplicationLifetime);
+            //RxApp.SuspensionHost.CreateNewAppState = () => new PreferencesViewModel();
+            //RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
+            //suspension.OnFrameworkInitializationCompleted();
 
-            // Load the saved view model state.
-            Globals.Preferences = RxApp.SuspensionHost.GetAppState<PreferencesViewModel>();
+            //// Load the saved view model state.
+            //Globals.Preferences = RxApp.SuspensionHost.GetAppState<PreferencesViewModel>();
+
+            Globals.OnStartup(ApplicationLifetime);
 
             // The rest of the normal Avalonia init
             mainWindowViewModel = new MainWindowViewModel();

@@ -52,10 +52,10 @@ namespace HandsLiftedApp.Views.Preferences
                 displayIdentifyWindow.Position = new PixelPoint(i.Bounds.X, i.Bounds.Y);
                 displayIdentifyWindow.Topmost = true;
                 displayIdentifyWindow.WindowState = WindowState.FullScreen;
-                displayIdentifyWindow.ScreenNumber.Text = $"{index + 1}";
                 displayIdentifyWindow.ScreenBounds.Text = $"{i.Bounds.Width} x {i.Bounds.Height}";
                 displayIdentifyWindow.ScreenLocation.Text = $"({i.Bounds.X}, {i.Bounds.Y})";
                 displayIdentifyWindow.Show();
+                displayIdentifyWindow.ScreenNumber.Text = $"{index + 1}";
                 //Dispatcher.UIThread.InvokeAsync(() =>
                 //{
                 //    displayIdentifyWindow.WindowState = WindowState.FullScreen;
