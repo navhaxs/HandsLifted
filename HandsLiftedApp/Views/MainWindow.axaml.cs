@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using HandsLiftedApp.Utils;
 
 namespace HandsLiftedApp.Views {
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
@@ -31,7 +32,6 @@ namespace HandsLiftedApp.Views {
 
             if (Design.IsDesignMode)
                 return;
-
 
             SubscribeToWindowState();
 
@@ -163,7 +163,7 @@ namespace HandsLiftedApp.Views {
             if (v != WindowState.Maximized)
             {
 
-                var margins = new MARGINS
+                var margins = new Win32.MARGINS
                 {
                     cyBottomHeight = 1,
                     cxRightWidth = 1,
@@ -171,21 +171,10 @@ namespace HandsLiftedApp.Views {
                     cyTopHeight = 1
                 };
 
-                //DwmExtendFrameIntoClientArea(this.PlatformImpl.Handle.Handle, ref margins);
+                Win32.DwmExtendFrameIntoClientArea(this.PlatformImpl.Handle.Handle, ref margins);
             }
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct MARGINS
-        {
-            public int cxLeftWidth;
-            public int cxRightWidth;
-            public int cyTopHeight;
-            public int cyBottomHeight;
-        }
-
-        //[DllImport("dwmapi.dll")]
-        //internal static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
 
 
         private void Exit(object sender, Avalonia.Interactivity.RoutedEventArgs e)

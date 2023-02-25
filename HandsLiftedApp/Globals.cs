@@ -8,6 +8,7 @@ using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
 using System.IO;
 using System.Diagnostics;
+using Avalonia.Controls;
 
 namespace HandsLiftedApp
 {
@@ -19,6 +20,9 @@ namespace HandsLiftedApp
         // note: this is initialized by App.axaml.cs on program start up
         public static void OnStartup(IApplicationLifetime applicationLifetime)
         {
+            if (Design.IsDesignMode)
+                return;
+            
             LoadEnv();
 
             // Initialize app preferences state here

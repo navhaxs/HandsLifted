@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="HandsLiftedApp/Views/DisplayIdentifyWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/MainWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/ProjectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/StageDisplayWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/MainWindow.xaml" value="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/LibVLCSharp.Avalonia.Sample.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
