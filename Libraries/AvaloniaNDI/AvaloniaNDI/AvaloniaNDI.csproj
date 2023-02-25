@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>AvaloniaNDI</AssemblyName>
+    <RootNamespace>AvaloniaNDI</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="NDISDK\Processing.NDI.Lib.x64.dll" />
+    <None Remove="NDISDK\Processing.NDI.Lib.x86.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ContentWithTargetPath Include="NDISDK\Processing.NDI.Lib.x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <TargetPath>Processing.NDI.Lib.x64.dll</TargetPath>
+    </ContentWithTargetPath>
+		  <ContentWithTargetPath Include="NDISDK\Processing.NDI.Lib.x86.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			  <TargetPath>Processing.NDI.Lib.x86.dll</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Skia" />
+    <PackageReference Include="System.Reactive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NDILibDotNet2\NDILibDotNet2.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NAudio">
+      <HintPath>..\NAudio\NAudio.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ContentWithTargetPath Include="NDISDK\Processing.NDI.Lib.x64.dll">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <TargetPath>Processing.NDI.Lib.x64.dll</TargetPath>
+	  </ContentWithTargetPath>
+	  <ContentWithTargetPath Include="NDISDK\Processing.NDI.Lib.x86.dll">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <TargetPath>Processing.NDI.Lib.x86.dll</TargetPath>
+	  </ContentWithTargetPath>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:songslide="using:HandsLiftedApp.Views.Render.SongSlide"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             x:Class="HandsLiftedApp.Views.Render.SongSlide.LowerThirdSlideTemplate">
+	<Grid Width="1920" Height="1080">
+		<!--<Image Source="avares://HandsLiftedApp/Assets/test2.png" Width="1920" Height="1080"/>-->
+
+		<Grid Width="1920" Height="1080"
+			RowDefinitions="5*,2*">
+			<Rectangle Grid.Row="1" Opacity="0.92">
+				<Rectangle.Fill>
+					<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
+						<LinearGradientBrush.GradientStops>
+							<GradientStop Offset="0" Color="#6ebadd"/>
+							<GradientStop Offset="1" Color="#3c7dab"/>
+						</LinearGradientBrush.GradientStops>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+
+			<!-- TODO title and copyright-->
+			<Grid Grid.Row="1" HorizontalAlignment="Stretch">
+				<Viewbox StretchDirection="DownOnly">
+					<songslide:LowerThirdSlideContent />
+				</Viewbox>
+			</Grid>
+
+
+		</Grid>
+	</Grid>
+</UserControl>

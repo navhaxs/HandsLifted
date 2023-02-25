@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ext="using:HandsLiftedApp.Extensions"
+			 xmlns:utils="using:HandsLiftedApp.Utils"
+			 xmlns:views="using:HandsLiftedApp.Views"
+			 xmlns:songslide="using:HandsLiftedApp.Views.Render.SongSlide"
+			 xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+			 xmlns:hla="using:HandsLiftedApp.XTransitioningContentControl"
+			 xmlns:controls="using:HandsLiftedApp.Controls"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="HandsLiftedApp.Views.Render.AltSlideRenderer">
+
+	<UserControl.Resources>
+		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
+	</UserControl.Resources>
+
+	<UserControl.DataTemplates>
+		<utils:MyTemplateSelector>
+			<DataTemplate x:Key="SongTitleSlide">
+				<songslide:LowerThirdSlideTemplate Width="1920" Height="1080" />
+			</DataTemplate>
+			<DataTemplate x:Key="SongSlide">
+				<songslide:LowerThirdSlideTemplate Width="1920" Height="1080" />
+			</DataTemplate>
+		</utils:MyTemplateSelector>
+	</UserControl.DataTemplates>
+
+	<!-- TODO need to use my custom control here to ensure no discontinous blanks whilst transitioning, even if we do not need the cross-fade effect -->
+	<ContentControl Content="{Binding}">
+		<!--<hla:XTransitioningContentControl.PageTransition>
+			<CrossFade Duration="1.00" />
+			-->
+		<!--<CompositePageTransition>
+				<CrossFade Duration="0:00:00.500" />
+				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
+				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
+				<ext:CustomTransition Duration="0:00:00.250" />
+			</CompositePageTransition>-->
+		<!--
+		</hla:XTransitioningContentControl.PageTransition>-->
+	</ContentControl>
+	<!--<TransitioningContentControl Name="root" Content="{Binding}" >
+		<TransitioningContentControl.PageTransition>
+			<CrossFade Duration="0.25" />
+			-->
+	<!--<CompositePageTransition>
+				<CrossFade Duration="0:00:00.500" />
+				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
+				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
+				<ext:CustomTransition Duration="0:00:00.250" />
+			</CompositePageTransition>-->
+	<!--
+		</TransitioningContentControl.PageTransition>
+	</TransitioningContentControl>-->
+</UserControl>

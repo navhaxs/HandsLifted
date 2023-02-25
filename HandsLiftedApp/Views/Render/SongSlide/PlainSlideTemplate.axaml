@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             x:Class="HandsLiftedApp.Views.PlainSlideTemplate"
+			 Background="Black">
+	<Grid Width="1920" Height="1080">
+			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0 80 0 0">
+				<Viewbox StretchDirection="DownOnly" Margin="40">
+					<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
+							   LineHeight="120"
+							   FontFamily="Open Sans"
+							   FontWeight="SemiBold"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"
+							   Foreground="White" FontSize="70" TextAlignment="Center"/>
+				</Viewbox>
+			</Grid>
+
+	</Grid>
+</UserControl>

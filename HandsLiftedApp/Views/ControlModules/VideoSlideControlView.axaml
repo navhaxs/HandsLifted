@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
+	<StackPanel>
+		<DockPanel Margin="6 0">
+			<TextBlock DockPanel.Dock="Right" Text="{Binding State.PrettyRemainingTime}" />
+			<TextBlock>
+				<TextBlock.Text>
+					<MultiBinding StringFormat="{}{0} / {1}">
+						<Binding Path="State.PrettyCurrentTime" />
+						<Binding Path="State.PrettyDuration" />
+					</MultiBinding>
+				</TextBlock.Text>
+			</TextBlock>
+		</DockPanel>
+		<Slider Minimum="0" Maximum="100" Value="{Binding State.Position}" Grid.Column="1" />
+		<StackPanel Orientation="Horizontal" x:Name="test" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
+				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="24" />
+				<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"
+						FontSize="24" Click="StopButton_Click" />
+				<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" Background="Red" FontSize="24" />
+			</StackPanel>
+	</StackPanel>
+</UserControl>

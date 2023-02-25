@@ -1,6 +1,0 @@
-[submodule "HandsLiftedApp/Libraries/AvaloniaNDI"]
-	path = HandsLiftedApp/Libraries/AvaloniaNDI
-	url = https://github.com/navhaxs/AvaloniaNDI
-[submodule "HandsLiftedApp/Libraries/vlcsharpavalonia"]
-	path = HandsLiftedApp/Libraries/vlcsharpavalonia
-	url = https://github.com/navhaxs/vlcsharpavalonia

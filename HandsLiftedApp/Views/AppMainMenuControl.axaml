@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:material="using:Material.Icons.Avalonia"
+             mc:Ignorable="d"
+			 Background="Transparent"
+			 MinWidth="200"
+			 x:Class="HandsLiftedApp.Views.AppMainMenuControl">
+	<UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Padding" Value="12 8" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="HorizontalContentAlignment" Value="Left" />
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="Background" Value="#ffffff" />
+			<Setter Property="BorderThickness" Value="0" />
+		</Style>
+		
+		<Style Selector="Button:pointerover">
+			<Setter Property="Background" Value="#F9F7F7" />
+		</Style>
+
+		<Style Selector="Button:nth-child(1)">
+			<Setter Property="CornerRadius" Value="6 6 0 0" />
+		</Style>
+		<Style Selector="Button:nth-last-child(1)">
+			<Setter Property="CornerRadius" Value="0 0 6 6" />
+		</Style>
+		<Style Selector="Button:nth-child(1):nth-last-child(1)">
+			<Setter Property="CornerRadius" Value="6 6 6 6" />
+		</Style>
+		<Style Selector="material|MaterialIcon">
+			<Setter Property="Margin" Value="0 0 10 0" />
+		</Style>
+	</UserControl.Styles>
+
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#f2f2f2"
+			BoxShadow="2 2 10 -4 #ff000000" Margin="0 6 6 6">
+		<Grid >
+			<StackPanel Grid.Column="0">
+				<StackPanel>
+					<Button Command="{Binding NewServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Shimmer" Foreground="#888888" />
+							<TextBlock>New</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding LoadServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="FolderOpen" Foreground="#888888" />
+							<TextBlock>Load</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding SaveServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="ContentSave" Foreground="#888888" />
+							<TextBlock>Save</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button Command="{Binding EditPlaylistInfoCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Abc" Foreground="#888888" />
+							<TextBlock>Rename</TextBlock>
+						</DockPanel>
+					</Button>
+				</StackPanel>
+				<Grid Height="4" />
+				<StackPanel>
+					<!--<Button Command="{Binding SyncServiceCommand}">
+						<DockPanel>
+							<material:MaterialIcon Kind="Sync" Foreground="#888888" />
+							<TextBlock>Sync</TextBlock>
+						</DockPanel>
+					</Button>-->
+					<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
+				</StackPanel>
+				<Grid Height="4" />
+				<StackPanel VerticalAlignment="Bottom">
+					<Button Content="Setup" Command="{Binding OnPreferencesWindowCommand}"/>
+					<Button Content="About" Command="{Binding OnAboutWindowCommand}"/>
+					<Button Content="Exit" Click="CloseWindow"/>
+				</StackPanel>
+			</StackPanel>
+
+		</Grid>
+
+	</Border>
+</UserControl>

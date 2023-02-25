@@ -1,0 +1,141 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:material="using:Material.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="350"
+		Width="680" Height="350"
+        x:Class="HandsLiftedApp.Views.App.AboutWindow"
+		ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+		WindowStartupLocation="CenterOwner"
+		CanResize="False"
+		ShowInTaskbar="False"
+        Title="AboutWindow">
+	<DockPanel>
+		<Grid Background="#6033ab" DockPanel.Dock="Top">
+			<TextBlock
+				Foreground="White"
+				Margin="14 14"
+				FontSize="18">About VisionScreens</TextBlock>
+		</Grid>
+		<Grid
+            Height="60"
+            Margin="10,0,10,10"
+            DockPanel.Dock="Bottom">
+			<StackPanel VerticalAlignment="Bottom">
+				<StackPanel.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="FontSize" Value="12" />
+					</Style>
+				</StackPanel.Styles>
+				<WrapPanel>
+					<TextBlock Text="VisionScreens" FontWeight="Bold" Padding="0 0 4 0" />
+					<TextBlock Text="© Jeremy Wong 2015-2023" />
+				</WrapPanel>
+				<WrapPanel>
+					<TextBlock Text="Build " />
+					<TextBlock Text="{Binding GitHash, Mode=OneWay, FallbackValue='(unknown git hash)'}" />
+					<TextBlock Text=" (" />
+					<TextBlock Text="{Binding BuildDate, Mode=OneWay, FallbackValue='(unknown build date)'}" />
+					<TextBlock Text=")" />
+					<TextBlock Text=" " />
+					<TextBlock Text="Development build. Expect bugs."
+							   TextWrapping="Wrap"
+							   FontWeight="SemiBold"
+							   Foreground="Red"/>
+				</WrapPanel>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel.Styles>
+						<Style Selector="Button">
+							<Setter Property="Margin" Value="0 0 8 0" />
+						</Style>
+						<Style Selector="Button material|MaterialIcon">
+							<Setter Property="Margin" Value="1 0 0 0" />
+							<Setter Property="Height" Value="14" />
+						</Style>
+					</StackPanel.Styles>
+					<Button Classes="link" HorizontalAlignment="Left">
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="View diagnostic logs" />
+							<material:MaterialIcon Kind="ExternalLink"/>
+						</StackPanel>
+					</Button>
+					<Button Classes="link" HorizontalAlignment="Left">
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="Generate support info" />
+							<material:MaterialIcon Kind="ExternalLink"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</StackPanel>
+			<Button
+				x:Name="buttonDone"
+                Width="160"
+                Height="40"
+                Margin="0,10,0,0"
+				HorizontalContentAlignment="Center"
+				VerticalContentAlignment="Center"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Content="Done"
+				IsCancel="True"
+                IsDefault="True" />
+		</Grid>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="150" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Image
+                Width="100"
+                Height="76"
+                Margin="0,40,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Source="avares://HandsLiftedApp/Assets/app.png" />
+			<Border
+                Grid.Column="1"
+                Margin="0,10,10,0"
+                HorizontalAlignment="Stretch"
+                Background="#eee"
+                BorderThickness="1"
+                CornerRadius="6">
+				<Border.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="Foreground"
+								Value="Black" />
+						<Setter Property="FontSize"
+								Value="14" />
+					</Style>
+				</Border.Styles>
+				<DockPanel>
+					
+					<StackPanel Orientation="Horizontal" Margin="15" DockPanel.Dock="Bottom">
+						<TextBlock FontWeight="Bold" Text="Powered by " VerticalAlignment="Center" />
+						<DockPanel ToolTip.ShowDelay="0" ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS.">
+							<Image Height="32" Source="avares://HandsLiftedApp/Assets/avalonia.png" />
+							<TextBlock Text="Avalonia" FontWeight="Bold" VerticalAlignment="Center" />
+						</DockPanel>
+					</StackPanel>
+				<StackPanel Margin="15,15,35,0">
+					<TextBlock
+						Margin="0 8 0 8"
+						Foreground="Black"
+						FontSize="20"
+						TextWrapping="Wrap">
+						Presentation software for everyday churches
+					</TextBlock>
+					<TextBlock
+						Margin="0 8 0 16"
+						Foreground="Black"
+						TextWrapping="Wrap">
+						VisionScreens brings your lyrics and content together for easy slides preparation and operation.
+					</TextBlock>
+					<TextBlock Text="This copy of VisionScreens is licensed for non-profit use only." TextWrapping="Wrap" />
+				</StackPanel>
+				</DockPanel>
+			</Border>
+		</Grid>
+	</DockPanel>
+</Window>

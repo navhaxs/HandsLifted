@@ -1,0 +1,122 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="220"
+	         xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:b="using:HandsLiftedApp.Behaviours"
+	 		 xmlns:material="using:Material.Icons.Avalonia"
+			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
+             xmlns:controls="using:HandsLiftedApp.Controls"
+             xmlns:converters="using:HandsLiftedApp.Converters"
+			 xmlns:vm="using:HandsLiftedApp.ViewModels"
+             x:Class="HandsLiftedApp.Controls.SongArrangementControl">
+
+	<!--<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>-->
+
+	<Design.DataContext>
+		<vme:ExampleSongViewModel />
+	</Design.DataContext>
+
+	<UserControl.Resources>
+		<converters:StanzaSortConverter x:Key="stanzaSortConverter"/>
+
+		<Flyout Placement="BottomEdgeAlignedLeft" x:Key="MySharedFlyout">
+			<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Content="{Binding Name}"
+								Background="{Binding Colour}"
+								Click="OnAddPartClick"
+								ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}">
+							<Button.Styles>
+								<Style Selector="ToolTip">
+									<Setter Property="IsHitTestVisible" Value="False" />
+								</Style>
+							</Button.Styles>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Flyout>
+	</UserControl.Resources>
+
+
+	<StackPanel>
+		<DockPanel>
+			<Button Content="Arrangement" DockPanel.Dock="Left" Padding="12 0 6 0"
+					BorderThickness="0"
+					Background="Transparent"
+					Click="ArrangementButtonClick">
+				<Button.Flyout>
+					<MenuFlyout>
+						
+					</MenuFlyout>
+				</Button.Flyout>
+			</Button>
+
+			<Button x:Name="AddPartFlyoutToggleButton" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10" Flyout="{StaticResource MySharedFlyout}">
+				<material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
+			</Button>
+
+			<ItemsControl Items="{Binding Arrangement}" MinHeight="20" Margin="4" VerticalAlignment="Center" Name="PART_ArrangementTokens">
+				<ItemsControl.Styles>
+					<Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter DockPanel#PART_Container">
+						<Setter Property="Margin" Value="0 2 -5 2" />
+					</Style>
+					<Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter DockPanel#PART_Container Border#PART_Content">
+						<Setter Property="Padding" Value="12 0" />
+					</Style>
+					<Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-child(1) DockPanel#PART_Container Path#PART_Before">
+						<Setter Property="IsVisible" Value="False" />
+					</Style>
+					<Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-child(1) DockPanel#PART_Container Border#PART_Content">
+						<Setter Property="CornerRadius" Value="4 0 0 4" />
+						<Setter Property="Padding" Value="18 0 12 0" />
+					</Style>
+					<Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-last-child(1) DockPanel#PART_Container">
+						<Setter Property="Margin" Value="0 2 0 2" />
+					</Style>
+				</ItemsControl.Styles>
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<DockPanel Name="PART_Container" Cursor="Hand">
+							<DockPanel.ContextMenu>
+								<ContextMenu PlacementAnchor="Bottom" PlacementMode="Bottom" PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
+									<MenuItem Header="Repeat" Click="OnRepeatPartClick" />
+									<MenuItem Header="Remove" Click="OnRemovePartClick" />
+								</ContextMenu>
+							</DockPanel.ContextMenu>
+
+							<Path Name="PART_Before" Data="M0,0 10,0 10,20 0,20 10,10" Fill="{Binding Value.Colour}" />
+							<Border Name="PART_Content" Background="{Binding Value.Colour}" BorderBrush="#aaaaaa">
+								<TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="12" Text="{Binding Value.Name}" />
+							</Border>
+							<Path Name="PART_After" Data="M0,0 8,10 0,20" Fill="{Binding Value.Colour}" />
+							<i:Interaction.Behaviors>
+								<b:StanzaDragControlBehavior />
+							</i:Interaction.Behaviors>
+						</DockPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			<Button Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
+
+		</DockPanel>
+
+	</StackPanel>
+</UserControl>

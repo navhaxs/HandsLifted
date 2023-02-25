@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 
+			 	xmlns:vm="using:HandsLiftedApp.ViewModels"
+		xmlns:utils="using:HandsLiftedApp.Utils"
+		xmlns:ext="using:HandsLiftedApp.Extensions"
+			xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+		xmlns:controls="using:HandsLiftedApp.Controls"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:material="using:Material.Icons.Avalonia"
+		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
+		xmlns:dataSlides="using:HandsLiftedApp.Data.Slides"
+			 
+             x:Class="HandsLiftedApp.Views.Library.LibraryView">
+
+	<Design.DataContext>
+		<!--<vm:MainWindowViewModel/>-->
+		<dataSlides:LogoSlide/>
+	</Design.DataContext>
+
+	<!--<UserControl.Resources>
+		<pc:ThirdComponentConverter x:Key="ThirdComponent" />
+	</UserControl.Resources>-->
+	
+	<StackPanel>
+		<ListBox Items="{Binding Library.Items}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+			
+		</ListBox>
+		<Grid ColumnDefinitions="* *">
+				<Viewbox>
+					<viewsrender:SlideRenderer ActiveSlide="{Binding}" Width="1920" Height="1080" IsLive="False" />
+				</Viewbox>
+				<StackPanel Grid.Column="1">
+					<TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
+
+				</StackPanel>
+
+		</Grid>
+	</StackPanel>
+	
+</UserControl>

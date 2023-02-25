@@ -1,0 +1,173 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:controls="using:HandsLiftedApp.Controls"
+			 xmlns:item="using:HandsLiftedApp.Views.Item"
+			 xmlns:utils="using:HandsLiftedApp.Utils"
+             xmlns:behaviours="using:HandsLiftedApp.Behaviours"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
+			 MinHeight="200"
+			 Background="Transparent"
+			 xmlns:converters="using:HandsLiftedApp.Converters"
+             x:Class="HandsLiftedApp.Controls.ItemSlidesView">
+
+	<UserControl.Resources>
+		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
+	</UserControl.Resources>
+
+	<UserControl.Styles>
+		<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml"/>
+
+		<Style Selector="ListBoxItem">
+			<Setter Property="Background" Value="Transparent"/>
+			<!--<Setter Property="Background" Value="#F2E6EA"/>-->
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Padding" Value="5 8"/>
+			<!--<Setter Property="Template">
+				<ControlTemplate>
+					<Grid>
+						<controls:SlideThumbnail 
+							Margin="5 8"
+							Content="{TemplateBinding Content}" />
+					</Grid>
+				</ControlTemplate>
+			</Setter>-->
+			<Setter Property="(i:Interaction.Behaviors)">
+				<i:BehaviorCollectionTemplate>
+					<i:BehaviorCollection>
+						<behaviours:ListBoxItemBehavior />
+					</i:BehaviorCollection>
+				</i:BehaviorCollectionTemplate>
+			</Setter>
+		</Style>
+	</UserControl.Styles>
+
+	<StackPanel Margin="0 0 0 0">
+		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
+			<DockPanel>
+
+				<item:ItemIcon DockPanel.Dock="Left" Margin="6 0 4 0" />
+
+				<Button Padding="22 6"
+						Command="{Binding State.EditCommand}"
+						DockPanel.Dock="Right"
+						BorderBrush="#b3aed9"
+						BorderThickness="1"
+						CornerRadius="4"
+						Margin="6"
+						Background="#ffffff">Edit</Button>
+				<!--<Ellipse
+						IsVisible="{Binding State.IsSelected, FallbackValue=False}"
+						Width="8"
+						Height="8"
+						Margin="12 0 0 0"
+						Fill="#c43e1c"
+						/>-->
+				<TextBlock Padding="0 8 0 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
+
+				<Border
+					HorizontalAlignment="Left"
+					IsVisible="{Binding State.IsSelected}"
+					VerticalAlignment="Center"
+					Margin="10 2 0 0"
+					CornerRadius="3"
+					Background="#c43e1c">
+					<TextBlock
+						Margin="8 0 8 1"
+						FontWeight="Bold"
+						Foreground="White"
+						FontSize="12">LIVE</TextBlock>
+				</Border>
+				
+				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
+			</DockPanel>
+		</Border>
+
+		<item:ItemInfo VerticalAlignment="Top" />
+
+		<controls:ListBoxWithoutKey Name="List"
+				 Background="Transparent"
+				 Items="{Binding Slides}"
+			     SelectionMode="Single"
+				 SelectedIndex="{Binding State.SelectedSlideIndex}"
+		    	AutoScrollToSelectedItem="False"
+				SelectionChanged="OnSelectionChanged"
+				 >
+			<controls:ListBoxWithoutKey.Styles>
+				<Style Selector="controls|ListBoxWithoutKey">
+					<Setter Property="BorderThickness" Value="0"/>
+				</Style>
+				<Style Selector="ListBoxItem">
+					<Setter Property="Padding" Value="0"/>
+					<!--<Setter Property="IsHitTestVisible" Value="False" />-->
+					<!--<Setter Property="Focusable" Value="False"/>-->
+				</Style>
+			</controls:ListBoxWithoutKey.Styles>
+			<controls:ListBoxWithoutKey.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel ItemWidth="244"
+							   ItemHeight="200"
+						   />
+					<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
+				</ItemsPanelTemplate>
+			</controls:ListBoxWithoutKey.ItemsPanel>
+			
+			<!--<controls:ListBoxWithoutKey.Control>
+				
+			</controls:ListBoxWithoutKey.Control>-->
+
+			<controls:ListBoxWithoutKey.DataTemplates>
+				<utils:MyTemplateSelector>
+					<DataTemplate x:Key="SongTitleSlide">
+						<!--<Viewbox>
+								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
+							</Viewbox>-->
+						<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Title}" TextWrapping="Wrap" Foreground="White" FontWeight="SemiBold" Margin="10" />
+					</DataTemplate>
+					<DataTemplate x:Key="SongSlide">
+						<!--<Viewbox>
+								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
+							</Viewbox>-->
+						<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Text}" TextWrapping="Wrap" Foreground="White" Margin="10" />
+					</DataTemplate>
+					<DataTemplate x:Key="ImageSlide">
+						<controls:SlideThumbnail>
+							<Grid>
+								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" />
+							</Grid>
+						</controls:SlideThumbnail>
+					</DataTemplate>
+					<DataTemplate x:Key="VideoSlide">
+						<controls:SlideThumbnail>
+							<Grid>
+								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" />
+							</Grid>
+						</controls:SlideThumbnail>
+						<!--<Border Padding="20">
+							<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
+						</Border>-->
+					</DataTemplate>
+					<DataTemplate x:Key="LogoSlide">
+						<Grid>
+							<Image Stretch="Uniform" Source="/Assets/SWEC-ProPresenter-Logo-Slide.jpg" RenderOptions.BitmapInterpolationMode="HighQuality" />
+						</Grid>
+					</DataTemplate>
+					<DataTemplate x:Key="MyKey">
+						<TextBlock Background="Red" Text="{Binding Text}" />
+					</DataTemplate>
+					<DataTemplate x:Key="MyKey2">
+						<TextBlock Background="Green" Text="{Binding Text}"/>
+					</DataTemplate>
+					<DataTemplate x:Key="Fallback">
+						<TextBlock TextWrapping="Wrap" Background="Red" Text="{Binding FallbackValue='Not good'}" />
+					</DataTemplate>
+				</utils:MyTemplateSelector>
+			</controls:ListBoxWithoutKey.DataTemplates>
+		
+	</controls:ListBoxWithoutKey>
+
+	</StackPanel>
+</UserControl>

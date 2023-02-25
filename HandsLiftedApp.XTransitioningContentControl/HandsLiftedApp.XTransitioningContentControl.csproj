@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Controls.Skia" />
+    <PackageReference Include="Avalonia.Skia" />
+    <PackageReference Include="BmpSharp" />
+    <PackageReference Include="System.Reactive" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <AvaloniaResource Include="**\*.xaml">
+		  <SubType>Designer</SubType>
+	  </AvaloniaResource>
+  </ItemGroup>
+
+</Project>

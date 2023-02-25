@@ -1,0 +1,103 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+	<Style Selector="Button">
+		<Setter Property="CornerRadius" Value="4" />
+	</Style>
+
+	<!--https://github.com/AvaloniaUI/Avalonia/issues/7640#issuecomment-1043865206-->
+	<Style Selector="Button.link">
+		<Setter Property="Foreground" Value="#0074cc" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Cursor" Value="Hand" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="Template">
+			<ControlTemplate>
+				<ContentPresenter Content="{TemplateBinding Content}">
+					<ContentPresenter.Styles>
+						<Style Selector="TextBlock">
+							<Setter Property="Foreground" Value="{TemplateBinding Foreground}"/>
+							<Setter Property="FontSize" Value="{TemplateBinding FontSize}"/>
+							<Setter Property="TextDecorations" Value="Underline"/>
+						</Style>
+					</ContentPresenter.Styles>
+				</ContentPresenter>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+	<Style Selector="Button.link:pointerover TextBlock">
+		<Setter Property="TextDecorations" Value="Underline" />
+	</Style>
+
+	<!-- https://github.com/AvaloniaUI/Avalonia/issues/6825#issuecomment-962925283 -->
+	<Style Selector="ScrollViewer">
+		<Setter Property="Background"
+				Value="Transparent" />
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
+					<ScrollContentPresenter Name="PART_ContentPresenter"
+											Grid.Row="0"
+											Grid.Column="0"
+											Grid.RowSpan="1"
+											Grid.ColumnSpan="1"
+											Background="{TemplateBinding Background}"
+											CanHorizontallyScroll="{TemplateBinding CanHorizontallyScroll}"
+											CanVerticallyScroll="{TemplateBinding CanVerticallyScroll}"
+											Content="{TemplateBinding Content}"
+											Extent="{TemplateBinding Extent, Mode=TwoWay}"
+											Padding="{TemplateBinding Padding}"
+											Offset="{TemplateBinding Offset, Mode=TwoWay}"
+											Viewport="{TemplateBinding Viewport, Mode=TwoWay}"
+>
+						<ScrollContentPresenter.GestureRecognizers>
+							<ScrollGestureRecognizer
+							  CanHorizontallyScroll="{TemplateBinding CanHorizontallyScroll}"
+							  CanVerticallyScroll="{TemplateBinding CanVerticallyScroll}" />
+						</ScrollContentPresenter.GestureRecognizers>
+					</ScrollContentPresenter>
+					<ScrollBar Name="PART_HorizontalScrollBar"
+							   AllowAutoHide="{TemplateBinding AllowAutoHide}"
+							   Orientation="Horizontal"
+							   LargeChange="{Binding LargeChange.Width, RelativeSource={RelativeSource TemplatedParent}}"
+							   SmallChange="{Binding SmallChange.Width, RelativeSource={RelativeSource TemplatedParent}}"
+							   Maximum="{TemplateBinding HorizontalScrollBarMaximum}"
+							   Value="{TemplateBinding HorizontalScrollBarValue, Mode=TwoWay}"
+							   ViewportSize="{TemplateBinding HorizontalScrollBarViewportSize}"
+							   Visibility="{TemplateBinding HorizontalScrollBarVisibility}"
+							   Grid.Row="1"
+							   Focusable="False" />
+					<ScrollBar Name="PART_VerticalScrollBar"
+							   AllowAutoHide="{TemplateBinding AllowAutoHide}"
+							   Orientation="Vertical"
+							   LargeChange="{Binding LargeChange.Height, RelativeSource={RelativeSource TemplatedParent}}"
+							   SmallChange="{Binding SmallChange.Height, RelativeSource={RelativeSource TemplatedParent}}"
+							   Maximum="{TemplateBinding VerticalScrollBarMaximum}"
+							   Value="{TemplateBinding VerticalScrollBarValue, Mode=TwoWay}"
+							   ViewportSize="{TemplateBinding VerticalScrollBarViewportSize}"
+							   Visibility="{TemplateBinding VerticalScrollBarVisibility}"
+							   Grid.Column="1"
+							   Focusable="False" />
+					<Panel x:Name="PART_ScrollBarsSeparator" Grid.Row="1" Grid.Column="1" Background="{DynamicResource ScrollViewerScrollBarsSeparatorBackground}" />
+				</Grid>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+
+	<!-- Wrap ToolTips -->
+	<Style Selector="ToolTip">
+		<Setter Property="MaxWidth"
+				Value="500" />
+	</Style>
+	<Style Selector="ToolTip TextBlock">
+		<Setter Property="TextWrapping"
+				Value="Wrap" />
+	</Style>
+</Styles>

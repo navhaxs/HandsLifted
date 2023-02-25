@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             x:Class="HandsLiftedApp.Views.SimpleSlideTitle">
+	<Grid Width="1920" Height="1080">
+		<Border BorderThickness="20" Margin="80 80">
+			<Border.BorderBrush>
+				<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%">
+					<LinearGradientBrush.GradientStops>
+						<GradientStop Offset="0" Color="#ff5eb5de"/>
+						<GradientStop Offset="1" Color="#ff3c7dab"/>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Border.BorderBrush>
+
+
+			<Grid Background="Black" HorizontalAlignment="Stretch">
+				<StackPanel VerticalAlignment="Bottom">
+
+					<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="30">
+						<TextBlock Text="{Binding Title, FallbackValue='Happy Day'}"
+								   FontFamily="Open Sans"
+								   FontWeight="SemiBold"
+								   HorizontalAlignment="Left"
+								   VerticalAlignment="Center"
+								   RenderOptions.BitmapInterpolationMode="HighQuality"
+								   Foreground="White" FontSize="120" TextAlignment="Left"/>
+					</Viewbox>
+
+					<Viewbox StretchDirection="DownOnly" VerticalAlignment="Bottom"
+							 Margin="30">
+						<TextBlock
+						Text="{Binding Copyright, FallbackValue='CCLI Song # 7127647&#x0a;Brooke Ligertwood | Jason Ingram | Scott Ligertwood&#x0a;© 2019 Fellow Ships Music (Admin. by Essential Music Publishing LLC)&#x0a;So Essential Tunes (Admin. by Essential Music Publishing LLC)&#x0a;Hillsong Music Publishing Australia&#x0a;For use solely with the SongSelect® Terms of Use. All rights reserved. www.ccli.com&#x0a;Note: Reproduction of this sheet music requires a CCLI Music Reproduction License.  Please report all copies.&#x0a;CCLI Licence # 317371'}"
+						Foreground="White"
+						FontSize="30"
+						Width="1760"
+						/>
+					</Viewbox>
+
+				</StackPanel>
+				<Image
+					Margin="0 0 20 20"
+					VerticalAlignment="Bottom"
+					Height="300"
+					HorizontalAlignment="Right"
+					Source="avares://HandsLiftedApp/Assets/ProPresenter-Color.png"/>
+			</Grid>
+
+		</Border>
+
+	</Grid>
+</UserControl>

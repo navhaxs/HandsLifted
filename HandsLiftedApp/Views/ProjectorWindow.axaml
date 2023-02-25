@@ -1,0 +1,115 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:HandsLiftedApp.Views"
+        xmlns:render="using:HandsLiftedApp.Views.Render"
+        xmlns:vm="using:HandsLiftedApp.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ndi="using:AvaloniaNDI"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:app="using:HandsLiftedApp"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        x:Class="HandsLiftedApp.Views.ProjectorWindow"
+        x:Name="window"
+		Icon="/Assets/app.ico"
+		DoubleTapped="ProjectorWindow_DoubleTapped"
+        Title="Projector Output">
+
+	<Window.Background>
+		<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+			<VisualBrush.Visual>
+				<!--<Canvas Width="16" Height="16" Background="#1a1a1a">
+					<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+					<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+				</Canvas>-->
+				<Canvas Width="16" Height="16" Background="#f6f6f6">
+					<Rectangle Height="8" Width="8" Fill="#e8e8ec" />
+					<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#e8e8ec" />
+				</Canvas>
+			</VisualBrush.Visual>
+		</VisualBrush>
+	</Window.Background>
+	<Window.ContextMenu>
+		<ContextMenu>
+			<MenuItem Header="{Binding #window.Title}" IsEnabled="False" />
+			<MenuItem x:Name="toggleFullscreen" Header="Toggle Fullscreen" />
+			<MenuItem x:Name="toggleTopmost" Header="Topmost">
+				<MenuItem.Icon>
+					<CheckBox BorderThickness="0"
+							  IsHitTestVisible="False"
+							  IsChecked="{Binding #window.Topmost}" />
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator />
+			<MenuItem x:Name="close" Header="Close" />
+		</ContextMenu>
+	</Window.ContextMenu>
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<Grid>
+
+		<ndi:NDISendContainer DataContext="{Binding ActiveSlide}" NdiName="VisionScreeens Lyrics Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="{Binding Source={x:Static app:Globals.Preferences}, Path=!EnableLyricsNDI}" >
+			<render:AltSlideRenderer Width="1920" Height="1080"/>
+		</ndi:NDISendContainer>
+
+		<Grid Background="Black" />
+
+		<Viewbox>
+			<ndi:NDISendContainer NdiName="VisionScreeens Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="{Binding Source={x:Static app:Globals.Preferences}, Path=!EnableOutputNDI}"
+								  IsContentHighResCheckFunc="IsContentHighResCheckFunc" >
+				<Grid Background="Black">
+					<views:ActiveSlideOutput Width="1920" Height="1080"/>
+				</Grid>
+			</ndi:NDISendContainer>
+		</Viewbox>
+
+		<Grid VerticalAlignment="Bottom" Name="OverlayControls" IsVisible="False">
+			<Grid.Styles>
+				<Style Selector="Button">
+					<Setter Property="Background" Value="Transparent" />
+					<Setter Property="BorderThickness" Value="0" />
+					<Setter Property="MinWidth" Value="80" />
+					<Setter Property="HorizontalContentAlignment" Value="Center" />
+				</Style>
+			</Grid.Styles>
+			<StackPanel Orientation="Horizontal">
+				<StackPanel.Styles>
+					<Style Selector="Button:pointerover">
+						<Setter Property="Background" Value="Red" />
+					</Style>
+					<Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Background" Value="Purple" />
+					</Style>
+				</StackPanel.Styles>
+				<Button
+					Command="{Binding OnPrevSlideClickCommand}"
+					HorizontalAlignment="Left"
+					FontSize="16"
+					IsTabStop="False">
+					<material:MaterialIcon
+						Kind="ChevronLeft"
+						Foreground="#eee"
+						Width="64"
+						Height="64"
+						/>
+				</Button>
+				<Button
+					Command="{Binding OnNextSlideClickCommand}"
+					HorizontalAlignment="Right"
+					FontSize="16"
+					IsTabStop="False">
+					<material:MaterialIcon
+						Foreground="#eee"
+						Kind="ChevronRight"
+						Width="64"
+						Height="64"
+					/>
+				</Button>
+			</StackPanel>
+		</Grid>
+
+	</Grid>
+</Window>
+

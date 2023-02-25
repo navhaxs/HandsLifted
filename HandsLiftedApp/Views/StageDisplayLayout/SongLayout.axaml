@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+	 		xmlns:views="using:HandsLiftedApp.Views"
+			xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+			 Background="Black"
+			 x:Class="HandsLiftedApp.Views.StageDisplayLayout.SongLayout"
+			 >
+	<Grid ColumnDefinitions="0.8* 0.2*" RowDefinitions="0.5* 0.4* 0.1*">
+
+		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0">
+			<StackPanel>
+				<StackPanel.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="FontSize" Value="120" />
+						<Setter Property="Foreground" Value="White" />
+						<Setter Property="TextWrapping" Value="Wrap" />
+					</Style>
+				</StackPanel.Styles>
+				<!--<TextBlock Text="{Binding ActiveSlide.SlideLabel, FallbackValue=''}" />-->
+				<TextBlock Text="{Binding ActiveSlide.SlideText, FallbackValue=''}" />
+			</StackPanel>
+		</Viewbox>
+
+		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1">
+			<StackPanel>
+				<StackPanel.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="FontSize" Value="88" />
+						<Setter Property="Foreground" Value="#af7b05" />
+						<Setter Property="TextWrapping" Value="Wrap" />
+					</Style>
+				</StackPanel.Styles>
+				<!--<TextBlock Text="{Binding NextSlideWithinItem.SlideLabel, FallbackValue=''}" />-->
+				<TextBlock Text="{Binding NextSlideWithinItem.SlideText, FallbackValue=''}" />
+			</StackPanel>
+		</Viewbox>
+
+		<Viewbox Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"  StretchDirection="DownOnly">
+			<TextBlock Foreground="White"
+					   VerticalAlignment="Bottom"
+					   Padding="15"
+					   FontSize="44"
+					   Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}', FallbackValue='time'}"
+				/>
+		</Viewbox>
+	</Grid>
+</UserControl>
