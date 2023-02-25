@@ -252,24 +252,25 @@ namespace HandsLiftedApp.XTransitioningContentControl
         // TODO: pre-render outside of this control. there is just too much delay to be responsive by UX.
         private Bitmap renderControlAsBitmap(Visual visual)
         {
-            SKBitmap bitmap = new SKBitmap(1920, 1080);
-            using (SKCanvas canvas = new SKCanvas(bitmap)) {
+            using (SKBitmap bitmap = new SKBitmap(1920, 1080))
+            {
+                using (SKCanvas canvas = new SKCanvas(bitmap)) {
 
-                using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
-                using var context = new DrawingContext(contextImpl);
+                    using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
+                    using var context = new DrawingContext(contextImpl);
 
-                using var renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
-                renderedBitmap.Render(visual);
-                contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
-                    new Rect(0, 0, 1920, 1080),
-                    new Rect(0, 0, 1920, 1080));
+                    using var renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
+                    renderedBitmap.Render(visual);
+                    contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
+                        new Rect(0, 0, 1920, 1080),
+                        new Rect(0, 0, 1920, 1080));
+                }
+                // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
+                // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563
+                BmpSharp.BitsPerPixelEnum bitsPerPixel = bitmap.BytesPerPixel == 4 ? BmpSharp.BitsPerPixelEnum.RGBA32 : BmpSharp.BitsPerPixelEnum.RGB24;
+                BmpSharp.Bitmap bmp = new BmpSharp.Bitmap(bitmap.Width, bitmap.Height, bitmap.Bytes, bitsPerPixel);
+                return new Bitmap(bmp.GetBmpStream(fliped: true));
             }
-
-            // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
-            // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563
-            BmpSharp.BitsPerPixelEnum bitsPerPixel = bitmap.BytesPerPixel == 4 ? BmpSharp.BitsPerPixelEnum.RGBA32 : BmpSharp.BitsPerPixelEnum.RGB24;
-            BmpSharp.Bitmap bmp = new BmpSharp.Bitmap(bitmap.Width, bitmap.Height, bitmap.Bytes, bitsPerPixel);
-            return new Bitmap(bmp.GetBmpStream(fliped: true));
         }
     }
 }

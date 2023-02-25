@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="HandsLiftedApp.Views.DisplayIdentifyWindow2"
+        x:Class="HandsLiftedApp.Views.DisplayIdentifyWindow"
 		Background="Transparent"
         CanResize="False"
         TransparencyLevelHint="Transparent"
@@ -11,7 +11,7 @@
 		SystemDecorations="None"
 		ShowInTaskbar="False"
 		Title="DisplayIdentifyWindow">
-	<!--<Window.Resources>
+	<Window.Resources>
 		<SolidColorBrush x:Key="FrameColor">#bfff6a00</SolidColorBrush>
 	</Window.Resources>
 	
@@ -33,8 +33,8 @@
 						   />
 		</Border>
 
-		--><!--TODO Monitor identification preview --><!--
-		--><!--<Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 70 70 0"
+		<!-- TODO Monitor identification preview  -->
+		<Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 70 70 0"
 	Background="{DynamicResource FrameColor}"
 	MinWidth="150"
 	Padding="20">
@@ -44,7 +44,7 @@
 					   MinWidth="160"
 					   HorizontalAlignment="Center"
 						   />
-		</Border>--><!--
+		</Border>
 
 
 		<Border VerticalAlignment="Top" HorizontalAlignment="Left"
@@ -67,5 +67,5 @@
 						   />
 		</Border>
 
-	</Grid>-->
+	</Grid>
 </Window>

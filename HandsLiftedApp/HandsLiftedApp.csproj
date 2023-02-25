@@ -94,6 +94,9 @@
 		<Compile Update="Views\ControlModules\AutoAdvanceControlView.axaml.cs">
 		  <DependentUpon>AutoAdvanceControlView.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\DisplayIdentifyWindow.axaml.cs">
+		  <DependentUpon>DisplayIdentifyWindow.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Item\SlidesGroupItemInfo.axaml.cs">
 		  <DependentUpon>SlidesGroupItemInfo.axaml</DependentUpon>
 		</Compile>

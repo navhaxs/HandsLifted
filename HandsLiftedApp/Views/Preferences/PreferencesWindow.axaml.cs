@@ -17,7 +17,7 @@ namespace HandsLiftedApp.Views.Preferences
         List<string> Items { get; set; } = new List<string>() { "a", "b", "c" };
         PreferencesViewModel preferencesViewModel { get; }
 
-        //List<DisplayIdentifyWindow2> wnds = new List<DisplayIdentifyWindow2>();
+        List<DisplayIdentifyWindow> wnds = new List<DisplayIdentifyWindow>();
 
         public PreferencesWindow()
         {
@@ -46,29 +46,29 @@ namespace HandsLiftedApp.Views.Preferences
             //StageDisplayComboBox.Items = this.Screens.All.Select(i => new DisplayModel(i.Bounds));
             //MyComboBox.Items = new List<string>() { "a", "b", "c" };
 
-            //foreach (var (i, index) in this.Screens.All.WithIndex())
-            //{
-            //    DisplayIdentifyWindow2 displayIdentifyWindow = new DisplayIdentifyWindow2();
-            //    displayIdentifyWindow.Show();
-            //    displayIdentifyWindow.Position = new PixelPoint(i.Bounds.X, i.Bounds.Y);
-            //    displayIdentifyWindow.Topmost = true;
-            //    displayIdentifyWindow.WindowState = WindowState.FullScreen;
-            //    displayIdentifyWindow.ScreenBounds.Text = $"{i.Bounds.Width} x {i.Bounds.Height}";
-            //    displayIdentifyWindow.ScreenLocation.Text = $"({i.Bounds.X}, {i.Bounds.Y})";
-            //    displayIdentifyWindow.ScreenNumber.Text = " ";
-            //    displayIdentifyWindow.ScreenNumber.Text = $"{index + 1}";
-            //    //Dispatcher.UIThread.InvokeAsync(() =>
-            //    //{
-            //    //    displayIdentifyWindow.WindowState = WindowState.FullScreen;
-            //    //});
-            //    //DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
-            //    //timer.Tick += (object? sender, EventArgs e) =>
-            //    //{
-            //    //    displayIdentifyWindow.Close();
-            //    //};
-            //    //timer.Start();
-            //    wnds.Add(displayIdentifyWindow);
-            //}
+            foreach (var (i, index) in this.Screens.All.WithIndex())
+            {
+                DisplayIdentifyWindow displayIdentifyWindow = new DisplayIdentifyWindow();
+                displayIdentifyWindow.Show();
+                displayIdentifyWindow.Position = new PixelPoint(i.Bounds.X, i.Bounds.Y);
+                displayIdentifyWindow.Topmost = true;
+                displayIdentifyWindow.WindowState = WindowState.FullScreen;
+                displayIdentifyWindow.ScreenBounds.Text = $"{i.Bounds.Width} x {i.Bounds.Height}";
+                displayIdentifyWindow.ScreenLocation.Text = $"({i.Bounds.X}, {i.Bounds.Y})";
+                displayIdentifyWindow.ScreenNumber.Text = " ";
+                displayIdentifyWindow.ScreenNumber.Text = $"{index + 1}";
+                //Dispatcher.UIThread.InvokeAsync(() =>
+                //{
+                //    displayIdentifyWindow.WindowState = WindowState.FullScreen;
+                //});
+                //DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+                //timer.Tick += (object? sender, EventArgs e) =>
+                //{
+                //    displayIdentifyWindow.Close();
+                //};
+                //timer.Start();
+                wnds.Add(displayIdentifyWindow);
+            }
 
             this.Closed += PreferencesWindow_Closed;
         }
@@ -81,13 +81,13 @@ namespace HandsLiftedApp.Views.Preferences
 
         private void PreferencesWindow_Closed(object? sender, EventArgs e)
         {
-            //wnds.ForEach(wnd =>
-            //{
-            //    if (wnd != null && wnd.IsVisible)
-            //    {
-            //        wnd.Close();
-            //    }
-            //});
+            wnds.ForEach(wnd =>
+            {
+                if (wnd != null && wnd.IsVisible)
+                {
+                    wnd.Close();
+                }
+            });
 
         }
     }
