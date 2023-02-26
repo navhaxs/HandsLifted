@@ -111,7 +111,7 @@ namespace HandsLiftedApp.Models
         public SlideReference GetNextSlide(bool allowItemLookAhead = true)
         {
             // if no selected item, attempt to select the first item
-            if (SelectedItem is BlankItem<ItemStateImpl>)
+            if (SelectedItem == null || SelectedItem is BlankItem<ItemStateImpl>)
             {
                 if (Playlist.Items.Count > 0)
                 {
@@ -173,7 +173,7 @@ namespace HandsLiftedApp.Models
         public SlideReference GetPreviousSlide()
         {
             // if no selected item, cannot go futher back, so do nothing 
-            if (SelectedItem is BlankItem<ItemStateImpl>)
+            if (SelectedItem == null || SelectedItem is BlankItem<ItemStateImpl>)
             {
                 return new SlideReference()
                 {

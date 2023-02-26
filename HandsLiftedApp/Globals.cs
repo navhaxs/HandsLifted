@@ -30,7 +30,7 @@ namespace HandsLiftedApp
             // Create the AutoSuspendHelper.
             var suspension = new AutoSuspendHelper(applicationLifetime);
             RxApp.SuspensionHost.CreateNewAppState = () => new PreferencesViewModel();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver("appstate.json"));
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver<PreferencesViewModel>("appstate.json"));
             suspension.OnFrameworkInitializationCompleted();
 
             // Load the saved view model state.

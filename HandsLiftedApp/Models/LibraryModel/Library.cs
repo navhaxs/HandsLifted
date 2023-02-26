@@ -21,12 +21,15 @@ namespace HandsLiftedApp.Models.LibraryModel
 
         void Refresh()
         {
-            var files = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories)                         
-                     .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
-
-            foreach (var f in files)
+            if (Directory.Exists(rootDirectory))
             {
-                Items.Add(new Item() { Name = f });
+                var files = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories)
+                         .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
+
+                foreach (var f in files)
+                {
+                    Items.Add(new Item() { Name = f });
+                }
             }
         }
     }

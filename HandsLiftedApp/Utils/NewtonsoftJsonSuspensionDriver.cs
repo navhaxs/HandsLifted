@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 using ReactiveUI;
 using System;
 using System.IO;
@@ -7,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Utils
 {
-    public class NewtonsoftJsonSuspensionDriver : ISuspensionDriver
+    public class NewtonsoftJsonSuspensionDriver<T> : ISuspensionDriver where T : new()
     {
         private readonly string _file;
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
@@ -26,10 +27,10 @@ namespace HandsLiftedApp.Utils
 
         public IObservable<object> LoadState()
         {
-            //if (!File.Exists(_file))
-            //{
-            //    return Observable.Return(new );
-            //}
+            if (!File.Exists(_file))
+            {
+                return Observable.Return((object)new T());
+            }
             var lines = File.ReadAllText(_file);
             var state = JsonConvert.DeserializeObject<object>(lines, _settings);
             return Observable.Return(state);
