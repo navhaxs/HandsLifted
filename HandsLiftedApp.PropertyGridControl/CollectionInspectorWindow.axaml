@@ -26,14 +26,14 @@
 					<StackPanel/>
 				</ItemsPanelTemplate>
 			</ListBox.ItemsPanel>
-			<ListBox.DataTemplates>
+			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel>
 						<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Index}" TextWrapping="Wrap" Foreground="White" FontWeight="SemiBold" Margin="10" />
 						<pg:PropertyGrid x:Name="propertyGrid" Background="#a4a4a4" SelectedObject="{Binding}" />
 					</StackPanel>
 				</DataTemplate>
-			</ListBox.DataTemplates>
+			</ListBox.ItemTemplate>
 		</ListBox>
 		<!--<TextBlock Text="{Binding Path=#items.SelectedIndex, FallbackValue=test}" FontSize="22" />-->
 	</DockPanel>

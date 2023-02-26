@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using DynamicData;
 using DynamicData.Binding;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
@@ -14,7 +13,6 @@ using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Models
@@ -26,49 +24,6 @@ namespace HandsLiftedApp.Models
         {
             Playlist = playlist;
 
-            MessageBus.Current.Listen<ActiveSlideChangedMessage>()
-                .Subscribe(x =>
-                {
-
-                    if (IsLogo)
-                    {
-                        IsLogo = false;
-                    }
-
-
-                    var lastSelectedIndex = Playlist.State.SelectedItemIndex;
-
-                    var sourceIndex = Playlist.Items.IndexOf(x.SourceItem);
-
-
-                    // update the selected item in the playlist
-                    Playlist.State.SelectedItemIndex = sourceIndex;
-
-
-                    // notify the last deselected item in the playlist
-                    if (lastSelectedIndex > -1 && sourceIndex != lastSelectedIndex && Playlist != null)
-                    {
-                        Playlist.Items[lastSelectedIndex].State.SelectedSlideIndex = -1;
-                    }
-                });
-
-            //_selectedItem = this.WhenAnyValue(x => x.SelectedItemIndex, (selectedIndex) =>
-            //    {
-            //        if (selectedIndex != -1)
-            //            return Playlist.Items[selectedIndex];
-
-            //        return null;
-            //    })
-            //    .ToProperty(this, x => x.SelectedItem);
-
-            //var ingredientsObservables = new[]
-            //{
-            //    this.WhenAnyValue(x => x.SelectedItemIndex),
-            //    this.WhenAnyValue(x => x.Playlist.Items)
-            //};
-
-
-
             _selectedItem = Observable.CombineLatest(
             this.WhenAnyValue(x => x.SelectedItemIndex),
                 Playlist.Items.ObserveCollectionChanges(),
@@ -78,13 +33,13 @@ namespace HandsLiftedApp.Models
                         return Playlist.Items.ElementAtOrDefault(selectedIndex);
                     }
 
-                    return null;
+                    return new BlankItem<ItemStateImpl>();
                 }
             ).ToProperty(this, x => x.SelectedItem);
 
-
-            // TODO: null https://www.reactiveui.net/docs/handbook/when-any/#watching-a-nested-property
+            // note re: null https://www.reactiveui.net/docs/handbook/when-any/#watching-a-nested-property
             // "If either Foo or Bar are null then the value of Baz won't be emitted."
+            // so we use BlankItem as a workaround.
             _activeSlide = this.WhenAnyValue(x => x.SelectedItem.State.SelectedSlide,
                     (Slide selectedSlide) => selectedSlide)
                     .ToProperty(this, c => c.ActiveSlide);
@@ -156,7 +111,7 @@ namespace HandsLiftedApp.Models
         public SlideReference GetNextSlide(bool allowItemLookAhead = true)
         {
             // if no selected item, attempt to select the first item
-            if (SelectedItem == null)
+            if (SelectedItem is BlankItem<ItemStateImpl>)
             {
                 if (Playlist.Items.Count > 0)
                 {
@@ -218,7 +173,7 @@ namespace HandsLiftedApp.Models
         public SlideReference GetPreviousSlide()
         {
             // if no selected item, cannot go futher back, so do nothing 
-            if (SelectedItem == null)
+            if (SelectedItem is BlankItem<ItemStateImpl>)
             {
                 return new SlideReference()
                 {
@@ -323,6 +278,11 @@ namespace HandsLiftedApp.Models
                 IsLogo = false;
                 return;
             }
+            if (IsBlank)
+            {
+                IsBlank = false;
+                return;
+            }
 
             SlideReference slideReference = GetNextSlide();
 
@@ -338,6 +298,11 @@ namespace HandsLiftedApp.Models
             if (IsLogo)
             {
                 IsLogo = false;
+                return;
+            }
+            if (IsBlank)
+            {
+                IsBlank = false;
                 return;
             }
 
@@ -361,6 +326,8 @@ namespace HandsLiftedApp.Models
                 // deselect the slide within the previous item
                 Playlist.Items[lastSelectedItemIndex].State.SelectedSlideIndex = -1;
             }
+            
+            MessageBus.Current.SendMessage(new ActiveSlideChangedMessage());
         }
     }
 }

@@ -194,8 +194,6 @@
 								</Style>
 							</DockPanel.Styles>
 							
-							<Grid Height="2" DockPanel.Dock="Bottom" />
-
 							<ToggleButton Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Name="LibraryToggleButton">
 								<DockPanel>
 									<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu" />
@@ -441,6 +439,7 @@
 						<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>
 					</UniformGrid>
 
+					<views:DebugInfoView HorizontalAlignment="Stretch" />
 					<!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
 
 					<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>

@@ -17,9 +17,9 @@
 			</VisualBrush.Visual>
 		</VisualBrush>
 	</Window.Background>
-	<StackPanel Background="#a4a4a4">
-		<TextBlock Text="{Binding $parent[Window].Title}" FontSize="22"/>
-		<Button Name="debugButton" Content="Debug in VS"/>
+	<DockPanel Background="#a4a4a4">
+		<TextBlock Text="{Binding $parent[Window].Title}" FontSize="22" DockPanel.Dock="Top" />
+		<Button Name="debugButton" Content="Debug in VS" DockPanel.Dock="Top" />
 		<pg:PropertyGrid x:Name="propertyGrid"/>
-	</StackPanel>
+	</DockPanel>
 </Window>

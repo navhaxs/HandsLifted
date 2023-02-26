@@ -92,7 +92,7 @@
 				 Background="Transparent"
 				 Items="{Binding Slides}"
 			     SelectionMode="Single"
-				 SelectedIndex="{Binding State.SelectedSlideIndex}"
+				 SelectedIndex="{Binding State.SelectedSlideIndex, Mode=OneWay}"
 		    	AutoScrollToSelectedItem="False"
 				SelectionChanged="OnSelectionChanged"
 				 >

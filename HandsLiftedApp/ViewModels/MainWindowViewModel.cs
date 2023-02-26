@@ -1,5 +1,4 @@
 using Avalonia.Animation;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using DynamicData;
 using HandsLiftedApp.Data.Models;
@@ -34,7 +33,10 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NetOffice.PowerPointApi;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
+using Design = Avalonia.Controls.Design;
+using Slide = HandsLiftedApp.Data.Slides.Slide;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -197,6 +199,7 @@ namespace HandsLiftedApp.ViewModels
                 .ToProperty(this, c => c.ActiveItemPageTransition);
 
             // The OpenFile command is bound to a button/menu item in the UI.
+            SlideClickCommand = ReactiveCommand.CreateFromTask<object>(OnSlideClickCommand);
             AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPresentationFileAsync);
             AddGroupCommand = ReactiveCommand.CreateFromTask(OpenGroupAsync);
             AddVideoCommand = ReactiveCommand.CreateFromTask(AddVideoCommandAsync);
@@ -384,6 +387,7 @@ namespace HandsLiftedApp.ViewModels
             MessageBus.Current.SendMessage(new FocusSelectedItem());
         }
 
+        public ReactiveCommand<object, Unit> SlideClickCommand { get; }
         public ReactiveCommand<Unit, Unit> AddPresentationCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGroupCommand { get; }
         public ReactiveCommand<Unit, Unit> AddVideoCommand { get; }
@@ -440,6 +444,28 @@ namespace HandsLiftedApp.ViewModels
             }
         }
 
+        private async Task OnSlideClickCommand(object? ac)
+        {
+            ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
+            Slide slide = (Slide)args[0];
+            Item<ItemStateImpl> item = (Item<ItemStateImpl>)args[1];
+
+            int itemIndex = Playlist.Items.IndexOf(item);
+            
+            if (Playlist.State.IsLogo)
+            {
+                Playlist.State.IsLogo = false;
+            }
+            
+            if (Playlist.State.IsBlank)
+            {
+                Playlist.State.IsBlank = false;
+            }
+
+            Playlist.State.NavigateToReference(new SlideReference()
+                { SlideIndex = slide.Index, ItemIndex = itemIndex, Slide = slide });
+        }
+
         private async Task OpenPresentationFileAsync()
         {
             try
@@ -457,7 +483,6 @@ namespace HandsLiftedApp.ViewModels
 
                     //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
                     PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };
-
 
                     Playlist.Items.Add(slidesGroup);
 

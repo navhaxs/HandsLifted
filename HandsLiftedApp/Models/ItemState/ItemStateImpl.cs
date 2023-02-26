@@ -93,11 +93,13 @@ namespace HandsLiftedApp.Models.ItemState
 
                 this.RaiseAndSetIfChanged(ref _selectedIndex, value);
 
-                if (_selectedIndex > -1)
-                {
+                
+                // !!! DO NOT CALL THIS IF NOT ACTIVE ITEM
+                // if (_selectedIndex > -1)
+                // {
 
-                    MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItem = parent });
-                }
+                    // MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItem = parent });
+                // }
             }
         }
 
@@ -109,8 +111,8 @@ namespace HandsLiftedApp.Models.ItemState
 
         public ReactiveCommand<Unit, Unit> EditCommand { get; }
 
-        private int _ItemIndex;
-        public int ItemIndex { get => _ItemIndex; set => _ItemIndex = value; }
+        // private int _ItemIndex;
+        // public int ItemIndex { get => _ItemIndex; set => _ItemIndex = value; }
 
         private IPageTransition? _pageTransition;
         public IPageTransition? PageTransition { get => _pageTransition; set => this.RaiseAndSetIfChanged(ref _pageTransition, value); }

@@ -91,7 +91,7 @@
 							</TextBlock.Text>
 						</TextBlock>
 					</StackPanel>
-					<Border CornerRadius="2">
+					<Border>
 						<Grid>
 							<Border Name="PART_Border" DockPanel.Dock="Bottom" CornerRadius="2">
 								<Border.Background>
@@ -104,9 +104,23 @@
 										</VisualBrush.Visual>
 									</VisualBrush>
 								</Border.Background>
+								<Interaction.Behaviors>
+									<EventTriggerBehavior EventName="Tapped">
+										<InvokeCommandAction
+											Command="{Binding ViewModel.SlideClickCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+											<InvokeCommandAction.CommandParameter>
+												<MultiBinding>
+													<Binding />
+													<Binding Path="$parent[ListBox].DataContext"/>
+												</MultiBinding>
+											</InvokeCommandAction.CommandParameter>
+											</InvokeCommandAction>
+									</EventTriggerBehavior>
+								</Interaction.Behaviors>
 							</Border>
 
 							<ContentPresenter Name="PART_ContentPresenter"
+							                  IsHitTestVisible="False"
 											  Margin="4"
 											  Background="{TemplateBinding Background}"
 											  BorderBrush="{TemplateBinding BorderBrush}"
