@@ -484,7 +484,7 @@ Description("Function to determine whether the content requires high resolution 
         public void ThrottledFunction(TimeSpan t)
         {
             // todo should be Max of [ON_CONTENT_CHANGE_THRESHOLD_MS, <slide transition duration ms>]
-            bool isHighRes = _lastLayoutPass != null && (DateTime.Now.Subtract((DateTime)_lastLayoutPass).Milliseconds < ON_CONTENT_CHANGE_THRESHOLD_MS);
+            bool isHighRes = _lastLayoutPass != null && (DateTime.Now.Subtract((DateTime)_lastLayoutPass).TotalMilliseconds < ON_CONTENT_CHANGE_THRESHOLD_MS);
 
             if (!isHighRes && IsContentHighResCheckFunc != null)
             {
@@ -615,14 +615,16 @@ Description("Function to determine whether the content requires high resolution 
             //SKBitmap bitmap = new SKBitmap(1920, 1080);
             //using (SKCanvas canvas = new SKCanvas(bitmap)) {
 
-                using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
-                using var context = new DrawingContext(contextImpl);
+            using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
+            using var context = new DrawingContext(contextImpl);
 
-                using var renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
-                renderedBitmap.Render(this.Child);
-                contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
-                    new Rect(0, 0, 1920, 1080),
-                    new Rect(0, 0, 1920, 1080));
+            using var renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
+
+            // TODO OPTIMISE THIS
+            renderedBitmap.Render(this.Child);
+            contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
+                new Rect(0, 0, 1920, 1080),
+                new Rect(0, 0, 1920, 1080));
             //}
 
             //s(targetBitmap).
