@@ -1,4 +1,5 @@
 ﻿using Avalonia.Animation;
+using Avalonia.Threading;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.ItemExtensionState;
@@ -40,8 +41,9 @@ namespace HandsLiftedApp.Models.ItemState
             _isSelected = this.WhenAnyValue(x => x.SelectedSlideIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
                 .ToProperty(this, x => x.IsSelected);
 
-
-            PageTransition = new XFade(TimeSpan.FromSeconds(0.500));
+            Dispatcher.UIThread.InvokeAsync(() => {
+                PageTransition = new XFade(TimeSpan.FromSeconds(0.500));
+            });
 
             Observable.CombineLatest(
                 this.WhenAnyValue(o => o.SelectedSlideIndex),

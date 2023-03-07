@@ -18,6 +18,7 @@ using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using HandsLiftedApp.Utils;
+using HandsLiftedApp.Views.Prepare;
 
 namespace HandsLiftedApp.Views {
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
@@ -32,6 +33,9 @@ namespace HandsLiftedApp.Views {
 
             if (Design.IsDesignMode)
                 return;
+
+            PrepareNewPlaylist v = new PrepareNewPlaylist();
+            v.Show();
 
             SubscribeToWindowState();
 

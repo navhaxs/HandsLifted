@@ -4,11 +4,14 @@
 		xmlns:vm="using:HandsLiftedApp.ViewModels"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:i="using:Avalonia.Xaml.Interactivity"
+		xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
 		xmlns:controls="using:HandsLiftedApp.Controls"
 		xmlns:material="using:Material.Icons.Avalonia"
 		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
 		xmlns:editor="using:HandsLiftedApp.Views.Editor"
+		xmlns:library="using:HandsLiftedApp.Views.Library"
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
@@ -221,7 +224,7 @@
 								   
 								   PlacementMode="Bottom"
 								   PlacementTarget="{Binding #AddItemButton}">
-								<Grid MinWidth="860" MinHeight="400">
+								<Grid MinWidth="460" MinHeight="400">
 									<views:AddItemPaletteControl />
 								</Grid>
 							</Popup>
@@ -243,77 +246,57 @@
 								ZIndex="2"
 							>
 
-							<DockPanel>
-								<Border
-							Height="50"
-							Padding="10,5,10,5"
-							VerticalAlignment="Bottom"
-							Background="#FFD6D6D6"
-							DockPanel.Dock="Bottom">
-									<Grid>
-										<Grid.Styles>
-											<Style Selector="Button">
-												<Setter Property="MinWidth" Value="250" />
-												<Setter Property="HorizontalContentAlignment" Value="Center" />
-											</Style>
-										</Grid.Styles>
-										<Grid.ColumnDefinitions>
-											<ColumnDefinition Width="2*" />
-											<ColumnDefinition Width="*" />
-											<ColumnDefinition Width="2*" />
-										</Grid.ColumnDefinitions>
-										<Button
-											Command="{Binding OnPrevSlideClickCommand}"
-											HorizontalAlignment="Left"
-											HorizontalContentAlignment="Stretch"
-											FontSize="16"
-											IsTabStop="False">
-											<Grid>
-												<material:MaterialIcon
-													Margin="10 0"
-													Foreground="#383838"
-													HorizontalAlignment="Left"
-													Kind="ArrowLeft" />
-												<TextBlock Text="Previous"
-														   TextAlignment="Center" />
-											</Grid>
-										</Button>
-										<!--<Button
-											Grid.Column="1"
-											HorizontalAlignment="Center"
-											Click="OnScrollToItemClick"
-											Content="Scroll"
-											FontSize="16">
-										</Button>-->
-										<Button
-											Command="{Binding OnNextSlideClickCommand}"
-											HorizontalAlignment="Right"
-											HorizontalContentAlignment="Stretch"
-											Grid.Column="2"
-											FontSize="16"
-											IsTabStop="False">
-											<Grid>
-												<material:MaterialIcon
-													Margin="10 0"
-													Foreground="#383838"
-													HorizontalAlignment="Right"
-													Kind="ArrowRight" />
-												<TextBlock Text="Next"
-														   TextAlignment="Center" />
-											</Grid>
-										</Button>
-									</Grid>
-								</Border>
+							<!-- SPLIT ME -->
+							<!-- SPLIT ME -->
+							<!-- SPLIT ME -->
+							<!-- SPLIT ME -->
+							<Grid>
 
-								<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />
-								<!--<library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
+								<Grid.Styles>
+									<Style Selector="RowDefinition.isCollapsed">
+										<Style.Setters>
+											<Setter Property="Height" Value="0" />
+										</Style.Setters>
+									</Style>
+								</Grid.Styles>
 								
-								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" IsVisible="{Binding !#LibraryToggleButton.IsChecked}" />
+								<Grid.RowDefinitions>
+									<RowDefinition Height="*" />
+									<RowDefinition Height="1" />
+									<RowDefinition Height="0.24*" >
+										<!--<i:Interaction.Behaviors>
+											<ia:DataTriggerBehavior Binding="{Binding #LibraryToggleButton.IsChecked}" ComparisonCondition="Equal" Value="true">
+												<ia:ChangePropertyAction TargetObject="{Binding #hello}" PropertyName="MaxHeight" Value="0" />
+											</ia:DataTriggerBehavior>
+											<ia:DataTriggerBehavior Binding="{Binding #LibraryToggleButton.IsChecked}" ComparisonCondition="Equal" Value="false">
+												<ia:ChangePropertyAction TargetObject="{Binding #hello}" PropertyName="MaxHeight" Value="Auto" />
+											</ia:DataTriggerBehavior>
+										</i:Interaction.Behaviors>-->
+									</RowDefinition>
+								</Grid.RowDefinitions>
+
+								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+
+								<GridSplitter
+										Grid.Row="1"
+										Margin="-3,-3"
+										BorderThickness="3,3"
+										BorderBrush="Transparent"
+										HorizontalAlignment="Stretch"
+										Background="#9a93cd"
+										ZIndex="9999"
+									/>
+
+								<library:LibraryView Grid.Row="2"  />
+
+								<!--<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
+							
+							
 								
 								<!-- non contiguous view -->
 								<!--<controls:ItemSlidesView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
-							</DockPanel>
+							</Grid>
 						</Border>
 					</Grid>
 
@@ -411,6 +394,73 @@
 							</Viewbox>
 						</Border>
 					</Grid>
+
+
+
+					<Border
+						DockPanel.Dock="Top"
+				Background="#FFD6D6D6"
+				>
+						<Grid>
+							<Grid.Styles>
+								<Style Selector="Button">
+									<Setter Property="HorizontalAlignment" Value="Stretch" />
+									<Setter Property="HorizontalContentAlignment" Value="Center" />
+									<Setter Property="Margin" Value="2" />
+									<Setter Property="FontSize" Value="14" />
+								</Style>
+							</Grid.Styles>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Button
+								Command="{Binding OnPrevSlideClickCommand}"
+								HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								IsTabStop="False">
+								<DockPanel>
+									<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99">
+										<material:MaterialIcon
+											DockPanel.Dock="Left"
+											Foreground="#383838"
+											HorizontalAlignment="Left"
+											Kind="ArrowLeft" />
+									</Border>
+									<TextBlock Text="Previous"
+											   TextAlignment="Center" />
+								</DockPanel>
+							</Button>
+							<!--<Button
+											Grid.Column="1"
+											HorizontalAlignment="Center"
+											Click="OnScrollToItemClick"
+											Content="Scroll"
+											FontSize="16">
+										</Button>-->
+							<Button
+								Command="{Binding OnNextSlideClickCommand}"
+								HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								Grid.Column="2"
+								IsTabStop="False">
+								<DockPanel>
+
+									<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99"
+																						DockPanel.Dock="Right">
+										
+										<material:MaterialIcon
+											Foreground="#383838"
+											HorizontalAlignment="Right"
+											Kind="ArrowRight" />
+									</Border>
+									<TextBlock Text="Next"
+											   TextAlignment="Center"
+											   />
+								</DockPanel>
+							</Button>
+						</Grid>
+					</Border>
 
 
 					<UniformGrid DockPanel.Dock="Top" Columns="3" Rows="1" Height="35">

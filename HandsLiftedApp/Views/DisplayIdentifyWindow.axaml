@@ -34,7 +34,7 @@
 		</Border>
 
 		<!-- TODO Monitor identification preview  -->
-		<Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 70 70 0"
+		<Border IsVisible="False	" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 70 70 0"
 	Background="{DynamicResource FrameColor}"
 	MinWidth="150"
 	Padding="20">

@@ -51,6 +51,8 @@ namespace HandsLiftedApp.Utils
                     rest = songPart.Substring(partNameEOL).Trim();
                 }
 
+                // TODO add line breaks (new slide) every 4 lines by default
+
                 song.Stanzas.Add(new SongStanza(Guid.NewGuid(), partName, rest));
 
             }

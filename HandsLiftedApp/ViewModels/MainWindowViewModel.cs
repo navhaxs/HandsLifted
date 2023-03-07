@@ -49,11 +49,11 @@ namespace HandsLiftedApp.ViewModels
         }
         private async Task Update()
         {
-            while (true)
-            {
-                await Task.Delay(100);
-                this.RaisePropertyChanged(nameof(CurrentTime));
-            }
+            //while (true)
+            //{
+            //    await Task.Delay(100);
+            //    this.RaisePropertyChanged(nameof(CurrentTime));
+            //}
         }
 
         public Playlist<PlaylistStateImpl, ItemStateImpl> _playlist;

@@ -20,6 +20,9 @@ namespace HandsLiftedApp.Converters
         {
             if (values[1] is ItemsControl)
             {
+                if (values[0] is null)
+                    return null;
+
                 var item = ((ItemsControl)values[1]);
                 if (item.ItemCount == 0 || item.GetRealizedContainers().Count() == 0)
                 {

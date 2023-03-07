@@ -24,6 +24,7 @@
 	<ItemGroup>
 		<None Remove="Assets\app_logo - Copy.png" />
 		<None Remove="Assets\avalonia.png" />
+		<None Remove="Assets\DesignerSlideTemplate\bg.png" />
 		<None Remove="Assets\homeBASE\image1.png" />
 		<None Remove="Assets\homeBASE\image2.png" />
 		<None Remove="Assets\homeBASE\image3.png" />
@@ -121,8 +122,14 @@
 		<Compile Update="Views\Render\CustomSlide\BibleReadingSlideTemplate.axaml.cs">
 		  <DependentUpon>BibleReadingSlideTemplate.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\Render\SongSlide\DesignerSlideTemplate.axaml.cs">
+		  <DependentUpon>DesignerSlideTemplate.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\Render\SongSlide\FancySlideTemplate.axaml.cs">
 		  <DependentUpon>FancySlideTemplate.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Render\SongSlide\DesignerSlideTitle.axaml.cs">
+		  <DependentUpon>DesignerSlideTitle.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Render\SongSlide\FancySlideTitle.axaml.cs">
 		  <DependentUpon>FancySlideTitle.axaml</DependentUpon>

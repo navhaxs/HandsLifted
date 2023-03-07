@@ -1,0 +1,111 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	 xmlns:material="using:Material.Icons.Avalonia"
+	 xmlns:prepare="using:HandsLiftedApp.Views.Prepare"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="650"
+        x:Class="HandsLiftedApp.Views.Prepare.PrepareNewPlaylist"
+        Title="PrepareNewPlaylist">
+
+	<Window.Styles>
+		<Style Selector="TextBlock.h1">
+			<Setter Property="FontSize" Value="24"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+		</Style>
+	</Window.Styles>
+
+	<ScrollViewer>
+
+		<StackPanel>
+
+			<StackPanel
+				Background="#6033ab">
+				<TextBlock
+					MinWidth="800"
+					HorizontalAlignment="Center"
+					Text="Prepare New Playlist"
+					Padding="0 16"
+					FontSize="18"
+					Foreground="White"
+					/>
+			</StackPanel>
+
+			<StackPanel MinWidth="800" HorizontalAlignment="Center"
+						Margin="0 20 0 80">
+
+				<TextBox
+				BorderThickness="0 0 0 1"
+				Padding="4 0"
+				Margin="0 0 0 8"
+				FontSize="26"
+				Text="St Paul's 9:30am - 5 March 2023" />
+
+				<Button
+					Background="Transparent"
+					HorizontalAlignment="Right"
+					CornerRadius="6"
+					BorderThickness="1"
+					VerticalContentAlignment="Center"
+					Padding="18 10">
+					<DockPanel>
+						<TextBlock Text="Sync" Padding="0 0 12 0" FontSize="16" />
+						<material:MaterialIcon Kind="SyncCircle" Foreground="#888888" Margin="-4" VerticalAlignment="Stretch" Width="28" Height="28" />
+					</DockPanel>
+				</Button>
+
+				<TextBlock Text="Pre-service" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Call to Worship" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Adoration" Classes="h1" />
+
+				<prepare:PrepareItem />
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Confession" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Doxology" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Kids Talk" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Welcome" Classes="h1" />
+
+				<TextBlock Text="Announcements" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Prayer" Classes="h1" />
+
+				<TextBlock Text="Bible Reading" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Sermon" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Response" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+				<TextBlock Text="Sending out" Classes="h1" />
+
+				<TextBlock Text="Post-service" Classes="h1" />
+
+				<prepare:PrepareItem />
+
+			</StackPanel>
+		</StackPanel>
+	</ScrollViewer>
+</Window>

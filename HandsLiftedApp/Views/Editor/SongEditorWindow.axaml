@@ -22,7 +22,7 @@
 			<MenuItem Name="btnFileSave" Header="Save XML" />
 			<MenuItem Command="{Binding SongDataUpdateCommand}" Header="SYNC" />
 		</Menu>
-		<Grid ColumnDefinitions="*, 1, 2*">
+		<Grid ColumnDefinitions="2*, 1, 3*">
 			<Grid>
 				<DockPanel>
 					<DockPanel.Styles>
@@ -30,17 +30,12 @@
 							<Setter Property="BorderThickness" Value="0" />
 						</Style>
 					</DockPanel.Styles>
-					<DockPanel DockPanel.Dock="Top">
-						<Button DockPanel.Dock="Right" Command="{Binding OnClickCommand}" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="20 12">
-							<!--<StackPanel>
-				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
-			</StackPanel>-->
-							Add New Stanza</Button>
-
-						<TextBox Text="{Binding song.Title}" Watermark="Song Title" FontWeight="Bold" FontSize="30" Padding="0 6 0 5" TextWrapping="Wrap" Margin="12 12 12 12" />
-					</DockPanel>
 					<ScrollViewer HorizontalScrollBarVisibility="Auto">
-						<ItemsControl Items="{Binding song.Stanzas}" Margin="0 0 5 0">
+
+						<StackPanel>
+							<TextBox Text="{Binding song.Title}" Watermark="Song Title" FontWeight="Bold" FontSize="30" Padding="0 6 0 5" TextWrapping="Wrap" Margin="12 12 12 12" />
+
+							<ItemsControl Items="{Binding song.Stanzas}" Margin="0 0 5 0">
 							<!--<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<WrapPanel Orientation="Vertical" ItemWidth="360" />
@@ -74,6 +69,18 @@
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>
+
+							<Button Command="{Binding OnClickCommand}" HorizontalAlignment="Stretch">
+								<!--<StackPanel>
+				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
+			</StackPanel>-->
+								Add New Stanza
+							</Button>
+
+							<TextBox Text="{Binding song.Copyright}" Watermark="Copyright" FontSize="13" Padding="0 6 0 5" AcceptsReturn="True" TextWrapping="Wrap" />
+
+						</StackPanel>
+						
 					</ScrollViewer>
 
 				</DockPanel>
@@ -113,7 +120,6 @@
 						<TextBlock Grid.Row="1" Grid.Column="1" Text="EndOnBlankSlide" />
 					</Grid>
 						
-					<TextBox Text="{Binding song.Copyright}" Watermark="Copyright" FontSize="13" Padding="0 6 0 5" AcceptsReturn="True" TextWrapping="Wrap" />
 				</DockPanel>
 				
 

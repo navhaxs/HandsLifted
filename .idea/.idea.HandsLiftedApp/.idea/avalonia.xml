@@ -14,6 +14,8 @@
         <entry key="HandsLiftedApp/Views/Editor/SlideDesigner.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/Editor/SlideDesignerWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/MainWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/Prepare/PrepareItem.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/Prepare/PrepareNewPlaylist.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/ProjectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/Render/SlideRenderer.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/StageDisplayWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />

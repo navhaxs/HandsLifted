@@ -2,6 +2,7 @@
 
 namespace HandsLiftedApp.Logic
 {
+    using Avalonia.Threading;
     using EmbedIO.WebSockets;
     using HandsLiftedApp.Models.AppState;
     using HandsLiftedApp.Models.UI;
@@ -60,8 +61,10 @@ namespace HandsLiftedApp.Logic
                         {
                             Thread.CurrentThread.IsBackground = true;
                             /* run your code here */
-                            MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
-                            MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
+                            Dispatcher.UIThread.InvokeAsync(() => {
+                                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                                MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
+                            });
                         }).Start();
                         return SendAsync(context, "{\"action\":\"NextSlide\", \"status\": \"ok\"}");
                         break;
@@ -71,8 +74,10 @@ namespace HandsLiftedApp.Logic
                         {
                             Thread.CurrentThread.IsBackground = true;
                             /* run your code here */
-                            MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
-                            MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
+                            Dispatcher.UIThread.InvokeAsync(() => {
+                                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                                MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
+                            });
                         }).Start();
                         return SendAsync(context, "{\"action\":\"PreviousSlide\", \"status\": \"ok\"}");
                         break;

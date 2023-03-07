@@ -17,33 +17,71 @@
              x:Class="HandsLiftedApp.Views.Library.LibraryView">
 
 	<Design.DataContext>
-		<!--<vm:MainWindowViewModel/>-->
-		<dataSlides:LogoSlide/>
+		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
 	<!--<UserControl.Resources>
 		<pc:ThirdComponentConverter x:Key="ThirdComponent" />
 	</UserControl.Resources>-->
-	
-	<StackPanel>
-		<ListBox Items="{Binding Library.Items}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Name}" />
-				</DataTemplate>
-			</ListBox.ItemTemplate>
+
+	<UserControl.Styles>
+		<Style Selector="TextBlock.h1">
+			<Setter Property="FontSize" Value="24"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+		</Style>
+	</UserControl.Styles>
+
+	<Border
+		BorderThickness="0 1 0 0"
+		BorderBrush="#9a93cd">
+
+
+	<DockPanel>
+		<StackPanel
+			DockPanel.Dock="Top"
+			Background="#6033ab">
+			<TextBlock
+				HorizontalAlignment="Left"
+				Text="Library"
+				Padding="0 6"
+				FontSize="18"
+				Margin="8 0"
+				Foreground="White"
+				/>
+		</StackPanel>
+		<Grid ColumnDefinitions="* 2*">
+
+			<DockPanel>
+				<TextBox Watermark="Search for songs" DockPanel.Dock="Top" />
+				<ListBox Items="{Binding Library.Items}"
+						 SelectedItem="{Binding	Library.SelectedItem}"
+						 >
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Title}" />
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+
+			<DockPanel
+				Grid.Column="1">
+				<Button
+					Margin="20"
+					Padding="16"
+					VerticalAlignment="Bottom"
+					HorizontalAlignment="Right"
+					Content="Add to playlist"
+					Command="{Binding Library.OnAddSelectedToPlaylistCommand}"
+					/>
+			</DockPanel>
 			
-		</ListBox>
-		<Grid ColumnDefinitions="* *">
-				<Viewbox>
-					<viewsrender:SlideRenderer ActiveSlide="{Binding}" Width="1920" Height="1080" IsLive="False" />
-				</Viewbox>
-				<StackPanel Grid.Column="1">
-					<TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
-
-				</StackPanel>
-
 		</Grid>
-	</StackPanel>
 	
+		<!--<StackPanel>
+			<TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
+		</StackPanel>-->
+		
+	</DockPanel>
+	</Border>
 </UserControl>

@@ -18,10 +18,10 @@
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
 			<DataTemplate x:Key="SongTitleSlide">
-				<views:FancySlideTitle />
+				<views:DesignerSlideTitle/>
 			</DataTemplate>
 			<DataTemplate x:Key="SongSlide">
-				<views:FancySlideTemplate/>
+				<views:DesignerSlideTemplate/>
 			</DataTemplate>
 			<DataTemplate x:Key="ImageSlide">
 				<Grid>
