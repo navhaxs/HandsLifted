@@ -34,7 +34,7 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         [XmlIgnore]
-        public abstract ObservableCollection<Slide> Slides { get; }
+        public abstract ObservableCollection<Slide?> Slides { get; }
 
         public void Dispose()
         {

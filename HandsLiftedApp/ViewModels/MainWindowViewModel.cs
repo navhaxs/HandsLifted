@@ -756,8 +756,15 @@ namespace HandsLiftedApp.ViewModels
         void OnRemoveItemCommand(object? itemState)
         {
             // TODO confirm dialog?
+            // should be 'item'
+
+            if (itemState is not Item)
+                return;
+
             int v = Playlist.Items.IndexOf(itemState);
-            Playlist.Items.RemoveAt(v);
+
+            if (v > -1)
+                Playlist.Items.RemoveAt(v);
         }
 
     }
