@@ -31,6 +31,7 @@ namespace HandsLiftedApp.Views {
             this.AttachDevTools();
 #endif
 
+            
             if (Design.IsDesignMode)
                 return;
 
@@ -211,6 +212,9 @@ namespace HandsLiftedApp.Views {
 
         private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
+            this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
+            //this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
+
             // TODO: if a textbox, datepicker etc is selected - then skip this func.
             var m = FocusManager.Instance?.Current;
 

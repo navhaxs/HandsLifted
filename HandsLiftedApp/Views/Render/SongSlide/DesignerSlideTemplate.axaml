@@ -13,23 +13,24 @@
 			   Stretch="UniformToFill"
 			   />
 
-		<Border BorderThickness="14" Margin="60 110">
+		<Border Margin="60 110 0 0">
 
 			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
-				<Viewbox StretchDirection="DownOnly"
-						 HorizontalAlignment="Stretch">
-					<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
-							   LineHeight="140"
+				<!--<Viewbox StretchDirection="DownOnly"
+						 HorizontalAlignment="Stretch">-->
+					<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed&#x0a;This is very really extraordinarily long lyric line'}"
+							   LineHeight="120"
 							   FontWeight="SemiBold"
-							   TextAlignment="Center"
+							   TextAlignment="Left"
 							   HorizontalAlignment="Stretch"
 							   VerticalAlignment="Center"
 							   FontFamily="Montserrat"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
 							   Foreground="#a06d39"
 							   FontSize="90"
+							   TextWrapping="WrapWithOverflow"
 							/>
-				</Viewbox>
+				<!--</Viewbox>-->
 			</Grid>
 
 		</Border>

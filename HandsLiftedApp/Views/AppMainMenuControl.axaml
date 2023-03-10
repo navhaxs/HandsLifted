@@ -77,6 +77,7 @@
 				</StackPanel>
 				<Grid Height="4" />
 				<StackPanel VerticalAlignment="Bottom">
+					<Button Content="Debug1" Command="{Binding OnDebug1Command}"/>
 					<Button Content="Setup" Command="{Binding OnPreferencesWindowCommand}"/>
 					<Button Content="About" Command="{Binding OnAboutWindowCommand}"/>
 					<Button Content="Exit" Click="CloseWindow"/>

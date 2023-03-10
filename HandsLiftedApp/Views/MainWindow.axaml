@@ -246,11 +246,7 @@
 								ZIndex="2"
 							>
 
-							<!-- SPLIT ME -->
-							<!-- SPLIT ME -->
-							<!-- SPLIT ME -->
-							<!-- SPLIT ME -->
-							<Grid>
+							<Grid x:Name="CentreGrid">
 
 								<Grid.Styles>
 									<Style Selector="RowDefinition.isCollapsed">
@@ -275,7 +271,77 @@
 									</RowDefinition>
 								</Grid.RowDefinitions>
 
-								<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+								<DockPanel>
+
+
+									<Border
+										DockPanel.Dock="Bottom"
+								Background="#FFD6D6D6"
+				>
+										<Grid>
+											<Grid.Styles>
+												<Style Selector="Button">
+													<Setter Property="HorizontalAlignment" Value="Stretch" />
+													<Setter Property="HorizontalContentAlignment" Value="Center" />
+													<Setter Property="Margin" Value="6 2" />
+													<Setter Property="FontSize" Value="14" />
+												</Style>
+											</Grid.Styles>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="*" />
+												<ColumnDefinition Width="*" />
+												<ColumnDefinition Width="*" />
+											</Grid.ColumnDefinitions>
+											<Button
+												Command="{Binding OnPrevSlideClickCommand}"
+												HorizontalAlignment="Stretch"
+												HorizontalContentAlignment="Stretch"
+												IsTabStop="False">
+												<DockPanel>
+													<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99">
+														<material:MaterialIcon
+															DockPanel.Dock="Left"
+															Foreground="#383838"
+															HorizontalAlignment="Left"
+															Kind="ArrowLeft" />
+													</Border>
+													<TextBlock Text="Previous"
+															   TextAlignment="Center" />
+												</DockPanel>
+											</Button>
+											<!--<Button
+											Grid.Column="1"
+											HorizontalAlignment="Center"
+											Click="OnScrollToItemClick"
+											Content="Scroll"
+											FontSize="16">
+										</Button>-->
+											<Button
+												Command="{Binding OnNextSlideClickCommand}"
+												HorizontalAlignment="Stretch"
+												HorizontalContentAlignment="Stretch"
+												Grid.Column="2"
+												IsTabStop="False">
+												<DockPanel>
+
+													<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99"
+																										DockPanel.Dock="Right">
+
+														<material:MaterialIcon
+															Foreground="#383838"
+															HorizontalAlignment="Right"
+															Kind="ArrowRight" />
+													</Border>
+													<TextBlock Text="Next"
+															   TextAlignment="Center"
+											   />
+												</DockPanel>
+											</Button>
+										</Grid>
+									</Border>
+
+									<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+								</DockPanel>
 
 								<GridSplitter
 										Grid.Row="1"
@@ -394,74 +460,6 @@
 							</Viewbox>
 						</Border>
 					</Grid>
-
-
-
-					<Border
-						DockPanel.Dock="Top"
-				Background="#FFD6D6D6"
-				>
-						<Grid>
-							<Grid.Styles>
-								<Style Selector="Button">
-									<Setter Property="HorizontalAlignment" Value="Stretch" />
-									<Setter Property="HorizontalContentAlignment" Value="Center" />
-									<Setter Property="Margin" Value="2" />
-									<Setter Property="FontSize" Value="14" />
-								</Style>
-							</Grid.Styles>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<Button
-								Command="{Binding OnPrevSlideClickCommand}"
-								HorizontalAlignment="Stretch"
-								HorizontalContentAlignment="Stretch"
-								IsTabStop="False">
-								<DockPanel>
-									<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99">
-										<material:MaterialIcon
-											DockPanel.Dock="Left"
-											Foreground="#383838"
-											HorizontalAlignment="Left"
-											Kind="ArrowLeft" />
-									</Border>
-									<TextBlock Text="Previous"
-											   TextAlignment="Center" />
-								</DockPanel>
-							</Button>
-							<!--<Button
-											Grid.Column="1"
-											HorizontalAlignment="Center"
-											Click="OnScrollToItemClick"
-											Content="Scroll"
-											FontSize="16">
-										</Button>-->
-							<Button
-								Command="{Binding OnNextSlideClickCommand}"
-								HorizontalAlignment="Stretch"
-								HorizontalContentAlignment="Stretch"
-								Grid.Column="2"
-								IsTabStop="False">
-								<DockPanel>
-
-									<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99"
-																						DockPanel.Dock="Right">
-										
-										<material:MaterialIcon
-											Foreground="#383838"
-											HorizontalAlignment="Right"
-											Kind="ArrowRight" />
-									</Border>
-									<TextBlock Text="Next"
-											   TextAlignment="Center"
-											   />
-								</DockPanel>
-							</Button>
-						</Grid>
-					</Border>
-
 
 					<UniformGrid DockPanel.Dock="Top" Columns="3" Rows="1" Height="35">
 						<UniformGrid.Styles>

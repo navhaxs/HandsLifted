@@ -1,10 +1,11 @@
 ﻿using Avalonia.Animation;
+using Avalonia.Media.Imaging;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public abstract class Slide : ReactiveObject, ISlideRender
+    public abstract class Slide : ReactiveObject 
     {
 
         private int _index;

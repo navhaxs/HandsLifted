@@ -32,7 +32,7 @@ namespace HandsLiftedApp.Utils
                 var partNameEOL = songPart.IndexOf(Environment.NewLine);
                 var partName = songPart.Substring(0, partNameEOL);
 
-                string rest;
+                string stanzaBody;
                 if (index == songParts.Count - 1)
                 {
                     string doubleNewLine = Environment.NewLine + Environment.NewLine;
@@ -44,22 +44,58 @@ namespace HandsLiftedApp.Utils
                     var regex = new Regex(@" \(Admin. by(.*)\)\r\n");
                     song.Copyright = regex.Replace(song.Copyright, "\r\n");
 
-                    rest = songPart.Substring(partNameEOL, copyrightStart - partNameEOL).Trim();
+                    stanzaBody = songPart.Substring(partNameEOL, copyrightStart - partNameEOL).Trim();
                 }
                 else
                 {
-                    rest = songPart.Substring(partNameEOL).Trim();
+                    stanzaBody = songPart.Substring(partNameEOL).Trim();
                 }
 
                 // TODO add line breaks (new slide) every 4 lines by default
 
-                song.Stanzas.Add(new SongStanza(Guid.NewGuid(), partName, rest));
+                if (!stanzaBody.Contains(Environment.NewLine + Environment.NewLine)
+                    && numLines(stanzaBody) > 6) {
+
+                    List<string> stanzaParagraphs = new List<string>();
+                    List<string> stanzaParagraph = new List<string>();
+                    //foreach (var line in stanzaBody.Split(Environment.NewLine)) {
+                    string[] lines = stanzaBody.Split(Environment.NewLine);
+                    foreach (var (line, lineIdx) in lines.WithIndex()) {
+                        if (stanzaParagraph.Count < 4 || stanzaParagraph.Last() == line || lineIdx == (lines.Count() - 1)) {
+                            stanzaParagraph.Add(line);
+                        }
+                        else {
+                            stanzaParagraphs.Add(string.Join(Environment.NewLine, stanzaParagraph));
+                            stanzaParagraph.Clear();
+                            stanzaParagraph.Add(line);
+                        }
+                    }
+
+                    if (stanzaParagraph.Count > 0) {
+                        stanzaParagraphs.Add(string.Join(Environment.NewLine, stanzaParagraph));
+                        stanzaParagraph.Clear();
+                    }
+
+
+                    //var output = stanzaBody.Split(Environment.NewLine)
+                    //    .Chunk(4)
+                    //    .Select(chunk => string.Join(Environment.NewLine, chunk));
+
+                    stanzaBody = string.Join(Environment.NewLine + Environment.NewLine, stanzaParagraphs);
+                }
+
+                song.Stanzas.Add(new SongStanza(Guid.NewGuid(), partName, stanzaBody));
+
 
             }
 
             song.ResetArrangement();
 
             return song;
+        }
+
+        private static int numLines(string input) {
+            return ((input.Length - input.Replace(Environment.NewLine, string.Empty).Length) / Environment.NewLine.Length) + 1;
         }
     }
 }

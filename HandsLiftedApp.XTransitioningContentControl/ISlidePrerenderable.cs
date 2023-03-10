@@ -4,6 +4,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
 {
     public interface ISlidePrerenderable
     {
-        public Bitmap TryGetRendered();
+        public Bitmap? TryGetCachedBitmap();
     }
 }
