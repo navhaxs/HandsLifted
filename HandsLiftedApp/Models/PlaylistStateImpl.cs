@@ -117,7 +117,7 @@ namespace HandsLiftedApp.Models
                 {
                     return new SlideReference()
                     {
-                        Slide = Playlist.Items[0].Slides[0],
+                        Slide = Playlist.Items[0]?.Slides.FirstOrDefault(),
                         SlideIndex = 0,
                         ItemIndex = 0,
                     };

@@ -53,6 +53,9 @@ namespace HandsLiftedApp.Models.LibraryModel
             }
         }
         private void watch() {
+            if (!Directory.Exists(rootDirectory))
+                return;
+
             watcher.Path = rootDirectory;
             watcher.Filter = "*.*";
             watcher.Changed += new FileSystemEventHandler((s, e) => {
