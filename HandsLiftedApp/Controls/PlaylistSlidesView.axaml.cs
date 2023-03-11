@@ -237,27 +237,27 @@ namespace HandsLiftedApp.Controls
 
             if (rect.Bottom + Ypadding > offset.Y + presenter.Viewport.Height)
             {
-                if (Ypadding < scrollViewer.Bounds.Height)
-                {
-                    offset = offset.WithY(controlParent.Bounds.Y);
-                }
-                else
-                {
+                //if (Ypadding < scrollViewer.Bounds.Height)
+                //{
+                //    offset = offset.WithY(controlParent.Bounds.Y);
+                //}
+                //else
+                //{
                     offset = offset.WithY((rect.Bottom + Ypadding - presenter.Viewport.Height) + presenter.Child.Margin.Top);
-                }
+                //}
                 result = true;
             }
 
             if (rect.Y - Ypadding < offset.Y)
             {
-                if (Ypadding < scrollViewer.Bounds.Height)
-                {
-                    offset = offset.WithY(controlParent.Bounds.Y);
-                }
-                else
-                {
+                //if (Ypadding < scrollViewer.Bounds.Height)
+                //{
+                //    offset = offset.WithY(controlParent.Bounds.Y);
+                //}
+                //else
+                //{
                     offset = offset.WithY(rect.Y - Ypadding);
-                }
+                //}
                 result = true;
             }
 

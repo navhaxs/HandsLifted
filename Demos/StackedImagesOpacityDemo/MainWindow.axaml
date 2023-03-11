@@ -7,7 +7,6 @@
 		xmlns:dut="using:HandsLiftedApp.XTransitioningContentControl"
         Title="StackedImagesOpacityDemo">
 	<Grid>
-		
 		<Viewbox>
 			<Grid>
 				<!--<Image Source="avares://StackedImagesOpacityDemo/Test1.png" Width="1920" Height="1080"

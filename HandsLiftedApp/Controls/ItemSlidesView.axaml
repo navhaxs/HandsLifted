@@ -108,10 +108,13 @@
 			</controls:ListBoxWithoutKey.Styles>
 			<controls:ListBoxWithoutKey.ItemsPanel>
 				<ItemsPanelTemplate>
-					<WrapPanel 
-																	  ItemWidth="244"
-							   ItemHeight="137"
-/>
+					<WrapPanel
+						ItemWidth="244"
+						ItemHeight="200"
+						/>
+					<!--<WrapPanel 
+						ItemWidth="244"
+						ItemHeight="137" />-->
 					<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
 				</ItemsPanelTemplate>
 			</controls:ListBoxWithoutKey.ItemsPanel>

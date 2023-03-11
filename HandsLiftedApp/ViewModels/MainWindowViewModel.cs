@@ -37,6 +37,7 @@ using NetOffice.PowerPointApi;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
 using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
+using Google.Apis.Drive.v3.Data;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -198,7 +199,7 @@ namespace HandsLiftedApp.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, c => c.ActiveItemPageTransition);
 
-            // The OpenFile command is bound to a button/menu item in the UI.
+            // Commands
             SlideClickCommand = ReactiveCommand.CreateFromTask<object>(OnSlideClickCommand);
             AddPresentationCommand = ReactiveCommand.CreateFromTask(OpenPresentationFileAsync);
             AddGroupCommand = ReactiveCommand.CreateFromTask(OpenGroupAsync);
@@ -756,9 +757,8 @@ namespace HandsLiftedApp.ViewModels
         void OnRemoveItemCommand(object? itemState)
         {
             // TODO confirm dialog?
-            // should be 'item'
 
-            if (itemState is not Item)
+            if (itemState == null || itemState.GetType().IsSubclassOf(typeof(Item)) || itemState.GetType() == typeof(Item))
                 return;
 
             int v = Playlist.Items.IndexOf(itemState);

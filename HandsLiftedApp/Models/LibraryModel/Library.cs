@@ -7,20 +7,21 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models.LibraryModel
-{
-    public class Library : ReactiveObject
-    {
+namespace HandsLiftedApp.Models.LibraryModel {
+    public class Library : ReactiveObject {
         private ObservableCollection<Item> Items { get; }
         private string rootDirectory;
         public ReactiveCommand<Unit, Unit> OnAddSelectedToPlaylistCommand { get; }
         private Item _selectedItem;
         public Item SelectedItem { get => _selectedItem; set => this.RaiseAndSetIfChanged(ref _selectedItem, value); }
-        
+
         private FileSystemWatcher watcher = new FileSystemWatcher();
 
-        public Library() { 
+        public Library() {
             Items = new ObservableCollection<Item>();
             rootDirectory = "C:\\VisionScreens\\TestSongs";
 
@@ -31,23 +32,81 @@ namespace HandsLiftedApp.Models.LibraryModel
                 }
             });
 
-
-
             Refresh();
 
             watch();
+
+            _searchResults = this
+         .WhenAnyValue(x => x.SearchTerm)
+         //.Throttle(TimeSpan.FromMilliseconds(100))
+         .Select(term => term?.Trim().ToLower())
+         .DistinctUntilChanged()
+         //.Where(term => !string.IsNullOrWhiteSpace(term))
+         .SelectMany(SearchNuGetPackages)
+         .ObserveOn(RxApp.MainThreadScheduler)
+         .ToProperty(this, x => x.SearchResults);
+
+            // We subscribe to the "ThrownExceptions" property of our OAPH, where ReactiveUI 
+            // marshals any exceptions that are thrown in SearchNuGetPackages method. 
+            // See the "Error Handling" section for more information about this.
+            _searchResults.ThrownExceptions.Subscribe(error => { /* Handle errors here */ });
+
+            // A helper method we can use for Visibility or Spinners to show if results are available.
+            // We get the latest value of the SearchResults and make sure it's not null.
+            _isAvailable = this
+                .WhenAnyValue(x => x.SearchResults)
+                .Select(searchResults => searchResults != null)
+                .ToProperty(this, x => x.IsAvailable);
         }
 
-        void Refresh()
-        {
-            if (Directory.Exists(rootDirectory))
-            {
+        // In ReactiveUI, this is the syntax to declare a read-write property
+        // that will notify Observers, as well as WPF, that a property has 
+        // changed. If we declared this as a normal property, we couldn't tell 
+        // when it has changed!
+        private string _searchTerm;
+        public string SearchTerm {
+            get => _searchTerm;
+            set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
+        }
+
+        // Here's the interesting part: In ReactiveUI, we can take IObservables
+        // and "pipe" them to a Property - whenever the Observable yields a new
+        // value, we will notify ReactiveObject that the property has changed.
+        // 
+        // To do this, we have a class called ObservableAsPropertyHelper - this
+        // class subscribes to an Observable and stores a copy of the latest value.
+        // It also runs an action whenever the property changes, usually calling
+        // ReactiveObject's RaisePropertyChanged.
+        private readonly ObservableAsPropertyHelper<IEnumerable<Item>> _searchResults;
+        public IEnumerable<Item> SearchResults => _searchResults.Value;
+
+        // Here, we want to create a property to represent when the application 
+        // is performing a search (i.e. when to show the "spinner" control that 
+        // lets the user know that the app is busy). We also declare this property
+        // to be the result of an Observable (i.e. its value is derived from 
+        // some other property)
+        private readonly ObservableAsPropertyHelper<bool> _isAvailable;
+        public bool IsAvailable => _isAvailable.Value;
+
+        // Here we search NuGet packages using the NuGet.Client library. Ideally, we should
+        // extract such code into a separate service, say, INuGetSearchService, but let's 
+        // try to avoid overcomplicating things at this time.
+        private async Task<IEnumerable<Item>> SearchNuGetPackages(
+            string term, CancellationToken token) {
+            if (term == null || term.Length == 0)
+                return Items;
+
+            // TODO: filter by content as well (full-text search)
+            return Items.Where(item => item.Title.ToLower().Contains(term));
+        }
+
+        void Refresh() {
+            if (Directory.Exists(rootDirectory)) {
                 var files = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories)
                          .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
 
                 // TODO: sync the Items list properly
-                foreach (var f in files)
-                {
+                foreach (var f in files) {
                     Items.Add(new Item() { FullFilePath = f, Title = Path.GetFileNameWithoutExtension(f) });
                 }
             }
@@ -60,7 +119,7 @@ namespace HandsLiftedApp.Models.LibraryModel
             watcher.Filter = "*.*";
             watcher.Changed += new FileSystemEventHandler((s, e) => {
                 switch (e.ChangeType) {
-                   // case WatcherChangeTypes.Created: { }
+                    // case WatcherChangeTypes.Created: { }
 
                 }
                 Refresh();
@@ -78,8 +137,7 @@ namespace HandsLiftedApp.Models.LibraryModel
         }
     }
 
-    public class Item
-    {
+    public class Item {
         public string FullFilePath { get; set; }
         public string Title { get; set; } // display title in list view
     }

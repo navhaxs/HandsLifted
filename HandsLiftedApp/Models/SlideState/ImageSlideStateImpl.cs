@@ -2,6 +2,7 @@
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -65,7 +66,12 @@ namespace HandsLiftedApp.Models.SlideState
                 {
                     using (Stream imageStream = File.OpenRead(path))
                     {
-                        return Bitmap.DecodeToWidth(imageStream, THUMBNAIL_WIDTH);
+                        try {
+                            return Bitmap.DecodeToWidth(imageStream, THUMBNAIL_WIDTH);
+                        }
+                        catch (Exception e) {
+                            Log.Error($"Failed to decode image [{path}]");
+                        }
                     }
                 }
 

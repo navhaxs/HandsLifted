@@ -5,5 +5,29 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.GroupItemsEditorWindow"
         Title="GroupItemsEditorWindow">
-	<DataGrid Name="DataGrid" AutoGenerateColumns="True" />
+	<DockPanel>
+		<StackPanel>
+			<TextBox Watermark="GroupItem Title" Text="{Binding Title}" />
+			<Separator />
+			<Button>Add Item from single select</Button>
+			<Button>Add Items from multiselect</Button>
+			<Button>Add Items from folder</Button>
+			<Separator />
+			<Button>Move Item Up</Button>
+			<Button>Move Item Down</Button>
+			<Separator />
+			<Button>Move Item Elsewhere</Button>
+			<Button>Move Item To New Group</Button>
+			<Button>Move Range To New Group</Button>
+			<Separator />
+			<Button>Edit Item Info</Button>
+			<Button>Remove Item</Button>
+			<Separator />
+			<Button>Toggle Item Visibility</Button>
+			<Separator />
+			<Button>Load XML</Button>
+			<Button>Save XML</Button>
+		</StackPanel>
+	    <DataGrid Name="DataGrid" AutoGenerateColumns="True" />
+	</DockPanel>
 </Window>

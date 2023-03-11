@@ -10,7 +10,7 @@
 		<PropertyGroup>
 			<CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd))</CurrentDate>
 		</PropertyGroup>
-		<Exec Command="echo Configuration: $(Configuration)&#xD;&#xA;echo DevEnvDir: $(DevEnvDir)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo VisualStudioVersion: $(VisualStudioVersion)&#xD;&#xA;echo AssemblySearchPaths: $(AssemblySearchPaths)&#xD;&#xA;echo AssemblyName: $(AssemblyName)&#xD;&#xA;echo BaseIntermediateOutputPath: $(BaseIntermediateOutputPath)&#xD;&#xA;echo CscToolPath: $(CscToolPath)&#xD;&#xA;&#xD;&#xA;cd &quot;$(SolutionDir)&quot;&#xD;&#xA;echo git rev-parse --short HEAD &gt; &quot;$(ProjectDir)\BuildInfo\GitHash.txt&quot;&#xD;&#xA;echo %25date%25 &gt; &quot;$(ProjectDir)\BuildInfo\BuildDate.txt&quot;" />
+		<Exec Command="echo Configuration: $(Configuration)&#xD;&#xA;echo DevEnvDir: $(DevEnvDir)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo VisualStudioVersion: $(VisualStudioVersion)&#xD;&#xA;echo AssemblySearchPaths: $(AssemblySearchPaths)&#xD;&#xA;echo AssemblyName: $(AssemblyName)&#xD;&#xA;echo BaseIntermediateOutputPath: $(BaseIntermediateOutputPath)&#xD;&#xA;echo CscToolPath: $(CscToolPath)&#xD;&#xA;&#xD;&#xA;cd &quot;$(SolutionDir)&quot;&#xD;&#xA;git rev-parse --short HEAD &gt; &quot;$(ProjectDir)\BuildInfo\GitHash.txt&quot;&#xD;&#xA;echo %25date%25 &gt; &quot;$(ProjectDir)\BuildInfo\BuildDate.txt&quot;" />
 	</Target>
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\**" />
@@ -88,9 +88,6 @@
 		</Compile>
 		<Compile Update="Controls\PlaylistSlidesView.axaml.cs">
 			<DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
-		</Compile>
-		<Compile Update="Views\AddItemPaletteControl.axaml.cs">
-			<DependentUpon>AddItemPaletteControl.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\ControlModules\AutoAdvanceControlView.axaml.cs">
 		  <DependentUpon>AutoAdvanceControlView.axaml</DependentUpon>

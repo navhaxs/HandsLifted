@@ -100,54 +100,8 @@ namespace HandsLiftedApp.Views {
                      x.Window.Show(this);
              });
 
-            //OrderableListBox = this.FindControl<ListBox>("itemsListBox");
-            //OrderableListBox.PointerReleased += X_PointerReleased;
 
             this.TemplateApplied += MainWindow_TemplateApplied;
-
-            // test font loading
-
-            //var fontManagerImpl = AvaloniaLocator.Current.GetService<IFontManagerImpl>();
-
-            //if (fontManagerImpl == null)
-            //    throw new InvalidOperationException("No font manager implementation was registered.");
-
-            //var m = new FontManager(fontManagerImpl);
-
-            //var source = new Uri("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf");
-            //var key = new FontFamilyKey(source);
-            //var fontFamily = FontFamily.Parse(source.OriginalString);
-
-            //Debug.Print(fontFamily.Name);
-            //Debug.Print(fontFamily.Name);
-            //Debug.Print(fontFamily.Name);
-            //Debug.Print(fontFamily.Name);
-            //Debug.Print(fontFamily.Name);
-            //Debug.Print(fontFamily.Name);
-            //var typeface = new Typeface(fontFamily);
-            //m.GetOrAddGlyphTypeface(typeface);
-
-            //fontManagerImpl.CreateGlyphTypeface(typeface);
-
-            //Debug.Print(fontFamily.Name);
-            //Debug.Print(fontFamily.Name);
-
-
-            //var u = new Uri("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf");
-
-
-
-            //var assetLoader = AvaloniaLocator.Current.GetService<IAssetLoader>();
-
-            //var fontFamily = new FontFamily("C:\\VisionScreens\\LeagueGothic-Regular-VariableFont_wdth.ttf#League Gothic");
-
-            //var fontAssets = FontFamilyLoader.LoadFontAssets(fontFamily.Key).ToArray();
-
-            //foreach (var fontAsset in fontAssets)
-            //{
-            //    var stream = assetLoader.Open(fontAsset);
-            //}
-
 
             this.Loaded += (e, s) =>
             {
@@ -160,8 +114,25 @@ namespace HandsLiftedApp.Views {
                     updateWin32Border(v);
                 });
 
+            LibraryToggleButton.Click += (object? sender, RoutedEventArgs e) => {
+                if (isLibraryVisible) {
+                    lastLibraryContentGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height;
+                    lastLibrarySplitterGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height;
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
+                }
+                else {
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = lastLibraryContentGridLength;
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
+                }
+                isLibraryVisible = !isLibraryVisible;
+            };
+
         }
 
+        bool isLibraryVisible = false;
+        GridLength lastLibraryContentGridLength = new GridLength(260);
+        GridLength lastLibrarySplitterGridLength = new GridLength(0);
 
         void updateWin32Border(WindowState v)
         {
@@ -212,8 +183,6 @@ namespace HandsLiftedApp.Views {
 
         private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
-            this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
-            //this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
 
             // TODO: if a textbox, datepicker etc is selected - then skip this func.
             var m = FocusManager.Instance?.Current;
@@ -270,11 +239,6 @@ namespace HandsLiftedApp.Views {
                 System.Diagnostics.Debug.Print(e.Message);
                 interaction.SetOutput(null);
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void OnScrollToItemClick(object? sender, RoutedEventArgs e)

@@ -38,23 +38,28 @@
 
 	<DockPanel>
 		<StackPanel
-			DockPanel.Dock="Top"
-			Background="#6033ab">
+			DockPanel.Dock="Top">
 			<TextBlock
 				HorizontalAlignment="Left"
 				Text="Library"
 				Padding="0 6"
 				FontSize="18"
 				Margin="8 0"
-				Foreground="White"
 				/>
 		</StackPanel>
 		<Grid ColumnDefinitions="* 2*">
 
 			<DockPanel>
-				<TextBox Watermark="Search for songs" DockPanel.Dock="Top" />
-				<ListBox Items="{Binding Library.Items}"
+				<TextBox 
+					Watermark="Search songs and content..."
+					DockPanel.Dock="Top"
+					BorderThickness="0 0 0 1"
+					Padding="8 4 8 4"
+					Text="{Binding Library.SearchTerm}" 		 FontSize="16" />
+				<ListBox Items="{Binding Library.SearchResults}"
 						 SelectedItem="{Binding	Library.SelectedItem}"
+						 BorderThickness="0"
+						 Margin="4 0"
 						 >
 					<ListBox.ItemTemplate>
 						<DataTemplate>

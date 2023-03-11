@@ -98,7 +98,7 @@
 
 						<Button
 								DockPanel.Dock="Right"
-								Click="OnScrollToItemClick"
+								IsHitTestVisible="False"
 								Margin="1 0 8 0"
 								CornerRadius="3"
 								BorderThickness="0"

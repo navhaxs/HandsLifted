@@ -148,6 +148,22 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 //}
                 await Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
 
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO: must ensure data is *ready* before proceeding. tricky if data load call was async :/
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+                // TODO:
+
                 // if slide has page transition override
                 if (((ISlideRender)content).PageTransition != null)
                 {

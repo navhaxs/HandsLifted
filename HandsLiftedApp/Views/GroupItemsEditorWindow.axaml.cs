@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Avalonia;
 using System.Collections;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Models.ItemExtensionState;
 
 namespace HandsLiftedApp.Views
 {
@@ -24,9 +27,9 @@ namespace HandsLiftedApp.Views
 
         private void GroupItemsEditorWindow_DataContextChanged(object? sender, System.EventArgs e)
         {
-            if (this.DataContext is IEnumerable)
+            if (this.DataContext is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)
             {
-                this.FindControl<DataGrid>("DataGrid").Items = (IEnumerable)this.DataContext;
+                this.FindControl<DataGrid>("DataGrid").Items = (IEnumerable)(((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)this.DataContext).Slides);
             }
         }
 

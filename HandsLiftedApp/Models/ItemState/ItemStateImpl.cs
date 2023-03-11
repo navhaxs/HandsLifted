@@ -137,7 +137,7 @@ namespace HandsLiftedApp.Models.ItemState
                 //SongEditorViewModel vm = new SongEditorViewModel() { song = (SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent };
                 //vm.SongDataUpdated += Vm_SongDataUpdated;
 
-                GroupItemsEditorWindow seq = new GroupItemsEditorWindow() { DataContext = ((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent).Slides };
+                GroupItemsEditorWindow seq = new GroupItemsEditorWindow() { DataContext = ((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent) };
                 seq.Show();
             }
         }
