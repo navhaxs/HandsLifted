@@ -5,7 +5,7 @@ using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public abstract class Slide : ReactiveObject 
+    public abstract class Slide : ReactiveObject, ISlideRender
     {
 
         private int _index;
@@ -28,26 +28,26 @@ namespace HandsLiftedApp.Data.Slides
         private IPageTransition? _pageTransition;
         public IPageTransition? PageTransition { get => _pageTransition; set => this.RaiseAndSetIfChanged(ref _pageTransition, value); }
 
-        public virtual async Task OnEnterSlide()
+        public virtual void OnEnterSlide()
         {
         }
 
-        public virtual async Task OnLeaveSlide()
+        public virtual void OnLeaveSlide()
         {
         }
 
-        public virtual async Task OnPreloadSlide()
+        public virtual void OnPreloadSlide()
         {
         }
     }
 
     public interface ISlideState
     {
-        public virtual async Task OnSlideEnterEvent()
+        public virtual void OnSlideEnterEvent()
         {
 
         }
-        public virtual async Task OnSlideLeaveEvent()
+        public virtual void OnSlideLeaveEvent()
         {
 
         }

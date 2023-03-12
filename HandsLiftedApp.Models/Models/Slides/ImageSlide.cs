@@ -1,15 +1,17 @@
-﻿using ReactiveUI;
+﻿using Avalonia.Media.Imaging;
+using HandsLiftedApp.XTransitioningContentControl;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class ImageSlide<T> : Slide where T : IImageSlideState
+    public class ImageSlide<T> : Slide, ISlideBitmapRender where T : IImageSlideState
     {
         T _state;
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
         public string ImagePath { get; set; }
 
-        public ImageSlide(String imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png")
+        public ImageSlide(string imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png")
         {
             ImagePath = imagePath;
             State = (T)Activator.CreateInstance(typeof(T), this);
@@ -19,25 +21,30 @@ namespace HandsLiftedApp.Data.Slides
 
         public override string? SlideLabel => Path.GetFileName(ImagePath);
 
-        public override async Task OnPreloadSlide()
+        public override void OnPreloadSlide()
         {
             // does not need to be async
-            await base.OnEnterSlide();
-            await State.OnSlideEnterEvent();
+            base.OnEnterSlide();
+            State.OnSlideEnterEvent();
         }
-        public override async Task OnEnterSlide()
+        public override void OnEnterSlide()
         {
-            await base.OnEnterSlide();
-            await State.OnSlideEnterEvent();
+            base.OnEnterSlide();
+            State.OnSlideEnterEvent();
         }
 
-        public override async Task OnLeaveSlide()
+        public override void OnLeaveSlide()
         {
-            await base.OnLeaveSlide();
-            await State.OnSlideLeaveEvent();
+            base.OnLeaveSlide();
+            State.OnSlideLeaveEvent();
         }
 
+        public Bitmap GetBitmap() {
+            return State.GetBitmap();
+        }
     }
-    public interface IImageSlideState : ISlideState { }
+    public interface IImageSlideState : ISlideState {
+        public Bitmap GetBitmap();
+    }
 
 }

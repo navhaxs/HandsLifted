@@ -146,13 +146,13 @@ namespace HandsLiftedApp.ViewModels
                     {
                         var selectedIndex = this.Playlist.State.SelectedItem.State.SelectedSlideIndex;
 
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            if (selectedItem.Slides.ElementAtOrDefault(selectedIndex + 1) != null)
-                                selectedItem.Slides[selectedIndex + 1].OnPreloadSlide();
-                            if (selectedItem.Slides.ElementAtOrDefault(selectedIndex - 1) != null)
-                                selectedItem.Slides[selectedIndex - 1].OnPreloadSlide();
-                        });
+                        //Dispatcher.UIThread.InvokeAsync(() =>
+                        //{
+                        //    if (selectedItem.Slides.ElementAtOrDefault(selectedIndex + 1) != null)
+                        //        selectedItem.Slides[selectedIndex + 1].OnPreloadSlide();
+                        //    if (selectedItem.Slides.ElementAtOrDefault(selectedIndex - 1) != null)
+                        //        selectedItem.Slides[selectedIndex - 1].OnPreloadSlide();
+                        //});
                     }
 
                     return active;

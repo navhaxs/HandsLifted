@@ -110,7 +110,6 @@ namespace HandsLiftedApp.Models.ItemState
 
         private ObservableAsPropertyHelper<Slide?> _selectedSlide;
         public Slide? SelectedSlide { get => _selectedSlide.Value; }
-
         public ReactiveCommand<Unit, Unit> EditCommand { get; }
 
         // private int _ItemIndex;

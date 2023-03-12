@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HandsLiftedApp.Utils {
+﻿namespace HandsLiftedApp.Utils {
     internal class SlidePrerenderingService {
-        // render (priority)
+        // TODO: this will pre-render slide bitmaps in the background (only when the app is idle?)
     }
 }

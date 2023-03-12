@@ -357,13 +357,13 @@
 																   TextAlignment="Center" />
 													</DockPanel>
 												</Button>
-												<!--<Button
+												<Button
 											Grid.Column="1"
-											HorizontalAlignment="Center"
 											Click="OnScrollToItemClick"
-											Content="Scroll"
+											HorizontalAlignment="Stretch"
+											VerticalAlignment="Stretch"
 											FontSize="16">
-										</Button>-->
+										</Button>
 												<Button
 													Command="{Binding OnNextSlideClickCommand}"
 													HorizontalAlignment="Stretch"

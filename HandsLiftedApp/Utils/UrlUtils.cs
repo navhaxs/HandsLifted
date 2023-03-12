@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Utils
-{
+namespace HandsLiftedApp.Utils {
     internal class UrlUtils
     {
         // https://stackoverflow.com/a/43232486/

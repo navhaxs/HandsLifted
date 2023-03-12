@@ -140,29 +140,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             IPageTransition transition = PageTransition;
             if (content is ISlideRender)
             {
-
-                //if (EnableSlideEvents)
-                //{
-                // call enter slide (e.g. ensure image will load here)
-                //Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
-                //}
                 await Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
-
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO: must ensure data is *ready* before proceeding. tricky if data load call was async :/
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
-                // TODO:
 
                 // if slide has page transition override
                 if (((ISlideRender)content).PageTransition != null)
@@ -185,7 +163,9 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             if (_previousImageSite != null && CurrentContent is not IDynamicSlideRender)
             {
-                _previousImageSite.Source = renderControlAsBitmap(_contentPresenter);
+                _previousImageSite.Source = (CurrentContent is ISlideBitmapRender)
+                    ? ((ISlideBitmapRender)CurrentContent).GetBitmap()
+                    : renderControlAsBitmap(_contentPresenter);
                 _previousImageSite.IsVisible = true;
                 _previousImageSite.Opacity = 1;
             }
@@ -208,12 +188,10 @@ namespace HandsLiftedApp.XTransitioningContentControl
             //{
             _currentImageSite.IsVisible = true;
             _currentImageSite.Opacity = 0;
-            _currentImageSite.Source = renderControlAsBitmap(_contentPresenter);
-            //}
-            //else
-            //{
-            //    _currentImageSite.IsVisible = false;
-            //}
+
+            _currentImageSite.Source = (CurrentContent is ISlideBitmapRender)
+                ? ((ISlideBitmapRender)CurrentContent).GetBitmap()
+                : renderControlAsBitmap(_contentPresenter);
 
             // maybe what this could instead is take screenshot of existing (bitmap no alpha), then take screenshot of new (bitmap no alpha), then fade between the bitmaps. this way, there should be no alpha multiplier issues during the fade effect.
 

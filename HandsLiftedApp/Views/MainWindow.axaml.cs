@@ -243,8 +243,8 @@ namespace HandsLiftedApp.Views {
 
         private void OnScrollToItemClick(object? sender, RoutedEventArgs e)
         {
-            //MessageBus.Current.SendMessage(new FocusSelectedItem());
-            MessageBus.Current.SendMessage(new Test());
+            MessageBus.Current.SendMessage(new FocusSelectedItem());
+            //MessageBus.Current.SendMessage(new Test());
         }
         private void MainWindow_Closed(object sender, EventArgs e)
         {
