@@ -536,16 +536,7 @@ Description("Function to determine whether the content requires high resolution 
             if (targetBitmap == null || targetBitmap.PixelSize.Width != xres || targetBitmap.PixelSize.Height != yres) {
                 // Create a properly sized RenderTargetBitmap
                 targetBitmap = new RenderTargetBitmap(new PixelSize(xres, yres));
-
-
-
-                //fmtConvertedBmp = new FormatConvertedBitmap();
-                //fmtConvertedBmp.BeginInit();
-                //fmtConvertedBmp.Source = targetBitmap;
-                //fmtConvertedBmp.DestinationFormat = PixelFormats.Bgra32;
-                //fmtConvertedBmp.EndInit();
             }
-
 
             stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
             bufferSize = yres * stride;
@@ -590,61 +581,18 @@ Description("Function to determine whether the content requires high resolution 
             // get the canvas from the surface
             var canvas = surface.Canvas;
 
-            // render the Avalonia visual into the buffer
-            var x = this.VisualRoot.Renderer;
-            //using var context = new DrawingContext(DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi, x is IVisualBrushRenderer ? x as IVisualBrushRenderer : null));
-            //targetBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
-
-            //UnmanagedMemoryStream unmanagedmemstream = new UnmanagedMemoryStream((byte*)bufferPtr.ToPointer(), bufferSize, bufferSize, FileAccess.ReadWrite);
-            //targetBitmap.Save(unmanagedmemstream);
-
-            //targetBitmap.CreateDrawingContext(x is IVisualBrushRenderer ? x as IVisualBrushRenderer : null);
-
-            //using (MemoryStream sourceByteStream = new MemoryStream()) {
-            //    targetBitmap.Save(sourceByteStream);
-            //    byte[] sourceBytes = sourceByteStream.ToArray();
-            //    using (MemoryStream targetByteStream = new MemoryStream(sourceBytes)) {
-            //        return ArgbImage.Load(targetByteStream);
-            //    }
-            //}
-
-            // clear to prevent trails
-            //targetBitmap.Clear();
-
-            // render the content into the bitmap
-            //SKBitmap bitmap = new SKBitmap(1920, 1080);
-            //using (SKCanvas canvas = new SKCanvas(bitmap)) {
-
             using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
-            using var context = new DrawingContext(contextImpl);
 
-            using var renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
+            // render the Avalonia visual
+            targetBitmap.Render(this.Child);
 
-            // TODO OPTIMISE THIS
-            renderedBitmap.Render(this.Child);
-            contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
+            // draw rendered visual into the buffer
+            contextImpl.DrawBitmap(targetBitmap.PlatformImpl, 1.0,
                 new Rect(0, 0, 1920, 1080),
                 new Rect(0, 0, 1920, 1080));
-            //}
-
-            //s(targetBitmap).
 
             // add it to the output queue
             AddFrame(videoFrame);
-        }
-
-        private SKImage s(RenderTargetBitmap sourceImage) {
-            if (sourceImage is RenderTargetBitmap renderTargetBitmap) {
-                Type type = renderTargetBitmap.PlatformImpl.Item.GetType();
-                if (type.FullName == "Avalonia.Skia.SurfaceRenderTarget") {
-                    MethodInfo getSnapshotMethod = type.GetMethod("SnapshotImage");
-                    object skImageObject = getSnapshotMethod.Invoke(renderTargetBitmap.PlatformImpl.Item, null);
-                    if (skImageObject != null) {
-                        return (SKImage)skImageObject;
-                    }
-                }
-            }
-            return null;
         }
 
         private static void OnNdiSenderPropertyChanged(AvaloniaPropertyChangedEventArgs e)
@@ -828,7 +776,6 @@ Description("Function to determine whether the content requires high resolution 
         private IntPtr sendInstancePtr = IntPtr.Zero;
 
         RenderTargetBitmap targetBitmap = null;
-        //FormatConvertedBitmap fmtConvertedBmp = null;
 
         private int stride;
         private int bufferSize;
