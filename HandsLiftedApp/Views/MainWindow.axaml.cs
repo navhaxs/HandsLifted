@@ -35,9 +35,6 @@ namespace HandsLiftedApp.Views {
             if (Design.IsDesignMode)
                 return;
 
-            PrepareNewPlaylist v = new PrepareNewPlaylist();
-            v.Show();
-
             SubscribeToWindowState();
 
             this.Closing += MainWindow_Closing;

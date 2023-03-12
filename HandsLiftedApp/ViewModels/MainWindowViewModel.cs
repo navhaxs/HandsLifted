@@ -514,7 +514,7 @@ namespace HandsLiftedApp.ViewModels
                 {
 
                     DateTime now = DateTime.Now;
-                    string folderName = Path.GetDirectoryName(fullPath);
+                    string folderName = new DirectoryInfo(fullPath).Name;
 
                     SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = folderName };
 

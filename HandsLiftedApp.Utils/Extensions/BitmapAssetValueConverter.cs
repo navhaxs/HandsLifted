@@ -3,6 +3,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Serilog;
 using System;
 using System.Globalization;
 using System.IO;
@@ -27,30 +28,43 @@ namespace HandsLiftedApp.Extensions
             if (value == null)
                 return null;
 
-            if (value is string rawUri && targetType == typeof(IImage))
+            if (value is string rawUri && (targetType == typeof(IBitmap) || targetType == typeof(IImage)))
             {
-                Uri uri;
+                if (rawUri.Length == 0)
+                    return null;
 
-                // Allow for assembly overrides
-                if (rawUri.StartsWith("avares://"))
-                {
-                    uri = new Uri(rawUri);
-                }
-                else
-                {
-                    //string assemblyName = Assembly.GetEntryAssembly().GetName().Name;
-                    //uri = new Uri($"avares://{assemblyName}{rawUri}");
-                    using (Stream imageStream = File.OpenRead(rawUri))
-                    {
-                        return Bitmap.DecodeToWidth(imageStream, 400);
+
+                try {
+
+
+                    Uri uri;
+
+                    // Allow for assembly overrides
+                    if (rawUri.StartsWith("avares://")) {
+                        uri = new Uri(rawUri);
                     }
-                    //return new Bitmap(rawUri);
+                    else {
+                        //string assemblyName = Assembly.GetEntryAssembly().GetName().Name;
+                        //uri = new Uri($"avares://{assemblyName}{rawUri}");
+
+                        if (!File.Exists(rawUri))
+                            return null;
+
+                        using (Stream imageStream = File.OpenRead(rawUri)) {
+                            return Bitmap.DecodeToWidth(imageStream, 400);
+                        }
+                        //return new Bitmap(rawUri);
+                    }
+
+                    var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+                    var asset = assets.Open(uri);
+
+                    return new Bitmap(asset);
                 }
-
-                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                var asset = assets.Open(uri);
-
-                return new Bitmap(asset);
+                catch (Exception ex) {
+                    Log.Error($"Failed to load image {value}");
+                    return null;
+                }
             }
 
             throw new NotSupportedException();

@@ -8,14 +8,21 @@
 	<UserControl.DataTemplates>
 		<utils:MyTemplateSelector>
 			<DataTemplate x:Key="SongTitleSlide">
-				<TextBlock Text="{Binding Title, FallbackValue=''}"
-						   FontFamily="Arial"
-						   FontWeight="Bold"
-						   HorizontalAlignment="Center"
-						   VerticalAlignment="Center"
-						   Margin="0 30 0 40"
-						   RenderOptions.BitmapInterpolationMode="HighQuality"
-						   Foreground="White" FontSize="49" TextAlignment="Center"/>
+				<StackPanel VerticalAlignment="Center" Margin="0 30">
+					<TextBlock Text="{Binding Title, FallbackValue=''}"
+							   FontFamily="Arial"
+							   FontWeight="Bold"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"
+							   Foreground="White" FontSize="60" TextAlignment="Center"/>
+					<TextBlock Text="{Binding Copyright, FallbackValue=''}"
+							   FontFamily="Arial"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"
+							   Foreground="White" FontSize="34" TextAlignment="Center"/>
+				</StackPanel>
 			</DataTemplate>
 			<DataTemplate x:Key="SongSlide">
 				<TextBlock Text="{Binding Text, FallbackValue=''}"

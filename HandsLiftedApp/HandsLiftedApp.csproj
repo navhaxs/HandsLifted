@@ -51,11 +51,13 @@
 		<PackageReference Include="Avalonia.Controls.DataGrid" />
 		<PackageReference Include="Avalonia.Desktop" />
 		<PackageReference Include="Avalonia.Diagnostics" />
+		<PackageReference Include="Avalonia.Markup.Xaml.Loader" />
 		<PackageReference Include="Avalonia.ReactiveUI" />
 		<PackageReference Include="Avalonia.Themes.Simple" />
 		<PackageReference Include="Avalonia.Xaml.Behaviors" />
 		<PackageReference Include="Avalonia.Xaml.Interactions" />
 		<PackageReference Include="Avalonia.Xaml.Interactivity" />
+		<PackageReference Include="Config.Net" />
 		<PackageReference Include="EmbedIO" />
 		<PackageReference Include="Material.Icons.Avalonia" />
 		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />

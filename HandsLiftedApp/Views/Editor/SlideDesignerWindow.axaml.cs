@@ -9,10 +9,6 @@ namespace HandsLiftedApp.Views.Editor
         public SlideDesignerWindow()
         {
             InitializeComponent();
-
-            var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            fontComboBox.Items = FontManager.Current.GetInstalledFontFamilyNames().Select(x => new FontFamily(x));
-            fontComboBox.SelectedIndex = 0;
         }
     }
 }

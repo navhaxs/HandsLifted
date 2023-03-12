@@ -52,18 +52,5 @@
 
 		</Border>
 
-		<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom"
-			  Margin="0 0 -40 180">
-			<TextBlock
-				Text="#homeBASE22"
-				FontFamily="League Gothic, Playfair Display"
-				FontSize="70"
-				Foreground="#5d848d"
-				>
-				<TextBlock.RenderTransform>
-					<RotateTransform Angle="-90" />
-				</TextBlock.RenderTransform>
-			</TextBlock>
-		</Grid>
 	</Grid>
 </UserControl>

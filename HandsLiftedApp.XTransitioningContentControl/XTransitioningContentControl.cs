@@ -227,7 +227,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
             return rendered;
         }
 
-        // TODO: pre-render outside of this control. there is just too much delay to be responsive by UX.
         private Bitmap renderControlAsBitmap(Visual visual)
         {
             using (SKBitmap bitmap = new SKBitmap(1920, 1080))

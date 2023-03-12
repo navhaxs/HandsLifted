@@ -16,14 +16,6 @@ namespace ScratchApp
 
             this.DataContext = this;
 
-            //            var xaml =
-            //@"<TextBlock xmlns='https://github.com/avaloniaui'>AAA Batteries</TextBlock>";
-
-            //            Control target = AvaloniaRuntimeXamlLoader.Parse<Control>(xaml);
-
-            //            this.Content = target;
-
-
             var x = new List<Person>
             {
                 new Person() { FirstName = "A", LastName = "A" },
@@ -34,8 +26,6 @@ namespace ScratchApp
             this.FindControl<DataGrid>("DataGrid").Items = x;
 
         }
-
-
 
         public class Person
         {

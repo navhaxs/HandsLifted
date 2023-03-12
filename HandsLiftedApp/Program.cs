@@ -1,15 +1,12 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
-using LibVLCSharp.Avalonia;
 using Serilog;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp
-{
+namespace HandsLiftedApp {
     class Program
     {
         static EventWaitHandle s_event;
@@ -28,7 +25,6 @@ namespace HandsLiftedApp
                        .WriteTo.Console()
                        .WriteTo.File("logs/visionscreens_app_log.txt")
                        .CreateLogger();
-
 
                 Log.Information("Hello, world!");
 

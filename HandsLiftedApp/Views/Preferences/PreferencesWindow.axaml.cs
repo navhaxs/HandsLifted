@@ -29,9 +29,6 @@ namespace HandsLiftedApp.Views.Preferences
             if (Design.IsDesignMode)
                 return;
 
-            SlideDesignerWindow slideDesignerWindow = new SlideDesignerWindow();
-            slideDesignerWindow.Show();
-
             preferencesViewModel = Globals.Preferences;
             AllAvailableScreens = this.Screens.All.Select(i => new DisplayModel(i.Bounds)).ToList();
             AllAvailableScreens.Add(new UnsetDisplay());

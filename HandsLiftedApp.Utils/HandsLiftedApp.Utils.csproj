@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" />
+    <PackageReference Include="Serilog" />
     <PackageReference Include="System.Reactive" />
   </ItemGroup>
 
