@@ -1,4 +1,7 @@
-﻿using HandsLiftedApp.Data.Slides;
+﻿using Avalonia.Media.Imaging;
+using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Utils;
+using HandsLiftedApp.Views;
 
 namespace HandsLiftedApp.Models.SlideState
 {

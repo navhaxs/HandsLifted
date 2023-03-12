@@ -1,10 +1,11 @@
-﻿using HandsLiftedApp.Data.Models.Items;
+﻿using Avalonia.Media.Imaging;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class SongSlide<T> : Slide where T : ISongSlideState
+    public class SongSlide<T> : Slide, ISlideBitmapCacheable where T : ISongSlideState
     {
         T _state;
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
@@ -25,6 +26,7 @@ namespace HandsLiftedApp.Data.Slides
             set
             {
                 this.RaiseAndSetIfChanged(ref _text, value);
+                cached = null;
                 //this.RaisePropertyChanged(nameof(SlideText));
             }
         }
@@ -47,6 +49,9 @@ namespace HandsLiftedApp.Data.Slides
         // ref
         public SongStanza? OwnerSongStanza { get; } = null;
 
+        Bitmap _cached;
+        public Bitmap? cached { get => _cached; set => _cached = value; }
+
         public override bool Equals(Object obj)
         {
             //Check for null and compare run-time types.
@@ -61,8 +66,8 @@ namespace HandsLiftedApp.Data.Slides
                 return (Id == p.Id);
             }
         }
-
     }
 
-    public interface ISongSlideState : ISlideState { }
+    public interface ISongSlideState : ISlideState {
+    }
 }

@@ -57,11 +57,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 nameof(CurrentContent),
                 o => o.CurrentContent);
 
-        //System.Timers.Timer aTimer = new System.Timers.Timer();
         public XTransitioningContentControl()
         {
-            //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            //aTimer.Enabled = true;
         }
 
         /// <summary>
@@ -163,9 +160,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             if (_previousImageSite != null && CurrentContent is not IDynamicSlideRender)
             {
-                _previousImageSite.Source = (CurrentContent is ISlideBitmapRender)
-                    ? ((ISlideBitmapRender)CurrentContent).GetBitmap()
-                    : renderControlAsBitmap(_contentPresenter);
+                // copy the 'current slide as Bitmap' to the previous image layer
+                _previousImageSite.Source = _currentImageSite.Source;
                 _previousImageSite.IsVisible = true;
                 _previousImageSite.Opacity = 1;
             }
@@ -176,26 +172,16 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 ((ISlideRender)CurrentContent).OnLeaveSlide();
             }
 
-
-            //_contentPresenterContainer.IsVisible = true;
             CurrentContent = content;
             if (_contentPresenterContainer != null)
                 _contentPresenterContainer.ZIndex = (CurrentContent is IDynamicSlideRender) ? 999 : 0;
             Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
-            //_contentPresenterContainer.IsVisible = false;
 
-            //if (content is IStaticSlideRender)
-            //{
             _currentImageSite.IsVisible = true;
             _currentImageSite.Opacity = 0;
-
-            _currentImageSite.Source = (CurrentContent is ISlideBitmapRender)
-                ? ((ISlideBitmapRender)CurrentContent).GetBitmap()
-                : renderControlAsBitmap(_contentPresenter);
+            _currentImageSite.Source = GetBitmap(CurrentContent);
 
             // maybe what this could instead is take screenshot of existing (bitmap no alpha), then take screenshot of new (bitmap no alpha), then fade between the bitmaps. this way, there should be no alpha multiplier issues during the fade effect.
-
-            //clock.PlayState = PlayState.Run;
 
             if (transition != null)
             {
@@ -215,33 +201,31 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 _previousImageSite.Opacity = 0;
             }
 
-            //_contentPresenterContainer.IsVisible = false;
             _currentImageSite.IsVisible = true;
             _currentImageSite.Opacity = 1;
-
-            //if (_previousImageSite != null)
-            //{
-            //    _previousImageSite.Opacity = 0;
-            //}
-
-            //if (PageTransition != null)
-            //    await PageTransition.Start(null, this, true, _lastTransitionCts.Token);
         }
 
-        // Specify what you want to happen when the Elapsed event is raised.
-        private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
+        private Bitmap GetBitmap(object? visual) {
+            if (visual == null)
+                return null;
 
-            //Dispatcher.UIThread.Post(() =>
-            //{
+            if (visual is ISlideBitmapRender)
+                return ((ISlideBitmapRender)visual).GetBitmap();
 
-            //    if (_contentPresenterContainer.Opacity != 1)
-            //    {
-            //        System.Diagnostics.Debug.Print($"{_previousImageSite.Opacity}+{_contentPresenterContainer.Opacity}={_previousImageSite.Opacity + _contentPresenterContainer.Opacity}");
-            //    }
-            //});
+            if (visual is ISlideBitmapCacheable) {
+                Bitmap? cached = ((ISlideBitmapCacheable)visual).GetBitmap();
+                if (cached != null)
+                    return cached;
+            }
+
+            Bitmap rendered = renderControlAsBitmap(_contentPresenter);
+
+            if (visual is ISlideBitmapCacheable) {
+                ((ISlideBitmapCacheable)visual).SetBitmap(rendered);
+            }
+
+            return rendered;
         }
-
 
         // TODO: pre-render outside of this control. there is just too much delay to be responsive by UX.
         private Bitmap renderControlAsBitmap(Visual visual)

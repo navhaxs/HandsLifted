@@ -27,7 +27,7 @@ namespace HandsLiftedApp.Models.SlideState {
         private const int IMAGE_WIDTH = 1920;
         private const int THUMBNAIL_WIDTH = 300;
 
-        public void LoadImage() {
+        public void EnsureImageLoaded() {
             if (Image is not null) {
                 return;
             }
@@ -77,7 +77,7 @@ namespace HandsLiftedApp.Models.SlideState {
             private set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
         }
         public void OnSlideEnterEvent() {
-            LoadImage();
+            EnsureImageLoaded();
         }
         public void OnSlideLeaveEvent() {
             // low memory mode
@@ -85,6 +85,7 @@ namespace HandsLiftedApp.Models.SlideState {
         }
 
         public Bitmap GetBitmap() {
+            EnsureImageLoaded();
             return Image;
         }
     }
