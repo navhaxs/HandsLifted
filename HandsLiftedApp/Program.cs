@@ -65,16 +65,18 @@ namespace HandsLiftedApp {
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp()
-    => AppBuilder.Configure<App>()
-        .UsePlatformDetect()
-        .LogToTrace()
-        .UseReactiveUI();
+        public static AppBuilder BuildAvaloniaApp() {
+            // workaround for https://github.com/AvaloniaUI/AvaloniaVS/issues/250
+            GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
+
+            return AppBuilder.Configure<App>()
+                .UsePlatformDetect()
+                .LogToTrace()
+                .UseReactiveUI();
+        }
+
         //public static AppBuilder BuildAvaloniaApp()
         //{
-        //    // workaround for https://github.com/AvaloniaUI/AvaloniaVS/issues/250
-        //    //GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
-
         //    return AppBuilder.Configure<App>()
         //        .UsePlatformDetect()
         //        .LogToTrace()

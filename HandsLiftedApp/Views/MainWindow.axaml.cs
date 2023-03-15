@@ -19,6 +19,9 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views.Prepare;
+using HandsLiftedApp.Views.Editor;
+using System.Diagnostics;
+using Avalonia.Threading;
 
 namespace HandsLiftedApp.Views {
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
@@ -34,6 +37,14 @@ namespace HandsLiftedApp.Views {
             
             if (Design.IsDesignMode)
                 return;
+
+
+            myClickWaitTimer = new DispatcherTimer(
+                new TimeSpan(0, 0, 0, 0, 300),
+                DispatcherPriority.Background,
+                mouseWaitTimer_Tick
+            );
+
 
             SubscribeToWindowState();
 
@@ -125,6 +136,60 @@ namespace HandsLiftedApp.Views {
                 isLibraryVisible = !isLibraryVisible;
             };
 
+
+            PlaylistTitleButton.PointerPressed += PlaylistTitleButton_PointerPressed;
+            PlaylistTitleButton.PointerReleased += PlaylistTitleButton_PointerReleased;
+            PlaylistTitleButton.PointerMoved += PlaylistTitleButton_PointerMoved;
+            PlaylistTitleButton.DoubleTapped += PlaylistTitleButton_DoubleTapped;
+            PlaylistTitleButton.Click += PlaylistTitleButton_Click;
+            //PlaylistTitleButton.AddHandler(TappedEvent, this.RegisterTap, handledEventsToo: true);
+        }
+
+        private void PlaylistTitleButton_DoubleTapped(object? sender, TappedEventArgs e) {
+            // Stop the timer from ticking.
+            myClickWaitTimer.Stop();
+
+            Trace.WriteLine("Double Click");
+            e.Handled = true;
+
+            this.WindowState = (this.WindowState == WindowState.Normal) ? WindowState.Maximized : WindowState.Normal;
+        }
+
+        private void PlaylistTitleButton_PointerMoved(object? sender, PointerEventArgs e) {
+            if (mouseState != null) {
+                this.BeginMoveDrag(mouseState);
+            }
+        }
+
+        PointerPressedEventArgs? mouseState = null;
+
+        private void PlaylistTitleButton_PointerReleased(object? sender, PointerReleasedEventArgs e) {
+            mouseState = null;
+        }
+        /*
+                public static event EventHandler<RoutedEventArgs> TapRegistered;
+                private void RegisterTap(object sender, RoutedEventArgs e) => MainWindow.TapRegistered?.Invoke(this, e);
+        */
+        private DispatcherTimer myClickWaitTimer;
+        private void mouseWaitTimer_Tick(object sender, EventArgs e) {
+            myClickWaitTimer.Stop();
+
+            // Handle Single Click Actions
+            Trace.WriteLine("Single Click");
+
+            MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
+            //editPlaylistTitleFlyout.IsOpen = true;
+        }
+        private void PlaylistTitleButton_PointerPressed(object? sender, PointerPressedEventArgs e) {
+            //this.BeginMoveDrag(e);
+            mouseState = e;
+            e.Handled = true;
+        }
+
+        private void PlaylistTitleButton_Click(object? sender, RoutedEventArgs e) {
+            myClickWaitTimer.Start();
+            //MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
+            mouseState = null;
         }
 
         bool isLibraryVisible = false;

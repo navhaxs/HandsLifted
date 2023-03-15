@@ -82,11 +82,7 @@
 								Command="{Binding Library.OnAddSelectedToPlaylistCommand}"
 					/>
 						</DockPanel>
-
 					</Grid>
-
-			
-
 				</DockPanel>
 			</TabItem>
 			<TabItem>

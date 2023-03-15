@@ -20,6 +20,13 @@
 			<Button>Move Item To New Group</Button>
 			<Button>Move Range To New Group</Button>
 			<Separator />
+			<Button>Copy Item Up</Button>
+			<Button>Copy Item Down</Button>
+			<Separator />
+			<Button>Copy Item Elsewhere</Button>
+			<Button>Copy Item To New Group</Button>
+			<Button>Copy Range To New Group</Button>
+			<Separator />
 			<Button>Edit Item Info</Button>
 			<Button>Remove Item</Button>
 			<Separator />

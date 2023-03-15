@@ -12,83 +12,96 @@
 		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
 	</UserControl.Resources>
 
-	<Grid ColumnDefinitions="2* *">
-		<Viewbox Grid.Column="0" VerticalAlignment="Top">
-			<Grid Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}}" Height="1080" Width="1920">
-				<Border>
-					<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top"  Margin="60 80">
-						<Viewbox StretchDirection="DownOnly"
-								 HorizontalAlignment="Left">
-							<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
-									   LineHeight="{Binding #LineHeightTextBox.Text}"
-									   FontWeight="SemiBold"
-									   TextAlignment="Left"
-									   HorizontalAlignment="Stretch"
-									   VerticalAlignment="Center"
-									   FontFamily="{Binding #fontComboBox.SelectedItem, FallbackValue='Garamond, Playfair Display'}"
-									   RenderOptions.BitmapInterpolationMode="HighQuality"
-									   Foreground="{Binding #TextColour.Color, Converter={StaticResource ColorToBrush}}"
-									   FontSize="{Binding #FontSizeTextBox.Text}"
-							/>
-						</Viewbox>
-					</Grid>
-					<Border.Background>
-						<ImageBrush Source="{Binding #bgGraphicFilePath.Text, Converter={StaticResource variableImage}}" Stretch="UniformToFill"/>
-					</Border.Background>
-				</Border>
-			</Grid>
-		</Viewbox>
+	<DockPanel>
+		<ListBox DockPanel.Dock="Left"
+				 SelectedIndex="0"
+				 Name="designsListBox"
+				 Items="{Binding SlideDesigner.ListOfDesigns}">
+		</ListBox>
+		<Grid ColumnDefinitions="2* *">
+			<Viewbox Grid.Column="0" VerticalAlignment="Top">
+				<Grid Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}}" Height="1080" Width="1920">
+					<Border>
+						<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top"  Margin="60 80">
+							<Viewbox StretchDirection="DownOnly"
+									 HorizontalAlignment="Left">
+								<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
+										   LineHeight="{Binding #LineHeightTextBox.Text}"
+										   FontWeight="SemiBold"
+										   TextAlignment="Left"
+										   HorizontalAlignment="Stretch"
+										   VerticalAlignment="Center"
+										   FontFamily="{Binding #fontComboBox.SelectedItem, FallbackValue='Garamond, Playfair Display'}"
+										   RenderOptions.BitmapInterpolationMode="HighQuality"
+										   Foreground="{Binding #TextColour.Color, Converter={StaticResource ColorToBrush}}"
+										   FontSize="{Binding #FontSizeTextBox.Text}"
+								/>
+							</Viewbox>
+						</Grid>
+						<Border.Background>
+							<ImageBrush Source="{Binding #bgGraphicFilePath.Text, Converter={StaticResource variableImage}}" Stretch="UniformToFill"/>
+						</Border.Background>
+					</Border>
+				</Grid>
+			</Viewbox>
 
-		<ScrollViewer Grid.Column="1">
-			<StackPanel Margin="8">
+			<ScrollViewer Grid.Column="1">
+				<StackPanel Margin="8">
 
 
-				<StackPanel.Styles>
-					<Style Selector="ColorPicker">
-						<Setter Property="HorizontalAlignment" Value="Left" />
-					</Style>
-				</StackPanel.Styles>
+					<StackPanel.Styles>
+						<Style Selector="ColorPicker">
+							<Setter Property="HorizontalAlignment" Value="Left" />
+						</Style>
+					</StackPanel.Styles>
 
-				<!-- "Garamond, Playfair Display" -->
-				<TextBlock Text="Font" />
-				<ComboBox x:Name="fontComboBox">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
 
-				<Grid Height="10" />
+					<TextBlock Text="Name" />
+					<TextBox Name="Name" Watermark="" Text="{Binding #designsListBox.SelectedItem.Name}" />
 
-				<TextBlock Text="Colour" />
-				<ColorPicker Name="TextColour" Color="#2b505e" />
 
-				<TextBlock Text="Background" />
-				<ColorPicker Name="BackgroundColour" Color="#b7d1d8" />
+					<!-- "Garamond, Playfair Display" -->
+					<TextBlock Text="Font" />
+					<ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamily, FallbackValue='Arial'}">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 
-				<TextBlock Text="Font Size" />
-				<DockPanel>
-					<TextBox Name="FontSizeTextBox" Text="110" />
-					<Slider Name="FontSizeSlider" Minimum="1" Maximum="200"
-							IsSnapToTickEnabled="True"
-							TickFrequency="1"
-							Value="{Binding #FontSizeTextBox.Text}"/>
-				</DockPanel>
+					<Grid Height="10" />
 
-				<TextBlock Text="Line Height" />
-				<DockPanel>
-					<TextBox Name="LineHeightTextBox" Text="160" />
-					<Slider Name="LineHeightSlider" Minimum="1" Maximum="200"
-							IsSnapToTickEnabled="True"
-							TickFrequency="1"
-							Value="{Binding #LineHeightTextBox.Text}"/>
-				</DockPanel>
+					<TextBlock Text="Colour" />
+					<ColorPicker Name="TextColour" Color="{Binding #designsListBox.SelectedItem.TextColour, FallbackValue='White'}" />
 
-				<TextBlock Text="BgGraphicFilePath" />
-				<TextBox Name="bgGraphicFilePath" Watermark="" Text="/Assets/SWEC-ProPresenter-Logo-Slide.jpg" />
+					<TextBlock Text="Background" />
+					<ColorPicker Name="BackgroundColour" Color="{Binding #designsListBox.SelectedItem.BackgroundColour, FallbackValue='Black'}" />
 
-			</StackPanel>
-		</ScrollViewer>
-	</Grid>
+					<TextBlock Text="Font Size" />
+					<DockPanel>
+						<TextBox Name="FontSizeTextBox" Text="{Binding #designsListBox.SelectedItem.FontSize, FallbackValue=1}" />
+						<Slider Name="FontSizeSlider" Minimum="1" Maximum="200"
+								IsSnapToTickEnabled="True"
+								TickFrequency="1"
+								Value="{Binding #FontSizeTextBox.Text}"/>
+					</DockPanel>
+
+					<TextBlock Text="Line Height" />
+					<DockPanel>
+						<TextBox Name="LineHeightTextBox" Text="{Binding #designsListBox.SelectedItem.LineHeight, FallbackValue=1}" />
+						<Slider Name="LineHeightSlider" Minimum="1" Maximum="200"
+								IsSnapToTickEnabled="True"
+								TickFrequency="1"
+								Value="{Binding #LineHeightTextBox.Text}"/>
+					</DockPanel>
+
+					<TextBlock Text="BgGraphicFilePath" />
+					<TextBox Name="bgGraphicFilePath" Watermark="" Text="{Binding #designsListBox.SelectedItem.BackgroundGraphicFilePath}" />
+
+				</StackPanel>
+			</ScrollViewer>
+		</Grid>
+	</DockPanel>
+
 </UserControl>

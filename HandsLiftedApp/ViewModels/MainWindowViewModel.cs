@@ -38,6 +38,7 @@ using static HandsLiftedApp.Importer.PowerPoint.Main;
 using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
 using Google.Apis.Drive.v3.Data;
+using HandsLiftedApp.Models.SlideDesign;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -57,6 +58,7 @@ namespace HandsLiftedApp.ViewModels
             //}
         }
 
+        public SlideDesignerViewModel SlideDesigner { get; } = new SlideDesignerViewModel();
         public Playlist<PlaylistStateImpl, ItemStateImpl> _playlist;
 
         public Playlist<PlaylistStateImpl, ItemStateImpl> Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }

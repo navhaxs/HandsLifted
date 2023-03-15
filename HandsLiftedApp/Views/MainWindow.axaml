@@ -10,6 +10,7 @@
 		xmlns:controls="using:HandsLiftedApp.Controls"
 		xmlns:material="using:Material.Icons.Avalonia"
 		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
+		xmlns:app="using:HandsLiftedApp.Views.App"
 		xmlns:editor="using:HandsLiftedApp.Views.Editor"
 		xmlns:library="using:HandsLiftedApp.Views.Library"
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
@@ -105,14 +106,32 @@
 									<views:AppMainMenuControl />
 								</Popup>
 
+								<Button Margin="0 8 14 8" Padding="12" BorderThickness="0" Background="Transparent"
+										Name="PlaylistTitleButton"
+										  VerticalContentAlignment="Stretch"
+								  VerticalAlignment="Stretch"
+										Cursor="Hand">
+									<Button.Styles>
+										<Style Selector="Button:pointerover /template/ ContentPresenter">
+											<Setter Property="Background" Value="#d0d0d0" />
 
-								<StackPanel Orientation="Horizontal" Margin="2 20 14 20"
-											VerticalAlignment="Center"
-											IsHitTestVisible="False">
-									<!--<controls:EditableLabelControl />-->
-									<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Title, FallbackValue='Untitled'}" />
-									<TextBlock FontSize="20" Margin="0 0 12 0" Foreground="#8a8c8c" Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}" />
-								</StackPanel>
+										</Style>
+										<Style Selector="Button:pressed /template/ ContentPresenter">
+											<Setter Property="BorderBrush" Value="#2c628b"/>
+											<Setter Property="Background" Value="#c4e5f6"/>
+										</Style>
+										<Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
+											<Setter Property="RenderTransform" Value="none" />
+										</Style>
+									</Button.Styles>
+									<StackPanel Orientation="Horizontal" 
+												VerticalAlignment="Center"
+												IsHitTestVisible="False">
+										<!--<controls:EditableLabelControl />-->
+										<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Title, FallbackValue='Untitled'}" />
+										<TextBlock FontSize="20" Margin="0 0 0 0" Foreground="#8a8c8c" Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}" />
+									</StackPanel>
+								</Button>
 								<!--<ToggleButton
 								Name="EditTitleButton" VerticalAlignment="Center"
 								Background="Transparent"
@@ -393,13 +412,12 @@
 
 									<GridSplitter
 											Grid.Row="1"
-											Margin="-3,0"
-											BorderThickness="3,0"
-											BorderBrush="Transparent"
+											Margin="-10,-10"
+											BorderThickness="10,10"
+											BorderBrush="Red"
 											HorizontalAlignment="Stretch"
 											Background="#9a93cd"
-											ZIndex="9999"
-									/>
+											ZIndex="9999" />
 
 									<library:LibraryView Grid.Row="2"  />
 
@@ -549,8 +567,6 @@
 							</StackPanel>
 						</DockPanel>
 					</Border>-->
-
-						<Grid></Grid>
 
 					</DockPanel>
 				</Grid>
