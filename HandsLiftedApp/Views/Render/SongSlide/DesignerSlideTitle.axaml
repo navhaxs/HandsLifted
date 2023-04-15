@@ -3,20 +3,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
-             x:Class="HandsLiftedApp.Views.DesignerSlideTitle">
-	<Grid Background="#f5ede4">
+             x:Class="HandsLiftedApp.Views.DesignerSlideTitle"
+	xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
+	xmlns:ext="using:HandsLiftedApp.Extensions">
 
 
-		<Image Source="/Assets/DesignerSlideTemplate/bg.png"
-			   VerticalAlignment="Stretch"
-			   HorizontalAlignment="Stretch"
-			   StretchDirection="Both"
-			   Stretch="UniformToFill"
-			   />
+	<UserControl.Resources>
+		<converters:ColorToBrushConverter x:Key="ColorToBrush" />
+		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
+	</UserControl.Resources>
+	
+	<Grid Background="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundColour, Converter={StaticResource ColorToBrush}}">
 		
-		<Border BorderThickness="14" Margin="80 80 80 80">
+		<Border>
 
-			<Grid HorizontalAlignment="Stretch">
+			<Grid HorizontalAlignment="Stretch" Margin="80">
 				<StackPanel VerticalAlignment="Bottom">
 
 					<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0 0 90 40" MaxHeight="500">
@@ -27,9 +28,9 @@
 							TextWrapping="Wrap"
 							   HorizontalAlignment="Stretch"
 							   VerticalAlignment="Center"
-							   FontFamily="Garamond, Playfair Display"
+							   FontFamily="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontFamily, FallbackValue='Garamond, Playfair Display'}"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
-							   Foreground="#b87c4b"
+							   Foreground="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.TextColour, Converter={StaticResource ColorToBrush}}"
 							   FontSize="170"
 								   />
 					</Viewbox>
@@ -38,8 +39,9 @@
 							 MinHeight="260">
 						<TextBlock
 						Text="{Binding Copyright, FallbackValue='CCLI Song # 7127647&#x0a;Brooke Ligertwood | Jason Ingram | Scott Ligertwood&#x0a;© 2019 Fellow Ships Music (Admin. by Essential Music  Publishing LLC)&#x0a;So Essential Tunes (Admin. by Essential Music Publishing LLC)&#x0a;Hillsong Music Publishing Australia&#x0a;For use solely with the SongSelect® Terms of Use. All rights reserved. www.ccli.com&#x0a;Note: Reproduction of this sheet music requires a CCLI Music Reproduction License. Please report all copies.&#x0a;CCLI Licence # 317371'}"
-							Foreground="#b87c4b"
-							FontFamily="Garamond, Playfair Display"
+	   Foreground="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.TextColour, Converter={StaticResource ColorToBrush}}"							
+													   FontFamily="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontFamily, FallbackValue='Garamond, Playfair Display'}"
+
 
 						FontSize="30"
 						Width="1760"
@@ -48,7 +50,9 @@
 
 				</StackPanel>
 			</Grid>
-
+			<Border.Background>
+				<ImageBrush Source="{Binding  $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill"/>
+			</Border.Background>
 		</Border>
 
 	</Grid>

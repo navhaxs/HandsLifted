@@ -3,8 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:controls="using:HandsLiftedApp.Controls"
-			 xmlns:item="using:HandsLiftedApp.Views.Item"
+	         xmlns:app="using:HandsLiftedApp"
 			 xmlns:utils="using:HandsLiftedApp.Utils"
+			 xmlns:item="using:HandsLiftedApp.Views.Item"
              xmlns:behaviours="using:HandsLiftedApp.Behaviours"
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
@@ -68,7 +69,7 @@
 						/>-->
 				<TextBlock Padding="0 8 0 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
 
-				<Border
+				<!--<Border
 					HorizontalAlignment="Left"
 					IsVisible="{Binding State.IsSelected}"
 					VerticalAlignment="Center"
@@ -80,7 +81,7 @@
 						FontWeight="Bold"
 						Foreground="White"
 						FontSize="12">LIVE</TextBlock>
-				</Border>
+				</Border>-->
 				
 				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
 			</DockPanel>
@@ -109,8 +110,8 @@
 			<controls:ListBoxWithoutKey.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel
-						ItemWidth="244"
-						ItemHeight="200"
+						ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=244}"
+						ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}"
 						/>
 					<!--<WrapPanel 
 						ItemWidth="244"
@@ -140,7 +141,8 @@
 					<DataTemplate x:Key="ImageSlide">
 						<controls:SlideThumbnail>
 							<Grid>
-								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" />
+								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" 
+									   							RenderOptions.BitmapInterpolationMode="MediumQuality" />
 							</Grid>
 						</controls:SlideThumbnail>
 					</DataTemplate>
@@ -156,7 +158,10 @@
 					</DataTemplate>
 					<DataTemplate x:Key="LogoSlide">
 						<Grid>
-							<Image Stretch="Uniform" Source="/Assets/SWEC-ProPresenter-Logo-Slide.jpg" RenderOptions.BitmapInterpolationMode="HighQuality" />
+							<Image
+							Stretch="Uniform"
+							Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
+							RenderOptions.BitmapInterpolationMode="MediumQuality" />
 						</Grid>
 					</DataTemplate>
 					<DataTemplate x:Key="MyKey">

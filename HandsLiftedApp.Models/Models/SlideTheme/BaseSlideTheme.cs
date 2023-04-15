@@ -5,17 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace HandsLiftedApp.Models.SlideDesign {
-    public class Base : ReactiveObject {
+namespace HandsLiftedApp.Data.SlideTheme {
+    
+    [Serializable]
+    public class BaseSlideTheme : ReactiveObject {
         // Slide Design Meta
         private string _Name;
         public string Name { get => _Name; set => this.RaiseAndSetIfChanged(ref _Name, value); }
 
         // Slide Design Properties
         private FontFamily _FontFamily;
+        [XmlIgnore]
         public FontFamily FontFamily { get => _FontFamily; set => this.RaiseAndSetIfChanged(ref _FontFamily, value); }
         private FontWeight _FontWeight;
+        [XmlIgnore]
         public FontWeight FontWeight { get => _FontWeight; set => this.RaiseAndSetIfChanged(ref _FontWeight, value); }
         private Color _TextColour;
         public Color TextColour { get => _TextColour; set => this.RaiseAndSetIfChanged(ref _TextColour, value); }

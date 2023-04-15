@@ -19,6 +19,7 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
 
+        [XmlIgnore]
         public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>() { new LogoSlide() };
     }
 }

@@ -13,6 +13,7 @@
     <PackageReference Include="Google.Apis.Drive.v3" />
     <PackageReference Include="Google.Apis.Slides.v1" />
     <PackageReference Include="Magick.NET-Q16-HDRI-AnyCPU" />
+    <PackageReference Include="Serilog" />
   </ItemGroup>
 
   <ItemGroup>

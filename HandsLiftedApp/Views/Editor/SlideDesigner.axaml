@@ -6,17 +6,41 @@
 			 xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
 			 xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
 			 xmlns:ext="using:HandsLiftedApp.Extensions"
+		 	 xmlns:vm="using:HandsLiftedApp.ViewModels"
              x:Class="HandsLiftedApp.Views.Editor.SlideDesigner">
 	<UserControl.Resources>
 		<converters:ColorToBrushConverter x:Key="ColorToBrush" />
 		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
 	</UserControl.Resources>
 
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
 	<DockPanel>
 		<ListBox DockPanel.Dock="Left"
 				 SelectedIndex="0"
+			 SelectedItem="{Binding	SlideDesigner.ActiveDesign, Mode=OneWayToSource}"
+				 MinWidth="80"
 				 Name="designsListBox"
 				 Items="{Binding SlideDesigner.ListOfDesigns}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Viewbox MaxHeight="60">
+						
+					<Grid
+						Height="130"
+						Width="130"
+						Background="{Binding BackgroundColour, Converter={StaticResource ColorToBrush}}">
+						<TextBlock Text="A"
+								   FontSize="80"
+								   Margin="20"
+								   FontFamily="{Binding FontFamily, FallbackValue='Garamond, Playfair Display'}"
+								   FontWeight="SemiBold"/>
+					</Grid>
+					</Viewbox>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
 		</ListBox>
 		<Grid ColumnDefinitions="2* *">
 			<Viewbox Grid.Column="0" VerticalAlignment="Top">

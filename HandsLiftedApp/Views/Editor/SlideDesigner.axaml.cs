@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Media;
 using System.Linq;
@@ -11,7 +12,9 @@ namespace HandsLiftedApp.Views.Editor
             InitializeComponent();
 
             var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            fontComboBox.Items = FontManager.Current.GetInstalledFontFamilyNames().Select(x => new FontFamily(x));
+            var fontFamilies = FontManager.Current.GetInstalledFontFamilyNames().ToList();
+            fontFamilies.Sort();
+            fontComboBox.Items = fontFamilies.Select(x => new FontFamily(x));
             fontComboBox.SelectedIndex = 0;
         }
     }

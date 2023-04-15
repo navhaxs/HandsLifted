@@ -33,12 +33,10 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NetOffice.PowerPointApi;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
 using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
-using Google.Apis.Drive.v3.Data;
-using HandsLiftedApp.Models.SlideDesign;
+using HandsLiftedApp.Models.SlideDesigner;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -51,11 +49,11 @@ namespace HandsLiftedApp.ViewModels
         }
         private async Task Update()
         {
-            //while (true)
-            //{
-            //    await Task.Delay(100);
-            //    this.RaisePropertyChanged(nameof(CurrentTime));
-            //}
+            while (true)
+            {
+                await Task.Delay(100);
+                this.RaisePropertyChanged(nameof(CurrentTime));
+            }
         }
 
         public SlideDesignerViewModel SlideDesigner { get; } = new SlideDesignerViewModel();

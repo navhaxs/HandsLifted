@@ -40,7 +40,7 @@ namespace HandsLiftedApp.Logic
                     .WithUrlPrefix(url)
                     .WithMode(HttpListenerMode.EmbedIO))
                 //.WithLocalSessionManager()
-                .WithModule(new HandsLiftedWebSocketsModule("/"))
+                .WithModule(new HandsLiftedWebSocketsModule("/control"))
             //.WithStaticFolder("/slides", HtmlRootPath, true, m => m.WithContentCaching(UseFileCache))
             //.WithModule(new FileModule("/", new ResourceFileProvider(typeof(App).Assembly, "HandsLiftedApp.Public")))
             //.WithModule(new ActionModule("/", HttpVerbs.Any, ctx => ctx.SendDataAsync(new { Message = "Error" })));

@@ -191,8 +191,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 }
                 else
                 {
+                    // TODO bug when fading to black (empty slide)
                     await transition.Start(_previousImageSite, _currentImageSite, true, _lastTransitionCts.Token);
-
                 }
             }
             else
@@ -221,7 +221,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
             Bitmap rendered = renderControlAsBitmap(_contentPresenter);
 
             if (visual is ISlideBitmapCacheable) {
-                ((ISlideBitmapCacheable)visual).SetBitmap(rendered);
+                // Testing
+                //((ISlideBitmapCacheable)visual).SetBitmap(rendered);
             }
 
             return rendered;
@@ -234,7 +235,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 using (SKCanvas canvas = new SKCanvas(bitmap)) {
 
                     using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
-                    using var context = new DrawingContext(contextImpl);
 
                     using var renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
                     renderedBitmap.Render(visual);

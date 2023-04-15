@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ApplicationIcon>Assets\app.ico</ApplicationIcon>
 		<AvaloniaXamlIlDebuggerLaunch>false</AvaloniaXamlIlDebuggerLaunch>
+		<TargetFrameworks>net6.0-windows</TargetFrameworks>
 	</PropertyGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<PropertyGroup>

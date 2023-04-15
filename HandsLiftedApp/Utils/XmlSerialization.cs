@@ -7,6 +7,9 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Serilog;
+using Serilog.Core;
+using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Utils
 {
@@ -18,6 +21,15 @@ namespace HandsLiftedApp.Utils
     /// </summary>
     public static class XmlSerialization
     {
+
+        static Type[] TYPES = new Type[] {
+                      typeof(SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>),
+                      typeof(SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>),
+                      typeof(LogoItem<ItemStateImpl>),
+                      typeof(GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl>),
+                      typeof(PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>)
+                  };
+
         /// <summary>
         /// Writes the given object instance to an XML file.
         /// <para>Only Public properties and variables will be written to the file. These can be any type though, even other classes.</para>
@@ -34,9 +46,7 @@ namespace HandsLiftedApp.Utils
             try
             {
                 var serializer = new XmlSerializer(typeof(T),
-    new Type[] { typeof(SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>), typeof(SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>) });
-
-
+                    TYPES);
 
                 var settings = new XmlWriterSettings
                 {
@@ -49,6 +59,11 @@ namespace HandsLiftedApp.Utils
                 {
                     serializer.Serialize(xmlWriter, objectToWrite);
                 }
+                Log.Information($"Wrote XML {filePath}");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to write XML");
             }
             finally
             {
@@ -69,12 +84,8 @@ namespace HandsLiftedApp.Utils
             TextReader stream = null;
             try
             {
-
-
-
-
                 var serializer = new XmlSerializer(typeof(T),
-                  new Type[] { typeof(SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>), typeof(SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>) });
+                TYPES);
 
                 stream = new StreamReader(filePath);
 
@@ -86,8 +97,14 @@ namespace HandsLiftedApp.Utils
 
                 using (XmlReader xmlReader = XmlReader.Create(stream, settings))
                 {
+                    Log.Information($"Read XML {filePath}");
                     return (T)serializer.Deserialize(xmlReader);
                 }
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to load XML");
+                throw e;
             }
             finally
             {

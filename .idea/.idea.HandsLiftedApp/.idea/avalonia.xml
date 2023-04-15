@@ -5,6 +5,7 @@
       <map>
         <entry key="HandsLiftedApp.PropertyGridControl/CollectionInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp.PropertyGridControl/ObjectInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Controls/ItemOrderListView.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Controls/ItemSlidesView.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Controls/ListBoxItem.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Controls/PlaylistSlidesView.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
@@ -18,6 +19,7 @@
         <entry key="HandsLiftedApp/Views/Prepare/PrepareNewPlaylist.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/ProjectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/Render/SlideRenderer.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/StageDisplayLayout/SongLayout.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/StageDisplayWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/MainWindow.xaml" value="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/LibVLCSharp.Avalonia.Sample.csproj" />
       </map>

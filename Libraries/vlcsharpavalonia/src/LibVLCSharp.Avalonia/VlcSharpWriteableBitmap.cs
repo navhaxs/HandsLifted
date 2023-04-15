@@ -77,7 +77,7 @@ namespace LibVLCSharp.Avalonia
 
         public void Render(DrawingContext context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)
         {
-            Render(context.PlatformImpl, opacity, sourceRect, destRect, bitmapInterpolationMode);
+            Render(context, opacity, sourceRect, destRect, bitmapInterpolationMode);
         }
 
         public void Render(IDrawingContextImpl context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)

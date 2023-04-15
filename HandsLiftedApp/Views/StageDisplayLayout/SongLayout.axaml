@@ -42,7 +42,7 @@
 			<TextBlock Foreground="White"
 					   VerticalAlignment="Bottom"
 					   Padding="15"
-					   FontSize="44"
+					   FontSize="100"
 					   Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}', FallbackValue='time'}"
 				/>
 		</Viewbox>

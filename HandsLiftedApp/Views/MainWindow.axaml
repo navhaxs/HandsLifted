@@ -32,6 +32,7 @@
 	</Design.DataContext>
 
 	<Border BorderThickness="1" BorderBrush="#9b9b9b">
+	
 		<Grid>
 			<DockPanel>
 
@@ -364,20 +365,21 @@
 													HorizontalAlignment="Stretch"
 													HorizontalContentAlignment="Stretch"
 													IsTabStop="False">
-													<DockPanel>
-														<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99">
-															<material:MaterialIcon
-																DockPanel.Dock="Left"
-																Foreground="#383838"
-																HorizontalAlignment="Left"
-																Kind="ArrowLeft" />
-														</Border>
+													<DockPanel Margin="6 0">
+														<material:MaterialIcon
+															DockPanel.Dock="Left"
+															Foreground="#383838"
+															
+															HorizontalAlignment="Left"
+															Kind="ArrowLeft" />
 														<TextBlock Text="Previous"
 																   TextAlignment="Center" />
 													</DockPanel>
 												</Button>
 												<Button
 											Grid.Column="1"
+											Background="Transparent"
+											BorderThickness="0"
 											Click="OnScrollToItemClick"
 											HorizontalAlignment="Stretch"
 											VerticalAlignment="Stretch"
@@ -389,19 +391,15 @@
 													HorizontalContentAlignment="Stretch"
 													Grid.Column="2"
 													IsTabStop="False">
-													<DockPanel>
-
-														<Border BorderBrush="#383838" BorderThickness="1" CornerRadius="99"
-																											DockPanel.Dock="Right">
-
-															<material:MaterialIcon
-																Foreground="#383838"
-																HorizontalAlignment="Right"
-																Kind="ArrowRight" />
-														</Border>
+													<DockPanel Margin="6 0">
+														<material:MaterialIcon
+															DockPanel.Dock="Right"
+															  Foreground="#383838"
+															  HorizontalAlignment="Right"
+															  Kind="ArrowRight" />
 														<TextBlock Text="Next"
-																   TextAlignment="Center"
-											   />
+														           TextAlignment="Center"
+														/>
 													</DockPanel>
 												</Button>
 											</Grid>
@@ -412,8 +410,8 @@
 
 									<GridSplitter
 											Grid.Row="1"
-											Margin="-10,-10"
-											BorderThickness="10,10"
+											Margin="0,0,0,-10"
+											BorderThickness="10,10,10,10"
 											BorderBrush="Red"
 											HorizontalAlignment="Stretch"
 											Background="#9a93cd"

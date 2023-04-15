@@ -15,6 +15,7 @@ namespace HandsLiftedApp
     public static class Globals
     {
         public static PreferencesViewModel Preferences;
+        public static StageDisplayViewModel StageDisplay = new StageDisplayViewModel();
         public static Env Env;
 
         // note: this is initialized by App.axaml.cs on program start up

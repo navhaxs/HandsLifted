@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -58,6 +59,8 @@ namespace HandsLiftedApp.Data.Models.Items
             this.RaisePropertyChanged("Slides");
         }
 
+        public BaseSlideTheme SlideTheme { get; set; }
+
         public void ResetArrangement()
         {
             var a = new ObservableCollection<SongItem<T, S, I>.Ref<SongStanza>>();
@@ -72,7 +75,7 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             int i = 0;
 
-            // TODO add title slide
+            // add title slide
             if (StartOnTitleSlide && TitleSlide != null)
             {
                 TitleSlide.Index = i;
@@ -98,7 +101,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
                 stanzaSeenCount[_datum.Uuid] = stanzaSeenCount.ContainsKey(_datum.Uuid) ? stanzaSeenCount[_datum.Uuid] + 1 : 0;
                 // break slides by newlines
-                string[] lines = _datum.Lyrics.Split(new string[] { Environment.NewLine + Environment.NewLine },
+                string[] lines = _datum.Lyrics.Replace("\r\n", "\n").Split(new string[] { "\n\n" },
                            StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var x in lines.Select((line, index) => new { line, index }))

@@ -11,7 +11,7 @@ using Avalonia.Media;
 
 namespace HandsLiftedApp.PropertyGridControl
 {
-    public class PropertyGrid : UserControl //<PropertyGridViewModel>
+    public partial class PropertyGrid : UserControl //<PropertyGridViewModel>
     {
         public static readonly StyledProperty<object?> SelectedObjectProperty =
             AvaloniaProperty.Register<PropertyGrid, object?>(

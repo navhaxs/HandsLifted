@@ -1,4 +1,5 @@
-﻿using Avalonia.Animation;
+﻿using System.Xml.Serialization;
+using Avalonia.Animation;
 using Avalonia.Media.Imaging;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
@@ -26,6 +27,7 @@ namespace HandsLiftedApp.Data.Slides
 
         // slide-override: page transition
         private IPageTransition? _pageTransition;
+        [XmlIgnore]
         public IPageTransition? PageTransition { get => _pageTransition; set => this.RaiseAndSetIfChanged(ref _pageTransition, value); }
 
         public virtual void OnEnterSlide()

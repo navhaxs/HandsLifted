@@ -34,7 +34,7 @@
 					<TextBlock Text="© Jeremy Wong 2015-2023" />
 				</WrapPanel>
 				<WrapPanel>
-					<TextBlock Text="Build " />
+					<TextBlock Text="Build #" />
 					<TextBlock Text="{Binding GitHash, Mode=OneWay, FallbackValue='(unknown git hash)'}" />
 					<TextBlock Text=" (" />
 					<TextBlock Text="{Binding BuildDate, Mode=OneWay, FallbackValue='(unknown build date)'}" />

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:converters="using:HandsLiftedApp.Converters"
              xmlns:behaviours="using:HandsLiftedApp.Behaviours"
+             xmlns:material="using:Material.Icons.Avalonia"
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:idd="clr-namespace:Avalonia.Xaml.Interactions.DragAndDrop;assembly=Avalonia.Xaml.Interactions"
@@ -96,29 +97,32 @@
 						
 						<!--<item:ItemIcon DockPanel.Dock="Left" Margin="5 0 8 0" Background="Red" />-->
 
-						<Button
-								DockPanel.Dock="Right"
-								IsHitTestVisible="False"
-								Margin="1 0 8 0"
-								CornerRadius="3"
-								BorderThickness="0"
-								IsVisible="{Binding State.IsSelected}"
-								VerticalAlignment="Center"
-								Background="#c43e1c">
-							<Button.Styles>
-								<Style Selector="Button:pointerover">
-									<Setter Property="Background" Value="#C1634B" />
-								</Style>
-								<Style Selector="Button:pressed">
-									<Setter Property="Background" Value="#913C27" />
-								</Style>
-							</Button.Styles>
-							<TextBlock
-								Margin="8 0 8 1"
-								FontWeight="Bold"
-								Foreground="White"
-								FontSize="12">LIVE</TextBlock>
-						</Button>
+						<!-- <Button -->
+						<!-- 		DockPanel.Dock="Right" -->
+						<!-- 		IsHitTestVisible="False" -->
+						<!-- 		Margin="1 0 8 0" -->
+						<!-- 		CornerRadius="3" -->
+						<!-- 		BorderThickness="0" -->
+						<!-- 		IsVisible="{Binding State.IsSelected}" -->
+						<!-- 		VerticalAlignment="Center" -->
+						<!-- 		Background="#c43e1c"> -->
+						<!-- 	<Button.Styles> -->
+						<!-- 		<Style Selector="Button:pointerover"> -->
+						<!-- 			<Setter Property="Background" Value="#C1634B" /> -->
+						<!-- 		</Style> -->
+						<!-- 		<Style Selector="Button:pressed"> -->
+						<!-- 			<Setter Property="Background" Value="#913C27" /> -->
+						<!-- 		</Style> -->
+						<!-- 	</Button.Styles> -->
+						<!-- 	<TextBlock -->
+						<!-- 		Margin="8 0 8 1" -->
+						<!-- 		FontWeight="Bold" -->
+						<!-- 		Foreground="White" -->
+						<!-- 		FontSize="12">LIVE</TextBlock> -->
+						<!-- </Button> -->
+						<material:MaterialIcon
+						IsVisible="{Binding State.IsSelected}"	
+							DockPanel.Dock="Left" VerticalAlignment="Center" Height="32" Width="32" Foreground="#c43e1c" Kind="Play" Margin="0" Padding="0" />
 
 						<TextBlock TextTrimming="CharacterEllipsis" Padding="6 10 0 10">
 							<TextBlock.Text>

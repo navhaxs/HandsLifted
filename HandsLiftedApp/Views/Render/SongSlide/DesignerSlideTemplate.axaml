@@ -3,37 +3,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
-             x:Class="HandsLiftedApp.Views.DesignerSlideTemplate">
-	<Grid Background="#f5ede4">
+             x:Class="HandsLiftedApp.Views.DesignerSlideTemplate"
+ 			 xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
+			 xmlns:ext="using:HandsLiftedApp.Extensions">
 
-		<Image Source="/Assets/DesignerSlideTemplate/bg.png"
-			   VerticalAlignment="Stretch"
-			   HorizontalAlignment="Stretch"
-			   StretchDirection="Both"
-			   Stretch="UniformToFill"
-			   />
+	<UserControl.Resources>
+		<converters:ColorToBrushConverter x:Key="ColorToBrush" />
+		<ext:BitmapAssetValueConverter x:Key="variableImage"/>
+	</UserControl.Resources>
 
-		<Border Margin="60 110 0 0">
-
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
-				<!--<Viewbox StretchDirection="DownOnly"
-						 HorizontalAlignment="Stretch">-->
-					<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed&#x0a;This is very really extraordinarily long lyric line'}"
-							   LineHeight="120"
+	<Grid Background="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundColour, Converter={StaticResource ColorToBrush}}">
+		<Border>
+			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="60 80">
+				<Viewbox StretchDirection="DownOnly"
+						 HorizontalAlignment="Left">
+					<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
+							   LineHeight="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.LineHeight}"
 							   FontWeight="SemiBold"
 							   TextAlignment="Left"
 							   HorizontalAlignment="Stretch"
 							   VerticalAlignment="Center"
-							   FontFamily="Montserrat"
+							   FontFamily="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontFamily, FallbackValue='Garamond, Playfair Display'}"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
-							   Foreground="#a06d39"
-							   FontSize="90"
-							   TextWrapping="WrapWithOverflow"
+							   Foreground="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.TextColour, Converter={StaticResource ColorToBrush}}"
+							   FontSize="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontSize}"
 							/>
-				<!--</Viewbox>-->
+				</Viewbox>
 			</Grid>
-
+			<Border.Background>
+				<ImageBrush Source="{Binding  $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill"/>
+			</Border.Background>
 		</Border>
-
 	</Grid>
+
 </UserControl>

@@ -25,7 +25,7 @@ namespace HandsLiftedApp.Models.SlideState {
         private static readonly object loadImageLock = new object();
 
         private const int IMAGE_WIDTH = 1920;
-        private const int THUMBNAIL_WIDTH = 300;
+        private const int THUMBNAIL_WIDTH = 500;
 
         public void EnsureImageLoaded() {
             if (Image is not null) {

@@ -9,7 +9,7 @@ namespace HandsLiftedApp.Data.Slides
     {
         T _state;
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
-        public String Id { get; set; }
+        public string Id { get; set; }
 
         public SongSlide(SongStanza? ownerSongStanza, string id)
         {

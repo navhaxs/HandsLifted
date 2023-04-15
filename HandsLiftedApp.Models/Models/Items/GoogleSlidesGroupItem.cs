@@ -3,6 +3,8 @@ using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
+    [XmlRoot("GoogleSlides", Namespace = Constants.Namespace, IsNullable = false)]
+    [Serializable]
     public class GoogleSlidesGroupItem<I, J, K> : SlidesGroupItem<I, J> where I : IItemState where J : IItemAutoAdvanceTimerState where K : IGoogleSlidesGroupItemState
     {
         private K _syncstate;

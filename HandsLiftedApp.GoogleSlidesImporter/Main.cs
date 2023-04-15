@@ -8,15 +8,17 @@ using Google;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static Google.Apis.Drive.v3.FilesResource;
-using static HandsLiftedApp.Importer.GoogleSlides.Program;
 using Google.Apis.Auth.OAuth2.Responses;
-using System;
 using Newtonsoft.Json.Linq;
-using static Google.Apis.Requests.BatchRequest;
 using System.Net.Http.Json;
+using Google.Apis.Util;
+using static HandsLiftedApp.Importer.GoogleSlides.Program;
+using Google.Apis.Drive.v3.Data;
+using System.Threading;
+using Google.Apis.Auth.OAuth2.Flows;
+using Serilog;
 
-namespace HandsLiftedApp.Importer.GoogleSlides
-{
+namespace HandsLiftedApp.Importer.GoogleSlides {
     public class Main
     {
         static string[] Scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
@@ -27,9 +29,9 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 
         private static readonly object syncSlidesLock = new object();
 
-
         public static ImportStats RunGoogleSlidesImportTask(IProgress<ImportStats> progress, ImportTask task)
         {
+            Log.Information($"Running Google Slides import for {task}");
             ImportStats stats = new ImportStats() { Task = task };
             lock (syncSlidesLock)
             {
@@ -52,6 +54,15 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                         Console.WriteLine("Credential file saved to: " + credPath);
                     }
 
+
+                    if (credential.Token.IsExpired(SystemClock.Default)) {
+                        var m = credential.GetAccessTokenForRequestAsync().Result;
+
+                        //If the token is expired recreate the token
+                        TokenResponse token = credential.Flow.RefreshTokenAsync(credential.UserId, credential.Token.RefreshToken, CancellationToken.None).Result;
+                        credential.Token = token;
+                    }
+
                     // Create Google Slides API service.
                     var service = new SlidesService(new BaseClientService.Initializer
                     {
@@ -67,7 +78,6 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                     PresentationsResource.GetRequest request = service.Presentations.Get(fileId);
 
                     Presentation presentation = request.Execute();
-
 
                     double progressPercentage = 10.0d;
 

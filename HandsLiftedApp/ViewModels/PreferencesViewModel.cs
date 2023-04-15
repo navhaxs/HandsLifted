@@ -99,6 +99,25 @@ namespace HandsLiftedApp.ViewModels
 
 
 
+        // testing
+        private int _ItemWidth = 244;
+        [DataMember]
+        public int ItemWidth
+        {
+            get => _ItemWidth;
+            set => this.RaiseAndSetIfChanged(ref _ItemWidth, value);
+        }
+
+        private int _ItemHeight = 200;
+        [DataMember]
+        public int ItemHeight
+        {
+            get => _ItemHeight;
+            set => this.RaiseAndSetIfChanged(ref _ItemHeight, value);
+        }
+
+
+
         [DataContract]
         public class DisplayModel : ReactiveObject
         {

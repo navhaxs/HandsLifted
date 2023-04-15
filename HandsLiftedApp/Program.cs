@@ -26,7 +26,7 @@ namespace HandsLiftedApp {
                        .WriteTo.File("logs/visionscreens_app_log.txt")
                        .CreateLogger();
 
-                Log.Information("Hello, world!");
+                Log.Information("App startup");
 
                 TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
@@ -55,6 +55,7 @@ namespace HandsLiftedApp {
             }
             finally
             {
+                Log.Information("App shutdown");
                 Log.CloseAndFlush();
             }
         }

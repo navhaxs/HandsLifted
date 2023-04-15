@@ -69,6 +69,21 @@
 						<TextBox Text="1080" />
 					</StackPanel>
 				</StackPanel>
+				<Label>View</Label>
+				<StackPanel>
+					<TextBlock Text="Slide thumbnail" />
+					<StackPanel Orientation="Horizontal">
+						<StackPanel.Styles>
+							<Style Selector="TextBox">
+								<Setter Property="MinWidth" Value="60" />
+								<Setter Property="Padding" Value="4" />
+							</Style>
+						</StackPanel.Styles>
+						<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=244}" />
+						<material:MaterialIcon Kind="Close" Foreground="#888888" Margin="4" VerticalAlignment="Center" />
+						<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" />
+					</StackPanel>
+				</StackPanel>
 				<Label>NDI</Label>
 				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableOutputNDI}">Enable Main Output NDI</CheckBox>
 				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableLyricsOutputNDI}">Enable Lyrics Output NDI</CheckBox>
