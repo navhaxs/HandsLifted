@@ -6,7 +6,7 @@
  	 		 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="150"
              x:Class="HandsLiftedApp.Views.Item.SlidesGroupItemInfo">
-	<Border Background="#f1f1f1" CornerRadius="5" Padding="5">
+	<Border Background="#f6f6fc" CornerRadius="5" Padding="5">
 
 		<StackPanel>
 			
@@ -89,7 +89,7 @@
 			</StackPanel>-->
 			<TextBlock Grid.Row="1" Grid.Column="0" Text="" />
 			<!-- Tooltip: (navigating past the last slides goes back to the first) -->
-			<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsLooping}" Content="Looping slide navigation"
+			<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsLooping}" Content="Looping slide navigation (next/prev slide navigation controls will loop)"
 					  />
 		</Grid>
 

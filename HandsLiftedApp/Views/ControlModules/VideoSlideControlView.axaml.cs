@@ -50,7 +50,7 @@ namespace HandsLiftedApp.Views.ControlModules
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MediaPlayer != null && MediaPlayer.IsPlaying)
+            if (MediaPlayer != null)
             {
                 MediaPlayer.Stop();
             }
@@ -60,6 +60,11 @@ namespace HandsLiftedApp.Views.ControlModules
         {
             if (MediaPlayer != null && !MediaPlayer.IsPlaying)
             {
+                if (MediaPlayer.State == VLCState.Ended)
+                {
+                    MediaPlayer.Stop();
+                    MediaPlayer.Position = 0;
+                }
                 MediaPlayer.Play();
             }
         }

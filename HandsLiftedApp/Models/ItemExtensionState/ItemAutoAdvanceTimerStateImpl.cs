@@ -24,6 +24,10 @@ namespace HandsLiftedApp.Models.ItemExtensionState
                 .Subscribe(x =>
                 {
                     ApplyTimerConfig(x.Item1, x.Item2);
+
+                    // TODO if timer is NOT already running, start it now...
+                    //if (parentSlidesGroup.State.IsSelected == true && parentSlidesGroup.AutoAdvanceTimer.IsEnabled)
+                    //    Timer.Start(x.Item2);
                 });
 
             // already handled
@@ -37,6 +41,9 @@ namespace HandsLiftedApp.Models.ItemExtensionState
 
             Timer.OnElapsed += (sender, e) =>
             {
+                if (!parentSlidesGroup.AutoAdvanceTimer.IsEnabled)
+                    return;
+
                 if (!parentSlidesGroup.State.IsSelected)
                     return;
 

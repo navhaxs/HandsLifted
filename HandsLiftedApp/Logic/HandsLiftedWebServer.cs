@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Logic
 {
-    internal class HandsLiftedWebServer
+    internal static class HandsLiftedWebServer
     {
         private static int PORT = 8979;
         private static CancellationTokenSource ctSource;
 
-        public void Start()
+        public static void Start()
         {
             Run();
         }
 
-        public int getPort()
+        public static int getPort()
         { return PORT; }
 
         private static async Task Run()
@@ -25,6 +25,7 @@ namespace HandsLiftedApp.Logic
 
             ctSource = new CancellationTokenSource();
 
+      
             using (var server = CreateWebServer(url))
             {
                 if (!ctSource.IsCancellationRequested)
@@ -47,8 +48,10 @@ namespace HandsLiftedApp.Logic
             ;
         }
 
-        public void Stop()
+        public static void Stop()
         {
+            if (ctSource != null)
+                ctSource.Cancel();
         }
     }
 }

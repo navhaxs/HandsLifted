@@ -56,10 +56,7 @@ namespace HandsLiftedApp.Models.ItemExtensionState
                 var old = parentSlidesGroup.SourceSlidesExportDirectory;
                 parentSlidesGroup.SourceSlidesExportDirectory = targetDirectory;
 
-                if (old != null)
-                {
-                    Directory.Delete(old, true);
-                }
+                FileUtils.DeleteDirectory(old);
             });
         }
     }

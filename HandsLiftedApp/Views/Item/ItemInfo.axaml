@@ -18,10 +18,16 @@
 					<item:SongItemInfo />
 				</DataTemplate>
 				<DataTemplate x:Key="GoogleSlidesGroupItem">
-					<item:GoogleSlidesInfo />
+					<StackPanel>
+						<item:GoogleSlidesInfo />
+						<item:SlidesGroupItemInfo/>
+					</StackPanel>
 				</DataTemplate>
 				<DataTemplate x:Key="PowerPointSlidesGroupItem">
-					<item:PowerPointInfo />
+					<StackPanel>
+						<item:PowerPointInfo />
+						<item:SlidesGroupItemInfo/>
+					</StackPanel>
 				</DataTemplate>
 				<DataTemplate x:Key="SlidesGroupItem">
 					<item:SlidesGroupItemInfo/>

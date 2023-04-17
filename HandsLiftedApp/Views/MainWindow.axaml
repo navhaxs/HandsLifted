@@ -521,7 +521,7 @@
 							</Border>
 						</Grid>
 
-						<UniformGrid DockPanel.Dock="Top" Columns="3" Rows="1" Height="35">
+						<UniformGrid DockPanel.Dock="Top" Columns="2" Rows="1" Height="35">
 							<UniformGrid.Styles>
 								<Style Selector="RadioButton">
 									<Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -544,13 +544,13 @@
 							</UniformGrid.Styles>
 							<RadioButton IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton>
 							<RadioButton IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
-							<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>
+							<!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
 						</UniformGrid>
 
 						<views:DebugInfoView HorizontalAlignment="Stretch" />
 						<!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
 
-						<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>
+						<!--<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>-->
 
 						<!-- controlmodules -->
 						<!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->

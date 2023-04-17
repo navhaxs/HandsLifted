@@ -49,11 +49,12 @@ namespace HandsLiftedApp.ViewModels
         }
         private async Task Update()
         {
-            while (true)
-            {
-                await Task.Delay(100);
-                this.RaisePropertyChanged(nameof(CurrentTime));
-            }
+            // TODO this seems to throw random errors / gets in the way of exiting the app
+            //while (true)
+            //{
+            //    await Task.Delay(100);
+            //    this.RaisePropertyChanged(nameof(CurrentTime));
+            //}
         }
 
         public SlideDesignerViewModel SlideDesigner { get; } = new SlideDesignerViewModel();
@@ -308,8 +309,7 @@ namespace HandsLiftedApp.ViewModels
 
 
             // TODO initialise at the right place (tm)
-            var ws = new HandsLiftedWebServer();
-            ws.Start();
+            HandsLiftedWebServer.Start();
 
             if (Globals.Preferences.OnStartupShowOutput)
                 ToggleProjectorWindow(true);
@@ -718,7 +718,7 @@ namespace HandsLiftedApp.ViewModels
         {
             Playlist = XmlSerialization.ReadFromXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH);
 
-            // fixup
+            // TODO: workaround to fixup data structure after loading from XML
             foreach (var i in Playlist.Items)
             {
                 if (i is SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> s)
@@ -730,7 +730,21 @@ namespace HandsLiftedApp.ViewModels
                     }
                 }
             }
+
+            foreach (var i in Playlist.Items)
+            {
+                if (i.GetType() == Types.Items.GOOGLE_SLIDES)
+                {
+                    ((GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl>)i).SyncState.SyncCommand();
+                }
+                if (i.GetType() == Types.Items.POWERPOINT)
+                {
+                    ((PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>)i).SyncState.SyncCommand();
+                }
+            }
         }
+
+
         void OnMoveUpItemCommand(object? itemState)
         {
             // get the index of itemState

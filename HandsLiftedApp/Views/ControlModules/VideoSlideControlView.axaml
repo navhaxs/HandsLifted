@@ -2,26 +2,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150"
+	 		 xmlns:material="using:Material.Icons.Avalonia"
              x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
-	<StackPanel>
-		<DockPanel Margin="6 0">
-			<TextBlock DockPanel.Dock="Right" Text="{Binding State.PrettyRemainingTime}" />
-			<TextBlock>
-				<TextBlock.Text>
-					<MultiBinding StringFormat="{}{0} / {1}">
-						<Binding Path="State.PrettyCurrentTime" />
-						<Binding Path="State.PrettyDuration" />
-					</MultiBinding>
-				</TextBlock.Text>
-			</TextBlock>
-		</DockPanel>
-		<Slider Minimum="0" Maximum="100" Value="{Binding State.Position}" Grid.Column="1" />
-		<StackPanel Orientation="Horizontal" x:Name="test" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
-				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="24" />
-				<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"
-						FontSize="24" Click="StopButton_Click" />
-				<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" Background="Red" FontSize="24" />
-			</StackPanel>
-	</StackPanel>
+	<Border Background="#f6f6fc" CornerRadius="6" VerticalAlignment="Top" Margin="6">
+		<StackPanel Margin="6">
+			<DockPanel>
+				<TextBlock DockPanel.Dock="Right" Text="{Binding State.PrettyRemainingTime, FallbackValue='RemainingTime'}" />
+				<TextBlock>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0} / {1}">
+							<Binding Path="State.PrettyCurrentTime" />
+							<Binding Path="State.PrettyDuration" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</DockPanel>
+			<Slider Minimum="0" Maximum="100" Value="{Binding State.Position}" Grid.Column="1" />
+			<DockPanel>
+				<CheckBox Content="IsMuted"
+						  Margin="6 0 0 0"
+						  IsChecked="{Binding State.IsMuted}"
+						   DockPanel.Dock="Right"/>
+				<TextBlock Text="{Binding State.State, FallbackValue='(Stopped)'}"
+						   DockPanel.Dock="Right" VerticalAlignment="Center"/>
+				<StackPanel Orientation="Horizontal" x:Name="test" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
+					<Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click" FontSize="24"
+							IsVisible="{Binding !State.ShouldDisplayPauseButton}">
+						<material:MaterialIcon Kind="Play" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
+					</Button>
+					<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" FontSize="24"
+												IsVisible="{Binding State.ShouldDisplayPauseButton}">
+						<material:MaterialIcon Kind="Pause" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
+					</Button>
+					<Button VerticalAlignment="Bottom" HorizontalAlignment="Left"
+							FontSize="24" Click="StopButton_Click" Margin="4 0 0 0">
+						<material:MaterialIcon Kind="Stop" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
+					</Button>
+				</StackPanel>
+			</DockPanel>
+		</StackPanel>
+	</Border>
 </UserControl>

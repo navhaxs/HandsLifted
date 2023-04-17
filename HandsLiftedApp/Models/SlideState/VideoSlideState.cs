@@ -100,7 +100,8 @@ namespace HandsLiftedApp.Models.SlideState
                 Wrap(muteChanged).DistinctUntilChanged(_ => IsMuted).Subscribe(_ => this.RaisePropertyChanged(nameof(IsMuted))),
                 Wrap(fullState).DistinctUntilChanged(_ => State).Subscribe(_ => this.RaisePropertyChanged(nameof(State))),
                 Wrap(volumeChanged).DistinctUntilChanged(_ => Volume).Subscribe(_ => this.RaisePropertyChanged(nameof(Volume))),
-                Wrap(fullState).DistinctUntilChanged(_ => Information).Subscribe(_ => this.RaisePropertyChanged(nameof(Information)))
+                Wrap(fullState).DistinctUntilChanged(_ => Information).Subscribe(_ => this.RaisePropertyChanged(nameof(Information))),
+                Wrap(fullState).DistinctUntilChanged(_ => ShouldDisplayPauseButton).Subscribe(_ => this.RaisePropertyChanged(nameof(ShouldDisplayPauseButton)))
             };
 
                 bool active() => _subscriptions == null ? false : MediaPlayer.IsPlaying || MediaPlayer.CanPause;
@@ -192,6 +193,8 @@ namespace HandsLiftedApp.Models.SlideState
         public String PrettyDuration => Duration.ToString(@"hh\:mm\:ss");
 
         public VLCState State => MediaPlayer.State;
+
+        public bool ShouldDisplayPauseButton => MediaPlayer.State == VLCState.Playing;
 
         public string MediaInfo
         {
