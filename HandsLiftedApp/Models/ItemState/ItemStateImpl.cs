@@ -4,6 +4,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.SlideState;
+using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.ViewModels.Editor;
 using HandsLiftedApp.Views;
@@ -118,8 +119,13 @@ namespace HandsLiftedApp.Models.ItemState
         private IPageTransition? _pageTransition;
         public IPageTransition? PageTransition { get => _pageTransition; set => this.RaiseAndSetIfChanged(ref _pageTransition, value); }
 
-        private string? _test;
-        public string? Test { get => _test; set => this.RaiseAndSetIfChanged(ref _test, value); }
+        public Slide GenerateSlideFromSource(string filename, int index)
+        {
+            return PlaylistUtils.GenerateMediaContentSlide(filename, index);
+        }
+
+        //private string? _test;
+        //public string? Test { get => _test; set => this.RaiseAndSetIfChanged(ref _test, value); }
 
         void RunTheThing()
         {

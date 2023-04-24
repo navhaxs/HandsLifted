@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Serilog;
+using Serilog.Templates;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -20,10 +21,12 @@ namespace HandsLiftedApp {
         {
             try
             {
+                ExpressionTemplate OUTPUT_TEMPLATE = new ExpressionTemplate("[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
                 Log.Logger = new LoggerConfiguration()
                        .MinimumLevel.Debug()
-                       .WriteTo.Console()
-                       .WriteTo.File("logs/visionscreens_app_log.txt")
+                       .Enrich.FromLogContext()
+                       .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
+                       .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
                        .CreateLogger();
 
                 Log.Information("App startup");
@@ -52,6 +55,8 @@ namespace HandsLiftedApp {
             {
                 // globally handle uncaught exceptions end up here
                 Log.Fatal(e, "Global fatal exception. Please report this error.");
+
+                // TODO UI here
             }
             finally
             {

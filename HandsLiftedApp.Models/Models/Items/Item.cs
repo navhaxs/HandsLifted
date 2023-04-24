@@ -47,5 +47,7 @@ namespace HandsLiftedApp.Data.Models.Items
         public int SelectedSlideIndex { get; set; }
 
         public IPageTransition? PageTransition { get; set; }
+
+        public Slide GenerateSlideFromSource(string filename, int index);
     }
 }

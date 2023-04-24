@@ -3,6 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="AutofacSerilogIntegration" Version="5.0.0" />
     <PackageVersion Include="Avalonia" Version="11.0.0-preview5" />
     <PackageVersion Include="Avalonia.AvaloniaEdit" Version="11.0.0-preview5" />
     <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="11.0.0-preview5" />
@@ -28,7 +29,7 @@
     <PackageVersion Include="Google.Apis.Drive.v3" Version="1.57.0.2789" />
     <PackageVersion Include="Google.Apis.Slides.v1" Version="1.57.0.2759" />
     <PackageVersion Include="GridExtra.Avalonia" Version="0.9.1" />
-    <PackageVersion Include="LibVLCSharp" Version="3.6.7" />
+    <PackageVersion Include="LibVLCSharp" Version="3.7.0" />
     <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.6.6" />
     <PackageVersion Include="Magick.NET-Q16-HDRI-AnyCPU" Version="12.0.1" />
     <PackageVersion Include="Material.Icons.Avalonia" Version="2.0.0-preview2" />
@@ -44,7 +45,9 @@
     <PackageVersion Include="PDFiumCore" Version="107.0.5268" />
     <PackageVersion Include="ReactiveHistory" Version="0.10.7" />
     <PackageVersion Include="Serilog" Version="2.12.0" />
+    <PackageVersion Include="Serilog.Expressions" Version="3.4.1" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.1-dev-00907" />
+    <PackageVersion Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
     <PackageVersion Include="SIL.Scripture" Version="11.0.1" />
     <PackageVersion Include="System.Net.Http.Json" Version="7.0.0" />

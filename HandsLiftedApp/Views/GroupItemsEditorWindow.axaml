@@ -9,12 +9,12 @@
 		<StackPanel>
 			<TextBox Watermark="GroupItem Title" Text="{Binding Title}" />
 			<Separator />
-			<Button>Add Item from single select</Button>
-			<Button>Add Items from multiselect</Button>
+			<Button Click="AddItemSingleClick">Add Item from single select</Button>
+			<Button Click="AddItemFolderClick">Add Items from multiselect</Button>
 			<Button>Add Items from folder</Button>
 			<Separator />
-			<Button>Move Item Up</Button>
-			<Button>Move Item Down</Button>
+			<Button Click="MoveItemUpClick">Move Item Up</Button>
+			<Button Click="MoveItemDownClick">Move Item Down</Button>
 			<Separator />
 			<Button>Move Item Elsewhere</Button>
 			<Button>Move Item To New Group</Button>
@@ -35,6 +35,9 @@
 			<Button>Load XML</Button>
 			<Button>Save XML</Button>
 		</StackPanel>
-	    <DataGrid Name="DataGrid" AutoGenerateColumns="True" />
+	    <ListBox Name="DataGrid_Items"  
+				  Items="{Binding Items, Mode=TwoWay}"/>
+	    <DataGrid Name="DataGrid_Slides" AutoGenerateColumns="True" 
+				  Items="{Binding Slides, Mode=TwoWay}"/>
 	</DockPanel>
 </Window>

@@ -4,6 +4,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using Avalonia.Utilities;
+using Serilog;
 using System;
 using System.IO;
 using System.Reactive;
@@ -77,7 +78,7 @@ namespace LibVLCSharp.Avalonia
 
         public void Render(DrawingContext context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)
         {
-            Render(context, opacity, sourceRect, destRect, bitmapInterpolationMode);
+            Render(context.PlatformImpl, opacity, sourceRect, destRect, bitmapInterpolationMode);
         }
 
         public void Render(IDrawingContextImpl context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)

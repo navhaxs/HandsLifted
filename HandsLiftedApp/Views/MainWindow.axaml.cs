@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
@@ -15,29 +14,31 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using HandsLiftedApp.Utils;
-using HandsLiftedApp.Views.Prepare;
 using HandsLiftedApp.Views.Editor;
 using System.Diagnostics;
 using Avalonia.Threading;
+using Serilog;
 
-namespace HandsLiftedApp.Views {
+namespace HandsLiftedApp.Views
+{
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
+        ILogger log = Log.ForContext<MainWindow>();
 
         public MainWindow()
         {
+
+            log.Information("Creating MainWindow");
+
             InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
 
-            
             if (Design.IsDesignMode)
                 return;
-
 
             myClickWaitTimer = new DispatcherTimer(
                 new TimeSpan(0, 0, 0, 0, 300),
@@ -143,13 +144,14 @@ namespace HandsLiftedApp.Views {
             PlaylistTitleButton.DoubleTapped += PlaylistTitleButton_DoubleTapped;
             PlaylistTitleButton.Click += PlaylistTitleButton_Click;
             //PlaylistTitleButton.AddHandler(TappedEvent, this.RegisterTap, handledEventsToo: true);
+
+            log.Information("MainWindow initialized");
         }
 
         private void PlaylistTitleButton_DoubleTapped(object? sender, TappedEventArgs e) {
             // Stop the timer from ticking.
             myClickWaitTimer.Stop();
 
-            Trace.WriteLine("Double Click");
             e.Handled = true;
 
             this.WindowState = (this.WindowState == WindowState.Normal) ? WindowState.Maximized : WindowState.Normal;
@@ -213,9 +215,7 @@ namespace HandsLiftedApp.Views {
             }
         }
 
-
-
-        private void Exit(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void Exit(object sender, RoutedEventArgs e)
         {
             MainWindow hostWindow = (MainWindow)this.VisualRoot;
             hostWindow.Close();
@@ -284,7 +284,7 @@ namespace HandsLiftedApp.Views {
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.Print(e.Message);
+                Debug.Print(e.Message);
                 interaction.SetOutput(null);
             }
         }
@@ -298,7 +298,7 @@ namespace HandsLiftedApp.Views {
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.Print(e.Message);
+                Debug.Print(e.Message);
                 interaction.SetOutput(null);
             }
         }

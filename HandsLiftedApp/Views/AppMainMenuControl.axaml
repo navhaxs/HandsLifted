@@ -74,10 +74,10 @@
 						</DockPanel>
 					</Button>-->
 					<Button Content="Object Inspector" Command="{Binding OnDebugClickCommand}"/>
+					<Button Content="Debug Logs" Command="{Binding OnDebugLoggerClickCommand}"/>
 				</StackPanel>
 				<Grid Height="4" />
 				<StackPanel VerticalAlignment="Bottom">
-					<Button Content="Debug1" Command="{Binding OnDebug1Command}"/>
 					<Button Content="Setup" Command="{Binding OnPreferencesWindowCommand}"/>
 					<Button Content="About" Command="{Binding OnAboutWindowCommand}"/>
 					<Button Content="Exit" Click="CloseWindow"/>

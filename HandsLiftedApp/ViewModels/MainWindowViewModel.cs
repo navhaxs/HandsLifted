@@ -37,6 +37,7 @@ using static HandsLiftedApp.Importer.PowerPoint.Main;
 using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
 using HandsLiftedApp.Models.SlideDesigner;
+using HandsLiftedApp.Views.Debugging;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -229,7 +230,7 @@ namespace HandsLiftedApp.ViewModels
 
                 SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> a = args[1] as SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>;
 
-                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> newSlidesGroupItem = a.slice(a._Slides.IndexOf(args[0]));
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> newSlidesGroupItem = a.slice(a.Items.IndexOf(args[0]));
 
                 if (newSlidesGroupItem != null)
                     Playlist.Items.Insert(Playlist.Items.IndexOf(a) + 1, newSlidesGroupItem);
@@ -374,6 +375,12 @@ namespace HandsLiftedApp.ViewModels
             p.Show();
         }
 
+        public void OnDebugLoggerClickCommand()
+        {
+            LogViewerWindow p = new LogViewerWindow();
+            p.Show();
+        }
+
         public void OnNextSlideClickCommand()
         {
             //SlidesSelectedIndex += 1;
@@ -506,37 +513,7 @@ namespace HandsLiftedApp.ViewModels
         }
         private async Task OpenGroupAsync()
         {
-            try
-            {
-                var fullPath = await ShowOpenFolderDialog.Handle(Unit.Default);
-
-                if (fullPath != null && fullPath is string)
-                {
-
-                    DateTime now = DateTime.Now;
-                    string folderName = new DirectoryInfo(fullPath).Name;
-
-                    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = folderName };
-
-                    Playlist.Items.Add(slidesGroup);
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        // wait for UI to update...
-                        Dispatcher.UIThread.RunJobs();
-                        // and now we can jump to view
-                        var count = Playlist.Items.Count;
-                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
-                    });
-
-                    //slidesGroup.SyncState.SyncCommand();
-                    PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, fullPath);
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.Print(e.Message);
-            }
+          
         }
         private async Task AddVideoCommandAsync()
         {
@@ -564,7 +541,7 @@ namespace HandsLiftedApp.ViewModels
                         MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                     });
 
-                    slidesGroup._Slides.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath, 0));
+                    slidesGroup.Items.Add(fullPath);
                 }
             }
             catch (Exception e)
@@ -598,7 +575,7 @@ namespace HandsLiftedApp.ViewModels
                         MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                     });
 
-                    slidesGroup._Slides.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath, 0));
+                    slidesGroup.Items.Add(fullPath);
                 }
             }
             catch (Exception e)

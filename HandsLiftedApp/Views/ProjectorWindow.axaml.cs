@@ -32,6 +32,8 @@ namespace HandsLiftedApp.Views
             this.AttachDevTools();
 #endif
 
+            this.Closing += ProjectorWindow_Closing;
+
             //OverlayControls = this.FindControl<Grid>("OverlayControls");
             this.FindControl<MenuItem>("toggleFullscreen").Click += (s, e) =>
             {
@@ -84,6 +86,12 @@ namespace HandsLiftedApp.Views
                 //this.Height= this.Screens.All[1].Bounds.Height;
             }
 
+        }
+
+        private void ProjectorWindow_Closing(object? sender, WindowClosingEventArgs e)
+        {
+            this.IsVisible = false;
+            e.Cancel = true;
         }
 
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)

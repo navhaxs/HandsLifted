@@ -22,7 +22,6 @@ namespace HandsLiftedApp.Utils
 {
     internal static class PlaylistUtils
     {
-
         public static readonly string[] SUPPORTED_SONG = { "txt", "xml" };
         public static readonly string[] SUPPORTED_POWERPOINT = { "ppt", "pptx", "odp" };
         public static readonly string[] SUPPORTED_VIDEO = { "mp4", "flv", "mov", "mkv", "avi", "wmv" };
@@ -78,7 +77,7 @@ namespace HandsLiftedApp.Utils
 
             SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
 
-            slidesGroup._Slides.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath, 0));
+            slidesGroup.Items.Add(fullPath);
 
             return slidesGroup;
         }
@@ -194,7 +193,7 @@ namespace HandsLiftedApp.Utils
         public static void UpdateSlidesGroup<X>(ref X slidesGroup, string directory) where X : SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>
         {
             int i = 0;
-            var prevCount = slidesGroup._Slides.Count;
+            var prevCount = slidesGroup.Items.Count;
 
 
             slidesGroup.State.LockSelectionIndex = true;
@@ -210,15 +209,15 @@ namespace HandsLiftedApp.Utils
                 foreach (var f in images)
                 {
 
-                    Slide x = (f.EndsWith(".mp4")) ? new VideoSlide<VideoSlideStateImpl>(f) { Index = i } : new ImageSlide<ImageSlideStateImpl>(f) { Index = i };
+                    //Slide x = (f.EndsWith(".mp4")) ? new VideoSlide<VideoSlideStateImpl>(f) { Index = i } : new ImageSlide<ImageSlideStateImpl>(f) { Index = i };
 
-                    if (slidesGroup._Slides.ElementAtOrDefault(i) == null)
+                    if (slidesGroup.Items.ElementAtOrDefault(i) == null)
                     {
-                        slidesGroup._Slides.Add(x);
+                        slidesGroup.Items.Add(f);
                     }
                     else
                     {
-                        slidesGroup._Slides[i] = x;
+                        slidesGroup.Items[i] = f;
                     }
 
                     i++;
@@ -228,7 +227,7 @@ namespace HandsLiftedApp.Utils
                 while (i < prevCount)
                 {
                     // keep removing last slide
-                    slidesGroup._Slides.RemoveAt(slidesGroup._Slides.Count - 1);
+                    slidesGroup.Items.RemoveAt(slidesGroup.Items.Count - 1);
                     i++;
                 }
 

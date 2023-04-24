@@ -1,6 +1,7 @@
 ﻿using EmbedIO;
 using EmbedIO.Actions;
 using EmbedIO.Files;
+using Swan.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,6 +53,7 @@ namespace HandsLiftedApp.Logic
         {
             if (ctSource != null)
                 ctSource.Cancel();
+
         }
     }
 }

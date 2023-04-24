@@ -27,6 +27,43 @@ namespace HandsLiftedApp.Utils
             //return playlist;
             var rnd = new Random();
 
+
+            if (Directory.Exists(@"C:\VisionScreens\Announcements"))
+            {
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>();
+                try
+                {
+                    //var images = Directory.GetFiles(@"C:\VisionScreens\Announcements", "*.*", SearchOption.AllDirectories)
+                    //                .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"))
+                    //                .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
+
+                    //ObservableCollection<Slide> slidesGroupItems = new ObservableCollection<Slide>();
+                    //int i = 0;
+                    //foreach (var f in images)
+                    //{
+                    //    if (f.EndsWith(".mp4"))
+                    //    {
+                    //        slidesGroupItems.Add(new VideoSlide<VideoSlideStateImpl>(f) { Index = i });
+                    //    }
+                    //    else
+                    //    {
+                    //        slidesGroupItems.Add(new ImageSlide<ImageSlideStateImpl>(f) { Index = i });
+                    //    }
+                    //    i++;
+                    //}
+                    //slidesGroup._Slides = slidesGroupItems;
+                    slidesGroup = PlaylistUtils.CreateSlidesGroup(@"C:\VisionScreens\Announcements");
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                }
+                slidesGroup.Title = "Announcements";
+
+                playlist.Items.Add(slidesGroup);
+            }
+
+
             if (Directory.Exists(@"C:\VisionScreens\TestSongs"))
             {
                 var songs = Directory.GetFiles(@"C:\VisionScreens\TestSongs", "*.*", SearchOption.AllDirectories)
@@ -39,39 +76,6 @@ namespace HandsLiftedApp.Utils
                 }
 
               
-            }
-
-            if (Directory.Exists(@"C:\VisionScreens\Announcements"))
-            {
-                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>();
-                try
-                {
-                    var images = Directory.GetFiles(@"C:\VisionScreens\Announcements", "*.*", SearchOption.AllDirectories)
-                                    .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg") || s.ToLower().EndsWith(".jpeg") || s.ToLower().EndsWith(".mp4"))
-                                    .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
-
-                    ObservableCollection<Slide> slidesGroupItems = new ObservableCollection<Slide>();
-                    int i = 0;
-                    foreach (var f in images)
-                    {
-                        if (f.EndsWith(".mp4"))
-                        {
-                            slidesGroupItems.Add(new VideoSlide<VideoSlideStateImpl>(f) { Index = i });
-                        }
-                        else
-                        {
-                            slidesGroupItems.Add(new ImageSlide<ImageSlideStateImpl>(f) { Index = i });
-                        }
-                        i++;
-                    }
-                    slidesGroup._Slides = slidesGroupItems;
-                }
-                catch (Exception e) {
-                    Log.Error(e.Message);
-                }
-                slidesGroup.Title = "Announcements";
-
-                playlist.Items.Add(slidesGroup);
             }
 
             return playlist;

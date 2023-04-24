@@ -7,6 +7,7 @@
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Diagnostics" />
     <PackageReference Include="LibVLCSharp" />
+    <PackageReference Include="Serilog" />
     <PackageReference Include="System.Reactive" />
   </ItemGroup>
   <ItemGroup>
