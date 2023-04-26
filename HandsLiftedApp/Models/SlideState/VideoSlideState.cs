@@ -1,13 +1,10 @@
-﻿using Avalonia.Controls.Shapes;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using Avalonia.ReactiveUI;
-using Avalonia.Threading;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using LibVLCSharp.Shared;
 using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
-using Serilog;
 using System;
 using System.IO;
 using System.Linq;
@@ -23,7 +20,6 @@ namespace HandsLiftedApp.Models.SlideState
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
     public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, IVideoSlideState, IDisposable
     {
-        private LibVLC _libVLC;
         public Media _media { get; set; }
 
         private CompositeDisposable _subscriptions;
@@ -38,19 +34,12 @@ namespace HandsLiftedApp.Models.SlideState
             // TODO init only when actually needed (on slide enter)
             try
             {
-                Log.Debug("init VLC");
-                _libVLC = new LibVLC();
-                MediaPlayer = new MediaPlayer(_libVLC);
-                Log.Debug("init VLC - DONE");
-
+                MediaPlayer = new MediaPlayer(Globals.GlobalLibVLCInstance);
                 MediaPlayer.EndReached += MediaPlayer_EndReached;
-
-
                 string absolute = new Uri(VideoPath).AbsoluteUri;
                 bool isfile = absolute.StartsWith("file://");
-                _media = new Media(_libVLC, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
+                _media = new Media(Globals.GlobalLibVLCInstance, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
                 MediaPlayer.Media = _media;
-
 
                 bool operationActive = false;
                 var refresh = new Subject<Unit>();

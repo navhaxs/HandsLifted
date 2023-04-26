@@ -9,6 +9,9 @@ using YamlDotNet.Serialization;
 using System.IO;
 using System.Diagnostics;
 using Avalonia.Controls;
+using LibVLCSharp.Shared;
+using System;
+using Serilog;
 
 namespace HandsLiftedApp
 {
@@ -17,6 +20,7 @@ namespace HandsLiftedApp
         public static PreferencesViewModel Preferences;
         public static StageDisplayViewModel StageDisplay = new StageDisplayViewModel();
         public static Env Env;
+        public static LibVLC GlobalLibVLCInstance;
 
         // note: this is initialized by App.axaml.cs on program start up
         public static void OnStartup(IApplicationLifetime applicationLifetime)
@@ -38,6 +42,16 @@ namespace HandsLiftedApp
             Globals.Preferences = RxApp.SuspensionHost.GetAppState<PreferencesViewModel>();
 
             Debug.Print(Preferences.ToString());
+
+            try
+            {
+                GlobalLibVLCInstance = new LibVLC();
+                Log.Information("VLC initialized OK");
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "VLC failed to initialize");
+            }
         }
 
         private static void LoadEnv()

@@ -5,6 +5,7 @@
 		<ApplicationIcon>Assets\app.ico</ApplicationIcon>
 		<AvaloniaXamlIlDebuggerLaunch>false</AvaloniaXamlIlDebuggerLaunch>
 		<TargetFrameworks>net6.0-windows</TargetFrameworks>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<PropertyGroup>
