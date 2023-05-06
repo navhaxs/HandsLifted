@@ -41,7 +41,7 @@
                 </Grid>
                 <ItemsControl Name="List"
                               Background="White"
-                              Items="{Binding Items}">
+                              ItemsSource="{Binding Items}">
                     <ItemsControl.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="0" />

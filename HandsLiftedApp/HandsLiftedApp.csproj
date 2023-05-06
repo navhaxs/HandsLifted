@@ -68,7 +68,6 @@
 		<PackageReference Include="Serilog.Sinks.Debug" />
 		<PackageReference Include="Serilog.Sinks.File" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" />
-		<PackageReference Include="XamlNameReferenceGenerator" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
 	<ItemGroup>
@@ -80,6 +79,8 @@
 		<ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Utils.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
 		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
+		<ProjectReference Include="..\Libraries\LibMpv\LibMpv.Client\LibMpv.Client.csproj" />
+		<ProjectReference Include="..\Libraries\LibMpv\LibMpv.Context\LibMpv.Context.csproj" />
 		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -154,5 +155,13 @@
 		<Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
 		  <DependentUpon>DefaultLayout.axaml</DependentUpon>
 		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Binaries\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="..\Libraries\LibMpv\mpv\mpv-dev-x86_64\libmpv-2.dll" Link="libmpv-2.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 </Project>

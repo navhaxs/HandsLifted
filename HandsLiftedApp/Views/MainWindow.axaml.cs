@@ -44,8 +44,8 @@ namespace HandsLiftedApp.Views
                 new TimeSpan(0, 0, 0, 0, 300),
                 DispatcherPriority.Background,
                 mouseWaitTimer_Tick
-            );
-
+            )
+            { IsEnabled = false };
 
             SubscribeToWindowState();
 
@@ -137,13 +137,11 @@ namespace HandsLiftedApp.Views
                 isLibraryVisible = !isLibraryVisible;
             };
 
-
             PlaylistTitleButton.PointerPressed += PlaylistTitleButton_PointerPressed;
             PlaylistTitleButton.PointerReleased += PlaylistTitleButton_PointerReleased;
             PlaylistTitleButton.PointerMoved += PlaylistTitleButton_PointerMoved;
             PlaylistTitleButton.DoubleTapped += PlaylistTitleButton_DoubleTapped;
             PlaylistTitleButton.Click += PlaylistTitleButton_Click;
-            //PlaylistTitleButton.AddHandler(TappedEvent, this.RegisterTap, handledEventsToo: true);
 
             log.Information("MainWindow initialized");
         }
@@ -211,7 +209,7 @@ namespace HandsLiftedApp.Views
                     cyTopHeight = 1
                 };
 
-                Win32.DwmExtendFrameIntoClientArea(this.PlatformImpl.Handle.Handle, ref margins);
+                Win32.DwmExtendFrameIntoClientArea(this.TryGetPlatformHandle().Handle, ref margins);
             }
         }
 

@@ -8,7 +8,7 @@
 			 Background="Black"
 			 x:Class="HandsLiftedApp.Views.StageDisplayLayout.SongLayout"
 			 >
-	<Grid ColumnDefinitions="0.8* 0.2*" RowDefinitions="0.5* 0.4* 0.1*">
+	<Grid>
 
 		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0">
 			<StackPanel>

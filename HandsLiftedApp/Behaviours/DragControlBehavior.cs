@@ -89,26 +89,26 @@ namespace HandsLiftedApp.Behaviours
 
         private void Source_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            var target = TargetControl ?? AssociatedObject;
-            if (target is { })
-            {
-                _parent = target.Parent;
+            //var target = TargetControl ?? AssociatedObject;
+            //if (target is { })
+            //{
+            //    _parent = target.Parent;
 
-                if (!(target.RenderTransform is TranslateTransform))
-                {
-                    target.RenderTransform = new TranslateTransform();
-                }
+            //    if (!(target.RenderTransform is TranslateTransform))
+            //    {
+            //        target.RenderTransform = new TranslateTransform();
+            //    }
 
-                _previous = e.GetPosition(_parent);
-                if (_parent != null)
-                {
-                    _parent.PointerMoved += Parent_PointerMoved;
-                    _parent.PointerReleased += Parent_PointerReleased;
-                }
+            //    _previous = e.GetPosition(_parent);
+            //    if (_parent != null)
+            //    {
+            //        _parent.PointerMoved += Parent_PointerMoved;
+            //        _parent.PointerReleased += Parent_PointerReleased;
+            //    }
 
-                ListBox listBox = (ListBox)target.Parent;
-                var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
-            }
+            //    ListBox listBox = (ListBox)target.Parent;
+            //    var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
+            //}
         }
 
         private ListBoxItem GetHoveredItem(ListBox listBox, Point pos, Control? target)

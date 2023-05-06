@@ -25,7 +25,7 @@
 		<converters:StanzaSortConverter x:Key="stanzaSortConverter"/>
 
 		<Flyout Placement="BottomEdgeAlignedLeft" x:Key="MySharedFlyout">
-			<ItemsControl Items="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+			<ItemsControl ItemsSource="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel />
@@ -67,7 +67,7 @@
 				<material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
 			</Button>
 
-			<ItemsControl Items="{Binding Arrangement}" MinHeight="20" Margin="4" VerticalAlignment="Center" Name="PART_ArrangementTokens">
+			<ItemsControl ItemsSource="{Binding Arrangement}" MinHeight="20" Margin="4" VerticalAlignment="Center" Name="PART_ArrangementTokens">
 				<ItemsControl.Styles>
 					<Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter DockPanel#PART_Container">
 						<Setter Property="Margin" Value="0 2 -5 2" />

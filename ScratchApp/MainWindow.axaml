@@ -63,7 +63,7 @@
 		</WrapPanel>
 
 		<!--<TextBlock Text="{Binding People, FallbackValue='2'}" FontSize="20" Foreground="Red" />-->
-		<DataGrid Name="DataGrid" Items="{Binding People}"  AutoGenerateColumns="True" />
+		<!--<DataGrid Name="DataGrid" Items="{Binding People}"  AutoGenerateColumns="True" />-->
 
 	</Grid>
 

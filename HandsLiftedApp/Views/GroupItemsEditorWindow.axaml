@@ -35,9 +35,9 @@
 			<Button>Load XML</Button>
 			<Button>Save XML</Button>
 		</StackPanel>
-	    <ListBox Name="DataGrid_Items"  
-				  Items="{Binding Items, Mode=TwoWay}"/>
-	    <DataGrid Name="DataGrid_Slides" AutoGenerateColumns="True" 
-				  Items="{Binding Slides, Mode=TwoWay}"/>
+	    <ListBox Name="DataGrid_Items"
+				  ItemsSource="{Binding Items, Mode=TwoWay}"/>
+	    <DataGrid Name="DataGrid_Slides" AutoGenerateColumns="True"
+				  ItemsSource="{Binding Slides, Mode=TwoWay}"/>
 	</DockPanel>
 </Window>

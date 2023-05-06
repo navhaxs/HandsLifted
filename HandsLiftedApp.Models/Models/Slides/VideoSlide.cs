@@ -44,6 +44,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public override void OnEnterSlide()
         {
+            Log.Debug("VideoSlide OnEnterSlide");
             base.OnEnterSlide();
             State.OnSlideEnterEvent();
         }

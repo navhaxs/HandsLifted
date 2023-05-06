@@ -29,6 +29,5 @@
     <PackageReference Include="Avalonia.Themes.Simple" />
     <PackageReference Include="SIL.Scripture" />
     <PackageReference Include="System.Net.Http.Json" />
-    <PackageReference Include="XamlNameReferenceGenerator" />
   </ItemGroup>
 </Project>

@@ -82,7 +82,7 @@
 						Foreground="White"
 						FontSize="12">LIVE</TextBlock>
 				</Border>-->
-				
+
 				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
 			</DockPanel>
 		</Border>
@@ -90,13 +90,13 @@
 		<item:ItemInfo VerticalAlignment="Top" />
 
 		<controls:ListBoxWithoutKey Name="List"
-				 Background="Transparent"
-				 Items="{Binding Slides}"
-			     SelectionMode="Single"
-				 SelectedIndex="{Binding State.SelectedSlideIndex, Mode=OneWay}"
-		    	AutoScrollToSelectedItem="False"
+				Background="Transparent"
+				ItemsSource="{Binding Slides}"
+				SelectionMode="Single"
+				SelectedIndex="{Binding State.SelectedSlideIndex, Mode=OneWay}"
+				AutoScrollToSelectedItem="False"
 				SelectionChanged="OnSelectionChanged"
-				 >
+				>
 			<controls:ListBoxWithoutKey.Styles>
 				<Style Selector="controls|ListBoxWithoutKey">
 					<Setter Property="BorderThickness" Value="0"/>
@@ -119,7 +119,7 @@
 					<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
 				</ItemsPanelTemplate>
 			</controls:ListBoxWithoutKey.ItemsPanel>
-			
+
 			<!--<controls:ListBoxWithoutKey.Control>
 				
 			</controls:ListBoxWithoutKey.Control>-->
@@ -141,7 +141,7 @@
 					<DataTemplate x:Key="ImageSlide">
 						<controls:SlideThumbnail>
 							<Grid>
-								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" 
+								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}"
 									   							RenderOptions.BitmapInterpolationMode="MediumQuality" />
 							</Grid>
 						</controls:SlideThumbnail>
@@ -175,8 +175,8 @@
 					</DataTemplate>
 				</utils:MyTemplateSelector>
 			</controls:ListBoxWithoutKey.DataTemplates>
-		
-	</controls:ListBoxWithoutKey>
+
+		</controls:ListBoxWithoutKey>
 
 	</StackPanel>
 </UserControl>

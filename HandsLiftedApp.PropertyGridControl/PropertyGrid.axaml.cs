@@ -15,8 +15,8 @@ namespace HandsLiftedApp.PropertyGridControl
     {
         public static readonly StyledProperty<object?> SelectedObjectProperty =
             AvaloniaProperty.Register<PropertyGrid, object?>(
-                nameof(SelectedObject), typeof(object),
-                notifying: OnSelectedObjectChanged);
+                nameof(SelectedObject), typeof(object));
+                //notifying: OnSelectedObjectChanged);
 
         public static readonly StyledProperty<PropertyGridEditControlFactory?> EditControlFactoryProperty =
             AvaloniaProperty.Register<PropertyGrid, PropertyGridEditControlFactory?>(

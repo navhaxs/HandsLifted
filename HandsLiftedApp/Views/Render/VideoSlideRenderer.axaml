@@ -3,7 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:v="using:LibVLCSharp.Avalonia"
+			 xmlns:videoRendering="using:HandsLiftedApp.Views.Render.VideoRendering"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 Background="Blue"
              x:Class="HandsLiftedApp.Views.Render.VideoSlideRenderer">
 	<!-- TODO: render player controls here -->
 	<UserControl.Styles>
@@ -13,7 +15,7 @@
 			<Setter Property="FontSize" Value="122" />
 		</Style>
 	</UserControl.Styles>
-	<Grid>
+	<Grid Background="Purple">
 		<DockPanel Background="Black">
 			<TextBlock Text="{Binding State.PrettyRemainingTime}" DockPanel.Dock="Bottom" />
 			<StackPanel>
@@ -28,13 +30,17 @@
 				</TextBlock>
 			</StackPanel>
 		</DockPanel>
-		<v:VideoView x:Name="VideoView" VlcRenderingOptions="AvaloniaCustomDrawingOperation">
+		<videoRendering:MpvOpenGlVideoView
+			x:Name="VideoView"
+			>
+		</videoRendering:MpvOpenGlVideoView>
+		<!--<v:VideoView x:Name="VideoView" VlcRenderingOptions="VlcNative">-->
 			<!--<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
 				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="44" />
 				<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"
 						FontSize="44" Click="StopButton_Click" />
 				<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" Background="Red" FontSize="44" />
 			</StackPanel>-->
-		</v:VideoView >
+		<!--</v:VideoView >-->
 	</Grid>
 </UserControl>

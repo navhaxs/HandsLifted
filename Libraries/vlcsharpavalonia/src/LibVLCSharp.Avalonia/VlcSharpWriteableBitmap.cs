@@ -62,7 +62,7 @@ namespace LibVLCSharp.Avalonia
 
         public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode)
         {
-            Render(context, 1, sourceRect, destRect, bitmapInterpolationMode);
+            //Render(context, 1, sourceRect, destRect, bitmapInterpolationMode);
         }
 
         public void Read(Action<IBitmap> action)
@@ -76,14 +76,9 @@ namespace LibVLCSharp.Avalonia
             }
         }
 
-        public void Render(DrawingContext context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)
-        {
-            Render(context.PlatformImpl, opacity, sourceRect, destRect, bitmapInterpolationMode);
-        }
-
         public void Render(IDrawingContextImpl context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)
         {
-            Read(b => context.DrawBitmap(_read.PlatformImpl, opacity, sourceRect, destRect, bitmapInterpolationMode));
+            //Read(b => context.DrawImage(_read, sourceRect));
             NotifyRendered();
         }
 

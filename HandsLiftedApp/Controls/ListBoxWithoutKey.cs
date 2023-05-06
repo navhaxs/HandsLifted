@@ -10,23 +10,23 @@ namespace HandsLiftedApp.Controls
     public class ListBoxWithoutKey : ListBox
     {
 
-        protected override void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            base.ItemsCollectionChanged(sender, e);
+        //protected override void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    base.ItemsCollectionChanged(sender, e);
 
-            // required to ensure no duplicate selected items after a 'move'
-            if (e.Action == NotifyCollectionChangedAction.Move)
-            {
-                for (int i = 0; i < this.ItemCount; i++) {
-                    var listBoxItemContainer = this.ContainerFromIndex(i);
-                    bool isSelected = i == this.SelectedIndex;
-                    if (listBoxItemContainer is ListBoxItem lbi)
-                    {
-                        lbi.IsSelected = isSelected;
-                    }
-                }
-            }
-        }
+        //    // required to ensure no duplicate selected items after a 'move'
+        //    if (e.Action == NotifyCollectionChangedAction.Move)
+        //    {
+        //        for (int i = 0; i < this.ItemCount; i++) {
+        //            var listBoxItemContainer = this.ContainerFromIndex(i);
+        //            bool isSelected = i == this.SelectedIndex;
+        //            if (listBoxItemContainer is ListBoxItem lbi)
+        //            {
+        //                lbi.IsSelected = isSelected;
+        //            }
+        //        }
+        //    }
+        //}
 
         protected override void OnKeyDown(KeyEventArgs e)
         {

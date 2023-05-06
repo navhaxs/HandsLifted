@@ -23,7 +23,7 @@
 			 SelectedItem="{Binding	SlideDesigner.ActiveDesign, Mode=OneWayToSource}"
 				 MinWidth="80"
 				 Name="designsListBox"
-				 Items="{Binding SlideDesigner.ListOfDesigns}">
+				 ItemsSource="{Binding SlideDesigner.ListOfDesigns}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Viewbox MaxHeight="60">
@@ -42,7 +42,7 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-		<Grid ColumnDefinitions="2* *">
+		<Grid>
 			<Viewbox Grid.Column="0" VerticalAlignment="Top">
 				<Grid Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}}" Height="1080" Width="1920">
 					<Border>

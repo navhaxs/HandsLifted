@@ -37,7 +37,7 @@
 		BorderBrush="#9a93cd">
 		<TabControl SelectedIndex="0">
 			<TabItem Header="Library" VerticalContentAlignment="Center">
-				<Grid ColumnDefinitions="* 2*">
+				<Grid>
 
 						<DockPanel>
 							<TextBox
@@ -47,7 +47,7 @@
 								Padding="8 4 8 4"
 								Text="{Binding Library.SearchTerm}"
 								FontSize="16" />
-							<ListBox Items="{Binding Library.SearchResults}"
+							<ListBox ItemsSource="{Binding Library.SearchResults}"
 									 SelectedItem="{Binding	Library.SelectedItem}"
 									 BorderThickness="0"
 						 >

@@ -16,7 +16,7 @@
 		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
 		x:Class="HandsLiftedApp.Views.MainWindow"
 		Icon="/Assets/app.ico"
-		
+	
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
 		ExtendClientAreaTitleBarHeightHint="90"
@@ -512,7 +512,7 @@
 							<Border BorderBrush="#9a93cd" BorderThickness="0 1 0 1">
 								<Viewbox>
 
-									<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="False" PageTransition="{Binding ActiveItemPageTransition}" />
+									<!--<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="False" PageTransition="{Binding ActiveItemPageTransition}" />-->
 
 									<!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
 									<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
@@ -571,6 +571,7 @@
 			</DockPanel>
 
 			<Rectangle x:Name="shade" IsVisible="False" Fill="#80000000" />
+
 		</Grid>
 	</Border>
 

@@ -73,10 +73,11 @@
 
 	<Grid>
 
+		
 		<ListBox
 			x:Name="itemsListBox"
-			Items="{Binding Playlist.Items, Mode=OneWay}"
 			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
 			Classes="ItemsDragAndDrop"
 			Background="Transparent"
 			DragDrop.AllowDrop="True">

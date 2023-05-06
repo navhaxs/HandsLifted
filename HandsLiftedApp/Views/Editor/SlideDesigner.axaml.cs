@@ -12,9 +12,9 @@ namespace HandsLiftedApp.Views.Editor
             InitializeComponent();
 
             var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            var fontFamilies = FontManager.Current.GetInstalledFontFamilyNames().ToList();
-            fontFamilies.Sort();
-            fontComboBox.Items = fontFamilies.Select(x => new FontFamily(x));
+            var fontFamilies = FontManager.Current.SystemFonts.ToList();
+            //fontFamilies.Sort();
+            fontComboBox.ItemsSource = fontFamilies;
             fontComboBox.SelectedIndex = 0;
         }
     }

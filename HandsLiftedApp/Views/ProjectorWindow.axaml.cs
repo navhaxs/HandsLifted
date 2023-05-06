@@ -10,9 +10,11 @@ using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
+using LibVLCSharp.Avalonia;
 using ReactiveUI;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
 {
@@ -85,6 +87,16 @@ namespace HandsLiftedApp.Views
                 //this.Width = this.Screens.All[1].Bounds.Width;
                 //this.Height= this.Screens.All[1].Bounds.Height;
             }
+
+
+            //Task.Run(() =>
+            //{
+
+            //    VideoView.MpvContext = Globals.GlobalMpvContext;
+            //    Task.Delay(10000).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
+            //    Globals.GlobalMpvContext.Command("loadfile", "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "replace");
+            //    Globals.GlobalMpvContext.SetPropertyFlag("pause", false);
+            //});
 
         }
 

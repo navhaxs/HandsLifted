@@ -319,7 +319,7 @@
         </StackPanel.Clock>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="20">
           <TextBlock VerticalAlignment="Center">Hover to activate Keyframe Animations.</TextBlock>
-          <Button Content="{Binding PlayStateText}" Command="{Binding TogglePlayState}" Click="ToggleClock" />
+          <Button IsHitTestVisible="False" Opacity="0" Content="{Binding PlayStateText}" Command="{Binding TogglePlayState}" Click="ToggleClock" />
         </StackPanel>
         <WrapPanel ClipToBounds="False">
           <Border Classes="Test Rect1" Background="DarkRed"/>

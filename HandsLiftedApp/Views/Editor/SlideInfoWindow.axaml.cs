@@ -32,7 +32,7 @@ namespace HandsLiftedApp.Views.Editor
                     cyTopHeight = 1
                 };
 
-                Win32.DwmExtendFrameIntoClientArea(this.PlatformImpl.Handle.Handle, ref margins);
+                Win32.DwmExtendFrameIntoClientArea(this.TryGetPlatformHandle().Handle, ref margins);
             }
         }
     }

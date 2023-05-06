@@ -35,7 +35,7 @@
 						<StackPanel>
 							<TextBox Text="{Binding song.Title}" Watermark="Song Title" FontWeight="Bold" FontSize="30" Padding="0 6 0 5" TextWrapping="Wrap" Margin="12 12 12 12" />
 
-							<ItemsControl Items="{Binding song.Stanzas}" Margin="0 0 5 0">
+							<ItemsControl ItemsSource="{Binding song.Stanzas}" Margin="0 0 5 0">
 							<!--<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<WrapPanel Orientation="Vertical" ItemWidth="360" />
@@ -126,7 +126,7 @@
 				<ListBox Name="List"
 						 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 						 BorderThickness="0"
-						Items="{Binding song.Slides}">
+						ItemsSource="{Binding song.Slides}">
 					<ListBox.Styles>
 						<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml" />
 					</ListBox.Styles>

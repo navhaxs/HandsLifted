@@ -33,7 +33,7 @@ namespace HandsLiftedApp.Models.SlideDesigner {
         }
 
         public FontFamily TryParseFontFamily(string fontFamilyName) {
-            var installedFontFamilyNames = FontManager.Current.GetInstalledFontFamilyNames();
+            var installedFontFamilyNames = FontManager.Current.SystemFonts;
             if (installedFontFamilyNames.Contains(fontFamilyName))
                 return FontFamily.Parse("Trakya Rounded 300");
 

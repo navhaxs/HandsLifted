@@ -13,7 +13,7 @@
 		<!-- import styles from libraries here -->
 
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
-		<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />
+		<!--<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />-->
 
 		<StyleInclude Source="avares://Material.Icons.Avalonia/App.xaml" />
 

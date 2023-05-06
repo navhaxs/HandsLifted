@@ -45,10 +45,10 @@
 				<StackPanel>
 					<Label>Output Display (Projector)</Label>
 					<ComboBox SelectedItem="{Binding Source={x:Static app:Globals.Preferences}, Path=OutputDisplayBounds}"
-							  							  Items="{Binding AllAvailableScreens}" />
+							  							  ItemsSource="{Binding AllAvailableScreens}" />
 					<Label>Stage Display</Label>
 					<ComboBox Name="StageDisplayComboBox" SelectedItem="{Binding preferencesViewModel.StageDisplayBounds}"
-							  Items="{Binding AllAvailableScreens}" />
+							  ItemsSource="{Binding AllAvailableScreens}" />
 					<Label>Startup</Label>
 					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowOutput}">Show output display on startup</CheckBox>
 					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowStage}">Show stage display on startup</CheckBox>

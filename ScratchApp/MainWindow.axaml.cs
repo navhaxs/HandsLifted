@@ -23,7 +23,7 @@ namespace ScratchApp
             };
             People = new ObservableCollection<Person>(x);
 
-            this.FindControl<DataGrid>("DataGrid").Items = x;
+            //this.FindControl<DataGrid>("DataGrid").Items = x;
 
         }
 

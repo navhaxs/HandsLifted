@@ -234,13 +234,13 @@ namespace HandsLiftedApp.XTransitioningContentControl
             {
                 using (SKCanvas canvas = new SKCanvas(bitmap)) {
 
-                    using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
-
-                    using var renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
+                    using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
+                    using RenderTargetBitmap renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
                     renderedBitmap.Render(visual);
-                    contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
-                        new Rect(0, 0, 1920, 1080),
-                        new Rect(0, 0, 1920, 1080));
+                    // TODO broken
+                    //contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
+                        //new Rect(0, 0, 1920, 1080),
+                        //new Rect(0, 0, 1920, 1080));
                 }
                 // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
                 // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563

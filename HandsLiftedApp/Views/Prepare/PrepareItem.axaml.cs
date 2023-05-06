@@ -9,14 +9,14 @@ namespace HandsLiftedApp.Views.Prepare {
             InitializeComponent();
         }
 
-        private string _itemTitle = "Untitled Item";
+       // private string _itemTitle = "Untitled Item";
 
-        public string ItemTitle {
-            get => _itemTitle;
-            set => SetAndRaise(ItemTitleProperty, ref _itemTitle, value);
-        }
+       // public string ItemTitle {
+       //     get => _itemTitle;
+       //     set => SetAndRaise(ItemTitleProperty, ref _itemTitle, value);
+       // }
 
-        public static readonly AttachedProperty<string> ItemTitleProperty =
-       AvaloniaProperty.RegisterAttached<PrepareItem, string>(nameof(ItemTitle), typeof(string));
+       // public static readonly AttachedProperty<string> ItemTitleProperty =
+       //AvaloniaProperty.RegisterAttached<PrepareItem, string>(nameof(ItemTitle), typeof(string));
     }
 }

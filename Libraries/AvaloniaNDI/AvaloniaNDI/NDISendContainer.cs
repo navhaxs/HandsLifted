@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Rendering;
 using Avalonia.Skia.Helpers;
 using Avalonia.Skia;
 using Avalonia.Threading;
@@ -20,6 +19,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Platform;
+using System.IO;
+using Avalonia.Rendering;
 
 namespace AvaloniaNDI {
     public class NDISendContainer : Viewbox, INotifyPropertyChanged, IDisposable
@@ -581,15 +583,67 @@ Description("Function to determine whether the content requires high resolution 
             // get the canvas from the surface
             var canvas = surface.Canvas;
 
-            using var contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
+            using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
 
             // render the Avalonia visual
             targetBitmap.Render(this.Child);
 
             // draw rendered visual into the buffer
-            contextImpl.DrawBitmap(targetBitmap.PlatformImpl, 1.0,
-                new Rect(0, 0, 1920, 1080),
-                new Rect(0, 0, 1920, 1080));
+            DrawingContext drawingContext = targetBitmap.CreateDrawingContext();
+
+            // not implmented -
+            // Copies the bitmap pixel data into an array of pixels with the specified stride, starting at the specified offset.
+            //targetBitmap.CopyPixels(new PixelRect(0, 0, 1920, 1080), bufferPtr, bufferSize, stride);
+
+            // this is broken in preview7 -
+            // contextImpl.DrawBitmap(targetBitmap.PlatformImpl, 1.0,
+            //    new Rect(0, 0, 1920, 1080),
+            //    new Rect(0, 0, 1920, 1080));
+
+            //using var doc = SKDocument.CreatePdf(fileName);
+            //var visual = this.Child;
+            //{
+            //    var bounds = visual.Bounds;
+            //    var page = doc.BeginPage((float)bounds.Width, (float)bounds.Height);
+            //    using var context = DrawingContextHelper.WrapSkiaCanvas(page, SkiaPlatform.DefaultDpi));
+            //    targetBitmap.Render(visual, context);
+            //    doc.EndPage();
+            //}
+            //doc.Close();
+
+            //targetBitmap.Save(@"R:\2.png");
+
+            //if (targetBitmap is RenderTargetBitmap renderTargetBitmap)
+            //{
+            //    Type type = renderTargetBitmap.PlatformImpl.Item.GetType();
+            //    if (type.FullName == "Avalonia.Skia.SurfaceRenderTarget")
+            //    {
+            //        MethodInfo getSnapshotMethod = type.GetMethod("SnapshotImage");
+            //        object skImageObject = getSnapshotMethod.Invoke(renderTargetBitmap.PlatformImpl.Item, null);
+            //        if (skImageObject != null)
+            //        {
+            //            SKImage skImage = (SKImage)skImageObject;
+            //            //skImage.ToRasterImage();
+
+            //            canvas.DrawImage(skImage.ToRasterImage(), new SKPoint(0, 0));
+
+            //            using (var image = surface.Snapshot())
+            //            using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
+            //            using (var stream = File.OpenWrite(Path.Combine(@"R:\", "1.png")))
+            //            {
+            //                // save the data to a stream
+            //                data.SaveTo(stream);
+            //            }
+            //        }
+            //    }
+            //}
+            //var x = new Avalonia.Rendering.RendererBase();
+
+            //Type vc= x.GetType();
+            Type type = Type.GetType("Avalonia.Rendering.ImmediateRenderer, Avalonia.Base, Version=11.0.0.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b");
+            MethodInfo renderMethod = type.GetMethod("Render", new [] {typeof(Visual), typeof(DrawingContext)});
+            renderMethod.Invoke(null, new object[] { this.Child, drawingContext });
+
 
             // add it to the output queue
             AddFrame(videoFrame);

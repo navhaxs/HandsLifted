@@ -164,7 +164,7 @@ namespace HandsLiftedApp.PropertyGridControl
             IEnumerable<ConfigurablePropertyMetadata> allProperties)
         {
             var ctrlComboBox = new ComboBox();
-            ctrlComboBox.Items = property.GetEnumMembers();
+            ctrlComboBox.ItemsSource = property.GetEnumMembers();
             ctrlComboBox[!SelectingItemsControl.SelectedItemProperty] = new Binding(
                 nameof(property.ValueAccessor),
                 BindingMode.TwoWay);

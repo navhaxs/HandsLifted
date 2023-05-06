@@ -85,7 +85,7 @@ namespace HandsLiftedApp.Views
             {
                 target.Items.Move(fromIndex, nextIndex);
                 //DataGrid_Items.Items = null;
-                DataGrid_Items.Items = target.Items;
+                DataGrid_Items.ItemsSource = target.Items;
                 DataGrid_Items.SelectedIndex = nextIndex ;
             }
         }

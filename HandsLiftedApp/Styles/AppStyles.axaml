@@ -49,18 +49,12 @@
 											Grid.RowSpan="1"
 											Grid.ColumnSpan="1"
 											Background="{TemplateBinding Background}"
-											CanHorizontallyScroll="{TemplateBinding CanHorizontallyScroll}"
-											CanVerticallyScroll="{TemplateBinding CanVerticallyScroll}"
 											Content="{TemplateBinding Content}"
-											Extent="{TemplateBinding Extent, Mode=TwoWay}"
 											Padding="{TemplateBinding Padding}"
 											Offset="{TemplateBinding Offset, Mode=TwoWay}"
-											Viewport="{TemplateBinding Viewport, Mode=TwoWay}"
->
+											>
 						<ScrollContentPresenter.GestureRecognizers>
-							<ScrollGestureRecognizer
-							  CanHorizontallyScroll="{TemplateBinding CanHorizontallyScroll}"
-							  CanVerticallyScroll="{TemplateBinding CanVerticallyScroll}" />
+							<ScrollGestureRecognizer />
 						</ScrollContentPresenter.GestureRecognizers>
 					</ScrollContentPresenter>
 					<ScrollBar Name="PART_HorizontalScrollBar"
@@ -68,9 +62,6 @@
 							   Orientation="Horizontal"
 							   LargeChange="{Binding LargeChange.Width, RelativeSource={RelativeSource TemplatedParent}}"
 							   SmallChange="{Binding SmallChange.Width, RelativeSource={RelativeSource TemplatedParent}}"
-							   Maximum="{TemplateBinding HorizontalScrollBarMaximum}"
-							   Value="{TemplateBinding HorizontalScrollBarValue, Mode=TwoWay}"
-							   ViewportSize="{TemplateBinding HorizontalScrollBarViewportSize}"
 							   Visibility="{TemplateBinding HorizontalScrollBarVisibility}"
 							   Grid.Row="1"
 							   Focusable="False" />
@@ -79,9 +70,6 @@
 							   Orientation="Vertical"
 							   LargeChange="{Binding LargeChange.Height, RelativeSource={RelativeSource TemplatedParent}}"
 							   SmallChange="{Binding SmallChange.Height, RelativeSource={RelativeSource TemplatedParent}}"
-							   Maximum="{TemplateBinding VerticalScrollBarMaximum}"
-							   Value="{TemplateBinding VerticalScrollBarValue, Mode=TwoWay}"
-							   ViewportSize="{TemplateBinding VerticalScrollBarViewportSize}"
 							   Visibility="{TemplateBinding VerticalScrollBarVisibility}"
 							   Grid.Column="1"
 							   Focusable="False" />

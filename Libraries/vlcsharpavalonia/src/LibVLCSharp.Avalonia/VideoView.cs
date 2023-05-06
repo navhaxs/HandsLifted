@@ -42,7 +42,7 @@ namespace LibVLCSharp.Avalonia
         }
 
         private VlcVideoSourceProvider _provider = new VlcVideoSourceProvider();
-        private Image PART_Image;
+        private Control PART_Image;
         private NativeVideoPresenter PART_NativeHost;
         private bool _templateApplied;
 
@@ -81,7 +81,7 @@ namespace LibVLCSharp.Avalonia
         {
             base.OnApplyTemplate(e);
 
-            PART_Image = e.NameScope.Find<Image>("PART_RenderImage");
+            PART_Image = e.NameScope.Find<Control>("PART_RenderImage");
             PART_NativeHost = e.NameScope.Find<NativeVideoPresenter>("PART_NativeHost");
 
             _templateApplied = true;

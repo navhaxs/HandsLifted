@@ -3,38 +3,42 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.ReactiveUI;
 using Avalonia.Rendering.SceneGraph;
+using Avalonia.Visuals;
+using Avalonia.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-
+using Avalonia.Controls;
+using Avalonia.Logging;
+using Avalonia.Media;
+using Avalonia.Metadata;
 namespace LibVLCSharp.Avalonia
 {
-    public class VLCImageRenderer : Image
+    public class VLCImageRenderer : Control
     {
         public VLCImageRenderer()
         {
-            this.GetObservable(SourceProperty).Subscribe(v =>
-            {
-                _subscriptions?.Dispose();
-                _subscriptions = null;
+            //this.GetObservable(SourceProperty).Subscribe(v =>
+            //{
+            //    _subscriptions?.Dispose();
+            //    _subscriptions = null;
 
-                if (v is VlcSharpWriteableBitmap vb)
-                {
-                    var m = vb.Updated.Select(_ => vb.PixelSize)
-                                    .DistinctUntilChanged()
-                                    .ObserveOn(AvaloniaScheduler.Instance)
-                                    .Subscribe(_ => InvalidateMeasure());
+            //    if (v is VlcSharpWriteableBitmap vb)
+            //    {
+            //        var m = vb.Updated.Select(_ => vb.PixelSize)
+            //                        .DistinctUntilChanged()
+            //                        .ObserveOn(AvaloniaScheduler.Instance)
+            //                        .Subscribe(_ => InvalidateMeasure());
 
-                    var f = vb.Updated.Subscribe(_ => _stats.DeliveredFrame());
+            //        var f = vb.Updated.Subscribe(_ => _stats.DeliveredFrame());
 
-                    _subscriptions = new CompositeDisposable(m, f);
-                }
-            });
+            //        _subscriptions = new CompositeDisposable(m, f);
+            //    }
+            //});
         }
 
         public static readonly DirectPropertyBase<VlcVideoSourceProvider> SourceProviderProperty =
@@ -49,7 +53,7 @@ namespace LibVLCSharp.Avalonia
             {
                 if (SetAndRaise(SourceProviderProperty, ref _sourceProvider, value))
                 {
-                    Source = _sourceProvider?.VideoSource;
+                    //Source = _sourceProvider?.VideoSource;
                 }
             }
         }
@@ -121,58 +125,81 @@ namespace LibVLCSharp.Avalonia
 
             public void Render(IDrawingContextImpl context)
             {
-                try
-                {
-                    using (_stats.RenderFrame())
-                    {
-                        if (_source is VlcSharpWriteableBitmap vb)
-                            vb.Render(context, 1, _sourceRect, _destRect, _interpolationMode);
-                        else
-                            context.DrawBitmap(_source.PlatformImpl, 1, _sourceRect, _destRect, _interpolationMode);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"error render:{e.ToString()}");
-                }
+                //try
+                //{
+                //    using (_stats.RenderFrame())
+                //    {
+                //        if (_source is VlcSharpWriteableBitmap vb)
+                //            vb.Render(context, 1, _sourceRect, _destRect, _interpolationMode);
+                //        else
+                //            context.DrawBitmap(_source.PlatformImpl, 1, _sourceRect, _destRect, _interpolationMode);
+                //    }
+                //}
+                //catch (Exception e)
+                //{
+                //    Console.WriteLine($"error render:{e.ToString()}");
+                //}
 
-                _stats.Render(context, $"{_sourceRect.Width}x{_sourceRect.Height} -> {_destRect.Width.ToString("0.00")}x{_destRect.Height.ToString("0.00")}");
+                //_stats.Render(context, $"{_sourceRect.Width}x{_sourceRect.Height} -> {_destRect.Width.ToString("0.00")}x{_destRect.Height.ToString("0.00")}");
             }
         }
 
         //public override void Render(DrawingContext context)
         //{
-        //    if (UseCustomDrawingOperation)
+        //    var source = _sourceProvider?.VideoSource;
+
+        //    if (source != null && Bounds.Width > 0 && Bounds.Height > 0)
         //    {
-        //        var source = Source as IBitmap;
-        //        if (source != null)
-        //        {
-        //            Rect viewPort = new Rect(Bounds.Size);
-        //            Size sourceSize = source.PixelSize.ToSize(1);
-        //            Vector scale = Stretch.CalculateScaling(Bounds.Size, sourceSize);
-        //            Size scaledSize = sourceSize * scale;
-        //            Rect destRect = viewPort
-        //                .CenterRect(new Rect(scaledSize))
-        //                .Intersect(viewPort);
-        //            Rect sourceRect = new Rect(sourceSize)
-        //                .CenterRect(new Rect(destRect.Size / scale));
+        //        Rect viewPort = new Rect(Bounds.Size);
+        //        Size sourceSize = source.Size;
 
-        //            var interpolationMode = RenderOptions.GetBitmapInterpolationMode(this);
+        //        Vector scale = Stretch.Uniform.CalculateScaling(Bounds.Size, sourceSize, StretchDirection.Both);
+        //        Size scaledSize = sourceSize * scale;
+        //        Rect destRect = viewPort
+        //            .CenterRect(new Rect(scaledSize))
+        //            .Intersect(viewPort);
+        //        Rect sourceRect = new Rect(sourceSize)
+        //            .CenterRect(new Rect(destRect.Size / scale));
 
-        //            context.Custom(new CustomOp(source, sourceRect, destRect, interpolationMode, _stats));
-        //        }
-        //    }
-        //    else
-        //    {
-        //        using (_stats.RenderFrame())
-        //        {
-        //            base.Render(context);
-        //        }
-
-        //        var size = (Source as IBitmap)?.PixelSize ?? default(PixelSize);
-        //        _stats.Render(context, $"{size.Width}x{size.Height}");
+        //        context.DrawImage(source, sourceRect, destRect);
         //    }
         //}
+
+        public override void Render(DrawingContext context)
+        {
+            var Source = _sourceProvider?.VideoSource;
+
+            if (UseCustomDrawingOperation)
+            {
+                var source = Source as IBitmap;
+                if (source != null)
+                {
+                    Rect viewPort = new Rect(Bounds.Size);
+                    Size sourceSize = source.PixelSize.ToSize(1);
+                    Vector scale = Stretch.Uniform.CalculateScaling(Bounds.Size, sourceSize);
+                    Size scaledSize = sourceSize * scale;
+                    Rect destRect = viewPort
+                        .CenterRect(new Rect(scaledSize))
+                        .Intersect(viewPort);
+                    Rect sourceRect = new Rect(sourceSize)
+                        .CenterRect(new Rect(destRect.Size / scale));
+
+                    var interpolationMode = RenderOptions.GetBitmapInterpolationMode(this);
+
+                    context.Custom(new CustomOp(source, sourceRect, destRect, interpolationMode, _stats));
+                }
+            }
+            else
+            {
+                using (_stats.RenderFrame())
+                {
+                    base.Render(context);
+                }
+
+                var size = (Source as IBitmap)?.PixelSize ?? default(PixelSize);
+                //_stats.Render(context, $"{size.Width}x{size.Height}");
+            }
+        }
 
         private readonly RenderingStats _stats = new RenderingStats();
 
@@ -204,7 +231,7 @@ namespace LibVLCSharp.Avalonia
                 _rendered = 0;
                 _delivered = 0;
                 _last = 0;
-                _text = null;
+                //_text = null;
             }
 
             public void DeliveredFrame() => _delivered++;
@@ -242,24 +269,29 @@ namespace LibVLCSharp.Avalonia
                        $"stats for last {_frameTimes.Count} frames, rendered fps: {f(1000.0 / dur)}, time for render: {f(_frameDurations.Average())} ms";
             }
 
-            public void Render(DrawingContext context, string info, double x = 10, double y = 10)
-            {
-                Render(context, info, x, y);
-            }
+            //public void Render(DrawingContext context, string info, double x = 10, double y = 10)
+            //{
+            //    Render(context.PlatformImpl, info, x, y);
+            //}
 
-            private FormattedText _text;
+            //private DiagnosticTextRenderer 
 
-            public void Render(IDrawingContextImpl context, string info, double x = 10, double y = 10)
-            {
-                if (Enabled)
-                {
-                    //_text = _text != null && _rendered % UpdateStatsPerFrames != 0 ?
-                    //                _text :
-                    //                new FormattedText() { Text = $"{info}\n{ToString()}", FontSize = 12, Typeface = Typeface.Default };
-                    //context.DrawRectangle(Brushes.Black, null, _text.Bounds.Translate(new Vector(x, y)));
-                    //context.DrawText(Brushes.White, new Point(x, y), _text.PlatformImpl);
-                }
-            }
+            //public void Render(IDrawingContextImpl context, string info, double x = 10, double y = 10)
+            //{
+            //    if (Enabled)
+            //    {
+            //        //_text = _text != null && _rendered % UpdateStatsPerFrames != 0 ?
+            //        //                _text :
+            //        //                new FormattedText($"{info}\n{ToString()}", System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight, Typeface.Default, 12, new SolidColorBrush());
+            //        //context.DrawRectangle(Brushes.Black, null, _text.Bounds.Translate(new Vector(x, y)));
+            //        //context.DrawRectangle(Brushes.Red, null, new RoundedRect(new Rect(0, 0, 1000, 1000)));
+            //        //var text = "Current rendering API is not Skia";
+            //        //var glyphs = text.Select(ch => Typeface.Default.GlyphTypeface.GetGlyph(ch)).ToArray();
+            //        //context.DrawGlyphRun(Brushes.Black, new GlyphRun(Typeface.Default.GlyphTypeface, 12, text.AsMemory(), glyphs).PlatformImpl);
+
+            //        //context.DrawBitmap(Brushes.Black, ;
+            //    }
+            //}
         }
     }
 }

@@ -19,7 +19,7 @@
 	<DockPanel Background="#a4a4a4">
 		<TextBlock DockPanel.Dock="Top" Text="{Binding $parent[Window].Title}" FontSize="22"/>
 		<ListBox x:Name="items" Background="#a4a4a4"
-				 Items="{Binding}" SelectedIndex="0">
+				 ItemsSource="{Binding}" SelectedIndex="0">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<!-- disable virtualization -->
