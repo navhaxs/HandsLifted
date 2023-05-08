@@ -16,29 +16,31 @@ using Avalonia.Controls;
 using Avalonia.Logging;
 using Avalonia.Media;
 using Avalonia.Metadata;
+using Avalonia.ReactiveUI;
+
 namespace LibVLCSharp.Avalonia
 {
-    public class VLCImageRenderer : Control
+    public class VLCImageRenderer : Image
     {
         public VLCImageRenderer()
         {
-            //this.GetObservable(SourceProperty).Subscribe(v =>
-            //{
-            //    _subscriptions?.Dispose();
-            //    _subscriptions = null;
+            this.GetObservable(SourceProperty).Subscribe(v =>
+            {
+                _subscriptions?.Dispose();
+                _subscriptions = null;
 
-            //    if (v is VlcSharpWriteableBitmap vb)
-            //    {
-            //        var m = vb.Updated.Select(_ => vb.PixelSize)
-            //                        .DistinctUntilChanged()
-            //                        .ObserveOn(AvaloniaScheduler.Instance)
-            //                        .Subscribe(_ => InvalidateMeasure());
+                if (v is VlcSharpWriteableBitmap vb)
+                {
+                    var m = vb.Updated.Select(_ => vb.PixelSize)
+                                    .DistinctUntilChanged()
+                                    .ObserveOn(AvaloniaScheduler.Instance)
+                                    .Subscribe(_ => InvalidateMeasure());
 
-            //        var f = vb.Updated.Subscribe(_ => _stats.DeliveredFrame());
+                    var f = vb.Updated.Subscribe(_ => _stats.DeliveredFrame());
 
-            //        _subscriptions = new CompositeDisposable(m, f);
-            //    }
-            //});
+                    _subscriptions = new CompositeDisposable(m, f);
+                }
+            });
         }
 
         public static readonly DirectPropertyBase<VlcVideoSourceProvider> SourceProviderProperty =
@@ -53,7 +55,7 @@ namespace LibVLCSharp.Avalonia
             {
                 if (SetAndRaise(SourceProviderProperty, ref _sourceProvider, value))
                 {
-                    //Source = _sourceProvider?.VideoSource;
+                    Source = _sourceProvider?.VideoSource;
                 }
             }
         }
@@ -125,6 +127,7 @@ namespace LibVLCSharp.Avalonia
 
             public void Render(IDrawingContextImpl context)
             {
+
                 //try
                 //{
                 //    using (_stats.RenderFrame())
@@ -165,41 +168,42 @@ namespace LibVLCSharp.Avalonia
         //    }
         //}
 
-        public override void Render(DrawingContext context)
-        {
-            var Source = _sourceProvider?.VideoSource;
+        //public override void Render(DrawingContext context)
+        //{
+        //    var Source = _sourceProvider?.VideoSource;
 
-            if (UseCustomDrawingOperation)
-            {
-                var source = Source as IBitmap;
-                if (source != null)
-                {
-                    Rect viewPort = new Rect(Bounds.Size);
-                    Size sourceSize = source.PixelSize.ToSize(1);
-                    Vector scale = Stretch.Uniform.CalculateScaling(Bounds.Size, sourceSize);
-                    Size scaledSize = sourceSize * scale;
-                    Rect destRect = viewPort
-                        .CenterRect(new Rect(scaledSize))
-                        .Intersect(viewPort);
-                    Rect sourceRect = new Rect(sourceSize)
-                        .CenterRect(new Rect(destRect.Size / scale));
+        //    if (UseCustomDrawingOperation)
+        //    {
+        //        var source = Source as IBitmap;
+        //        if (source != null)
+        //        {
+        //            Rect viewPort = new Rect(Bounds.Size);
+        //            Size sourceSize = source.PixelSize.ToSize(1);
+        //            Vector scale = Stretch.Uniform.CalculateScaling(Bounds.Size, sourceSize);
+        //            Size scaledSize = sourceSize * scale;
+        //            Rect destRect = viewPort
+        //                .CenterRect(new Rect(scaledSize))
+        //                .Intersect(viewPort);
+        //            Rect sourceRect = new Rect(sourceSize)
+        //                .CenterRect(new Rect(destRect.Size / scale));
 
-                    var interpolationMode = RenderOptions.GetBitmapInterpolationMode(this);
+        //            var interpolationMode = RenderOptions.GetBitmapInterpolationMode(this);
 
-                    context.Custom(new CustomOp(source, sourceRect, destRect, interpolationMode, _stats));
-                }
-            }
-            else
-            {
-                using (_stats.RenderFrame())
-                {
-                    base.Render(context);
-                }
+        //            context.Custom(new CustomOp(source, sourceRect, destRect, interpolationMode, _stats));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        using (_stats.RenderFrame())
+        //        {
+        //            Source
+        //            base.Render(context);
+        //        }
 
-                var size = (Source as IBitmap)?.PixelSize ?? default(PixelSize);
-                //_stats.Render(context, $"{size.Width}x{size.Height}");
-            }
-        }
+        //        var size = (Source as IBitmap)?.PixelSize ?? default(PixelSize);
+        //        //_stats.Render(context, $"{size.Width}x{size.Height}");
+        //    }
+        //}
 
         private readonly RenderingStats _stats = new RenderingStats();
 

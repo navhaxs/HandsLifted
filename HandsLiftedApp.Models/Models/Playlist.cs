@@ -35,7 +35,7 @@ namespace HandsLiftedApp.Data.Models
         public DateTimeOffset Date { get => _date; set => this.RaiseAndSetIfChanged(ref _date, value); }
 
         [XmlIgnore]
-        public String PrettyDate => Date.ToString("dd MMM yyyy", CultureInfo.InvariantCulture);
+        public String PrettyDate => Date.ToString("d MMM yyyy", CultureInfo.InvariantCulture);
 
         private T _state;
 

@@ -102,7 +102,7 @@
 
 								<Popup Name="flyout"
 									   IsLightDismissEnabled="True"
-									   PlacementMode="Bottom"
+									   PlacementMode="BottomEdgeAlignedLeft"
 									   PlacementTarget="{Binding #AppMenuButton}">
 									<views:AppMainMenuControl />
 								</Popup>
@@ -512,7 +512,7 @@
 							<Border BorderBrush="#9a93cd" BorderThickness="0 1 0 1">
 								<Viewbox>
 
-									<!--<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="False" PageTransition="{Binding ActiveItemPageTransition}" />-->
+									<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="False" PageTransition="{Binding ActiveItemPageTransition}" />
 
 									<!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
 									<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
@@ -521,7 +521,8 @@
 							</Border>
 						</Grid>
 
-						<UniformGrid DockPanel.Dock="Top" Columns="2" Rows="1" Height="35">
+						<UniformGrid DockPanel.Dock="Top" Columns="2" Rows="1" Height="35"
+									 Margin="6 6">
 							<UniformGrid.Styles>
 								<Style Selector="RadioButton">
 									<Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -542,8 +543,10 @@
 									</Setter>
 								</Style>
 							</UniformGrid.Styles>
-							<RadioButton IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton>
-							<RadioButton IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
+							<RadioButton IsChecked="{Binding Playlist.State.IsLogo}"
+										 CornerRadius="6">Logo</RadioButton>
+							<RadioButton IsChecked="{Binding Playlist.State.IsBlank}"
+										 CornerRadius="6">Blank</RadioButton>
 							<!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
 						</UniformGrid>
 

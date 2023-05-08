@@ -28,29 +28,8 @@ namespace HandsLiftedApp.Views
                 {
                     this.WindowState = WindowState.FullScreen;
                 });
-                //this.Width = this.Screens.All[1].Bounds.Width;
-                //this.Height= this.Screens.All[1].Bounds.Height;
             }
 
         }
-        //public void onToggleFullscreen(bool? fullscreen = null)
-        //{
-        //    bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
-        //    this.Topmost = isFullScreenNext;
-        //    this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
-        //}
-
-        //private void ProjectorWindow_DoubleTapped(object? sender, RoutedEventArgs e)
-        //{
-        //    if (IControlExtension.FindAncestor<Button>((IControl)e.Source) != null)
-        //        return;
-
-        //    toggleFullscreen();
-        //}
-
-        //public void toggleFullscreen()
-        //{
-        //    this.WindowState = (this.WindowState == WindowState.FullScreen) ? WindowState.Normal : WindowState.FullScreen;
-        //}
-    }
+      }
 }

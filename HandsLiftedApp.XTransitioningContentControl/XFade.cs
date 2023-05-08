@@ -54,10 +54,10 @@ namespace HandsLiftedApp.XTransitioningContentControl
                             new Setter
                             {
                                 Property = Visual.OpacityProperty,
-                                Value = 1d
+                                Value = 0.5d
                             }
                         },
-                        Cue = new Cue(0.9d)
+                        Cue = new Cue(0.5d)
                     },
                     new KeyFrame()
                     {
@@ -80,6 +80,18 @@ namespace HandsLiftedApp.XTransitioningContentControl
             {
                 Children =
                 {
+                    new KeyFrame()
+                    {
+                        Setters =
+                        {
+                            new Setter
+                            {
+                                Property = Visual.OpacityProperty,
+                                Value = 0d
+                            }
+                        },
+                        Cue = new Cue(0d)
+                    },
                     new KeyFrame()
                     {
                         Setters =

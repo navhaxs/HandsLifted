@@ -5,13 +5,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <AvaloniaXaml Remove="MainWindow.axaml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove=".gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Include="MainWindow.axaml" />
+	  <Compile Update="MainWindow.axaml.cs">
+		  <DependentUpon>MainWindow.axaml</DependentUpon>
+	  </Compile>
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\*" />

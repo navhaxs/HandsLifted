@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using HandsLiftedApp.Logic;
 using System.Threading;
 
@@ -9,6 +10,7 @@ namespace HandsLiftedApp.Views.App
 {
     public partial class ExitConfirmationWindow : Window
     {
+        public Window parentWindow;
         public ExitConfirmationWindow()
         {
             InitializeComponent();
@@ -21,9 +23,10 @@ namespace HandsLiftedApp.Views.App
         {
             // ?? causes hang on exit
             HandsLiftedWebServer.Stop();
-            Thread.Sleep(500);
             // ?? causes hang on exit
 
+            Close();
+            parentWindow.Close();
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
             {
                 desktopLifetime.Shutdown();

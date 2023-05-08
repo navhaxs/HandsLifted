@@ -24,6 +24,14 @@ namespace HandsLiftedApp.ViewModels
         //public ReactiveCommand<Unit, Unit> Search { get; }
 
 
+        //private string _logoFilePath;
+        //[DataMember]
+        //public string LogoFilePath
+        //{
+        //    get => _logoFilePath;
+        //    set => this.RaiseAndSetIfChanged(ref _logoFilePath, value);
+        //}
+
         private bool _enableOutputNDI;
         [DataMember]
         public bool EnableOutputNDI

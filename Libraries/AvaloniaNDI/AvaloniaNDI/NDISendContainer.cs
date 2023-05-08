@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using Avalonia.Platform;
 using System.IO;
 using Avalonia.Rendering;
+using System.Runtime.Intrinsics.X86;
+using Avalonia.Controls.Platform.Surfaces;
 
 namespace AvaloniaNDI {
     public class NDISendContainer : Viewbox, INotifyPropertyChanged, IDisposable
@@ -535,10 +537,10 @@ Description("Function to determine whether the content requires high resolution 
             if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
                 return;
 
-            if (targetBitmap == null || targetBitmap.PixelSize.Width != xres || targetBitmap.PixelSize.Height != yres) {
-                // Create a properly sized RenderTargetBitmap
-                targetBitmap = new RenderTargetBitmap(new PixelSize(xres, yres));
-            }
+            //if (iHaveTheTargetBitmap == null || iHaveTheTargetBitmap.PixelSize.Width != xres || iHaveTheTargetBitmap.PixelSize.Height != yres) {
+            //    // Create a properly sized RenderTargetBitmap
+            //    iHaveTheTargetBitmap = new RenderTargetBitmap(new PixelSize(xres, yres));
+            //}
 
             stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
             bufferSize = yres * stride;
@@ -578,19 +580,19 @@ Description("Function to determine whether the content requires high resolution 
             var info = new SKImageInfo(xres, yres);
 
             // construct a surface around the existing memory
-            var surface = SKSurface.Create(info, bufferPtr, info.RowBytes);
+            var destinationSurface = SKSurface.Create(info, bufferPtr, info.RowBytes);
 
             // get the canvas from the surface
-            var canvas = surface.Canvas;
-
-            using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
+            var destinationCanvas = destinationSurface.Canvas;
+            using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
             // render the Avalonia visual
-            targetBitmap.Render(this.Child);
+            //iHaveTheTargetBitmap.Render(this.Child);
 
             // draw rendered visual into the buffer
-            DrawingContext drawingContext = targetBitmap.CreateDrawingContext();
+            //DrawingContext drawingContext = iHaveTheTargetBitmap.CreateDrawingContext();
 
+            #region "test"
             // not implmented -
             // Copies the bitmap pixel data into an array of pixels with the specified stride, starting at the specified offset.
             //targetBitmap.CopyPixels(new PixelRect(0, 0, 1920, 1080), bufferPtr, bufferSize, stride);
@@ -640,14 +642,101 @@ Description("Function to determine whether the content requires high resolution 
             //var x = new Avalonia.Rendering.RendererBase();
 
             //Type vc= x.GetType();
-            Type type = Type.GetType("Avalonia.Rendering.ImmediateRenderer, Avalonia.Base, Version=11.0.0.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b");
-            MethodInfo renderMethod = type.GetMethod("Render", new [] {typeof(Visual), typeof(DrawingContext)});
-            renderMethod.Invoke(null, new object[] { this.Child, drawingContext });
+            //Type type = Type.GetType("Avalonia.Rendering.ImmediateRenderer, Avalonia.Base, Version=11.0.0.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b");
+            //MethodInfo renderMethod = type.GetMethod("Render", new [] {typeof(Visual), typeof(DrawingContext)});
+            //renderMethod.Invoke(null, new object[] { this.Child, drawingContext });
+            #endregion
 
+            //var leaseFeature = iHaveTheDestination.GetFeature<ISkiaSharpApiLeaseFeature>();
+            //if (leaseFeature == null)
+            //    return;
+            //using var lease = leaseFeature.Lease();
+            //SKCanvas canvas2 = lease.SkCanvas;
+            //destinationCanvas.DrawBitmap(iHaveTheTargetBitmap);
+
+            //var fmt = new PixelFormat();
+            //var fb = new Framebuffer(fmt, new PixelSize(80, 80));
+            //var r = Avalonia.AvaloniaLocator.Current.GetRequiredService<IPlatformRenderInterface>();
+            //var bmp = new Bitmap(fmt, AlphaFormat.Premul, fb.Address, fb.Size, new Vector(96, 96), fb.RowBytes);
+            //fb.Deallocate();
+
+            //using (var ctx = targetBitmap.CreateDrawingContext())
+            //{
+            //    var canvas = ((ISkiaDrawingContextImpl)renderTarget).SkCanvas;
+            //}
+            //= VisualRoot!.RenderScaling;
+            var scale = VisualRoot!.RenderScaling;
+            using (var rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale)))
+            {
+                rtb.Render(this.Child);
+                //rtb.Save(@"R:\ndi_out.png");
+
+                if (rtb is RenderTargetBitmap renderTargetBitmap)
+                {
+                    Type type = renderTargetBitmap.PlatformImpl.Item.GetType();
+                    if (type.FullName == "Avalonia.Skia.SurfaceRenderTarget")
+                    {
+                        MethodInfo getSnapshotMethod = type.GetMethod("SnapshotImage");
+                        object skImageObject = getSnapshotMethod.Invoke(renderTargetBitmap.PlatformImpl.Item, null);
+                        if (skImageObject != null)
+                        {
+                            SKImage skImage = (SKImage)skImageObject;
+                            //skImage.ToRasterImage();
+
+                            destinationCanvas.DrawImage(skImage, new SKPoint(0, 0));
+
+                            //using (var image = destinationSurface.Snapshot())
+                            //using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                            //using (var stream = File.OpenWrite(Path.Combine(@"R:\", "1.png")))
+                            //{
+                            //    // save the data to a stream
+                            //    data.SaveTo(stream);
+                            //}
+
+                        }
+                    }
+                }
+            }
 
             // add it to the output queue
             AddFrame(videoFrame);
         }
+
+
+        class Framebuffer : ILockedFramebuffer, IFramebufferPlatformSurface
+        {
+            public Framebuffer(PixelFormat fmt, PixelSize size)
+            {
+                Format = fmt;
+                var bpp = fmt == PixelFormat.Rgb565 ? 2 : 4;
+                Size = size;
+                RowBytes = bpp * size.Width;
+                Address = Marshal.AllocHGlobal(size.Height * RowBytes);
+            }
+
+            public IntPtr Address { get; }
+
+            public Vector Dpi { get; } = new Vector(96, 96);
+
+            public PixelFormat Format { get; }
+
+            public PixelSize Size { get; }
+
+            public int RowBytes { get; }
+
+            public void Dispose()
+            {
+                //no-op
+            }
+
+            public ILockedFramebuffer Lock()
+            {
+                return this;
+            }
+
+            public void Deallocate() => Marshal.FreeHGlobal(Address);
+        }
+
 
         private static void OnNdiSenderPropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
@@ -829,7 +918,7 @@ Description("Function to determine whether the content requires high resolution 
         private Object sendInstanceLock = new Object();
         private IntPtr sendInstancePtr = IntPtr.Zero;
 
-        RenderTargetBitmap targetBitmap = null;
+        //RenderTargetBitmap iHaveTheTargetBitmap = null;
 
         private int stride;
         private int bufferSize;

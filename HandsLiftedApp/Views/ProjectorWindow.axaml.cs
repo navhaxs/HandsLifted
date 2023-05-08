@@ -118,7 +118,7 @@ namespace HandsLiftedApp.Views
         {
             bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
             this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
-            this.Topmost = isFullScreenNext;
+            //this.Topmost = isFullScreenNext;
         }
 
         public bool IsContentHighResCheckFunc(NDISendContainer sendContainer)

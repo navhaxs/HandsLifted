@@ -24,6 +24,11 @@ namespace LibVLCSharp.Avalonia
         private ISubject<Unit> _rendered = new Subject<Unit>();
         private ISubject<Unit> _updated = new Subject<Unit>();
         private WriteableBitmap _write;
+        public void NotClientImplementable()
+        {
+            // throw new NotImplementedException();
+        }
+
         public Vector Dpi => GetValueSafe(x => x.Dpi);
         public PixelSize PixelSize => GetValueSafe(x => x.PixelSize, new PixelSize(1, 1));
         public IRef<IBitmapImpl> PlatformImpl => GetValueSafe(x => x.PlatformImpl);
@@ -62,7 +67,8 @@ namespace LibVLCSharp.Avalonia
 
         public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode)
         {
-            //Render(context, 1, sourceRect, destRect, bitmapInterpolationMode);
+            Read(b => context.DrawImage(_read, destRect));
+            NotifyRendered();
         }
 
         public void Read(Action<IBitmap> action)
@@ -76,11 +82,11 @@ namespace LibVLCSharp.Avalonia
             }
         }
 
-        public void Render(IDrawingContextImpl context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)
-        {
-            //Read(b => context.DrawImage(_read, sourceRect));
-            NotifyRendered();
-        }
+        //public void Render(IDrawingContextImpl context, double opacity, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode = BitmapInterpolationMode.Default)
+        //{
+        //    //Read(b => context.DrawImage(_read, sourceRect));
+        //    NotifyRendered();
+        //}
 
         public void Save(string fileName, int? quality = null) => Read(b => b.Save(fileName));
 

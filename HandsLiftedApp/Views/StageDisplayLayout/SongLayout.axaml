@@ -8,7 +8,7 @@
 			 Background="Black"
 			 x:Class="HandsLiftedApp.Views.StageDisplayLayout.SongLayout"
 			 >
-	<Grid>
+	<Grid RowDefinitions="6*, 6*, *" ColumnDefinitions="9*, *">
 
 		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0">
 			<StackPanel>
@@ -23,12 +23,13 @@
 				<TextBlock Text="{Binding ActiveSlide.SlideText, FallbackValue=''}" />
 			</StackPanel>
 		</Viewbox>
-
-		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1">
+		
+		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"
+				 Margin="0 60 0 0">
 			<StackPanel>
 				<StackPanel.Styles>
 					<Style Selector="TextBlock">
-						<Setter Property="FontSize" Value="88" />
+						<Setter Property="FontSize" Value="60" />
 						<Setter Property="Foreground" Value="#af7b05" />
 						<Setter Property="TextWrapping" Value="Wrap" />
 					</Style>

@@ -1,6 +1,7 @@
 ﻿using EmbedIO;
 using EmbedIO.Actions;
 using EmbedIO.Files;
+using Serilog;
 using Swan.Logging;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,6 +33,8 @@ namespace HandsLiftedApp.Logic
                 if (!ctSource.IsCancellationRequested)
                     await server.RunAsync(ctSource.Token);
             }
+
+            Log.Information("Webserver has been shutdown");
         }
 
         // Create and configure our web server.

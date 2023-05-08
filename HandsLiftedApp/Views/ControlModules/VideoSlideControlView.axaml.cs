@@ -50,33 +50,35 @@ namespace HandsLiftedApp.Views.ControlModules
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            //if (MediaPlayer != null)
-            //{
-            //    MediaPlayer.Stop();
-            //}
-            Globals.GlobalMpvContext.Command("stop");
+            if (MediaPlayer != null)
+            {
+                MediaPlayer.Stop();
+            }
+            // Globals.GlobalMpvContext.Command("stop");
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.GlobalMpvContext.SetPropertyFlag("pause", false);
+            // Globals.GlobalMpvContext.SetPropertyFlag("pause", false);
 
-            //if (MediaPlayer != null && !MediaPlayer.IsPlaying)
-            //{
-            //    if (MediaPlayer.State == VLCState.Ended)
-            //    {
-            //        MediaPlayer.Stop();
-            //        MediaPlayer.Position = 0;
-            //    }
-            //    MediaPlayer.Play();
-
-            //    Globals.GlobalMpvContext.SetPropertyFlag("pause", false);
-            //}
+            if (MediaPlayer != null && !MediaPlayer.IsPlaying)
+            {
+                if (MediaPlayer.State == VLCState.Ended)
+                {
+                    MediaPlayer.Stop();
+                    MediaPlayer.Position = 0;
+                }
+                MediaPlayer.Play();
+            }
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.GlobalMpvContext.SetPropertyFlag("pause", true);
+            if (MediaPlayer != null)
+            {
+                MediaPlayer.Pause();
+            }
+            // Globals.GlobalMpvContext.SetPropertyFlag("pause", true);
         }
     }
 }

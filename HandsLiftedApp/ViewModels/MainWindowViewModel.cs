@@ -43,19 +43,17 @@ namespace HandsLiftedApp.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-
         public DateTime CurrentTime
         {
             get => DateTime.Now;
         }
         private async Task Update()
         {
-            // TODO this seems to throw random errors / gets in the way of exiting the app
-            //while (true)
-            //{
-            //    await Task.Delay(100);
-            //    this.RaisePropertyChanged(nameof(CurrentTime));
-            //}
+            while (true)
+            {
+                await Task.Delay(100);
+                this.RaisePropertyChanged(nameof(CurrentTime));
+            }
         }
 
         public SlideDesignerViewModel SlideDesigner { get; } = new SlideDesignerViewModel();
@@ -90,18 +88,6 @@ namespace HandsLiftedApp.ViewModels
 
         public Library Library { get; } = new Library();
 
-        //test
-        //test
-        //test
-        private String _TestString = "Test String";
-        public String TestString { get => _TestString; set => this.RaiseAndSetIfChanged(ref _TestString, value); }
-
-        private Dictionary<String, String> _TestDictionary = new Dictionary<String, String>();
-        public Dictionary<String, String> TestDictionary { get => _TestDictionary; set => this.RaiseAndSetIfChanged(ref _TestDictionary, value); }
-        //test
-        //test
-        //test
-
         public void LoadDemoSchedule()
         {
             Log.Information("Loading demo schedule");
@@ -110,18 +96,11 @@ namespace HandsLiftedApp.ViewModels
         }
         public MainWindowViewModel()
         {
-            TestDictionary.Add("Title", "Test Title");
-
             if (Design.IsDesignMode)
             {
                 Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
                 var song = PlaylistUtils.CreateSong();
                 Playlist.Items.Add(song);
-
-
-                // not working...
-                //Playlist.State.NavigateNextSlide();
-                //Playlist.State.NavigateNextSlide();
                 return;
             }
 
@@ -246,7 +225,11 @@ namespace HandsLiftedApp.ViewModels
 
             _ = Update(); // calling an async function we do not want to await
 
-            LoadDemoSchedule();
+            //LoadDemoSchedule();
+            if (File.Exists(TEST_SERVICE_FILE_PATH))
+            {
+                OnLoadService();
+            }
 
             MessageBus.Current.Listen<ActionMessage>()
                .Subscribe(x =>
@@ -308,9 +291,18 @@ namespace HandsLiftedApp.ViewModels
                     }).Start();
                 });
 
+            this
+                .WhenAnyValue(x => x.ActiveSlide)
+                //.ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x =>
+                {
+                    Globals.StageDisplay.SelectedIndex = (x is SongTitleSlide<SongTitleSlideStateImpl> || x is SongSlide<SongSlideStateImpl>)
+                        ? 1
+                        : 0;
+                });
 
-            // TODO initialise at the right place (tm)
-            HandsLiftedWebServer.Start();
+        // TODO initialise at the right place (tm)
+        HandsLiftedWebServer.Start();
 
             if (Globals.Preferences.OnStartupShowOutput)
                 ToggleProjectorWindow(true);

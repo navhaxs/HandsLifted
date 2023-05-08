@@ -15,22 +15,24 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<!--<ndi:NDISendContainer NdiName="VisionScreeens Stage Display" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsSendPaused="{Binding Source={x:Static app:Globals.Preferences}, Path=!EnableStageDisplayNDI}" >-->
-	<!--<TabControl Height="1080" Width="1920">-->
-	<TabControl SelectedIndex="{Binding Source={x:Static app:Globals.StageDisplay}, Path=SelectedIndex, FallbackValue=0}">
-		<TabControl.Styles>
-			<Style Selector="TabControl /template/ ItemsPresenter#PART_ItemsPresenter WrapPanel">
-				<Setter Property="HorizontalAlignment" Value="Right" />
-			</Style>
-		</TabControl.Styles>
+	<!--<ndi:NDISendContainer NdiName="VisionScreeens Stage Display"
+						  NdiWidth="1920" NdiHeight="1080"
+						  Width="1920" Height="1080"
+						  IsSendPaused="{Binding Source={x:Static app:Globals.Preferences}, Path=!EnableStageDisplayNDI}">-->
+		<TabControl SelectedIndex="{Binding Source={x:Static app:Globals.StageDisplay}, Path=SelectedIndex, FallbackValue=0}">
+			<TabControl.Styles>
+				<Style Selector="TabControl /template/ ItemsPresenter#PART_ItemsPresenter WrapPanel">
+					<Setter Property="HorizontalAlignment" Value="Right" />
+				</Style>
+			</TabControl.Styles>
 
-		<TabItem Header="Default" Focusable="False">
-			<sdl:DefaultLayout />
-		</TabItem>
-		<TabItem Header="Song" Focusable="False">
-			<sdl:SongLayout />
-		</TabItem>
-	</TabControl>
-<!--</ndi:NDISendContainer>-->
+			<TabItem Header="Default" Focusable="False">
+				<sdl:DefaultLayout />
+			</TabItem>
+			<TabItem Header="Song" Focusable="False">
+				<sdl:SongLayout />
+			</TabItem>
+		</TabControl>
+	<!--</ndi:NDISendContainer>-->
 
 </basewindows:BaseOutputWindow>

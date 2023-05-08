@@ -13,10 +13,10 @@
 	</UserControl.Resources>
 
 	<Grid Background="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundColour, Converter={StaticResource ColorToBrush}}">
-		<Border>
+		<Border RenderOptions.BitmapInterpolationMode="HighQuality">
 			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="60 80">
-				<Viewbox StretchDirection="DownOnly"
-						 HorizontalAlignment="Left">
+				<!--<Viewbox StretchDirection="DownOnly"
+						 HorizontalAlignment="Left">-->
 					<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
 							   LineHeight="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.LineHeight}"
 							   FontWeight="SemiBold"
@@ -28,10 +28,10 @@
 							   Foreground="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.TextColour, Converter={StaticResource ColorToBrush}}"
 							   FontSize="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontSize}"
 							/>
-				</Viewbox>
+				<!--</Viewbox>-->
 			</Grid>
 			<Border.Background>
-				<ImageBrush Source="{Binding  $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill"/>
+				<ImageBrush Source="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill" RenderOptions.BitmapInterpolationMode="HighQuality" />
 			</Border.Background>
 		</Border>
 	</Grid>

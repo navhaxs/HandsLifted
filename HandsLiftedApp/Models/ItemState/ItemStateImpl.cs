@@ -43,7 +43,7 @@ namespace HandsLiftedApp.Models.ItemState
                 .ToProperty(this, x => x.IsSelected);
 
             Dispatcher.UIThread.InvokeAsync(() => {
-                PageTransition = new XFade(TimeSpan.FromSeconds(0.500));
+                PageTransition = new XFade(TimeSpan.FromSeconds(1.200));
             });
 
             Observable.CombineLatest(

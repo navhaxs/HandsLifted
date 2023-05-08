@@ -20,7 +20,7 @@
 	<DockPanel>
 		<ListBox DockPanel.Dock="Left"
 				 SelectedIndex="0"
-			 SelectedItem="{Binding	SlideDesigner.ActiveDesign, Mode=OneWayToSource}"
+				 SelectedItem="{Binding	SlideDesigner.ActiveDesign}"
 				 MinWidth="80"
 				 Name="designsListBox"
 				 ItemsSource="{Binding SlideDesigner.ListOfDesigns}">
@@ -42,7 +42,7 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-		<Grid>
+		<Grid ColumnDefinitions="3*, *">
 			<Viewbox Grid.Column="0" VerticalAlignment="Top">
 				<Grid Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}}" Height="1080" Width="1920">
 					<Border>

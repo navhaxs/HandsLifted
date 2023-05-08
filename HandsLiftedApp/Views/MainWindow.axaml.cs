@@ -29,7 +29,6 @@ namespace HandsLiftedApp.Views
 
         public MainWindow()
         {
-
             log.Information("Creating MainWindow");
 
             InitializeComponent();
@@ -232,7 +231,7 @@ namespace HandsLiftedApp.Views
 
             this.FindControl<Control>("shade").IsVisible = true;
 
-            ExitConfirmationWindow w = new ExitConfirmationWindow();
+            ExitConfirmationWindow w = new ExitConfirmationWindow() { parentWindow = this };
             w.Closed += (object? sender, EventArgs e) =>
             {
                 this.FindControl<Control>("shade").IsVisible = false;

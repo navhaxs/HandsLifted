@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 
 namespace AvaloniaNDI.Sample
 {
@@ -12,12 +13,19 @@ namespace AvaloniaNDI.Sample
 #if DEBUG
             this.AttachDevTools();
 #endif
+
+            //TestButton.Click += TestButton_Click;
         }
 
-        private void InitializeComponent()
+        private void TestButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            AvaloniaXamlLoader.Load(this);
+            using (var rtb = new RenderTargetBitmap(new PixelSize(1920, 1080), new Vector(96, 96)))
+            {
+                rtb.Render(NdiSendContainer.Child);
+                rtb.Save("out.png");
+            }
         }
+
         public bool IsContentHighResCheckFunc(NDISendContainer sendContainer)
         {
             /* e.g.

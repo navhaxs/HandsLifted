@@ -31,7 +31,7 @@
 							IsVisible="{Binding !State.ShouldDisplayPauseButton}">
 						<material:MaterialIcon Kind="Play" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
 					</Button>
-					<Button Content="Pause" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" FontSize="24"
+					<Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" FontSize="24"
 												IsVisible="{Binding State.ShouldDisplayPauseButton}">
 						<material:MaterialIcon Kind="Pause" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
 					</Button>

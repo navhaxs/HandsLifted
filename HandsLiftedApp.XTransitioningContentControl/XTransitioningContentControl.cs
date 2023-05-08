@@ -13,6 +13,7 @@ using Avalonia.Skia.Helpers;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using SkiaSharp;
+using System.Reflection;
 using System.Timers;
 
 namespace HandsLiftedApp.XTransitioningContentControl
@@ -47,7 +48,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(
                 nameof(PageTransition),
                 //new CrossFade(TimeSpan.FromSeconds(0.125)));
-                new XFade(TimeSpan.FromSeconds(0.500)));
+                new XFade(TimeSpan.FromSeconds(1.200)));
 
         /// <summary>
         /// Defines the <see cref="CurrentContent"/> property.
@@ -107,7 +108,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             if (change.Property == ContentProperty)
             {
-                Dispatcher.UIThread.Post(() => UpdateContentWithTransition(Content));
+                //Dispatcher.UIThread.Post(() => UpdateContentWithTransition(Content));
+                Dispatcher.UIThread.Invoke(() => UpdateContentWithTransition(Content));
             }
         }
 
@@ -200,9 +202,16 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 //_contentPresenterContainer.IsVisible = true;
                 _previousImageSite.Opacity = 0;
             }
+            _previousImageSite.IsVisible = false;
+            _previousImageSite.Opacity = 0;
+            _previousImageSite.Source = null;
 
             _currentImageSite.IsVisible = true;
             _currentImageSite.Opacity = 1;
+            //Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+            //                                                        var clock = AvaloniaLocator.Current.GetService<IGlobalClock>();
+            //clock.PlayState = PlayState.Pause;
+            //clock.PlayState = PlayState.Run;
         }
 
         private Bitmap GetBitmap(object? visual) {
@@ -234,13 +243,44 @@ namespace HandsLiftedApp.XTransitioningContentControl
             {
                 using (SKCanvas canvas = new SKCanvas(bitmap)) {
 
+                    canvas.DrawRect(0, 0, 1920, 1080, new SKPaint() { Style = SKPaintStyle.Fill, Color = SKColors.Black });
+
                     using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
                     using RenderTargetBitmap renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
                     renderedBitmap.Render(visual);
+
+
                     // TODO broken
                     //contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
-                        //new Rect(0, 0, 1920, 1080),
-                        //new Rect(0, 0, 1920, 1080));
+                    //new Rect(0, 0, 1920, 1080),
+                    //new Rect(0, 0, 1920, 1080));
+
+                    var scale = 1;// VisualRoot!.RenderScaling;
+                    using (var rtb = new RenderTargetBitmap(new PixelSize(1920, 1080), new Vector(96 * scale, 96 * scale)))
+                    {
+                        rtb.Render(visual);
+
+                        if (rtb is RenderTargetBitmap renderTargetBitmap)
+                        {
+                            Type type = renderTargetBitmap.PlatformImpl.Item.GetType();
+                            if (type.FullName == "Avalonia.Skia.SurfaceRenderTarget")
+                            {
+                                MethodInfo getSnapshotMethod = type.GetMethod("SnapshotImage");
+                                object skImageObject = getSnapshotMethod.Invoke(renderTargetBitmap.PlatformImpl.Item, null);
+                                if (skImageObject != null)
+                                {
+                                    SKImage skImage = (SKImage)skImageObject;
+                                    //skImage.ToRasterImage();
+
+                                    canvas.DrawImage(skImage, new SKPoint(0, 0));
+
+                                }
+                            }
+                        }
+
+                        //rtb.Save(@"R:\3.png");
+                    }
+
                 }
                 // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
                 // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563

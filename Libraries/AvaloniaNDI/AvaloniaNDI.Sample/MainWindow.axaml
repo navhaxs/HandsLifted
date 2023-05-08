@@ -8,11 +8,14 @@
         x:Class="AvaloniaNDI.Sample.MainWindow"
         Background="#623079"
         Title="AvaloniaNDI.Sample">
+		
   <Viewbox>
-    <ndi:NDISendContainer NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsContentHighResCheckFunc="IsContentHighResCheckFunc">
-		<Grid Width="1920" Height="1080">
+    <ndi:NDISendContainer
+		Name="NdiSendContainer"  NdiName="Hello" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080" IsContentHighResCheckFunc="IsContentHighResCheckFunc">
         <sample:AnimationPage />
-      </Grid>
     </ndi:NDISendContainer>
-  </Viewbox>
+  <!--</Viewbox>-->
+		<!--<Button Name="TestButton" Content="TestButton" />
+	</Grid>-->
+	</Viewbox>
 </Window>

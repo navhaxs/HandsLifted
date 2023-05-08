@@ -8,8 +8,10 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -93,8 +95,15 @@ namespace HandsLiftedApp.Models
         {
             get
             {
-                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                return new Bitmap(assets.Open(new Uri(Playlist.LogoGraphicFile)));
+                try
+                {
+                    return BitmapLoader.LoadBitmap(Playlist.LogoGraphicFile);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"Unable to load Bitmap for LogoBitmap {(Playlist.LogoGraphicFile)}");
+                    return null;
+                }
             }
         }
 

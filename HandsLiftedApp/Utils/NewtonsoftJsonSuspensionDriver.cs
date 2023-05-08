@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualBasic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.IO;
 using System.Reactive;
@@ -33,13 +33,16 @@ namespace HandsLiftedApp.Utils
             }
             var lines = File.ReadAllText(_file);
             var state = JsonConvert.DeserializeObject<object>(lines, _settings);
-            return Observable.Return(state);
+            var result = Observable.Return(state);
+            Log.Information("Loaded appstate.json");
+            return result;
         }
 
         public IObservable<Unit> SaveState(object state)
         {
             var lines = JsonConvert.SerializeObject(state, _settings);
             File.WriteAllText(_file, lines);
+            Log.Information("Saved appstate.json");
             return Observable.Return(Unit.Default);
         }
     }

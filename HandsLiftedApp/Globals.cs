@@ -21,8 +21,8 @@ namespace HandsLiftedApp
         public static PreferencesViewModel Preferences;
         public static StageDisplayViewModel StageDisplay = new StageDisplayViewModel();
         public static Env Env;
-        //public static LibVLC GlobalLibVLCInstance;
-        public static MpvContext GlobalMpvContext;
+        public static LibVLC GlobalLibVLCInstance;
+        //public static MpvContext GlobalMpvContext;
 
         // note: this is initialized by App.axaml.cs on program start up
         public static void OnStartup(IApplicationLifetime applicationLifetime)
@@ -37,7 +37,7 @@ namespace HandsLiftedApp
             // Create the AutoSuspendHelper.
             var suspension = new AutoSuspendHelper(applicationLifetime);
             RxApp.SuspensionHost.CreateNewAppState = () => new PreferencesViewModel();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver<PreferencesViewModel>("appstate.json"));
+            RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver<PreferencesViewModel>(Constants.APP_STATE_FILEPATH));
             suspension.OnFrameworkInitializationCompleted();
 
             // Load the saved view model state.
@@ -47,12 +47,12 @@ namespace HandsLiftedApp
 
             try
             {
-                GlobalMpvContext = new MpvContext();
-                Log.Information("MPV initialized OK");
+                GlobalLibVLCInstance = new LibVLC();
+                Log.Information("LibVLC initialized OK");
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "MPV failed to initialize");
+                Log.Fatal(ex, "LibVLC failed to initialize");
             }
         }
 
