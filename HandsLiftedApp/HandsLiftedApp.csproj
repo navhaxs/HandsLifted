@@ -17,9 +17,13 @@
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <AvaloniaXaml Remove="Binaries\**" />
 	  <AvaloniaXaml Remove="Views\Render\NewFolder\**" />
+	  <Compile Remove="Binaries\**" />
 	  <Compile Remove="Views\Render\NewFolder\**" />
+	  <EmbeddedResource Remove="Binaries\**" />
 	  <EmbeddedResource Remove="Views\Render\NewFolder\**" />
+	  <None Remove="Binaries\**" />
 	  <None Remove="Views\Render\NewFolder\**" />
 	</ItemGroup>
 	<ItemGroup>
@@ -79,8 +83,6 @@
 		<ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Utils.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
 		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
-		<ProjectReference Include="..\Libraries\LibMpv\LibMpv.Client\LibMpv.Client.csproj" />
-		<ProjectReference Include="..\Libraries\LibMpv\LibMpv.Context\LibMpv.Context.csproj" />
 		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -155,13 +157,5 @@
 		<Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
 		  <DependentUpon>DefaultLayout.axaml</DependentUpon>
 		</Compile>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Binaries\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Include="..\Libraries\LibMpv\mpv\mpv-dev-x86_64\libmpv-2.dll" Link="libmpv-2.dll">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 </Project>

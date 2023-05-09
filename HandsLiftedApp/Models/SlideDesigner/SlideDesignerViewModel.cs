@@ -50,7 +50,7 @@ namespace HandsLiftedApp.Models.SlideDesigner {
             if (installedFontFamilyNames.Contains(fontFamilyName))
                 return FontFamily.Parse(fontFamilyName);
 
-            return FontFamily.Default;
+            return FontFamily.Parse("Arial");
         }
     }
 }

@@ -12,7 +12,6 @@ using Avalonia.Controls;
 using LibVLCSharp.Shared;
 using System;
 using Serilog;
-using LibMpv.Client;
 
 namespace HandsLiftedApp
 {

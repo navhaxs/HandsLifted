@@ -225,10 +225,19 @@ namespace HandsLiftedApp.ViewModels
 
             _ = Update(); // calling an async function we do not want to await
 
-            //LoadDemoSchedule();
             if (File.Exists(TEST_SERVICE_FILE_PATH))
             {
-                OnLoadService();
+                try
+                {
+                    OnLoadService();
+                }
+                catch (Exception _) {
+                    LoadDemoSchedule();
+                }
+            }
+            else
+            {
+                LoadDemoSchedule();
             }
 
             MessageBus.Current.Listen<ActionMessage>()
