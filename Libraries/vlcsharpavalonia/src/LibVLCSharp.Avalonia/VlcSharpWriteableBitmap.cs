@@ -67,6 +67,7 @@ namespace LibVLCSharp.Avalonia
 
         public void Draw(DrawingContext context, Rect sourceRect, Rect destRect)
         {
+            // this is the expensive operation!!
             Read(b => context.DrawImage(_read, destRect));
             NotifyRendered();
         }

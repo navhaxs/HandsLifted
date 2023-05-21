@@ -248,39 +248,13 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
                     using RenderTargetBitmap renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
                     renderedBitmap.Render(visual);
+                    IRenderTargetBitmapImpl item = renderedBitmap.PlatformImpl.Item;
+                    IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
+                    var leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();
+                    using var lease = leaseFeature.Lease();
+                    using SKImage skImage = lease.SkSurface.Snapshot();
 
-
-                    // TODO broken
-                    //contextImpl.DrawBitmap(renderedBitmap.PlatformImpl, 1,
-                    //new Rect(0, 0, 1920, 1080),
-                    //new Rect(0, 0, 1920, 1080));
-
-                    var scale = 1;// VisualRoot!.RenderScaling;
-                    using (var rtb = new RenderTargetBitmap(new PixelSize(1920, 1080), new Vector(96 * scale, 96 * scale)))
-                    {
-                        rtb.Render(visual);
-
-                        if (rtb is RenderTargetBitmap renderTargetBitmap)
-                        {
-                            Type type = renderTargetBitmap.PlatformImpl.Item.GetType();
-                            if (type.FullName == "Avalonia.Skia.SurfaceRenderTarget")
-                            {
-                                MethodInfo getSnapshotMethod = type.GetMethod("SnapshotImage");
-                                object skImageObject = getSnapshotMethod.Invoke(renderTargetBitmap.PlatformImpl.Item, null);
-                                if (skImageObject != null)
-                                {
-                                    SKImage skImage = (SKImage)skImageObject;
-                                    //skImage.ToRasterImage();
-
-                                    canvas.DrawImage(skImage, new SKPoint(0, 0));
-
-                                }
-                            }
-                        }
-
-                        //rtb.Save(@"R:\3.png");
-                    }
-
+                    canvas.DrawImage(skImage, new SKPoint(0, 0));
                 }
                 // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
                 // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563

@@ -34,7 +34,7 @@
 		<!-- 	x:Name="VideoView" -->
 		<!-- 	> -->
 		<!-- </videoRendering:MpvOpenGlVideoView> -->
-		<v:VideoView x:Name="VideoView" VlcRenderingOptions="Avalonia">
+		<v:VideoView x:Name="VideoView" VlcRenderingOptions="AvaloniaCustomDrawingOperation">
 			<!--<StackPanel Orientation="Horizontal" x:Name="test" Spacing="5" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
 				<Button Content="PLAY"   VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Yellow" Click="PlayButton_Click" FontSize="44" />
 				<Button Content="STOP" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Pink"

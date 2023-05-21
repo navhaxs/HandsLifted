@@ -10,7 +10,8 @@
              xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
 			 xmlns:i="using:Avalonia.Xaml.Interactivity"
 			 xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
-             x:Class="HandsLiftedApp.Views.ActiveSlideOutput">
+             x:Class="HandsLiftedApp.Views.ActiveSlideOutput"
+			 RenderOptions.BitmapInterpolationMode="HighQuality">
 	<Grid Background="Black">
 
 		<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="True" PageTransition="{Binding ActiveItemPageTransition}" />

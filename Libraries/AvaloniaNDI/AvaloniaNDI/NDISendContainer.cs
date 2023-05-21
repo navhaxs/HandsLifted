@@ -506,6 +506,9 @@ Description("Function to determine whether the content requires high resolution 
                 _argQueue.Enqueue(new Arguments() { });
             }
         }
+
+        RenderTargetBitmap rtb;
+
         private unsafe void OnCompositionTargetRendering()
         {
             if (IsSendPaused)
@@ -537,10 +540,12 @@ Description("Function to determine whether the content requires high resolution 
             if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
                 return;
 
-            //if (iHaveTheTargetBitmap == null || iHaveTheTargetBitmap.PixelSize.Width != xres || iHaveTheTargetBitmap.PixelSize.Height != yres) {
-            //    // Create a properly sized RenderTargetBitmap
-            //    iHaveTheTargetBitmap = new RenderTargetBitmap(new PixelSize(xres, yres));
-            //}
+            if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
+            {
+                // Create a properly sized RenderTargetBitmap
+                var scale = VisualRoot!.RenderScaling;
+                rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale));
+            }
 
             stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
             bufferSize = yres * stride;
@@ -587,117 +592,16 @@ Description("Function to determine whether the content requires high resolution 
             using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
             // render the Avalonia visual
-            //iHaveTheTargetBitmap.Render(this.Child);
+            rtb.Render(this.Child);
+            //rtb.Save(@"R:\ndi_out.png");
 
-            // draw rendered visual into the buffer
-            //DrawingContext drawingContext = iHaveTheTargetBitmap.CreateDrawingContext();
-
-            #region "test"
-            // not implmented -
-            // Copies the bitmap pixel data into an array of pixels with the specified stride, starting at the specified offset.
-            //targetBitmap.CopyPixels(new PixelRect(0, 0, 1920, 1080), bufferPtr, bufferSize, stride);
-
-            // this is broken in preview7 -
-            // contextImpl.DrawBitmap(targetBitmap.PlatformImpl, 1.0,
-            //    new Rect(0, 0, 1920, 1080),
-            //    new Rect(0, 0, 1920, 1080));
-
-            //using var doc = SKDocument.CreatePdf(fileName);
-            //var visual = this.Child;
-            //{
-            //    var bounds = visual.Bounds;
-            //    var page = doc.BeginPage((float)bounds.Width, (float)bounds.Height);
-            //    using var context = DrawingContextHelper.WrapSkiaCanvas(page, SkiaPlatform.DefaultDpi));
-            //    targetBitmap.Render(visual, context);
-            //    doc.EndPage();
-            //}
-            //doc.Close();
-
-            //targetBitmap.Save(@"R:\2.png");
-
-            //if (targetBitmap is RenderTargetBitmap renderTargetBitmap)
-            //{
-            //    Type type = renderTargetBitmap.PlatformImpl.Item.GetType();
-            //    if (type.FullName == "Avalonia.Skia.SurfaceRenderTarget")
-            //    {
-            //        MethodInfo getSnapshotMethod = type.GetMethod("SnapshotImage");
-            //        object skImageObject = getSnapshotMethod.Invoke(renderTargetBitmap.PlatformImpl.Item, null);
-            //        if (skImageObject != null)
-            //        {
-            //            SKImage skImage = (SKImage)skImageObject;
-            //            //skImage.ToRasterImage();
-
-            //            canvas.DrawImage(skImage.ToRasterImage(), new SKPoint(0, 0));
-
-            //            using (var image = surface.Snapshot())
-            //            using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
-            //            using (var stream = File.OpenWrite(Path.Combine(@"R:\", "1.png")))
-            //            {
-            //                // save the data to a stream
-            //                data.SaveTo(stream);
-            //            }
-            //        }
-            //    }
-            //}
-            //var x = new Avalonia.Rendering.RendererBase();
-
-            //Type vc= x.GetType();
-            //Type type = Type.GetType("Avalonia.Rendering.ImmediateRenderer, Avalonia.Base, Version=11.0.0.0, Culture=neutral, PublicKeyToken=c8d484a7012f9a8b");
-            //MethodInfo renderMethod = type.GetMethod("Render", new [] {typeof(Visual), typeof(DrawingContext)});
-            //renderMethod.Invoke(null, new object[] { this.Child, drawingContext });
-            #endregion
-
-            //var leaseFeature = iHaveTheDestination.GetFeature<ISkiaSharpApiLeaseFeature>();
-            //if (leaseFeature == null)
-            //    return;
-            //using var lease = leaseFeature.Lease();
-            //SKCanvas canvas2 = lease.SkCanvas;
-            //destinationCanvas.DrawBitmap(iHaveTheTargetBitmap);
-
-            //var fmt = new PixelFormat();
-            //var fb = new Framebuffer(fmt, new PixelSize(80, 80));
-            //var r = Avalonia.AvaloniaLocator.Current.GetRequiredService<IPlatformRenderInterface>();
-            //var bmp = new Bitmap(fmt, AlphaFormat.Premul, fb.Address, fb.Size, new Vector(96, 96), fb.RowBytes);
-            //fb.Deallocate();
-
-            //using (var ctx = targetBitmap.CreateDrawingContext())
-            //{
-            //    var canvas = ((ISkiaDrawingContextImpl)renderTarget).SkCanvas;
-            //}
-            //= VisualRoot!.RenderScaling;
-            var scale = VisualRoot!.RenderScaling;
-            using (var rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale)))
-            {
-                rtb.Render(this.Child);
-                //rtb.Save(@"R:\ndi_out.png");
-
-                if (rtb is RenderTargetBitmap renderTargetBitmap)
-                {
-                    Type type = renderTargetBitmap.PlatformImpl.Item.GetType();
-                    if (type.FullName == "Avalonia.Skia.SurfaceRenderTarget")
-                    {
-                        MethodInfo getSnapshotMethod = type.GetMethod("SnapshotImage");
-                        object skImageObject = getSnapshotMethod.Invoke(renderTargetBitmap.PlatformImpl.Item, null);
-                        if (skImageObject != null)
-                        {
-                            SKImage skImage = (SKImage)skImageObject;
-                            //skImage.ToRasterImage();
-
-                            destinationCanvas.DrawImage(skImage, new SKPoint(0, 0));
-
-                            //using (var image = destinationSurface.Snapshot())
-                            //using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-                            //using (var stream = File.OpenWrite(Path.Combine(@"R:\", "1.png")))
-                            //{
-                            //    // save the data to a stream
-                            //    data.SaveTo(stream);
-                            //}
-
-                        }
-                    }
-                }
-            }
-
+            IRenderTargetBitmapImpl item = rtb.PlatformImpl.Item;
+            IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
+            var leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();
+            using var lease = leaseFeature.Lease();
+            using SKImage skImage = lease.SkSurface.Snapshot();
+            destinationCanvas.DrawImage(skImage, new SKPoint(0, 0));
+        
             // add it to the output queue
             AddFrame(videoFrame);
         }

@@ -54,6 +54,7 @@
 	<Grid>
 		<!-- https://github.com/AvaloniaUI/Avalonia/issues/5382 -->
 		<hla:XTransitioningContentControl
+			RenderOptions.BitmapInterpolationMode="HighQuality"
 			Content="{Binding $parent[viewsrender:SlideRenderer].ActiveSlide}"
 			PageTransition="{Binding $parent[viewsrender:SlideRenderer].PageTransition}"
 			EnableSlideEvents="{Binding $parent[viewsrender:SlideRenderer].IsLive}"
