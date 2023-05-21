@@ -65,7 +65,7 @@ namespace LibVLCSharp.Avalonia
             _disposed = true;
         }
 
-        public void Draw(DrawingContext context, Rect sourceRect, Rect destRect, BitmapInterpolationMode bitmapInterpolationMode)
+        public void Draw(DrawingContext context, Rect sourceRect, Rect destRect)
         {
             Read(b => context.DrawImage(_read, destRect));
             NotifyRendered();

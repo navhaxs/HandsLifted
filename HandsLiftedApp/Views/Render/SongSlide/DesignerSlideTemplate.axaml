@@ -31,7 +31,7 @@
 				<!--</Viewbox>-->
 			</Grid>
 			<Border.Background>
-				<ImageBrush Source="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill" RenderOptions.BitmapInterpolationMode="HighQuality" />
+				<ImageBrush Source="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill" />
 			</Border.Background>
 		</Border>
 	</Grid>

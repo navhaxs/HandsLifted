@@ -4,22 +4,22 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AutofacSerilogIntegration" Version="5.0.0" />
-    <PackageVersion Include="Avalonia" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="11.0.0-preview6" />
-    <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Controls.Skia" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Desktop" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.ReactiveUI" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Skia" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Svg.Skia" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Themes.Simple" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.0.0-preview7" />
-    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.0.0-preview7" />
+    <PackageVersion Include="Avalonia" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Controls.Skia" Version="11.0.0-preview8.2" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.ReactiveUI" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Skia" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Svg.Skia" Version="11.0.0-preview8.2" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Themes.Simple" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.0.0-preview8" />
+    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.0.0-preview8" />
     <PackageVersion Include="BmpSharp" Version="0.2.0" />
     <PackageVersion Include="Config.Net" Version="5.1.5" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
@@ -59,7 +59,7 @@
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
     <PackageVersion Include="YamlDotNet" Version="13.1.0" />
-	<PackageVersion Include="CppSharp" Version="1.0.45.22293" />
-	<PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.6.0-1.final" />
+    <PackageVersion Include="CppSharp" Version="1.0.45.22293" />
+    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.6.0-1.final" />
   </ItemGroup>
 </Project>

@@ -125,7 +125,7 @@ namespace LibVLCSharp.Avalonia
 
             public bool HitTest(Point p) => false;
 
-            public void Render(IDrawingContextImpl context)
+            public void Render(ImmediateDrawingContext context)
             {
 
                 //try
