@@ -15,21 +15,13 @@ namespace HandsLiftedApp.Models.SlideDesigner {
         public BaseSlideTheme ActiveDesign { get => _ActiveDesign; set => this.RaiseAndSetIfChanged(ref _ActiveDesign, value); }
 
         public SlideDesignerViewModel() {
-            ListOfDesigns.Add(new BaseSlideTheme() {
-                Name = "Default",
-                FontFamily = TryParseFontFamily("Montserrat"),
-                TextColour = Color.Parse("#2b505e"),
-                BackgroundColour = Color.Parse("#b7d1d8"),
-                FontSize = 60,
-                LineHeight = 1
-            });
             ListOfDesigns.Add(new BaseSlideTheme()
             {
                 Name = "SWEC",
                 FontFamily = TryParseFontFamily("Montserrat"),
                 TextColour = Color.Parse("#a06d39"),
                 BackgroundColour = Color.Parse("#f5ede4"),
-                FontSize = 90,
+                FontSize = 80,
                 LineHeight = 130,
                 BackgroundGraphicFilePath = "C:\\VisionScreens\\Designs\\76c4ea22-fb91-4b58-9b07-b709f4402b0dcatalystconf-bg.png"
             });
@@ -40,6 +32,14 @@ namespace HandsLiftedApp.Models.SlideDesigner {
                 FontSize = 100,
                 LineHeight = 1,
                 BackgroundGraphicFilePath = "avares://HandsLiftedApp/Assets/DesignerSlideTemplate/bg.png"
+            });
+            ListOfDesigns.Add(new BaseSlideTheme() {
+                Name = "Default",
+                FontFamily = TryParseFontFamily("Montserrat"),
+                TextColour = Color.Parse("#2b505e"),
+                BackgroundColour = Color.Parse("#b7d1d8"),
+                FontSize = 60,
+                LineHeight = 1
             });
 
             ActiveDesign = ListOfDesigns[0];

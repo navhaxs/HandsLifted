@@ -1,182 +1,230 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:controls="using:HandsLiftedApp.Controls"
-	         xmlns:app="using:HandsLiftedApp"
-			 xmlns:utils="using:HandsLiftedApp.Utils"
-			 xmlns:item="using:HandsLiftedApp.Views.Item"
-             xmlns:behaviours="using:HandsLiftedApp.Behaviours"
-			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
-			 MinHeight="200"
-			 Background="Transparent"
-			 xmlns:converters="using:HandsLiftedApp.Converters"
-             x:Class="HandsLiftedApp.Controls.ItemSlidesView">
+<UserControl
+    x:Class="HandsLiftedApp.Controls.ItemSlidesView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="using:HandsLiftedApp"
+    xmlns:behaviours="using:HandsLiftedApp.Behaviours"
+    xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:item="using:HandsLiftedApp.Views.Item"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="using:HandsLiftedApp.Utils"
+    MinHeight="200"
+    d:DesignHeight="450"
+    d:DesignWidth="500"
+    Background="Transparent"
+    mc:Ignorable="d">
 
-	<UserControl.Resources>
-		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
+        <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
+    </UserControl.Resources>
 
-	<UserControl.Styles>
-		<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml"/>
+    <UserControl.Styles>
+        <StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml" />
 
-		<Style Selector="ListBoxItem">
-			<Setter Property="Background" Value="Transparent"/>
-			<!--<Setter Property="Background" Value="#F2E6EA"/>-->
-			<Setter Property="BorderBrush" Value="Transparent"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Padding" Value="5 8"/>
-			<!--<Setter Property="Template">
-				<ControlTemplate>
-					<Grid>
-						<controls:SlideThumbnail 
-							Margin="5 8"
-							Content="{TemplateBinding Content}" />
-					</Grid>
-				</ControlTemplate>
-			</Setter>-->
-			<Setter Property="(i:Interaction.Behaviors)">
-				<i:BehaviorCollectionTemplate>
-					<i:BehaviorCollection>
-						<behaviours:ListBoxItemBehavior />
-					</i:BehaviorCollection>
-				</i:BehaviorCollectionTemplate>
-			</Setter>
-		</Style>
-	</UserControl.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="5 8" />
+            <Setter Property="(i:Interaction.Behaviors)">
+                <i:BehaviorCollectionTemplate>
+                    <i:BehaviorCollection>
+                        <behaviours:ListBoxItemBehavior />
+                    </i:BehaviorCollection>
+                </i:BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
 
-	<StackPanel Margin="0 0 0 0">
-		<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">
-			<DockPanel>
 
-				<item:ItemIcon DockPanel.Dock="Left" Margin="6 0 4 0" />
+    <StackPanel>
 
-				<Button Padding="22 6"
-						Command="{Binding State.EditCommand}"
-						DockPanel.Dock="Right"
-						BorderBrush="#b3aed9"
-						BorderThickness="1"
-						CornerRadius="4"
-						Margin="6"
-						Background="#ffffff">Edit</Button>
-				<!--<Ellipse
-						IsVisible="{Binding State.IsSelected, FallbackValue=False}"
-						Width="8"
-						Height="8"
-						Margin="12 0 0 0"
-						Fill="#c43e1c"
-						/>-->
-				<TextBlock Padding="0 8 0 8" VerticalAlignment="Center" Text="{Binding Title, FallbackValue='Untitled Item, with a REALLY long title'}" FontSize="16" />
+        <DockPanel>
+            <Viewbox
+                Width="50"
+                Margin="0,20,0,0"
+                VerticalAlignment="Top"
+                Stretch="Uniform"
+                StretchDirection="DownOnly">
+                <Label
+                    Padding="12"
+                    Content="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}, FallbackValue='99'}"
+                    FontSize="16" />
+            </Viewbox>
+            <Border
+                Margin="0,12,12,0"
+                Background="#F6F4FF"
+                BorderBrush="#9a93cd"
+                BorderThickness="1"
+                CornerRadius="4">
+                <i:Interaction.Behaviors>
+                    <ia:DataTriggerBehavior
+                        Binding="{Binding State.IsSelected}"
+                        ComparisonCondition="Equal"
+                        Value="True">
+                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" />
+                        <ia:ChangePropertyAction PropertyName="BorderThickness" Value="2" />
+                    </ia:DataTriggerBehavior>
+                    <ia:DataTriggerBehavior
+                        Binding="{Binding State.IsSelected}"
+                        ComparisonCondition="Equal"
+                        Value="False">
+                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#9a93cd" />
+						<ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
+                    </ia:DataTriggerBehavior>
+                </i:Interaction.Behaviors>
 
-				<!--<Border
-					HorizontalAlignment="Left"
-					IsVisible="{Binding State.IsSelected}"
-					VerticalAlignment="Center"
-					Margin="10 2 0 0"
-					CornerRadius="3"
-					Background="#c43e1c">
-					<TextBlock
-						Margin="8 0 8 1"
-						FontWeight="Bold"
-						Foreground="White"
-						FontSize="12">LIVE</TextBlock>
-				</Border>-->
+                <StackPanel Margin="0,0,0,0">
+                    <!--<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">-->
+                    <DockPanel>
 
-				<!--<Label Padding="12 8" Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, Converter={StaticResource itemToIndexConverter}, FallbackValue=#}" FontSize="16" />-->
-			</DockPanel>
-		</Border>
+                        <!--<item:ItemIcon Margin="12,0,8,0" DockPanel.Dock="Left"
+									   />-->
 
-		<item:ItemInfo VerticalAlignment="Top" />
+                        <Button
+                            Margin="6"
+                            Padding="22,6"
+                            Background="#ffffff"
+                            BorderBrush="#b3aed9"
+                            BorderThickness="1"
+                            Command="{Binding State.EditCommand}"
+                            CornerRadius="4"
+                            DockPanel.Dock="Right">
+                            Edit
+                        </Button>
+                        <!--<Ellipse
+								IsVisible="{Binding State.IsSelected, FallbackValue=False}"
+								Width="8"
+								Height="8"
+								Margin="12 0 0 0"
+								Fill="#c43e1c"
+								/>-->
+                        <TextBlock
+                            Margin="16,16,8,8"
+                            Padding="0"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
 
-		<controls:ListBoxWithoutKey Name="List"
-				Background="Transparent"
-				ItemsSource="{Binding Slides}"
-				SelectionMode="Single"
-				SelectedIndex="{Binding State.SelectedSlideIndex, Mode=OneWay}"
-				AutoScrollToSelectedItem="False"
-				SelectionChanged="OnSelectionChanged"
-				>
-			<controls:ListBoxWithoutKey.Styles>
-				<Style Selector="controls|ListBoxWithoutKey">
-					<Setter Property="BorderThickness" Value="0"/>
-				</Style>
-				<Style Selector="ListBoxItem">
-					<Setter Property="Padding" Value="0"/>
-					<!--<Setter Property="IsHitTestVisible" Value="False" />-->
-					<!--<Setter Property="Focusable" Value="False"/>-->
-				</Style>
-			</controls:ListBoxWithoutKey.Styles>
-			<controls:ListBoxWithoutKey.ItemsPanel>
-				<ItemsPanelTemplate>
-					<WrapPanel
-						ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=244}"
-						ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}"
-						/>
-					<!--<WrapPanel 
-						ItemWidth="244"
-						ItemHeight="137" />-->
-					<!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
-				</ItemsPanelTemplate>
-			</controls:ListBoxWithoutKey.ItemsPanel>
+                    </DockPanel>
+                    <item:ItemInfo VerticalAlignment="Top" />
 
-			<!--<controls:ListBoxWithoutKey.Control>
-				
-			</controls:ListBoxWithoutKey.Control>-->
+                    <controls:ListBoxWithoutKey
+                        Name="List"
+                        AutoScrollToSelectedItem="False"
+                        Background="Transparent"
+                        ItemsSource="{Binding Slides}"
+                        SelectedIndex="{Binding State.SelectedSlideIndex, Mode=OneWay}"
+                        SelectionChanged="OnSelectionChanged"
+                        SelectionMode="Single">
+                        <controls:ListBoxWithoutKey.Styles>
+                            <Style Selector="controls|ListBoxWithoutKey">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Style>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="0" />
+                                <!--<Setter Property="IsHitTestVisible" Value="False" />-->
+                                <!--<Setter Property="Focusable" Value="False"/>-->
+                            </Style>
+                        </controls:ListBoxWithoutKey.Styles>
+                        <controls:ListBoxWithoutKey.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=244}" />
+                                <!--<WrapPanel
+								ItemWidth="244"
+								ItemHeight="137" />-->
+                                <!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
+                            </ItemsPanelTemplate>
+                        </controls:ListBoxWithoutKey.ItemsPanel>
 
-			<controls:ListBoxWithoutKey.DataTemplates>
-				<utils:MyTemplateSelector>
-					<DataTemplate x:Key="SongTitleSlide">
-						<!--<Viewbox>
-								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
-							</Viewbox>-->
-						<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Title}" TextWrapping="Wrap" Foreground="White" FontWeight="SemiBold" Margin="10" />
-					</DataTemplate>
-					<DataTemplate x:Key="SongSlide">
-						<!--<Viewbox>
-								<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
-							</Viewbox>-->
-						<TextBlock TextTrimming="CharacterEllipsis" MaxHeight="150" Text="{Binding Text}" TextWrapping="Wrap" Foreground="White" Margin="10" />
-					</DataTemplate>
-					<DataTemplate x:Key="ImageSlide">
-						<controls:SlideThumbnail>
-							<Grid>
-								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}"
-									   							RenderOptions.BitmapInterpolationMode="MediumQuality" />
-							</Grid>
-						</controls:SlideThumbnail>
-					</DataTemplate>
-					<DataTemplate x:Key="VideoSlide">
-						<controls:SlideThumbnail>
-							<Grid>
-								<Image Stretch="Uniform" Source="{Binding State.Thumbnail}" />
-							</Grid>
-						</controls:SlideThumbnail>
-						<!--<Border Padding="20">
-							<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
-						</Border>-->
-					</DataTemplate>
-					<DataTemplate x:Key="LogoSlide">
-						<Grid>
-							<Image
-							Stretch="Uniform"
-							Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
-							RenderOptions.BitmapInterpolationMode="MediumQuality" />
-						</Grid>
-					</DataTemplate>
-					<DataTemplate x:Key="MyKey">
-						<TextBlock Background="Red" Text="{Binding Text}" />
-					</DataTemplate>
-					<DataTemplate x:Key="MyKey2">
-						<TextBlock Background="Green" Text="{Binding Text}"/>
-					</DataTemplate>
-					<DataTemplate x:Key="Fallback">
-						<TextBlock TextWrapping="Wrap" Background="Red" Text="{Binding FallbackValue='Not good'}" />
-					</DataTemplate>
-				</utils:MyTemplateSelector>
-			</controls:ListBoxWithoutKey.DataTemplates>
+                        <!--<controls:ListBoxWithoutKey.Control>
+						
+					</controls:ListBoxWithoutKey.Control>-->
 
-		</controls:ListBoxWithoutKey>
+                        <controls:ListBoxWithoutKey.DataTemplates>
+                            <utils:MyTemplateSelector>
+                                <DataTemplate x:Key="SongTitleSlide">
+                                    <!--<Viewbox>
+										<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
+									</Viewbox>-->
+                                    <TextBlock
+                                        MaxHeight="150"
+                                        Margin="10"
+                                        FontWeight="SemiBold"
+                                        Foreground="White"
+                                        Text="{Binding Title}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="Wrap" />
+                                </DataTemplate>
+                                <DataTemplate x:Key="SongSlide">
+                                    <!--<Viewbox>
+										<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
+									</Viewbox>-->
+                                    <TextBlock
+                                        MaxHeight="150"
+                                        Margin="10"
+                                        Foreground="White"
+                                        Text="{Binding Text}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="Wrap" />
+                                </DataTemplate>
+                                <DataTemplate x:Key="ImageSlide">
+                                    <controls:SlideThumbnail>
+                                        <Grid>
+                                            <Image
+                                                RenderOptions.BitmapInterpolationMode="MediumQuality"
+                                                Source="{Binding State.Thumbnail}"
+                                                Stretch="Uniform" />
+                                        </Grid>
+                                    </controls:SlideThumbnail>
+                                </DataTemplate>
+                                <DataTemplate x:Key="VideoSlide">
+                                    <controls:SlideThumbnail>
+                                        <Grid>
+                                            <Image Source="{Binding State.Thumbnail}" Stretch="Uniform" />
+                                        </Grid>
+                                    </controls:SlideThumbnail>
+                                    <!--<Border Padding="20">
+									<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
+								</Border>-->
+                                </DataTemplate>
+                                <DataTemplate x:Key="LogoSlide">
+                                    <Grid>
+                                        <Image
+                                            RenderOptions.BitmapInterpolationMode="MediumQuality"
+                                            Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
+                                            Stretch="Uniform" />
+                                    </Grid>
+                                </DataTemplate>
+                                <DataTemplate x:Key="MyKey">
+                                    <TextBlock Background="Red" Text="{Binding Text}" />
+                                </DataTemplate>
+                                <DataTemplate x:Key="MyKey2">
+                                    <TextBlock Background="Green" Text="{Binding Text}" />
+                                </DataTemplate>
+                                <DataTemplate x:Key="Fallback">
+                                    <TextBlock
+                                        Background="Red"
+                                        Text="{Binding FallbackValue='Not good'}"
+                                        TextWrapping="Wrap" />
+                                </DataTemplate>
+                            </utils:MyTemplateSelector>
+                        </controls:ListBoxWithoutKey.DataTemplates>
 
-	</StackPanel>
+                    </controls:ListBoxWithoutKey>
+
+                </StackPanel>
+            </Border>
+        </DockPanel>
+
+        <controls:AddItemButton Margin="0,12,0,0" />
+
+    </StackPanel>
+
 </UserControl>

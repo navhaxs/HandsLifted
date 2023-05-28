@@ -1,0 +1,41 @@
+<UserControl
+    x:Class="HandsLiftedApp.Controls.AddItemButton"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Background="Transparent"
+    d:DesignHeight="150"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+    <Button Margin="50,0" 
+			Width="100"
+			HorizontalAlignment="Left" 
+			VerticalAlignment="Top">
+        <Button.Styles>
+            <Style Selector="Button">
+                <Setter Property="Padding" Value="12 8" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="Background" Value="#f6f4ff" />
+                <Setter Property="BorderBrush" Value="#f6f4ff" />
+            </Style>
+            <Style Selector="Button:pointerover">
+				<Setter Property="Background" Value="#f6f4ff" />
+				<Setter Property="BorderBrush" Value="#f6f4ff" />
+			</Style>
+        </Button.Styles>
+
+        <material:MaterialIcon
+            Margin="-4"
+			Height="24"
+			Width="24"
+            VerticalAlignment="Center"
+            DockPanel.Dock="Top"
+            Foreground="#9a93cd"
+            Kind="Plus" />
+
+    </Button>
+</UserControl>

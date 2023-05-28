@@ -30,8 +30,9 @@ namespace HandsLiftedApp.Converters
                 }
 
                 var last = item.GetRealizedContainers().Last();
-                var lastItemContainerHeight = last.Bounds.Height;
-                return (double)values[0] - lastItemContainerHeight;
+                double lastItemContainerHeight = last.Bounds.Height;
+                // 20% margin at bottom of scrollviewer content
+                return ((double)values[0] - lastItemContainerHeight) * 0.2;
             }
 
             // converter used for the wrong type

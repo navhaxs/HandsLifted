@@ -48,7 +48,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(
                 nameof(PageTransition),
                 //new CrossFade(TimeSpan.FromSeconds(0.125)));
-                new XFade(TimeSpan.FromSeconds(1.200)));
+                new XFade(TimeSpan.FromSeconds(0.125)));
 
         /// <summary>
         /// Defines the <see cref="CurrentContent"/> property.
@@ -231,7 +231,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             if (visual is ISlideBitmapCacheable) {
                 // Testing
-                //((ISlideBitmapCacheable)visual).SetBitmap(rendered);
+                ((ISlideBitmapCacheable)visual).SetBitmap(rendered);
             }
 
             return rendered;
@@ -247,7 +247,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
                     using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
                     using RenderTargetBitmap renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
-                    renderedBitmap.Render(visual);
+                    renderedBitmap.Render(visual); // System.ArgumentException: 'An item with the same key has already been added. Key: SubpixelAntialias'
+
                     IRenderTargetBitmapImpl item = renderedBitmap.PlatformImpl.Item;
                     IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
                     var leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();

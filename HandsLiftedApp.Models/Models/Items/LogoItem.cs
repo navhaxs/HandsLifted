@@ -15,7 +15,7 @@ namespace HandsLiftedApp.Data.Models.Items
     public class LogoItem<I> : Item<I> where I : IItemState
     {
         public LogoItem() {
-            Title = "(Logo)";
+            Title = "Logo";
         }
 
 

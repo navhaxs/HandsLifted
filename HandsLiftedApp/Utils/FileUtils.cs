@@ -16,6 +16,10 @@ namespace HandsLiftedApp.Utils
                 if (path != null && Directory.Exists(path))
                     Directory.Delete(path, true);
             }
+            catch (Exception e)
+            {
+                // LOG ME
+            }
             finally { }
         }
     }

@@ -123,9 +123,7 @@
 						Margin="0 8 0 8"
 						Foreground="Black"
 						FontSize="20"
-						TextWrapping="Wrap">
-						Presentation software for everyday churches
-					</TextBlock>
+						TextWrapping="Wrap">Church Presentation Software</TextBlock>
 					<TextBlock
 						Margin="0 8 0 16"
 						Foreground="Black"

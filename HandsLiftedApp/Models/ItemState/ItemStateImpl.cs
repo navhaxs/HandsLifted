@@ -43,7 +43,7 @@ namespace HandsLiftedApp.Models.ItemState
                 .ToProperty(this, x => x.IsSelected);
 
             Dispatcher.UIThread.InvokeAsync(() => {
-                PageTransition = new XFade(TimeSpan.FromSeconds(1.200));
+                PageTransition = new XFade(TimeSpan.FromSeconds(0.300));
             });
 
             Observable.CombineLatest(
@@ -113,11 +113,11 @@ namespace HandsLiftedApp.Models.ItemState
         public Slide? SelectedSlide { get => _selectedSlide.Value; }
         public ReactiveCommand<Unit, Unit> EditCommand { get; }
 
-        // private int _ItemIndex;
-        // public int ItemIndex { get => _ItemIndex; set => _ItemIndex = value; }
-
         private IPageTransition? _pageTransition;
         public IPageTransition? PageTransition { get => _pageTransition; set => this.RaiseAndSetIfChanged(ref _pageTransition, value); }
+
+        private int _itemIndex;
+        public int ItemIndex { get => _itemIndex; set => this.RaiseAndSetIfChanged(ref _itemIndex, value); }
 
         public Slide GenerateSlideFromSource(string filename, int index)
         {

@@ -14,19 +14,19 @@
 
 	<Grid Background="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.BackgroundColour, Converter={StaticResource ColorToBrush}}">
 		<Border RenderOptions.BitmapInterpolationMode="HighQuality">
-			<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="60 80">
-				<!--<Viewbox StretchDirection="DownOnly"
-						 HorizontalAlignment="Left">-->
+			<Grid HorizontalAlignment="Stretch" Margin="60 80">
+				<!--<Viewbox StretchDirection="DownOnly" Stretch="Uniform">-->
 					<TextBlock Text="{Binding Text, FallbackValue='Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed'}"
 							   LineHeight="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.LineHeight}"
 							   FontWeight="SemiBold"
-							   TextAlignment="Left"
+							   TextAlignment="Center"
 							   HorizontalAlignment="Stretch"
 							   VerticalAlignment="Center"
 							   FontFamily="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontFamily, FallbackValue='Garamond, Playfair Display'}"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
 							   Foreground="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.TextColour, Converter={StaticResource ColorToBrush}}"
 							   FontSize="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontSize}"
+							   TextWrapping="Wrap"
 							/>
 				<!--</Viewbox>-->
 			</Grid>

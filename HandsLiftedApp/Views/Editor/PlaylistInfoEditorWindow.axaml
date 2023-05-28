@@ -20,30 +20,40 @@
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
 
-	<Border>
-
-		<DockPanel>
-
+	<DockPanel>
+		<Grid Background="#6033ab" DockPanel.Dock="Top">
+			<TextBlock
+				Foreground="White"
+				Margin="14 14"
+				FontSize="18">Edit Playlist Info</TextBlock>
 			<Button Name="CancelButton" IsCancel="True" 
 					Padding="8"
 					BorderThickness="0"
 					Background="Transparent"
 					HorizontalAlignment="Right"
 					DockPanel.Dock="Top">
-				<material:MaterialIcon Kind="Close" />
+				<material:MaterialIcon Kind="Close" Foreground="White" />
 			</Button>
+		</Grid>
+		<DockPanel>
 			
 			<Button Name="DoneButton" IsDefault="True" 
 					Padding="12"
 					DockPanel.Dock="Bottom">Save</Button>
-		
+
 			<StackPanel Margin="8">
+				<TextBlock Text="Title" />
 				<TextBox Name="TitleField" Watermark="Playlist Title" FontSize="22" Text="{Binding Playlist.Title, Mode=OneTime}" />
+
+				<TextBlock Text="Date" />
 				<DatePicker Name="DateField" SelectedDate="{Binding Playlist.Date, Mode=OneTime}" />
+				
+				<TextBlock Text="Location" />
+				<TextBlock Text="C:\VisionScreens\service.xml" />
 			</StackPanel>
 			
 		</DockPanel>
 			
-	</Border>
+	</DockPanel>
 	
 </Window>

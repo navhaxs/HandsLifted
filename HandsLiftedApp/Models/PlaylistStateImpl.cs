@@ -65,18 +65,6 @@ namespace HandsLiftedApp.Models
 
             Playlist.Items.CollectionChanged += Items_CollectionChanged;
 
-            this.WhenAnyValue(x => x.SelectedItem).Subscribe((Item<ItemStateImpl>? c) =>
-            {
-                if (c == null)
-                {
-                    Debug.Print("null");
-                    return;
-                }
-
-                
-                Debug.Print(c.ToString());
-            });
-
             Playlist.WhenAnyValue(p => p.LogoGraphicFile).Subscribe(_ =>
             {
 

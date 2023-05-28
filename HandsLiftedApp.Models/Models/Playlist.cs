@@ -42,16 +42,31 @@ namespace HandsLiftedApp.Data.Models
         [XmlIgnore]
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
-        private ObservableCollection<Item<I>> _items = new ObservableCollection<Item<I>>();
+        private ObservableCollection<Item<I>> _items;
 
         public Playlist()
         {
+            Items = new ObservableCollection<Item<I>>();
             if (Design.IsDesignMode)
                 return;
-
             State = (T)Activator.CreateInstance(typeof(T), this);
         }
 
-        public ObservableCollection<Item<I>> Items { get => _items; set => this.RaiseAndSetIfChanged(ref _items, value); }
+        public ObservableCollection<Item<I>> Items
+        {
+            get => _items;
+            set
+            {
+                value.CollectionChanged += (s, e) =>
+                {
+                    int idx = 0;
+                    foreach(var item in value)
+                    {
+                        item.State.ItemIndex = idx++;
+                    }
+                };
+                this.RaiseAndSetIfChanged(ref _items, value);
+            }
+        }
     }
 }

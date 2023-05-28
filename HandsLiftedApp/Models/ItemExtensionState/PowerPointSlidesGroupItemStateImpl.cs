@@ -40,7 +40,8 @@ namespace HandsLiftedApp.Models.ItemExtensionState
             DateTime now = DateTime.Now;
             string fileName = Path.GetFileName(parentSlidesGroup.SourcePresentationFile);
 
-            string targetDirectory = Path.Join(@"R:\" + FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            // decision: where to import? do we import the source file? or just the exported data?
+            string targetDirectory = Path.Join(Globals.Env.TempDirectory + FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
             //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
 
             ImportTask importTask = new ImportTask() { PPTXFilePath = parentSlidesGroup.SourcePresentationFile, OutputDirectory = targetDirectory };

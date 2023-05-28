@@ -125,7 +125,11 @@ namespace HandsLiftedApp.Controls
                 {
                     var lastIndex = 0;
 
-                    if (offset.Y > Double.Epsilon)
+                    if (offset.Y == scrollViewer.ScrollBarMaximum.Y)
+                    {
+                        lastIndex = listBox.ItemCount - 1;
+                    }
+                    else if (offset.Y > Double.Epsilon)
                     {
                         for (int i = 0; i < listBox.ItemCount; i++)
                         {

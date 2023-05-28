@@ -757,6 +757,7 @@ namespace HandsLiftedApp.ViewModels
 
             if (v > -1)
                 Playlist.Items.RemoveAt(v);
+
         }
 
     }

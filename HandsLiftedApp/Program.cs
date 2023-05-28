@@ -76,6 +76,7 @@ namespace HandsLiftedApp {
             GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
 
             return AppBuilder.Configure<App>()
+                 .With(new SkiaOptions { MaxGpuResourceSizeBytes = 0x20000000 })
                 .UsePlatformDetect()
                 .LogToTrace()
                 .UseReactiveUI();

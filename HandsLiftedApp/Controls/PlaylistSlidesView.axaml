@@ -1,11 +1,15 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:converters="using:HandsLiftedApp.Converters"
-             xmlns:controls="using:HandsLiftedApp.Controls"
-             x:Class="HandsLiftedApp.Controls.PlaylistSlidesView">
+<UserControl
+    x:Class="HandsLiftedApp.Controls.PlaylistSlidesView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:LastItemHeightConverter x:Key="lastItemHeightConverter" />
@@ -13,9 +17,10 @@
 
     <Grid Name="parentWrapper">
 
-        <controls:CustomScrollViewer Name="ScrollViewer"
-                                     HorizontalScrollBarVisibility="Disabled"
-                                     VerticalScrollBarVisibility="Visible">
+        <controls:CustomScrollViewer
+            Name="ScrollViewer"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Visible">
             <controls:CustomScrollViewer.Styles>
                 <Style Selector="ScrollBar">
                     <Setter Property="AllowAutoHide" Value="false" />
@@ -25,23 +30,26 @@
                 </Style>
             </controls:CustomScrollViewer.Styles>
 
-            <DockPanel>
+            <DockPanel Background="White">
 
-                <!-- "fill" the height with the last item -->
-                <Grid DockPanel.Dock="Bottom" Background="White">
-                    <!-- TODO this would be a good place to put a 'add item' button -->
+                <controls:AddItemButton Margin="0,12,0,0" DockPanel.Dock="Top" />
+
+                <!--  "fill" the height with the last item  -->
+                <Grid DockPanel.Dock="Bottom">
+                    <!--  TODO this would be a good place to put a 'add item' button  -->
                     <Grid.Height>
                         <MultiBinding Converter="{StaticResource lastItemHeightConverter}">
                             <Binding ElementName="parentWrapper" Path="Bounds.Height" />
-                            <!-- TODO this below binding does not update when items changes. Fix this. -->
+                            <!--  TODO this below binding does not update when items changes. Fix this.  -->
                             <Binding ElementName="List" />
                             <Binding ElementName="List" Path="Items" />
                         </MultiBinding>
                     </Grid.Height>
                 </Grid>
-                <ItemsControl Name="List"
-                              Background="White"
-                              ItemsSource="{Binding Items}">
+                <ItemsControl
+                    Name="List"
+                    Background="White"
+                    ItemsSource="{Binding Items}">
                     <ItemsControl.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="0" />

@@ -43,7 +43,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
     public interface IItemState
     {
-        //public int ItemIndex { get; set; }
+        public int ItemIndex { get; set; }
         public int SelectedSlideIndex { get; set; }
 
         public IPageTransition? PageTransition { get; set; }

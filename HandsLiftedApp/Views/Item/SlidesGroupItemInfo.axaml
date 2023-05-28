@@ -6,7 +6,7 @@
  	 		 xmlns:utils="using:HandsLiftedApp.Utils"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="150"
              x:Class="HandsLiftedApp.Views.Item.SlidesGroupItemInfo">
-	<Border Background="#f6f6fc" CornerRadius="5" Padding="5">
+	<Border CornerRadius="5" Padding="5">
 
 		<StackPanel>
 			
