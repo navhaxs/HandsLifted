@@ -223,7 +223,9 @@
             </Border>
         </DockPanel>
 
-        <controls:AddItemButton Margin="0,12,0,0" />
+        <controls:AddItemButton Margin="0,12,0,0"
+								ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}"
+								/>
 
     </StackPanel>
 

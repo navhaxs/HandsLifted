@@ -163,7 +163,7 @@
 						<Grid>
 
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="0.18*" MinWidth="12" MaxWidth="700" />
+								<ColumnDefinition Width="0.18*" MaxWidth="700" />
 								<ColumnDefinition Width="0" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
@@ -220,6 +220,20 @@
 										<TextBlock Text="Library" />
 									</DockPanel>
 								</ToggleButton>
+
+								<Expander
+									DockPanel.Dock="Bottom"
+									>
+									<Expander.Header>
+										<DockPanel>
+											<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
+											<TextBlock Text="Library" />
+										</DockPanel>
+									</Expander.Header>
+									<Expander.Content>
+										<library:LibraryView />
+									</Expander.Content>
+								</Expander>
 
 								<Button
 									DockPanel.Dock="Bottom"
@@ -417,7 +431,6 @@
 											Background="#9a93cd"
 											ZIndex="9999" />
 
-									<library:LibraryView Grid.Row="2"  />
 
 									<!--<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
 

@@ -6,36 +6,97 @@
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Background="Transparent"
+	DragDrop.AllowDrop="True"
     d:DesignHeight="150"
     d:DesignWidth="400"
     mc:Ignorable="d">
-    <Button Margin="50,0" 
-			Width="100"
-			HorizontalAlignment="Left" 
-			VerticalAlignment="Top">
-        <Button.Styles>
-            <Style Selector="Button">
-                <Setter Property="Padding" Value="12 8" />
-                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Background" Value="#f6f4ff" />
-                <Setter Property="BorderBrush" Value="#f6f4ff" />
-            </Style>
-            <Style Selector="Button:pointerover">
-				<Setter Property="Background" Value="#f6f4ff" />
-				<Setter Property="BorderBrush" Value="#f6f4ff" />
-			</Style>
-        </Button.Styles>
+	<DockPanel>
+		<TextBlock Name="DropState" />
+		<Button Margin="50,0" 
+				DockPanel.Dock="Left"
+				Width="100"
+				HorizontalAlignment="Left" 
+				VerticalAlignment="Top"
+				>
+			<Button.Styles>
+				<Style Selector="Button">
+					<Setter Property="Padding" Value="12 8" />
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+					<Setter Property="BorderThickness" Value="1" />
+					<Setter Property="CornerRadius" Value="6" />
+					<Setter Property="Background" Value="#f6f4ff" />
+					<Setter Property="BorderBrush" Value="#f6f4ff" />
+				</Style>
+				<Style Selector="Button:pointerover">
+					<Setter Property="Background" Value="#f6f4ff" />
+					<Setter Property="BorderBrush" Value="#f6f4ff" />
+				</Style>
+			</Button.Styles>
 
-        <material:MaterialIcon
-            Margin="-4"
-			Height="24"
-			Width="24"
-            VerticalAlignment="Center"
-            DockPanel.Dock="Top"
-            Foreground="#9a93cd"
-            Kind="Plus" />
+			<material:MaterialIcon
+				Margin="-4"
+				Height="24"
+				Width="24"
+				VerticalAlignment="Center"
+				DockPanel.Dock="Top"
+				Foreground="#9a93cd"
+				Kind="Plus" />
 
-    </Button>
+			<Button.Flyout>
+				<MenuFlyout Placement="RightEdgeAlignedBottom">
+					<MenuItem Header="_Presentation">
+						<MenuItem Header="PowerPoint" Command="{Binding AddPresentationCommand}">
+							<MenuItem.Icon>
+								<material:MaterialIcon Kind="Presentation" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="Google Slides" Command="{Binding AddGoogleSlidesCommand}">
+							<MenuItem.Icon>
+								<material:MaterialIcon Kind="Slideshow" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="PDF Slides (Canva, etc.)">
+							<MenuItem.Icon>
+								<material:MaterialIcon Kind="Slideshow" />
+							</MenuItem.Icon>
+						</MenuItem>
+					</MenuItem>
+					<MenuItem Header="_Song" Command="{Binding AddSongCommand}">
+						<MenuItem.Icon>
+							<material:MaterialIcon Kind="Music" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="_Graphic/s" Command="{Binding AddGraphicCommand}">
+						<MenuItem.Icon>
+							<material:MaterialIcon Kind="Image" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="_Video" Command="{Binding AddVideoCommand}">
+						<MenuItem.Icon>
+							<material:MaterialIcon Kind="Video" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<Separator />
+					<MenuItem Header="_Logo" Command="{Binding AddLogoCommand}">
+						<MenuItem.Icon>
+							<material:MaterialIcon Kind="Star" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<Separator />
+					<MenuItem Header="_Group">
+						<MenuItem.Icon>
+							<material:MaterialIcon Kind="ContentCopy" />
+						</MenuItem.Icon>
+
+						<MenuItem Header="_...From Folder of Media" Command="{Binding AddGroupCommand}">
+						</MenuItem>
+						<MenuItem Header="Blank Group" Command="{Binding AddTestEmptyGroupCommand}">
+						</MenuItem>
+						<MenuItem Header="Custom Group (Bible Reading Slide Test)" Command="{Binding AddCustomSlideCommand}">
+						</MenuItem>
+					</MenuItem>
+				</MenuFlyout>
+			</Button.Flyout>
+		</Button>
+	</DockPanel>
 </UserControl>
