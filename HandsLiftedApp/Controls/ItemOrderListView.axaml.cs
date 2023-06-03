@@ -14,6 +14,8 @@ using System.Reflection;
 
 namespace HandsLiftedApp.Controls
 {
+    // TODO disable spyscroll feature as its rather buggy
+    // good effort tho.
     public partial class ItemOrderListView : UserControl
     {
         private static readonly object syncSlidesLock = new object();
@@ -33,7 +35,7 @@ namespace HandsLiftedApp.Controls
                    lock (syncSlidesLock)
                    {
                        listBox.SelectionChanged -= ListBox_SelectionChanged;
-                       listBox.SelectedIndex = x.Index;
+                       //listBox.SelectedIndex = x.Index;
                        listBox.SelectionChanged += ListBox_SelectionChanged;
                    }
                });

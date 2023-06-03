@@ -71,7 +71,8 @@ namespace HandsLiftedApp.Data.Models.Items
 
         // this should be a data type for the XML
         // that is the list of slide media items <by type... video song custom etc>
-        public ObservableCollection<string> Items { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> _items = new ObservableCollection<string>();
+        public ObservableCollection<string> Items { get => _items; set => this.RaiseAndSetIfChanged(ref _items, value); }
 
         private ObservableCollection<Slide> _slides = new ObservableCollection<Slide>();
 
@@ -131,7 +132,6 @@ namespace HandsLiftedApp.Data.Models.Items
             {
                 Items.RemoveAt(Items.Count - 1);
             }
-
 
             return slidesGroup;
         }

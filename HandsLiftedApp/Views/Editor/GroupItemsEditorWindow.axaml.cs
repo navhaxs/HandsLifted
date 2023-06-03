@@ -11,46 +11,39 @@ using HandsLiftedApp.Models.ItemExtensionState;
 using Avalonia.Interactivity;
 using ReactiveUI;
 using System.Reactive;
+using System.Threading.Tasks;
+using Avalonia.ReactiveUI;
+using HandsLiftedApp.ViewModels;
+using System.Linq;
 
 namespace HandsLiftedApp.Views
 {
-    public partial class GroupItemsEditorWindow : Window
+    public partial class GroupItemsEditorWindow : ReactiveWindow<GroupItemsEditorViewModel>
     {
-
-        public Interaction<Unit, string?> ShowOpenFileDialog { get; }
-        public Interaction<Unit, string?> ShowOpenFolderDialog { get; }
-
-        //public ObservableCollection<Person> People { get; }
         public GroupItemsEditorWindow()
         {
             InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
-
-
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
-            //this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
-            //this.WhenActivated(d => d(ViewModel.ShowOpenFolderDialog.RegisterHandler(ShowOpenFolderDialog)));
-
-            // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
-            ShowOpenFileDialog = new Interaction<Unit, string?>();
-            ShowOpenFolderDialog = new Interaction<Unit, string?>();
-
+            this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
             this.DataContextChanged += GroupItemsEditorWindow_DataContextChanged;
         }
+
+        private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)
+        {
+            var dialog = new OpenFileDialog();
+            var fileNames = await dialog.ShowAsync(this);
+            interaction.SetOutput(fileNames.FirstOrDefault());
+        }
+
         private void GroupItemsEditorWindow_DataContextChanged(object? sender, System.EventArgs e)
         {
-            //if (this.DataContext is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)
-            //{
-            //    this.FindControl<DataGrid>("DataGrid").Items = (IEnumerable)(((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)this.DataContext).Slides);
-            //}
+            //this.FindControl<DataGrid>("DataGrid").ItemsSource = ViewModel.Item.Slides;
         }
 
-        public void AddItemSingleClick(object? sender, RoutedEventArgs args)
-        {
-
-        }
+  
         
         public void AddItemFolderClick(object? sender, RoutedEventArgs args)
         {

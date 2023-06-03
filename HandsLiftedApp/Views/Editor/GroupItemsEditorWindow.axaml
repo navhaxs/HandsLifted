@@ -1,0 +1,140 @@
+<Window
+    x:Class="HandsLiftedApp.Views.GroupItemsEditorWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="GroupItemsEditorWindow"
+    d:DesignHeight="650"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <DockPanel>
+        <ScrollViewer>
+
+            <StackPanel>
+                <TextBox Text="{Binding Item.Title}" Watermark="GroupItem Title" />
+                <!--<Separator />
+                <TextBlock>Add</TextBlock>
+                <Button>Add Item from single select</Button>
+                <Button>Add Items from multiselect</Button>
+                <Button>Add Items from folder</Button>-->
+                <Separator />
+                <TextBlock>Move</TextBlock>
+                <Button Command="{Binding MoveItemUp}">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Width="24"
+                            Height="24"
+                            Margin="-4,-4,-4,-4"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Foreground="#888888"
+                            Kind="ArrowUp" />
+                        <TextBlock>
+                            Move Item Up
+                        </TextBlock>
+                    </DockPanel>
+                </Button>
+				<Button Command="{Binding MoveItemDown}">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Width="24"
+                            Height="24"
+                            Margin="-4,-4,-4,-4"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Foreground="#888888"
+                            Kind="ArrowDown" />
+                        <TextBlock>
+                            Move Item Down
+                        </TextBlock>
+                    </DockPanel>
+                </Button>
+                <Separator />
+                <!--<TextBlock>Move special</TextBlock>
+                <Button>Move Item Elsewhere</Button>
+                <Button>Move Item To New Group</Button>
+                <Button>Move Range To New Group</Button>
+                <Separator />
+                <TextBlock>Copy</TextBlock>
+                <Button>Copy Item Up</Button>
+                <Button>Copy Item Down</Button>
+                <Separator />
+                <TextBlock>Copy special</TextBlock>
+                <Button>Copy Item Elsewhere</Button>
+                <Button>Copy Item To New Group</Button>
+                <Button>Copy Range To New Group</Button>
+                <Separator />-->
+                <TextBlock>Edit</TextBlock>
+                <Button>Edit Item Info</Button>
+                <Button Command="{Binding RemoveItem}">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Width="24"
+                            Height="24"
+                            Margin="-4,-4,-4,-4"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Foreground="#888888"
+                            Kind="Multiply" />
+                        <TextBlock>Remove Item</TextBlock>
+                    </DockPanel>
+                </Button>
+				<Separator />
+				<Button Command="{Binding ExploreFile}">Show in Explorer</Button>
+				<!--<Separator />
+                <Button>Toggle Item Visibility</Button>
+                <Separator />
+                <Button>Load XML</Button>
+                <Button>Save XML</Button>-->
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border
+            Background="#edeafc"
+            BorderBrush="#aba5d5"
+            BorderThickness="0,0,0,1"
+            DockPanel.Dock="Top">
+            <DockPanel>
+                <Button
+					Command="{Binding OpenFile}"
+                    MinWidth="80"
+                    Margin="8,0"
+                    Padding="24,14"
+                    VerticalAlignment="Bottom"
+                    Background="White"
+                    BorderBrush="#aba5d5"
+                    BorderThickness="1,1,1,0"
+                    CornerRadius="5 5 0 0"
+                    DockPanel.Dock="Left">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Width="24"
+                            Height="24"
+                            Margin="-4,-4,-4,-4"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Foreground="#888888"
+                            Kind="PlusCircleOutline" />
+                        <TextBlock
+                            Margin="12,0,0,0"
+                            FontSize="14"
+                            Text="Add item" />
+                    </DockPanel>
+                </Button>
+                <TextBlock
+                    Padding="16,20,16,14"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="Editor" />
+            </DockPanel>
+        </Border>
+        <ListBox Name="DataGrid_Items" ItemsSource="{Binding Item.Items, Mode=TwoWay}" />
+        <DataGrid
+            Name="DataGrid_Slides"
+            AutoGenerateColumns="True"
+			SelectedIndex="{Binding SelectedIndex}"
+            ItemsSource="{Binding Item.Slides, Mode=TwoWay}" />
+    </DockPanel>
+</Window>

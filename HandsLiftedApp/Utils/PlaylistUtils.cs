@@ -248,6 +248,7 @@ namespace HandsLiftedApp.Utils
         {
             string _filename = filename.ToLower();
 
+            // TODO: make VideoSlide and ImageSlide both share common MediaSlide parent class
             if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x)))
             {
                 return new VideoSlide<VideoSlideStateImpl>(filename) { Index = index };
