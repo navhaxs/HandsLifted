@@ -11,6 +11,7 @@ using System.Reactive;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
+using HandsLiftedApp.Models.UI;
 
 namespace HandsLiftedApp.Models.ItemExtensionState
 {
@@ -43,11 +44,24 @@ namespace HandsLiftedApp.Models.ItemExtensionState
         private async Task ChangeFileCommandTask()
         {
             // *gives up on MVVM*
-            //var dialog = new OpenFileDialog();
-            //var fileNames = await dialog.ShowAsync();
-            //interaction.SetOutput(fileNames.FirstOrDefault());
+            MessageBus.Current.SendMessage(new WrapFileOpenActionMessage()
+            {
+                CallbackAction = (fileName) =>
+                {
+                    if (fileName != null)
+                    {
+                        parentSlidesGroup.SourcePresentationFile = fileName;
+                        // TODO DRY
+                        //string PlaylistWorkingDirectory = @"C:\VisionScreensTmp\"; // i need a reference to Playlist :(
+                        //DateTime now = DateTime.Now;
+                        //string targetDirectory = Path.Join(PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                        //Directory.CreateDirectory(targetDirectory);
+                        parentSlidesGroup.SyncState.SyncCommand();
+                    }
+                }
+            });
         }
-        
+
         private void ExploreFileTask()
         {
             FileUtils.ExploreFile(parentSlidesGroup.SourcePresentationFile);
@@ -74,7 +88,8 @@ namespace HandsLiftedApp.Models.ItemExtensionState
             string fileName = Path.GetFileName(parentSlidesGroup.SourcePresentationFile);
 
             // decision: where to import? do we import the source file? or just the exported data?
-            string targetDirectory = Path.Join(Globals.Env.TempDirectory + FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            // OR relative to PLAYLIST directory
+            string targetDirectory = Path.Join(Globals.Env.TempDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
             //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
 
             ImportTask importTask = new ImportTask() { PPTXFilePath = parentSlidesGroup.SourcePresentationFile, OutputDirectory = targetDirectory };

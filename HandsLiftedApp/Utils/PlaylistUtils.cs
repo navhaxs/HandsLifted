@@ -88,11 +88,11 @@ namespace HandsLiftedApp.Utils
                 if (fullFilePath != null && fullFilePath is string)
                 {
 
-                    DateTime now = DateTime.Now;
+                    //DateTime now = DateTime.Now;
                     string fileName = Path.GetFileName(fullFilePath);
 
-                    string targetDirectory = Path.Join(state.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                    Directory.CreateDirectory(targetDirectory);
+                    //string targetDirectory = Path.Join(state.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    //Directory.CreateDirectory(targetDirectory);
 
                     //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
                     PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };

@@ -56,6 +56,9 @@ namespace HandsLiftedApp.Views
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
             this.WhenActivated(d => d(ViewModel.ShowOpenFolderDialog.RegisterHandler(ShowOpenFolderDialog)));
 
+            MessageBus.Current.Listen<WrapFileOpenActionMessage>()
+                .Subscribe(msg => wrapFileOpenDialog(msg.CallbackAction));
+
             MessageBus.Current.Listen<MainWindowMessage>()
              .Subscribe(x =>
              {
@@ -340,6 +343,12 @@ namespace HandsLiftedApp.Views
             });
         }
 
+        async Task wrapFileOpenDialog(Action<string?> callbackFunc)
+        {
+            var dialog = new OpenFileDialog();
+            var fileNames = await dialog.ShowAsync(this);
+            callbackFunc(fileNames != null ? fileNames.FirstOrDefault() : null);
+        }
 
     }
 }
