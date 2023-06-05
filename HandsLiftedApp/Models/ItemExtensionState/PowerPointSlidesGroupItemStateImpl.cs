@@ -1,4 +1,5 @@
 ﻿using Avalonia.Threading;
+using Avalonia.Controls;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Utils;
@@ -6,6 +7,9 @@ using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reactive;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
 
 namespace HandsLiftedApp.Models.ItemExtensionState
@@ -18,6 +22,10 @@ namespace HandsLiftedApp.Models.ItemExtensionState
         public PowerPointSlidesGroupItemStateImpl(ref PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> parent)
         {
             parentSlidesGroup = parent;
+
+            ChangeFileCommand = ReactiveCommand.CreateFromTask(ChangeFileCommandTask);
+            ExploreFile = ReactiveCommand.Create(ExploreFileTask);
+            EditInExternalCommand = ReactiveCommand.Create(EditInExternalCommandTask);
         }
 
         private bool _isSyncBusy = true;
@@ -26,13 +34,38 @@ namespace HandsLiftedApp.Models.ItemExtensionState
         public double _progress = 0;
         public double Progress { get => _progress; set => this.RaiseAndSetIfChanged(ref _progress, value); }
 
-        public void EditInExternalCommand()
-        {
-            using Process fileopener = new Process();
+        public ReactiveCommand<Unit, Unit> ChangeFileCommand { get; }
+        public ReactiveCommand<Unit, Unit> ExploreFile { get; }
+        public ReactiveCommand<Unit, Unit> EditInExternalCommand { get; }
+        //SourcePresentationFileExists
+        //SourceSlidesExportDirectoryExists
 
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + parentSlidesGroup.SourcePresentationFile + "\"";
-            fileopener.Start();
+        private async Task ChangeFileCommandTask()
+        {
+            // *gives up on MVVM*
+            //var dialog = new OpenFileDialog();
+            //var fileNames = await dialog.ShowAsync();
+            //interaction.SetOutput(fileNames.FirstOrDefault());
+        }
+        
+        private void ExploreFileTask()
+        {
+            FileUtils.ExploreFile(parentSlidesGroup.SourcePresentationFile);
+        }
+        
+        private void EditInExternalCommandTask()
+        {
+            if (File.Exists(parentSlidesGroup.SourcePresentationFile))
+            {
+                using Process fileopener = new Process();
+                fileopener.StartInfo.FileName = "explorer";
+                fileopener.StartInfo.Arguments = "\"" + parentSlidesGroup.SourcePresentationFile + "\"";
+                fileopener.Start();
+            }
+            else
+            {
+                // file does NOT exist
+            }
         }
 
         public void SyncCommand()

@@ -44,7 +44,7 @@
 		</Style>
 
 		<Style Selector="ListBoxItem">
-			<Setter Property="Margin" Value="4 0 0 0"/>
+			<Setter Property="Margin" Value="0"/>
 			<Setter Property="BorderThickness" Value="1 1 0 1"/>
 			<Setter Property="CornerRadius" Value="3 0 0 3"/>
 			<Setter Property="(i:Interaction.Behaviors)">
@@ -72,8 +72,6 @@
 	</UserControl.Styles>
 
 	<Grid>
-
-		
 		<ListBox
 			x:Name="itemsListBox"
 			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -95,9 +93,21 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<DockPanel VerticalAlignment="Stretch">
-						
-						<!--<item:ItemIcon DockPanel.Dock="Left" Margin="5 0 8 0" Background="Red" />-->
 
+						<Viewbox Width="10">
+							<Polygon Points="0,0 8,5, 0,10"
+									 Fill="#c43e1c"
+									 IsVisible="{Binding State.IsSelected}"
+									 />
+						</Viewbox>
+						
+						<!--<material:MaterialIcon
+							Background="Red"
+IsVisible="{Binding State.IsSelected_}"
+	DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Width="12"
+Foreground="#c43e1c" Kind="Play" Margin="0 0 0 0" Padding="0" />-->
+
+						<!--<item:ItemIcon DockPanel.Dock="Left" Margin="5 0 8 0" Background="Red" />-->
 						<!-- <Button -->
 						<!-- 		DockPanel.Dock="Right" -->
 						<!-- 		IsHitTestVisible="False" -->
@@ -121,12 +131,8 @@
 						<!-- 		Foreground="White" -->
 						<!-- 		FontSize="12">LIVE</TextBlock> -->
 						<!-- </Button> -->
-						<material:MaterialIcon
-						IsVisible="{Binding State.IsSelected}"	
-							DockPanel.Dock="Right" VerticalAlignment="Center" Height="16" Width="16"
-						Foreground="#c43e1c" Kind="Play" Margin="0 0 6 0" Padding="0" />
-
-						<TextBlock TextTrimming="CharacterEllipsis" Padding="6 10 0 10">
+						
+						<TextBlock TextTrimming="CharacterEllipsis" Padding="6 8 0 8">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0}">
 									<!--<MultiBinding StringFormat="{}{0}. {1}">-->

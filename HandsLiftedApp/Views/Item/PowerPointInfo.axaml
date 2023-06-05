@@ -1,22 +1,87 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="150"
-             x:Class="HandsLiftedApp.Views.Item.PowerPointInfo">
-	<Border Background="#f1f1f1" CornerRadius="5" Padding="5">
-		<StackPanel HorizontalAlignment="Left">
-			<StackPanel>
-				<TextBlock Text="PowerPoint Presentation" />
-				<DockPanel>
-					<Button DockPanel.Dock="Right" Content="..." />
-					<TextBlock Text="C:\VisionScreens\TestPresentations\Matthew 11 Sermon.pptx" TextDecorations="Underline" Foreground="Blue" />
-				</DockPanel>
-			</StackPanel>
-			<TextBlock Text="Last sync: 4:44am Today ('Sunday Post-roll', 8 Slides)" />
-			<Button Content="Edit in PowerPoint" HorizontalAlignment="Left" Command="{Binding SyncState.EditInExternalCommand}" />
-			<ProgressBar Value="{Binding SyncState.Progress}" Maximum="100" />
-			<Button Content="Sync now" HorizontalAlignment="Left" Command="{Binding SyncState.SyncCommand}" />
-		</StackPanel>
-	</Border>
+<UserControl
+    x:Class="HandsLiftedApp.Views.Item.PowerPointInfo"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="600"
+    mc:Ignorable="d">
+    <StackPanel>
+        <Border
+            Margin="8,8,8,0"
+            Background="#46847DBB"
+            CornerRadius="6">
+            <StackPanel Margin="12,16">
+                <DockPanel VerticalAlignment="Center">
+                    <material:MaterialIcon
+                        Width="32"
+                        Height="32"
+                        Margin="0,8,6,8"
+                        Foreground="#530066"
+                        Kind="MicrosoftPowerpoint" />
+                    <StackPanel
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Right"
+                        Orientation="Horizontal">
+                        <Button
+                            Margin="6,0,0,0"
+                            Command="{Binding SyncState.ChangeFileCommand}"
+                            Content="Change file..." />
+                        <Button Command="{Binding SyncState.EditInExternalCommand}" Content="Edit in PowerPoint" />
+                    </StackPanel>
+                    <Button VerticalAlignment="Center" Command="{Binding SyncState.ExploreFile}"
+							BorderThickness="0" Background="Transparent" HorizontalAlignment="Left">
+                        <TextBlock
+                            Foreground="Blue"
+                            Text="{Binding SourcePresentationFile, FallbackValue='SourcePresentationFile'}"
+                            TextDecorations="Underline"
+                            TextWrapping="Wrap" />
+                    </Button>
+                </DockPanel>
+            </StackPanel>
+        </Border>
+
+        <Expander
+            Margin="0,6,0,0"
+            VerticalAlignment="Top">
+            <Expander.Header>
+                <DockPanel>
+                    <material:MaterialIcon Margin="0,0,6,0" Kind="Sync" />
+                    <TextBlock>PowerPoint Presentation Sync</TextBlock>
+                </DockPanel>
+            </Expander.Header>
+            <Border
+                Margin="6,0"
+                BorderBrush="#9a93cd"
+                BorderThickness="1"
+                CornerRadius="5">
+                <DockPanel>
+                    <ProgressBar
+                        MinHeight="6"
+                        Margin="0,8,0,0"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="6"
+                        DockPanel.Dock="Bottom"
+                        Maximum="100"
+                        Value="{Binding SyncState.Progress}" />
+                    <TextBlock
+                        Margin="8,8,8,0"
+                        DockPanel.Dock="Bottom"
+                        Text="Last sync: 4:44am Today ('Sunday Post-roll', 8 Slides)" />
+                    <Button
+                        Command="{Binding SyncState.SyncCommand}"
+                        Content="Sync now"
+                        DockPanel.Dock="Right" />
+
+                    <TextBlock
+                        Margin="8,8,8,0"
+                        DockPanel.Dock="Bottom"
+                        Text="{Binding SourceSlidesExportDirectory, FallbackValue='SourceSlidesExportDirectory'}" />
+                </DockPanel>
+            </Border>
+
+        </Expander>
+    </StackPanel>
 </UserControl>

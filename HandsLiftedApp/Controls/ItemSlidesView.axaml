@@ -42,9 +42,7 @@
         </Style>
     </UserControl.Styles>
 
-
     <StackPanel>
-
         <DockPanel>
             <Viewbox
                 Width="50"
@@ -76,17 +74,15 @@
                         ComparisonCondition="Equal"
                         Value="False">
                         <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#9a93cd" />
-						<ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
+                        <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                     </ia:DataTriggerBehavior>
                 </i:Interaction.Behaviors>
 
                 <StackPanel Margin="0,0,0,0">
                     <!--<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">-->
                     <DockPanel>
-
                         <!--<item:ItemIcon Margin="12,0,8,0" DockPanel.Dock="Left"
 									   />-->
-
                         <Button
                             Margin="6"
                             Padding="22,6"
@@ -111,10 +107,8 @@
                             VerticalAlignment="Center"
                             FontSize="20"
                             Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
-
                     </DockPanel>
                     <item:ItemInfo VerticalAlignment="Top" />
-
                     <controls:ListBoxWithoutKey
                         Name="List"
                         AutoScrollToSelectedItem="False"
@@ -223,9 +217,7 @@
             </Border>
         </DockPanel>
 
-        <controls:AddItemButton Margin="0,12,0,0"
-								ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}"
-								/>
+        <controls:AddItemButton Margin="0,12,0,0" ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}" />
 
     </StackPanel>
 

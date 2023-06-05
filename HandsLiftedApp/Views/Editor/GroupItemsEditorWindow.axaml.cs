@@ -42,8 +42,6 @@ namespace HandsLiftedApp.Views
         {
             //this.FindControl<DataGrid>("DataGrid").ItemsSource = ViewModel.Item.Slides;
         }
-
-  
         
         public void AddItemFolderClick(object? sender, RoutedEventArgs args)
         {
