@@ -35,7 +35,7 @@ namespace HandsLiftedApp.Controls
                    lock (syncSlidesLock)
                    {
                        listBox.SelectionChanged -= ListBox_SelectionChanged;
-                       //listBox.SelectedIndex = x.Index;
+                       listBox.SelectedIndex = x.Index;
                        listBox.SelectionChanged += ListBox_SelectionChanged;
                    }
                });

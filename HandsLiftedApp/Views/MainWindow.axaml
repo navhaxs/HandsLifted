@@ -1,139 +1,157 @@
-<Window xmlns="https://github.com/avaloniaui"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:views="using:HandsLiftedApp.Views"
-		xmlns:vm="using:HandsLiftedApp.ViewModels"
-		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:i="using:Avalonia.Xaml.Interactivity"
-		xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
-		xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
-		xmlns:controls="using:HandsLiftedApp.Controls"
-		xmlns:material="using:Material.Icons.Avalonia"
-		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
-		xmlns:app="using:HandsLiftedApp.Views.App"
-		xmlns:editor="using:HandsLiftedApp.Views.Editor"
-		xmlns:library="using:HandsLiftedApp.Views.Library"
-		mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="550"
-		x:Class="HandsLiftedApp.Views.MainWindow"
-		Icon="/Assets/app.ico"
-	
-		ExtendClientAreaToDecorationsHint="True"
-		ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
-		ExtendClientAreaTitleBarHeightHint="90"
-		
-		Background="#eeeef2"
-		
-		WindowStartupLocation="CenterScreen"
-		Width="1280" Height="720"
-		Title="VisionScreens | Sunday 11am | 22 May 2022">
+<Window
+    x:Class="HandsLiftedApp.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="using:HandsLiftedApp.Views.App"
+    xmlns:approot="using:HandsLiftedApp"
+    xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
+    xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editor="using:HandsLiftedApp.Views.Editor"
+    xmlns:i="using:Avalonia.Xaml.Interactivity"
+    xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+    xmlns:library="using:HandsLiftedApp.Views.Library"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:HandsLiftedApp.Views"
+    xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+    xmlns:vm="using:HandsLiftedApp.ViewModels"
+    Title="VisionScreens | Sunday 11am | 22 May 2022"
+    Width="1280"
+    Height="720"
+    d:DesignHeight="550"
+    d:DesignWidth="800"
+    Background="#eeeef2"
+    ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
+    ExtendClientAreaTitleBarHeightHint="90"
+    ExtendClientAreaToDecorationsHint="True"
+    Icon="/Assets/app.ico"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
-	<Design.DataContext>
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
 
-	<Border BorderThickness="1" BorderBrush="#9b9b9b">
-	
-		<Grid>
-			<DockPanel>
+    <Border BorderBrush="#9b9b9b" BorderThickness="1">
 
-				<Grid>
+        <Grid>
+            <DockPanel>
 
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="1"/>
-						<ColumnDefinition Width="0.24*" MinWidth="200" MaxWidth="800" />
-					</Grid.ColumnDefinitions>
+                <Grid>
 
-					<DockPanel Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1" />
+                        <ColumnDefinition
+                            Width="0.24*"
+                            MinWidth="200"
+                            MaxWidth="800" />
+                    </Grid.ColumnDefinitions>
 
-						<Border DockPanel.Dock="Top" Height="70">
+                    <DockPanel Grid.Column="0">
 
-							<StackPanel Orientation="Horizontal">
+                        <Border Height="70" DockPanel.Dock="Top">
 
-								<ToggleButton Name="AppMenuButton"
-								  IsChecked="{Binding #flyout.IsOpen, Mode=TwoWay}"
-								  ClickMode="Press"
-								  Classes="MenuItem"
-								  HorizontalAlignment="Stretch"
-								  DockPanel.Dock="Bottom"
-								  Background="Transparent"
-								  HorizontalContentAlignment="Left"
-								  VerticalContentAlignment="Stretch"
-								  VerticalAlignment="Stretch"
-								  Margin="8"
-								  Padding="0"
-								  BorderThickness="0"
-								  HotKey="Alt+M">
-									<ToggleButton.Styles>
-										<Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
-											<!--<Setter Property="Background" Value="#9a93cd" />-->
-											<Setter Property="Background" Value="#d0d0d0" />
-										</Style>
-										<Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-											<!--<Setter Property="Background" Value="#9a93cd" />-->
-											<Setter Property="Background" Value="Transparent" />
-										</Style>
-										<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-											<Setter Property="Background" Value="Transparent" />
-										</Style>
-										<!--<Style Selector="ToggleButton:checked TextBlock">
+                            <StackPanel Orientation="Horizontal">
+
+                                <ToggleButton
+                                    Name="AppMenuButton"
+                                    Margin="8"
+                                    Padding="0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    VerticalContentAlignment="Stretch"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Classes="MenuItem"
+                                    ClickMode="Press"
+                                    DockPanel.Dock="Bottom"
+                                    HotKey="Alt+M"
+                                    IsChecked="{Binding #flyout.IsOpen, Mode=TwoWay}">
+                                    <ToggleButton.Styles>
+                                        <Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
+                                            <!--<Setter Property="Background" Value="#9a93cd" />-->
+                                            <Setter Property="Background" Value="#d0d0d0" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                                            <!--<Setter Property="Background" Value="#9a93cd" />-->
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                        <!--<Style Selector="ToggleButton:checked TextBlock">
 									<Setter Property="Foreground" Value="White" />
 								</Style>-->
-										<Style Selector="ToggleButton:pressed Border.AppButtonBorder">
-											<Setter Property="Background" Value="#9a93cd" />
-										</Style>
-										<Style Selector="ToggleButton:checked Border.AppButtonBorder">
-											<Setter Property="Background" Value="#5E3593" />
-										</Style>
-										<Style Selector="ToggleButton:checked material|MaterialIcon">
-											<Setter Property="Foreground" Value="White" />
-										</Style>
-									</ToggleButton.Styles>
-									<Border Classes="AppButtonBorder" CornerRadius="6">
-										<material:MaterialIcon
-											Height="20"
-											Width="20"
-											Kind="Menu"
-											Margin="12 0"
-											/>
-									</Border>
-								</ToggleButton>
+                                        <Style Selector="ToggleButton:pressed Border.AppButtonBorder">
+                                            <Setter Property="Background" Value="#9a93cd" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:checked Border.AppButtonBorder">
+                                            <Setter Property="Background" Value="#5E3593" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:checked material|MaterialIcon">
+                                            <Setter Property="Foreground" Value="White" />
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                    <Border Classes="AppButtonBorder" CornerRadius="6">
+                                        <material:MaterialIcon
+                                            Width="20"
+                                            Height="20"
+                                            Margin="12,0"
+                                            Kind="Menu" />
+                                    </Border>
+                                </ToggleButton>
 
 
-								<Popup Name="flyout"
-									   IsLightDismissEnabled="True"
-									   PlacementMode="BottomEdgeAlignedLeft"
-									   PlacementTarget="{Binding #AppMenuButton}">
-									<views:AppMainMenuControl />
-								</Popup>
+                                <Popup
+                                    Name="flyout"
+                                    IsLightDismissEnabled="True"
+                                    PlacementMode="BottomEdgeAlignedLeft"
+                                    PlacementTarget="{Binding #AppMenuButton}">
+                                    <views:AppMainMenuControl />
+                                </Popup>
 
-								<Button Margin="0 8 14 8" Padding="12" BorderThickness="0" Background="Transparent"
-										Name="PlaylistTitleButton"
-										  VerticalContentAlignment="Stretch"
-								  VerticalAlignment="Stretch"
-										Cursor="Hand">
-									<Button.Styles>
-										<Style Selector="Button:pointerover /template/ ContentPresenter">
-											<Setter Property="Background" Value="#d0d0d0" />
+                                <Button
+                                    Name="PlaylistTitleButton"
+                                    Margin="0,8,14,8"
+                                    Padding="12"
+                                    VerticalAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#d0d0d0" />
 
-										</Style>
-										<Style Selector="Button:pressed /template/ ContentPresenter">
-											<Setter Property="BorderBrush" Value="#2c628b"/>
-											<Setter Property="Background" Value="#c4e5f6"/>
-										</Style>
-										<Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
-											<Setter Property="RenderTransform" Value="none" />
-										</Style>
-									</Button.Styles>
-									<StackPanel Orientation="Horizontal" 
-												VerticalAlignment="Center"
-												IsHitTestVisible="False">
-										<!--<controls:EditableLabelControl />-->
-										<TextBlock FontSize="20" Margin="0 0 12 0" Text="{Binding Playlist.Title, FallbackValue='Untitled'}" />
-										<TextBlock FontSize="20" Margin="0 0 0 0" Foreground="#8a8c8c" Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}" />
-									</StackPanel>
-								</Button>
-								<!--<ToggleButton
+                                        </Style>
+                                        <Style Selector="Button:pressed /template/ ContentPresenter">
+                                            <Setter Property="BorderBrush" Value="#2c628b" />
+                                            <Setter Property="Background" Value="#c4e5f6" />
+                                        </Style>
+                                        <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
+                                            <Setter Property="RenderTransform" Value="none" />
+                                        </Style>
+                                    </Button.Styles>
+                                    <StackPanel
+                                        VerticalAlignment="Center"
+                                        IsHitTestVisible="False"
+                                        Orientation="Horizontal">
+                                        <!--<controls:EditableLabelControl />-->
+                                        <TextBlock
+                                            Margin="0,0,12,0"
+                                            FontSize="20"
+                                            Text="{Binding Playlist.Title, FallbackValue='Untitled'}" />
+                                        <TextBlock
+                                            Margin="0,0,0,0"
+                                            FontSize="20"
+                                            Foreground="#8a8c8c"
+                                            Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}" />
+                                    </StackPanel>
+                                </Button>
+                                <!--<ToggleButton
 								Name="EditTitleButton" VerticalAlignment="Center"
 								Background="Transparent"
 								BorderThickness="0"
@@ -145,434 +163,473 @@
 							   PlacementMode="Bottom"
 							   PlacementTarget="{Binding #EditTitleButton}">
 							</Popup>-->
-							</StackPanel>
-							<!--<DockPanel>
+                            </StackPanel>
+                            <!--<DockPanel>
 								<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />
 								<TextBlock Text="Debug" />
 							</DockPanel>-->
 
 
 
-						</Border>
+                        </Border>
 
-						<!--<Button.Flyout>
+                        <!--<Button.Flyout>
 						<Flyout Placement="BottomEdgeAlignedLeft">
 						</Flyout>
 					</Button.Flyout>-->
 
-						<Grid>
+                        <Grid>
 
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="0.18*" MaxWidth="700" />
-								<ColumnDefinition Width="0" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition
+                                    Width="0.18*"
+                                    MinWidth="34"
+                                    MaxWidth="700" />
+                                <ColumnDefinition Width="0" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-							<!-- Left panel -->
-							<DockPanel Grid.Column="0" Background="#eeeef2">
-								<DockPanel.Styles>
-									<Style Selector="ToggleButton.MenuItem">
-										<Setter Property="Padding" Value="8 8 6 8" />
-										<Setter Property="Background" Value="#f5f5f5" />
-										<Setter Property="HorizontalContentAlignment" Value="Left" />
-										<Setter Property="BorderBrush" Value="#bebebe"/>
-										<Setter Property="FontSize" Value="14" />
-									</Style>
-									<Style Selector="ToggleButton">
-										<Setter Property="BorderThickness" Value="0 1 0 1" />
-									</Style>
-									<!--<Style Selector="ToggleButton:nth-child(1)">
+                            <!--  Left panel  -->
+                            <DockPanel Grid.Column="0" Background="#eeeef2">
+                                <DockPanel.Styles>
+                                    <Style Selector="ToggleButton.MenuItem">
+                                        <Setter Property="Padding" Value="8 8 6 8" />
+                                        <Setter Property="Background" Value="#f5f5f5" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                        <Setter Property="BorderBrush" Value="#bebebe" />
+                                        <Setter Property="FontSize" Value="14" />
+                                    </Style>
+                                    <Style Selector="ToggleButton">
+                                        <Setter Property="BorderThickness" Value="0 1 0 1" />
+                                    </Style>
+                                    <!--<Style Selector="ToggleButton:nth-child(1)">
 									<Setter Property="BorderThickness" Value="1 0 1 0" />
 								</Style>
 								<Style Selector="ToggleButton:nth-child(1):nth-last-child(1)">
 									<Setter Property="BorderThickness" Value="1 0 1 0" />
 								</Style>-->
-									<Style Selector="ToggleButton:nth-last-child(1)">
-										<Setter Property="BorderThickness" Value="1 0 1 0" />
-									</Style>
-									<Style Selector="ToggleButton.MenuItem DockPanel material|MaterialIcon">
-										<Setter Property="Margin" Value="0 0 8 0" />
-										<Setter Property="Height" Value="18" />
-										<Setter Property="Width" Value="18" />
-										<Setter Property="Foreground" Value="#383838" />
-									</Style>
-									<Style Selector="Button DockPanel TextBlock">
-										<Setter Property="Margin" Value="8 0 0 0"/>
-										<Setter Property="FontSize" Value="14"/>
-										<Setter Property="VerticalAlignment" Value="Center"/>
-									</Style>
-									<Style Selector="Button:pointerover /template/ ContentPresenter">
-										<Setter Property="BorderBrush" Value="#3c7fb1"/>
-										<Setter Property="Background" Value="#bee6fd"/>
-									</Style>
-									<Style Selector="Button:pressed /template/ ContentPresenter">
-										<Setter Property="BorderBrush" Value="#2c628b"/>
-										<Setter Property="Background" Value="#c4e5f6"/>
-									</Style>
-									<Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
-										<Setter Property="RenderTransform" Value="none" />
-									</Style>
-								</DockPanel.Styles>
+                                    <Style Selector="ToggleButton:nth-last-child(1)">
+                                        <Setter Property="BorderThickness" Value="1 0 1 0" />
+                                    </Style>
+                                    <Style Selector="ToggleButton.MenuItem DockPanel material|MaterialIcon">
+                                        <Setter Property="Margin" Value="0 0 8 0" />
+                                        <Setter Property="Height" Value="18" />
+                                        <Setter Property="Width" Value="18" />
+                                        <Setter Property="Foreground" Value="#383838" />
+                                    </Style>
+                                    <Style Selector="Button DockPanel TextBlock">
+                                        <Setter Property="Margin" Value="8 0 0 0" />
+                                        <Setter Property="FontSize" Value="14" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                    </Style>
+                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                        <Setter Property="BorderBrush" Value="#3c7fb1" />
+                                        <Setter Property="Background" Value="#bee6fd" />
+                                    </Style>
+                                    <Style Selector="Button:pressed /template/ ContentPresenter">
+                                        <Setter Property="BorderBrush" Value="#2c628b" />
+                                        <Setter Property="Background" Value="#c4e5f6" />
+                                    </Style>
+                                    <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
+                                        <Setter Property="RenderTransform" Value="none" />
+                                    </Style>
+                                </DockPanel.Styles>
 
-								<ToggleButton Classes="MenuItem" HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Name="LibraryToggleButton">
-									<DockPanel>
-										<material:MaterialIcon DockPanel.Dock="Left" Kind="Menu" />
-										<TextBlock Text="Library" />
-									</DockPanel>
-								</ToggleButton>
+                                <ToggleButton
+                                    Name="LibraryToggleButton"
+                                    HorizontalAlignment="Stretch"
+                                    Classes="MenuItem"
+                                    DockPanel.Dock="Bottom">
+                                    <DockPanel>
+                                        <material:MaterialIcon DockPanel.Dock="Left" Kind="Bookshelf" />
+                                        <TextBlock Text="Library" />
+                                    </DockPanel>
+                                </ToggleButton>
 
-								<Expander
-									DockPanel.Dock="Bottom"
-									>
-									<Expander.Header>
-										<DockPanel>
-											<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
-											<TextBlock Text="Library" />
-										</DockPanel>
-									</Expander.Header>
-									<Expander.Content>
-										<library:LibraryView />
-									</Expander.Content>
-								</Expander>
+                                <Button
+                                    Name="AddItemButton"
+                                    Padding="8,8,6,8"
+                                    HorizontalContentAlignment="Left"
+                                    Background="#f5f5f5"
+                                    BorderBrush="#bebebe"
+                                    BorderThickness="0,1,0,0"
+                                    ClickMode="Press"
+                                    CornerRadius="0"
+                                    DockPanel.Dock="Bottom"
+                                    FontSize="14">
 
-								<Button
-									DockPanel.Dock="Bottom"
-									Name="AddItemButton"
-									ClickMode="Press"
-									Padding="8 8 6 8"
-									Background="#f5f5f5"
-									HorizontalContentAlignment="Left"
-									BorderBrush="#bebebe"
-									BorderThickness="0 1 0 0"
-									CornerRadius="0"
-									FontSize="14">
-
-									<Button.Styles>
-										<Style Selector="ScrollViewer">
-											<Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
-										</Style>
-										<Style Selector="MenuItem">
-											<Setter Property="FontSize" Value="14" />
-											<Setter Property="Padding" Value="8 6" />
-										</Style>
-									</Button.Styles>
+                                    <Button.Styles>
+                                        <Style Selector="ScrollViewer">
+                                            <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                                        </Style>
+                                        <Style Selector="MenuItem">
+                                            <Setter Property="FontSize" Value="14" />
+                                            <Setter Property="Padding" Value="8 6" />
+                                        </Style>
+                                    </Button.Styles>
 
 
-									<DockPanel>
-										<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
-										<TextBlock Text="Add Item" />
-									</DockPanel>
+                                    <DockPanel>
+                                        <material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline" />
+                                        <TextBlock Text="Add Item" />
+                                    </DockPanel>
 
 
-									<Button.Flyout>
-										<MenuFlyout Placement="RightEdgeAlignedBottom">
-											<MenuItem Header="_Presentation">
-												<MenuItem Header="PowerPoint" Command="{Binding AddPresentationCommand}">
-													<MenuItem.Icon>
-														<material:MaterialIcon Kind="Presentation" />
-													</MenuItem.Icon>
-												</MenuItem>
-												<MenuItem Header="Google Slides" Command="{Binding AddGoogleSlidesCommand}">
-													<MenuItem.Icon>
-														<material:MaterialIcon Kind="Slideshow" />
-													</MenuItem.Icon>
-												</MenuItem>
-												<MenuItem Header="PDF Slides (Canva, etc.)">
-													<MenuItem.Icon>
-														<material:MaterialIcon Kind="Slideshow" />
-													</MenuItem.Icon>
-												</MenuItem>
-											</MenuItem>
-											<MenuItem Header="_Song" Command="{Binding AddSongCommand}">
-												<MenuItem.Icon>
-													<material:MaterialIcon Kind="Music" />
-												</MenuItem.Icon>
-											</MenuItem>
-											<MenuItem Header="_Graphic/s" Command="{Binding AddGraphicCommand}">
-												<MenuItem.Icon>
-													<material:MaterialIcon Kind="Image" />
-												</MenuItem.Icon>
-											</MenuItem>
-											<MenuItem Header="_Video" Command="{Binding AddVideoCommand}">
-												<MenuItem.Icon>
-													<material:MaterialIcon Kind="Video" />
-												</MenuItem.Icon>
-											</MenuItem>
-											<Separator />
-											<MenuItem Header="_Logo" Command="{Binding AddLogoCommand}">
-												<MenuItem.Icon>
-													<material:MaterialIcon Kind="Star" />
-												</MenuItem.Icon>
-											</MenuItem>
-											<Separator />
-											<MenuItem Header="_Group">
-												<MenuItem.Icon>
-													<material:MaterialIcon Kind="ContentCopy" />
-												</MenuItem.Icon>
+                                    <Button.Flyout>
+                                        <MenuFlyout Placement="RightEdgeAlignedBottom">
+                                            <MenuItem Header="_Presentation">
+                                                <MenuItem Command="{Binding AddPresentationCommand}" Header="PowerPoint">
+                                                    <MenuItem.Icon>
+                                                        <material:MaterialIcon Kind="Presentation" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Command="{Binding AddGoogleSlidesCommand}" Header="Google Slides">
+                                                    <MenuItem.Icon>
+                                                        <material:MaterialIcon Kind="Slideshow" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="PDF Slides (Canva, etc.)">
+                                                    <MenuItem.Icon>
+                                                        <material:MaterialIcon Kind="Slideshow" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding AddSongCommand}" Header="_Song">
+                                                <MenuItem.Icon>
+                                                    <material:MaterialIcon Kind="Music" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding AddGraphicCommand}" Header="_Graphic/s">
+                                                <MenuItem.Icon>
+                                                    <material:MaterialIcon Kind="Image" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding AddVideoCommand}" Header="_Video">
+                                                <MenuItem.Icon>
+                                                    <material:MaterialIcon Kind="Video" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Command="{Binding AddLogoCommand}" Header="_Logo">
+                                                <MenuItem.Icon>
+                                                    <material:MaterialIcon Kind="Star" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="_Group">
+                                                <MenuItem.Icon>
+                                                    <material:MaterialIcon Kind="ContentCopy" />
+                                                </MenuItem.Icon>
 
-												<MenuItem Header="_...From Folder of Media" Command="{Binding AddGroupCommand}">
-												</MenuItem>
-												<MenuItem Header="Blank Group" Command="{Binding AddTestEmptyGroupCommand}">
-												</MenuItem>
-												<MenuItem Header="Custom Group (Bible Reading Slide Test)" Command="{Binding AddCustomSlideCommand}">
-												</MenuItem>
-											</MenuItem>
-										</MenuFlyout>
-									</Button.Flyout>
-								</Button>
+                                                <MenuItem Command="{Binding AddGroupCommand}" Header="_...From Folder of Media" />
+                                                <MenuItem Command="{Binding AddTestEmptyGroupCommand}" Header="Blank Group" />
+                                                <MenuItem Command="{Binding AddCustomSlideCommand}" Header="Custom Group (Bible Reading Slide Test)" />
+                                            </MenuItem>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
 
-								<controls:ItemOrderListView />
+                                <controls:ItemOrderListView Name="itemOrderListView" Opacity="0">
+                                    <i:Interaction.Behaviors>
+                                        <!--  TODO do this manually  -->
+                                        <ia:DataTriggerBehavior
+                                            Binding="{Binding #itemOrderListView.Bounds.Width}"
+                                            ComparisonCondition="LessThan"
+                                            Value="34">
+                                            <ia:ChangePropertyAction PropertyName="Opacity" Value="0" />
+                                        </ia:DataTriggerBehavior>
+                                        <ia:DataTriggerBehavior
+                                            Binding="{Binding #itemOrderListView.Bounds.Width}"
+                                            ComparisonCondition="GreaterThanOrEqual"
+                                            Value="34">
+                                            <ia:ChangePropertyAction PropertyName="Opacity" Value="1" />
+                                        </ia:DataTriggerBehavior>
+                                    </i:Interaction.Behaviors>
 
-							</DockPanel>
+                                </controls:ItemOrderListView>
 
-							<GridSplitter Grid.Column="1"
-										  Margin="-3,0"
-										  BorderThickness="3,0"
-										  BorderBrush="Transparent"
-										  HorizontalAlignment="Stretch"
-										  ZIndex="9999"
-								  />
+                            </DockPanel>
 
-							<!-- Centre panel-->
-							<Border Grid.Column="2" CornerRadius="2 0 0 0" HorizontalAlignment="Stretch" BorderBrush="#9a93cd" BorderThickness="1 1 0 0"
-									ZIndex="2"
-							>
+                            <GridSplitter
+                                Grid.Column="1"
+                                Margin="-3,0"
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="Transparent"
+                                BorderThickness="3,0"
+                                ZIndex="9999" />
 
-								<Grid x:Name="CentreGrid">
+                            <!--  Centre panel  -->
+                            <Border
+                                Grid.Column="2"
+                                HorizontalAlignment="Stretch"
+                                BorderBrush="#9a93cd"
+                                BorderThickness="1,1,0,0"
+                                CornerRadius="2 0 0 0"
+                                ZIndex="2">
 
-									<Grid.Styles>
-										<Style Selector="RowDefinition.isCollapsed">
-											<Style.Setters>
-												<Setter Property="Height" Value="0" />
-											</Style.Setters>
-										</Style>
-									</Grid.Styles>
+                                <Grid x:Name="CentreGrid">
 
-									<Grid.RowDefinitions>
+                                    <Grid.Styles>
+                                        <Style Selector="RowDefinition.isCollapsed">
+                                            <Style.Setters>
+                                                <Setter Property="Height" Value="0" />
+                                            </Style.Setters>
+                                        </Style>
+                                    </Grid.Styles>
+
+                                    <!--<Grid.RowDefinitions>
 										<RowDefinition Height="*" />
 										<RowDefinition Height="0" />
 										<RowDefinition Height="0" />
-									</Grid.RowDefinitions>
+									</Grid.RowDefinitions>-->
 
-									<DockPanel>
-										<Border
-											DockPanel.Dock="Bottom"
-											Height="50"
-											Padding="10,5,10,5"
-											Background="#FFD6D6D6">
-											<Grid>
-												<Grid.Styles>
-													<Style Selector="Button">
-														<Setter Property="HorizontalAlignment" Value="Stretch" />
-														<Setter Property="HorizontalContentAlignment" Value="Center" />
-														<Setter Property="Margin" Value="6 2" />
-														<Setter Property="FontSize" Value="14" />
-													</Style>
-												</Grid.Styles>
-												<Grid.ColumnDefinitions>
-													<ColumnDefinition Width="*" />
-													<ColumnDefinition Width="*" />
-													<ColumnDefinition Width="*" />
-												</Grid.ColumnDefinitions>
-												<Button
-													Command="{Binding OnPrevSlideClickCommand}"
-													HorizontalAlignment="Stretch"
-													HorizontalContentAlignment="Stretch"
-													IsTabStop="False">
-													<DockPanel Margin="6 0">
-														<material:MaterialIcon
-															DockPanel.Dock="Left"
-															Foreground="#383838"
-															
-															HorizontalAlignment="Left"
-															Kind="ArrowLeft" />
-														<TextBlock Text="Previous"
-																   TextAlignment="Center" />
-													</DockPanel>
-												</Button>
-												<Button
-											Grid.Column="1"
-											Background="Transparent"
-											BorderThickness="0"
-											Click="OnScrollToItemClick"
-											HorizontalAlignment="Stretch"
-											VerticalAlignment="Stretch"
-											FontSize="16">
-										</Button>
-												<Button
-													Command="{Binding OnNextSlideClickCommand}"
-													HorizontalAlignment="Stretch"
-													HorizontalContentAlignment="Stretch"
-													Grid.Column="2"
-													IsTabStop="False">
-													<DockPanel Margin="6 0">
-														<material:MaterialIcon
-															DockPanel.Dock="Right"
-															  Foreground="#383838"
-															  HorizontalAlignment="Right"
-															  Kind="ArrowRight" />
-														<TextBlock Text="Next"
-														           TextAlignment="Center"
-														/>
-													</DockPanel>
-												</Button>
-											</Grid>
-										</Border>
+                                    <DockPanel>
+                                        <Border
+                                            Height="50"
+                                            Padding="10,5,10,5"
+                                            Background="#FFD6D6D6"
+                                            DockPanel.Dock="Bottom">
+                                            <Grid>
+                                                <Grid.Styles>
+                                                    <Style Selector="Button">
+                                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                                        <Setter Property="Margin" Value="6 2" />
+                                                        <Setter Property="FontSize" Value="14" />
+                                                    </Style>
+                                                </Grid.Styles>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Button
+                                                    HorizontalAlignment="Stretch"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    Command="{Binding OnPrevSlideClickCommand}"
+                                                    IsTabStop="False">
+                                                    <DockPanel Margin="6,0">
+                                                        <material:MaterialIcon
+                                                            HorizontalAlignment="Left"
+                                                            DockPanel.Dock="Left"
+                                                            Foreground="#383838"
+                                                            Kind="ArrowLeft" />
+                                                        <TextBlock Text="Previous" TextAlignment="Center" />
+                                                    </DockPanel>
+                                                </Button>
+                                                <Button
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Click="OnScrollToItemClick"
+                                                    FontSize="16" />
 
-										<controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
-									</DockPanel>
 
-									<GridSplitter
+
+
+
+                                                <Button
+                                                    Grid.Column="2"
+                                                    HorizontalAlignment="Stretch"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    Command="{Binding OnNextSlideClickCommand}"
+                                                    IsTabStop="False">
+                                                    <DockPanel Margin="6,0">
+                                                        <material:MaterialIcon
+                                                            HorizontalAlignment="Right"
+                                                            DockPanel.Dock="Right"
+                                                            Foreground="#383838"
+                                                            Kind="ArrowRight" />
+                                                        <TextBlock Text="Next" TextAlignment="Center" />
+                                                    </DockPanel>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+
+                                        <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+                                    </DockPanel>
+
+                                    <!--<GridSplitter
 											Grid.Row="1"
 											Margin="0,0,0,-10"
 											BorderThickness="10,10,10,10"
 											BorderBrush="Red"
 											HorizontalAlignment="Stretch"
 											Background="#9a93cd"
-											ZIndex="9999" />
+											ZIndex="9999" />-->
 
+                                    <!--<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
 
-									<!--<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
+                                    <!--  non contiguous view  -->
+                                    <!--<controls:ItemSlidesView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
+                                    <library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}" />
 
+                                </Grid>
+                            </Border>
+                        </Grid>
 
-									<!-- non contiguous view -->
-									<!--<controls:ItemSlidesView DataContext="{Binding Playlist.State.SelectedItem}" />-->
+                    </DockPanel>
 
-								</Grid>
-							</Border>
-						</Grid>
+                    <GridSplitter
+                        Grid.Column="1"
+                        Margin="-3,0"
+                        HorizontalAlignment="Stretch"
+                        Background="#9a93cd"
+                        BorderBrush="Transparent"
+                        BorderThickness="3,0"
+                        ZIndex="9999" />
 
-					</DockPanel>
+                    <!--  Right panel  -->
+                    <DockPanel Grid.Column="2">
 
-					<GridSplitter Grid.Column="1"
-							Margin="-3,0"
-							BorderThickness="3,0"
-							BorderBrush="Transparent"
-							HorizontalAlignment="Stretch"
-							Background="#9a93cd"
-							ZIndex="9999"
-				  />
+                        <Border
+                            Height="70"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Top">
+                            <DockPanel>
 
-					<!-- Right panel -->
-					<DockPanel Grid.Column="2">
+                                <ToggleButton
+                                    Name="LiveButton"
+                                    Margin="2,0,0,0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    ClickMode="Press"
+                                    DockPanel.Dock="Left"
+                                    FontSize="18"
+                                    HotKey="Ctrl+L"
+                                    IsChecked="{Binding #liveFlyout.IsOpen, Mode=TwoWay}">
+                                    <ToggleButton.Styles>
+                                        <!--  override default styles  -->
+                                        <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                        <!--  custom styles  -->
+                                        <Style Selector="ToggleButton:pointerover Border">
+                                            <Setter Property="Background" Value="#d0d0d0" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:pressed Border">
+                                            <Setter Property="Background" Value="#9a93cd" />
+                                        </Style>
+                                        <Style Selector="ToggleButton:checked Border">
+                                            <Setter Property="Background" Value="#c1bbe2" />
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                    <Border Padding="12,6" CornerRadius="6">
+                                        <DockPanel>
+                                            <material:MaterialIcon
+                                                Width="26"
+                                                Height="22"
+                                                Margin="0"
+                                                Padding="0"
+                                                VerticalAlignment="Bottom"
+                                                DockPanel.Dock="Right"
+                                                Foreground="Black"
+                                                Kind="ChevronRight" />
+                                            <TextBlock VerticalAlignment="Bottom" Text="Live" />
+                                        </DockPanel>
+                                    </Border>
+                                </ToggleButton>
 
-						<Border DockPanel.Dock="Top" Height="70" VerticalAlignment="Center">
-							<DockPanel>
+                                <Popup
+                                    Name="liveFlyout"
+                                    IsLightDismissEnabled="True"
+                                    PlacementMode="Bottom"
+                                    PlacementTarget="{Binding #LiveButton}">
+                                    <controls:LiveOutputsFlyoutContent Margin="0" />
+                                </Popup>
 
-								<ToggleButton
-									Name="LiveButton"
-									IsChecked="{Binding #liveFlyout.IsOpen, Mode=TwoWay}"
-									ClickMode="Press"
-									DockPanel.Dock="Left"
-									Background="Transparent"
-									Padding="0"
-									VerticalAlignment="Center"
-									Margin="2 0 0 0"
-									BorderThickness="0"
-									FontSize="18"
-									HotKey="Ctrl+L">
-									<ToggleButton.Styles>
-										<!-- override default styles -->
-										<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-											<Setter Property="Background" Value="Transparent" />
-										</Style>
-										<!-- custom styles -->
-										<Style Selector="ToggleButton:pointerover Border">
-											<Setter Property="Background" Value="#d0d0d0" />
-										</Style>
-										<Style Selector="ToggleButton:pressed Border">
-											<Setter Property="Background" Value="#9a93cd" />
-										</Style>
-										<Style Selector="ToggleButton:checked Border">
-											<Setter Property="Background" Value="#c1bbe2" />
-										</Style>
-									</ToggleButton.Styles>
-									<Border CornerRadius="6" Padding="12 6">
-										<DockPanel>
-											<material:MaterialIcon DockPanel.Dock="Right"
-																   VerticalAlignment="Bottom"
-																   Height="22" Width="26"
-																   Foreground="Black"
-																   Kind="ChevronRight"
-																   Margin="0" Padding="0" />
-											<TextBlock Text="Live" VerticalAlignment="Bottom" />
-										</DockPanel>
-									</Border>
-								</ToggleButton>
+                            </DockPanel>
+                        </Border>
 
-								<Popup Name="liveFlyout"
-									   IsLightDismissEnabled="True"
-									   PlacementMode="Bottom"
-									   PlacementTarget="{Binding #LiveButton}">
-									<controls:LiveOutputsFlyoutContent Margin="0" />
-								</Popup>
+                        <Grid DockPanel.Dock="Top">
+                            <Grid.Background>
+                                <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+                                    <VisualBrush.Visual>
+                                        <Canvas
+                                            Width="16"
+                                            Height="16"
+                                            Background="#1a1a1a">
+                                            <Rectangle
+                                                Width="8"
+                                                Height="8"
+                                                Fill="#1c1c1c" />
+                                            <Rectangle
+                                                Canvas.Left="8"
+                                                Canvas.Top="8"
+                                                Width="8"
+                                                Height="8"
+                                                Fill="#1c1c1c" />
+                                        </Canvas>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </Grid.Background>
+                            <Border BorderBrush="#9a93cd" BorderThickness="0,1,0,1">
+                                <Viewbox>
 
-							</DockPanel>
-						</Border>
+                                    <viewsrender:SlideRenderer
+                                        ActiveSlide="{Binding ActiveSlide}"
+                                        IsLive="False"
+                                        PageTransition="{Binding ActiveItemPageTransition}" />
 
-						<Grid DockPanel.Dock="Top">
-							<Grid.Background>
-								<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
-									<VisualBrush.Visual>
-										<Canvas Width="16" Height="16" Background="#1a1a1a">
-											<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
-											<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
-										</Canvas>
-									</VisualBrush.Visual>
-								</VisualBrush>
-							</Grid.Background>
-							<Border BorderBrush="#9a93cd" BorderThickness="0 1 0 1">
-								<Viewbox>
+                                    <!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
+                                    <!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
+                                    <!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
+                                </Viewbox>
+                            </Border>
+                        </Grid>
 
-									<viewsrender:SlideRenderer ActiveSlide="{Binding ActiveSlide}" IsLive="False" PageTransition="{Binding ActiveItemPageTransition}" />
+                        <UniformGrid
+                            Height="35"
+                            Margin="6,6"
+                            Columns="2"
+                            DockPanel.Dock="Top"
+                            Rows="1">
+                            <UniformGrid.Styles>
+                                <Style Selector="RadioButton">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ToggleButton
+                                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                    IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </UniformGrid.Styles>
+                            <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton>
+                            <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
+                            <!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
+                        </UniformGrid>
 
-									<!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
-									<!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
-									<!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
-								</Viewbox>
-							</Border>
-						</Grid>
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            DockPanel.Dock="Bottom"
+							Minimum="50"
+							Maximum="180"
+                            Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
 
-						<UniformGrid DockPanel.Dock="Top" Columns="2" Rows="1" Height="35"
-									 Margin="6 6">
-							<UniformGrid.Styles>
-								<Style Selector="RadioButton">
-									<Setter Property="HorizontalContentAlignment" Value="Center" />
-									<Setter Property="HorizontalAlignment" Value="Stretch" />
-									<Setter Property="VerticalAlignment" Value="Stretch" />
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate>
-												<ToggleButton
-													Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-													IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-													HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-													HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-													VerticalAlignment="{TemplateBinding VerticalAlignment}"
-														  />
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-							</UniformGrid.Styles>
-							<RadioButton IsChecked="{Binding Playlist.State.IsLogo}"
-										 CornerRadius="6">Logo</RadioButton>
-							<RadioButton IsChecked="{Binding Playlist.State.IsBlank}"
-										 CornerRadius="6">Blank</RadioButton>
-							<!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
-						</UniformGrid>
+                        <views:DebugInfoView HorizontalAlignment="Stretch" />
+                        <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
 
-						<views:DebugInfoView HorizontalAlignment="Stretch" />
-						<!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
+                        <!--<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>-->
 
-						<!--<TextBlock Padding="5 5 5 10" FontSize="25" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"/>-->
-
-						<!-- controlmodules -->
-						<!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
-						<controlmodules:VideoSlideControlViewWrapper DockPanel.Dock="Bottom" DataContext="{Binding ActiveSlide}" />
-						<!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
-						<!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
+                        <!--  controlmodules  -->
+                        <!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
+                        <controlmodules:VideoSlideControlViewWrapper DataContext="{Binding ActiveSlide}" DockPanel.Dock="Bottom" />
+                        <!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
+                        <!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
 						<DockPanel Margin="10 8">
 							<material:MaterialIcon DockPanel.Dock="Right" Kind="Record" Foreground="#c43e1c" />
 							<StackPanel>
@@ -582,13 +639,16 @@
 						</DockPanel>
 					</Border>-->
 
-					</DockPanel>
-				</Grid>
-			</DockPanel>
+                    </DockPanel>
+                </Grid>
+            </DockPanel>
 
-			<Rectangle x:Name="shade" IsVisible="False" Fill="#80000000" />
+            <Rectangle
+                x:Name="shade"
+                Fill="#80000000"
+                IsVisible="False" />
 
-		</Grid>
-	</Border>
+        </Grid>
+    </Border>
 
 </Window>

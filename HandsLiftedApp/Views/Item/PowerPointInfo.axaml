@@ -33,7 +33,7 @@
                             Width="32"
                             Height="32"
                             Margin="0,8,6,8"
-                            Foreground="#530066"
+                            Foreground="#d04626"
                             Kind="MicrosoftPowerpoint" />
                         <StackPanel
                             VerticalAlignment="Center"

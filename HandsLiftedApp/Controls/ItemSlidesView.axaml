@@ -22,6 +22,7 @@
     <UserControl.Resources>
         <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
         <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
+		<converters:MultiplicationConverter x:Key="MultiplicationConverter" />
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -129,11 +130,21 @@
                         </controls:ListBoxWithoutKey.Styles>
                         <controls:ListBoxWithoutKey.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=244}" />
-                                <!--<WrapPanel
-								ItemWidth="244"
-								ItemHeight="137" />-->
-                                <!--<UniformGrid VerticalAlignment="Top" Columns="3" Margin="0" HorizontalAlignment="Left"/>-->
+                                <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
+								<WrapPanel>
+									<WrapPanel.ItemHeight>
+										<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+											<Binding Source="{x:Static app:Globals.Preferences}" Path="ItemHeight" FallbackValue="200"/>
+											<Binding Source="{x:Static app:Globals.Preferences}" Path="SlideThumbnailSizeMultiplier" FallbackValue="1"/>
+										</MultiBinding>
+									</WrapPanel.ItemHeight>
+									<WrapPanel.ItemWidth>
+										<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+											<Binding Source="{x:Static app:Globals.Preferences}" Path="ItemWidth" FallbackValue="290"/>
+											<Binding Source="{x:Static app:Globals.Preferences}" Path="SlideThumbnailSizeMultiplier" FallbackValue="1"/>
+										</MultiBinding>
+									</WrapPanel.ItemWidth>
+								</WrapPanel>
                             </ItemsPanelTemplate>
                         </controls:ListBoxWithoutKey.ItemsPanel>
 

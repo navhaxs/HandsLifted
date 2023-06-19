@@ -126,17 +126,17 @@ namespace HandsLiftedApp.Views
                 });
 
             LibraryToggleButton.Click += (object? sender, RoutedEventArgs e) => {
-                if (isLibraryVisible) {
-                    lastLibraryContentGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height;
-                    lastLibrarySplitterGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height;
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
-                }
-                else {
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = lastLibraryContentGridLength;
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
-                }
-                isLibraryVisible = !isLibraryVisible;
+                //if (isLibraryVisible) {
+                //    lastLibraryContentGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height;
+                //    lastLibrarySplitterGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height;
+                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
+                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
+                //}
+                //else {
+                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = lastLibraryContentGridLength;
+                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
+                //}
+                //isLibraryVisible = !isLibraryVisible;
             };
 
             PlaylistTitleButton.PointerPressed += PlaylistTitleButton_PointerPressed;

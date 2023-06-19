@@ -105,13 +105,14 @@ namespace HandsLiftedApp.Controls
 
                    Dispatcher.UIThread.InvokeAsync(() =>
                    {
-                       // wait for UI to update...
-                       Dispatcher.UIThread.RunJobs();
+                       // layout pass required, see https://github.com/AvaloniaUI/Avalonia/issues/9992#issuecomment-1408205703
+                       Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
 
                        // and now we can jump to view
                        var control = listBox.ItemContainerGenerator.ContainerFromIndex(x.Index);
                        if (control is not null)
                        {
+
                            scrollViewer.Offset = new Vector(0, control.Bounds.Top);
                            //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
                        }

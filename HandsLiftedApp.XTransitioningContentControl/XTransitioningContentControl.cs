@@ -4,17 +4,12 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Rendering;
 using Avalonia.Skia;
 using Avalonia.Skia.Helpers;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using SkiaSharp;
-using System.Reflection;
-using System.Timers;
 
 namespace HandsLiftedApp.XTransitioningContentControl
 {
@@ -91,8 +86,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
-
-            Dispatcher.UIThread.Post(() => UpdateContentWithTransition(Content));
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -108,6 +101,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             if (change.Property == ContentProperty)
             {
+                // Use Invoke instead of Post. Fixes flickering. (Why?)
                 //Dispatcher.UIThread.Post(() => UpdateContentWithTransition(Content));
                 Dispatcher.UIThread.Invoke(() => UpdateContentWithTransition(Content));
             }
@@ -116,14 +110,15 @@ namespace HandsLiftedApp.XTransitioningContentControl
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
+
+            // todo: if this fails, did you forget to add Styles?
             _previousImageSite = e.NameScope.Find<Image>("PART_PreviousImageSite");
             _currentImageSite = e.NameScope.Find<Image>("PART_CurrentImageSite");
             _contentPresenter = e.NameScope.Find<ContentPresenter>("PART_ContentPresenter");
             _contentPresenterContainer = e.NameScope.Find<Grid>("PART_ContentPresenterContainer");
 
-            // todo: if this fails, did you forget to add Styles?
+            Dispatcher.UIThread.Invoke(() => UpdateContentWithTransition(Content));
         }
-
 
         /// <summary>
         /// Updates the content with transitions.
@@ -147,15 +142,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     transition = ((ISlideRender)content).PageTransition;
                 }
             }
-
-
-            //if (Object.Equals(CurrentContent, content))
-            //{
-            //    return;
-            //}
-
-            //var clock = AvaloniaLocator.Current.GetService<IGlobalClock>();
-            //clock.PlayState = PlayState.Pause;
 
             _lastTransitionCts?.Cancel();
             _lastTransitionCts = new CancellationTokenSource();
@@ -202,21 +188,18 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 //_contentPresenterContainer.IsVisible = true;
                 _previousImageSite.Opacity = 0;
             }
+            _currentImageSite.IsVisible = true;
+            _currentImageSite.Opacity = 1;
+
             _previousImageSite.IsVisible = false;
             _previousImageSite.Opacity = 0;
             _previousImageSite.Source = null;
-
-            _currentImageSite.IsVisible = true;
-            _currentImageSite.Opacity = 1;
-            //Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
-            //                                                        var clock = AvaloniaLocator.Current.GetService<IGlobalClock>();
-            //clock.PlayState = PlayState.Pause;
-            //clock.PlayState = PlayState.Run;
         }
 
         private Bitmap GetBitmap(object? visual) {
+            // TODO Cache blank black bitmap
             if (visual == null)
-                return null;
+                return renderControlAsBitmap(null);
 
             if (visual is ISlideBitmapRender)
                 return ((ISlideBitmapRender)visual).GetBitmap();
@@ -237,7 +220,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             return rendered;
         }
 
-        private Bitmap renderControlAsBitmap(Visual visual)
+        private Bitmap renderControlAsBitmap(Visual? visual)
         {
             using (SKBitmap bitmap = new SKBitmap(1920, 1080))
             {
@@ -245,17 +228,20 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
                     canvas.DrawRect(0, 0, 1920, 1080, new SKPaint() { Style = SKPaintStyle.Fill, Color = SKColors.Black });
 
-                    using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
-                    using RenderTargetBitmap renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
-                    renderedBitmap.Render(visual); // System.ArgumentException: 'An item with the same key has already been added. Key: SubpixelAntialias'
+                    if (visual != null)
+                    {
+                        using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
+                        using RenderTargetBitmap renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
+                        renderedBitmap.Render(visual); // System.ArgumentException: 'An item with the same key has already been added. Key: SubpixelAntialias'
 
-                    IRenderTargetBitmapImpl item = renderedBitmap.PlatformImpl.Item;
-                    IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
-                    var leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();
-                    using var lease = leaseFeature.Lease();
-                    using SKImage skImage = lease.SkSurface.Snapshot();
+                        IRenderTargetBitmapImpl item = renderedBitmap.PlatformImpl.Item;
+                        IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
+                        var leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();
+                        using var lease = leaseFeature.Lease();
+                        using SKImage skImage = lease.SkSurface.Snapshot();
 
-                    canvas.DrawImage(skImage, new SKPoint(0, 0));
+                        canvas.DrawImage(skImage, new SKPoint(0, 0));
+                    }
                 }
                 // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
                 // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563

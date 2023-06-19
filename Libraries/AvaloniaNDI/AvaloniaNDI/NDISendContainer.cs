@@ -24,6 +24,7 @@ using System.IO;
 using Avalonia.Rendering;
 using System.Runtime.Intrinsics.X86;
 using Avalonia.Controls.Platform.Surfaces;
+using System.Diagnostics;
 
 namespace AvaloniaNDI {
     public class NDISendContainer : Viewbox, INotifyPropertyChanged, IDisposable
@@ -511,99 +512,107 @@ Description("Function to determine whether the content requires high resolution 
 
         private unsafe void OnCompositionTargetRendering()
         {
-            if (IsSendPaused)
-                return;
+            try
+            {
+                if (IsSendPaused)
+                    return;
 
 #if DEBUG
-            if (Design.IsDesignMode)
-                return;
+                if (Design.IsDesignMode)
+                    return;
 #endif
 
-            // skip if UI thread has pending render jobs (fixes blinking/flashing empty frames)
-            if (Dispatcher.UIThread.HasJobsWithPriority(DispatcherPriority.Render))
-                return;
+                // skip if UI thread has pending render jobs (fixes blinking/flashing empty frames)
+                if (Dispatcher.UIThread.HasJobsWithPriority(DispatcherPriority.Render))
+                    return;
 
-            // TODO: cache this value so its not called on *every* call
-            if (NDIlib.send_get_no_connections(sendInstancePtr, 0) == 0)
-                return;
-            
-            if (this.Child == null)
-                return;
+                // TODO: cache this value so its not called on *every* call
+                if (NDIlib.send_get_no_connections(sendInstancePtr, 0) == 0)
+                    return;
 
-            int xres = NdiWidth;
-            int yres = NdiHeight;
+                if (this.Child == null)
+                    return;
 
-            int frNum = NdiFrameRateNumerator;
-            int frDen = NdiFrameRateDenominator;
+                int xres = NdiWidth;
+                int yres = NdiHeight;
 
-            // sanity
-            if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
-                return;
+                int frNum = NdiFrameRateNumerator;
+                int frDen = NdiFrameRateDenominator;
 
-            if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
-            {
-                // Create a properly sized RenderTargetBitmap
-                var scale = VisualRoot!.RenderScaling;
-                rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale));
+                // sanity
+                if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
+                    return;
+
+                if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
+                {
+                    // Create a properly sized RenderTargetBitmap
+                    var scale = VisualRoot!.RenderScaling;
+                    rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale));
+                }
+
+                stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
+                bufferSize = yres * stride;
+                aspectRatio = (float)xres / (float)yres;
+
+                // allocate some memory for a video buffer
+                IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
+
+                // We are going to create a progressive frame at 60Hz.
+                NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()
+                {
+                    // Resolution
+                    xres = NdiWidth,
+                    yres = NdiHeight,
+                    // Use BGRA video
+                    FourCC = NDIlib.FourCC_type_e.FourCC_type_BGRA,
+                    // The frame-eate
+                    frame_rate_N = frNum,
+                    frame_rate_D = frDen,
+                    // The aspect ratio
+                    picture_aspect_ratio = aspectRatio,
+                    // This is a progressive frame
+                    frame_format_type = NDIlib.frame_format_type_e.frame_format_type_progressive,
+                    // Timecode.
+                    timecode = NDIlib.send_timecode_synthesize,
+                    // The video memory used for this frame
+                    p_data = bufferPtr,
+                    // The line to line stride of this image
+                    line_stride_in_bytes = stride,
+                    // no metadata
+                    p_metadata = IntPtr.Zero,
+                    // only valid on received frames
+                    timestamp = 0
+                };
+
+                // define the surface properties
+                SKImageInfo info = new SKImageInfo(xres, yres);
+
+                // construct a surface around the existing memory
+                SKSurface destinationSurface = SKSurface.Create(info, bufferPtr, info.RowBytes);
+
+                // get the canvas from the surface
+                SKCanvas destinationCanvas = destinationSurface.Canvas;
+                using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
+
+                // render the Avalonia visual
+                rtb.Render(this.Child);
+                //rtb.Save(@"R:\ndi_out.png");
+
+                IRenderTargetBitmapImpl item = rtb.PlatformImpl.Item;
+                IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
+                ISkiaSharpApiLeaseFeature leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();
+                using ISkiaSharpApiLease lease = leaseFeature.Lease();
+                using SKImage skImage = lease.SkSurface.Snapshot();
+                destinationCanvas.DrawImage(skImage, new SKPoint(0, 0));
+
+                // add it to the output queue
+                AddFrame(videoFrame);
             }
-
-            stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
-            bufferSize = yres * stride;
-            aspectRatio = (float)xres / (float)yres;
-
-            // allocate some memory for a video buffer
-            IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
-
-            // We are going to create a progressive frame at 60Hz.
-            NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()
+            catch (Exception e)
             {
-                // Resolution
-                xres = NdiWidth,
-                yres = NdiHeight,
-                // Use BGRA video
-                FourCC = NDIlib.FourCC_type_e.FourCC_type_BGRA,
-                // The frame-eate
-                frame_rate_N = frNum,
-                frame_rate_D = frDen,
-                // The aspect ratio
-                picture_aspect_ratio = aspectRatio,
-                // This is a progressive frame
-                frame_format_type = NDIlib.frame_format_type_e.frame_format_type_progressive,
-                // Timecode.
-                timecode = NDIlib.send_timecode_synthesize,
-                // The video memory used for this frame
-                p_data = bufferPtr,
-                // The line to line stride of this image
-                line_stride_in_bytes = stride,
-                // no metadata
-                p_metadata = IntPtr.Zero,
-                // only valid on received frames
-                timestamp = 0
-            };
-
-            // define the surface properties
-            var info = new SKImageInfo(xres, yres);
-
-            // construct a surface around the existing memory
-            var destinationSurface = SKSurface.Create(info, bufferPtr, info.RowBytes);
-
-            // get the canvas from the surface
-            var destinationCanvas = destinationSurface.Canvas;
-            using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
-
-            // render the Avalonia visual
-            rtb.Render(this.Child);
-            //rtb.Save(@"R:\ndi_out.png");
-
-            IRenderTargetBitmapImpl item = rtb.PlatformImpl.Item;
-            IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
-            var leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();
-            using var lease = leaseFeature.Lease();
-            using SKImage skImage = lease.SkSurface.Snapshot();
-            destinationCanvas.DrawImage(skImage, new SKPoint(0, 0));
-        
-            // add it to the output queue
-            AddFrame(videoFrame);
+                // TODO logging
+                Debug.Print(e.Message.ToString());
+            }
         }
 
 
@@ -744,7 +753,7 @@ Description("Function to determine whether the content requires high resolution 
                         NDIlib.video_frame_v2_t frame;
                         if (pendingFrames.TryTake(out frame, 250))
                         {
-                            // this dropps frames if the UI is rendernig ahead of the specified NDI frame rate
+                            // this drops frames if the UI is rendering ahead of the specified NDI frame rate
                             while (pendingFrames.Count > 1)
                             {
                                 NDIlib.video_frame_v2_t discardFrame = pendingFrames.Take();

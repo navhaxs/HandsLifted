@@ -79,7 +79,7 @@
 								<Setter Property="Padding" Value="4" />
 							</Style>
 						</StackPanel.Styles>
-						<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=244}" />
+						<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />
 						<material:MaterialIcon Kind="Close" Foreground="#888888" Margin="4" VerticalAlignment="Center" />
 						<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" />
 					</StackPanel>

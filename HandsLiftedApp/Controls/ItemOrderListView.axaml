@@ -1,149 +1,132 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:converters="using:HandsLiftedApp.Converters"
-             xmlns:behaviours="using:HandsLiftedApp.Behaviours"
-             xmlns:material="using:Material.Icons.Avalonia"
-			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
-			 xmlns:idd="clr-namespace:Avalonia.Xaml.Interactions.DragAndDrop;assembly=Avalonia.Xaml.Interactions"
-			 xmlns:b="using:HandsLiftedApp.Behaviours"
-			 xmlns:item="using:HandsLiftedApp.Views.Item"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
-			 xmlns:vm="using:HandsLiftedApp.ViewModels"
-             x:Class="HandsLiftedApp.Controls.ItemOrderListView">
+<UserControl
+    x:Class="HandsLiftedApp.Controls.ItemOrderListView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="using:HandsLiftedApp.Behaviours"
+    xmlns:behaviours="using:HandsLiftedApp.Behaviours"
+    xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
+    xmlns:idd="clr-namespace:Avalonia.Xaml.Interactions.DragAndDrop;assembly=Avalonia.Xaml.Interactions"
+    xmlns:item="using:HandsLiftedApp.Views.Item"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:HandsLiftedApp.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="200"
+    mc:Ignorable="d">
 
-	<Design.DataContext>
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
 
-	<UserControl.Resources>
-		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
+    </UserControl.Resources>
 
-	<UserControl.Styles>
-		<Style Selector="ListBox">
-			<Setter Property="BorderThickness" Value="0" />
-			<Setter Property="Padding" Value="0" />
-			<Setter Property="Margin" Value="0" />
-		</Style>
+    <UserControl.Styles>
+        <Style Selector="ListBox">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
 
-		<Style Selector="ListBoxItem">
-			<Setter Property="ContextMenu">
-				<Setter.Value>
-					<ContextMenu>
-						<MenuItem Header="Move Up" Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" CommandParameter="{Binding}"/>
-						<MenuItem Header="Move Down" Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" CommandParameter="{Binding}"/>
-						<MenuItem Header="Remove Item" Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" CommandParameter="{Binding}"/>
-					</ContextMenu>
-				</Setter.Value>
-			</Setter>
-			<Setter Property="Padding" Value="0" />
-			<Setter Property="FontSize" Value="13" />
-		</Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="ContextMenu">
+                <Setter.Value>
+                    <ContextMenu>
+                        <MenuItem
+                            Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}"
+                            CommandParameter="{Binding}"
+                            Header="Move Up" />
+                        <MenuItem
+                            Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}"
+                            CommandParameter="{Binding}"
+                            Header="Move Down" />
+                        <MenuItem
+                            Command="{Binding $parent[Window].DataContext.RemoveItemCommand}"
+                            CommandParameter="{Binding}"
+                            Header="Remove Item" />
+                    </ContextMenu>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
 
-		<Style Selector="ListBoxItem">
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="BorderThickness" Value="1 1 0 1"/>
-			<Setter Property="CornerRadius" Value="3 0 0 3"/>
-			<Setter Property="(i:Interaction.Behaviors)">
-				<i:BehaviorCollectionTemplate>
-					<i:BehaviorCollection>
-						<behaviours:DragControlBehavior />
-					</i:BehaviorCollection>
-				</i:BehaviorCollectionTemplate>
-			</Setter>
-		</Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="BorderThickness" Value="1 1 0 1" />
+            <Setter Property="CornerRadius" Value="3 0 0 3" />
+            <Setter Property="(i:Interaction.Behaviors)">
+                <i:BehaviorCollectionTemplate>
+                    <i:BehaviorCollection>
+                        <behaviours:DragControlBehavior />
+                    </i:BehaviorCollection>
+                </i:BehaviorCollectionTemplate>
+            </Setter>
+        </Style>
 
-		<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-			<Setter Property="Background" Value="#66edeafc"/>
-			<Setter Property="BorderBrush" Value="#9a93cd"/>
-		</Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#66edeafc" />
+            <Setter Property="BorderBrush" Value="#9a93cd" />
+        </Style>
 
-		<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-			<!--<Setter Property="Background" Value="#9a93cd"/>-->
-		</Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <!--<Setter Property="Background" Value="#9a93cd"/>-->
+        </Style>
 
-		<Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
-			<!--<Setter Property="Background" Value="#6259A5"/>-->
-		</Style>
+        <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
+            <!--<Setter Property="Background" Value="#6259A5"/>-->
+        </Style>
 
-	</UserControl.Styles>
+    </UserControl.Styles>
 
-	<Grid>
-		<ListBox
-			x:Name="itemsListBox"
-			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-			ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
-			Classes="ItemsDragAndDrop"
-			Background="Transparent"
-			DragDrop.AllowDrop="True">
-			<ListBox.ItemsPanel>
-				<ItemsPanelTemplate>
-					<!-- disable virtualization -->
-					<StackPanel/>
-				</ItemsPanelTemplate>
-			</ListBox.ItemsPanel>
-			<ListBox.ContextMenu>
-				<ContextMenu>
-					<MenuItem Header="Add Item" />
-				</ContextMenu>
-			</ListBox.ContextMenu>
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<DockPanel VerticalAlignment="Stretch">
+    <Grid>
+        <ListBox
+            x:Name="itemsListBox"
+            Background="Transparent"
+            Classes="ItemsDragAndDrop"
+            DragDrop.AllowDrop="True"
+            ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <!--  disable virtualization  -->
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add Item" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel VerticalAlignment="Stretch">
 
-						<Viewbox Width="10">
-							<Polygon Points="0,0 8,5, 0,10"
-									 Fill="#c43e1c"
-									 IsVisible="{Binding State.IsSelected}"
-									 />
-						</Viewbox>
-						
-						<!--<material:MaterialIcon
-							Background="Red"
-IsVisible="{Binding State.IsSelected_}"
-	DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Width="12"
-Foreground="#c43e1c" Kind="Play" Margin="0 0 0 0" Padding="0" />-->
+                        <Viewbox Width="10">
+                            <Polygon
+                                Fill="#c43e1c"
+                                IsVisible="{Binding State.IsSelected}"
+                                Points="0,0 8,5, 0,10" />
+                        </Viewbox>
 
-						<!--<item:ItemIcon DockPanel.Dock="Left" Margin="5 0 8 0" Background="Red" />-->
-						<!-- <Button -->
-						<!-- 		DockPanel.Dock="Right" -->
-						<!-- 		IsHitTestVisible="False" -->
-						<!-- 		Margin="1 0 8 0" -->
-						<!-- 		CornerRadius="3" -->
-						<!-- 		BorderThickness="0" -->
-						<!-- 		IsVisible="{Binding State.IsSelected}" -->
-						<!-- 		VerticalAlignment="Center" -->
-						<!-- 		Background="#c43e1c"> -->
-						<!-- 	<Button.Styles> -->
-						<!-- 		<Style Selector="Button:pointerover"> -->
-						<!-- 			<Setter Property="Background" Value="#C1634B" /> -->
-						<!-- 		</Style> -->
-						<!-- 		<Style Selector="Button:pressed"> -->
-						<!-- 			<Setter Property="Background" Value="#913C27" /> -->
-						<!-- 		</Style> -->
-						<!-- 	</Button.Styles> -->
-						<!-- 	<TextBlock -->
-						<!-- 		Margin="8 0 8 1" -->
-						<!-- 		FontWeight="Bold" -->
-						<!-- 		Foreground="White" -->
-						<!-- 		FontSize="12">LIVE</TextBlock> -->
-						<!-- </Button> -->
-						
-						<TextBlock TextTrimming="CharacterEllipsis" Padding="6 8 0 8">
-							<TextBlock.Text>
-								<MultiBinding StringFormat="{}{0}">
-									<!--<MultiBinding StringFormat="{}{0}. {1}">-->
-									<!--<Binding Path="State.ItemIndex" />-->
-									<Binding Path="Title" />
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
-					</DockPanel>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
-	</Grid>
+                        <TextBlock
+                            Padding="6,8,0,8"
+                            FontSize="13"
+							Foreground="#181818"
+                            TextTrimming="CharacterEllipsis">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}">
+                                    <Binding Path="Title" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
 </UserControl>

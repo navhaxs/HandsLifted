@@ -189,7 +189,7 @@
                     </ListBox.Styles>
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel ItemHeight="200" ItemWidth="244" />
+                            <WrapPanel ItemHeight="200" ItemWidth="290" />
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
 
