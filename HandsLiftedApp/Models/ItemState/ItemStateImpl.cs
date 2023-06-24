@@ -42,8 +42,9 @@ namespace HandsLiftedApp.Models.ItemState
             _isSelected = this.WhenAnyValue(x => x.SelectedSlideIndex, (selectedIndex) => selectedIndex != null && selectedIndex != -1)
                 .ToProperty(this, x => x.IsSelected);
 
-            Dispatcher.UIThread.InvokeAsync(() => {
-                PageTransition = new XFade(TimeSpan.FromSeconds(1.300));
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                PageTransition = new XFade(TimeSpan.FromSeconds(0.60));
             });
 
             Observable.CombineLatest(
@@ -96,12 +97,12 @@ namespace HandsLiftedApp.Models.ItemState
 
                 this.RaiseAndSetIfChanged(ref _selectedIndex, value);
 
-                
+
                 // !!! DO NOT CALL THIS IF NOT ACTIVE ITEM
                 // if (_selectedIndex > -1)
                 // {
 
-                    // MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItem = parent });
+                // MessageBus.Current.SendMessage(new ActiveSlideChangedMessage() { SourceItem = parent });
                 // }
             }
         }
@@ -129,6 +130,12 @@ namespace HandsLiftedApp.Models.ItemState
 
         void RunTheThing()
         {
+            if (parent is LogoItem<ItemStateImpl>)
+            {
+                LogoEditorWindow seq = new LogoEditorWindow() { DataContext = parent };
+                seq.Show();
+            }
+
             if (parent is SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)
             {
                 SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)parent };

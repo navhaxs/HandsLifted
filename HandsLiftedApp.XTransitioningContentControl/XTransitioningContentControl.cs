@@ -196,7 +196,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
             _previousImageSite.Source = null;
         }
 
-        private Bitmap GetBitmap(object? visual) {
+        private Bitmap GetBitmap(object? visual)
+        {
             // TODO Cache blank black bitmap
             if (visual == null)
                 return renderControlAsBitmap(null);
@@ -204,7 +205,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
             if (visual is ISlideBitmapRender)
                 return ((ISlideBitmapRender)visual).GetBitmap();
 
-            if (visual is ISlideBitmapCacheable) {
+            if (visual is ISlideBitmapCacheable)
+            {
                 Bitmap? cached = ((ISlideBitmapCacheable)visual).GetBitmap();
                 if (cached != null)
                     return cached;
@@ -212,7 +214,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             Bitmap rendered = renderControlAsBitmap(_contentPresenter);
 
-            if (visual is ISlideBitmapCacheable) {
+            if (visual is ISlideBitmapCacheable)
+            {
                 // Testing
                 ((ISlideBitmapCacheable)visual).SetBitmap(rendered);
             }
@@ -224,7 +227,8 @@ namespace HandsLiftedApp.XTransitioningContentControl
         {
             using (SKBitmap bitmap = new SKBitmap(1920, 1080))
             {
-                using (SKCanvas canvas = new SKCanvas(bitmap)) {
+                using (SKCanvas canvas = new SKCanvas(bitmap))
+                {
 
                     canvas.DrawRect(0, 0, 1920, 1080, new SKPaint() { Style = SKPaintStyle.Fill, Color = SKColors.Black });
 
@@ -232,7 +236,21 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     {
                         using IDrawingContextImpl contextImpl = DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
                         using RenderTargetBitmap renderedBitmap = new RenderTargetBitmap(new PixelSize(1920, 1080));
-                        renderedBitmap.Render(visual); // System.ArgumentException: 'An item with the same key has already been added. Key: SubpixelAntialias'
+                        try
+                        {
+                            renderedBitmap.Render(visual); // System.ArgumentException: 'An item with the same key has already been added. Key: SubpixelAntialias'
+                        }
+                        catch (Exception ex1)
+                        {
+                            try
+                            {
+                                renderedBitmap.Render(visual); // System.ArgumentException: 'An item with the same key has already been added. Key: SubpixelAntialias'
+                            }
+                            catch (Exception ex2)
+                            {
+                                // retry
+                            }
+                        }
 
                         IRenderTargetBitmapImpl item = renderedBitmap.PlatformImpl.Item;
                         IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();

@@ -1,15 +1,10 @@
-﻿using HandsLiftedApp.Comparer;
-using HandsLiftedApp.Data.Models;
+﻿using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
-using HandsLiftedApp.Models.SlideState;
 using Serilog;
-using Serilog.Core;
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -64,9 +59,9 @@ namespace HandsLiftedApp.Utils
             }
 
 
-            if (Directory.Exists(@"C:\VisionScreens\TestSongs"))
+            if (Directory.Exists(@"C:\VisionScreens\Songs"))
             {
-                var songs = Directory.GetFiles(@"C:\VisionScreens\TestSongs", "*.*", SearchOption.AllDirectories)
+                var songs = Directory.GetFiles(@"C:\VisionScreens\Songs", "*.*", SearchOption.AllDirectories)
                 .Where(s => s.ToLower().EndsWith(".txt"))
                 .OrderBy(x => rnd.Next()).Take(4)
                 ;
@@ -75,7 +70,7 @@ namespace HandsLiftedApp.Utils
                     playlist.Items.Add(SongImporter.createSongItemFromTxt(f));
                 }
 
-              
+
             }
 
             return playlist;

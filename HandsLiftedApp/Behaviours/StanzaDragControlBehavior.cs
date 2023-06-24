@@ -11,7 +11,6 @@ using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.ItemState;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace HandsLiftedApp.Behaviours
@@ -76,44 +75,42 @@ namespace HandsLiftedApp.Behaviours
 
         private void Source_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            //var target = TargetControl ?? AssociatedObject;
-            //if (target is { })
-            //{
-            //    _parent = target.Parent;
+            var target = TargetControl ?? AssociatedObject;
+            if (target is { })
+            {
+                _parent = (Control)target.GetLogicalParent();
 
 
+                if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
+                {
+                    ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
+                    int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer((Control)target.GetLogicalParent());
+
+                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
+                    ctx.Arrangement.RemoveAt(SourceIndex);
+                    return;
+                }
 
 
-            //    if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
-            //    {
-            //        ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
-            //        int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target.Parent);
+                if (!(target.RenderTransform is TranslateTransform))
+                {
+                    target.RenderTransform = new TranslateTransform();
+                }
 
-            //        Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
-            //        ctx.Arrangement.RemoveAt(SourceIndex);
-            //        return;
-            //    }
+                _previous = e.GetPosition(_parent);
+                if (_parent != null)
+                {
+                    _parent.PointerMoved += Parent_PointerMoved;
+                    _parent.PointerReleased += Parent_PointerReleased;
 
-
-            //    if (!(target.RenderTransform is TranslateTransform))
-            //    {
-            //        target.RenderTransform = new TranslateTransform();
-            //    }
-
-            //    _previous = e.GetPosition(_parent);
-            //    if (_parent != null)
-            //    {
-            //        _parent.PointerMoved += Parent_PointerMoved;
-            //        _parent.PointerReleased += Parent_PointerReleased;
-
-            //        var m = _parent.GetVisualRoot();
-            //        if (m is Window)
-            //        {
-            //            (m as Window).LostFocus += StanzaDragControlBehavior_LostFocus;
-            //            (m as Window).PointerPressed += StanzaDragControlBehavior_PointerPressed;
-            //        }
-            //    }
-            //}
+                    var m = _parent.GetVisualRoot();
+                    if (m is Window)
+                    {
+                        (m as Window).LostFocus += StanzaDragControlBehavior_LostFocus;
+                        (m as Window).PointerPressed += StanzaDragControlBehavior_PointerPressed;
+                    }
+                }
+            }
         }
 
         private void StanzaDragControlBehavior_PointerPressed(object? sender, PointerPressedEventArgs e)
@@ -141,7 +138,8 @@ namespace HandsLiftedApp.Behaviours
 
                    if (m.Count() > 0)
                    {
-                       return nn.Any(source => {
+                       return nn.Any(source =>
+                       {
                            var mm = source.GetVisualDescendants();
                            return mm.Any(targetDecendant => m.Contains(targetDecendant));
                        });
@@ -172,7 +170,8 @@ namespace HandsLiftedApp.Behaviours
 
                 ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
 
-                for (int i = 0; i < listBox.ItemCount; i++) {
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
                     listBoxItemContainer.Classes.Remove("draggingover");
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
@@ -264,7 +263,7 @@ namespace HandsLiftedApp.Behaviours
 
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
-                
+
                 UpdateCursor();
 
                 _parent = null;
@@ -274,51 +273,52 @@ namespace HandsLiftedApp.Behaviours
 
         private void Parent_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
-            //if (_parent is { })
-            //{
-            //    var target = TargetControl ?? AssociatedObject;
+            if (_parent is { })
+            {
+                var target = TargetControl ?? AssociatedObject;
 
-            //    ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
-            //    Point pos = e.GetPosition(listBox);
-            //    ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, target.Parent);
+                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
+                Point pos = e.GetPosition(listBox);
+                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, (Control)target.GetLogicalParent());
 
-            //    // check if dragging past the last item
-            //    ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
-            //    bool isPastLastItem = false; // (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
+                // check if dragging past the last item
+                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
+                bool isPastLastItem = false; // (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
 
-            //    int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target.Parent);
-            //    int DestinationIndex = isPastLastItem ? listBox.ItemCount - 1 : listBox.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer((Control)target.GetLogicalParent());
+                int DestinationIndex = isPastLastItem ? listBox.ItemCount - 1 : listBox.ItemContainerGenerator.IndexFromContainer(hoveredItem);
 
-            //    for (int i = 0; i < listBox.ItemCount; i++) {
-            //        var listBoxItemContainer = listBox.ContainerFromIndex(i);
-            //        listBoxItemContainer.Classes.Remove("draggingover");
-            //        var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
+                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
+                    listBoxItemContainer.Classes.Remove("draggingover");
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
 
-            //        if (adornerLayer != null)
-            //        {
-            //            adornerLayer.Children.Clear();
-            //        }
-            //    }
+                    if (adornerLayer != null)
+                    {
+                        adornerLayer.Children.Clear();
+                    }
+                }
 
-            //    ResetDraggingState();
-            //    if (SourceIndex != DestinationIndex && DestinationIndex > -1)
-            //    {
-            //        //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
-            //        Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
-            //        ctx.Arrangement.Move(SourceIndex, DestinationIndex);
+                ResetDraggingState();
+                if (SourceIndex != DestinationIndex && DestinationIndex > -1)
+                {
+                    //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
+                    Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
+                    ctx.Arrangement.Move(SourceIndex, DestinationIndex);
 
-            //        //ctx.Slides.ElementAt(0)
-            //        //var ctx = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)target.DataContext;
-            //        //SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> a = ctx.Value;
-            //        //MessageBus.Current.SendMessage(new MoveItemMessage()
-            //        //{
-            //        //    SourceIndex = SourceIndex,
-            //        //    DestinationIndex = DestinationIndex
-            //        //});
-            //    }
+                    //ctx.Slides.ElementAt(0)
+                    //var ctx = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)target.DataContext;
+                    //SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> a = ctx.Value;
+                    //MessageBus.Current.SendMessage(new MoveItemMessage()
+                    //{
+                    //    SourceIndex = SourceIndex,
+                    //    DestinationIndex = DestinationIndex
+                    //});
+                }
 
 
-            //}
+            }
         }
     }
 }

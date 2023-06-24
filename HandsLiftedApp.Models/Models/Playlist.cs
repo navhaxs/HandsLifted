@@ -28,7 +28,7 @@ namespace HandsLiftedApp.Data.Models
         // TODO move into Dictionary
 
         //private String _logoGraphicFile = "/Assets/homeBASE/image5.png";
-        private String _logoGraphicFile = "avares://HandsLiftedApp/Assets/homeBASE/image5.png";
+        private String _logoGraphicFile = @"C:\VisionScreens\WA23_TITLE.png";
         public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
 
         public DateTimeOffset _date = DateTimeOffset.Now;
@@ -60,7 +60,7 @@ namespace HandsLiftedApp.Data.Models
                 value.CollectionChanged += (s, e) =>
                 {
                     int idx = 0;
-                    foreach(var item in value)
+                    foreach (var item in value)
                     {
                         item.State.ItemIndex = idx++;
                     }

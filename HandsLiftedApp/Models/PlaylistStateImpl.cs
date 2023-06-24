@@ -13,7 +13,6 @@ using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using Serilog;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -29,7 +28,8 @@ namespace HandsLiftedApp.Models
             _selectedItem = Observable.CombineLatest(
             this.WhenAnyValue(x => x.SelectedItemIndex),
                 Playlist.Items.ObserveCollectionChanges(),
-                (selectedIndex, items) => {
+                (selectedIndex, items) =>
+                {
                     if (selectedIndex != -1)
                     {
                         return Playlist.Items.ElementAtOrDefault(selectedIndex);
@@ -49,7 +49,7 @@ namespace HandsLiftedApp.Models
             _nextSlide = this.WhenAnyValue((PlaylistStateImpl x) => x.SelectedItem.State.SelectedSlide,
                     (Slide selectedSlide) => GetNextSlide().Slide)
                     .ToProperty(this, c => c.NextSlide);
-            
+
             _nextSlideWithinItem = this.WhenAnyValue((PlaylistStateImpl x) => x.SelectedItem.State.SelectedSlide,
                     (Slide selectedSlide) => GetNextSlide(false).Slide)
                     .ToProperty(this, c => c.NextSlideWithinItem);
@@ -67,6 +67,12 @@ namespace HandsLiftedApp.Models
 
             Playlist.WhenAnyValue(p => p.LogoGraphicFile).Subscribe(_ =>
             {
+                if (Playlist.LogoGraphicFile == null || Playlist.LogoGraphicFile == "")
+                {
+                    return;
+                }
+
+                // TODO what is this actually doing:??
 
                 var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
                 if (assets.Exists(new Uri(Playlist.LogoGraphicFile)))
@@ -97,7 +103,7 @@ namespace HandsLiftedApp.Models
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action ==System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
                 //if ()
                 //e.OldItems
@@ -188,7 +194,7 @@ namespace HandsLiftedApp.Models
                 {
                     Slide = SelectedItem.Slides[nextSlideIndex],
                     SlideIndex = nextSlideIndex,
-                    ItemIndex = SelectedItemIndex 
+                    ItemIndex = SelectedItemIndex
                 };
             }
             // for selected item, if slide group that is loopable, then loop back to last slide of this item
@@ -323,7 +329,7 @@ namespace HandsLiftedApp.Models
                 // deselect the slide within the previous item
                 Playlist.Items[lastSelectedItemIndex].State.SelectedSlideIndex = -1;
             }
-            
+
             MessageBus.Current.SendMessage(new ActiveSlideChangedMessage());
         }
     }

@@ -377,11 +377,11 @@
                                         </Style>
                                     </Grid.Styles>
 
-                                    <!--<Grid.RowDefinitions>
+                                    <Grid.RowDefinitions>
 										<RowDefinition Height="*" />
 										<RowDefinition Height="0" />
 										<RowDefinition Height="0" />
-									</Grid.RowDefinitions>-->
+									</Grid.RowDefinitions>
 
                                     <DockPanel>
                                         <Border
@@ -451,23 +451,24 @@
                                         <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
                                     </DockPanel>
 
-                                    <!--<GridSplitter
+                                    <GridSplitter
 											Grid.Row="1"
 											Margin="0,0,0,-10"
 											BorderThickness="10,10,10,10"
 											BorderBrush="Red"
 											HorizontalAlignment="Stretch"
 											Background="#9a93cd"
-											ZIndex="9999" />-->
+											ZIndex="9999" />
 
                                     <!--<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
 
                                     <!--  non contiguous view  -->
                                     <!--<controls:ItemSlidesView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
-                                    <library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}" />
+									<library:LibraryView IsVisible="{Binding #LibraryToggleButton.IsChecked}"
+														 Grid.Row="2"/>
 
-                                </Grid>
+								</Grid>
                             </Border>
                         </Grid>
 

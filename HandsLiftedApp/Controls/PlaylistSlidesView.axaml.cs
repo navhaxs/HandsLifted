@@ -88,7 +88,7 @@ namespace HandsLiftedApp.Controls
 
                    if (listBoxWithoutKey == null)
                        return;
-                   
+
                    if (listBoxWithoutKey.SelectedIndex > -1)
                    {
                        Control control = listBoxWithoutKey.ItemContainerGenerator.ContainerFromIndex(listBoxWithoutKey.SelectedIndex);
@@ -113,8 +113,12 @@ namespace HandsLiftedApp.Controls
                        if (control is not null)
                        {
 
-                           scrollViewer.Offset = new Vector(0, control.Bounds.Top);
-                           //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
+                           Dispatcher.UIThread.InvokeAsync(() =>
+                           {
+                               // HACK: AddItemButton heiht = 56
+                               scrollViewer.Offset = new Vector(0, control.Bounds.Top + 4);
+                               //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
+                           });
                        }
 
                    });
@@ -248,7 +252,7 @@ namespace HandsLiftedApp.Controls
                 //}
                 //else
                 //{
-                    offset = offset.WithY((rect.Bottom + Ypadding - presenter.Viewport.Height) + presenter.Child.Margin.Top);
+                offset = offset.WithY((rect.Bottom + Ypadding - presenter.Viewport.Height) + presenter.Child.Margin.Top);
                 //}
                 result = true;
             }
@@ -261,7 +265,7 @@ namespace HandsLiftedApp.Controls
                 //}
                 //else
                 //{
-                    offset = offset.WithY(rect.Y - Ypadding);
+                offset = offset.WithY(rect.Y - Ypadding);
                 //}
                 result = true;
             }

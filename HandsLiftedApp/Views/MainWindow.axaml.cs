@@ -4,22 +4,22 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
+using Avalonia.Threading;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
+using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.Views.App;
+using HandsLiftedApp.Views.Editor;
 using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
-using HandsLiftedApp.Utils;
-using HandsLiftedApp.Views.Editor;
-using System.Diagnostics;
-using Avalonia.Threading;
-using Serilog;
 
 namespace HandsLiftedApp.Views
 {
@@ -33,7 +33,7 @@ namespace HandsLiftedApp.Views
 
             InitializeComponent();
 #if DEBUG
-            this.AttachDevTools();
+            this.AttachDevTools(KeyGesture.Parse("Ctrl+F12"));
 #endif
 
             if (Design.IsDesignMode)
@@ -125,18 +125,21 @@ namespace HandsLiftedApp.Views
                     updateWin32Border(v);
                 });
 
-            LibraryToggleButton.Click += (object? sender, RoutedEventArgs e) => {
-                //if (isLibraryVisible) {
-                //    lastLibraryContentGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height;
-                //    lastLibrarySplitterGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height;
-                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
-                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
-                //}
-                //else {
-                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = lastLibraryContentGridLength;
-                //    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
-                //}
-                //isLibraryVisible = !isLibraryVisible;
+            LibraryToggleButton.Click += (object? sender, RoutedEventArgs e) =>
+            {
+                if (isLibraryVisible)
+                {
+                    lastLibraryContentGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height;
+                    lastLibrarySplitterGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height;
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
+                }
+                else
+                {
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = lastLibraryContentGridLength;
+                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
+                }
+                isLibraryVisible = !isLibraryVisible;
             };
 
             PlaylistTitleButton.PointerPressed += PlaylistTitleButton_PointerPressed;
@@ -148,7 +151,8 @@ namespace HandsLiftedApp.Views
             log.Information("MainWindow initialized");
         }
 
-        private void PlaylistTitleButton_DoubleTapped(object? sender, TappedEventArgs e) {
+        private void PlaylistTitleButton_DoubleTapped(object? sender, TappedEventArgs e)
+        {
             // Stop the timer from ticking.
             myClickWaitTimer.Stop();
 
@@ -157,15 +161,18 @@ namespace HandsLiftedApp.Views
             this.WindowState = (this.WindowState == WindowState.Normal) ? WindowState.Maximized : WindowState.Normal;
         }
 
-        private void PlaylistTitleButton_PointerMoved(object? sender, PointerEventArgs e) {
-            if (mouseState != null) {
+        private void PlaylistTitleButton_PointerMoved(object? sender, PointerEventArgs e)
+        {
+            if (mouseState != null)
+            {
                 this.BeginMoveDrag(mouseState);
             }
         }
 
         PointerPressedEventArgs? mouseState = null;
 
-        private void PlaylistTitleButton_PointerReleased(object? sender, PointerReleasedEventArgs e) {
+        private void PlaylistTitleButton_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
             mouseState = null;
         }
         /*
@@ -173,7 +180,8 @@ namespace HandsLiftedApp.Views
                 private void RegisterTap(object sender, RoutedEventArgs e) => MainWindow.TapRegistered?.Invoke(this, e);
         */
         private DispatcherTimer myClickWaitTimer;
-        private void mouseWaitTimer_Tick(object sender, EventArgs e) {
+        private void mouseWaitTimer_Tick(object sender, EventArgs e)
+        {
             myClickWaitTimer.Stop();
 
             // Handle Single Click Actions
@@ -182,13 +190,15 @@ namespace HandsLiftedApp.Views
             MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
             //editPlaylistTitleFlyout.IsOpen = true;
         }
-        private void PlaylistTitleButton_PointerPressed(object? sender, PointerPressedEventArgs e) {
+        private void PlaylistTitleButton_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
             //this.BeginMoveDrag(e);
             mouseState = e;
             e.Handled = true;
         }
 
-        private void PlaylistTitleButton_Click(object? sender, RoutedEventArgs e) {
+        private void PlaylistTitleButton_Click(object? sender, RoutedEventArgs e)
+        {
             myClickWaitTimer.Start();
             //MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
             mouseState = null;

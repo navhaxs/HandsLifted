@@ -11,8 +11,10 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models.LibraryModel {
-    public class Library : ReactiveObject {
+namespace HandsLiftedApp.Models.LibraryModel
+{
+    public class Library : ReactiveObject
+    {
         private ObservableCollection<Item> Items { get; }
         private string rootDirectory;
         public ReactiveCommand<Unit, Unit> OnAddSelectedToPlaylistCommand { get; }
@@ -21,12 +23,15 @@ namespace HandsLiftedApp.Models.LibraryModel {
 
         private FileSystemWatcher watcher = new FileSystemWatcher();
 
-        public Library() {
+        public Library()
+        {
             Items = new ObservableCollection<Item>();
-            rootDirectory = "C:\\VisionScreens\\TestSongs";
+            rootDirectory = "C:\\VisionScreens\\Songs";
 
-            OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() => {
-                if (SelectedItem != null) {
+            OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
+            {
+                if (SelectedItem != null)
+                {
                     List<string> items = new List<string>() { SelectedItem.FullFilePath };
                     MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(items));
                 }
@@ -64,7 +69,8 @@ namespace HandsLiftedApp.Models.LibraryModel {
         // changed. If we declared this as a normal property, we couldn't tell 
         // when it has changed!
         private string _searchTerm;
-        public string SearchTerm {
+        public string SearchTerm
+        {
             get => _searchTerm;
             set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
         }
@@ -92,7 +98,8 @@ namespace HandsLiftedApp.Models.LibraryModel {
         // extract such code into a separate service, say, INuGetSearchService, but let's 
         // try to avoid overcomplicating things at this time.
         private async Task<IEnumerable<Item>> SearchNuGetPackages(
-            string term, CancellationToken token) {
+            string term, CancellationToken token)
+        {
             if (term == null || term.Length == 0)
                 return Items;
 
@@ -100,44 +107,54 @@ namespace HandsLiftedApp.Models.LibraryModel {
             return Items.Where(item => item.Title.ToLower().Contains(term));
         }
 
-        void Refresh() {
-            if (Directory.Exists(rootDirectory)) {
+        void Refresh()
+        {
+            if (Directory.Exists(rootDirectory))
+            {
                 var files = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories)
                          .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
 
                 // TODO: sync the Items list properly
-                foreach (var f in files) {
+                foreach (var f in files)
+                {
                     Items.Add(new Item() { FullFilePath = f, Title = Path.GetFileNameWithoutExtension(f) });
                 }
             }
         }
-        private void watch() {
+        private void watch()
+        {
             if (!Directory.Exists(rootDirectory))
                 return;
 
             watcher.Path = rootDirectory;
             watcher.Filter = "*.*";
-            watcher.Changed += new FileSystemEventHandler((s, e) => {
-                switch (e.ChangeType) {
+            watcher.Changed += new FileSystemEventHandler((s, e) =>
+            {
+                switch (e.ChangeType)
+                {
                     // case WatcherChangeTypes.Created: { }
 
                 }
                 Refresh();
             });
-            watcher.Created += new FileSystemEventHandler((s, e) => {
+            watcher.Created += new FileSystemEventHandler((s, e) =>
+            {
                 Refresh();
             });
-            watcher.Deleted += new FileSystemEventHandler((s, e) => {
+            watcher.Deleted += new FileSystemEventHandler((s, e) =>
+            {
                 Refresh();
             });
-            watcher.Renamed += new RenamedEventHandler((s, e) => {
+            watcher.Renamed += new RenamedEventHandler((s, e) =>
+            {
                 Refresh();
             });
             watcher.EnableRaisingEvents = true;
         }
     }
 
-    public class Item {
+    public class Item
+    {
         public string FullFilePath { get; set; }
         public string Title { get; set; } // display title in list view
     }

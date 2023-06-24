@@ -89,26 +89,26 @@ namespace HandsLiftedApp.Behaviours
 
         private void Source_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            //var target = TargetControl ?? AssociatedObject;
-            //if (target is { })
-            //{
-            //    _parent = target.Parent;
+            var target = TargetControl ?? AssociatedObject;
+            if (target is { })
+            {
+                _parent = (Control)target.GetLogicalParent();
 
-            //    if (!(target.RenderTransform is TranslateTransform))
-            //    {
-            //        target.RenderTransform = new TranslateTransform();
-            //    }
+                if (!(target.RenderTransform is TranslateTransform))
+                {
+                    target.RenderTransform = new TranslateTransform();
+                }
 
-            //    _previous = e.GetPosition(_parent);
-            //    if (_parent != null)
-            //    {
-            //        _parent.PointerMoved += Parent_PointerMoved;
-            //        _parent.PointerReleased += Parent_PointerReleased;
-            //    }
+                _previous = e.GetPosition(_parent);
+                if (_parent != null)
+                {
+                    _parent.PointerMoved += Parent_PointerMoved;
+                    _parent.PointerReleased += Parent_PointerReleased;
+                }
 
-            //    ListBox listBox = (ListBox)target.Parent;
-            //    var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
-            //}
+                ListBox listBox = (ListBox)target.Parent;
+                var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
+            }
         }
 
         private ListBoxItem GetHoveredItem(ListBox listBox, Point pos, Control? target)
@@ -141,13 +141,15 @@ namespace HandsLiftedApp.Behaviours
             {
                 target.RenderTransform = new TranslateTransform();
                 ListBox listBox = (ListBox)target.Parent;
-                for (int i=0; i<listBox.ItemCount; i++) {
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
-    
+
                     listBoxItemContainer.Classes.Remove("draggingover");
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
 
-                    if (adornerLayer != null) {
+                    if (adornerLayer != null)
+                    {
                         adornerLayer.Children.Clear();
                     }
                 }
@@ -200,7 +202,8 @@ namespace HandsLiftedApp.Behaviours
                 bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom)
                     && pos.X > 0 && pos.X < listBox.Bounds.Width;
 
-                for (int i = 0; i < listBox.ItemCount; i++) {
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
                     adornerLayer.Children.Clear();
@@ -277,7 +280,8 @@ namespace HandsLiftedApp.Behaviours
                 int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
                 int DestinationIndex = isPastLastItem ? listBox.ItemCount - 1 : listBox.ItemContainerGenerator.IndexFromContainer(hoveredItem);
 
-                for (int i = 0; i < listBox.ItemCount; i++) {
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
 
                     listBoxItemContainer.Classes.Remove("draggingover");

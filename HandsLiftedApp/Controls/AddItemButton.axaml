@@ -9,6 +9,7 @@
     d:DesignWidth="400"
     Background="Transparent"
     DragDrop.AllowDrop="True"
+	IsVisible="False"
     mc:Ignorable="d">
     <DockPanel>
         <TextBlock Name="DropState" />
@@ -45,12 +46,12 @@
             <Button.Flyout>
                 <MenuFlyout Placement="RightEdgeAlignedBottom">
                     <MenuItem Header="_Presentation">
-                        <MenuItem Command="{Binding AddPresentationCommand}" Header="PowerPoint">
+                        <MenuItem Command="{Binding $parent[Window].DataContext.AddPresentationCommand}" Header="PowerPoint">
                             <MenuItem.Icon>
                                 <material:MaterialIcon Kind="Presentation" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Command="{Binding AddGoogleSlidesCommand}" Header="Google Slides">
+                        <MenuItem Command="{Binding $parent[Window].DataContext.AddGoogleSlidesCommand}" Header="Google Slides">
                             <MenuItem.Icon>
                                 <material:MaterialIcon Kind="Slideshow" />
                             </MenuItem.Icon>
@@ -61,25 +62,23 @@
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
-                    <MenuItem Command="{Binding AddSongCommand}" Header="_Song">
+                    <MenuItem Command="{Binding $parent[Window].DataContext.AddSongCommand}" Header="_Song">
                         <MenuItem.Icon>
                             <material:MaterialIcon Kind="Music" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding AddGraphicCommand}" Header="_Graphic/s">
+                    <MenuItem Command="{Binding $parent[Window].DataContext.AddGraphicCommand}" Header="_Graphic/s">
                         <MenuItem.Icon>
                             <material:MaterialIcon Kind="Image" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding AddVideoCommand}" Header="_Video">
+                    <MenuItem Command="{Binding $parent[Window].DataContext.AddVideoCommand}" Header="_Video">
                         <MenuItem.Icon>
                             <material:MaterialIcon Kind="Video" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-					<!-- TODO bind to DataContext of Window if possible -->
-                    <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
-                    <MenuItem Command="{Binding DataContext.AddLogoCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Header="_Logo">
+                    <MenuItem Command="{Binding  $parent[Window].DataContext.AddLogoCommand}" Header="_Logo">
                         <MenuItem.Icon>
                             <material:MaterialIcon Kind="Star" />
                         </MenuItem.Icon>
@@ -90,9 +89,9 @@
                             <material:MaterialIcon Kind="ContentCopy" />
                         </MenuItem.Icon>
 
-                        <MenuItem Command="{Binding AddGroupCommand}" Header="_...From Folder of Media" />
-                        <MenuItem Command="{Binding AddTestEmptyGroupCommand}" Header="Blank Group" />
-                        <MenuItem Command="{Binding AddCustomSlideCommand}" Header="Custom Group (Bible Reading Slide Test)" />
+                        <MenuItem Command="{Binding $parent[Window].DataContext.AddGroupCommand}" Header="_...From Folder of Media" />
+                        <MenuItem Command="{Binding $parent[Window].DataContext.AddTestEmptyGroupCommand}" Header="Blank Group" />
+                        <MenuItem Command="{Binding $parent[Window].DataContext.AddCustomSlideCommand}" Header="Custom Group (Bible Reading Slide Test)" />
                     </MenuItem>
                 </MenuFlyout>
             </Button.Flyout>
