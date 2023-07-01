@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Diagnostics" />
+    <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="LibVLCSharp" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="System.Reactive" />

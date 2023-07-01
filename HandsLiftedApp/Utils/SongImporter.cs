@@ -17,7 +17,7 @@ namespace HandsLiftedApp.Utils
         {
             string text = File.ReadAllText(txtFilePath);
 
-            List<string> parsed = new List<string>(text.Split("\r\n\r\n\r\n").Select(str => str.Trim()));
+            List<string> parsed = new List<string>(text.Split("\n\n").Select(str => str.Trim()));
 
             SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> song = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>()
             {
@@ -29,7 +29,7 @@ namespace HandsLiftedApp.Utils
 
             foreach (var (songPart, index) in songParts.WithIndex())
             {
-                var partNameEOL = songPart.IndexOf(Environment.NewLine);
+                var partNameEOL = songPart.IndexOf("\n");
                 var partName = songPart.Substring(0, partNameEOL);
 
                 string stanzaBody;

@@ -26,6 +26,13 @@ namespace HandsLiftedApp.Controls
             InitializeComponent();
             _dropState = this.Get<TextBlock>("DropState");
 
+            AddButton.PointerEntered += (object? sender, PointerEventArgs e) => {
+                AddButtonTooltip.IsVisible = true;
+            };
+            AddButton.PointerExited += (object? sender, PointerEventArgs e) => {
+                AddButtonTooltip.IsVisible = false;
+            };
+
             SetupDnd("Files", async d => d.Set(DataFormats.Files, new[] { await (VisualRoot as TopLevel)!.StorageProvider.TryGetFileFromPathAsync(Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName) }), DragDropEffects.Copy);
         }
 
