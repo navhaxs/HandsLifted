@@ -38,6 +38,8 @@ using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
 using HandsLiftedApp.Models.SlideDesigner;
 using HandsLiftedApp.Views.Debugging;
+using HandsLiftedApp.ViewModels.Editor;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -186,11 +188,12 @@ namespace HandsLiftedApp.ViewModels
             AddGroupCommand = ReactiveCommand.CreateFromTask(OpenGroupAsync);
             AddVideoCommand = ReactiveCommand.CreateFromTask(AddVideoCommandAsync);
             AddGraphicCommand = ReactiveCommand.CreateFromTask(AddGraphicCommandAsync);
-            AddLogoCommand = ReactiveCommand.CreateFromTask(AddLogoCommandAsync);
+            AddLogoCommand = ReactiveCommand.Create<object>(AddLogoCommandAsync);
             AddTestEmptyGroupCommand = ReactiveCommand.CreateFromTask(OpenTestEmptyGroupAsync);
             AddCustomSlideCommand = ReactiveCommand.CreateFromTask(AddCustomSlideCommandAsync);
             AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
             AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
+            AddNewSongCommand = ReactiveCommand.CreateFromTask(AddNewSongAsync);
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
             NewServiceCommand = ReactiveCommand.Create(OnNewService);
             LoadServiceCommand = ReactiveCommand.Create(OnLoadService);
@@ -401,11 +404,12 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> AddGroupCommand { get; }
         public ReactiveCommand<Unit, Unit> AddVideoCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGraphicCommand { get; }
-        public ReactiveCommand<Unit, Unit> AddLogoCommand { get; }
+        public ReactiveCommand<object, Unit> AddLogoCommand { get; }
         public ReactiveCommand<Unit, Unit> AddTestEmptyGroupCommand { get; }
         public ReactiveCommand<Unit, Unit> AddCustomSlideCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddNewSongCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
         public ReactiveCommand<Unit, Unit> NewServiceCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadServiceCommand { get; }
@@ -584,9 +588,13 @@ namespace HandsLiftedApp.ViewModels
                 System.Diagnostics.Debug.Print(e.Message);
             }
         }
-        private async Task AddLogoCommandAsync()
+        private void AddLogoCommandAsync(object insertAfterThisIndex)
         {
-            Playlist.Items.Add(new LogoItem<ItemStateImpl>());
+            int insertIdx = Playlist.Items.Count;
+            if (insertAfterThisIndex is int)
+            {
+                Playlist.Items.Insert((int)insertAfterThisIndex + 1, new LogoItem<ItemStateImpl>());
+            }
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -669,10 +677,26 @@ namespace HandsLiftedApp.ViewModels
 
                 if (fileName != null && fileName is string)
                 {
-                    var songItem = SongImporter.createSongItemFromTxt((string)fileName);
+                    var songItem = SongImporter.createSongItemFromTxtFile((string)fileName);
                     Playlist.Items.Add(songItem);
                 }
 
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Print(e.Message);
+            }
+        } 
+        private async Task AddNewSongAsync()
+        {
+            try
+            {
+                SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> song = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>();
+                Playlist.Items.Add(song);
+
+                SongEditorViewModel vm = new SongEditorViewModel() { song = song };
+                SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
+                seq.Show();
             }
             catch (Exception e)
             {

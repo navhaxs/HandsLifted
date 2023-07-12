@@ -17,6 +17,16 @@ namespace HandsLiftedApp.Models.SlideDesigner {
         public SlideDesignerViewModel() {
             ListOfDesigns.Add(new BaseSlideTheme()
             {
+                Name = "Default",
+                FontFamily = TryParseFontFamily("Open Sans"),
+                TextColour = Color.Parse("#4d2888"),
+                BackgroundColour = Color.Parse("#ffffff"),
+                FontSize = 80,
+                LineHeight = 130,
+                BackgroundGraphicFilePath = @"avares://HandsLiftedApp/Assets/DefaultTheme/VisionScreens_1440_background.png"
+            });
+            ListOfDesigns.Add(new BaseSlideTheme()
+            {
                 Name = "SWEC",
                 FontFamily = TryParseFontFamily("Montserrat"),
                 TextColour = Color.Parse("#a06d39"),
@@ -34,7 +44,7 @@ namespace HandsLiftedApp.Models.SlideDesigner {
                 BackgroundGraphicFilePath = "avares://HandsLiftedApp/Assets/DesignerSlideTemplate/bg.png"
             });
             ListOfDesigns.Add(new BaseSlideTheme() {
-                Name = "Default",
+                Name = "Blue",
                 FontFamily = TryParseFontFamily("Montserrat"),
                 TextColour = Color.Parse("#2b505e"),
                 BackgroundColour = Color.Parse("#b7d1d8"),

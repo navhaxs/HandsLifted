@@ -33,6 +33,10 @@
 						<Setter Property="Background" Value="#f6f4ff" />
 						<Setter Property="BorderBrush" Value="#f6f4ff" />
 					</Style>
+					<Style Selector="MenuItem">
+						<Setter Property="Padding" Value="6 10" />
+						<Setter Property="FontSize" Value="14" />
+					</Style>
 				</Button.Styles>
 
 				<material:MaterialIcon
@@ -46,6 +50,7 @@
 
 				<Button.Flyout>
 					<MenuFlyout Placement="BottomEdgeAlignedLeft">
+
 						<MenuItem Header="_Presentation">
 							<MenuItem Command="{Binding $parent[Window].DataContext.AddPresentationCommand}" Header="PowerPoint">
 								<MenuItem.Icon>
@@ -63,10 +68,17 @@
 								</MenuItem.Icon>
 							</MenuItem>
 						</MenuItem>
-						<MenuItem Command="{Binding $parent[Window].DataContext.AddSongCommand}" Header="_Song">
+						<MenuItem Header="_Song">
 							<MenuItem.Icon>
 								<material:MaterialIcon Kind="Music" />
 							</MenuItem.Icon>
+							<MenuItem Command="{Binding $parent[Window].DataContext.AddSongCommand}" Header="From _File">
+							</MenuItem>
+							<MenuItem Command="{Binding $parent[Window].DataContext.AddNewSongCommand}" Header="From _New">
+								<MenuItem.Icon>
+									<material:MaterialIcon Kind="Music" />
+								</MenuItem.Icon>
+							</MenuItem>
 						</MenuItem>
 						<MenuItem Command="{Binding $parent[Window].DataContext.AddGraphicCommand}" Header="_Graphic/s">
 							<MenuItem.Icon>
@@ -79,7 +91,9 @@
 							</MenuItem.Icon>
 						</MenuItem>
 						<Separator />
-						<MenuItem Command="{Binding $parent[Window].DataContext.AddLogoCommand}" Header="_Logo">
+						<MenuItem Header="_Logo"
+								  Command="{Binding $parent[Window].DataContext.AddLogoCommand}"
+								  CommandParameter="{Binding State.ItemIndex}">
 							<MenuItem.Icon>
 								<material:MaterialIcon Kind="Star" />
 							</MenuItem.Icon>
@@ -93,12 +107,14 @@
 							<MenuItem Command="{Binding $parent[Window].DataContext.AddGroupCommand}" Header="_...From Folder of Media" />
 							<MenuItem Command="{Binding $parent[Window].DataContext.AddTestEmptyGroupCommand}" Header="Blank Group" />
 							<MenuItem Command="{Binding $parent[Window].DataContext.AddCustomSlideCommand}" Header="Custom Group (Bible Reading Slide Test)" />
-						</MenuItem>
+						</MenuItem>	
 					</MenuFlyout>
 				</Button.Flyout>
 			</Button>
 			<TextBlock Name="AddButtonTooltip" Text="Add Item" VerticalAlignment="Center" HorizontalAlignment="Left" 
 					   FontSize="14" IsVisible="False"/>
+			<TextBlock Text="{Binding State.ItemIndex}" VerticalAlignment="Center" HorizontalAlignment="Left" 
+					   FontSize="14" />
 		</StackPanel>
     </DockPanel>
 </UserControl>

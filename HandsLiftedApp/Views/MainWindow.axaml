@@ -448,7 +448,25 @@
                                             </Grid>
                                         </Border>
 
-                                        <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+										<Grid>
+                                            <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
+											<Button HorizontalAlignment="Right"
+													VerticalAlignment="Bottom">
+												<Button.Content>
+													Zoom
+												</Button.Content>
+												<Button.Flyout>
+													<Flyout>
+														<Slider
+														HorizontalAlignment="Stretch"
+														DockPanel.Dock="Bottom"
+														Minimum="50"
+														Maximum="180"
+														Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
+													</Flyout>
+												</Button.Flyout>
+											</Button>
+										</Grid>
                                     </DockPanel>
 
                                     <GridSplitter
@@ -613,13 +631,6 @@
                             <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
                             <!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
                         </UniformGrid>
-
-                        <Slider
-                            HorizontalAlignment="Stretch"
-                            DockPanel.Dock="Bottom"
-							Minimum="50"
-							Maximum="180"
-                            Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
 
                         <views:DebugInfoView HorizontalAlignment="Stretch" />
                         <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->

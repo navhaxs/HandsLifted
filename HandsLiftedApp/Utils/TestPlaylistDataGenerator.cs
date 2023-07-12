@@ -67,7 +67,7 @@ namespace HandsLiftedApp.Utils
                 ;
                 foreach (var f in songs)
                 {
-                    playlist.Items.Add(SongImporter.createSongItemFromTxt(f));
+                    playlist.Items.Add(SongImporter.createSongItemFromTxtFile(f));
                 }
 
 

@@ -271,6 +271,14 @@ namespace HandsLiftedApp.Data.Models.Items
 
         [XmlIgnore]
         public override TrulyObservableCollection<Slide> Slides { get => _stanzaSlides; }
+
+        public void ReplaceWith(SongItem<T, S, I> item)
+        {
+            this.Title = item.Title;
+            this.Stanzas = item.Stanzas;
+            this.Copyright = item.Copyright;
+            this.ResetArrangement();
+        }
     }
 
     public class SongStanza : ReactiveObject

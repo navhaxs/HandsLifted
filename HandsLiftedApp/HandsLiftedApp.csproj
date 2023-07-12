@@ -29,6 +29,8 @@
 	<ItemGroup>
 		<None Remove="Assets\app_logo - Copy.png" />
 		<None Remove="Assets\avalonia.png" />
+		<None Remove="Assets\DefaultTheme\VisionScreens_1440_background.png" />
+		<None Remove="Assets\DefaultTheme\VisionScreens_1440_placeholder.png" />
 		<None Remove="Assets\DesignerSlideTemplate\bg.png" />
 		<None Remove="Assets\homeBASE\image1.png" />
 		<None Remove="Assets\homeBASE\image2.png" />

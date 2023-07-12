@@ -39,7 +39,7 @@ namespace HandsLiftedApp.Utils
 
                 if (SUPPORTED_SONG.Contains(extNoDot))
                 {
-                    var songItem = SongImporter.createSongItemFromTxt(fileName);
+                    var songItem = SongImporter.createSongItemFromTxtFile(fileName);
 
                     if (songItem != null)
                         addedItems.Add(songItem);

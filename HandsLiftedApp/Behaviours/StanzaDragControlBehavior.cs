@@ -187,61 +187,62 @@ namespace HandsLiftedApp.Behaviours
 
             UpdateCursor(new Cursor(StandardCursorType.DragMove));
 
-            //if (target is { })
-            //{
-            //    ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
+            if (target is { })
+            {
+                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
 
-            //    Point pos = args.GetPosition(_parent.Parent);
-            //    Point pos1 = args.GetPosition(_parent);
-            //    if (target.RenderTransform is TranslateTransform tr)
-            //    {
-            //        tr.X += pos1.X - _previous.X;
-            //        tr.Y += pos1.Y - _previous.Y;
-            //        // TODO FIXME for multiple rows where negative Y may actually be appropriate
-            //        //tr.Y = Math.Clamp(tr.Y + pos1.Y - _previous.Y, 0, listBox.Bounds.Bottom - target.Bounds.Height);
-            //    }
-            //    _previous = pos1;
+                Point pos = args.GetPosition((Control)_parent.Parent);
+                Point pos1 = args.GetPosition(_parent);
+                if (target.RenderTransform is TranslateTransform tr)
+                {
+                    tr.X += pos1.X - _previous.X;
+                    //tr.Y += pos1.Y - _previous.Y; % target.Height;
+                    // TODO FIXME for multiple rows where negative Y may actually be appropriate
+                    //tr.Y = Math.Clamp(tr.Y + pos1.Y - _previous.Y, 0, listBox.Bounds.Bottom - target.Bounds.Height);
+                }
+                _previous = pos1;
 
-            //    ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, target.Parent);
+                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, (Control)target.Parent);
 
-            //    // check if dragging past the last item
-            //    ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
-            //    bool isPastLastItem = false;// (lastItem != null) && (isPastLastItem = pos1.Y > lastItem.Bounds.Bottom);
+                // check if dragging past the last item
+                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
+                bool isPastLastItem = false;// (lastItem != null) && (isPastLastItem = pos1.Y > lastItem.Bounds.Bottom);
 
-            //    for (int i = 0; i < listBox.ItemCount; i++) {
-            //        var listBoxItemContainer = listBox.ContainerFromIndex(i);
-            //        var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
-            //        adornerLayer.Children.Clear();
-            //        listBoxItemContainer.ZIndex = 5;
-            //    }
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
+                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
+                    adornerLayer.Children.Clear();
+                    listBoxItemContainer.ZIndex = 5;
+                }
 
-            //    if (isPastLastItem)
-            //    {
-            //        hoveredItem = lastItem;
-            //    }
+                if (isPastLastItem)
+                {
+                    hoveredItem = lastItem;
+                }
 
-            //    if (hoveredItem is null)
-            //        return;
+                if (hoveredItem is null)
+                    return;
 
-            //    if (hoveredItem != target)
-            //    {
-            //        hoveredItem.ZIndex = 1;
-            //        var adornerElement = hoveredItem;
-            //        var adornerLayer = AdornerLayer.GetAdornerLayer(adornerElement);
+                if (hoveredItem != target)
+                {
+                    hoveredItem.ZIndex = 1;
+                    var adornerElement = hoveredItem;
+                    var adornerLayer = AdornerLayer.GetAdornerLayer(adornerElement);
 
-            //        if (adornerLayer != null)
-            //        {
-            //            var adornedElement = new Border()
-            //            {
-            //                CornerRadius = new CornerRadius(3, 0, 0, 3),
-            //                BorderThickness = new Thickness(2, 2, 2, 2),
-            //                BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd"))
-            //            };
-            //            adornerLayer.Children.Add(adornedElement);
-            //            AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
-            //        }
-            //    }
-            //}
+                    if (adornerLayer != null)
+                    {
+                        var adornedElement = new Border()
+                        {
+                            CornerRadius = new CornerRadius(3, 0, 0, 3),
+                            BorderThickness = new Thickness(2, 2, 2, 2),
+                            BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd"))
+                        };
+                        adornerLayer.Children.Add(adornedElement);
+                        AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
+                    }
+                }
+            }
         }
 
         private void UpdateCursor(Cursor? cursor = null, Control? p = null)

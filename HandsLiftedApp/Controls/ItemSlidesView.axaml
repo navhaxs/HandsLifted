@@ -13,6 +13,7 @@
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utils="using:HandsLiftedApp.Utils"
+    xmlns:views="using:HandsLiftedApp.Views"
     MinHeight="200"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -22,7 +23,7 @@
     <UserControl.Resources>
         <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
         <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
-		<converters:MultiplicationConverter x:Key="MultiplicationConverter" />
+        <converters:MultiplicationConverter x:Key="MultiplicationConverter" />
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -131,20 +132,32 @@
                         <controls:ListBoxWithoutKey.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
-								<WrapPanel>
-									<WrapPanel.ItemHeight>
-										<MultiBinding Converter="{StaticResource MultiplicationConverter}">
-											<Binding Source="{x:Static app:Globals.Preferences}" Path="ItemHeight" FallbackValue="200"/>
-											<Binding Source="{x:Static app:Globals.Preferences}" Path="SlideThumbnailSizeMultiplier" FallbackValue="1"/>
-										</MultiBinding>
-									</WrapPanel.ItemHeight>
-									<WrapPanel.ItemWidth>
-										<MultiBinding Converter="{StaticResource MultiplicationConverter}">
-											<Binding Source="{x:Static app:Globals.Preferences}" Path="ItemWidth" FallbackValue="290"/>
-											<Binding Source="{x:Static app:Globals.Preferences}" Path="SlideThumbnailSizeMultiplier" FallbackValue="1"/>
-										</MultiBinding>
-									</WrapPanel.ItemWidth>
-								</WrapPanel>
+                                <WrapPanel>
+                                    <WrapPanel.ItemHeight>
+                                        <MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                            <Binding
+                                                FallbackValue="200"
+                                                Path="ItemHeight"
+                                                Source="{x:Static app:Globals.Preferences}" />
+                                            <Binding
+                                                FallbackValue="1"
+                                                Path="SlideThumbnailSizeMultiplier"
+                                                Source="{x:Static app:Globals.Preferences}" />
+                                        </MultiBinding>
+                                    </WrapPanel.ItemHeight>
+                                    <WrapPanel.ItemWidth>
+                                        <MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                            <Binding
+                                                FallbackValue="290"
+                                                Path="ItemWidth"
+                                                Source="{x:Static app:Globals.Preferences}" />
+                                            <Binding
+                                                FallbackValue="1"
+                                                Path="SlideThumbnailSizeMultiplier"
+                                                Source="{x:Static app:Globals.Preferences}" />
+                                        </MultiBinding>
+                                    </WrapPanel.ItemWidth>
+                                </WrapPanel>
                             </ItemsPanelTemplate>
                         </controls:ListBoxWithoutKey.ItemsPanel>
 
@@ -155,29 +168,31 @@
                         <controls:ListBoxWithoutKey.DataTemplates>
                             <utils:MyTemplateSelector>
                                 <DataTemplate x:Key="SongTitleSlide">
-                                    <!--<Viewbox>
-										<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
-									</Viewbox>-->
-                                    <TextBlock
-                                        MaxHeight="150"
-                                        Margin="10"
+									<Viewbox>
+										<views:DesignerSlideTitle
+                                            Width="1920"
+                                            Height="1080" />
+									</Viewbox>
+									<!--<TextBlock
                                         FontWeight="SemiBold"
                                         Foreground="White"
                                         Text="{Binding Title}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap" />
+                                        TextTrimming="CharacterEllipsis" />-->
                                 </DataTemplate>
                                 <DataTemplate x:Key="SongSlide">
-                                    <!--<Viewbox>
-										<views:SimpleSlideTemplate DataContext="{Binding Data}" Width="1920" Height="1080" />
-									</Viewbox>-->
-                                    <TextBlock
-                                        MaxHeight="150"
-                                        Margin="10"
+                                    <Viewbox>
+                                        <views:DesignerSlideTemplate
+                                            Width="1920"
+                                            Height="1080" />
+                                    </Viewbox>
+                                    <!--<TextBlock
                                         Foreground="White"
                                         Text="{Binding Text}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap" />
+										Height="9999"
+										VerticalAlignment="Top"
+                                        TextTrimming="WordEllipsis"
+										ClipToBounds="True"
+										/>-->
                                 </DataTemplate>
                                 <DataTemplate x:Key="ImageSlide">
                                     <controls:SlideThumbnail>

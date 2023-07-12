@@ -11,7 +11,8 @@ namespace HandsLiftedApp.ViewModels.Editor
 
             this.Title = "Rock Of Ages";
             this.Copyright = @"“Hallelujah” words and music by John Doe
-© 2018 Good Music Co.
+© 2018 Test Music Publishing Co.
+This is a very very very very very very very very very very long line.
 Used by permission. CCLI Licence #12345";
 
             var v1Guid = Guid.NewGuid();
@@ -34,38 +35,38 @@ God of Glory
 Majesty
 Praise forever to the King of kings"));
 
-            var v2Guid = Guid.NewGuid();
-            Stanzas.Add(new SongStanza(v2Guid, "Verse 2", @"To reveal the kingdom coming
-And to reconcile the lost
-To redeem the whole creation
-You did not despise the cross
+//            var v2Guid = Guid.NewGuid();
+//            Stanzas.Add(new SongStanza(v2Guid, "Verse 2", @"To reveal the kingdom coming
+//And to reconcile the lost
+//To redeem the whole creation
+//You did not despise the cross
 
-For even in Your suffering
-You saw to the other side
-Knowing this was our salvation
-Jesus for our sake You died"));
+//For even in Your suffering
+//You saw to the other side
+//Knowing this was our salvation
+//Jesus for our sake You died"));
 
-            var v3Guid = Guid.NewGuid();
-            Stanzas.Add(new SongStanza(v3Guid, "Verse 3", @"And the morning that You rose
-All of heaven held its breath
-Till that stone was moved for good
-For the Lamb had conquered death
+//            var v3Guid = Guid.NewGuid();
+//            Stanzas.Add(new SongStanza(v3Guid, "Verse 3", @"And the morning that You rose
+//All of heaven held its breath
+//Till that stone was moved for good
+//For the Lamb had conquered death
 
-And the dead rose from their tombs
-And the angels stood in awe
-For the souls of all who'd come
-To the Father are restored"));
+//And the dead rose from their tombs
+//And the angels stood in awe
+//For the souls of all who'd come
+//To the Father are restored"));
 
-            var v4Guid = Guid.NewGuid();
-            Stanzas.Add(new SongStanza(v4Guid, "Verse 4", @"And the Church of Christ was born
-Then the Spirit lit the flame
-Now this Gospel truth of old
-Shall not kneel shall not faint
+//            var v4Guid = Guid.NewGuid();
+//            Stanzas.Add(new SongStanza(v4Guid, "Verse 4", @"And the Church of Christ was born
+//Then the Spirit lit the flame
+//Now this Gospel truth of old
+//Shall not kneel shall not faint
 
-By His blood and in His Name
-In His freedom I am free
-For the love of Jesus Christ
-Who has resurrected me"));
+//By His blood and in His Name
+//In His freedom I am free
+//For the love of Jesus Christ
+//Who has resurrected me"));
 
             this.ResetArrangement();
         }

@@ -116,7 +116,7 @@ namespace HandsLiftedApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref _SlideThumbnailSizeMultiplier, value);
         }
 
-        private int _ItemWidth = 290;
+        private int _ItemWidth = 480;
         [DataMember]
         public int ItemWidth
         {
@@ -124,7 +124,7 @@ namespace HandsLiftedApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref _ItemWidth, value);
         }
 
-        private int _ItemHeight = 200;
+        private int _ItemHeight = 320;//70;
         [DataMember]
         public int ItemHeight
         {

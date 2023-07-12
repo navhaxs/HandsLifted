@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ReactiveUI;
 using Avalonia.Interactivity;
 using HandsLiftedApp.Models.ItemState;
+using System;
 
 namespace HandsLiftedApp.Views.Editor
 {
@@ -24,21 +25,32 @@ namespace HandsLiftedApp.Views.Editor
             this.AttachDevTools();
 #endif
 
-            _btnGetWavHeader = this.FindControl<MenuItem>("btnGetWavHeader");
-            _btnGetWavHeader.Click += async (sender, e) => await GetWavHeader();
-            _btnFileLoad = this.FindControl<MenuItem>("btnFileLoad");
-            _btnFileLoad.Click += async (sender, e) => await LoadFromXML();
-            _btnFileSave = this.FindControl<MenuItem>("btnFileSave");
-            _btnFileSave.Click += async (sender, e) => await SaveToXML();
+            //_btnGetWavHeader = this.FindControl<MenuItem>("btnGetWavHeader");
+            //_btnGetWavHeader.Click += async (sender, e) => await GetWavHeader();
+            //_btnFileLoad = this.FindControl<MenuItem>("btnFileLoad");
+            //_btnFileLoad.Click += async (sender, e) => await LoadFromXML();
+            //_btnFileSave = this.FindControl<MenuItem>("btnFileSave");
+            //_btnFileSave.Click += async (sender, e) => await SaveToXML();
 
             // TODO skip caret between textbox
             //TextBox tb = new TextBox();
             //tb.WhenAny
+
+            ImportPasteHereTextBox.TextChanged += ImportPasteHereTextBox_TextChanged;
         }
 
-        private void InitializeComponent()
+        private void ImportPasteHereTextBox_TextChanged(object? sender, TextChangedEventArgs e)
         {
-            AvaloniaXamlLoader.Load(this);
+            try
+            {
+                SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> songItem = SongImporter.createSongItemFromStringData(ImportPasteHereTextBox.Text);
+
+                ((SongEditorViewModel)this.DataContext).song.ReplaceWith(songItem);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private async Task GetWavHeader()
@@ -58,7 +70,7 @@ namespace HandsLiftedApp.Views.Editor
             if (result != null)
             {
                 //_wavFileSplitter.GetWavHeader(result, text => _textOutput.Text = text);
-                ((SongEditorViewModel)this.DataContext).song = SongImporter.createSongItemFromTxt(result[0]);
+                ((SongEditorViewModel)this.DataContext).song = SongImporter.createSongItemFromTxtFile(result[0]);
             }
         }
 

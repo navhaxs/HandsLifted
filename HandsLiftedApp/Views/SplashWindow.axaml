@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="84"
         x:Class="HandsLiftedApp.Views.SplashWindow"
         Title="SplashWindow"
 		Icon="/Assets/app.ico"
@@ -11,12 +11,22 @@
         ExtendClientAreaChromeHints="NoChrome"
         SystemDecorations="None"
         CanResize="False"
-        Height="450" Width="600"
+        Height="480" Width="200"
         TransparencyLevelHint="Transparent"
         WindowStartupLocation="CenterScreen"
         Topmost="True"
         ExtendClientAreaTitleBarHeightHint="-1">
-    <Image Source="avares://HandsLiftedApp/Assets/splash.png"
+
+	<Grid>
+		<TextBlock
+			Background="Red"
+	        Margin="10"
+			Text="This is Going to be some long long longwwhalong long long long long long long long long long long long long long long long long long long long long long long long long text"
+        	TextTrimming="WordEllipsis"
+	        TextWrapping="Wrap" />
+	</Grid>
+	
+    <!--<Image Source="avares://HandsLiftedApp/Assets/splash.png"
         RenderOptions.BitmapInterpolationMode="HighQuality"
-         />
+         />-->
 </Window>
