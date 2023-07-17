@@ -57,8 +57,8 @@
 
         <Style Selector="ListBoxItem">
             <Setter Property="Margin" Value="0" />
-            <Setter Property="BorderThickness" Value="1 1 0 1" />
-            <Setter Property="CornerRadius" Value="3 0 0 3" />
+            <Setter Property="BorderThickness" Value="6 0 0 0" />
+            <Setter Property="CornerRadius" Value="0 0 0 0" />
             <Setter Property="(i:Interaction.Behaviors)">
                 <i:BehaviorCollectionTemplate>
                     <i:BehaviorCollection>
@@ -69,8 +69,8 @@
         </Style>
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="#66edeafc" />
-            <Setter Property="BorderBrush" Value="#9a93cd" />
+			<Setter Property="Background" Value="#4B9A93CD" />
+			<Setter Property="BorderBrush" Value="#6259A5" />
         </Style>
 
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
@@ -86,7 +86,7 @@
     <Grid>
         <ListBox
             x:Name="itemsListBox"
-            Background="Transparent"
+			Background="Transparent"
             Classes="ItemsDragAndDrop"
             DragDrop.AllowDrop="True"
             ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
@@ -108,15 +108,15 @@
 
                         <Viewbox Width="10">
                             <Polygon
-                                Fill="#c43e1c"
-                                IsVisible="{Binding State.IsSelected}"
+                                Fill="#FF3400"
+								IsVisible="{Binding State.IsSelected}"
                                 Points="0,0 8,5, 0,10" />
                         </Viewbox>
 
                         <TextBlock
                             Padding="6,8,0,8"
                             FontSize="13"
-							Foreground="#181818"
+							Foreground="White"
                             TextTrimming="CharacterEllipsis">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">

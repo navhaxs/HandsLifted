@@ -102,7 +102,8 @@
 							</DockPanel.ContextMenu>
 
 							<Path Name="PART_Before" Data="M0,0 10,0 10,20 0,20 10,10" Fill="{Binding Value.Colour}" />
-							<Border Name="PART_Content" Background="{Binding Value.Colour}" BorderBrush="#aaaaaa">
+							<Border Name="PART_Content" Background="{Binding Value.Colour}" BorderBrush="#aaaaaa"
+									Margin="-1 0 -0 0">
 								<TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="12" Text="{Binding Value.Name}" />
 							</Border>
 							<Path Name="PART_After" Data="M0,0 8,10 0,20" Fill="{Binding Value.Colour}" />

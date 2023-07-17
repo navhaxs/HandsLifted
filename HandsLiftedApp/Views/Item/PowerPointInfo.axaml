@@ -11,7 +11,7 @@
     <StackPanel>
         <Border
             Margin="8,8,8,0"
-            Background="#46847DBB"
+            Background="#5D536F"
             CornerRadius="6">
             <DockPanel>
                 <ProgressBar

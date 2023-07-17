@@ -24,10 +24,10 @@
 					<Style Selector="Button">
 						<Setter Property="Padding" Value="12 8" />
 						<Setter Property="HorizontalAlignment" Value="Stretch" />
-						<Setter Property="BorderThickness" Value="1" />
+						<Setter Property="BorderThickness" Value="0" />
 						<Setter Property="CornerRadius" Value="6" />
-						<Setter Property="Background" Value="#f6f4ff" />
-						<Setter Property="BorderBrush" Value="#f6f4ff" />
+						<Setter Property="Background" Value="#581F1744" />
+						<Setter Property="BorderBrush" Value="#9a93cd" />
 					</Style>
 					<Style Selector="Button:pointerover">
 						<Setter Property="Background" Value="#f6f4ff" />
@@ -113,8 +113,8 @@
 			</Button>
 			<TextBlock Name="AddButtonTooltip" Text="Add Item" VerticalAlignment="Center" HorizontalAlignment="Left" 
 					   FontSize="14" IsVisible="False"/>
-			<TextBlock Text="{Binding State.ItemIndex}" VerticalAlignment="Center" HorizontalAlignment="Left" 
-					   FontSize="14" />
+			<!--<TextBlock Text="{Binding State.ItemIndex}" VerticalAlignment="Center" HorizontalAlignment="Left" 
+					   FontSize="14" />-->
 		</StackPanel>
     </DockPanel>
 </UserControl>

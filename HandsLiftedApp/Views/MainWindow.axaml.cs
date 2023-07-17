@@ -210,6 +210,10 @@ namespace HandsLiftedApp.Views
 
         void updateWin32Border(WindowState v)
         {
+            // set border thickness to 0 when maximised
+            RootBorder.BorderThickness = new Thickness((v == WindowState.Maximized) ? 0 : 1);
+
+            // apply workaround for avalonia bug:
             if (v != WindowState.Maximized)
             {
 

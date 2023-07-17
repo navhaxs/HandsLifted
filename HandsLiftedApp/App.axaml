@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:HandsLiftedApp"
 			 xmlns:material="using:Material.Icons.Avalonia"
-			 RequestedThemeVariant="Light"
+			 RequestedThemeVariant="Dark"
              x:Class="HandsLiftedApp.App">
 	<!--<Application.DataTemplates>
 		<local:ViewLocator/>

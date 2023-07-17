@@ -13,12 +13,12 @@
 			<Setter Property="HorizontalAlignment" Value="Stretch" />
 			<Setter Property="HorizontalContentAlignment" Value="Left" />
 			<Setter Property="FontSize" Value="14" />
-			<Setter Property="Background" Value="#ffffff" />
+			<Setter Property="Background" Value="#1d1d1d" />
 			<Setter Property="BorderThickness" Value="0" />
 		</Style>
 		
 		<Style Selector="Button:pointerover">
-			<Setter Property="Background" Value="#F9F7F7" />
+			<Setter Property="Background" Value="#3a344a" />
 		</Style>
 
 		<Style Selector="Button:nth-child(1)">
@@ -35,7 +35,7 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#f2f2f2"
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#282828"
 			BoxShadow="2 2 10 -4 #ff000000" Margin="0 6 6 6">
 		<Grid >
 			<StackPanel Grid.Column="0">

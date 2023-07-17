@@ -17,7 +17,6 @@
     MinHeight="200"
     d:DesignHeight="450"
     d:DesignWidth="500"
-    Background="Transparent"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -59,9 +58,9 @@
             </Viewbox>
             <Border
                 Margin="0,12,12,0"
-                Background="#F6F4FF"
+                Background="#7E282828"
                 BorderBrush="#9a93cd"
-                BorderThickness="1"
+                BorderThickness="0"
                 CornerRadius="4">
                 <i:Interaction.Behaviors>
                     <ia:DataTriggerBehavior
@@ -88,7 +87,7 @@
                         <Button
                             Margin="6"
                             Padding="22,6"
-                            Background="#ffffff"
+                            Background="#242131"
                             BorderBrush="#b3aed9"
                             BorderThickness="1"
                             Command="{Binding State.EditCommand}"
@@ -108,6 +107,8 @@
                             Padding="0"
                             VerticalAlignment="Center"
                             FontSize="20"
+							Foreground="White"
+							FontWeight="SemiBold"
                             Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
                     </DockPanel>
                     <item:ItemInfo VerticalAlignment="Top" />
@@ -180,34 +181,38 @@
                                         TextTrimming="CharacterEllipsis" />-->
                                 </DataTemplate>
                                 <DataTemplate x:Key="SongSlide">
-                                    <Viewbox>
+                                    <!--<Viewbox>
+										--><!--TODO: cache as image--><!--
                                         <views:DesignerSlideTemplate
                                             Width="1920"
                                             Height="1080" />
-                                    </Viewbox>
-                                    <!--<TextBlock
+                                    </Viewbox>-->
+                                    <TextBlock
                                         Foreground="White"
                                         Text="{Binding Text}"
 										Height="9999"
 										VerticalAlignment="Top"
                                         TextTrimming="WordEllipsis"
 										ClipToBounds="True"
-										/>-->
+										/>
                                 </DataTemplate>
                                 <DataTemplate x:Key="ImageSlide">
                                     <controls:SlideThumbnail>
                                         <Grid>
-                                            <Image
-                                                RenderOptions.BitmapInterpolationMode="MediumQuality"
+											<Image
+                                                RenderOptions.BitmapInterpolationMode="LowQuality"
                                                 Source="{Binding State.Thumbnail}"
                                                 Stretch="Uniform" />
-                                        </Grid>
+										</Grid>
                                     </controls:SlideThumbnail>
                                 </DataTemplate>
                                 <DataTemplate x:Key="VideoSlide">
                                     <controls:SlideThumbnail>
                                         <Grid>
-                                            <Image Source="{Binding State.Thumbnail}" Stretch="Uniform" />
+                                            <Image 
+											    RenderOptions.BitmapInterpolationMode="LowQuality"
+												Source="{Binding State.Thumbnail}" 
+												Stretch="Uniform" />
                                         </Grid>
                                     </controls:SlideThumbnail>
                                     <!--<Border Padding="20">
@@ -217,7 +222,7 @@
                                 <DataTemplate x:Key="LogoSlide">
                                     <Grid>
                                         <Image
-                                            RenderOptions.BitmapInterpolationMode="MediumQuality"
+                                            RenderOptions.BitmapInterpolationMode="LowQuality"
                                             Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
                                             Stretch="Uniform" />
                                     </Grid>

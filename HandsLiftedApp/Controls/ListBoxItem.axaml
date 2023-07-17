@@ -204,7 +204,7 @@
 
 	<Style Selector="ListBoxItem /template/ Border#PART_Border">
 		<Setter Property="BorderBrush" Value="#724bab"/>
-		<Setter Property="BorderThickness" Value="2" />
+		<Setter Property="BorderThickness" Value="0" />
 	</Style>
 
 	<Style Selector="ListBoxItem:selected /template/ Border#PART_Border">
