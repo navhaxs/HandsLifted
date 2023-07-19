@@ -39,8 +39,9 @@
 			
 			<Button Name="DoneButton" IsDefault="True" 
 					Padding="12"
+					Margin="12"
 					DockPanel.Dock="Bottom">Save</Button>
-
+			
 			<StackPanel Margin="8">
 				<TextBlock Text="Title" />
 				<TextBox Name="TitleField" Watermark="Playlist Title" FontSize="22" Text="{Binding Playlist.Title, Mode=OneTime}" />
@@ -48,8 +49,8 @@
 				<TextBlock Text="Date" />
 				<DatePicker Name="DateField" SelectedDate="{Binding Playlist.Date, Mode=OneTime}" />
 				
-				<TextBlock Text="Location" />
-				<TextBlock Text="C:\VisionScreens\service.xml" />
+				<!--<TextBlock Text="Location" />
+				<TextBlock Text="C:\VisionScreens\service.xml" />-->
 			</StackPanel>
 			
 		</DockPanel>

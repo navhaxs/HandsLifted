@@ -17,6 +17,15 @@ namespace HandsLiftedApp.Models.SlideDesigner {
         public SlideDesignerViewModel() {
             ListOfDesigns.Add(new BaseSlideTheme()
             {
+                Name = "Basic",
+                FontFamily = TryParseFontFamily("Times New Roman"),
+                TextColour = Color.Parse("White"),
+                BackgroundColour = Color.Parse("Black"),
+                FontSize = 80,
+                LineHeight = 130,
+            });
+            ListOfDesigns.Add(new BaseSlideTheme()
+            {
                 Name = "Default",
                 FontFamily = TryParseFontFamily("Open Sans"),
                 TextColour = Color.Parse("#4d2888"),

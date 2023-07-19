@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using Serilog;
 using Serilog.Core;
 using HandsLiftedApp.Data.Slides;
+using System.IO.Pipes;
 
 namespace HandsLiftedApp.Utils
 {
@@ -22,10 +23,12 @@ namespace HandsLiftedApp.Utils
     public static class XmlSerialization
     {
 
+        // todo scan this...
         static Type[] TYPES = new Type[] {
                       typeof(SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>),
                       typeof(SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>),
                       typeof(LogoItem<ItemStateImpl>),
+                      typeof(SectionHeadingItem<ItemStateImpl>),
                       typeof(GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl>),
                       typeof(PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>)
                   };
@@ -39,8 +42,7 @@ namespace HandsLiftedApp.Utils
         /// <typeparam name="T">The type of object being written to the file.</typeparam>
         /// <param name="filePath">The file path to write the object instance to.</param>
         /// <param name="objectToWrite">The object instance to write to the file.</param>
-        /// <param name="append">If false the file will be overwritten if it already exists. If true the contents will be appended to the file.</param>
-        public static void WriteToXmlFile<T>(string filePath, T objectToWrite, bool append = false) where T : new()
+        public static void WriteToXmlFile<T>(string filePath, T objectToWrite) where T : new()
         {
             TextWriter writer = null;
             try
@@ -54,12 +56,20 @@ namespace HandsLiftedApp.Utils
                     NewLineHandling = NewLineHandling.Replace,
                     Indent = true,
                 };
-                writer = new StreamWriter(filePath, append);
-                using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
+
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    serializer.Serialize(xmlWriter, objectToWrite);
+                    writer = new StreamWriter(memoryStream);
+                    using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
+                    {
+                        serializer.Serialize(xmlWriter, objectToWrite);
+                    }
+
+                    // serialization was successful - only now do we write to disk
+                    using (FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                        memoryStream.CopyTo(file);
+                    Log.Information($"Wrote XML {filePath}");
                 }
-                Log.Information($"Wrote XML {filePath}");
             }
             catch (Exception e)
             {

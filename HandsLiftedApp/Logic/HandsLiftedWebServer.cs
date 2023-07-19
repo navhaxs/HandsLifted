@@ -27,14 +27,15 @@ namespace HandsLiftedApp.Logic
 
             ctSource = new CancellationTokenSource();
 
+            Log.Information("Webserver has started");
       
             using (var server = CreateWebServer(url))
             {
                 if (!ctSource.IsCancellationRequested)
-                    await server.RunAsync(ctSource.Token);
+                    server.RunAsync(ctSource.Token);
             }
 
-            Log.Information("Webserver has been shutdown");
+            //Log.Information("Webserver has been shutdown");
         }
 
         // Create and configure our web server.
@@ -55,7 +56,11 @@ namespace HandsLiftedApp.Logic
         public static void Stop()
         {
             if (ctSource != null)
+            {
+                Log.Information("Webserver asked to stop");
                 ctSource.Cancel();
+                Log.Information("Webserver is stopping");
+            }
 
         }
     }

@@ -229,9 +229,11 @@ namespace HandsLiftedApp.Views
             }
         }
 
-        private void Exit(object sender, RoutedEventArgs e)
+        bool _isConfirmedExiting = false;
+        public void ExitApp()
         {
             MainWindow hostWindow = (MainWindow)this.VisualRoot;
+            _isConfirmedExiting = true;
             hostWindow.Close();
             //this.Close();
         }
@@ -244,17 +246,20 @@ namespace HandsLiftedApp.Views
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
         {
-            e.Cancel = true;
-
-            this.FindControl<Control>("shade").IsVisible = true;
-
-            ExitConfirmationWindow w = new ExitConfirmationWindow() { parentWindow = this };
-            w.Closed += (object? sender, EventArgs e) =>
+            if (!_isConfirmedExiting)
             {
-                this.FindControl<Control>("shade").IsVisible = false;
-            };
+                e.Cancel = true;
 
-            w.ShowDialog(this);
+                this.FindControl<Control>("shade").IsVisible = true;
+
+                ExitConfirmationWindow w = new ExitConfirmationWindow() { parentWindow = this };
+                w.Closed += (object? sender, EventArgs e) =>
+                {
+                    this.FindControl<Control>("shade").IsVisible = false;
+                };
+
+                w.ShowDialog(this);
+            }
         }
 
         private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
@@ -324,7 +329,7 @@ namespace HandsLiftedApp.Views
         }
         private void MainWindow_Closed(object sender, EventArgs e)
         {
-            ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
+            ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown();
         }
 
         private async void SubscribeToWindowState()

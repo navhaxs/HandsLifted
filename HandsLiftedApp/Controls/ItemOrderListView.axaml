@@ -13,7 +13,7 @@
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:HandsLiftedApp.ViewModels"
-    d:DesignHeight="450"
+    d:DesignHeight="80"
     d:DesignWidth="200"
     mc:Ignorable="d">
 
@@ -58,7 +58,7 @@
         <Style Selector="ListBoxItem">
             <Setter Property="Margin" Value="0" />
             <Setter Property="BorderThickness" Value="6 0 0 0" />
-            <Setter Property="CornerRadius" Value="0 0 0 0" />
+            <Setter Property="CornerRadius" Value="0 6 6 0" />
             <Setter Property="(i:Interaction.Behaviors)">
                 <i:BehaviorCollectionTemplate>
                     <i:BehaviorCollection>
@@ -74,7 +74,13 @@
         </Style>
 
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <!--<Setter Property="Background" Value="#9a93cd"/>-->
+            <Setter Property="Background" Value="#72A8A8A8"/>
+			<Setter Property="BorderBrush" Value="#72A8A8A8" />
+		</Style>
+
+        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="#839A93CD" />
+			<Setter Property="BorderBrush" Value="#6259A5" />
         </Style>
 
         <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
@@ -106,7 +112,7 @@
                 <DataTemplate>
                     <DockPanel VerticalAlignment="Stretch">
 
-                        <Viewbox Width="10">
+                        <Viewbox Width="10" Height="10" Margin="-7,0,7,0">
                             <Polygon
                                 Fill="#FF3400"
 								IsVisible="{Binding State.IsSelected}"
@@ -114,7 +120,7 @@
                         </Viewbox>
 
                         <TextBlock
-                            Padding="6,8,0,8"
+                            Padding="0,8,0,8"
                             FontSize="13"
 							Foreground="White"
                             TextTrimming="CharacterEllipsis">

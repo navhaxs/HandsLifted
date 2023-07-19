@@ -31,6 +31,7 @@ namespace HandsLiftedApp {
 
                 Log.Information("App startup");
 
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                 TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
                 // Windows-only
@@ -65,9 +66,14 @@ namespace HandsLiftedApp {
             }
         }
 
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Log.Fatal("CurrentDomain_UnhandledExceptionEventArgs. Please report this error.", e);
+        }
+
         private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
-            Log.Fatal(e.ToString(), "TaskScheduler_UnobservedTaskException. Please report this error.");
+            Log.Fatal("TaskScheduler_UnobservedTaskException. Please report this error.", e);
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.

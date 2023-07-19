@@ -11,6 +11,7 @@ namespace HandsLiftedApp.Data.Models
     [XmlRoot("Playlist", Namespace = Constants.Namespace, IsNullable = false)]
     // todo: see https://stackoverflow.com/questions/11886290/use-the-xmlinclude-or-soapinclude-attribute-to-specify-types-that-are-not-known
     [XmlInclude(typeof(LogoItem<IItemState>))]
+    [XmlInclude(typeof(SectionHeadingItem<IItemState>))]
     [XmlInclude(typeof(SongItem<ISongTitleSlideState, ISongSlideState, IItemState>))]
     [XmlInclude(typeof(SlidesGroupItem<IItemState, IItemAutoAdvanceTimerState>))]
     [XmlInclude(typeof(GoogleSlidesGroupItem<IItemState, IItemAutoAdvanceTimerState, IGoogleSlidesGroupItemState>))]

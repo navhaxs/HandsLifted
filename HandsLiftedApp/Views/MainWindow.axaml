@@ -206,11 +206,11 @@
                                 <Button
                                     Name="PlaylistTitleButton"
                                     Margin="0,0,0,8"
-                                    Padding="20,8,0,8"
-                                    HorizontalContentAlignment="Left"
+                                    Padding="18,8,0,8"
+                                    HorizontalContentAlignment="Stretch"
                                     Background="#377D61C6"
                                     BorderThickness="0"
-                                    CornerRadius="0 6 6 0"
+                                    CornerRadius="0,6,6,0"
                                     Cursor="Hand"
                                     DockPanel.Dock="Top">
                                     <Button.Styles>
@@ -224,28 +224,41 @@
                                         <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
                                             <Setter Property="RenderTransform" Value="none" />
                                         </Style>
+                                        <Style Selector="Button material|MaterialIcon">
+                                            <Setter Property="IsVisible" Value="False" />
+                                        </Style>
+                                        <Style Selector="Button:pointerover material|MaterialIcon">
+                                            <Setter Property="IsVisible" Value="True" />
+                                        </Style>
                                     </Button.Styles>
-                                    <StackPanel IsHitTestVisible="False">
-                                        <!--<controls:EditableLabelControl />-->
-                                        <TextBlock
-                                            FontSize="20"
-                                            FontWeight="Bold"
-                                            Foreground="White"
-                                            Text="{Binding Playlist.Title, FallbackValue='Untitled'}"
-                                            TextTrimming="CharacterEllipsis" />
-                                        <TextBlock
-                                            FontSize="20"
-                                            Foreground="White"
-                                            Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}"
-                                            TextTrimming="CharacterEllipsis" />
-                                    </StackPanel>
+                                    <Grid>
+                                        <StackPanel IsHitTestVisible="False">
+                                            <!--<controls:EditableLabelControl />-->
+                                            <TextBlock
+                                                FontSize="20"
+                                                FontWeight="Bold"
+                                                Foreground="White"
+                                                Text="{Binding Playlist.Title, FallbackValue='Untitled Playlist'}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <TextBlock
+                                                FontSize="20"
+                                                Foreground="White"
+                                                Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}"
+                                                TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                        <material:MaterialIcon
+                                            Margin="0,0,12,0"
+                                            HorizontalAlignment="Right"
+                                            Kind="Pencil" />
+                                    </Grid>
                                 </Button>
 
                                 <ToggleButton
                                     Name="LibraryToggleButton"
                                     HorizontalAlignment="Stretch"
-									CornerRadius="0,0,6,0"
+                                    Background="#232323"
                                     Classes="MenuItem"
+                                    CornerRadius="0,6,6,0"
                                     DockPanel.Dock="Bottom">
                                     <DockPanel>
                                         <material:MaterialIcon DockPanel.Dock="Left" Kind="Bookshelf" />
@@ -253,7 +266,7 @@
                                     </DockPanel>
                                 </ToggleButton>
 
-                                <Button
+                                <!--<Button
                                     Name="AddItemButton"
                                     Padding="8,8,6,8"
                                     HorizontalContentAlignment="Left"
@@ -331,7 +344,7 @@
                                             </MenuItem>
                                         </MenuFlyout>
                                     </Button.Flyout>
-                                </Button>
+                                </Button>-->
 
                                 <controls:ItemOrderListView Name="itemOrderListView" Opacity="0">
                                     <i:Interaction.Behaviors>
@@ -411,7 +424,7 @@
                                                         <material:MaterialIcon
                                                             HorizontalAlignment="Left"
                                                             DockPanel.Dock="Left"
-                                                            Foreground="#383838"
+                                                            Foreground="#dedede"
                                                             Kind="ArrowLeft" />
                                                         <TextBlock Text="Previous" TextAlignment="Center" />
                                                     </DockPanel>
@@ -439,7 +452,7 @@
                                                         <material:MaterialIcon
                                                             HorizontalAlignment="Right"
                                                             DockPanel.Dock="Right"
-                                                            Foreground="#383838"
+                                                            Foreground="#dedede"
                                                             Kind="ArrowRight" />
                                                         <TextBlock Text="Next" TextAlignment="Center" />
                                                     </DockPanel>
@@ -455,29 +468,17 @@
 
                                             <Grid>
                                                 <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
-                                                <Button
-													Background="#437C7C7C"
-													BorderThickness="1,1,1,0"
-													HorizontalAlignment="Right"
-														VerticalAlignment="Bottom"
-														Padding="12,6"
-														CornerRadius="6,6,0,0"
-														Margin="0,0,26,0">
-                                                    <Button.Content>
-                                                        Zoom
-                                                    </Button.Content>
-                                                    <Button.Flyout>
-                                                        <Flyout>
-                                                            <Slider
-																MinWidth="80"
-                                                                HorizontalAlignment="Stretch"
-                                                                DockPanel.Dock="Bottom"
-                                                                Maximum="180"
-                                                                Minimum="50"
-                                                                Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
-                                                        </Flyout>
-                                                    </Button.Flyout>
-                                                </Button>
+                                                <Slider
+                                                    MinWidth="90"
+                                                    Margin="0,0,26,0"
+                                                    Padding="12,4"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    Background="Transparent"
+                                                    BorderBrush="#121212"
+                                                    Maximum="180"
+                                                    Minimum="20"
+                                                    Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
                                             </Grid>
                                         </Border>
 
@@ -617,39 +618,38 @@
                                     </Viewbox>
                                 </Grid>
 
-								<Border CornerRadius="6"
-										Height="35"
-										Margin="6 6"
-										DockPanel.Dock="Top"
-										Background="#505050">
-									<UniformGrid
-										Columns="2"
-										Rows="1">
-										<UniformGrid.Styles>
-											<Style Selector="RadioButton">
-												<Setter Property="Background" Value="#505050" />
-												<Setter Property="HorizontalContentAlignment" Value="Center" />
-												<Setter Property="HorizontalAlignment" Value="Stretch" />
-												<Setter Property="VerticalAlignment" Value="Stretch" />
-												<Setter Property="Template">
-													<Setter.Value>
-														<ControlTemplate>
-															<ToggleButton
-																HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-																VerticalAlignment="{TemplateBinding VerticalAlignment}"
-																HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-																Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-																IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
-														</ControlTemplate>
-													</Setter.Value>
-												</Setter>
-											</Style>
-										</UniformGrid.Styles>
-										<RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton>
-										<RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
-										<!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
-									</UniformGrid>
-								</Border>
+                                <Border
+                                    Height="35"
+                                    Margin="6,6"
+                                    Background="#505050"
+                                    CornerRadius="6"
+                                    DockPanel.Dock="Top">
+                                    <UniformGrid Columns="2" Rows="1">
+                                        <UniformGrid.Styles>
+                                            <Style Selector="RadioButton">
+                                                <Setter Property="Background" Value="#505050" />
+                                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <ToggleButton
+                                                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </UniformGrid.Styles>
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton>
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
+                                        <!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
+                                    </UniformGrid>
+                                </Border>
 
                                 <views:DebugInfoView HorizontalAlignment="Stretch" />
                                 <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->

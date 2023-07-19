@@ -99,6 +99,14 @@
 							</MenuItem.Icon>
 						</MenuItem>
 						<Separator />
+						<MenuItem Header="_Section"
+								  Command="{Binding $parent[Window].DataContext.AddSectionCommand}"
+								  CommandParameter="{Binding State.ItemIndex}">
+							<MenuItem.Icon>
+								<material:MaterialIcon Kind="Star" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<Separator />
 						<MenuItem Header="_Group">
 							<MenuItem.Icon>
 								<material:MaterialIcon Kind="ContentCopy" />

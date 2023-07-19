@@ -10,7 +10,7 @@ namespace HandsLiftedApp.Views.App
 {
     public partial class ExitConfirmationWindow : Window
     {
-        public Window parentWindow;
+        public MainWindow parentWindow;
         public ExitConfirmationWindow()
         {
             InitializeComponent();
@@ -26,11 +26,11 @@ namespace HandsLiftedApp.Views.App
             // ?? causes hang on exit
 
             Close();
-            parentWindow.Close();
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-            {
-                desktopLifetime.Shutdown();
-            }
+            parentWindow.ExitApp();
+            //if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+            //{
+            //    desktopLifetime.Shutdown();
+            //}
         }
 
         private void OnCancel(object? sender, RoutedEventArgs e)

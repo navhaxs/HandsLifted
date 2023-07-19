@@ -24,7 +24,6 @@ using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -39,22 +38,29 @@ using Slide = HandsLiftedApp.Data.Slides.Slide;
 using HandsLiftedApp.Models.SlideDesigner;
 using HandsLiftedApp.Views.Debugging;
 using HandsLiftedApp.ViewModels.Editor;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.Reactive.Disposables;
 
 namespace HandsLiftedApp.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     {
+        public ViewModelActivator Activator { get; }
+
+        private bool _isRunning = true;
+
         public DateTime CurrentTime
         {
             get => DateTime.Now;
         }
         private async Task Update()
         {
-            while (true)
+            while (_isRunning)
             {
                 await Task.Delay(100);
-                this.RaisePropertyChanged(nameof(CurrentTime));
+                if (_isRunning)
+                {
+                    this.RaisePropertyChanged(nameof(CurrentTime));
+                }
             }
         }
 
@@ -98,6 +104,16 @@ namespace HandsLiftedApp.ViewModels
         }
         public MainWindowViewModel()
         {
+            Activator = new ViewModelActivator();
+            this.WhenActivated(disposables =>
+            {
+                // Use WhenActivated to execute logic
+                // when the view model gets deactivated.
+                Disposable
+                    .Create(() => this.HandleDeactivation())
+                    .DisposeWith(disposables);
+            });
+
             if (Design.IsDesignMode)
             {
                 Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
@@ -189,6 +205,7 @@ namespace HandsLiftedApp.ViewModels
             AddVideoCommand = ReactiveCommand.CreateFromTask(AddVideoCommandAsync);
             AddGraphicCommand = ReactiveCommand.CreateFromTask(AddGraphicCommandAsync);
             AddLogoCommand = ReactiveCommand.Create<object>(AddLogoCommandAsync);
+            AddSectionCommand = ReactiveCommand.Create<object>(AddSectionCommandAsync);
             AddTestEmptyGroupCommand = ReactiveCommand.CreateFromTask(OpenTestEmptyGroupAsync);
             AddCustomSlideCommand = ReactiveCommand.CreateFromTask(AddCustomSlideCommandAsync);
             AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
@@ -234,7 +251,8 @@ namespace HandsLiftedApp.ViewModels
                 {
                     OnLoadService();
                 }
-                catch (Exception _) {
+                catch (Exception _)
+                {
                     LoadDemoSchedule();
                 }
             }
@@ -313,8 +331,8 @@ namespace HandsLiftedApp.ViewModels
                         : 0;
                 });
 
-        // TODO initialise at the right place (tm)
-        HandsLiftedWebServer.Start();
+            // TODO initialise at the right place (tm)
+            HandsLiftedWebServer.Start();
 
             if (Globals.Preferences.OnStartupShowOutput)
                 ToggleProjectorWindow(true);
@@ -324,6 +342,11 @@ namespace HandsLiftedApp.ViewModels
 
             if (Globals.Preferences.OnStartupShowLogo)
                 Playlist.State.IsLogo = true;
+        }
+
+        private void HandleDeactivation() {
+            Log.Information("MainWindowViewModel is deactivating");
+            _isRunning = false;
         }
 
         private ProjectorWindow _projectorWindow;
@@ -405,6 +428,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> AddVideoCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGraphicCommand { get; }
         public ReactiveCommand<object, Unit> AddLogoCommand { get; }
+        public ReactiveCommand<object, Unit> AddSectionCommand { get; }
         public ReactiveCommand<Unit, Unit> AddTestEmptyGroupCommand { get; }
         public ReactiveCommand<Unit, Unit> AddCustomSlideCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
@@ -464,19 +488,19 @@ namespace HandsLiftedApp.ViewModels
             Item<ItemStateImpl> item = (Item<ItemStateImpl>)args[1];
 
             int itemIndex = Playlist.Items.IndexOf(item);
-            
+
             if (Playlist.State.IsLogo)
             {
                 Playlist.State.IsLogo = false;
             }
-            
+
             if (Playlist.State.IsBlank)
             {
                 Playlist.State.IsBlank = false;
             }
 
             Playlist.State.NavigateToReference(new SlideReference()
-                { SlideIndex = slide.Index, ItemIndex = itemIndex, Slide = slide });
+            { SlideIndex = slide.Index, ItemIndex = itemIndex, Slide = slide });
         }
 
         private async Task OpenPresentationFileAsync()
@@ -518,7 +542,7 @@ namespace HandsLiftedApp.ViewModels
         }
         private async Task OpenGroupAsync()
         {
-          
+
         }
         private async Task AddVideoCommandAsync()
         {
@@ -590,20 +614,27 @@ namespace HandsLiftedApp.ViewModels
         }
         private void AddLogoCommandAsync(object insertAfterThisIndex)
         {
-            int insertIdx = Playlist.Items.Count;
-            if (insertAfterThisIndex is int)
-            {
-                Playlist.Items.Insert((int)insertAfterThisIndex + 1, new LogoItem<ItemStateImpl>());
-            }
+            AddItem(insertAfterThisIndex, new LogoItem<ItemStateImpl>());
+        }
+
+        private void AddItem(object insertAfterThisIndex, Item<ItemStateImpl> item)
+        {
+            int insertIdx = (insertAfterThisIndex != null && insertAfterThisIndex is int) ? ((int)insertAfterThisIndex + 1) : 0;// Playlist.Items.Count;
+
+            Playlist.Items.Insert(insertIdx, item);
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 // wait for UI to update...
                 Dispatcher.UIThread.RunJobs();
                 // and now we can jump to view
-                var count = Playlist.Items.Count;
-                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = insertIdx });
             });
+        }
+
+        private void AddSectionCommandAsync(object insertAfterThisIndex)
+        {
+            AddItem(insertAfterThisIndex, new SectionHeadingItem<ItemStateImpl>());
         }
         private async Task OpenTestEmptyGroupAsync()
         {
@@ -686,7 +717,7 @@ namespace HandsLiftedApp.ViewModels
             {
                 System.Diagnostics.Debug.Print(e.Message);
             }
-        } 
+        }
         private async Task AddNewSongAsync()
         {
             try

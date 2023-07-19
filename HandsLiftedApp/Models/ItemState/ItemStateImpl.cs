@@ -130,8 +130,9 @@ namespace HandsLiftedApp.Models.ItemState
 
         void RunTheThing()
         {
-            if (parent is LogoItem<ItemStateImpl>)
+            if (parent is LogoItem<ItemStateImpl> || parent is SectionHeadingItem<ItemStateImpl>)
             {
+                // todo datatemplates
                 LogoEditorWindow seq = new LogoEditorWindow() { DataContext = parent };
                 seq.Show();
             }

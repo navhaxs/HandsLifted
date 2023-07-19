@@ -109,6 +109,7 @@ namespace HandsLiftedApp.Controls
                        Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
 
                        // and now we can jump to view
+                       // TODO: IF THE VIEW IS NOT ALREADY WITHIN VIEWPORT
                        var control = listBox.ItemContainerGenerator.ContainerFromIndex(x.Index);
                        if (control is not null)
                        {
@@ -116,7 +117,12 @@ namespace HandsLiftedApp.Controls
                            Dispatcher.UIThread.InvokeAsync(() =>
                            {
                                // HACK: AddItemButton heiht = 56
-                               scrollViewer.Offset = new Vector(0, control.Bounds.Top + 4);
+
+                               if (control.Bounds.Top < scrollViewer.Offset.Y || control.Bounds.Top > (scrollViewer.Offset.Y + scrollViewer.Bounds.Height))
+                               {
+                                   scrollViewer.Offset = new Vector(0, control.Bounds.Top + 4);
+                               }
+
                                //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
                            });
                        }

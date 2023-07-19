@@ -5,6 +5,7 @@
     xmlns:app="using:HandsLiftedApp"
     xmlns:behaviours="using:HandsLiftedApp.Behaviours"
     xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:avaloniaconverters="using:Avalonia.Markup.Xaml.Converters"
     xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -14,13 +15,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:views="using:HandsLiftedApp.Views"
-    MinHeight="200"
     d:DesignHeight="450"
     d:DesignWidth="500"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
+		<avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrush" />
+		<converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
         <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
         <converters:MultiplicationConverter x:Key="MultiplicationConverter" />
     </UserControl.Resources>
@@ -58,7 +59,7 @@
             </Viewbox>
             <Border
                 Margin="0,12,12,0"
-                Background="#7E282828"
+				Background="{Binding ItemGroupColour, Converter={StaticResource ColorToBrush}, FallbackValue='#7E282828'}"
                 BorderBrush="#9a93cd"
                 BorderThickness="0"
                 CornerRadius="4">
