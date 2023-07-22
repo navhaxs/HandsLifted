@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using HandsLiftedApp.Data.Models.Types;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
@@ -24,9 +25,6 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             Title = "(New Section)";
         }
-
-        private Color _itemGroupColour = Color.Parse("#3a344a");
-        public Color ItemGroupColour { get => _itemGroupColour; set => this.RaiseAndSetIfChanged(ref _itemGroupColour, value); }
 
         // A section heading item itself has no slides (it is empty)
         public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>() { };

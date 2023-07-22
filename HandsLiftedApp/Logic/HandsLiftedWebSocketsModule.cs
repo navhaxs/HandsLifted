@@ -4,8 +4,13 @@ namespace HandsLiftedApp.Logic
 {
     using Avalonia.Threading;
     using EmbedIO.WebSockets;
+    using HandsLiftedApp.Data.Models;
     using HandsLiftedApp.Models.AppState;
+    using HandsLiftedApp.Models.PlaylistActions;
     using HandsLiftedApp.Models.UI;
+    using HandsLiftedApp.Models.WebsocketsEngine;
+    using HandsLiftedApp.Utils;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using ReactiveUI;
     using System;
@@ -18,6 +23,13 @@ namespace HandsLiftedApp.Logic
             : base(urlPath, true)
         {
             // placeholder
+
+            MessageBus.Current.Listen<PublishStateMessage>()
+               .Subscribe(x =>
+               {
+                   string json = JsonConvert.SerializeObject(x, Formatting.None);
+                   BroadcastAsync(json);
+               });
 
             //WeakReferenceMessenger.Default.Register<ResponseMessage>(this, (object r, ResponseMessage eventMessages) =>
             //{

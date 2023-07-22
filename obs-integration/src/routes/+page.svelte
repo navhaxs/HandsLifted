@@ -1,11 +1,48 @@
 <script>
-	const exampleSocket = new WebSocket('ws://localhost:8787/');
-	
+	import { onMount } from 'svelte';
+
+	// let photos = [];
+	/**
+	 * @type {{ Text: string; }}
+	 */
+	let publishedSlide;
+
+	onMount(async () => {
+		// const res = await fetch(`/tutorial/api/album`);
+		// photos = await res.json();
+		console.log('ello')
+		const exampleSocket = new WebSocket('ws://localhost:8979/control/');
+		exampleSocket.onmessage = (event) => {
+			console.log('event', event.data)
+			const parsed = JSON.parse(event.data);
+			if (parsed.NewPublish) {
+				publishedSlide = parsed.NewPublish.CurrentSlide;
+				console.log('recvd', publishedSlide)
+			}
+		};
+	});
+
+	const lyrics = [
+		'Oh, happy day, happy day\nYou washed my sin away',
+		'Oh, happy day, happy day\nI’ll never be the same',
+		'Forever I am changed',
+		'When I stand, in that place\nFree at last, meeting face to face',
+		'I am Yours, Jesus You are mine',
+		'',
+		'Endless joy, perfect peace\nEarthly pain finally will cease',
+		'Celebrate, Jesus is alive\nHe’s alive'
+	];
+
+	let currentText = '';
+
+	// var i = 0;
+	// setInterval(() => {
+	// 	currentText = lyrics[++i % lyrics.length];
+	// }, 2000)
 </script>
 
 <div>
-	<h1>Oh Happy Day, Happy Day</h1>
-	<h1>You Washed My Sin Away</h1>
+	<h1 class="whitespace-pre-wrap">{publishedSlide?.Text}</h1>
 </div>
 
 <style lang="scss">

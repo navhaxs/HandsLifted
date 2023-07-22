@@ -1,4 +1,6 @@
 ﻿using Avalonia.Animation;
+using Avalonia.Media;
+using HandsLiftedApp.Data.Models.Types;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -32,6 +34,11 @@ namespace HandsLiftedApp.Data.Models.Items
                 this.RaisePropertyChanged(nameof(Slides));
             }
         }
+
+
+        public XmlColor _itemGroupColour = Color.Parse("#3a344a");
+        [XmlIgnore]
+        public Color ItemGroupColour { get => _itemGroupColour; set => this.RaiseAndSetIfChanged(ref _itemGroupColour, value); }
 
         [XmlIgnore]
         public abstract ObservableCollection<Slide?> Slides { get; }

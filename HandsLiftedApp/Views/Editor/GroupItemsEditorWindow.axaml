@@ -14,7 +14,9 @@
 
             <StackPanel>
                 <TextBox Text="{Binding Item.Title}" Watermark="GroupItem Title" />
-                <!--<Separator />
+				<ColorPicker Color="{Binding Item.ItemGroupColour, FallbackValue='#3a344a'}" />
+
+				<!--<Separator />
                 <TextBlock>Add</TextBlock>
                 <Button>Add Item from single select</Button>
                 <Button>Add Items from multiselect</Button>

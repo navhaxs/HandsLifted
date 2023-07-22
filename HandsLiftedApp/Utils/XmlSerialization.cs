@@ -67,7 +67,7 @@ namespace HandsLiftedApp.Utils
 
                     // serialization was successful - only now do we write to disk
                     using (FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                        memoryStream.CopyTo(file);
+                        memoryStream.WriteTo(file);
                     Log.Information($"Wrote XML {filePath}");
                 }
             }

@@ -29,10 +29,13 @@ namespace HandsLiftedApp.Converters
                     return values[0];
                 }
 
-                var last = item.GetRealizedContainers().Last();
-                double lastItemContainerHeight = last.Bounds.Height;
-                // 20% margin at bottom of scrollviewer content
-                return ((double)values[0] - lastItemContainerHeight) * 0.2;
+                if (values[0] is double)
+                {
+                    var last = item.GetRealizedContainers().Last();
+                    double lastItemContainerHeight = last.Bounds.Height;
+                    // 20% margin at bottom of scrollviewer content
+                    return ((double)values[0] - lastItemContainerHeight) * 0.2;
+                }
             }
 
             // converter used for the wrong type

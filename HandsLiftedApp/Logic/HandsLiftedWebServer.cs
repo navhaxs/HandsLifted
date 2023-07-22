@@ -10,7 +10,7 @@ namespace HandsLiftedApp.Logic
 {
     internal static class HandsLiftedWebServer
     {
-        private static int PORT = 8979;
+        private static int PORT = 8979; // TODO config
         private static CancellationTokenSource ctSource;
 
         public static void Start()
@@ -32,10 +32,10 @@ namespace HandsLiftedApp.Logic
             using (var server = CreateWebServer(url))
             {
                 if (!ctSource.IsCancellationRequested)
-                    server.RunAsync(ctSource.Token);
+                    await server.RunAsync(ctSource.Token);
             }
 
-            //Log.Information("Webserver has been shutdown");
+            Log.Information("Webserver has been shutdown");
         }
 
         // Create and configure our web server.

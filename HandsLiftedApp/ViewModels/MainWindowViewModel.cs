@@ -39,6 +39,8 @@ using HandsLiftedApp.Models.SlideDesigner;
 using HandsLiftedApp.Views.Debugging;
 using HandsLiftedApp.ViewModels.Editor;
 using System.Reactive.Disposables;
+using HandsLiftedApp.Models.WebsocketsEngine;
+using HandsLiftedApp.Models.WebsocketsV1;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -158,6 +160,27 @@ namespace HandsLiftedApp.ViewModels
                 })
                 .ToProperty(this, c => c.ActiveSlide)
             ;
+
+            this.WhenAnyValue(x => x.ActiveSlide)
+                .ObserveOn(RxApp.MainThreadScheduler) // TODO: what does this actually do?
+                .Subscribe(slide => {
+                    // TODO: refactor this move to own file (service?)
+                    var msg = new PublishStateMessage();
+                    if (slide is SongSlide<SongSlideStateImpl>)
+                    {
+                        msg.NewPublish = new VisionScreensState() { CurrentSlide = new PublishedSongSlide() { Text = slide.SlideText } };
+                    }
+                    else if (slide is SongTitleSlide<SongTitleSlideStateImpl>)
+                    {
+                        msg.NewPublish = new VisionScreensState() { CurrentSlide = new PublishedSongTitleSlide() { Title = ((SongTitleSlide<SongTitleSlideStateImpl>)slide).Title, Copyright = ((SongTitleSlide<SongTitleSlideStateImpl>)slide).Copyright } };
+                    }
+                    else
+                    {
+                        msg.NewPublish = new VisionScreensState();
+                    }
+
+                    MessageBus.Current.SendMessage(msg);
+                });
 
             _previousSlide = this.WhenAnyValue(x => x.Playlist.State.PreviousSlide, x => x.Playlist.State.IsLogo, x => x.LogoSlideInstance,
                 x => x.Playlist.State.IsBlank, x => x.BlankSlideInstance,
