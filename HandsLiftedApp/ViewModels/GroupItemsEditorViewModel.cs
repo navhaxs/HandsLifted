@@ -6,6 +6,11 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using ReactiveUI;
 using HandsLiftedApp.Utils;
+using System.Collections.Generic;
+using HandsLiftedApp.Data.Slides;
+using System.Linq;
+using System.Collections;
+using System;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -18,7 +23,7 @@ namespace HandsLiftedApp.ViewModels
             //this.WhenAnyValue(x => x.SelectedIndex, x => x.Item.Items, (selectedIndex, items) => canMove(selectedIndex, selectedIndex - 1, items.Count)));
             MoveItemDown = ReactiveCommand.CreateFromTask(MoveItemDownAsync);
             //this.WhenAnyValue(x => x.SelectedIndex, x => x.Item.Items, (selectedIndex, items) => canMove(selectedIndex, selectedIndex + 1, items.Count)));
-            RemoveItem = ReactiveCommand.CreateFromTask(RemoveItemAsync);
+            RemoveItem = ReactiveCommand.CreateFromTask<object>(RemoveItemAsync);
             ExploreFile = ReactiveCommand.CreateFromTask(ExploreFileAsync);
 
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
@@ -33,7 +38,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> OpenFile { get; }
         public ReactiveCommand<Unit, Unit> MoveItemUp { get; }
         public ReactiveCommand<Unit, Unit> MoveItemDown { get; }
-        public ReactiveCommand<Unit, Unit> RemoveItem { get; }
+        public ReactiveCommand<object, Unit> RemoveItem { get; }
         public ReactiveCommand<Unit, Unit> ExploreFile { get; }
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
 
@@ -81,10 +86,32 @@ namespace HandsLiftedApp.ViewModels
             MoveItem(SelectedIndex, SelectedIndex + 1);
         }
 
-        private async Task RemoveItemAsync()
+        private async Task RemoveItemAsync(object param)
         {
-            if (SelectedIndex > -1)
-                Item.Items.RemoveAt(SelectedIndex);
+            var m = ((IList)param);
+            //var x = new List<Slide>(m);
+
+            var arrayToRemove = new int[m.Count];
+            int i = 0;
+            foreach (var item in m)
+            {
+                if (item is Slide)
+                {
+                    var slide = (Slide)item;
+                    arrayToRemove[i++] = slide.Index;
+                }
+            }
+
+            Array.Sort(arrayToRemove);
+            Array.Reverse(arrayToRemove);
+
+            foreach (var item in arrayToRemove)
+            {
+                Item.Items.RemoveAt(item);
+            }
+
+            //if (SelectedIndex > -1)
+            //    Item.Items.RemoveAt(SelectedIndex);
         }
        private async Task ExploreFileAsync()
         {

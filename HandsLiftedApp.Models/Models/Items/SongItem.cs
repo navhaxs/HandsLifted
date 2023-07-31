@@ -238,6 +238,7 @@ namespace HandsLiftedApp.Data.Models.Items
             }
         }
 
+        //[XmlType(TypeName = "Ref")]
         public class Ref<X>
         {
             public X Value { get; set; }

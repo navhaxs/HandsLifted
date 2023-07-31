@@ -64,6 +64,7 @@
 		<PackageReference Include="Avalonia.Xaml.Behaviors" />
 		<PackageReference Include="Avalonia.Xaml.Interactions" />
 		<PackageReference Include="Avalonia.Xaml.Interactivity" />
+		<PackageReference Include="ConcurrentPriorityQueue" />
 		<PackageReference Include="Config.Net" />
 		<PackageReference Include="EmbedIO" />
 		<PackageReference Include="Material.Icons.Avalonia" />
@@ -73,6 +74,7 @@
 		<PackageReference Include="Serilog.Sinks.Console" />
 		<PackageReference Include="Serilog.Sinks.Debug" />
 		<PackageReference Include="Serilog.Sinks.File" />
+		<PackageReference Include="System.Collections.Concurrent" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>

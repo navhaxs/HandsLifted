@@ -9,6 +9,7 @@ namespace HandsLiftedApp.Utils
     {
         public static Bitmap LoadBitmap(string pathOrUri)
         {
+            return null;
             try
             {
                 Uri uri;

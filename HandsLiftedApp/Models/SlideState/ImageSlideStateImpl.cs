@@ -3,7 +3,10 @@ using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using Serilog;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Models.SlideState
@@ -15,9 +18,9 @@ namespace HandsLiftedApp.Models.SlideState
             // this runs on a separate bg thread (todo: with lock)?
             Task.Run(() =>
             {
+                LoadThumbnail();
                 //if (Monitor.TryEnter(loadImageLock)) {
                 //    try {
-                LoadThumbnail();
                 //    }
                 //    finally {
                 //        Monitor.Exit(loadImageLock);
@@ -26,6 +29,7 @@ namespace HandsLiftedApp.Models.SlideState
             });
         }
 
+        private static readonly object thumbnailLock = new object();
         private static readonly object loadImageLock = new object();
 
         private const int IMAGE_WIDTH = 1920;
@@ -52,24 +56,44 @@ namespace HandsLiftedApp.Models.SlideState
 
         public void LoadThumbnail()
         {
-            // todo skip if already running
-            var path = _slide.ImagePath;
-
-            if (File.Exists(path))
-            {
-                // todo try catch below line:
-                using (Stream imageStream = File.OpenRead(path))
+            //await mySemaphoreSlim.WaitAsync();
+            //if (Monitor.TryEnter(thumbnailLock))
+            //{
+                if (Thumbnail != null)
                 {
-                    try
-                    {
-                        Thumbnail = Bitmap.DecodeToWidth(imageStream, THUMBNAIL_WIDTH);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error($"Failed to decode image [{path}]");
-                    }
+                    return;
                 }
-            }
+
+                try
+                {
+                    // todo skip if already running
+                    var path = _slide.ImagePath;
+                    Debug.Print($"{RuntimeHelpers.GetHashCode(this)} Loading {path}");
+
+                    if (File.Exists(path))
+                    {
+                        // todo try catch below line:
+                        using (Stream imageStream = File.OpenRead(path))
+                        {
+                            try
+                            {
+                                // TODO should be using the BitmapLoader util
+                                // Also should be on separate thread
+                                Thumbnail = Bitmap.DecodeToWidth(imageStream, THUMBNAIL_WIDTH);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error($"Failed to decode image [{path}]");
+                            }
+                        }
+                    }
+
+                }
+                finally
+                {
+                    //Monitor.Exit(thumbnailLock);
+                }
+            //}
         }
 
         public string ImageName
@@ -88,7 +112,7 @@ namespace HandsLiftedApp.Models.SlideState
             private set => this.RaiseAndSetIfChanged(ref _image, value);
         }
 
-        private Bitmap? _thumbnail;
+        private Bitmap? _thumbnail = null;
         public Bitmap? Thumbnail
         {
             get => _thumbnail;

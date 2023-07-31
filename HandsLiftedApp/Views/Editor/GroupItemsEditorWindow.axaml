@@ -70,7 +70,9 @@
                 <Separator />-->
                 <TextBlock>Edit</TextBlock>
                 <Button>Edit Item Info</Button>
-                <Button Command="{Binding RemoveItem}">
+                <Button 
+					CommandParameter="{Binding #DataGrid_Slides.SelectedItems}"
+					Command="{Binding RemoveItem}">
                     <DockPanel>
                         <material:MaterialIcon
                             Width="24"
