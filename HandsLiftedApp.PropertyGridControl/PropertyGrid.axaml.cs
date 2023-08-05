@@ -65,7 +65,7 @@ namespace HandsLiftedApp.PropertyGridControl
 
         public void FocusFirstValueRowEditor()
         {
-            FocusManager.Instance?.Focus(_firstValueRowEditor, NavigationMethod.Tab);
+            _firstValueRowEditor.Focus(NavigationMethod.Tab);
         }
 
         private static void OnSelectedObjectChanged(AvaloniaObject sender, bool beforeChanging)

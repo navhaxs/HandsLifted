@@ -9,7 +9,6 @@ namespace HandsLiftedApp.Utils
     {
         public static Bitmap LoadBitmap(string pathOrUri)
         {
-            return null;
             try
             {
                 Uri uri;
@@ -36,10 +35,7 @@ namespace HandsLiftedApp.Utils
                     //return new Bitmap(rawUri);
                 }
 
-                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                var asset = assets.Open(uri);
-
-                return new Bitmap(asset);
+                return new Bitmap(AssetLoader.Open(uri));
             }
             catch (Exception ex)
             {

@@ -21,9 +21,9 @@ namespace LibVLCSharp.Avalonia
         private uint _pixelFormatPixelSize;
         private VlcSharpWriteableBitmap _videoSource = new VlcSharpWriteableBitmap();
 
-        private ISubject<IBitmap> _display = new Subject<IBitmap>();
+        private ISubject<Bitmap> _display = new Subject<Bitmap>();
 
-        public IObservable<IBitmap> Display => _display;
+        public IObservable<Bitmap> Display => _display;
 
         /// <summary>
         /// The vlc media player instance.
@@ -33,7 +33,7 @@ namespace LibVLCSharp.Avalonia
         /// <summary>
         /// The Image source that represents the video.
         /// </summary>
-        public IBitmap VideoSource => _videoSource;
+        public Bitmap VideoSource => _videoSource;
 
         private static void ToFourCC(string fourCCString, IntPtr destination)
         {
@@ -74,7 +74,7 @@ namespace LibVLCSharp.Avalonia
         private void CleanUp()
         {
             _videoSource?.Clear();
-            _display.OnNext(null);
+            _display?.OnNext(null);
         }
 
         /// <summary>

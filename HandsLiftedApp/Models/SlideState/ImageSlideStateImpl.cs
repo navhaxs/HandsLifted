@@ -18,6 +18,7 @@ namespace HandsLiftedApp.Models.SlideState
             // this runs on a separate bg thread (todo: with lock)?
             Task.Run(() =>
             {
+                // TODO optimise this in a separate thread
                 LoadThumbnail();
                 //if (Monitor.TryEnter(loadImageLock)) {
                 //    try {

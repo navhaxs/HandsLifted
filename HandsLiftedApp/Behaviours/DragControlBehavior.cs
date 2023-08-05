@@ -54,7 +54,7 @@ namespace HandsLiftedApp.Behaviours
 
                 if (source.ContextMenu != null)
                 {
-                    source.ContextMenu.MenuOpened += ContextMenu_MenuOpened;
+                    source.ContextMenu.Opened += ContextMenu_MenuOpened;
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace HandsLiftedApp.Behaviours
 
                 if (source.ContextMenu != null)
                 {
-                    source.ContextMenu.MenuOpened -= ContextMenu_MenuOpened;
+                    source.ContextMenu.Opened -= ContextMenu_MenuOpened;
                 }
             }
 

@@ -98,7 +98,7 @@ namespace LibVLCSharp.Avalonia
 
         private struct CustomOp : ICustomDrawOperation
         {
-            private IBitmap _source;
+            private Bitmap _source;
             private Rect _sourceRect;
             private Rect _destRect;
             private BitmapInterpolationMode _interpolationMode;
@@ -106,7 +106,7 @@ namespace LibVLCSharp.Avalonia
 
             public Rect Bounds => _destRect;
 
-            public CustomOp(IBitmap source, Rect sourceRect, Rect destRect, BitmapInterpolationMode interpolationMode, RenderingStats stats)
+            public CustomOp(Bitmap source, Rect sourceRect, Rect destRect, BitmapInterpolationMode interpolationMode, RenderingStats stats)
             {
                 _source = source;
                 _sourceRect = sourceRect;

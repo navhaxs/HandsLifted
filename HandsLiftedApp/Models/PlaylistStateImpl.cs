@@ -72,10 +72,7 @@ namespace HandsLiftedApp.Models
                     return;
                 }
 
-                // TODO what is this actually doing:??
-
-                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                if (assets.Exists(new Uri(Playlist.LogoGraphicFile)))
+                if (AssetLoader.Exists(new Uri(Playlist.LogoGraphicFile)))
                 {
                     this.RaisePropertyChanged(nameof(LogoBitmap));
                     this.RaisePropertyChanged("LogoBitmap");

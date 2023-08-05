@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Skia.Helpers;
 using Avalonia.Skia;
@@ -14,25 +13,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Platform;
-using System.IO;
-using Avalonia.Rendering;
-using System.Runtime.Intrinsics.X86;
-using Avalonia.Controls.Platform.Surfaces;
 using System.Diagnostics;
 
-namespace AvaloniaNDI {
+namespace AvaloniaNDI
+{
     public class NDISendContainer : Viewbox, INotifyPropertyChanged, IDisposable
     {
-
-        private DateTime? _lastLayoutPass;
-        private DateTime? _lastThrottledFrame;
-
         [Category("NewTek NDI"),
         Description("NDI output width in pixels. Required.")]
         public int NdiWidth
@@ -279,7 +270,7 @@ Description("Function to determine whether the content requires high resolution 
             }
             else
             {
-                System.Diagnostics.Debug.Assert(false, "Unexpected audio sample size.");
+                Debug.Assert(false, "Unexpected audio sample size.");
             }
 
             // release the GC pinning of the byte[]'s
@@ -310,8 +301,6 @@ Description("Function to determine whether the content requires high resolution 
             }
         }
 
-        private NDIRenderLoopTask _NDIRenderLoopTask;
-
         public NDISendContainer()
         {
             if (Design.IsDesignMode)
@@ -334,13 +323,11 @@ Description("Function to determine whether the content requires high resolution 
                         });
                     }
 
+                    // TODO: 2x here is a hack for testing
                     // (1/60fps)*1000 = 16.67 ms
-                    Thread.Sleep(TimeSpan.FromMilliseconds(16.67d));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(2 * 16.67d));
                 }
             });
-            _NDIRenderLoopTask = new NDIRenderLoopTask(ThrottledFunction);
-            IRenderLoop renderLoop = AvaloniaLocator.Current.GetService<IRenderLoop>();
-            renderLoop.Add(_NDIRenderLoopTask);
 
             this.LayoutUpdated += NDISendContainer_LayoutUpdated;
 
@@ -368,13 +355,30 @@ Description("Function to determine whether the content requires high resolution 
                 throw;
             }
 
+            this.AttachedToVisualTree += NDISendContainer_AttachedToVisualTree;
             this.DetachedFromVisualTree += NDISendContainer_DetachedFromVisualTree;
 
         }
 
+        private void NDISendContainer_AttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
+        {
+            GetNextRenderTick();
+        }
+
+        void GetNextRenderTick()
+        {
+            if (!_disposed)
+            {
+                Window.GetTopLevel(this).RequestAnimationFrame((TimeSpan s) =>
+                {
+                    _argQueue.Enqueue(new Arguments() { });
+                    GetNextRenderTick();
+                });
+            }
+        }
+
         private void NDISendContainer_LayoutUpdated(object sender, EventArgs e)
         {
-            _lastLayoutPass = DateTime.Now;
         }
         private void NDISendContainer_DetachedFromVisualTree(object sender, VisualTreeAttachmentEventArgs e)
         {
@@ -447,11 +451,6 @@ Description("Function to determine whether the content requires high resolution 
                     pendingFrames.Dispose();
                 }
 
-                // Remove Avalonia render loop task
-                IRenderLoop renderLoop = AvaloniaLocator.Current.GetService<IRenderLoop>();
-                renderLoop.Remove(_NDIRenderLoopTask);
-                _NDIRenderLoopTask = null;
-
                 // Destroy the NDI sender
                 if (sendInstancePtr != IntPtr.Zero)
                 {
@@ -484,172 +483,104 @@ Description("Function to determine whether the content requires high resolution 
         private ConcurrentQueue<Arguments> _argQueue = new ConcurrentQueue<Arguments>();
         private Task _loop;
 
-        private const int ON_CONTENT_CHANGE_THRESHOLD_MS = 2000;
 
         public void ThrottledFunction(TimeSpan t)
         {
-            // todo should be Max of [ON_CONTENT_CHANGE_THRESHOLD_MS, <slide transition duration ms>]
-            bool isHighRes = _lastLayoutPass != null && (DateTime.Now.Subtract((DateTime)_lastLayoutPass).TotalMilliseconds < ON_CONTENT_CHANGE_THRESHOLD_MS);
-
-            if (!isHighRes && IsContentHighResCheckFunc != null)
-            {
-                // user-supplied check to determine whether the current content requires high resolution frame updates (e.g. it is a video or animation)
-                isHighRes = IsContentHighResCheckFunc(this);
-            }
-
-            if (isHighRes)
-            {
-                _argQueue.Enqueue(new Arguments() { });
-            }
-            else if (_lastThrottledFrame == null || _lastThrottledFrame != null && (DateTime.Now.Subtract((DateTime)_lastThrottledFrame).Seconds > 1))
-            {
-                _lastThrottledFrame = DateTime.Now;
-                _argQueue.Enqueue(new Arguments() { });
-            }
+            _argQueue.Enqueue(new Arguments() { });
         }
 
         RenderTargetBitmap rtb;
 
         private unsafe void OnCompositionTargetRendering()
         {
-            try
-            {
-                if (IsSendPaused)
-                    return;
+            if (IsSendPaused)
+                return;
 
 #if DEBUG
-                if (Design.IsDesignMode)
-                    return;
+            if (Design.IsDesignMode)
+                return;
 #endif
 
-                // skip if UI thread has pending render jobs (fixes blinking/flashing empty frames)
-                if (Dispatcher.UIThread.HasJobsWithPriority(DispatcherPriority.Render))
-                    return;
+            // skip if UI thread has pending render jobs (fixes blinking/flashing empty frames)
+            if (Dispatcher.UIThread.HasJobsWithPriority(DispatcherPriority.Render))
+                return;
 
-                // TODO: cache this value so its not called on *every* call
-                if (NDIlib.send_get_no_connections(sendInstancePtr, 0) == 0)
-                    return;
+            // TODO: cache this value so its not called on *every* call
+            if (NDIlib.send_get_no_connections(sendInstancePtr, 0) == 0)
+                return;
 
-                if (this.Child == null)
-                    return;
+            if (this.Child == null)
+                return;
 
-                int xres = NdiWidth;
-                int yres = NdiHeight;
+            int xres = NdiWidth;
+            int yres = NdiHeight;
 
-                int frNum = NdiFrameRateNumerator;
-                int frDen = NdiFrameRateDenominator;
+            int frNum = NdiFrameRateNumerator;
+            int frDen = NdiFrameRateDenominator;
 
-                // sanity
-                if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
-                    return;
+            // sanity
+            if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
+                return;
 
-                if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
-                {
-                    // Create a properly sized RenderTargetBitmap
-                    var scale = VisualRoot!.RenderScaling;
-                    rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale));
-                }
-
-                stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
-                bufferSize = yres * stride;
-                aspectRatio = (float)xres / (float)yres;
-
-                // allocate some memory for a video buffer
-                IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
-
-                // We are going to create a progressive frame at 60Hz.
-                NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()
-                {
-                    // Resolution
-                    xres = NdiWidth,
-                    yres = NdiHeight,
-                    // Use BGRA video
-                    FourCC = NDIlib.FourCC_type_e.FourCC_type_BGRA,
-                    // The frame-eate
-                    frame_rate_N = frNum,
-                    frame_rate_D = frDen,
-                    // The aspect ratio
-                    picture_aspect_ratio = aspectRatio,
-                    // This is a progressive frame
-                    frame_format_type = NDIlib.frame_format_type_e.frame_format_type_progressive,
-                    // Timecode.
-                    timecode = NDIlib.send_timecode_synthesize,
-                    // The video memory used for this frame
-                    p_data = bufferPtr,
-                    // The line to line stride of this image
-                    line_stride_in_bytes = stride,
-                    // no metadata
-                    p_metadata = IntPtr.Zero,
-                    // only valid on received frames
-                    timestamp = 0
-                };
-
-                // define the surface properties
-                SKImageInfo info = new SKImageInfo(xres, yres);
-
-                // construct a surface around the existing memory
-                SKSurface destinationSurface = SKSurface.Create(info, bufferPtr, info.RowBytes);
-
-                // get the canvas from the surface
-                SKCanvas destinationCanvas = destinationSurface.Canvas;
-                using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
-
-                // render the Avalonia visual
-                rtb.Render(this.Child);
-                //rtb.Save(@"R:\ndi_out.png");
-
-                IRenderTargetBitmapImpl item = rtb.PlatformImpl.Item;
-                IDrawingContextImpl drawingContextImpl = item.CreateDrawingContext();
-                ISkiaSharpApiLeaseFeature leaseFeature = drawingContextImpl.GetFeature<ISkiaSharpApiLeaseFeature>();
-                using ISkiaSharpApiLease lease = leaseFeature.Lease();
-                using SKImage skImage = lease.SkSurface.Snapshot();
-                destinationCanvas.DrawImage(skImage, new SKPoint(0, 0));
-
-                // add it to the output queue
-                AddFrame(videoFrame);
-            }
-            catch (Exception e)
+            if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
             {
-                // TODO logging
-                Debug.Print(e.Message.ToString());
+                // Create a properly sized RenderTargetBitmap
+                var scale = 1; // VisualRoot!.RenderScaling;
+                rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale));
             }
+
+            stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
+            bufferSize = yres * stride;
+            aspectRatio = (float)xres / (float)yres;
+
+            // allocate some memory for a video buffer
+            IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
+
+            // We are going to create a progressive frame at 60Hz.
+            NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()
+            {
+                // Resolution
+                xres = NdiWidth,
+                yres = NdiHeight,
+                // Use BGRA video
+                FourCC = NDIlib.FourCC_type_e.FourCC_type_BGRA,
+                // The frame-eate
+                frame_rate_N = frNum,
+                frame_rate_D = frDen,
+                // The aspect ratio
+                picture_aspect_ratio = aspectRatio,
+                // This is a progressive frame
+                frame_format_type = NDIlib.frame_format_type_e.frame_format_type_progressive,
+                // Timecode.
+                timecode = NDIlib.send_timecode_synthesize,
+                // The video memory used for this frame
+                p_data = bufferPtr,
+                // The line to line stride of this image
+                line_stride_in_bytes = stride,
+                // no metadata
+                p_metadata = IntPtr.Zero,
+                // only valid on received frames
+                timestamp = 0
+            };
+
+            // define the surface properties
+            var info = new SKImageInfo(xres, yres);
+
+            // construct a surface around the existing memory
+            var destinationSurface = SKSurface.Create(info, bufferPtr, info.RowBytes);
+
+            // get the canvas from the surface
+            var destinationCanvas = destinationSurface.Canvas;
+            using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
+
+            // render the Avalonia visual
+            rtb.Render(this.Child);
+
+            rtb.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+
+            // add it to the output queue
+            AddFrame(videoFrame);
         }
-
-
-        class Framebuffer : ILockedFramebuffer, IFramebufferPlatformSurface
-        {
-            public Framebuffer(PixelFormat fmt, PixelSize size)
-            {
-                Format = fmt;
-                var bpp = fmt == PixelFormat.Rgb565 ? 2 : 4;
-                Size = size;
-                RowBytes = bpp * size.Width;
-                Address = Marshal.AllocHGlobal(size.Height * RowBytes);
-            }
-
-            public IntPtr Address { get; }
-
-            public Vector Dpi { get; } = new Vector(96, 96);
-
-            public PixelFormat Format { get; }
-
-            public PixelSize Size { get; }
-
-            public int RowBytes { get; }
-
-            public void Dispose()
-            {
-                //no-op
-            }
-
-            public ILockedFramebuffer Lock()
-            {
-                return this;
-            }
-
-            public void Deallocate() => Marshal.FreeHGlobal(Address);
-        }
-
 
         private static void OnNdiSenderPropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
@@ -753,7 +684,7 @@ Description("Function to determine whether the content requires high resolution 
                         NDIlib.video_frame_v2_t frame;
                         if (pendingFrames.TryTake(out frame, 250))
                         {
-                            // this drops frames if the UI is rendering ahead of the specified NDI frame rate
+                            // this dropps frames if the UI is rendernig ahead of the specified NDI frame rate
                             while (pendingFrames.Count > 1)
                             {
                                 NDIlib.video_frame_v2_t discardFrame = pendingFrames.Take();

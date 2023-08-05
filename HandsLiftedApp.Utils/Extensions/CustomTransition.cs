@@ -112,13 +112,13 @@ namespace HandsLiftedApp.Extensions
 
                 if (from != null)
                 {
-                    tasks.Add(_fadeOutAnimation.RunAsync(from, null, cancellationToken));
+                    tasks.Add(_fadeOutAnimation.RunAsync(from, cancellationToken));
                 }
 
                 if (to != null)
                 {
                     to.IsVisible = true;
-                    tasks.Add(_fadeInAnimation.RunAsync(to, null, cancellationToken));
+                    tasks.Add(_fadeInAnimation.RunAsync(to, cancellationToken));
                 }
 
                 await Task.WhenAll(tasks);

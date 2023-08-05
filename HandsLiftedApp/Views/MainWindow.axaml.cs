@@ -266,9 +266,10 @@ namespace HandsLiftedApp.Views
         {
 
             // TODO: if a textbox, datepicker etc is selected - then skip this func.
-            var m = FocusManager.Instance?.Current;
+            var focusManager = TopLevel.GetTopLevel(this).FocusManager;
+            var focusedElement = focusManager.GetFocusedElement();
 
-            if (m is TextBox || m is DatePicker)
+            if (focusedElement is TextBox || focusedElement is DatePicker)
                 return;
 
             switch (e.Key)

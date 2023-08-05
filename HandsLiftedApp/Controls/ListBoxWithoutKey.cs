@@ -43,12 +43,13 @@ namespace HandsLiftedApp.Controls
                 if (point.Properties.IsLeftButtonPressed) //  || point.Properties.IsRightButtonPressed)
                 {
                     base.OnPointerPressed(e);
-                    e.Handled = UpdateSelectionFromEventSource(
-                        e.Source,
-                        true,
-                        e.KeyModifiers.HasAllFlags(KeyModifiers.Shift),
-                        e.KeyModifiers.HasAllFlags(AvaloniaLocator.Current.GetRequiredService<PlatformHotkeyConfiguration>().CommandModifiers),
-                        point.Properties.IsRightButtonPressed);
+                    // TODO
+                    //e.Handled = UpdateSelectionFromEventSource(
+                    //    e.Source,
+                    //    true,
+                    //    e.KeyModifiers.HasAllFlags(KeyModifiers.Shift),
+                    //    e.KeyModifiers.HasAllFlags(AvaloniaLocator.Current.GetRequiredService<PlatformHotkeyConfiguration>().CommandModifiers),
+                    //    point.Properties.IsRightButtonPressed);
                 }
             }
         }

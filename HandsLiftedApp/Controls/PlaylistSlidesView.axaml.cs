@@ -106,7 +106,7 @@ namespace HandsLiftedApp.Controls
                    Dispatcher.UIThread.InvokeAsync(() =>
                    {
                        // layout pass required, see https://github.com/AvaloniaUI/Avalonia/issues/9992#issuecomment-1408205703
-                       Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
+                       //Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
 
                        // and now we can jump to view
                        // TODO: IF THE VIEW IS NOT ALREADY WITHIN VIEWPORT

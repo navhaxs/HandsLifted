@@ -14,7 +14,7 @@ using System.Threading;
 
 namespace LibVLCSharp.Avalonia
 {
-    public sealed class VlcSharpWriteableBitmap : IBitmap, IAffectsRender
+    public sealed class VlcSharpWriteableBitmap : Bitmap
     {
         private bool _disposed;
         private object _lockRead = new object();
@@ -24,6 +24,12 @@ namespace LibVLCSharp.Avalonia
         private ISubject<Unit> _rendered = new Subject<Unit>();
         private ISubject<Unit> _updated = new Subject<Unit>();
         private WriteableBitmap _write;
+
+        // TODO: broken in Avalonia 11.x
+        public VlcSharpWriteableBitmap() : base("")
+        {
+        }
+
         public void NotClientImplementable()
         {
             // throw new NotImplementedException();
@@ -31,7 +37,7 @@ namespace LibVLCSharp.Avalonia
 
         public Vector Dpi => GetValueSafe(x => x.Dpi);
         public PixelSize PixelSize => GetValueSafe(x => x.PixelSize, new PixelSize(1, 1));
-        public IRef<IBitmapImpl> PlatformImpl => GetValueSafe(x => x.PlatformImpl);
+        //public Ref<IBitmapImpl> PlatformImpl => GetValueSafe(x => x.PlatformImpl);
         public IObservable<Unit> Rendered => _rendered;
         public Size Size => GetValueSafe(x => x.Size);
         public IObservable<Unit> Updated => _updated;
@@ -72,7 +78,7 @@ namespace LibVLCSharp.Avalonia
             NotifyRendered();
         }
 
-        public void Read(Action<IBitmap> action)
+        public void Read(Action<Bitmap> action)
         {
             using (LockRead())
             {
@@ -120,7 +126,7 @@ namespace LibVLCSharp.Avalonia
             NotifyUpdated();
         }
 
-        private T GetValueSafe<T>(Func<IBitmap, T> getter, T defaultvalue = default(T))
+        private T GetValueSafe<T>(Func<Bitmap, T> getter, T defaultvalue = default(T))
         {
             if (_disposed) throw new ObjectDisposedException(nameof(VlcSharpWriteableBitmap));
 

@@ -15,6 +15,14 @@ namespace HandsLiftedApp.Models.SlideDesigner {
         public BaseSlideTheme ActiveDesign { get => _ActiveDesign; set => this.RaiseAndSetIfChanged(ref _ActiveDesign, value); }
 
         public SlideDesignerViewModel() {
+            ListOfDesigns.Add(new BaseSlideTheme() {
+                FontFamily = TryParseFontFamily("Cambria"),
+                TextColour = Color.Parse("#a06d39"),
+                BackgroundColour = Color.Parse("#f5ede4"),
+                FontSize = 100,
+                LineHeight = 1,
+                BackgroundGraphicFilePath = "avares://HandsLiftedApp/Assets/DesignerSlideTemplate/bg.png"
+            });
             ListOfDesigns.Add(new BaseSlideTheme()
             {
                 Name = "Basic",
@@ -27,7 +35,7 @@ namespace HandsLiftedApp.Models.SlideDesigner {
             ListOfDesigns.Add(new BaseSlideTheme()
             {
                 Name = "Default",
-                FontFamily = TryParseFontFamily("Open Sans"),
+                FontFamily = TryParseFontFamily("Cambria"),
                 TextColour = Color.Parse("#4d2888"),
                 BackgroundColour = Color.Parse("#ffffff"),
                 FontSize = 80,
@@ -37,7 +45,7 @@ namespace HandsLiftedApp.Models.SlideDesigner {
             ListOfDesigns.Add(new BaseSlideTheme()
             {
                 Name = "SWEC",
-                FontFamily = TryParseFontFamily("Montserrat"),
+                FontFamily = TryParseFontFamily("Cambria"),
                 TextColour = Color.Parse("#a06d39"),
                 BackgroundColour = Color.Parse("#f5ede4"),
                 FontSize = 80,
@@ -45,16 +53,8 @@ namespace HandsLiftedApp.Models.SlideDesigner {
                 BackgroundGraphicFilePath = "C:\\VisionScreens\\Designs\\76c4ea22-fb91-4b58-9b07-b709f4402b0dcatalystconf-bg.png"
             });
             ListOfDesigns.Add(new BaseSlideTheme() {
-                FontFamily = TryParseFontFamily("Montserrat"),
-                TextColour = Color.Parse("#a06d39"),
-                BackgroundColour = Color.Parse("#f5ede4"),
-                FontSize = 100,
-                LineHeight = 1,
-                BackgroundGraphicFilePath = "avares://HandsLiftedApp/Assets/DesignerSlideTemplate/bg.png"
-            });
-            ListOfDesigns.Add(new BaseSlideTheme() {
                 Name = "Blue",
-                FontFamily = TryParseFontFamily("Montserrat"),
+                FontFamily = TryParseFontFamily("Cambria"),
                 TextColour = Color.Parse("#2b505e"),
                 BackgroundColour = Color.Parse("#b7d1d8"),
                 FontSize = 60,

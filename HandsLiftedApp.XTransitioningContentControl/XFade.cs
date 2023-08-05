@@ -173,7 +173,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
                 if (to != null)
                 {
-                    tasks.Add(_fadeInAnimation.RunAsync(to, null, cancellationToken));
+                    tasks.Add(_fadeInAnimation.RunAsync(to, cancellationToken));
                     to.IsVisible = true;
                 }
 
