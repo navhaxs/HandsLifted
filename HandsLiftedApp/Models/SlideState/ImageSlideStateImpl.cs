@@ -20,6 +20,7 @@ namespace HandsLiftedApp.Models.SlideState
             {
                 // TODO optimise this in a separate thread
                 LoadThumbnail();
+                EnsureImageLoaded(); // HACK until XTransitioningControl reimplemented
                 //if (Monitor.TryEnter(loadImageLock)) {
                 //    try {
                 //    }

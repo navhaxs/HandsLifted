@@ -18,7 +18,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         private readonly Animation _fadeInAnimation;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XFade"/> class.
+        /// Initializes a new instance of the <see cref="CrossFade"/> class.
         /// </summary>
         public XFade()
             : this(TimeSpan.Zero)
@@ -26,7 +26,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XFade"/> class.
+        /// Initializes a new instance of the <see cref="CrossFade"/> class.
         /// </summary>
         /// <param name="duration">The duration of the animation.</param>
         public XFade(TimeSpan duration)
@@ -45,19 +45,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
                                 Value = 1d
                             }
                         },
-                        Cue = new Cue(0d)
-                    },
-                    new KeyFrame()
-                    {
-                        Setters =
-                        {
-                            new Setter
-                            {
-                                Property = Visual.OpacityProperty,
-                                Value = 0.5d
-                            }
-                        },
-                        Cue = new Cue(0.5d)
+                        Cue = new Cue(0.9d) // TODO in the XTransitioningControl, must always swap presenter2 and presenter at end of 1 transition cycle
                     },
                     new KeyFrame()
                     {
@@ -70,28 +58,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
                             }
                         },
                         Cue = new Cue(1d)
-                    },
-                },
-                Easing = new XEaseInOutExpo()
-                //, Delay = new TimeSpan(0,0,0,0, 500)
-                //Easing = new CubicEaseIn()
+                    }
+
+                }
             };
             _fadeInAnimation = new Animation
             {
                 Children =
                 {
-                    new KeyFrame()
-                    {
-                        Setters =
-                        {
-                            new Setter
-                            {
-                                Property = Visual.OpacityProperty,
-                                Value = 0d
-                            }
-                        },
-                        Cue = new Cue(0d)
-                    },
                     new KeyFrame()
                     {
                         Setters =
@@ -105,9 +79,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
                         Cue = new Cue(1d)
                     }
 
-                },
-                //Easing = new CubicEaseOut()
-                Easing = new XEaseInOutExpo()
+                }
             };
             _fadeOutAnimation.Duration = _fadeInAnimation.Duration = duration;
         }
@@ -140,7 +112,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         }
 
         /// <inheritdoc cref="Start(Visual, Visual, CancellationToken)" />
-        public async Task Start(Visual from, Visual to, CancellationToken cancellationToken)
+        public async Task Start(Visual? from, Visual? to, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -148,40 +120,29 @@ namespace HandsLiftedApp.XTransitioningContentControl
             }
 
             var tasks = new List<Task>();
-            using (var disposables = new CompositeDisposable())
+            using (var disposables = new CompositeDisposable(1))
             {
                 if (to != null)
                 {
-                    disposables.Add(to.SetValue(Visual.OpacityProperty, 0, Avalonia.Data.BindingPriority.Animation));
+                    disposables.Add(to.SetValue(Visual.OpacityProperty, 0, Avalonia.Data.BindingPriority.Animation)!);
                 }
 
-                // TODO: take a screenshot of the NEXT SLIDE
-                // TODO: take a screenshot of the NEXT SLIDE
-                // TODO: take a screenshot of the NEXT SLIDE
-                // TODO: take a screenshot of the NEXT SLIDE
-                // TODO: take a screenshot of the NEXT SLIDE
-                // then fade between two NON-Alpha images :)
-
-                //if (from != null)
-                //{
-                //    from.PageTransitionIsVisible = true;
-                //    from.Opacity = 1;
-                //    Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
-
-                //    tasks.Add(_fadeOutAnimation.RunAsync(from, null, cancellationToken));
-                //}
+                if (from != null)
+                {
+                    tasks.Add(_fadeOutAnimation.RunAsync(from, cancellationToken));
+                }
 
                 if (to != null)
                 {
-                    tasks.Add(_fadeInAnimation.RunAsync(to, cancellationToken));
                     to.IsVisible = true;
+                    tasks.Add(_fadeInAnimation.RunAsync(to, cancellationToken));
                 }
 
                 await Task.WhenAll(tasks);
 
                 if (from != null && !cancellationToken.IsCancellationRequested)
                 {
-                    from.Opacity = 0;
+                    from.IsVisible = false;
                 }
             }
         }
@@ -202,7 +163,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         /// <returns>
         /// A <see cref="Task"/> that tracks the progress of the animation.
         /// </returns>
-        Task IPageTransition.Start(Visual from, Visual to, bool forward, CancellationToken cancellationToken)
+        Task IPageTransition.Start(Visual? from, Visual? to, bool forward, CancellationToken cancellationToken)
         {
             return Start(from, to, cancellationToken);
         }

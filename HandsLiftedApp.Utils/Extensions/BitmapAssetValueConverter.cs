@@ -29,7 +29,7 @@ namespace HandsLiftedApp.Extensions
             if (value == null)
                 return null;
 
-            if (value is string rawUri && targetType == typeof(IImageBrushSource))
+            if (value is string rawUri && (targetType == typeof(IImageBrushSource) || targetType == typeof(IImage)))
             {
                 if (rawUri.Length == 0)
                     return null;

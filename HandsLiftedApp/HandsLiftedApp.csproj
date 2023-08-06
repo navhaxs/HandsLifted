@@ -18,13 +18,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <AvaloniaXaml Remove="Binaries\**" />
-	  <AvaloniaXaml Remove="Views\Render\NewFolder\**" />
 	  <Compile Remove="Binaries\**" />
-	  <Compile Remove="Views\Render\NewFolder\**" />
 	  <EmbeddedResource Remove="Binaries\**" />
-	  <EmbeddedResource Remove="Views\Render\NewFolder\**" />
 	  <None Remove="Binaries\**" />
-	  <None Remove="Views\Render\NewFolder\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Assets\app_logo - Copy.png" />
@@ -87,6 +83,7 @@
 		<ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Utils.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
 		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
+		<ProjectReference Include="..\Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj" />
 		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -155,8 +152,11 @@
 		<Compile Update="Views\Render\SongSlide\SimpleSlideTemplate.axaml.cs">
 			<DependentUpon>SimpleSlideTemplate.axaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\Render\VideoSlideRenderer.axaml.cs">
-			<DependentUpon>VideoSlideRenderer.axaml</DependentUpon>
+		<Compile Update="Views\Render\VlcVideoSlideRenderer.axaml.cs">
+			<DependentUpon>VlcVideoSlideRenderer.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Render\MpvVideoSlideRenderer.axaml.cs">
+		  <DependentUpon>MpvVideoSlideRenderer.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\StageDisplayLayout\SongLayout.axaml.cs">
 		  <DependentUpon>SongLayout.axaml</DependentUpon>
@@ -164,5 +164,8 @@
 		<Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
 		  <DependentUpon>DefaultLayout.axaml</DependentUpon>
 		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Views\Render\Video\" />
 	</ItemGroup>
 </Project>

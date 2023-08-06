@@ -21,43 +21,19 @@ namespace HandsLiftedApp.XTransitioningContentControl
     /// </summary>
     public class XTransitioningContentControl : ContentControl
     {
-        private CancellationTokenSource? _lastTransitionCts;
-        private bool _enableSlideEvents = true;
-        private object? _currentContent;
-        Image _previousImageSite;
-        Image _currentImageSite;
-        ContentPresenter _contentPresenter;
-        Grid _contentPresenterContainer;
 
-        /// <summary>
-        /// Defines the <see cref="EnableSlideEvents"/> property.
-        /// </summary>
-        public static readonly DirectProperty<XTransitioningContentControl, bool> EnableSlideEventsProperty =
-            AvaloniaProperty.RegisterDirect<XTransitioningContentControl, bool>(
-                nameof(EnableSlideEvents),
-                o => o.EnableSlideEvents,
-                (o, v) => o.EnableSlideEvents = v);
+        private CancellationTokenSource? _currentTransition;
+        private ContentPresenter? _presenter2;
+        private bool _isFirstFull;
+        private bool _shouldAnimate;
 
         /// <summary>
         /// Defines the <see cref="PageTransition"/> property.
         /// </summary>
         public static readonly StyledProperty<IPageTransition?> PageTransitionProperty =
-            AvaloniaProperty.Register<XTransitioningContentControl, IPageTransition?>(
+            AvaloniaProperty.Register<TransitioningContentControl, IPageTransition?>(
                 nameof(PageTransition),
-                //new CrossFade(TimeSpan.FromSeconds(0.125)));
-                new XFade(TimeSpan.FromSeconds(0.125)));
-
-        /// <summary>
-        /// Defines the <see cref="CurrentContent"/> property.
-        /// </summary>
-        public static readonly DirectProperty<XTransitioningContentControl, object?> CurrentContentProperty =
-            AvaloniaProperty.RegisterDirect<XTransitioningContentControl, object?>(
-                nameof(CurrentContent),
-                o => o.CurrentContent);
-
-        public XTransitioningContentControl()
-        {
-        }
+                defaultValue: new ImmutableCrossFade(TimeSpan.FromMilliseconds(125)));
 
         /// <summary>
         /// Gets or sets the animation played when content appears and disappears.
@@ -68,33 +44,60 @@ namespace HandsLiftedApp.XTransitioningContentControl
             set => SetValue(PageTransitionProperty, value);
         }
 
-        /// <summary>
-        /// Gets the content currently displayed on the screen.
-        /// </summary>
-        public object? CurrentContent
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            get => _currentContent;
-            private set => SetAndRaise(CurrentContentProperty, ref _currentContent, value);
-        }
+            var result = base.ArrangeOverride(finalSize);
 
-        /// <summary>
-        /// </summary>
-        public bool EnableSlideEvents
-        {
-            get => _enableSlideEvents;
-            private set => SetAndRaise(EnableSlideEventsProperty, ref _enableSlideEvents, value);
+            if (_shouldAnimate)
+            {
+                _currentTransition?.Cancel();
+
+                if (_presenter2 is not null &&
+                    Presenter is Visual presenter &&
+                    PageTransition is { } transition)
+                {
+                    _shouldAnimate = false;
+
+                    var cancel = new CancellationTokenSource();
+                    _currentTransition = cancel;
+
+                    var from = _isFirstFull ? _presenter2 : presenter;
+                    var to = _isFirstFull ? presenter : _presenter2;
+
+                    transition.Start(from, to, true, cancel.Token).ContinueWith(x =>
+                    {
+                        if (!cancel.IsCancellationRequested)
+                        {
+                            HideOldPresenter();
+                        }
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                }
+
+                _shouldAnimate = false;
+            }
+
+            return result;
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
+            UpdateContent(false);
         }
 
-        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        protected override bool RegisterContentPresenter(ContentPresenter presenter)
         {
-            base.OnDetachedFromVisualTree(e);
+            if (!base.RegisterContentPresenter(presenter) &&
+                presenter is ContentPresenter p &&
+                p.Name == "PART_ContentPresenter2")
+            {
+                _presenter2 = p;
+                _presenter2.IsVisible = false;
+                UpdateContent(false);
+                return true;
+            }
 
-            _lastTransitionCts?.Cancel();
+            return false;
         }
 
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -103,132 +106,174 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
             if (change.Property == ContentProperty)
             {
-                // Use Invoke instead of Post. Fixes flickering. (Why?)
-                //Dispatcher.UIThread.InvokeAsync(new Action(() => { UpdateContentWithTransition(Content); } ));
-                //Dispatcher.UIThread.Post(() => UpdateContentWithTransition(Content));
-                Dispatcher.UIThread.Invoke(() => UpdateContentWithTransition(Content));
+                UpdateContent(true);
             }
         }
 
-        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+        private void UpdateContent(bool withTransition)
         {
-            base.OnApplyTemplate(e);
-
-            // todo: if this fails, did you forget to add Styles?
-            _previousImageSite = e.NameScope.Find<Image>("PART_PreviousImageSite");
-            _currentImageSite = e.NameScope.Find<Image>("PART_CurrentImageSite");
-            _contentPresenter = e.NameScope.Find<ContentPresenter>("PART_ContentPresenter");
-            _contentPresenterContainer = e.NameScope.Find<Grid>("PART_ContentPresenterContainer");
-
-            Dispatcher.UIThread.Invoke(() => UpdateContentWithTransition(Content));
-        }
-
-        /// <summary>
-        /// Updates the content with transitions.
-        /// </summary>
-        /// <param name="content">New content to set.</param>
-        private async void UpdateContentWithTransition(object? content)
-        {
-            if (VisualRoot is null)
+            if (VisualRoot is null || _presenter2 is null || Presenter is null)
             {
                 return;
             }
 
-            IPageTransition transition = PageTransition;
-            if (content is ISlideRender)
+            var currentPresenter = _isFirstFull ? _presenter2 : Presenter;
+            currentPresenter.Content = Content;
+            currentPresenter.IsVisible = true;
+
+            _isFirstFull = !_isFirstFull;
+
+            if (PageTransition is not null && withTransition)
             {
-                await Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
-
-                // if slide has page transition override
-                if (((ISlideRender)content).PageTransition != null)
-                {
-                    transition = ((ISlideRender)content).PageTransition;
-                }
-            }
-
-            _lastTransitionCts?.Cancel();
-            _lastTransitionCts = new CancellationTokenSource();
-
-            if (_previousImageSite != null && CurrentContent is not IDynamicSlideRender)
-            {
-                // copy the 'current slide as Bitmap' to the previous image layer
-                _previousImageSite.Source = _currentImageSite.Source;
-                _previousImageSite.IsVisible = true;
-                _previousImageSite.Opacity = 1;
-            }
-
-
-            if (CurrentContent is ISlideRender && EnableSlideEvents)
-            {
-                ((ISlideRender)CurrentContent).OnLeaveSlide();
-            }
-
-            CurrentContent = content;
-            if (_contentPresenterContainer != null)
-                _contentPresenterContainer.ZIndex = (CurrentContent is IDynamicSlideRender) ? 999 : 0;
-            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
-
-            _currentImageSite.IsVisible = true;
-            _currentImageSite.Opacity = 0;
-            _currentImageSite.Source = GetBitmap(CurrentContent);
-
-            // maybe what this could instead is take screenshot of existing (bitmap no alpha), then take screenshot of new (bitmap no alpha), then fade between the bitmaps. this way, there should be no alpha multiplier issues during the fade effect.
-
-            if (transition != null)
-            {
-                //if (CurrentContent is IDynamicSlideRender)
-                //{
-                //    await transition.Start(_previousImageSite, null, true, _lastTransitionCts.Token);
-                //}
-                //else
-                //{
-                //    // TODO bug when fading to black (empty slide)
-                await transition.Start(_previousImageSite, _currentImageSite, true, _lastTransitionCts.Token);
-                //}
+                _shouldAnimate = true;
+                InvalidateArrange();
             }
             else
             {
-                //_contentPresenterContainer.IsVisible = true;
-                _previousImageSite.Opacity = 0;
+                HideOldPresenter();
             }
-
-            _currentImageSite.IsVisible = true;
-            _currentImageSite.Opacity = 1;
-
-            _previousImageSite.IsVisible = false;
-            _previousImageSite.Opacity = 0;
-            _previousImageSite.Source = null;
-
-            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
-            InvalidateArrange();
         }
 
-        private Bitmap GetBitmap(object? visual)
+        private void HideOldPresenter()
         {
-            // TODO Cache blank black bitmap
-            if (visual == null)
-                return renderControlAsBitmap(null);
-
-            if (visual is ISlideBitmapRender)
-                return ((ISlideBitmapRender)visual).GetBitmap();
-
-            if (visual is ISlideBitmapCacheable)
+            var oldPresenter = _isFirstFull ? _presenter2 : Presenter;
+            if (oldPresenter is not null)
             {
-                Bitmap? cached = ((ISlideBitmapCacheable)visual).GetBitmap();
-                if (cached != null)
-                    return cached;
+                oldPresenter.Content = null;
+                oldPresenter.IsVisible = false;
             }
-
-            Bitmap rendered = renderControlAsBitmap(_contentPresenter);
-
-            if (visual is ISlideBitmapCacheable)
-            {
-                // Testing
-                ((ISlideBitmapCacheable)visual).SetBitmap(rendered);
-            }
-
-            return rendered;
         }
+
+        private class ImmutableCrossFade : IPageTransition
+        {
+            private readonly CrossFade _inner;
+
+            public ImmutableCrossFade(TimeSpan duration) => _inner = new CrossFade(duration);
+
+            public Task Start(Visual? from, Visual? to, bool forward, CancellationToken cancellationToken)
+            {
+                return _inner.Start(from, to, cancellationToken);
+            }
+        }
+        //protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+        //{
+        //    base.OnApplyTemplate(e);
+
+        //    // todo: if this fails, did you forget to add Styles?
+        //    _previousImageSite = e.NameScope.Find<Image>("PART_PreviousImageSite");
+        //    _currentImageSite = e.NameScope.Find<Image>("PART_CurrentImageSite");
+        //    _contentPresenter = e.NameScope.Find<ContentPresenter>("PART_ContentPresenter");
+        //    _contentPresenterContainer = e.NameScope.Find<Grid>("PART_ContentPresenterContainer");
+
+        //    Dispatcher.UIThread.Invoke(() => UpdateContentWithTransition(Content));
+        //}
+
+        ///// <summary>
+        ///// Updates the content with transitions.
+        ///// </summary>
+        ///// <param name="content">New content to set.</param>
+        //private async void UpdateContentWithTransition(object? content)
+        //{
+        //    if (VisualRoot is null)
+        //    {
+        //        return;
+        //    }
+
+        //    IPageTransition transition = PageTransition;
+        //    if (content is ISlideRender)
+        //    {
+        //        await Dispatcher.UIThread.InvokeAsync(() => ((ISlideRender)content).OnEnterSlide());
+
+        //        // if slide has page transition override
+        //        if (((ISlideRender)content).PageTransition != null)
+        //        {
+        //            transition = ((ISlideRender)content).PageTransition;
+        //        }
+        //    }
+
+        //    _lastTransitionCts?.Cancel();
+        //    _lastTransitionCts = new CancellationTokenSource();
+
+        //    if (_previousImageSite != null && CurrentContent is not IDynamicSlideRender)
+        //    {
+        //        // copy the 'current slide as Bitmap' to the previous image layer
+        //        _previousImageSite.Source = _currentImageSite.Source;
+        //        _previousImageSite.IsVisible = true;
+        //        _previousImageSite.Opacity = 1;
+        //    }
+
+
+        //    if (CurrentContent is ISlideRender && EnableSlideEvents)
+        //    {
+        //        ((ISlideRender)CurrentContent).OnLeaveSlide();
+        //    }
+
+        //    CurrentContent = content;
+        //    if (_contentPresenterContainer != null)
+        //        _contentPresenterContainer.ZIndex = (CurrentContent is IDynamicSlideRender) ? 999 : 0;
+        //    Dispatcher.UIThread.RunJobs(DispatcherPriority.Render); // required to wait for images to load
+
+        //    _currentImageSite.IsVisible = true;
+        //    _currentImageSite.Opacity = 0;
+        //    _currentImageSite.Source = GetBitmap(CurrentContent);
+
+        //    // maybe what this could instead is take screenshot of existing (bitmap no alpha), then take screenshot of new (bitmap no alpha), then fade between the bitmaps. this way, there should be no alpha multiplier issues during the fade effect.
+
+        //    if (transition != null)
+        //    {
+        //        //if (CurrentContent is IDynamicSlideRender)
+        //        //{
+        //        //    await transition.Start(_previousImageSite, null, true, _lastTransitionCts.Token);
+        //        //}
+        //        //else
+        //        //{
+        //        //    // TODO bug when fading to black (empty slide)
+        //        await transition.Start(_previousImageSite, _currentImageSite, true, _lastTransitionCts.Token);
+        //        //}
+        //    }
+        //    else
+        //    {
+        //        //_contentPresenterContainer.IsVisible = true;
+        //        _previousImageSite.Opacity = 0;
+        //    }
+
+        //    _currentImageSite.IsVisible = true;
+        //    _currentImageSite.Opacity = 1;
+
+        //    _previousImageSite.IsVisible = false;
+        //    _previousImageSite.Opacity = 0;
+        //    _previousImageSite.Source = null;
+
+        //    Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
+        //    InvalidateArrange();
+        //}
+
+        //private Bitmap GetBitmap(object? visual)
+        //{
+        //    // TODO Cache blank black bitmap
+        //    if (visual == null)
+        //        return renderControlAsBitmap(null);
+
+        //    if (visual is ISlideBitmapRender)
+        //        return ((ISlideBitmapRender)visual).GetBitmap();
+
+        //    if (visual is ISlideBitmapCacheable)
+        //    {
+        //        Bitmap? cached = ((ISlideBitmapCacheable)visual).GetBitmap();
+        //        if (cached != null)
+        //            return cached;
+        //    }
+
+        //    Bitmap rendered = renderControlAsBitmap(_contentPresenter);
+
+        //    if (visual is ISlideBitmapCacheable)
+        //    {
+        //        // Testing
+        //        ((ISlideBitmapCacheable)visual).SetBitmap(rendered);
+        //    }
+
+        //    return rendered;
+        //}
 
         private Bitmap renderControlAsBitmap(Visual? visual)
         {
