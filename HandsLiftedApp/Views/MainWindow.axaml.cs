@@ -244,6 +244,11 @@ namespace HandsLiftedApp.Views
             //startWindow.ShowDialog(this);
         }
 
+        private void CloseWindow(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
+        }
+
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
         {
             if (!_isConfirmedExiting)
@@ -265,6 +270,11 @@ namespace HandsLiftedApp.Views
         private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
 
+            if (!GetTopLevel(this).IsFocused)
+            {
+                return;
+            }
+            
             // TODO: if a textbox, datepicker etc is selected - then skip this func.
             var focusManager = TopLevel.GetTopLevel(this).FocusManager;
             var focusedElement = focusManager.GetFocusedElement();
