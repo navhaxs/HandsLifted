@@ -5,5 +5,5 @@
              xmlns:libmpv="using:Avalonia.Controls.LibMpv"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Views.Render.MpvVideoSlideRenderer">
-	<libmpv:OpenGlVideoView MpvContext="{Binding OpenGLMpvContext}" />
+	<libmpv:SoftwareVideoView x:Name="VideoView" />
 </UserControl>

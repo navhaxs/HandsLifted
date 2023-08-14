@@ -12,6 +12,7 @@ using Avalonia.Controls;
 using LibVLCSharp.Shared;
 using System;
 using Serilog;
+using LibMpv.Client;
 
 namespace HandsLiftedApp
 {
@@ -21,7 +22,7 @@ namespace HandsLiftedApp
         public static StageDisplayViewModel StageDisplay = new StageDisplayViewModel();
         public static Env Env;
         public static LibVLC GlobalLibVLCInstance;
-        //public static MpvContext GlobalMpvContext;
+        public static MpvContext GlobalMpvContextInstance;
 
         // note: this is initialized by App.axaml.cs on program start up
         public static void OnStartup(IApplicationLifetime applicationLifetime)
@@ -44,14 +45,26 @@ namespace HandsLiftedApp
 
             Debug.Print(Preferences.ToString());
 
-            try
-            {
-                GlobalLibVLCInstance = new LibVLC();
-                Log.Information("LibVLC initialized OK");
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "LibVLC failed to initialize");
+            //try
+            //{
+            //    GlobalLibVLCInstance = new LibVLC();
+            //    Log.Information("LibVLC initialized OK");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Fatal(ex, "LibVLC failed to initialize");
+            //}
+
+            if (!Design.IsDesignMode) {
+                try
+                {
+                    GlobalMpvContextInstance = new MpvContext();
+                    Log.Information("LibMPV initialized OK");
+                }
+                catch (Exception ex)
+                {
+                    Log.Fatal(ex, "LibMPV failed to initialize");
+                }
             }
         }
 

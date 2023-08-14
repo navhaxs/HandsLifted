@@ -1,5 +1,7 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.ReactiveUI;
+using LibMpv.Client;
 using Serilog;
 using Serilog.Templates;
 using System;
@@ -49,6 +51,11 @@ namespace HandsLiftedApp {
                     }
                 }
 
+                
+                Log.Information("Init LibMPV");
+                FindLibMpv();
+                Log.Information("Init LibMPV...OK");
+
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
             }
@@ -63,6 +70,35 @@ namespace HandsLiftedApp {
             {
                 Log.Information("App shutdown");
                 Log.CloseAndFlush();
+            }
+        }
+
+        private static void FindLibMpv()
+        {
+            var libMpvVersions = new[] { 2, 1 };
+
+            // Search libmpv path on Linux
+            if (FunctionResolverFactory.GetPlatformId() == PlatformID.Unix)
+            {
+                var libraryFolders = new[] {
+                    "/lib/x86_64-linux-gnu",
+                    "/usr/lib"
+                };
+
+                foreach (var folder in libraryFolders)
+                {
+                    foreach (var version in libMpvVersions)
+                    {
+                        var fullPath = System.IO.Path.Combine(folder, $"libmpv.so.{version}");
+                        if (System.IO.File.Exists(fullPath))
+                        {
+                            //Set path and libmpv version
+                            libmpv.RootPath = folder;
+                            libmpv.LibraryVersionMap["libmpv"] = version;
+                            return;
+                        }
+                    }
+                }
             }
         }
 
@@ -82,25 +118,12 @@ namespace HandsLiftedApp {
             GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
 
             return AppBuilder.Configure<App>()
-                 .With(new SkiaOptions { MaxGpuResourceSizeBytes = 0x20000000 })
+                // TODO config
+                .With(new SkiaOptions { MaxGpuResourceSizeBytes = 0x20000000 })
                 .UsePlatformDetect()
                 .LogToTrace()
                 .UseReactiveUI();
         }
-
-        //public static AppBuilder BuildAvaloniaApp()
-        //{
-        //    return AppBuilder.Configure<App>()
-        //        .UsePlatformDetect()
-        //        .LogToTrace()
-        //        .UseReactiveUI()
-        //        // customised MaxGpuResourceSizeBytes value (TODO: move to config file or ENV variable)
-        //        .With(new SkiaOptions { MaxGpuResourceSizeBytes = 0x20000000 })
-        //        // configure VLC to render within Avalonia - so we then have the pixels which we can send to NDI :)
-        //        //.With(new VlcSharpOptions { RenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia) })
-        //        //.UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.Avalonia)
-        //    ;
-        //}
     }
 }
 

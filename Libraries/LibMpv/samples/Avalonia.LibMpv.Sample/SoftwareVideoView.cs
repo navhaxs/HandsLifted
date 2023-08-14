@@ -38,7 +38,7 @@ public class SoftwareVideoView: Control
        ClipToBounds = true;
     }
 
-    public override void Render(DrawingContext context)
+    public override void Render(DrawingContext context) // what calls this?
     {
         if (VisualRoot == null || _mpvContext == null)
             return;
@@ -51,7 +51,7 @@ public class SoftwareVideoView: Control
         using (ILockedFramebuffer lockedBitmap = this.renderTarget.Lock())
         {
             _mpvContext.SoftwareRender(lockedBitmap.Size.Width, lockedBitmap.Size.Height, lockedBitmap.Address, "bgra");
-        }
+        } // TODO can this renderTarget be sent to NDI?
         context.DrawImage(this.renderTarget, new Rect(0, 0, renderTarget.PixelSize.Width, renderTarget.PixelSize.Height));
     }
 

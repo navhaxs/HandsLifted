@@ -47,7 +47,7 @@
                 <DataTemplate x:Key="VideoSlide">
                     <Grid>
                         <viewsrender:MpvVideoSlideRenderer />
-                        <viewsrender:VlcVideoSlideRenderer />
+                        <!--<viewsrender:VlcVideoSlideRenderer />-->
                     </Grid>
                 </DataTemplate>
                 <DataTemplate x:Key="CustomSlide">
