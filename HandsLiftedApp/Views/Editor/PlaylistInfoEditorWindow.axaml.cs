@@ -21,6 +21,20 @@ namespace HandsLiftedApp.Views.Editor
                 Close();
             };
             CancelButton.Click += (s, e) => Close();
+
+            DateField.SelectedDateChanged += DateField_SelectedDateChanged;
+            calendar.SelectedDatesChanged += Calendar_SelectedDatesChanged;
+        }
+
+        private void DateField_SelectedDateChanged(object? sender, DatePickerSelectedValueChangedEventArgs e)
+        {
+            calendar.SelectedDate = DateField.SelectedDate.Value.DateTime;
+            calendar.DisplayDate = DateField.SelectedDate.Value.DateTime;
+        }
+
+        private void Calendar_SelectedDatesChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            DateField.SelectedDate = calendar.SelectedDate;
         }
     }
 }

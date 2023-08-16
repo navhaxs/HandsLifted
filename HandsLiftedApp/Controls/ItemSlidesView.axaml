@@ -46,7 +46,7 @@
 
     <StackPanel>
         <DockPanel>
-            <!--<Viewbox
+            <Viewbox
                 Width="50"
                 Margin="0,20,0,0"
                 VerticalAlignment="Top"
@@ -56,7 +56,7 @@
                     Padding="12"
                     Content="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}, FallbackValue='99'}"
                     FontSize="16" />
-            </Viewbox>-->
+            </Viewbox>
             <Border
                 Margin="12,12,12,0"
 				Background="{Binding ItemGroupColour, Converter={StaticResource ColorToBrush}, FallbackValue='#7E282828'}"
@@ -249,7 +249,7 @@
             </Border>
         </DockPanel>
 
-        <controls:AddItemButton Margin="0,12,0,0" ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}" />
+        <controls:AddItemButton Margin="12  ,12,0,0" ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}" />
 
     </StackPanel>
 

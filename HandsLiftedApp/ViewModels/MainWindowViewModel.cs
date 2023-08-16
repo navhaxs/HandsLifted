@@ -419,6 +419,9 @@ namespace HandsLiftedApp.ViewModels
             }
         }
 
+        private bool _IsSidebarOpen = true;
+        public bool IsSidebarOpen { get => _IsSidebarOpen; set => this.RaiseAndSetIfChanged(ref _IsSidebarOpen, value); }
+
         public void OnDebugClickCommand()
         {
             ObjectInspectorWindow p = new ObjectInspectorWindow() { DataContext = this };

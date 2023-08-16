@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
@@ -14,6 +15,7 @@ using HandsLiftedApp.Views.Editor;
 using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using Serilog;
+using Swan;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -148,7 +150,46 @@ namespace HandsLiftedApp.Views
             PlaylistTitleButton.DoubleTapped += PlaylistTitleButton_DoubleTapped;
             PlaylistTitleButton.Click += PlaylistTitleButton_Click;
 
+            SidebarGridSplitter.DragDelta += SidebarGridSplitter_DragDelta;
+            SidebarGridSplitter.DragCompleted += SidebarGridSplitter_DragCompleted;
+
             log.Information("MainWindow initialized");
+
+            this.DataContextChanged +=
+                (sender, args) =>
+                {
+                    if (this.DataContext is MainWindowViewModel vm)
+                    {
+                        vm.WhenAnyValue(value => value.IsSidebarOpen)
+                                .Subscribe(nextIsSidebarOpen => {
+                                    updateSidebarGridSplitter(nextIsSidebarOpen);
+                                });
+                    }
+                };
+        }
+
+        private void SidebarGridSplitter_DragCompleted(object? sender, VectorEventArgs e)
+        {
+            if (this.DataContext is MainWindowViewModel vm)
+            {
+                updateSidebarGridSplitter(vm.IsSidebarOpen);
+            }
+        }
+
+        private void updateSidebarGridSplitter(bool isSidebarOpen)
+        {
+            SidebarGridSplitter.IsVisible = isSidebarOpen;
+            SidebarGridSplitter.Opacity = isSidebarOpen ? 1 : 0;
+        }
+
+        private void SidebarGridSplitter_DragDelta(object? sender, VectorEventArgs e)
+        {
+            var sidebarWouldBeWidth = this.Bounds.Width - (SidebarGridSplitter.Bounds.Left + e.Vector.X);
+            if (this.DataContext is MainWindowViewModel vm)
+            {
+                vm.IsSidebarOpen = (sidebarWouldBeWidth > 200);
+            }
+            SidebarGridSplitter.Opacity = 0;
         }
 
         private void PlaylistTitleButton_DoubleTapped(object? sender, TappedEventArgs e)

@@ -4,8 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:vm="using:HandsLiftedApp.ViewModels"
 		xmlns:material="using:Material.Icons.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="250"
-		Width="400" Height="250"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="550"
+		Width="400" Height="550"
 		
 		ShowInTaskbar="False"
 		CanResize="False"
@@ -35,24 +35,47 @@
 				<material:MaterialIcon Kind="Close" Foreground="White" />
 			</Button>
 		</Grid>
-		<DockPanel>
-			
-			<Button Name="DoneButton" IsDefault="True" 
+		<DockPanel
+			LastChildFill="True"
+			Margin="12 0 12 12">
+
+			<DockPanel.Styles>
+				<Style Selector="StackPanel > TextBlock">
+					<Setter Property="Margin" Value="0 12 0 6" />
+				</Style>
+			</DockPanel.Styles>
+
+			<Button Name="DoneButton"
+					Margin="0 12 0 0"
+					IsDefault="True"
 					Padding="12"
-					Margin="12"
 					DockPanel.Dock="Bottom">Save</Button>
-			
-			<StackPanel Margin="8">
+
+			<StackPanel DockPanel.Dock="Top">
 				<TextBlock Text="Title" />
 				<TextBox Name="TitleField" Watermark="Playlist Title" FontSize="22" Text="{Binding Playlist.Title, Mode=OneTime}" />
 
 				<TextBlock Text="Date" />
-				<DatePicker Name="DateField" SelectedDate="{Binding Playlist.Date, Mode=OneTime}" />
-				
-				<!--<TextBlock Text="Location" />
-				<TextBlock Text="C:\VisionScreens\service.xml" />-->
+				<StackPanel Orientation="Horizontal">
+					<DatePicker Name="DateField"
+								DayFormat="d (ddd)"
+								SelectedDate="{Binding Playlist.Date, Mode=OneTime}" />
+					<Button>
+						<material:MaterialIcon Kind="Calendar" Foreground="White" />
+						<Button.Flyout>
+							<Flyout>
+								<Calendar x:Name="calendar" SelectionMode="SingleDate" HorizontalAlignment="Left" />
+							</Flyout>
+						</Button.Flyout>
+					</Button>
+
+				</StackPanel>
+
+				<TextBlock Text="Notes" />
 			</StackPanel>
 			
+			<TextBox AcceptsReturn="True" TextWrapping="Wrap" />
+
 		</DockPanel>
 			
 	</DockPanel>
