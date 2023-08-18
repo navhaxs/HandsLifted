@@ -19,6 +19,15 @@ namespace HandsLiftedApp.Views.Render
 
             this.DataContextChanged += VideoSlide_DataContextChanged;
             this.AttachedToVisualTree += VideoSlideRenderer_AttachedToVisualTree;
+            this.DetachedFromVisualTree += MpvVideoSlideRenderer_DetachedFromVisualTree;
+        }
+
+        private void MpvVideoSlideRenderer_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+        {
+            if (VideoView.MpvContext != null)
+            {
+                Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", true);
+            }
         }
 
         private void VideoSlide_DataContextChanged(object? sender, EventArgs e)
@@ -45,12 +54,10 @@ namespace HandsLiftedApp.Views.Render
         {
             if (this.VisualRoot as Window is ProjectorWindow)
             {
-                    if (this.DataContext is VideoSlide<VideoSlideStateImpl> videoSlide)
+                if (this.DataContext is VideoSlide<VideoSlideStateImpl> videoSlide)
                 {
 
                     VideoView.MpvContext = Globals.GlobalMpvContextInstance;
-
-                    //MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
 
                     Task.Run(() =>
                     {
@@ -59,14 +66,6 @@ namespace HandsLiftedApp.Views.Render
                         Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", false);
 
                     });
-                        //videoSlide
-                        //MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
-
-                    //if (this.VisualRoot as Window is ProjectorWindow)
-                    //{
-                    //    VideoView.MediaPlayer = MediaPlayer;
-                    //    VideoView.VlcRenderingOptions = LibVLCAvaloniaRenderingOptions.Avalonia;
-                    //}
                 }
             }
             else if (VideoView != null)
@@ -75,7 +74,7 @@ namespace HandsLiftedApp.Views.Render
             }
 
 
-        
+
         }
 
     }

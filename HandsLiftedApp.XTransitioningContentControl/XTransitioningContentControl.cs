@@ -127,7 +127,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
             currentPresenter.IsVisible = true;
 
             _isFirstFull = !_isFirstFull;
-            Debug.Print($"{_isFirstFull}");
 
             if (PageTransition is not null && withTransition)
             {
