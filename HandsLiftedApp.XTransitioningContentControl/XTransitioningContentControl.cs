@@ -11,6 +11,7 @@ using Avalonia.Skia.Helpers;
 using Avalonia.Threading;
 using SkiaSharp;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace HandsLiftedApp.XTransitioningContentControl
@@ -21,7 +22,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
     /// </summary>
     public class XTransitioningContentControl : ContentControl
     {
-
         private CancellationTokenSource? _currentTransition;
         private ContentPresenter? _presenter2;
         private bool _isFirstFull;
@@ -87,8 +87,12 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
         protected override bool RegisterContentPresenter(ContentPresenter presenter)
         {
-            if (!base.RegisterContentPresenter(presenter) &&
-                presenter is ContentPresenter p &&
+            if (base.RegisterContentPresenter(presenter))
+            {
+                return true;
+            }
+
+            if (presenter is ContentPresenter p &&
                 p.Name == "PART_ContentPresenter2")
             {
                 _presenter2 = p;
@@ -102,12 +106,13 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
-            base.OnPropertyChanged(change);
-
             if (change.Property == ContentProperty)
             {
                 UpdateContent(true);
+                return;
             }
+
+            base.OnPropertyChanged(change);
         }
 
         private void UpdateContent(bool withTransition)
@@ -122,6 +127,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
             currentPresenter.IsVisible = true;
 
             _isFirstFull = !_isFirstFull;
+            Debug.Print($"{_isFirstFull}");
 
             if (PageTransition is not null && withTransition)
             {
@@ -141,6 +147,13 @@ namespace HandsLiftedApp.XTransitioningContentControl
             {
                 oldPresenter.Content = null;
                 oldPresenter.IsVisible = false;
+
+                oldPresenter.ZIndex = 1;
+            }
+            var newPresenter = _isFirstFull ? Presenter : _presenter2;
+            if (newPresenter is not null)
+            {
+                newPresenter.ZIndex = 0;
             }
         }
 

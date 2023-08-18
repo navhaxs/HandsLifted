@@ -8,17 +8,18 @@
 		<local:ViewLocator/>
 	</Application.DataTemplates>-->
 
-	<Application.Resources>
+	<!--<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
-	</Application.Resources>
+	</Application.Resources>-->
 
 	<Application.Styles>
 		<SimpleTheme />
 		<!-- import styles from libraries here -->
+		<StyleInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml" />
 
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
 		<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />

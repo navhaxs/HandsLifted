@@ -21,11 +21,11 @@
 
 
     <!--  https://github.com/AvaloniaUI/Avalonia/issues/5382  -->
-    <TransitioningContentControl
+    <hla:XTransitioningContentControl
         Content="{Binding $parent[viewsrender:SlideRenderer].ActiveSlide}"
         PageTransition="{Binding $parent[viewsrender:SlideRenderer].PageTransition}"
         RenderOptions.BitmapInterpolationMode="HighQuality">
-        <TransitioningContentControl.DataTemplates>
+		<hla:XTransitioningContentControl.DataTemplates>
             <utils:MyTemplateSelector>
                 <DataTemplate x:Key="SongTitleSlide">
                     <views:DesignerSlideTitle />
@@ -61,6 +61,7 @@
                 </DataTemplate>
 
             </utils:MyTemplateSelector>
-        </TransitioningContentControl.DataTemplates>
-    </TransitioningContentControl>
+        </hla:XTransitioningContentControl.DataTemplates>
+    
+</hla:XTransitioningContentControl>
 </UserControl>
