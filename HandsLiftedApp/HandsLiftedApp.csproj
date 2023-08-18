@@ -87,8 +87,6 @@
 		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="BuildInfo\BuildDate.txt" />
-		<EmbeddedResource Include="BuildInfo\GitHash.txt" />
 		<Resource Include="WebRoot\index.html" />
 	</ItemGroup>
 	<ItemGroup>
