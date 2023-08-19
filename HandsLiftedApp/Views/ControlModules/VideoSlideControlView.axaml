@@ -12,8 +12,8 @@
 				<TextBlock>
 					<TextBlock.Text>
 						<MultiBinding StringFormat="{}{0} / {1}">
-							<Binding Path="State.PrettyCurrentTime" />
-							<Binding Path="State.PrettyDuration" />
+							<Binding Path="State.TimePos" />
+							<Binding Path="State.Duration" />
 						</MultiBinding>
 					</TextBlock.Text>
 				</TextBlock>

@@ -25,5 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\LibMpv.Context\LibMpv.Context.csproj" />
+    <ProjectReference Include="..\LibMpv.Context.MVVM\LibMpv.Context.MVVM.csproj" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
 using LibMpv.Client;
-using LibVLCSharp.Avalonia;
 using System;
 using System.Threading.Tasks;
 
@@ -57,7 +56,7 @@ namespace HandsLiftedApp.Views.Render
                 if (this.DataContext is VideoSlide<VideoSlideStateImpl> videoSlide)
                 {
 
-                    VideoView.MpvContext = Globals.GlobalMpvContextInstance;
+                    // VideoView.MpvContext = Globals.GlobalMpvContextInstance;
 
                     Task.Run(() =>
                     {

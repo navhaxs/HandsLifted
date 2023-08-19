@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using AvaloniaNDI;
 using HandsLiftedApp.Data.Slides;
@@ -10,11 +8,9 @@ using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.ViewModels;
-using LibVLCSharp.Avalonia;
 using ReactiveUI;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
 {

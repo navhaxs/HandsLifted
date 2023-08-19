@@ -2,10 +2,10 @@
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
-using LibVLCSharp.Shared;
 using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -14,22 +14,49 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using HandsLiftedApp.Utils.LibMpvVideo;
+using LibMpv.Client;
 
 namespace HandsLiftedApp.Models.SlideState
 {
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
     public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, IVideoSlideState, IDisposable
     {
-        public Media _media { get; set; }
+        
+        public MpvContext? Context { get; } = Globals.GlobalMpvContextInstance;
+
 
         private CompositeDisposable _subscriptions;
 
         private VideoSlide<VideoSlideStateImpl> parentVideoSlide;
+        
+        // Route property changed events to MVVM context
+        private void MpvContextPropertyChanged(object? sender, MpvPropertyEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(e.Name))
+            {
+                // If there will be a lot of properties, it might be better to do a dictionary lookup
+                var observableProperty = observableProperties.FirstOrDefault(it=>it.LibMpvName == e.Name);
+                if (observableProperty != null)
+                {
+                    this.RaisePropertyChanged(observableProperty.MvvmName);
+                    // RaisePropertyChanged(observableProperty.MvvmName);
+                }
+            }
+        }
 
         public VideoSlideStateImpl(ref VideoSlide<VideoSlideStateImpl> videoSlide) : base(ref videoSlide)
         {
             parentVideoSlide = videoSlide;
             VideoPath = videoSlide.VideoPath;
+            
+            // Register propertyes for observation
+            foreach (var observableProperty in observableProperties)
+                Context.ObserveProperty(observableProperty.LibMpvName, observableProperty.LibMpvFormat, 0);
+
+            // Register router LibMpv => MVVM
+            Context.PropertyChanged += MpvContextPropertyChanged;
+
 
             // TODO init only when actually needed (on slide enter)
             try
@@ -96,6 +123,10 @@ namespace HandsLiftedApp.Models.SlideState
             //    bool active() => _subscriptions == null ? false : MediaPlayer.IsPlaying || MediaPlayer.CanPause;
 
             //    stateChanged = Wrap(stateChanged);
+            Globals.GlobalMpvContextInstance.Seek += (sender, args) =>
+            {
+                Debug.Print(args.ToString());
+            };
 
             }
             catch
@@ -133,11 +164,32 @@ namespace HandsLiftedApp.Models.SlideState
                 if (parentVideoSlide.IsLoop)
                 {
                     // loop this media
-                    this.MediaPlayer.Stop();
-                    this.MediaPlayer.Play();
+                    // this.MediaPlayer.Stop();
+                    // this.MediaPlayer.Play();
                 }
             });
         }
+        
+        public long? Duration
+        {
+            get => Globals.GlobalMpvContextInstance?.GetPropertyLong("duration");
+            set 
+            {
+                if (value == null) return;
+                Globals.GlobalMpvContextInstance?.SetPropertyLong("duration",value.Value);
+            }
+        }
+
+        public long? TimePos 
+        {
+            get => Globals.GlobalMpvContextInstance?.GetPropertyLong("time-pos");
+            set
+            {
+                if (value == null) return;
+                Globals.GlobalMpvContextInstance?.SetPropertyLong("time-pos", value.Value);
+            }
+        }
+
 
         // TODO: thumbnail
         //private Bitmap? _image;
@@ -148,15 +200,14 @@ namespace HandsLiftedApp.Models.SlideState
         //    private set => this.RaiseAndSetIfChanged(ref _image, value);
         //}
         public string VideoPath { get; set; }
-        public MediaPlayer MediaPlayer { get; }
-
+        
         public async Task OnSlideEnterEvent()
         {
 
         }
         public async Task OnSlideLeaveEvent()
         {
-            MediaPlayer?.Stop();
+            // MediaPlayer?.Stop();
         }
 
         // --- stuff from vlc sample ---
@@ -171,7 +222,7 @@ namespace HandsLiftedApp.Models.SlideState
 
         public bool? IsMuted
         {
-            get => MediaPlayer?.Mute;
+            get => false;//MediaPlayer?.Mute;
             //set => MediaPlayer.Mute = value;
         }
 
@@ -185,43 +236,23 @@ namespace HandsLiftedApp.Models.SlideState
 
         //public bool ShouldDisplayPauseButton => MediaPlayer.State == VLCState.Playing;
 
-        public string MediaInfo
-        {
-            get
-            {
-                var m = MediaPlayer.Media;
-
-                if (m == null)
-                    return "";
-
-                var vt = m.Tracks.FirstOrDefault(t => t.TrackType == TrackType.Video);
-                var at = m.Tracks.FirstOrDefault(t => t.TrackType == TrackType.Audio);
-                var videoCodec = m.CodecDescription(TrackType.Video, vt.Codec);
-                var audioCodec = m.CodecDescription(TrackType.Audio, at.Codec);
-
-                return $"{vt.Data.Video.Width}x{vt.Data.Video.Height} {vt.Description}video: {videoCodec} audio: {audioCodec}";
-            }
-        }
-
-        public string Information => $"FPS:{MediaPlayer.Fps} {MediaInfo}";
-
-        public float Position
-        {
-            get => (MediaPlayer != null) ? MediaPlayer.Position * 100.0f : 0f;
-            set
-            {
-                if (MediaPlayer != null && MediaPlayer.Position != value / 100.0f)
-                {
-                    MediaPlayer.Position = value / 100.0f;
-                }
-            }
-        }
-
-        public int Volume
-        {
-            get => MediaPlayer != null ? MediaPlayer.Volume : 0;
-            set => MediaPlayer.Volume = value;
-        }
+        // public float Position
+        // {
+        //     get => (MediaPlayer != null) ? MediaPlayer.Position * 100.0f : 0f;
+        //     set
+        //     {
+        //         if (MediaPlayer != null && MediaPlayer.Position != value / 100.0f)
+        //         {
+        //             MediaPlayer.Position = value / 100.0f;
+        //         }
+        //     }
+        // }
+        //
+        // public int Volume
+        // {
+        //     get => MediaPlayer != null ? MediaPlayer.Volume : 0;
+        //     set => MediaPlayer.Volume = value;
+        // }
 
         //public ICommand PlayCommand { get; }
         //public ICommand StopCommand { get; }
@@ -235,7 +266,17 @@ namespace HandsLiftedApp.Models.SlideState
         {
             _subscriptions.Dispose();
             _subscriptions = null;
-            MediaPlayer.Dispose();
+            // MediaPlayer.Dispose();
         }
+        
+        static PropertyToObserve[] observableProperties = new PropertyToObserve[]
+        {
+            new() { MvvmName=nameof(Duration), LibMpvName="duration", LibMpvFormat = mpv_format.MPV_FORMAT_INT64 },
+            new() { MvvmName=nameof(TimePos), LibMpvName="time-pos", LibMpvFormat = mpv_format.MPV_FORMAT_INT64 },
+            // new() { MvvmName=nameof(Paused), LibMpvName="pause", LibMpvFormat = mpv_format.MPV_FORMAT_FLAG },
+            // new() { MvvmName=nameof(PlaybackSpeed), LibMpvName="speed", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
+        };
+
+
     }
 }

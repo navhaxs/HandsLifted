@@ -66,8 +66,9 @@ public class MpvMvvmContext : INotifyPropertyChanged
     }
 
     // Load media and play
-    public void Play(string mediaLocation)
+    public void Play()
     {
+        var mediaLocation = MediaUrl;
         Context?.Command("loadfile", mediaLocation, "replace");
         Paused = false;
     }
@@ -129,4 +130,15 @@ public class MpvMvvmContext : INotifyPropertyChanged
         new() { MvvmName=nameof(PlaybackSpeed), LibMpvName="speed", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
     };
 
+    
+    
+    string _mediaUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    public string MediaUrl
+    {
+        get => _mediaUrl;
+        // set
+        // {
+            // this.RaiseAndSetIfChanged(ref _mediaUrl, value);
+        // }
+    }
 }

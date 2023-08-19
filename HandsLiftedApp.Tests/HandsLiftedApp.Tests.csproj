@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HandsLiftedApp.Auth.GoogleDrive\HandsLiftedApp.Auth.GoogleDrive.csproj" />
     <ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
     <ProjectReference Include="..\HandsLiftedApp\HandsLiftedApp.csproj" />
   </ItemGroup>

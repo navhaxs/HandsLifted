@@ -31,6 +31,7 @@
     <PackageVersion Include="Google.Apis.Drive.v3" Version="1.60.0.3034" />
     <PackageVersion Include="Google.Apis.Slides.v1" Version="1.60.0.2979" />
     <PackageVersion Include="GridExtra.Avalonia" Version="0.9.1" />
+    <PackageVersion Include="HanumanInstitute.LibMpv.Avalonia" Version="0.9.1" />
     <PackageVersion Include="LibVLCSharp" Version="3.7.0" />
     <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.7.0" />
     <PackageVersion Include="Magick.NET-Q16-HDRI-AnyCPU" Version="13.1.0" />

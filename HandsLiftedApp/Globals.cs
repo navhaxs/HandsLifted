@@ -9,7 +9,6 @@ using YamlDotNet.Serialization;
 using System.IO;
 using System.Diagnostics;
 using Avalonia.Controls;
-using LibVLCSharp.Shared;
 using System;
 using Serilog;
 using LibMpv.Client;
@@ -21,7 +20,6 @@ namespace HandsLiftedApp
         public static PreferencesViewModel Preferences;
         public static StageDisplayViewModel StageDisplay = new StageDisplayViewModel();
         public static Env Env;
-        public static LibVLC GlobalLibVLCInstance;
         public static MpvContext GlobalMpvContextInstance;
 
         // note: this is initialized by App.axaml.cs on program start up

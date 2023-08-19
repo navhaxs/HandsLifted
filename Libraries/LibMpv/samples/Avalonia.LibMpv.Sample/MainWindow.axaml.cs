@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using LibMpv.Context.MVVM;
 
 namespace Avalonia.Controls.LibMpv
 {
@@ -6,7 +7,7 @@ namespace Avalonia.Controls.LibMpv
     {
         public MainWindow()
         {
-            DataContext = new MainWindowModel();
+            DataContext = new MpvMvvmContext(); // new MainWindowModel();
             InitializeComponent();
         }
     }

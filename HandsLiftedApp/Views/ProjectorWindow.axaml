@@ -8,9 +8,6 @@
         xmlns:ndi="using:AvaloniaNDI"
         xmlns:material="using:Material.Icons.Avalonia"
         xmlns:app="using:HandsLiftedApp"
-		
-		xmlns:videoRendering="using:HandsLiftedApp.Views.Render.VideoRendering"
-		
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
         x:Name="window"

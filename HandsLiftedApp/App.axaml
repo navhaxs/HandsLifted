@@ -22,7 +22,6 @@
 		<StyleInclude Source="avares://HandsLiftedApp.XTransitioningContentControl/Styles.xaml" />
 
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
-		<StyleInclude Source="avares://LibVLCSharp.Avalonia/Styles.xaml" />
 
 		<materialIcons:MaterialIconStyles />
 

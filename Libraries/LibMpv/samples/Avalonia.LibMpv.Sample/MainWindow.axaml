@@ -12,7 +12,7 @@
     <Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
         <TabControl SelectedIndex="{Binding SelectedContext, Mode=TwoWay}">
             <TabItem Header="OpenGL">
-                <local:OpenGlVideoView MpvContext="{Binding OpenGLMpvContext}" />
+                <local:OpenGlVideoView MpvContext="{Binding Context}" />
             </TabItem>
             <TabItem Header="Software">
                 <local:SoftwareVideoView MpvContext="{Binding SoftwareMpvContext}" />
@@ -35,6 +35,8 @@
                 Margin="5"
                 Orientation="Horizontal"
                 Spacing="5">
+                <TextBlock Text="{Binding TimePos}" />
+                <TextBlock Text="{Binding Duration}" />
                 <Button
                     x:Name="LoadButton"
                     HorizontalAlignment="Right"

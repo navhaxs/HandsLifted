@@ -71,7 +71,6 @@
 		<PackageReference Include="Serilog.Sinks.Debug" />
 		<PackageReference Include="Serilog.Sinks.File" />
 		<PackageReference Include="System.Collections.Concurrent" />
-		<PackageReference Include="VideoLAN.LibVLC.Windows" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
 	<ItemGroup>
@@ -84,7 +83,6 @@
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
 		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
 		<ProjectReference Include="..\Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj" />
-		<ProjectReference Include="..\Libraries\vlcsharpavalonia\src\LibVLCSharp.Avalonia\LibVLCSharp.Avalonia.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="WebRoot\index.html" />
@@ -149,9 +147,6 @@
 		</Compile>
 		<Compile Update="Views\Render\SongSlide\SimpleSlideTemplate.axaml.cs">
 			<DependentUpon>SimpleSlideTemplate.axaml</DependentUpon>
-		</Compile>
-		<Compile Update="Views\Render\VlcVideoSlideRenderer.axaml.cs">
-			<DependentUpon>VlcVideoSlideRenderer.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\Render\MpvVideoSlideRenderer.axaml.cs">
 		  <DependentUpon>MpvVideoSlideRenderer.axaml</DependentUpon>

@@ -52,6 +52,11 @@
 					DockPanel.Dock="Bottom">Save</Button>
 
 			<StackPanel DockPanel.Dock="Top">
+				<TextBlock Text="File location" />
+				<TextBlock Text="C:\VisionScreens\service.xml" />
+				<TextBlock Text="Open in Windows Explorer" />
+				<!--<controls:Hyperlink Alias="{Binding Alias}" Url="{Binding Url}" />-->
+				
 				<TextBlock Text="Title" />
 				<TextBox Name="TitleField" Watermark="Playlist Title" FontSize="22" Text="{Binding Playlist.Title, Mode=OneTime}" />
 
@@ -72,6 +77,8 @@
 				</StackPanel>
 
 				<TextBlock Text="Notes" />
+				
+
 			</StackPanel>
 			
 			<TextBox AcceptsReturn="True" TextWrapping="Wrap" />
