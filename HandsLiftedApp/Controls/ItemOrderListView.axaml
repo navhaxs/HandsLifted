@@ -13,7 +13,7 @@
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:HandsLiftedApp.ViewModels"
-    d:DesignHeight="80"
+    d:DesignHeight="280"
     d:DesignWidth="200"
     mc:Ignorable="d">
 
@@ -69,18 +69,18 @@
         </Style>
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-			<Setter Property="Background" Value="#4B9A93CD" />
-			<Setter Property="BorderBrush" Value="#6259A5" />
+            <Setter Property="Background" Value="#4B9A93CD" />
+            <Setter Property="BorderBrush" Value="#6259A5" />
         </Style>
 
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#72A8A8A8"/>
-			<Setter Property="BorderBrush" Value="#72A8A8A8" />
-		</Style>
+            <Setter Property="Background" Value="#72A8A8A8" />
+            <Setter Property="BorderBrush" Value="#72A8A8A8" />
+        </Style>
 
         <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="#839A93CD" />
-			<Setter Property="BorderBrush" Value="#6259A5" />
+            <Setter Property="Background" Value="#839A93CD" />
+            <Setter Property="BorderBrush" Value="#6259A5" />
         </Style>
 
         <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
@@ -90,16 +90,55 @@
     </UserControl.Styles>
 
     <Grid>
+        <Button
+            Name="AddItemButton"
+            Margin="0,0,6,8"
+            Padding="12"
+			VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            HorizontalContentAlignment="Left"
+            Background="#3a344a"
+            BorderThickness="0"
+            ClickMode="Press"
+            CornerRadius="6"
+            DockPanel.Dock="Bottom"
+            FontSize="14"
+            Foreground="White">
+            <Button.Styles>
+                <Style Selector="ScrollViewer">
+                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                </Style>
+                <Style Selector="MenuItem">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Padding" Value="8 6" />
+                </Style>
+            </Button.Styles>
+            <Button.Effect>
+                <DropShadowEffect
+                    BlurRadius="6"
+                    OffsetX="0"
+                    OffsetY="1"
+                    Color="#55000000" />
+            </Button.Effect>
+
+            <DockPanel>
+                <material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline"
+									   Margin="0,0,8,0" />
+                <TextBlock Text="Add Item" />
+            </DockPanel>
+        </Button>
         <ListBox
             x:Name="itemsListBox"
-			Background="Transparent"
+			CornerRadius="0,0,0,6"
+            Background="Transparent"
             Classes="ItemsDragAndDrop"
             DragDrop.AllowDrop="True"
             ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <!--  disable virtualization  -->
+					<!-- TODO: AddItemButton -->
+                    <!-- disable virtualization -->
                     <StackPanel />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
@@ -112,17 +151,20 @@
                 <DataTemplate>
                     <DockPanel VerticalAlignment="Stretch">
 
-                        <Viewbox Width="10" Height="10" Margin="-7,0,7,0">
+                        <Viewbox
+                            Width="10"
+                            Height="10"
+                            Margin="-7,0,7,0">
                             <Polygon
                                 Fill="#FF3400"
-								IsVisible="{Binding State.IsSelected}"
+                                IsVisible="{Binding State.IsSelected}"
                                 Points="0,0 8,5, 0,10" />
                         </Viewbox>
 
                         <TextBlock
                             Padding="0,8,0,8"
                             FontSize="13"
-							Foreground="White"
+                            Foreground="White"
                             TextTrimming="CharacterEllipsis">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">

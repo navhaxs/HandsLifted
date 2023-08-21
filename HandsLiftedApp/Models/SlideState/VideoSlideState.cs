@@ -23,7 +23,7 @@ namespace HandsLiftedApp.Models.SlideState
     public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, IVideoSlideState, IDisposable
     {
         
-        public MpvContext? Context { get; } = Globals.GlobalMpvContextInstance;
+        public MpvContext? Context { set; get; }
 
 
         private CompositeDisposable _subscriptions;
@@ -47,13 +47,15 @@ namespace HandsLiftedApp.Models.SlideState
 
         public VideoSlideStateImpl(ref VideoSlide<VideoSlideStateImpl> videoSlide) : base(ref videoSlide)
         {
+            Context = Globals.GlobalMpvContextInstance;
+            
             parentVideoSlide = videoSlide;
             VideoPath = videoSlide.VideoPath;
             
             // Register propertyes for observation
             foreach (var observableProperty in observableProperties)
                 Context.ObserveProperty(observableProperty.LibMpvName, observableProperty.LibMpvFormat, 0);
-
+            
             // Register router LibMpv => MVVM
             Context.PropertyChanged += MpvContextPropertyChanged;
 
@@ -123,11 +125,11 @@ namespace HandsLiftedApp.Models.SlideState
             //    bool active() => _subscriptions == null ? false : MediaPlayer.IsPlaying || MediaPlayer.CanPause;
 
             //    stateChanged = Wrap(stateChanged);
-            Globals.GlobalMpvContextInstance.Seek += (sender, args) =>
-            {
-                Debug.Print(args.ToString());
-            };
-
+            // Globals.GlobalMpvContextInstance.Seek += (sender, args) =>
+            // {
+            //     Debug.Print(args.ToString());
+            // };
+            //
             }
             catch
             {
@@ -172,24 +174,55 @@ namespace HandsLiftedApp.Models.SlideState
         
         public long? Duration
         {
-            get => Globals.GlobalMpvContextInstance?.GetPropertyLong("duration");
+            get {
+                try
+                {
+                    return Globals.GlobalMpvContextInstance?.GetPropertyLong("duration");
+                }
+                catch (MpvException ex)
+                {
+                    return null;
+                }
+            }
             set 
             {
                 if (value == null) return;
-                Globals.GlobalMpvContextInstance?.SetPropertyLong("duration",value.Value);
+                try
+                {
+                    Globals.GlobalMpvContextInstance?.SetPropertyLong("duration",value.Value);
+                }
+                catch (MpvException ex)
+                {
+                }
             }
         }
-
+        
         public long? TimePos 
         {
-            get => Globals.GlobalMpvContextInstance?.GetPropertyLong("time-pos");
+            get
+            {
+                try
+                {
+                    return Globals.GlobalMpvContextInstance?.GetPropertyLong("time-pos");
+                }
+                catch (MpvException ex)
+                {
+                    return null;
+                }
+            }
             set
             {
                 if (value == null) return;
-                Globals.GlobalMpvContextInstance?.SetPropertyLong("time-pos", value.Value);
+                try
+                {
+                    Globals.GlobalMpvContextInstance?.SetPropertyLong("time-pos", value.Value);
+                }
+                catch (MpvException ex)
+                {
+                }
             }
         }
-
+        
 
         // TODO: thumbnail
         //private Bitmap? _image;

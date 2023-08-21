@@ -1,115 +1,117 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 
-			 	xmlns:vm="using:HandsLiftedApp.ViewModels"
-		xmlns:utils="using:HandsLiftedApp.Utils"
-		xmlns:ext="using:HandsLiftedApp.Extensions"
-			xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
-		xmlns:controls="using:HandsLiftedApp.Controls"
-		xmlns:sys="clr-namespace:System;assembly=mscorlib"
-		xmlns:material="using:Material.Icons.Avalonia"
-		xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
-		xmlns:dataSlides="using:HandsLiftedApp.Data.Slides"
-							xmlns:editor="using:HandsLiftedApp.Views.Editor"
-        xmlns:render="using:HandsLiftedApp.Views.Render" 
-             x:Class="HandsLiftedApp.Views.Library.LibraryView">
+<UserControl
+    x:Class="HandsLiftedApp.Views.Library.LibraryView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
+    xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dataSlides="using:HandsLiftedApp.Data.Slides"
+    xmlns:editor="using:HandsLiftedApp.Views.Editor"
+    xmlns:ext="using:HandsLiftedApp.Extensions"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:render="using:HandsLiftedApp.Views.Render"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:utils="using:HandsLiftedApp.Utils"
+    xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
+    xmlns:vm="using:HandsLiftedApp.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
-	<Design.DataContext>
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
 
-	<!--<UserControl.Resources>
+    <!--<UserControl.Resources>
 		<pc:ThirdComponentConverter x:Key="ThirdComponent" />
 	</UserControl.Resources>-->
 
-	<UserControl.Styles>
-		<Style Selector="TextBlock.h1">
-			<Setter Property="FontSize" Value="24"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-		</Style>
-	</UserControl.Styles>
+    <UserControl.Styles>
+        <Style Selector="TextBlock.h1">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+    </UserControl.Styles>
 
-	<Border
-		BorderThickness="0 1 0 0"
-		BorderBrush="#9a93cd">
-		<TabControl SelectedIndex="0">
-			<TabItem Header="Library" VerticalContentAlignment="Center">
-				<Grid>
+    <TabControl SelectedIndex="0">
+        <TabItem VerticalContentAlignment="Center" Header="Library">
+            <Grid>
 
-						<DockPanel>
-							<TextBox
-								Watermark="Search songs and content..."
-								DockPanel.Dock="Top"
-								BorderThickness="0 0 0 1"
-								Padding="8 4 8 4"
-								Text="{Binding Library.SearchTerm}"
-								FontSize="16" />
-							<ListBox ItemsSource="{Binding Library.SearchResults}"
-									 SelectedItem="{Binding	Library.SelectedItem}"
-									 BorderThickness="0"
-						 >
-								<ListBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding Title}" />
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-							</ListBox>
-						</DockPanel>
+                <DockPanel>
+                    <TextBox
+						Background="Transparent"
+                        Padding="8,4,8,4"
+                        BorderThickness="0,0,0,1"
+                        DockPanel.Dock="Top"
+                        FontSize="16"
+                        Text="{Binding Library.SearchTerm}"
+                        Watermark="Search songs and content..." />
+                    <ListBox
+						Background="Transparent"
+                        BorderThickness="0"
+                        ItemsSource="{Binding Library.SearchResults}"
+                        SelectedItem="{Binding Library.SelectedItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
 
-						<DockPanel
-							Grid.Column="1">
-							<Button
-								Margin="20"
-								Padding="16"
-								VerticalAlignment="Bottom"
-								HorizontalAlignment="Right"
-								Content="Add to playlist"
-								Command="{Binding Library.OnAddSelectedToPlaylistCommand}"
-					/>
-						</DockPanel>
-					</Grid>
-			</TabItem>
-			<TabItem>
-				<TabItem.Header>
-					<TextBlock VerticalAlignment="Center">Design</TextBlock>
-				</TabItem.Header>
-				<editor:SlideDesigner />
-			</TabItem>
-			<TabItem>
-				<TabItem.Header>
-					<TextBlock VerticalAlignment="Center">Logo</TextBlock>
-				</TabItem.Header>
-				<DockPanel>
-					<StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-						<TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
-					</StackPanel>
-					<Grid>
-						<Viewbox VerticalAlignment="Top">
-							<Grid Background="#b7d1d8"
-								Width="1920"
-								Height="1080">
-								<Image 
-									Stretch="Uniform"
-									Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
-									RenderOptions.BitmapInterpolationMode="HighQuality" />
-								
-							</Grid>
-						</Viewbox>
-					</Grid>
-				</DockPanel>
-			</TabItem>
-			<TabItem>
-				<TabItem.Header>
-					<TextBlock VerticalAlignment="Center">Captions</TextBlock>
-				</TabItem.Header>
-				<Viewbox>
-					<render:AltSlideRenderer Width="1920" Height="1080" DataContext="{Binding ActiveSlide}" />
-				</Viewbox>
-			</TabItem>
-		</TabControl>
+                <DockPanel Grid.Column="1">
+                    <Button
+                        Margin="20"
+                        Padding="16"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding Library.OnAddSelectedToPlaylistCommand}"
+                        Content="Add to playlist" />
+                </DockPanel>
+            </Grid>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <TextBlock VerticalAlignment="Center">Design</TextBlock>
+            </TabItem.Header>
+            <editor:SlideDesigner />
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <TextBlock VerticalAlignment="Center">Logo</TextBlock>
+            </TabItem.Header>
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
+                </StackPanel>
+                <Grid>
+                    <Viewbox VerticalAlignment="Top">
+                        <Grid
+                            Width="1920"
+                            Height="1080"
+                            Background="#b7d1d8">
+                            <Image
+                                RenderOptions.BitmapInterpolationMode="HighQuality"
+                                Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
+                                Stretch="Uniform" />
 
-	</Border>
+                        </Grid>
+                    </Viewbox>
+                </Grid>
+            </DockPanel>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <TextBlock VerticalAlignment="Center">Captions</TextBlock>
+            </TabItem.Header>
+            <Viewbox>
+                <render:AltSlideRenderer
+                    Width="1920"
+                    Height="1080"
+                    DataContext="{Binding ActiveSlide}" />
+            </Viewbox>
+        </TabItem>
+    </TabControl>
+
 </UserControl>

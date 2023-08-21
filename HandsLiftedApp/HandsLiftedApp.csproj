@@ -42,6 +42,8 @@
 		<None Remove="Assets\Test.png" />
 		<None Remove="Assets\test2.png" />
 		<None Remove="builddate.txt" />
+		<None Remove="BuildInfo\BuildDate.txt" />
+		<None Remove="BuildInfo\GitHash.txt" />
 		<None Remove="version.txt" />
 		<None Remove="WebRoot\index.html" />
 	</ItemGroup>
@@ -85,6 +87,8 @@
 		<ProjectReference Include="..\Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="BuildInfo\BuildDate.txt" />
+		<EmbeddedResource Include="BuildInfo\GitHash.txt" />
 		<Resource Include="WebRoot\index.html" />
 	</ItemGroup>
 	<ItemGroup>

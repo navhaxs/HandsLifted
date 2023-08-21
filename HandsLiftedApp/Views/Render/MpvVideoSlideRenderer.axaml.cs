@@ -11,6 +11,8 @@ namespace HandsLiftedApp.Views.Render
     public partial class MpvVideoSlideRenderer : UserControl
     {
 
+        bool _isMounted = false;
+
         public MpvVideoSlideRenderer()
         {
             InitializeComponent();
@@ -23,10 +25,11 @@ namespace HandsLiftedApp.Views.Render
 
         private void MpvVideoSlideRenderer_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (VideoView.MpvContext != null)
+            if (_isMounted && VideoView.MpvContext != null)
             {
                 Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", true);
             }
+            _isMounted = false;
         }
 
         private void VideoSlide_DataContextChanged(object? sender, EventArgs e)
@@ -56,13 +59,19 @@ namespace HandsLiftedApp.Views.Render
                 if (this.DataContext is VideoSlide<VideoSlideStateImpl> videoSlide)
                 {
 
-                    // VideoView.MpvContext = Globals.GlobalMpvContextInstance;
+                    _isMounted = true;
+                    VideoView.MpvContext = Globals.GlobalMpvContextInstance;
 
                     Task.Run(() =>
                     {
                         Task.Delay(1000).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlid
-                        Globals.GlobalMpvContextInstance.Command("loadfile", videoSlide.VideoPath, "replace");
-                        Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", false);
+                        
+                        if (_isMounted)
+                        {
+                            // only run if slide still active
+                            Globals.GlobalMpvContextInstance.Command("loadfile", videoSlide.VideoPath, "replace");
+                            Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", false);
+                        }
 
                     });
                 }

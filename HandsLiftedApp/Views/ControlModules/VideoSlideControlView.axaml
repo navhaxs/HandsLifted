@@ -5,7 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150"
 	 		 xmlns:material="using:Material.Icons.Avalonia"
              x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
-	<Border Background="#f6f6fc" CornerRadius="6" VerticalAlignment="Top" Margin="6">
+	<Border Background="#3a344a" CornerRadius="6" VerticalAlignment="Top" Margin="6">
 		<StackPanel Margin="6">
 			<DockPanel>
 				<TextBlock DockPanel.Dock="Right" Text="{Binding State.PrettyRemainingTime, FallbackValue='RemainingTime'}" />
@@ -18,7 +18,7 @@
 					</TextBlock.Text>
 				</TextBlock>
 			</DockPanel>
-			<Slider Minimum="0" Maximum="100" Value="{Binding State.Position}" Grid.Column="1" />
+			<Slider Minimum="0" Maximum="{Binding State.Duration}" Value="{Binding State.TimePos}" Grid.Column="1" />
 			<DockPanel>
 				<CheckBox Content="IsMuted"
 						  Margin="6 0 0 0"

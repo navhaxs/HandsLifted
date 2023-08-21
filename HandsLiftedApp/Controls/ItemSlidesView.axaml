@@ -58,7 +58,7 @@
                     FontSize="16" />
             </Viewbox>
             <Border
-                Margin="12,12,12,0"
+                Margin="0,12,12,0"
 				Background="{Binding ItemGroupColour, Converter={StaticResource ColorToBrush}, FallbackValue='#7E282828'}"
                 BorderBrush="#9a93cd"
                 BorderThickness="0"
@@ -249,7 +249,7 @@
             </Border>
         </DockPanel>
 
-        <controls:AddItemButton Margin="12  ,12,0,0" ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}" />
+        <controls:AddItemButton Margin="0,12,0,0" ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}" />
 
     </StackPanel>
 

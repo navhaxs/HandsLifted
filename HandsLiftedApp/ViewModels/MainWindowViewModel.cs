@@ -62,6 +62,13 @@ namespace HandsLiftedApp.ViewModels
                 if (_isRunning)
                 {
                     this.RaisePropertyChanged(nameof(CurrentTime));
+
+                    // for debug stat #1
+                    long memory = GC.GetTotalMemory(true);
+
+                    // for debug stat #2
+                    Process currentProc = Process.GetCurrentProcess();
+                    long memoryUsed = currentProc.PrivateMemorySize64;
                 }
             }
         }

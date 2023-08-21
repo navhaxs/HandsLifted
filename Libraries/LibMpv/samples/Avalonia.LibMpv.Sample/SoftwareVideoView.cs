@@ -44,6 +44,9 @@ public class SoftwareVideoView: Control
             return;
 
         var bitmapSize = GetPixelSize();
+
+        if (bitmapSize.Height == 0 || bitmapSize.Width == 0)
+            return;
             
         if (renderTarget == null || renderTarget.PixelSize.Width != bitmapSize.Width || renderTarget.PixelSize.Height != bitmapSize.Height)
             this.renderTarget = new WriteableBitmap(bitmapSize, new Vector(96.0, 96.0), PixelFormat.Bgra8888, AlphaFormat.Premul);

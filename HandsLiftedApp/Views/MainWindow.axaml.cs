@@ -21,12 +21,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
 {
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
+
+     
+     
+
         ILogger log = Log.ForContext<MainWindow>();
 
         public MainWindow()
@@ -72,20 +77,20 @@ namespace HandsLiftedApp.Views
                      case ActionType.AboutWindow:
                          AboutWindow a = new AboutWindow() { };
                          this.FindControl<Control>("shade").IsVisible = true;
-                         a.ShowDialog(this);
                          a.Closed += (object? sender, EventArgs e) =>
                          {
                              this.FindControl<Control>("shade").IsVisible = false;
                          };
+                         a.ShowDialog(this);
                          break;
                      case ActionType.PreferencesWindow:
                          PreferencesWindow p = new PreferencesWindow() { };
                          this.FindControl<Control>("shade").IsVisible = true;
-                         p.ShowDialog(this);
                          p.Closed += (object? sender, EventArgs e) =>
                          {
                              this.FindControl<Control>("shade").IsVisible = false;
                          };
+                         p.ShowDialog(this);
                          break;
                  }
              });
@@ -108,7 +113,11 @@ namespace HandsLiftedApp.Views
                      };
 
                  if (x.ShowAsDialog)
+                 {
+                     this.IsEnabled = false;
                      x.Window.ShowDialog(this);
+                     this.IsEnabled = true;
+                 }
                  else
                      x.Window.Show(this);
              });
@@ -131,15 +140,15 @@ namespace HandsLiftedApp.Views
             {
                 if (isLibraryVisible)
                 {
-                    lastLibraryContentGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height;
-                    lastLibrarySplitterGridLength = this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height;
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = new GridLength(0);
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = new GridLength(0);
+                    lastLibraryContentGridLength = this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height;
+                    lastLibrarySplitterGridLength = this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height;
+                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height = new GridLength(0);
+                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height = new GridLength(0);
                 }
                 else
                 {
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[2].Height = lastLibraryContentGridLength;
-                    this.FindControl<Grid>("CentreGrid").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
+                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height = lastLibraryContentGridLength;
+                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
                 }
                 isLibraryVisible = !isLibraryVisible;
             };
@@ -285,9 +294,13 @@ namespace HandsLiftedApp.Views
             //startWindow.ShowDialog(this);
         }
 
-        private void CloseWindow(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void CloseWindow(object sender, RoutedEventArgs e)
         {
             MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
+        }
+        private void OnDebugConsoleClick(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("test");
         }
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
@@ -379,6 +392,7 @@ namespace HandsLiftedApp.Views
             MessageBus.Current.SendMessage(new FocusSelectedItem());
             //MessageBus.Current.SendMessage(new Test());
         }
+   
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown();

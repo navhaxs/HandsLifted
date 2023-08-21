@@ -1,10 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
+using HandsLiftedApp.Utils;
 using LibMpv.Client;
 using Serilog;
 using Serilog.Templates;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,12 +25,17 @@ namespace HandsLiftedApp {
         {
             try
             {
+                ConsoleUtils.AllocConsole();
+                var myWriter = new ConsoleTraceListener();
+                Trace.Listeners.Add(myWriter);
+
                 ExpressionTemplate OUTPUT_TEMPLATE = new ExpressionTemplate("[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
                 Log.Logger = new LoggerConfiguration()
                        .MinimumLevel.Debug()
                        .Enrich.FromLogContext()
                        .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
                        .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
+                       //.WriteTo.Console()
                        .CreateLogger();
 
                 Log.Information("App startup");
@@ -68,7 +75,7 @@ namespace HandsLiftedApp {
             }
             finally
             {
-                Log.Information("App shutdown");
+                Log.Information("App shutdown. Bye!");
                 Log.CloseAndFlush();
             }
         }
