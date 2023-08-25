@@ -50,6 +50,12 @@
         BorderThickness="1">
 
         <Grid>
+
+            <TextBlock
+                Foreground="Red"
+                IsHitTestVisible="False"
+                Text="{Binding DebugInfoText}" />
+
             <Grid x:Name="DockedLibraryWrapper">
 
                 <Grid.Styles>
@@ -493,7 +499,7 @@
                                                 <Grid.Styles>
                                                     <Style Selector="Button">
                                                         <Setter Property="BorderThickness" Value="0" />
-                                                        <Setter Property="Background" Value="#505050" />
+                                                        <Setter Property="Background" Value="#444" />
                                                         <Setter Property="HorizontalAlignment" Value="Stretch" />
                                                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                                                         <Setter Property="Margin" Value="6 2" />
@@ -506,18 +512,18 @@
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <Button
-                                                    HorizontalAlignment="Stretch"
+                                                    Padding="6,0"
                                                     HorizontalContentAlignment="Stretch"
+                                                    VerticalContentAlignment="Stretch"
                                                     Command="{Binding OnPrevSlideClickCommand}"
                                                     IsTabStop="False">
-                                                    <DockPanel Margin="6,0">
-                                                        <material:MaterialIcon
-                                                            HorizontalAlignment="Left"
-                                                            DockPanel.Dock="Left"
-                                                            Foreground="#dedede"
-                                                            Kind="ChevronLeftCircleOutline" />
-                                                        <TextBlock Text="Previous" TextAlignment="Center" />
-                                                    </DockPanel>
+                                                    <Grid Margin="6,0">
+                                                        <material:MaterialIcon HorizontalAlignment="Left" Kind="ArrowLeft" />
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            Text="Previous"
+                                                            TextAlignment="Center" />
+                                                    </Grid>
                                                 </Button>
                                                 <!--<Button
                                                     Grid.Column="1"
@@ -541,14 +547,13 @@
                                                     HorizontalContentAlignment="Stretch"
                                                     Command="{Binding OnNextSlideClickCommand}"
                                                     IsTabStop="False">
-                                                    <DockPanel Margin="6,0">
-                                                        <material:MaterialIcon
-                                                            HorizontalAlignment="Right"
-                                                            DockPanel.Dock="Right"
-                                                            Foreground="#dedede"
-                                                            Kind="ChevronRightCircleOutline" />
-                                                        <TextBlock Text="Next" TextAlignment="Center" />
-                                                    </DockPanel>
+                                                    <Grid Margin="6,0">
+                                                        <material:MaterialIcon HorizontalAlignment="Right" Kind="ArrowRight" />
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            Text="Next"
+                                                            TextAlignment="Center" />
+                                                    </Grid>
                                                 </Button>
                                             </Grid>
                                         </Border>
@@ -561,17 +566,29 @@
 
                                             <Grid>
                                                 <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
-                                                <Slider
-                                                    MinWidth="90"
-                                                    Margin="0,0,26,0"
-                                                    Padding="12,4"
+                                                <DockPanel
+													Background="#1e1e1e"
+                                                    Margin="0,0,18,0"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Bottom"
-                                                    Background="Transparent"
-                                                    BorderBrush="#121212"
-                                                    Maximum="80"
-                                                    Minimum="40"
-                                                    Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
+                                                    LastChildFill="True">
+                                                    <material:MaterialIcon
+                                                        DockPanel.Dock="Left"
+                                                        Foreground="White"
+                                                        Kind="Minus" />
+                                                    <material:MaterialIcon
+                                                        DockPanel.Dock="Right"
+                                                        Foreground="White"
+                                                        Kind="Plus" />
+                                                    <Slider
+                                                        MinWidth="90"
+                                                        Padding="12,4"
+                                                        Background="Transparent"
+                                                        BorderBrush="#121212"
+                                                        Maximum="80"
+                                                        Minimum="40"
+                                                        Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
+                                                </DockPanel>
                                             </Grid>
                                         </Border>
 

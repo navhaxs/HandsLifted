@@ -62,6 +62,7 @@
 		<PackageReference Include="Avalonia.Xaml.Behaviors" />
 		<PackageReference Include="Avalonia.Xaml.Interactions" />
 		<PackageReference Include="Avalonia.Xaml.Interactivity" />
+		<PackageReference Include="ByteSize" />
 		<PackageReference Include="ConcurrentPriorityQueue" />
 		<PackageReference Include="Config.Net" />
 		<PackageReference Include="EmbedIO" />

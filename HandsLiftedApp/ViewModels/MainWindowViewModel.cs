@@ -41,6 +41,7 @@ using HandsLiftedApp.ViewModels.Editor;
 using System.Reactive.Disposables;
 using HandsLiftedApp.Models.WebsocketsEngine;
 using HandsLiftedApp.Models.WebsocketsV1;
+using ByteSizeLib;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -69,9 +70,14 @@ namespace HandsLiftedApp.ViewModels
                     // for debug stat #2
                     Process currentProc = Process.GetCurrentProcess();
                     long memoryUsed = currentProc.PrivateMemorySize64;
+
+                    DebugInfoText = $"{ByteSize.FromBytes(memory).ToString("#.#")} {ByteSize.FromBytes(memoryUsed).ToString("#.#")}";
                 }
             }
         }
+
+        private string _debugInfoText = string.Empty;
+        public string DebugInfoText {  get => _debugInfoText; set => this.RaiseAndSetIfChanged(ref _debugInfoText, value); }
 
         public SlideDesignerViewModel SlideDesigner { get; } = new SlideDesignerViewModel();
         public Playlist<PlaylistStateImpl, ItemStateImpl> _playlist;

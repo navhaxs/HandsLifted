@@ -90,43 +90,6 @@
     </UserControl.Styles>
 
     <Grid>
-        <Button
-            Name="AddItemButton"
-            Margin="0,0,6,8"
-            Padding="12"
-			VerticalAlignment="Bottom"
-            HorizontalAlignment="Right"
-            HorizontalContentAlignment="Left"
-            Background="#3a344a"
-            BorderThickness="0"
-            ClickMode="Press"
-            CornerRadius="6"
-            DockPanel.Dock="Bottom"
-            FontSize="14"
-            Foreground="White">
-            <Button.Styles>
-                <Style Selector="ScrollViewer">
-                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
-                </Style>
-                <Style Selector="MenuItem">
-                    <Setter Property="FontSize" Value="14" />
-                    <Setter Property="Padding" Value="8 6" />
-                </Style>
-            </Button.Styles>
-            <Button.Effect>
-                <DropShadowEffect
-                    BlurRadius="6"
-                    OffsetX="0"
-                    OffsetY="1"
-                    Color="#55000000" />
-            </Button.Effect>
-
-            <DockPanel>
-                <material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline"
-									   Margin="0,0,8,0" />
-                <TextBlock Text="Add Item" />
-            </DockPanel>
-        </Button>
         <ListBox
             x:Name="itemsListBox"
 			CornerRadius="0,0,0,6"
@@ -176,5 +139,43 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-    </Grid>
+		<Button
+				Name="AddItemButton"
+				Margin="0,0,6,8"
+				Padding="12"
+				VerticalAlignment="Bottom"
+				HorizontalAlignment="Right"
+				HorizontalContentAlignment="Left"
+				Background="#3a344a"
+				BorderThickness="0"
+				ClickMode="Press"
+				CornerRadius="6"
+				DockPanel.Dock="Bottom"
+				FontSize="14"
+				Foreground="White">
+			<Button.Styles>
+				<Style Selector="ScrollViewer">
+					<Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+				</Style>
+				<Style Selector="MenuItem">
+					<Setter Property="FontSize" Value="14" />
+					<Setter Property="Padding" Value="8 6" />
+				</Style>
+			</Button.Styles>
+			<Button.Effect>
+				<DropShadowEffect
+                    BlurRadius="6"
+                    OffsetX="0"
+                    OffsetY="1"
+                    Color="#55000000" />
+			</Button.Effect>
+
+			<DockPanel>
+				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline"
+									   Margin="0,0,8,0" />
+				<TextBlock Text="Add Item" />
+			</DockPanel>
+		</Button>
+
+	</Grid>
 </UserControl>
