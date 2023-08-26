@@ -64,14 +64,19 @@ namespace HandsLiftedApp.ViewModels
                 {
                     this.RaisePropertyChanged(nameof(CurrentTime));
 
-                    // for debug stat #1
-                    long memory = GC.GetTotalMemory(true);
+                    if (Debugger.IsAttached)
+                    {
+                        await Task.Delay(400);
 
-                    // for debug stat #2
-                    Process currentProc = Process.GetCurrentProcess();
-                    long memoryUsed = currentProc.PrivateMemorySize64;
+                        // for debug stat #1
+                        long memory = GC.GetTotalMemory(true);
 
-                    DebugInfoText = $"{ByteSize.FromBytes(memory).ToString("#.#")} {ByteSize.FromBytes(memoryUsed).ToString("#.#")}";
+                        // for debug stat #2
+                        Process currentProc = Process.GetCurrentProcess();
+                        long memoryUsed = currentProc.PrivateMemorySize64;
+
+                        DebugInfoText = $"{ByteSize.FromBytes(memory).ToString("#.#")} {ByteSize.FromBytes(memoryUsed).ToString("#.#")}";
+                    }
                 }
             }
         }
@@ -434,6 +439,9 @@ namespace HandsLiftedApp.ViewModels
 
         private bool _IsSidebarOpen = true;
         public bool IsSidebarOpen { get => _IsSidebarOpen; set => this.RaiseAndSetIfChanged(ref _IsSidebarOpen, value); }
+ 
+        private int _BottomLeftPanelSelectedTabIndex = 0;
+        public int BottomLeftPanelSelectedTabIndex { get => _BottomLeftPanelSelectedTabIndex; set => this.RaiseAndSetIfChanged(ref _BottomLeftPanelSelectedTabIndex, value); }
 
         public void OnDebugClickCommand()
         {

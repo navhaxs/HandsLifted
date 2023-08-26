@@ -58,6 +58,16 @@ namespace HandsLiftedApp.Models
                     (Slide selectedSlide) => GetPreviousSlide().Slide)
                     .ToProperty(this, c => c.PreviousSlide);
 
+            _selectedSlideItemDisplayText =
+                this.WhenAnyValue(
+                vm => vm.SelectedItem.State.SelectedSlideIndex,
+                vm => vm.SelectedItem.Slides.Count,
+                (int index, int count) =>
+                {
+                    return $"Slide {index + 1} of {count}";
+                })
+                .ToProperty(this, c => c.SelectedSlideItemDisplayText);
+
             if (Design.IsDesignMode)
             {
                 SelectedItemIndex = 0;
@@ -260,6 +270,9 @@ namespace HandsLiftedApp.Models
 
         private ObservableAsPropertyHelper<Slide?> _previousSlide;
         public Slide? PreviousSlide { get => _previousSlide.Value; }
+
+        private ObservableAsPropertyHelper<string> _selectedSlideItemDisplayText;
+        public string SelectedSlideItemDisplayText { get => _selectedSlideItemDisplayText.Value; }
 
         // TODO: "Presentation State" can be moved out of playlist state.
         private bool _isLogo = false;

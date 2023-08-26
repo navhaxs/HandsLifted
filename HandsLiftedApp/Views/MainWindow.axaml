@@ -6,7 +6,9 @@
     xmlns:approot="using:HandsLiftedApp"
     xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
     xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:designer="using:HandsLiftedApp.Views.Designer"
     xmlns:editor="using:HandsLiftedApp.Views.Editor"
     xmlns:i="using:Avalonia.Xaml.Interactivity"
     xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
@@ -32,6 +34,10 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
+    <Window.Resources>
+        <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
+    </Window.Resources>
+
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="IsSidebarOpen">
@@ -39,8 +45,31 @@
                     <CheckBox ClipToBounds="False" IsChecked="{Binding IsSidebarOpen}" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Copy" />
-            <MenuItem Header="Paste" />
+			<MenuItem Header="ScrollToActiveItem" Click="OnScrollToItemClick" />
+            <TextBox Text="{Binding BottomLeftPanelSelectedTabIndex}" />
+            <DockPanel
+                Margin="0,0,18,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Background="#1e1e1e"
+                LastChildFill="True">
+                <material:MaterialIcon
+                    DockPanel.Dock="Left"
+                    Foreground="White"
+                    Kind="Minus" />
+                <material:MaterialIcon
+                    DockPanel.Dock="Right"
+                    Foreground="White"
+                    Kind="Plus" />
+                <Slider
+                    MinWidth="90"
+                    Padding="12,4"
+                    Background="Transparent"
+                    BorderBrush="#121212"
+                    Maximum="80"
+                    Minimum="40"
+                    Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
+            </DockPanel>
         </ContextMenu>
     </Window.ContextMenu>
 
@@ -52,6 +81,7 @@
         <Grid>
 
             <TextBlock
+                Margin="60,6,0,0"
                 Foreground="Red"
                 IsHitTestVisible="False"
                 Text="{Binding DebugInfoText}" />
@@ -67,7 +97,7 @@
                 </Grid.Styles>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" MinHeight="260" />
                     <RowDefinition Height="0" />
                     <RowDefinition Height="0" />
                 </Grid.RowDefinitions>
@@ -89,11 +119,14 @@
                 <Border
                     Grid.Row="2"
                     Margin="6,0,6,6"
-                    Padding="10,0,0,0"
+                    Padding="10"
                     Background="#3a344a"
                     CornerRadius="0,6,6,6"
                     DockPanel.Dock="Bottom">
-                    <library:LibraryView />
+                    <Carousel BorderThickness="0" SelectedIndex="{Binding BottomLeftPanelSelectedTabIndex}">
+                        <library:LibraryView />
+                        <designer:DesignerView />
+                    </Carousel>
                 </Border>
 
                 <Grid>
@@ -409,7 +442,6 @@
                                                 </DockPanel>
                                             </ToggleButton>
 
-
                                             <ToggleButton
                                                 Name="DesignerToggleButton"
                                                 Margin="0,6,6,0"
@@ -537,10 +569,7 @@
                                                     Grid.Column="1"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
-                                                    FontSize="15">
-                                                    Slide 1 of 20
-                                                </TextBlock>
-
+                                                    FontSize="15" Text="{Binding Playlist.State.SelectedSlideItemDisplayText}" />
                                                 <Button
                                                     Grid.Column="2"
                                                     HorizontalAlignment="Stretch"
@@ -566,29 +595,6 @@
 
                                             <Grid>
                                                 <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
-                                                <DockPanel
-													Background="#1e1e1e"
-                                                    Margin="0,0,18,0"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Bottom"
-                                                    LastChildFill="True">
-                                                    <material:MaterialIcon
-                                                        DockPanel.Dock="Left"
-                                                        Foreground="White"
-                                                        Kind="Minus" />
-                                                    <material:MaterialIcon
-                                                        DockPanel.Dock="Right"
-                                                        Foreground="White"
-                                                        Kind="Plus" />
-                                                    <Slider
-                                                        MinWidth="90"
-                                                        Padding="12,4"
-                                                        Background="Transparent"
-                                                        BorderBrush="#121212"
-                                                        Maximum="80"
-                                                        Minimum="40"
-                                                        Value="{Binding Source={x:Static approot:Globals.Preferences}, Path=SlideThumbnailSizeMultiplier, FallbackValue=100}" />
-                                                </DockPanel>
                                             </Grid>
                                         </Border>
 
@@ -784,5 +790,6 @@
 
         </Grid>
     </Border>
+
 
 </Window>

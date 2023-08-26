@@ -83,6 +83,8 @@
 
 	<!-- Wrap ToolTips -->
 	<Style Selector="ToolTip">
+		<Setter Property="Foreground"
+		Value="White" />
 		<Setter Property="MaxWidth"
 				Value="500" />
 	</Style>

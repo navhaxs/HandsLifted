@@ -73,8 +73,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PDFTestApp", "PDFTestApp\PD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.AudacityPipe.ConsoleApp1", "Demo.AudacityPipe.ConsoleApp1\Demo.AudacityPipe.ConsoleApp1.csproj", "{80FDB146-2567-439D-8403-5FF3B08F331F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scratch", "Scratch", "{7023196F-59FE-4E0F-B628-F49CC8E781D3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpv.Client", "Libraries\LibMpv\src\LibMpv.Client\LibMpv.Client.csproj", "{F6904C4F-C17D-41B3-A0DE-6B622500136B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpv.Context", "Libraries\LibMpv\src\LibMpv.Context\LibMpv.Context.csproj", "{400B1D09-937A-48AA-9A2A-B61EF2D1B661}"

@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Comparer;
+﻿using Avalonia.Controls;
+using HandsLiftedApp.Comparer;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
 using System;
@@ -25,8 +26,15 @@ namespace HandsLiftedApp.Models.LibraryModel
 
         public Library()
         {
+            if (Design.IsDesignMode)
+            {
+                Items = new ObservableCollection<Item>();
+                return;
+            }
+
             Items = new ObservableCollection<Item>();
-            rootDirectory = "C:\\VisionScreens\\Songs";
+            rootDirectory = Globals.Env.SongLibraryDirectory;
+            rootDirectory = Globals.Env.SongLibraryDirectory;
 
             OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
             {
@@ -42,14 +50,14 @@ namespace HandsLiftedApp.Models.LibraryModel
             watch();
 
             _searchResults = this
-         .WhenAnyValue(x => x.SearchTerm)
-         //.Throttle(TimeSpan.FromMilliseconds(100))
-         .Select(term => term?.Trim().ToLower())
-         .DistinctUntilChanged()
-         //.Where(term => !string.IsNullOrWhiteSpace(term))
-         .SelectMany(SearchNuGetPackages)
-         .ObserveOn(RxApp.MainThreadScheduler)
-         .ToProperty(this, x => x.SearchResults);
+                .WhenAnyValue(x => x.SearchTerm)
+                //.Throttle(TimeSpan.FromMilliseconds(100))
+                .Select(term => term?.Trim().ToLower())
+                .DistinctUntilChanged()
+                //.Where(term => !string.IsNullOrWhiteSpace(term))
+                .SelectMany(SearchNuGetPackages)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.SearchResults);
 
             // We subscribe to the "ThrownExceptions" property of our OAPH, where ReactiveUI 
             // marshals any exceptions that are thrown in SearchNuGetPackages method. 

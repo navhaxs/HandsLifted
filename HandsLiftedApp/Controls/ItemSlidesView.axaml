@@ -96,6 +96,17 @@
                             DockPanel.Dock="Right">
                             Edit
                         </Button>
+                        <Button
+                            Margin="6"
+                            Padding="22,6"
+                            Background="#242131"
+                            BorderBrush="#b3aed9"
+                            BorderThickness="1"
+                            Command="{Binding State.EditCommand}"
+                            CornerRadius="4"
+                            DockPanel.Dock="Right">
+                            Replace/Swap/MoveUp/MoveDown
+                        </Button>
                         <!--<Ellipse
 								IsVisible="{Binding State.IsSelected, FallbackValue=False}"
 								Width="8"

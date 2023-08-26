@@ -15,8 +15,8 @@
     xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
     xmlns:vm="using:HandsLiftedApp.ViewModels"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="350"
+    d:DesignWidth="1100"
     mc:Ignorable="d">
 
     <Design.DataContext>
@@ -34,24 +34,52 @@
         </Style>
     </UserControl.Styles>
 
-    <TabControl SelectedIndex="0">
-        <TabItem VerticalContentAlignment="Center" Header="Library">
-            <Grid>
+    <!--  Wrapper  -->
+    <DockPanel>
+
+        <!--  Search box  -->
+        <TextBox
+            MinWidth="400"
+            MaxWidth="400"
+            Padding="8,4,8,4"
+            HorizontalAlignment="Left"
+            Background="Transparent"
+            BorderThickness="1"
+            DockPanel.Dock="Top"
+            FontSize="16"
+            Text="{Binding Library.SearchTerm}"
+            Watermark="Search songs and content..." />
+
+        <!--  3 Pane Splitter  -->
+        <Grid ColumnDefinitions="*,1,2*,1,2*">
+
+            <!--  Left box  -->
+            <ListBox Grid.Column="0" Margin="0,0,0,0" BorderThickness="0">
+                <ListBoxItem IsSelected="True">Songs</ListBoxItem>
+                <ListBoxItem>Media</ListBoxItem>
+                <ListBoxItem>Presentations</ListBoxItem>
+                <ListBoxItem>Countdowns</ListBoxItem>
+                <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem>
+            </ListBox>
+
+			<GridSplitter
+				Grid.Column="1"
+				Margin="-3,0"
+				HorizontalAlignment="Stretch"
+				Background="Red"
+				BorderBrush="Transparent"
+				BorderThickness="3,0"
+				ZIndex="9999" />
+
+			<!--  Centre box  -->
+            <Grid Grid.Column="2">
 
                 <DockPanel>
-                    <TextBox
-						Background="Transparent"
-                        Padding="8,4,8,4"
-                        BorderThickness="0,0,0,1"
-                        DockPanel.Dock="Top"
-                        FontSize="16"
-                        Text="{Binding Library.SearchTerm}"
-                        Watermark="Search songs and content..." />
                     <ListBox
-						Background="Transparent"
-                        BorderThickness="0"
+                        Background="Transparent"
                         ItemsSource="{Binding Library.SearchResults}"
-                        SelectedItem="{Binding Library.SelectedItem}">
+                        SelectedItem="{Binding Library.SelectedItem}"
+						BorderThickness="0" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Title}" />
@@ -60,58 +88,33 @@
                     </ListBox>
                 </DockPanel>
 
-                <DockPanel Grid.Column="1">
-                    <Button
-                        Margin="20"
-                        Padding="16"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        Command="{Binding Library.OnAddSelectedToPlaylistCommand}"
-                        Content="Add to playlist" />
-                </DockPanel>
+                <DockPanel Grid.Column="1" />
             </Grid>
-        </TabItem>
-        <TabItem>
-            <TabItem.Header>
-                <TextBlock VerticalAlignment="Center">Design</TextBlock>
-            </TabItem.Header>
-            <editor:SlideDesigner />
-        </TabItem>
-        <TabItem>
-            <TabItem.Header>
-                <TextBlock VerticalAlignment="Center">Logo</TextBlock>
-            </TabItem.Header>
-            <DockPanel>
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
-                </StackPanel>
-                <Grid>
-                    <Viewbox VerticalAlignment="Top">
-                        <Grid
-                            Width="1920"
-                            Height="1080"
-                            Background="#b7d1d8">
-                            <Image
-                                RenderOptions.BitmapInterpolationMode="HighQuality"
-                                Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
-                                Stretch="Uniform" />
 
-                        </Grid>
-                    </Viewbox>
-                </Grid>
-            </DockPanel>
-        </TabItem>
-        <TabItem>
-            <TabItem.Header>
-                <TextBlock VerticalAlignment="Center">Captions</TextBlock>
-            </TabItem.Header>
-            <Viewbox>
-                <render:AltSlideRenderer
-                    Width="1920"
-                    Height="1080"
-                    DataContext="{Binding ActiveSlide}" />
-            </Viewbox>
-        </TabItem>
-    </TabControl>
+			<GridSplitter
+				Grid.Column="3"
+				Margin="-3,0"
+				HorizontalAlignment="Stretch"
+				Background="Red"
+				BorderBrush="Transparent"
+				BorderThickness="3,0"
+				ZIndex="9999" />
+
+			<!--  Right box  -->
+            <Grid Grid.Column="4">
+                <TextBlock Text="preview content goes here" />
+                <Button
+                    Margin="20"
+                    Padding="16"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Command="{Binding Library.OnAddSelectedToPlaylistCommand}"
+                    Content="Add to playlist" />
+            </Grid>
+
+        </Grid>
+
+    </DockPanel>
+    <!--  /Wrapper  -->
 
 </UserControl>

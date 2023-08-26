@@ -30,14 +30,15 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#f2f2f2">
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#1d1d1d">
 		<StackPanel>
 			<StackPanel.Styles>
 				<Style Selector="Button">
 					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 					<Setter Property="MinHeight" Value="50" />
 					<Setter Property="VerticalContentAlignment" Value="Top" />
-					<Setter Property="Background" Value="White" />
+					<Setter Property="Background" Value="Transparent" />
+					<Setter Property="Foreground" Value="White" />
 				</Style>
 				<Style Selector="Button > DockPanel > CheckBox">
 					<Setter Property="Margin" Value="0 0 6 0" />

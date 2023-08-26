@@ -141,7 +141,7 @@
         </ListBox>
 		<Button
 				Name="AddItemButton"
-				Margin="0,0,6,8"
+				Margin="6,0,6,8"
 				Padding="12"
 				VerticalAlignment="Bottom"
 				HorizontalAlignment="Right"
@@ -171,9 +171,11 @@
 			</Button.Effect>
 
 			<DockPanel>
-				<material:MaterialIcon DockPanel.Dock="Left" Kind="PlusCircleOutline"
-									   Margin="0,0,8,0" />
-				<TextBlock Text="Add Item" />
+				<material:MaterialIcon DockPanel.Dock="Left" Kind="Plus"
+									   Height="20"
+									   Width="20"
+									  />
+				<TextBlock IsVisible="False" Margin="8,0,8,0" Text="Add Item" />
 			</DockPanel>
 		</Button>
 

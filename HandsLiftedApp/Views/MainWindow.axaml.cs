@@ -138,19 +138,23 @@ namespace HandsLiftedApp.Views
 
             LibraryToggleButton.Click += (object? sender, RoutedEventArgs e) =>
             {
-                if (isLibraryVisible)
+                if (this.DataContext is MainWindowViewModel vm)
                 {
-                    lastLibraryContentGridLength = this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height;
-                    lastLibrarySplitterGridLength = this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height;
-                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height = new GridLength(0);
-                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height = new GridLength(0);
+                    bool forceVisible = vm.BottomLeftPanelSelectedTabIndex != 0;
+                    vm.BottomLeftPanelSelectedTabIndex = 0;
+                    ToggleBottomPanel(forceVisible);
                 }
-                else
+                DesignerToggleButton.IsChecked = false;
+            };
+            DesignerToggleButton.Click += (object? sender, RoutedEventArgs e) =>
+            {
+                if (this.DataContext is MainWindowViewModel vm)
                 {
-                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height = lastLibraryContentGridLength;
-                    this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
+                    bool forceVisible = vm.BottomLeftPanelSelectedTabIndex != 1;
+                    vm.BottomLeftPanelSelectedTabIndex = 1;
+                    ToggleBottomPanel(forceVisible);
                 }
-                isLibraryVisible = !isLibraryVisible;
+                LibraryToggleButton.IsChecked = false;
             };
 
             PlaylistTitleButton.PointerPressed += PlaylistTitleButton_PointerPressed;
@@ -175,6 +179,29 @@ namespace HandsLiftedApp.Views
                                 });
                     }
                 };
+        }
+
+        private void ToggleBottomPanel(bool forceVisible = false)
+        {
+            if (forceVisible && isLibraryVisible)
+            {
+                // do nothing if already visible
+                return;
+            }
+
+            if (isLibraryVisible)
+            {
+                lastLibraryContentGridLength = this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height;
+                lastLibrarySplitterGridLength = this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height;
+                this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height = new GridLength(0);
+                this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height = new GridLength(0);
+            }
+            else
+            {
+                this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[2].Height = lastLibraryContentGridLength;
+                this.FindControl<Grid>("DockedLibraryWrapper").RowDefinitions[1].Height = lastLibrarySplitterGridLength;
+            }
+            isLibraryVisible = !isLibraryVisible;
         }
 
         private void SidebarGridSplitter_DragCompleted(object? sender, VectorEventArgs e)
