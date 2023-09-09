@@ -175,7 +175,7 @@
 									   Height="20"
 									   Width="20"
 									  />
-				<TextBlock IsVisible="False" Margin="8,0,8,0" Text="Add Item" />
+				<TextBlock IsVisible="True" Margin="8,0,8,0" Text="Add Item" />
 			</DockPanel>
 		</Button>
 

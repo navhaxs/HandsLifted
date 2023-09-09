@@ -85,16 +85,21 @@
 
         <Grid>
 
-            <StackPanel Margin="60,6,0,0" Orientation="Horizontal" VerticalAlignment="Top">
+            <StackPanel
+                Margin="60,6,0,0"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
                 <TextBlock
                     Foreground="Red"
                     IsHitTestVisible="False"
                     IsVisible="{Binding IsDisplayDebugInfo}"
                     Text="{Binding DebugInfoText}" />
-                <Grid
-                    Width="20"
-                    Height="20"
+                <Border
+                    Width="10"
+                    Height="10"
+                    Margin="5,0,0,0"
                     Background="Red"
+                    CornerRadius="999"
                     IsVisible="{Binding Source={x:Static approot:Globals.BitmapLoadWorkerThread}, Path=IsBusy}" />
             </StackPanel>
 
@@ -110,38 +115,19 @@
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" MinHeight="260" />
+                    <RowDefinition Height="6" />
                     <RowDefinition Height="0" />
-                    <RowDefinition Height="0" />
+                    <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
-
-                <GridSplitter
-                    Grid.Row="1"
-                    Margin="0,0,0,-10"
-                    HorizontalAlignment="Stretch"
-                    Background="#7C74B6"
-                    BorderBrush="Red"
-                    BorderThickness="10,10,10,10"
-                    ZIndex="9999" />
 
                 <!--<editor:SlideDesigner IsVisible="{Binding #LibraryToggleButton.IsChecked}" />-->
 
                 <!--  non contiguous view  -->
                 <!--<controls:ItemSlidesView DataContext="{Binding Playlist.State.SelectedItem}" />-->
 
-                <Border
-                    Grid.Row="2"
-                    Margin="6,0,6,6"
-                    Padding="10"
-                    Background="#3a344a"
-                    CornerRadius="0,6,6,6"
-                    DockPanel.Dock="Bottom">
-                    <Carousel BorderThickness="0" SelectedIndex="{Binding BottomLeftPanelSelectedTabIndex}">
-                        <library:LibraryView />
-                        <designer:DesignerView />
-                    </Carousel>
-                </Border>
-
-                <Grid>
+                <!--  BEGIN the main grid  -->
+				<Grid Grid.Row="0"
+					  >
 
                     <Grid.Styles>
                         <Style Selector="DockPanel.sidebar_open">
@@ -166,7 +152,7 @@
                         Classes.sidebar_close="{Binding !IsSidebarOpen}"
                         Classes.sidebar_open="{Binding IsSidebarOpen}">
 
-                        <Border Height="32" DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top">
 
                             <DockPanel>
                                 <ToggleButton
@@ -178,7 +164,6 @@
                                     IsVisible="{Binding !IsSidebarOpen}">
                                     <material:MaterialIcon Kind="DockRight" />
                                 </ToggleButton>
-
 
                                 <ToggleButton
                                     Name="AppMenuButton"
@@ -268,13 +253,13 @@
 
                                             <MenuItem Command="{Binding OnDebugClickCommand}" Header="Object Inspector" />
 
-											<MenuItem Header="-" />
+                                            <MenuItem Header="-" />
 
-											<MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" />
-											<MenuItem Command="{Binding OnAboutWindowCommand}" Header="About" />
-											<MenuItem Click="CloseWindow" Header="Exit" />
+                                            <MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" />
+                                            <MenuItem Command="{Binding OnAboutWindowCommand}" Header="About" />
+                                            <MenuItem Click="CloseWindow" Header="Exit" />
 
-										</MenuFlyout>
+                                        </MenuFlyout>
                                     </ToggleButton.Flyout>
 
                                 </ToggleButton>
@@ -420,69 +405,6 @@
                                                 Kind="Pencil" />
                                         </Grid>
                                     </Button>
-
-                                    <Border Height="55" DockPanel.Dock="Bottom">
-
-                                        <StackPanel Orientation="Horizontal">
-
-                                            <ToggleButton
-                                                Name="LibraryToggleButton"
-                                                Margin="6,6,6,0"
-                                                Padding="10,10,14,8"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Bottom"
-                                                Background="#1e1e1e"
-                                                BorderThickness="0"
-                                                Classes="MenuItem"
-                                                CornerRadius="6 6 0 0"
-                                                DockPanel.Dock="Bottom">
-                                                <ToggleButton.Styles>
-                                                    <Style Selector="ToggleButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                                                        <Setter Property="Background" Value="#3a344a" />
-                                                    </Style>
-                                                    <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-                                                        <Setter Property="Background" Value="#3a344a" />
-                                                    </Style>
-                                                </ToggleButton.Styles>
-                                                <DockPanel>
-                                                    <material:MaterialIcon
-                                                        DockPanel.Dock="Left"
-                                                        Foreground="#dedede"
-                                                        Kind="Bookshelf" />
-                                                    <TextBlock Text="Library" />
-                                                </DockPanel>
-                                            </ToggleButton>
-
-                                            <ToggleButton
-                                                Name="DesignerToggleButton"
-                                                Margin="0,6,6,0"
-                                                Padding="10,10,14,8"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Bottom"
-                                                Background="#1e1e1e"
-                                                BorderThickness="0"
-                                                Classes="MenuItem"
-                                                CornerRadius="6 6 0 0"
-                                                DockPanel.Dock="Bottom">
-                                                <ToggleButton.Styles>
-                                                    <Style Selector="ToggleButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                                                        <Setter Property="Background" Value="#3a344a" />
-                                                    </Style>
-                                                    <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-                                                        <Setter Property="Background" Value="#3a344a" />
-                                                    </Style>
-                                                </ToggleButton.Styles>
-                                                <DockPanel>
-                                                    <material:MaterialIcon
-                                                        DockPanel.Dock="Left"
-                                                        Foreground="#dedede"
-                                                        Kind="Paintbrush" />
-                                                    <TextBlock Text="Designer" />
-                                                </DockPanel>
-                                            </ToggleButton>
-                                        </StackPanel>
-
-                                    </Border>
 
                                     <!--<Border
                                         Height="1"
@@ -793,6 +715,84 @@
 
                     </DockPanel>
                 </Grid>
+                <!--  END the main grid  -->
+
+                <GridSplitter
+                    Grid.Row="1"
+                    Margin="0,0,0,-10"
+					Background="Transparent"
+                    HorizontalAlignment="Stretch"
+                    BorderThickness="10,10,10,10"
+                    ZIndex="9999" />
+
+                <Border
+                    Grid.Row="2"
+					VerticalAlignment="Stretch"
+					Margin="6,0"
+                    Padding="10"
+					Background="#3A576F"
+                    CornerRadius="6,6,6,0"
+                    DockPanel.Dock="Bottom">
+                    <Carousel BorderThickness="0" SelectedIndex="{Binding BottomLeftPanelSelectedTabIndex}">
+                        <library:LibraryView />
+                        <designer:DesignerView />
+                    </Carousel>
+                </Border>
+
+				<!--Docked toggle buttons-->
+				<Border Grid.Row="3">
+
+					<StackPanel Orientation="Horizontal">
+						<StackPanel.Styles>
+							<Style Selector="ToggleButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="#3a344a" />
+							</Style>
+							<Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+								<Setter Property="Background" Value="#3A576F" />
+								<Setter Property="CornerRadius" Value="0" />
+							</Style>
+						</StackPanel.Styles>
+
+						<ToggleButton
+                            Name="LibraryToggleButton"
+                            Margin="6,0,6,0"
+                            Padding="10,10,14,8"
+                            Background="#1e1e1e"
+                            BorderThickness="0"
+                            Classes="MenuItem"
+                            CornerRadius="6 6 0 0"
+                            DockPanel.Dock="Bottom">
+
+							<DockPanel>
+								<material:MaterialIcon
+                                    DockPanel.Dock="Left"
+                                    Foreground="#dedede"
+                                    Kind="Bookshelf" />
+								<TextBlock Text="Library" />
+							</DockPanel>
+						</ToggleButton>
+
+						<ToggleButton
+                            Name="DesignerToggleButton"
+                            Padding="10,10,14,8"
+                            Background="#1e1e1e"
+                            BorderThickness="0"
+                            Classes="MenuItem"
+                            CornerRadius="6 6 0 0"
+                            DockPanel.Dock="Bottom">
+							<DockPanel>
+								<material:MaterialIcon
+                                    DockPanel.Dock="Left"
+                                    Foreground="#dedede"
+                                    Kind="Paintbrush" />
+								<TextBlock Text="Designer" />
+							</DockPanel>
+						</ToggleButton>
+					</StackPanel>
+
+				</Border>
+
+                <!--  close root grid  -->
             </Grid>
 
             <Rectangle
