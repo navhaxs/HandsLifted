@@ -121,6 +121,8 @@ namespace HandsLiftedApp.Controls
                                if (control.Bounds.Top < scrollViewer.Offset.Y || control.Bounds.Top > (scrollViewer.Offset.Y + scrollViewer.Bounds.Height))
                                {
                                    scrollViewer.Offset = new Vector(0, control.Bounds.Top + 4);
+                                   scrollViewer.ScrollToEnd();
+                                   scrollViewer.Offset = new Vector(0, control.Bounds.Top + 4);
                                }
 
                                //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");

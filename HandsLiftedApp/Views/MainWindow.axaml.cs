@@ -280,6 +280,11 @@ namespace HandsLiftedApp.Views
             //MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
             mouseState = null;
         }
+        
+        private void OnGCCleanupClick(object? sender, RoutedEventArgs e)
+        {
+            GC.Collect();
+        }
 
         bool isLibraryVisible = false;
         GridLength lastLibraryContentGridLength = new GridLength(260);

@@ -3,9 +3,9 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:app="using:HandsLiftedApp"
+    xmlns:avaloniaconverters="using:Avalonia.Markup.Xaml.Converters"
     xmlns:behaviours="using:HandsLiftedApp.Behaviours"
     xmlns:controls="using:HandsLiftedApp.Controls"
-    xmlns:avaloniaconverters="using:Avalonia.Markup.Xaml.Converters"
     xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -20,8 +20,8 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-		<avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrush" />
-		<converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
+        <avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
         <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
         <converters:MultiplicationConverter x:Key="MultiplicationConverter" />
     </UserControl.Resources>
@@ -59,7 +59,7 @@
             </Viewbox>
             <Border
                 Margin="0,12,12,0"
-				Background="{Binding ItemGroupColour, Converter={StaticResource ColorToBrush}, FallbackValue='#7E282828'}"
+                Background="{Binding ItemGroupColour, Converter={StaticResource ColorToBrush}, FallbackValue='#7E282828'}"
                 BorderBrush="#9a93cd"
                 BorderThickness="0"
                 CornerRadius="4">
@@ -79,10 +79,18 @@
                         <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                     </ia:DataTriggerBehavior>
                 </i:Interaction.Behaviors>
-
+ 
                 <StackPanel Margin="0,0,0,0">
                     <!--<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">-->
                     <DockPanel>
+						<DockPanel.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="MoveUp" />
+								<MenuItem Header="MoveDown" />
+								<MenuItem Header="Replace" />
+								<MenuItem Header="Swap" />
+							</ContextMenu>
+						</DockPanel.ContextMenu>
                         <!--<item:ItemIcon Margin="12,0,8,0" DockPanel.Dock="Left"
 									   />-->
                         <Button
@@ -96,17 +104,6 @@
                             DockPanel.Dock="Right">
                             Edit
                         </Button>
-                        <Button
-                            Margin="6"
-                            Padding="22,6"
-                            Background="#242131"
-                            BorderBrush="#b3aed9"
-                            BorderThickness="1"
-                            Command="{Binding State.EditCommand}"
-                            CornerRadius="4"
-                            DockPanel.Dock="Right">
-                            Replace/Swap/MoveUp/MoveDown
-                        </Button>
                         <!--<Ellipse
 								IsVisible="{Binding State.IsSelected, FallbackValue=False}"
 								Width="8"
@@ -119,8 +116,8 @@
                             Padding="0"
                             VerticalAlignment="Center"
                             FontSize="20"
-							Foreground="White"
-							FontWeight="SemiBold"
+                            FontWeight="SemiBold"
+                            Foreground="White"
                             Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
                     </DockPanel>
                     <item:ItemInfo VerticalAlignment="Top" />
@@ -181,12 +178,10 @@
                         <controls:ListBoxWithoutKey.DataTemplates>
                             <utils:MyTemplateSelector>
                                 <DataTemplate x:Key="SongTitleSlide">
-									<Viewbox>
-										<views:DesignerSlideTitle
-                                            Width="1920"
-                                            Height="1080" />
-									</Viewbox>
-									<!--<TextBlock
+                                    <Viewbox>
+                                        <views:DesignerSlideTitle Width="1920" Height="1080" />
+                                    </Viewbox>
+                                    <!--<TextBlock
                                         FontWeight="SemiBold"
                                         Foreground="White"
                                         Text="{Binding Title}"
@@ -194,37 +189,38 @@
                                 </DataTemplate>
                                 <DataTemplate x:Key="SongSlide">
                                     <!--<Viewbox>
-										--><!--TODO: cache as image--><!--
+										-->
+                                    <!--  TODO: cache as image  -->
+                                    <!--
                                         <views:DesignerSlideTemplate
                                             Width="1920"
                                             Height="1080" />
                                     </Viewbox>-->
                                     <TextBlock
+                                        Height="9999"
+                                        VerticalAlignment="Top"
+                                        ClipToBounds="True"
                                         Foreground="White"
                                         Text="{Binding Text}"
-										Height="9999"
-										VerticalAlignment="Top"
-                                        TextTrimming="WordEllipsis"
-										ClipToBounds="True"
-										/>
+                                        TextTrimming="WordEllipsis" />
                                 </DataTemplate>
                                 <DataTemplate x:Key="ImageSlide">
                                     <controls:SlideThumbnail>
                                         <Grid>
-											<Image
+                                            <Image
                                                 RenderOptions.BitmapInterpolationMode="LowQuality"
                                                 Source="{Binding State.Thumbnail}"
                                                 Stretch="Uniform" />
-										</Grid>
+                                        </Grid>
                                     </controls:SlideThumbnail>
                                 </DataTemplate>
                                 <DataTemplate x:Key="VideoSlide">
                                     <controls:SlideThumbnail>
                                         <Grid>
-                                            <Image 
-											    RenderOptions.BitmapInterpolationMode="LowQuality"
-												Source="{Binding State.Thumbnail}" 
-												Stretch="Uniform" />
+                                            <Image
+                                                RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                Source="{Binding State.Thumbnail}"
+                                                Stretch="Uniform" />
                                         </Grid>
                                     </controls:SlideThumbnail>
                                     <!--<Border Padding="20">

@@ -30,7 +30,7 @@
 						<Setter Property="BorderBrush" Value="#9a93cd" />
 					</Style>
 					<Style Selector="Button:pointerover">
-						<Setter Property="Background" Value="#f6f4ff" />
+						<Setter Property="Background" Value="#5c3ab6" />
 						<Setter Property="BorderBrush" Value="#f6f4ff" />
 					</Style>
 					<Style Selector="MenuItem">

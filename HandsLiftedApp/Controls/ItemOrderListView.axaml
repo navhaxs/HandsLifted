@@ -53,12 +53,9 @@
             </Setter>
             <Setter Property="Padding" Value="0" />
             <Setter Property="FontSize" Value="13" />
-        </Style>
-
-        <Style Selector="ListBoxItem">
             <Setter Property="Margin" Value="0" />
-            <Setter Property="BorderThickness" Value="6 0 0 0" />
-            <Setter Property="CornerRadius" Value="0 6 6 0" />
+            <Setter Property="BorderThickness" Value="0 0 0 1" />
+            <Setter Property="CornerRadius" Value="0 0 0 0" />
             <Setter Property="(i:Interaction.Behaviors)">
                 <i:BehaviorCollectionTemplate>
                     <i:BehaviorCollection>
@@ -69,18 +66,18 @@
         </Style>
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="#4B9A93CD" />
-            <Setter Property="BorderBrush" Value="#6259A5" />
+            <Setter Property="Background" Value="Transparent" />
+			<Setter Property="FontWeight" Value="Bold" />
+            <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
 
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#72A8A8A8" />
-            <Setter Property="BorderBrush" Value="#72A8A8A8" />
+            <Setter Property="Background" Value="#C11F576F" />
+            <!--<Setter Property="BorderBrush" Value="#1f576f" />-->
         </Style>
 
         <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#839A93CD" />
-            <Setter Property="BorderBrush" Value="#6259A5" />
+            <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
 
         <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
@@ -90,7 +87,9 @@
     </UserControl.Styles>
 
     <Grid>
-        <ListBox
+		<ScrollViewer>
+			<ListBox
+				Margin="0,0,0,100"
             x:Name="itemsListBox"
 			CornerRadius="0,0,0,6"
             Background="Transparent"
@@ -112,7 +111,7 @@
             </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel VerticalAlignment="Stretch">
+                    <DockPanel VerticalAlignment="Stretch" Margin="6,0,0,0">
 
                         <Viewbox
                             Width="10"
@@ -139,9 +138,10 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+		</ScrollViewer>
 		<Button
 				Name="AddItemButton"
-				Margin="6,0,6,8"
+				Margin="6,0,6,12"
 				Padding="12"
 				VerticalAlignment="Bottom"
 				HorizontalAlignment="Right"
@@ -152,6 +152,7 @@
 				CornerRadius="6"
 				DockPanel.Dock="Bottom"
 				FontSize="14"
+				Cursor="Hand"
 				Foreground="White">
 			<Button.Styles>
 				<Style Selector="ScrollViewer">
@@ -160,6 +161,13 @@
 				<Style Selector="MenuItem">
 					<Setter Property="FontSize" Value="14" />
 					<Setter Property="Padding" Value="8 6" />
+				</Style>
+				<Style Selector="Button:pointerover /template/ ContentPresenter">
+					<Setter Property="Background" Value="#5C3AB6" />
+				</Style>
+				<Style Selector="Button:pressed /template/ ContentPresenter">
+					<Setter Property="BorderBrush" Value="#2c628b" />
+					<Setter Property="Background" Value="#5F5C2ED6" />
 				</Style>
 			</Button.Styles>
 			<Button.Effect>

@@ -16,7 +16,11 @@
 		</Style>
 
 		<Style Selector="Button:pointerover">
-			<Setter Property="Background" Value="#F9F7F7" />
+			<Setter Property="Background" Value="#5c3ab6" />
+		</Style>
+
+		<Style Selector="Button:pressed /template/ ContentPresenter">
+			<Setter Property="Background" Value="#3b2a69" />
 		</Style>
 
 		<Style Selector="Button:nth-child(1)">
