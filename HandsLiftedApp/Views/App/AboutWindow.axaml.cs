@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using NetOffice;
 using System;
 
 namespace HandsLiftedApp.Views.App

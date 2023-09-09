@@ -336,15 +336,7 @@ namespace HandsLiftedApp.Views
             {
                 e.Cancel = true;
 
-                this.FindControl<Control>("shade").IsVisible = true;
-
-                ExitConfirmationWindow w = new ExitConfirmationWindow() { parentWindow = this };
-                w.Closed += (object? sender, EventArgs e) =>
-                {
-                    this.FindControl<Control>("shade").IsVisible = false;
-                };
-
-                w.ShowDialog(this);
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new ExitConfirmationWindow() { parentWindow = this }));
             }
         }
 
