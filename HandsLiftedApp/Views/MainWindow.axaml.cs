@@ -325,10 +325,6 @@ namespace HandsLiftedApp.Views
         {
             MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
         }
-        private void OnDebugConsoleClick(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("test");
-        }
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
         {

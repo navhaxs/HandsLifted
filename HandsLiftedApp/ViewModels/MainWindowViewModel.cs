@@ -36,7 +36,6 @@ using static HandsLiftedApp.Importer.PowerPoint.Main;
 using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
 using HandsLiftedApp.Models.SlideDesigner;
-using HandsLiftedApp.Views.Debugging;
 using HandsLiftedApp.ViewModels.Editor;
 using System.Reactive.Disposables;
 using HandsLiftedApp.Models.WebsocketsEngine;
@@ -449,12 +448,6 @@ namespace HandsLiftedApp.ViewModels
         public void OnDebugClickCommand()
         {
             ObjectInspectorWindow p = new ObjectInspectorWindow() { DataContext = this };
-            p.Show();
-        }
-
-        public void OnDebugLoggerClickCommand()
-        {
-            LogViewerWindow p = new LogViewerWindow();
             p.Show();
         }
 

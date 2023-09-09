@@ -267,16 +267,14 @@
                                             <MenuItem Header="-" />
 
                                             <MenuItem Command="{Binding OnDebugClickCommand}" Header="Object Inspector" />
-                                            <MenuItem Command="{Binding OnDebugLoggerClickCommand}" Header="Debug Logs" />
 
-                                            <MenuItem Header="-" />
+											<MenuItem Header="-" />
 
-                                            <MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" />
-                                            <MenuItem Command="{Binding OnAboutWindowCommand}" Header="About" />
-                                            <MenuItem Click="CloseWindow" Header="Exit" />
-                                            <MenuItem Click="OnDebugConsoleClick" Header="Debug Logs" />
+											<MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" />
+											<MenuItem Command="{Binding OnAboutWindowCommand}" Header="About" />
+											<MenuItem Click="CloseWindow" Header="Exit" />
 
-                                        </MenuFlyout>
+										</MenuFlyout>
                                     </ToggleButton.Flyout>
 
                                 </ToggleButton>
