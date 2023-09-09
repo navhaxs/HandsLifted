@@ -141,7 +141,7 @@
 		</ScrollViewer>
 		<Button
 				Name="AddItemButton"
-				Margin="6,0,6,12"
+				Margin="6,0,6,8"
 				Padding="12"
 				VerticalAlignment="Bottom"
 				HorizontalAlignment="Right"
