@@ -64,12 +64,12 @@ namespace HandsLiftedApp.ViewModels
                 {
                     this.RaisePropertyChanged(nameof(CurrentTime));
 
-                    if (Debugger.IsAttached)
+                    if (Debugger.IsAttached && IsDisplayDebugInfo)
                     {
                         await Task.Delay(400);
 
                         // for debug stat #1
-                        long memory = GC.GetTotalMemory(true);
+                        long memory = GC.GetTotalMemory(false);
 
                         // for debug stat #2
                         Process currentProc = Process.GetCurrentProcess();
@@ -115,6 +115,9 @@ namespace HandsLiftedApp.ViewModels
         public IPageTransition? ActiveItemPageTransition { get => _activeItemPageTransition.Value; }
 
         public Library Library { get; } = new Library();
+
+        private bool _IsDisplayDebugInfo = true;
+        public bool IsDisplayDebugInfo { get => _IsDisplayDebugInfo; set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value); }
 
         public void LoadDemoSchedule()
         {

@@ -12,15 +12,18 @@ using Avalonia.Controls;
 using System;
 using Serilog;
 using LibMpv.Client;
+using HandsLiftedApp.Services.Bitmaps;
 
 namespace HandsLiftedApp
 {
     public static class Globals
     {
+        // note: these are public to be accessed from axaml bindings
         public static PreferencesViewModel Preferences;
         public static StageDisplayViewModel StageDisplay = new StageDisplayViewModel();
         public static Env Env;
         public static MpvContext GlobalMpvContextInstance;
+        public static BitmapLoadWorkerThread BitmapLoadWorkerThread;
 
         // note: this is initialized by App.axaml.cs on program start up
         public static void OnStartup(IApplicationLifetime applicationLifetime)
@@ -64,6 +67,8 @@ namespace HandsLiftedApp
                     Log.Fatal(ex, "LibMPV failed to initialize");
                 }
             }
+
+            BitmapLoadWorkerThread = new BitmapLoadWorkerThread();
         }
 
         private static void LoadEnv()

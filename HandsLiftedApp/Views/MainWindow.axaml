@@ -45,7 +45,12 @@
                     <CheckBox ClipToBounds="False" IsChecked="{Binding IsSidebarOpen}" />
                 </MenuItem.Icon>
             </MenuItem>
-			<MenuItem Header="ScrollToActiveItem" Click="OnScrollToItemClick" />
+            <MenuItem Header="IsDisplayDebugInfo">
+                <MenuItem.Icon>
+                    <CheckBox ClipToBounds="False" IsChecked="{Binding IsDisplayDebugInfo}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Click="OnScrollToItemClick" Header="ScrollToActiveItem" />
             <TextBox Text="{Binding BottomLeftPanelSelectedTabIndex}" />
             <DockPanel
                 Margin="0,0,18,0"
@@ -80,11 +85,18 @@
 
         <Grid>
 
-            <TextBlock
-                Margin="60,6,0,0"
-                Foreground="Red"
-                IsHitTestVisible="False"
-                Text="{Binding DebugInfoText}" />
+            <StackPanel Margin="60,6,0,0" Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBlock
+                    Foreground="Red"
+                    IsHitTestVisible="False"
+                    IsVisible="{Binding IsDisplayDebugInfo}"
+                    Text="{Binding DebugInfoText}" />
+                <Grid
+                    Width="20"
+                    Height="20"
+                    Background="Red"
+                    IsVisible="{Binding Source={x:Static approot:Globals.BitmapLoadWorkerThread}, Path=IsBusy}" />
+            </StackPanel>
 
             <Grid x:Name="DockedLibraryWrapper">
 
@@ -166,6 +178,7 @@
                                     IsVisible="{Binding !IsSidebarOpen}">
                                     <material:MaterialIcon Kind="DockRight" />
                                 </ToggleButton>
+
 
                                 <ToggleButton
                                     Name="AppMenuButton"
@@ -569,7 +582,8 @@
                                                     Grid.Column="1"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
-                                                    FontSize="15" Text="{Binding Playlist.State.SelectedSlideItemDisplayText}" />
+                                                    FontSize="15"
+                                                    Text="{Binding Playlist.State.SelectedSlideItemDisplayText}" />
                                                 <Button
                                                     Grid.Column="2"
                                                     HorizontalAlignment="Stretch"

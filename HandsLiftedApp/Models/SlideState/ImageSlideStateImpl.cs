@@ -1,13 +1,10 @@
 ﻿using Avalonia.Media.Imaging;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Services.Bitmaps;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
-using Serilog;
-using System;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
+using static HandsLiftedApp.Services.Bitmaps.BitmapLoadWorkerThread;
 
 namespace HandsLiftedApp.Models.SlideState
 {
@@ -15,95 +12,33 @@ namespace HandsLiftedApp.Models.SlideState
     {
         public ImageSlideStateImpl(ref ImageSlide<ImageSlideStateImpl> imageSlide) : base(ref imageSlide)
         {
-            // this runs on a separate bg thread (todo: with lock)?
-            Task.Run(() =>
-            {
-                // TODO optimise this in a separate thread
-                LoadThumbnail();
-                EnsureImageLoaded(); // HACK until XTransitioningControl reimplemented
-                //if (Monitor.TryEnter(loadImageLock)) {
-                //    try {
-                //    }
-                //    finally {
-                //        Monitor.Exit(loadImageLock);
-                //    }
-                //}
-            });
+            LoadImage();
         }
-
-        private static readonly object thumbnailLock = new object();
-        private static readonly object loadImageLock = new object();
 
         private const int IMAGE_WIDTH = 1920;
         private const int THUMBNAIL_WIDTH = 500;
+
+        public void LoadImage()
+        {
+            BitmapLoadWorkerThread.priorityQueue.Add(new BitmapLoadRequest() {  BitmapFilePath = _slide.ImagePath, Callback = (bitmap) => Image = bitmap });
+        }
 
         public void EnsureImageLoaded()
         {
             if (Image is not null)
             {
+                // TODO: force image reload if (hash of filpath+file.io last modified) has changed
                 return;
             }
 
-            //// skip if already running
             var path = _slide.ImagePath;
 
-            if (File.Exists(path))
-            {
-                using (Stream imageStream = File.OpenRead(path))
-                {
-                    Image = Bitmap.DecodeToWidth(imageStream, IMAGE_WIDTH);
-                }
-            }
-        }
-
-        public void LoadThumbnail()
-        {
-            //await mySemaphoreSlim.WaitAsync();
-            //if (Monitor.TryEnter(thumbnailLock))
-            //{
-                if (Thumbnail != null)
-                {
-                    return;
-                }
-
-                try
-                {
-                    // todo skip if already running
-                    var path = _slide.ImagePath;
-                    Debug.Print($"{RuntimeHelpers.GetHashCode(this)} Loading {path}");
-
-                    if (File.Exists(path))
-                    {
-                        // todo try catch below line:
-                        using (Stream imageStream = File.OpenRead(path))
-                        {
-                            try
-                            {
-                                // TODO should be using the BitmapLoader util
-                                // Also should be on separate thread
-                                Thumbnail = Bitmap.DecodeToWidth(imageStream, THUMBNAIL_WIDTH);
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Error($"Failed to decode image [{path}]");
-                            }
-                        }
-                    }
-
-                }
-                finally
-                {
-                    //Monitor.Exit(thumbnailLock);
-                }
-            //}
+            Image = BitmapUtils.LoadBitmap(path, IMAGE_WIDTH);
         }
 
         public string ImageName
         {
-            get
-            {
-                return Path.GetFileName(_slide.ImagePath);
-            }
+            get => Path.GetFileName(_slide.ImagePath);
         }
 
         // note: on low memory scenarios, this can be unloaded for the not currently-active slide
@@ -111,14 +46,16 @@ namespace HandsLiftedApp.Models.SlideState
         public Bitmap? Image
         {
             get => _image;
-            private set => this.RaiseAndSetIfChanged(ref _image, value);
+            private set
+            {
+                this.RaiseAndSetIfChanged(ref _image, value);
+                this.RaisePropertyChanged(nameof(Thumbnail));
+            }
         }
 
-        private Bitmap? _thumbnail = null;
         public Bitmap? Thumbnail
         {
-            get => _thumbnail;
-            private set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
+            get => _image;
         }
         public void OnSlideEnterEvent()
         {

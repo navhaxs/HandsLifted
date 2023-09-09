@@ -31,7 +31,8 @@ namespace HandsLiftedApp {
 
                 ExpressionTemplate OUTPUT_TEMPLATE = new ExpressionTemplate("[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
                 Log.Logger = new LoggerConfiguration()
-                       .MinimumLevel.Debug()
+                       //.MinimumLevel.Debug()
+                       .MinimumLevel.Verbose()
                        .Enrich.FromLogContext()
                        .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
                        .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
