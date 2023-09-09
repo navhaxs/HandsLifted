@@ -35,31 +35,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
             {
                 Children =
                 {
-                    new KeyFrame()
-                    {
-                        Setters =
-                        {
-                            new Setter
-                            {
-                                Property = Visual.OpacityProperty,
-                                Value = 1d
-                            }
-                        },
-                        Cue = new Cue(0.9d) // TODO in the XTransitioningControl, must always swap presenter2 and presenter at end of 1 transition cycle
-                    },
-                    new KeyFrame()
-                    {
-                        Setters =
-                        {
-                            new Setter
-                            {
-                                Property = Visual.OpacityProperty,
-                                Value = 0d
-                            }
-                        },
-                        Cue = new Cue(1d)
-                    }
-
                 }
             };
             _fadeInAnimation = new Animation
