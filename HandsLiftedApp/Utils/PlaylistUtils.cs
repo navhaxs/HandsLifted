@@ -77,7 +77,7 @@ namespace HandsLiftedApp.Utils
 
             SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
 
-            slidesGroup.Items.Add(fullPath);
+            slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath));
 
             return slidesGroup;
         }
@@ -211,13 +211,15 @@ namespace HandsLiftedApp.Utils
 
                     //Slide x = (f.EndsWith(".mp4")) ? new VideoSlide<VideoSlideStateImpl>(f) { Index = i } : new ImageSlide<ImageSlideStateImpl>(f) { Index = i };
 
+                    var s = PlaylistUtils.GenerateMediaContentSlide(f);
+
                     if (slidesGroup.Items.ElementAtOrDefault(i) == null)
                     {
-                        slidesGroup.Items.Add(f);
+                        slidesGroup.Items.Add(s);
                     }
                     else
                     {
-                        slidesGroup.Items[i] = f;
+                        slidesGroup.Items[i] = s;
                     }
 
                     i++;
@@ -244,17 +246,17 @@ namespace HandsLiftedApp.Utils
             //return slidesGroup;
         }
 
-        public static Slide GenerateMediaContentSlide(string filename, int index)
+        public static Slide GenerateMediaContentSlide(string filename) //, int index)
         {
             string _filename = filename.ToLower();
 
             // TODO: make VideoSlide and ImageSlide both share common MediaSlide parent class
             if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x)))
             {
-                return new VideoSlide<VideoSlideStateImpl>(filename) { Index = index };
+                return new VideoSlide<VideoSlideStateImpl>(filename); // { Index = index };
             }
 
-            return new ImageSlide<ImageSlideStateImpl>(filename) { Index = index };
+            return new ImageSlide<ImageSlideStateImpl>(filename); // { Index = index };
         }
 
         public static SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> CreateSong()

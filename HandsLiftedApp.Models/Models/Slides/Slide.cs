@@ -10,7 +10,8 @@ namespace HandsLiftedApp.Data.Slides
     {
 
         private int _index;
-        public int Index
+        [XmlIgnore]
+        public int Index // does this make sense here? or should all slides have a Slides[<wrapper: index+slide>]
         {
             get => _index; set
             {

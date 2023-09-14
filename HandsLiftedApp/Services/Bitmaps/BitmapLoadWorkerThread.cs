@@ -44,6 +44,7 @@ namespace HandsLiftedApp.Services.Bitmaps
                 // TODO: skip if not required (hash of filpath+file.io last modified OR already loaded)
                 var result = BitmapUtils.LoadBitmap(request.BitmapFilePath, 1920);
 
+                Thread.Sleep(200);
                 // return via callback
                 request.Callback(result);
 

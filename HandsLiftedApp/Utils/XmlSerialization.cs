@@ -30,7 +30,10 @@ namespace HandsLiftedApp.Utils
                       typeof(LogoItem<ItemStateImpl>),
                       typeof(SectionHeadingItem<ItemStateImpl>),
                       typeof(GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl>),
-                      typeof(PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>)
+                      typeof(PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>),
+                      //
+                      typeof(ImageSlide<ImageSlideStateImpl>),
+                      typeof(VideoSlide<VideoSlideStateImpl>),
                   };
 
         /// <summary>
@@ -49,6 +52,8 @@ namespace HandsLiftedApp.Utils
             {
                 var serializer = new XmlSerializer(typeof(T),
                     TYPES);
+                //var serializer = new XmlSerializer(typeof(T),
+                //    HandsLiftedApp.Data.Constants.Namespace);
 
                 var settings = new XmlWriterSettings
                 {
@@ -108,7 +113,10 @@ namespace HandsLiftedApp.Utils
                 using (XmlReader xmlReader = XmlReader.Create(stream, settings))
                 {
                     Log.Information($"Read XML {filePath}");
-                    return (T)serializer.Deserialize(xmlReader);
+                    var x = (T)serializer.Deserialize(xmlReader);
+                    Log.Information($"Read XML {filePath} DONE");
+
+                    return x;
                 }
             }
             catch (Exception e)

@@ -1,19 +1,29 @@
 ﻿using Avalonia.Media.Imaging;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
+using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Slides
 {
+    [XmlRoot(Namespace = Constants.Namespace)]
+    [Serializable]
     public class ImageSlide<T> : Slide, ISlideBitmapRender where T : IImageSlideState
     {
-        T _state;
+        private T _state;
+        [XmlIgnore]
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
-        public string ImagePath { get; set; }
+        private string _imagePath;
+        public string ImagePath { get => _imagePath; set => this.RaiseAndSetIfChanged(ref _imagePath, value); }
 
         public ImageSlide(string imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png")
         {
             ImagePath = imagePath;
+            State = (T)Activator.CreateInstance(typeof(T), this);
+        }
+
+        public ImageSlide()
+        {
             State = (T)Activator.CreateInstance(typeof(T), this);
         }
 
@@ -46,5 +56,4 @@ namespace HandsLiftedApp.Data.Slides
     public interface IImageSlideState : ISlideState {
         public Bitmap GetBitmap();
     }
-
 }

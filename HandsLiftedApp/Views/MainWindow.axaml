@@ -23,6 +23,7 @@
     Height="720"
     d:DesignHeight="650"
     d:DesignWidth="1200"
+    Background="{DynamicResource BackgroundBrush}"
     ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
     ExtendClientAreaTitleBarHeightHint="90"
     ExtendClientAreaToDecorationsHint="True"
@@ -35,11 +36,44 @@
     </Design.DataContext>
 
     <Window.Resources>
-        <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
+
+        <ResourceDictionary>
+            <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
+
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ControlBackgroundBrush">#ffffff</SolidColorBrush>
+                    <SolidColorBrush x:Key="BottomBackgroundBrush">#DEDEDE</SolidColorBrush>
+                    <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#eeeef2</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
+                    <SolidColorBrush x:Key="GridSplitterBrush">#deddec</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ControlBackgroundBrush">#121212</SolidColorBrush>
+                    <SolidColorBrush x:Key="BottomBackgroundBrush">#1e1e1e</SolidColorBrush>
+                    <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#444</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundBrush">White</SolidColorBrush>
+                    <SolidColorBrush x:Key="GridSplitterBrush">Black</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <Window.ContextMenu>
         <ContextMenu>
+            <ComboBox
+                x:Name="ThemeVariants"
+                HorizontalAlignment="Stretch"
+                DisplayMemberBinding="{Binding Key, x:DataType=ThemeVariant}"
+                SelectedIndex="0">
+                <ComboBox.Items>
+                    <ThemeVariant>Default</ThemeVariant>
+                    <ThemeVariant>Light</ThemeVariant>
+                    <ThemeVariant>Dark</ThemeVariant>
+                </ComboBox.Items>
+            </ComboBox>
             <MenuItem Header="IsSidebarOpen">
                 <MenuItem.Icon>
                     <CheckBox ClipToBounds="False" IsChecked="{Binding IsSidebarOpen}" />
@@ -179,21 +213,22 @@
                                     ClickMode="Press"
                                     DockPanel.Dock="Left"
                                     HotKey="Alt+M"
-                                    IsChecked="{Binding #flyout.IsOpen, Mode=TwoWay}">
+                                    IsChecked="{Binding #AppMenuFlyout.IsOpen, Mode=TwoWay}">
+
                                     <ToggleButton.Styles>
                                         <Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
                                             <Setter Property="Background" Value="#5c3ab6" />
                                         </Style>
                                         <Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
-                                            <!--<Setter Property="Background" Value="#9a93cd" />-->
-                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Background" Value="#9a93cd" />
+                                            <!--<Setter Property="Background" Value="Transparent" />-->
                                         </Style>
                                         <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
                                             <Setter Property="Background" Value="Transparent" />
                                         </Style>
-                                        <!--<Style Selector="ToggleButton:checked TextBlock">
-									<Setter Property="Foreground" Value="White" />
-								</Style>-->
+                                        <Style Selector="ToggleButton:checked TextBlock">
+                                            <Setter Property="Foreground" Value="White" />
+                                        </Style>
                                         <Style Selector="ToggleButton:pressed Border.AppButtonBorder">
                                             <Setter Property="Background" Value="#9a93cd" />
                                         </Style>
@@ -204,16 +239,6 @@
                                             <Setter Property="Foreground" Value="White" />
                                         </Style>
 
-
-                                        <Style Selector="MenuFlyoutPresenter">
-                                            <Setter Property="CornerRadius" Value="6" />
-                                            <Setter Property="BorderBrush" Value="#9a93cd" />
-                                            <Setter Property="Background" Value="#1d1d1d" />
-                                        </Style>
-                                        <Style Selector="MenuFlyoutPresenter MenuItem">
-                                            <Setter Property="Padding" Value="12 8" />
-                                            <Setter Property="FontSize" Value="14" />
-                                        </Style>
                                     </ToggleButton.Styles>
                                     <Border Classes="AppButtonBorder" CornerRadius="6">
                                         <material:MaterialIcon
@@ -222,47 +247,68 @@
                                             Margin="12,0"
                                             Kind="DotsHorizontal" />
                                     </Border>
-                                    <ToggleButton.Flyout>
-                                        <MenuFlyout Placement="BottomEdgeAlignedLeft">
-
-                                            <MenuItem Command="{Binding NewServiceCommand}" Header="New">
-                                                <MenuItem.Icon>
-                                                    <material:MaterialIcon Foreground="#888888" Kind="Shimmer" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-
-                                            <MenuItem Command="{Binding LoadServiceCommand}" Header="Load">
-                                                <MenuItem.Icon>
-                                                    <material:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-
-                                            <MenuItem Command="{Binding SaveServiceCommand}" Header="Save">
-                                                <MenuItem.Icon>
-                                                    <material:MaterialIcon Foreground="#888888" Kind="ContentSave" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-
-                                            <MenuItem Command="{Binding EditPlaylistInfoCommand}" Header="Rename">
-                                                <MenuItem.Icon>
-                                                    <material:MaterialIcon Foreground="#888888" Kind="Abc" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-
-                                            <MenuItem Header="-" />
-
-                                            <MenuItem Command="{Binding OnDebugClickCommand}" Header="Object Inspector" />
-
-                                            <MenuItem Header="-" />
-
-                                            <MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" />
-                                            <MenuItem Command="{Binding OnAboutWindowCommand}" Header="About" />
-                                            <MenuItem Click="CloseWindow" Header="Exit" />
-
-                                        </MenuFlyout>
-                                    </ToggleButton.Flyout>
-
                                 </ToggleButton>
+
+                                <Popup
+                                    Name="AppMenuFlyout"
+                                    IsLightDismissEnabled="True"
+                                    PlacementMode="BottomEdgeAlignedLeft"
+                                    PlacementTarget="{Binding #AppMenuButton}">
+                                    <ContextMenu>
+
+                                        <ContextMenu.Styles>
+
+                                            <Style Selector="ContextMenu">
+                                                <Setter Property="CornerRadius" Value="6" />
+                                                <Setter Property="BorderBrush" Value="#9a93cd" />
+                                                <Setter Property="Background" Value="#1d1d1d" />
+                                            </Style>
+                                            <Style Selector="MenuItem">
+                                                <Setter Property="Padding" Value="12 8" />
+                                                <Setter Property="FontSize" Value="14" />
+                                            </Style>
+
+                                        </ContextMenu.Styles>
+
+                                        <MenuItem Command="{Binding NewServiceCommand}" Header="New">
+                                            <MenuItem.Icon>
+                                                <material:MaterialIcon Foreground="#888888" Kind="Shimmer" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+
+                                        <MenuItem Command="{Binding LoadServiceCommand}" Header="Load">
+                                            <MenuItem.Icon>
+                                                <material:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+
+                                        <MenuItem Command="{Binding SaveServiceCommand}" Header="Save">
+                                            <MenuItem.Icon>
+                                                <material:MaterialIcon Foreground="#888888" Kind="ContentSave" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+
+                                        <MenuItem Command="{Binding EditPlaylistInfoCommand}" Header="Rename">
+                                            <MenuItem.Icon>
+                                                <material:MaterialIcon Foreground="#888888" Kind="Abc" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+
+                                        <MenuItem Header="-" />
+
+                                        <MenuItem
+                                            Command="{Binding OnDebugClickCommand}"
+                                            Header="Object Inspector"
+                                            IsVisible="{Binding IsDisplayDebugInfo}" />
+
+                                        <MenuItem Header="-" IsVisible="{Binding IsDisplayDebugInfo}" />
+
+                                        <MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" />
+                                        <MenuItem Command="{Binding OnAboutWindowCommand}" Header="About" />
+                                        <MenuItem Click="CloseWindow" Header="Exit" />
+
+                                    </ContextMenu>
+                                </Popup>
 
                                 <!--<ToggleButton
 								Name="EditTitleButton" VerticalAlignment="Center"
@@ -383,7 +429,7 @@
                                                 <TextBlock
                                                     FontSize="20"
                                                     FontWeight="Bold"
-                                                    Foreground="White"
+                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                     TextTrimming="CharacterEllipsis">
                                                     <TextBlock.Text>
                                                         <MultiBinding StringFormat="{}{0}">
@@ -395,7 +441,7 @@
                                                 </TextBlock>
                                                 <TextBlock
                                                     FontSize="20"
-                                                    Foreground="White"
+                                                    Foreground="{DynamicResource ForegroundBrush}"
                                                     Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}"
                                                     TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
@@ -457,14 +503,14 @@
                                             Height="50"
                                             Margin="6,0,6,6"
                                             Padding="10,5,10,5"
-                                            Background="#6F111111"
+                                            Background="{DynamicResource BottomBackgroundBrush}"
                                             CornerRadius="0,0,6,6"
                                             DockPanel.Dock="Bottom">
                                             <Grid>
                                                 <Grid.Styles>
                                                     <Style Selector="Button">
                                                         <Setter Property="BorderThickness" Value="0" />
-                                                        <Setter Property="Background" Value="#444" />
+                                                        <Setter Property="Background" Value="{DynamicResource SlideNavigationButtonBackgroundBrush}" />
                                                         <Setter Property="HorizontalAlignment" Value="Stretch" />
                                                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                                                         <Setter Property="Margin" Value="6 2" />
@@ -531,7 +577,7 @@
                                         <Border
                                             Margin="6,0,6,0"
                                             HorizontalAlignment="Stretch"
-                                            Background="#121212"
+                                            Background="{DynamicResource ControlBackgroundBrush}"
                                             CornerRadius="6,0,0,0">
 
                                             <controls:PlaylistSlidesView DataContext="{Binding Playlist}" />
@@ -549,7 +595,7 @@
                         Grid.Column="1"
                         Margin="-3,0"
                         HorizontalAlignment="Stretch"
-                        Background="Black"
+                        Background="{DynamicResource GridSplitterBrush}"
                         BorderBrush="Transparent"
                         BorderThickness="3,0"
                         ZIndex="9999" />
@@ -603,7 +649,7 @@
                                                 Padding="0"
                                                 VerticalAlignment="Bottom"
                                                 DockPanel.Dock="Right"
-                                                Foreground="White"
+                                                Foreground="{DynamicResource ForegroundBrush}"
                                                 Kind="ChevronRight" />
                                             <TextBlock VerticalAlignment="Bottom" Text="Live" />
                                         </DockPanel>
@@ -621,7 +667,7 @@
                             </DockPanel>
                         </Border>
 
-                        <Border Background="#282828">
+                        <Border Background="{DynamicResource BackgroundBrush}">
                             <DockPanel>
 
 
@@ -747,7 +793,7 @@
                 </Border>
 
                 <!--  Docked toggle buttons  -->
-                <Border Grid.Row="3" Background="#1e1e1e">
+                <Border Grid.Row="3" Background="{DynamicResource BottomBackgroundBrush}">
 
                     <DockPanel>
 
@@ -769,13 +815,16 @@
                                     <Setter Property="BorderBrush" Value="#337CB3" />
                                     <Setter Property="Background" Value="#3A576F" />
                                 </Style>
+                                <Style Selector="ToggleButton TextBlock">
+                                    <Setter Property="Margin" Value="6 0 0 0" />
+                                </Style>
                             </StackPanel.Styles>
 
                             <ToggleButton
                                 Name="LibraryToggleButton"
                                 Margin="6,0,6,0"
                                 Padding="10,10,14,8"
-                                Background="#1e1e1e"
+                                Background="Transparent"
                                 BorderThickness="0"
                                 Classes="MenuItem"
                                 DockPanel.Dock="Bottom">
@@ -783,7 +832,7 @@
                                 <DockPanel>
                                     <material:MaterialIcon
                                         DockPanel.Dock="Left"
-                                        Foreground="#dedede"
+                                        Foreground="{DynamicResource ForegroundBrush}"
                                         Kind="Bookshelf" />
                                     <TextBlock Text="Library" />
                                 </DockPanel>
@@ -792,14 +841,14 @@
                             <ToggleButton
                                 Name="DesignerToggleButton"
                                 Padding="10,10,14,8"
-                                Background="#1e1e1e"
+                                Background="Transparent"
                                 BorderThickness="0"
                                 Classes="MenuItem"
                                 DockPanel.Dock="Bottom">
                                 <DockPanel>
                                     <material:MaterialIcon
                                         DockPanel.Dock="Left"
-                                        Foreground="#dedede"
+                                        Foreground="{DynamicResource ForegroundBrush}"
                                         Kind="Paintbrush" />
                                     <TextBlock Text="Designer" />
                                 </DockPanel>

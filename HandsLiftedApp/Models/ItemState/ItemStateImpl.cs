@@ -120,10 +120,10 @@ namespace HandsLiftedApp.Models.ItemState
         private int _itemIndex;
         public int ItemIndex { get => _itemIndex; set => this.RaiseAndSetIfChanged(ref _itemIndex, value); }
 
-        public Slide GenerateSlideFromSource(string filename, int index)
-        {
-            return PlaylistUtils.GenerateMediaContentSlide(filename, index);
-        }
+        //public Slide GenerateSlideFromSource(string filename)
+        //{
+        //    return PlaylistUtils.GenerateMediaContentSlide(filename);
+        //}
 
         //private string? _test;
         //public string? Test { get => _test; set => this.RaiseAndSetIfChanged(ref _test, value); }

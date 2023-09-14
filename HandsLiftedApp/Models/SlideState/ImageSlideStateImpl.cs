@@ -3,8 +3,11 @@ using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Services.Bitmaps;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
+using System.Diagnostics;
 using System.IO;
 using static HandsLiftedApp.Services.Bitmaps.BitmapLoadWorkerThread;
+using System;
+using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Models.SlideState
 {
@@ -12,15 +15,29 @@ namespace HandsLiftedApp.Models.SlideState
     {
         public ImageSlideStateImpl(ref ImageSlide<ImageSlideStateImpl> imageSlide) : base(ref imageSlide)
         {
-            LoadImage();
+            //imageSlide.WhenAnyValue(p => p.ImagePath);
+            imageSlide.WhenAnyValue(p => p.ImagePath)
+            .Subscribe(_ =>
+            {
+                if (_ == null)
+                    return;
+                LoadImage(_);
+            });
         }
 
         private const int IMAGE_WIDTH = 1920;
         private const int THUMBNAIL_WIDTH = 500;
 
-        public void LoadImage()
+        public void LoadImage(string imagePath)
         {
-            BitmapLoadWorkerThread.priorityQueue.Add(new BitmapLoadRequest() {  BitmapFilePath = _slide.ImagePath, Callback = (bitmap) => Image = bitmap });
+            System.Action<Bitmap> value = (bitmap) => {
+                //if (Image != null)
+                //{
+                //    Debug.Print("Already set");
+                //}
+                Image = bitmap;
+            };
+            BitmapLoadWorkerThread.priorityQueue.Add(new BitmapLoadRequest() {  BitmapFilePath = imagePath, Callback = value });
         }
 
         public void EnsureImageLoaded()

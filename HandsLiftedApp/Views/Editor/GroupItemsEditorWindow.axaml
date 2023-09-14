@@ -9,18 +9,63 @@
     d:DesignHeight="650"
     d:DesignWidth="800"
     mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#edeafc</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#462C8D</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundBrush">White</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <DockPanel>
+        <Border
+            Background="{DynamicResource HeaderBackgroundBrush}"
+            BorderBrush="#aba5d5"
+            BorderThickness="0,0,0,1"
+            DockPanel.Dock="Top">
+            <DockPanel>
+                <TextBlock
+                    Padding="16,20,16,14"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="Editor" />
+            </DockPanel>
+        </Border>
+
         <ScrollViewer>
 
             <StackPanel>
                 <TextBox Text="{Binding Item.Title}" Watermark="GroupItem Title" />
-				<ColorPicker Color="{Binding Item.ItemGroupColour, FallbackValue='#3a344a'}" />
+                <ColorPicker Color="{Binding Item.ItemGroupColour, FallbackValue='#3a344a'}" />
 
-				<!--<Separator />
+                <!--<Separator />
                 <TextBlock>Add</TextBlock>
                 <Button>Add Item from single select</Button>
                 <Button>Add Items from multiselect</Button>
                 <Button>Add Items from folder</Button>-->
+                <Separator />
+                <Button Command="{Binding OpenFile}">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Width="24"
+                            Height="24"
+                            Margin="-4,-4,-4,-4"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Foreground="#888888"
+                            Kind="PlusCircleOutline" />
+                        <TextBlock
+                            Margin="12,0,0,0"
+                            Text="Add item" />
+                    </DockPanel>
+                </Button>
                 <Separator />
                 <TextBlock>Move</TextBlock>
                 <Button Command="{Binding MoveItemUp}">
@@ -38,7 +83,7 @@
                         </TextBlock>
                     </DockPanel>
                 </Button>
-				<Button Command="{Binding MoveItemDown}">
+                <Button Command="{Binding MoveItemDown}">
                     <DockPanel>
                         <material:MaterialIcon
                             Width="24"
@@ -70,9 +115,7 @@
                 <Separator />-->
                 <TextBlock>Edit</TextBlock>
                 <Button>Edit Item Info</Button>
-                <Button 
-					CommandParameter="{Binding #DataGrid_Slides.SelectedItems}"
-					Command="{Binding RemoveItem}">
+                <Button Command="{Binding RemoveItem}" CommandParameter="{Binding #DataGrid_Slides.SelectedItems}">
                     <DockPanel>
                         <material:MaterialIcon
                             Width="24"
@@ -85,9 +128,9 @@
                         <TextBlock>Remove Item</TextBlock>
                     </DockPanel>
                 </Button>
-				<Separator />
-				<Button Command="{Binding ExploreFile}">Show in Explorer</Button>
-				<!--<Separator />
+                <Separator />
+                <Button Command="{Binding ExploreFile}">Show in Explorer</Button>
+                <!--<Separator />
                 <Button>Toggle Item Visibility</Button>
                 <Separator />
                 <Button>Load XML</Button>
@@ -95,50 +138,11 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Border
-            Background="#edeafc"
-            BorderBrush="#aba5d5"
-            BorderThickness="0,0,0,1"
-            DockPanel.Dock="Top">
-            <DockPanel>
-                <Button
-					Command="{Binding OpenFile}"
-                    MinWidth="80"
-                    Margin="8,0"
-                    Padding="24,14"
-                    VerticalAlignment="Bottom"
-                    Background="White"
-                    BorderBrush="#aba5d5"
-                    BorderThickness="1,1,1,0"
-                    CornerRadius="5 5 0 0"
-                    DockPanel.Dock="Left">
-                    <DockPanel>
-                        <material:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Margin="-4,-4,-4,-4"
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Foreground="#888888"
-                            Kind="PlusCircleOutline" />
-                        <TextBlock
-                            Margin="12,0,0,0"
-                            FontSize="14"
-                            Text="Add item" />
-                    </DockPanel>
-                </Button>
-                <TextBlock
-                    Padding="16,20,16,14"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="Editor" />
-            </DockPanel>
-        </Border>
-        <ListBox Name="DataGrid_Items" ItemsSource="{Binding Item.Items, Mode=TwoWay}" />
+
         <DataGrid
-            Name="DataGrid_Slides"
+            Name="DataGrid_Items"
             AutoGenerateColumns="True"
-			SelectedIndex="{Binding SelectedIndex}"
-            ItemsSource="{Binding Item.Slides, Mode=TwoWay}" />
+            ItemsSource="{Binding Item.Items, Mode=TwoWay}"
+            SelectedIndex="{Binding SelectedIndex}" />
     </DockPanel>
 </Window>

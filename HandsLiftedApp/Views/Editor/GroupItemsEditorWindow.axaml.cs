@@ -1,10 +1,5 @@
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using static HandsLiftedApp.Models.ItemState.ItemStateImpl;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Avalonia;
-using System.Collections;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.ItemExtensionState;
@@ -26,6 +21,10 @@ namespace HandsLiftedApp.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+
+            if (Design.IsDesignMode)
+                return;
+
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
             this.DataContextChanged += GroupItemsEditorWindow_DataContextChanged;

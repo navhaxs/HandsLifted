@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Models.AppState;
@@ -163,8 +164,8 @@ namespace HandsLiftedApp.Views
             PlaylistTitleButton.DoubleTapped += PlaylistTitleButton_DoubleTapped;
             PlaylistTitleButton.Click += PlaylistTitleButton_Click;
 
-            SidebarGridSplitter.DragDelta += SidebarGridSplitter_DragDelta;
-            SidebarGridSplitter.DragCompleted += SidebarGridSplitter_DragCompleted;
+            //SidebarGridSplitter.DragDelta += SidebarGridSplitter_DragDelta;
+            //SidebarGridSplitter.DragCompleted += SidebarGridSplitter_DragCompleted;
 
             log.Information("MainWindow initialized");
 
@@ -179,6 +180,16 @@ namespace HandsLiftedApp.Views
                                 });
                     }
                 };
+
+            var themeVariants = this.Get<ComboBox>("ThemeVariants");
+            themeVariants.SelectedItem = Application.Current!.RequestedThemeVariant;
+            themeVariants.SelectionChanged += (sender, e) =>
+            {
+                if (themeVariants.SelectedItem is ThemeVariant themeVariant)
+                {
+                    Application.Current!.RequestedThemeVariant = themeVariant;
+                }
+            };
         }
 
         private void ToggleBottomPanel(bool forceVisible = false)

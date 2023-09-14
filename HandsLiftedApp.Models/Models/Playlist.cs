@@ -16,6 +16,9 @@ namespace HandsLiftedApp.Data.Models
     [XmlInclude(typeof(SlidesGroupItem<IItemState, IItemAutoAdvanceTimerState>))]
     [XmlInclude(typeof(GoogleSlidesGroupItem<IItemState, IItemAutoAdvanceTimerState, IGoogleSlidesGroupItemState>))]
     [XmlInclude(typeof(PowerPointSlidesGroupItem<IItemState, IItemAutoAdvanceTimerState, IPowerPointSlidesGroupItemState>))]
+    //
+    [XmlInclude(typeof(ImageSlide<IImageSlideState>))]
+    [XmlInclude(typeof(VideoSlide<IVideoSlideState>))]
     [Serializable]
     public class Playlist<T, I> : ReactiveObject where T : IPlaylistState where I : IItemState
     {

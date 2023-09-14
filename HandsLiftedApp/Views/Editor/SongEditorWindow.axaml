@@ -57,20 +57,31 @@
     </Window.Resources>
 
     <DockPanel>
-        <DockPanel DockPanel.Dock="Top" Margin="16 16 16 0">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left">
-                    <TextBlock Text="Import" />
-                </ToggleButton>
-                <Button Content="Load" DockPanel.Dock="Left" />
-                <Button Content="Save" DockPanel.Dock="Left" />
-                <Button Content="Reset Arrangement" DockPanel.Dock="Left" />
-            </StackPanel>
-            <TextBlock
-                Padding="6"
-                FontSize="22"
-                Text="Song Editor" />
-        </DockPanel>
+		<Grid DockPanel.Dock="Top" Background="#583092">
+			<DockPanel Margin="16 6 16 8">
+				
+				<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+					<ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left">
+						<TextBlock Text="Import" />
+					</ToggleButton>
+					<Button Content="Load" DockPanel.Dock="Left" />
+					<Button Content="Save" DockPanel.Dock="Left" />
+					<Button Content="Reset Arrangement" DockPanel.Dock="Left" />
+				</StackPanel>
+				<TextBlock
+					Padding="6"
+					FontSize="22"
+					Text="Song Editor" />
+			</DockPanel>
+
+			<Grid.Effect>
+				<DropShadowEffect
+                    BlurRadius="6"
+                    OffsetX="0"
+                    OffsetY="1"
+                    Color="#55000000" />
+			</Grid.Effect>
+        </Grid>
 
         <!--<Menu DockPanel.Dock="Top">
             <MenuItem Name="btnGetWavHeader" Header="Import TXT" />

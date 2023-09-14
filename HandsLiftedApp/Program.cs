@@ -26,8 +26,8 @@ namespace HandsLiftedApp {
             try
             {
                 ConsoleUtils.AllocConsole();
-                var myWriter = new ConsoleTraceListener();
-                Trace.Listeners.Add(myWriter);
+                //var myWriter = new ConsoleTraceListener();
+                //Trace.Listeners.Add(myWriter);
 
                 ExpressionTemplate OUTPUT_TEMPLATE = new ExpressionTemplate("[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
                 Log.Logger = new LoggerConfiguration()
@@ -43,6 +43,8 @@ namespace HandsLiftedApp {
 
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                 TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+
+                Trace.Listeners.Add(new ConsoleTraceListener());
 
                 // Windows-only
                 // https://stackoverflow.com/a/646500/
@@ -71,6 +73,12 @@ namespace HandsLiftedApp {
             {
                 // globally handle uncaught exceptions end up here
                 Log.Fatal(e, "Global fatal exception. Please report this error.");
+
+                Debugger.Launch();
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
 
                 // TODO UI here
             }

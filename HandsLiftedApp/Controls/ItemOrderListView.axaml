@@ -126,7 +126,6 @@
                         <TextBlock
                             Padding="0,8,0,8"
                             FontSize="13"
-                            Foreground="White"
                             TextTrimming="CharacterEllipsis">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">

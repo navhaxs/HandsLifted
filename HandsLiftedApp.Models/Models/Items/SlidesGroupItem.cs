@@ -2,16 +2,20 @@
 using DynamicData.Binding;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
+using Serilog;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
-    // TODO: need to define list of media, rather than Slide ??? for serialization
     //[XmlType(TypeName = "SlidesGroupItemX")]
     [XmlRoot("SlidesGroupItem", Namespace = Constants.Namespace, IsNullable = false)]
-
+    //
+    // TODO: need to define list of media, rather than Slide ??? for serialization
+    [XmlInclude(typeof(ImageSlide<IImageSlideState>))]
+    [XmlInclude(typeof(VideoSlide<IVideoSlideState>))]
+    [Serializable]
     public class SlidesGroupItem<I, J> : Item<I> where I : IItemState where J : IItemAutoAdvanceTimerState
     {
         private J _timerState;
@@ -21,83 +25,23 @@ namespace HandsLiftedApp.Data.Models.Items
         public SlidesGroupItem()
         {
             TimerState = (J)Activator.CreateInstance(typeof(J), this);
-
-            //_slides = this.WhenAnyValue(x => x.Items,
-            //(ObservableCollection<string> items) => generateObservableCollectionFromList(items.Select((item, index) => generateSlideFromItem(item, index))))
-            //.ToProperty(this, c => c.Slides);
-
-
-
-            // Observe any changes in the observable collection.
-            // Note that the property has no public setters, so we 
-            // assume the collection is mutated by using the Add(), 
-            // Delete(), Clear() and other similar methods.
-            this.Items.CollectionChanged += Items_CollectionChanged;
-                // Convert the collection to a stream of chunks,
-                // so we have IObservable<IChangeSet<TKey, TValue>>
-                // type also known as the DynamicData monad.
-                //.ToObservableChangeSet(x => x)
-                //// Each time the collection changes, we get
-                //// all updated items at once.
-                //.ToCollection()
-                //// If the collection isn't empty, we access the
-                //// first element and check if it is an empty string.
-                ////.Select(items =>
-
-                ////    items.Any() &&
-                ////    !string.IsNullOrWhiteSpace(items.First()))
-                //.Select(items => items.Select((item, index) => generateSlideFromItem(item, index)))
-                //.ToProperty(this, c => c._slides);
-                // Then, we convert the boolean value to the
-                // property. When the first string in the
-                // collection isn't empty, Easy will be set
-                // to True, otherwise to False.
-                //.ToPropertyEx(this, x => x.Slides);
-            //_Slides.CollectionChanged += (s, x) =>
-            //{
-            //    this.RaisePropertyChanged(nameof(Slides));
-            //};
         }
-
-        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            _slides = new ObservableCollection<Slide>(Items.Select((item, index) => generateSlideFromItem(item, index)));
-            this.RaisePropertyChanged("Items");
-            this.RaisePropertyChanged("Slides");
-        }
-
-        private Slide generateSlideFromItem(string filename, int index) { return State.GenerateSlideFromSource(filename, index); }
-        private ObservableCollection<Slide> generateObservableCollectionFromList(IEnumerable<Slide> slides) => new ObservableCollection<Slide>(slides);
 
         // this should be a data type for the XML
         // that is the list of slide media items <by type... video song custom etc>
         [XmlIgnore]
-        public ObservableCollection<string> _items = new ObservableCollection<string>();
-        public ObservableCollection<string> Items { get => _items; set => this.RaiseAndSetIfChanged(ref _items, value); }
-
-        private ObservableCollection<Slide> _slides = new ObservableCollection<Slide>();
-
-        //[XmlIgnore] // TODO
-        //public ObservableCollection<Slide> _slides = new ObservableCollection<Slide>();
-        //{
-        //    get => _internal_slides; set
-        //    {
-        //        this.RaiseAndSetIfChanged(ref _internal_slides, value);
-        //        this.RaisePropertyChanged(nameof(Slides));
-        //        _internal_slides.CollectionChanged += (s, x) =>
-        //        {
-        //            this.RaisePropertyChanged(nameof(_Slides));
-        //            this.RaisePropertyChanged(nameof(Slides));
-        //        };
-        //    }
-        //}
-        //private ObservableAsPropertyHelper<ObservableCollection<Slide>> _slides;
+        public ObservableCollection<Slide> _items = new ObservableCollection<Slide>();
+        public ObservableCollection<Slide> Items { get => _items; set => this.RaiseAndSetIfChanged(ref _items, value); }
 
         [XmlIgnore]
-        public override ObservableCollection<Slide> Slides { get => _slides; }
-        //get => _slides.Value; }
+        public override ObservableCollection<Slide> Slides => _items;
+        ///new ObservableCollection<Slide>(_items.Select((item, index) => {
+        //    item.Index = index;
+        //    return item;
+        //}));
 
         private bool _IsLooping = false;
+
         /// <summary>
         /// Loop back to the first slide of the item once reaching the end 
         /// </summary>

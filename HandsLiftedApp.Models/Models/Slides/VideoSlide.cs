@@ -1,13 +1,18 @@
 ﻿using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
 using Serilog;
+using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Slides
 {
+    [XmlRoot(Namespace = Constants.Namespace)]
+    [Serializable]
     public class VideoSlide<T> : Slide, IDynamicSlideRender where T : IVideoSlideState
     {
-        public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
         T _state;
+
+        [XmlIgnore]
+        public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
         public string VideoPath { get => _videoPath; set => this.RaiseAndSetIfChanged(ref _videoPath, value); }
         private string _videoPath;
@@ -27,6 +32,19 @@ namespace HandsLiftedApp.Data.Slides
         public VideoSlide(String videoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4")
         {
             VideoPath = videoPath;
+
+            try
+            {
+                State = (T)Activator.CreateInstance(typeof(T), this);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
+        }
+
+        public VideoSlide()
+        {
 
             try
             {

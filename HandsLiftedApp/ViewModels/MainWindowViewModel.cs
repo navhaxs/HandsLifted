@@ -613,7 +613,7 @@ namespace HandsLiftedApp.ViewModels
                         MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                     });
 
-                    slidesGroup.Items.Add(fullPath);
+                    slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath));
                 }
             }
             catch (Exception e)
@@ -647,7 +647,7 @@ namespace HandsLiftedApp.ViewModels
                         MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                     });
 
-                    slidesGroup.Items.Add(fullPath);
+                    slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath));
                 }
             }
             catch (Exception e)
@@ -792,7 +792,9 @@ namespace HandsLiftedApp.ViewModels
 
         void OnLoadService()
         {
+            Log.Debug("Loading test service.xml");
             Playlist = XmlSerialization.ReadFromXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH);
+            Log.Debug("Loading test service.xml DONE");
 
             // TODO: workaround to fixup data structure after loading from XML
             foreach (var i in Playlist.Items)

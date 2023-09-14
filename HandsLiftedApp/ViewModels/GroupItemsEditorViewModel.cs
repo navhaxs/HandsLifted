@@ -11,6 +11,7 @@ using HandsLiftedApp.Data.Slides;
 using System.Linq;
 using System.Collections;
 using System;
+using HandsLiftedApp.Models.SlideState;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -61,7 +62,8 @@ namespace HandsLiftedApp.ViewModels
                     //    if (slidesGroupItem != null)
                     //        addedItems.Add(slidesGroupItem);
                     //}
-                    Item.Items.Add(fileName);
+                    var x = PlaylistUtils.GenerateMediaContentSlide(fileName);
+                    Item.Items.Add(x);
                 }
             }
             catch (System.Exception e)
@@ -116,7 +118,16 @@ namespace HandsLiftedApp.ViewModels
        private async Task ExploreFileAsync()
         {
             if (SelectedIndex > -1)
-                FileUtils.ExploreFile(Item.Items[SelectedIndex]);
+            {
+                if (Item.Items[SelectedIndex] is ImageSlide<ImageSlideStateImpl> imageSlide)
+                {
+                    FileUtils.ExploreFile(imageSlide.ImagePath);
+                }
+                else if (Item.Items[SelectedIndex] is VideoSlide<VideoSlideStateImpl> videoSlide)
+                {
+                    FileUtils.ExploreFile(videoSlide.VideoPath);
+                }
+            }
         }
 
         private void MoveItem(int sourceIndex, int nextIndex)
