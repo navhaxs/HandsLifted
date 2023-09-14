@@ -37,12 +37,10 @@
                     <viewsrender:ImageRenderer />
                 </DataTemplate>
                 <DataTemplate x:Key="LogoSlide">
-                    <Grid Background="#b7d1d8">
-                        <Image
-                            RenderOptions.BitmapInterpolationMode="HighQuality"
-                            Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
-                            Stretch="Uniform" />
-                    </Grid>
+                    <Image
+                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                        Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
+                        Stretch="Uniform" />
                 </DataTemplate>
                 <DataTemplate x:Key="VideoSlide">
                     <Grid>

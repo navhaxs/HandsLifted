@@ -7,19 +7,15 @@ namespace HandsLiftedApp.Data.Slides
 {
     [XmlRoot(Namespace = Constants.Namespace)]
     [Serializable]
-    public class ImageSlide<T> : Slide, ISlideBitmapRender where T : IImageSlideState
+    public class ImageSlide<T> : MediaSlide, ISlideBitmapRender where T : IImageSlideState
     {
         private T _state;
         [XmlIgnore]
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
 
-        private string _imagePath;
-        public string ImagePath { get => _imagePath; set => this.RaiseAndSetIfChanged(ref _imagePath, value); }
-
-        public ImageSlide(string imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png")
+        public ImageSlide(string imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png") : this()
         {
-            ImagePath = imagePath;
-            State = (T)Activator.CreateInstance(typeof(T), this);
+            SourceMediaPath = imagePath;
         }
 
         public ImageSlide()
@@ -29,7 +25,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public override string? SlideText => null;
 
-        public override string? SlideLabel => Path.GetFileName(ImagePath);
+        public override string? SlideLabel => Path.GetFileName(SourceMediaPath);
 
         public override void OnPreloadSlide()
         {

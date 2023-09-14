@@ -4,6 +4,7 @@ using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using Serilog;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 
@@ -24,17 +25,36 @@ namespace HandsLiftedApp.Data.Models.Items
 
         public SlidesGroupItem()
         {
+            _items.CollectionChanged += _items_CollectionChanged;
+
             TimerState = (J)Activator.CreateInstance(typeof(J), this);
         }
 
         // this should be a data type for the XML
         // that is the list of slide media items <by type... video song custom etc>
         [XmlIgnore]
-        public ObservableCollection<Slide> _items = new ObservableCollection<Slide>();
-        public ObservableCollection<Slide> Items { get => _items; set => this.RaiseAndSetIfChanged(ref _items, value); }
+        public TrulyObservableCollection<MediaSlide> _items = new TrulyObservableCollection<MediaSlide>();
+        public TrulyObservableCollection<MediaSlide> Items { get => _items; set
+            {
+                this.RaiseAndSetIfChanged(ref _items, value);
+                _items.CollectionChanged += _items_CollectionChanged;
+                this.RaisePropertyChanged(nameof(Slides));
+            }
+        }
+
+        private void _items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.RaisePropertyChanged(nameof(Items));
+            this.RaisePropertyChanged(nameof(Slides));
+        }
 
         [XmlIgnore]
-        public override ObservableCollection<Slide> Slides => _items;
+        public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>(_items.Select((item, index) =>
+        {
+            item.Index = index;
+            return item;
+        }));
+
         ///new ObservableCollection<Slide>(_items.Select((item, index) => {
         //    item.Index = index;
         //    return item;

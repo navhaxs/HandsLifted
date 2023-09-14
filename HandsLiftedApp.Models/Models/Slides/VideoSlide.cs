@@ -7,15 +7,12 @@ namespace HandsLiftedApp.Data.Slides
 {
     [XmlRoot(Namespace = Constants.Namespace)]
     [Serializable]
-    public class VideoSlide<T> : Slide, IDynamicSlideRender where T : IVideoSlideState
+    public class VideoSlide<T> : MediaSlide, IDynamicSlideRender where T : IVideoSlideState
     {
         T _state;
 
         [XmlIgnore]
         public T State { get => _state; set => this.RaiseAndSetIfChanged(ref _state, value); }
-
-        public string VideoPath { get => _videoPath; set => this.RaiseAndSetIfChanged(ref _videoPath, value); }
-        private string _videoPath;
 
         /// <summary>
         /// Loop the playback of this video item
@@ -29,18 +26,9 @@ namespace HandsLiftedApp.Data.Slides
         public bool IsMute { get => _isMute; set => this.RaiseAndSetIfChanged(ref _isMute, value); }
         private bool _isMute = false;
 
-        public VideoSlide(String videoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4")
+        public VideoSlide(String videoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4") : this()
         {
-            VideoPath = videoPath;
-
-            try
-            {
-                State = (T)Activator.CreateInstance(typeof(T), this);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-            }
+            SourceMediaPath = videoPath;
         }
 
         public VideoSlide()
@@ -58,7 +46,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public override string? SlideText => null;
 
-        public override string? SlideLabel => Path.GetFileName(VideoPath);
+        public override string? SlideLabel => Path.GetFileName(SourceMediaPath);
 
         public override void OnEnterSlide()
         {
@@ -77,5 +65,4 @@ namespace HandsLiftedApp.Data.Slides
     public interface IVideoSlideState : ISlideState
     {
     }
-
 }

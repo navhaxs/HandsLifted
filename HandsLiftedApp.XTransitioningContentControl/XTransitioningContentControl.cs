@@ -64,6 +64,9 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     var from = _isFirstFull ? _presenter2 : presenter;
                     var to = _isFirstFull ? presenter : _presenter2;
 
+                    from.ZIndex = 0;
+                    to.ZIndex = 1;
+
                     transition.Start(from, to, true, cancel.Token).ContinueWith(x =>
                     {
                         if (!cancel.IsCancellationRequested)

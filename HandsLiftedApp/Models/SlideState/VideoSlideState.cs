@@ -50,7 +50,7 @@ namespace HandsLiftedApp.Models.SlideState
             Context = Globals.GlobalMpvContextInstance;
             
             parentVideoSlide = videoSlide;
-            VideoPath = videoSlide.VideoPath;
+            VideoPath = videoSlide.SourceMediaPath;
             
             // Register propertyes for observation
             foreach (var observableProperty in observableProperties)

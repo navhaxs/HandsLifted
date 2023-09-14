@@ -121,11 +121,11 @@ namespace HandsLiftedApp.ViewModels
             {
                 if (Item.Items[SelectedIndex] is ImageSlide<ImageSlideStateImpl> imageSlide)
                 {
-                    FileUtils.ExploreFile(imageSlide.ImagePath);
+                    FileUtils.ExploreFile(imageSlide.SourceMediaPath);
                 }
                 else if (Item.Items[SelectedIndex] is VideoSlide<VideoSlideStateImpl> videoSlide)
                 {
-                    FileUtils.ExploreFile(videoSlide.VideoPath);
+                    FileUtils.ExploreFile(videoSlide.SourceMediaPath);
                 }
             }
         }

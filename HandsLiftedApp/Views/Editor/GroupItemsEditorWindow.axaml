@@ -115,7 +115,7 @@
                 <Separator />-->
                 <TextBlock>Edit</TextBlock>
                 <Button>Edit Item Info</Button>
-                <Button Command="{Binding RemoveItem}" CommandParameter="{Binding #DataGrid_Slides.SelectedItems}">
+                <Button Command="{Binding RemoveItem}" CommandParameter="{Binding #DataGrid_Items.SelectedItems}">
                     <DockPanel>
                         <material:MaterialIcon
                             Width="24"
@@ -141,8 +141,19 @@
 
         <DataGrid
             Name="DataGrid_Items"
-            AutoGenerateColumns="True"
+            AutoGenerateColumns="False"
             ItemsSource="{Binding Item.Items, Mode=TwoWay}"
-            SelectedIndex="{Binding SelectedIndex}" />
+            SelectedIndex="{Binding SelectedIndex}">
+			<DataGrid.Columns>
+				<DataGridTemplateColumn Header="Image">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Image Source="{Binding State.Image}" Height="64"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn Header="SourceMediaPath" Binding="{Binding SourceMediaPath}"/>
+			</DataGrid.Columns>
+        </DataGrid>
     </DockPanel>
 </Window>

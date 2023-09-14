@@ -246,7 +246,7 @@ namespace HandsLiftedApp.Utils
             //return slidesGroup;
         }
 
-        public static Slide GenerateMediaContentSlide(string filename) //, int index)
+        public static MediaSlide GenerateMediaContentSlide(string filename) //, int index)
         {
             string _filename = filename.ToLower();
 

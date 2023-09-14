@@ -16,7 +16,7 @@ namespace HandsLiftedApp.Models.SlideState
         public ImageSlideStateImpl(ref ImageSlide<ImageSlideStateImpl> imageSlide) : base(ref imageSlide)
         {
             //imageSlide.WhenAnyValue(p => p.ImagePath);
-            imageSlide.WhenAnyValue(p => p.ImagePath)
+            imageSlide.WhenAnyValue(p => p.SourceMediaPath)
             .Subscribe(_ =>
             {
                 if (_ == null)
@@ -48,14 +48,14 @@ namespace HandsLiftedApp.Models.SlideState
                 return;
             }
 
-            var path = _slide.ImagePath;
+            var path = _slide.SourceMediaPath;
 
             Image = BitmapUtils.LoadBitmap(path, IMAGE_WIDTH);
         }
 
         public string ImageName
         {
-            get => Path.GetFileName(_slide.ImagePath);
+            get => Path.GetFileName(_slide.SourceMediaPath);
         }
 
         // note: on low memory scenarios, this can be unloaded for the not currently-active slide

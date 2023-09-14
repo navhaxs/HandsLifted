@@ -102,10 +102,10 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     disposables.Add(to.SetValue(Visual.OpacityProperty, 0, Avalonia.Data.BindingPriority.Animation)!);
                 }
 
-                if (from != null)
-                {
-                    tasks.Add(_fadeOutAnimation.RunAsync(from, cancellationToken));
-                }
+                //if (from != null)
+                //{
+                //    tasks.Add(_fadeOutAnimation.RunAsync(from, cancellationToken));
+                //}
 
                 if (to != null)
                 {

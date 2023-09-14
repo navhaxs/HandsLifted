@@ -69,7 +69,7 @@ namespace HandsLiftedApp.Views.Render
                         if (_isMounted)
                         {
                             // only run if slide still active
-                            Globals.GlobalMpvContextInstance.Command("loadfile", videoSlide.VideoPath, "replace");
+                            Globals.GlobalMpvContextInstance.Command("loadfile", videoSlide.SourceMediaPath, "replace");
                             Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", false);
                         }
 
