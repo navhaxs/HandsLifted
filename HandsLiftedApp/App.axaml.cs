@@ -6,6 +6,7 @@ using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.Views;
 using ReactiveUI;
+using System.Diagnostics;
 
 namespace HandsLiftedApp
 {
@@ -38,6 +39,12 @@ namespace HandsLiftedApp
                     DataContext = mainWindowViewModel,
                 };
             }
+
+            if (Debugger.IsAttached)
+            {
+                TestModeApp.RunSongEditorWindow();
+            }
+
             base.OnFrameworkInitializationCompleted();
         }
     }

@@ -29,7 +29,6 @@
 
             <Flyout x:Key="MySharedFlyout" Placement="BottomEdgeAlignedLeft">
                 <StackPanel Margin="6">
-                    <TextBlock Padding="8,0" FontSize="16">Add item</TextBlock>
                     <ItemsControl
                         MinWidth="150"
                         MinHeight="20"
@@ -50,6 +49,7 @@
                                     Content="{Binding Name}"
                                     Foreground="Black"
                                     ToolTip.ShowDelay="0"
+									Click="OnAddPartClick"
                                     ToolTip.Tip="{Binding Lyrics}">
                                     <Button.Styles>
                                         <Style Selector="ToolTip">
@@ -229,7 +229,7 @@
                                                 Padding="20,12,20,12"
                                                 HorizontalAlignment="Center"
                                                 HorizontalContentAlignment="Stretch"
-                                                Background="#DCF0FC"
+                                                Background="#F4ECFF"
                                                 BorderBrush="#dddddd"
                                                 BorderThickness="1,1,1,1"
                                                 Command="{Binding OnClickCommand}"
@@ -316,8 +316,8 @@
                                                 PlacementAnchor="Bottom"
                                                 PlacementMode="Bottom"
                                                 PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
-                                                <!--<MenuItem Click="OnRepeatPartClick" Header="Repeat" />
-                                            <MenuItem Click="OnRemovePartClick" Header="Remove" />-->
+                                                <MenuItem Click="OnRepeatPartClick" Header="Repeat" />
+                                                <MenuItem Click="OnRemovePartClick" Header="Remove" />
                                             </ContextMenu>
                                         </DockPanel.ContextMenu>
 
@@ -332,6 +332,10 @@
                                                 Foreground="Black"
                                                 Text="{Binding Value.Name}" />
                                         </Border>
+
+										<i:Interaction.Behaviors>
+											<b:StanzaVerticalDragControlBehavior />
+										</i:Interaction.Behaviors>
                                     </DockPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -340,16 +344,17 @@
                         <Button
                             x:Name="AddPartFlyoutToggleButton"
                             Padding="10"
-                            HorizontalAlignment="Left"
-                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
                             Background="Transparent"
                             BorderThickness="0"
                             Flyout="{StaticResource MySharedFlyout}">
-                            <material:MaterialIcon
-                                Margin="-4"
-                                VerticalAlignment="Center"
-                                Foreground="#888888"
-                                Kind="PlusCircleOutline" />
+								<material:MaterialIcon
+									DockPanel.Dock="Left"
+									Margin="-4,0,6,0"
+									VerticalAlignment="Center"
+									Foreground="#888888"
+									Kind="PlusCircleOutline" />
                         </Button>
 
                     </StackPanel>

@@ -777,7 +777,7 @@ namespace HandsLiftedApp.ViewModels
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.Print(e.Message);
+                Debug.Print(e.Message);
             }
         }
 

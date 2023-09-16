@@ -44,8 +44,6 @@ namespace HandsLiftedApp
             // Load the saved view model state.
             Globals.Preferences = RxApp.SuspensionHost.GetAppState<PreferencesViewModel>();
 
-            Debug.Print(Preferences.ToString());
-
             //try
             //{
             //    GlobalLibVLCInstance = new LibVLC();

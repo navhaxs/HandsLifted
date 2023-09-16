@@ -30,9 +30,6 @@ namespace HandsLiftedApp.Views
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
 
-     
-     
-
         ILogger log = Log.ForContext<MainWindow>();
 
         public MainWindow()

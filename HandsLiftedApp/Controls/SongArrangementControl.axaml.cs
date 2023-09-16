@@ -5,7 +5,6 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive;
 

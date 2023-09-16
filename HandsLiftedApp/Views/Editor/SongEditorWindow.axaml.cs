@@ -37,6 +37,31 @@ namespace HandsLiftedApp.Views.Editor
             ImportPasteHereTextBox.TextChanged += ImportPasteHereTextBox_TextChanged;
         }
 
+        public void OnAddPartClick(object? sender, RoutedEventArgs args)
+        {
+            var stanza = (SongStanza)((Control)sender).DataContext;
+            var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<Data.Models.Items.SongStanza>() { Value = stanza };
+            ((SongEditorViewModel)this.DataContext).song.Arrangement.Add(m);
+        }
+
+        public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
+        {
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> stanza = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)((Control)sender).DataContext;
+
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> clonedStanza = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> { Value = stanza.Value };
+
+            var lastIndex = ((SongEditorViewModel)this.DataContext).song.Arrangement.IndexOf(stanza);
+
+            ((SongEditorViewModel)this.DataContext).song.Arrangement.Insert(lastIndex + 1, clonedStanza);
+        }
+
+        public void OnRemovePartClick(object? sender, RoutedEventArgs args)
+        {
+            SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza> stanza = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)((Control)sender).DataContext;
+
+            ((SongEditorViewModel)this.DataContext).song.Arrangement.Remove(stanza);
+        }
+
         private void ImportPasteHereTextBox_TextChanged(object? sender, TextChangedEventArgs e)
         {
             try

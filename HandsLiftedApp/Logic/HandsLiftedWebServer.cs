@@ -2,6 +2,7 @@
 using EmbedIO.Actions;
 using EmbedIO.Files;
 using Serilog;
+using Swan;
 using Swan.Logging;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,6 +42,8 @@ namespace HandsLiftedApp.Logic
         // Create and configure our web server.
         private static WebServer CreateWebServer(string url)
         {
+            Logger.UnregisterLogger<ConsoleLogger>();
+
             var UseFileCache = false;
             return new WebServer(o => o
                     .WithUrlPrefix(url)

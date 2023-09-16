@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Templates;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,12 +40,14 @@ namespace HandsLiftedApp {
                        //.WriteTo.Console()
                        .CreateLogger();
 
-                Log.Information("App startup");
-
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                 TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
                 Trace.Listeners.Add(new ConsoleTraceListener());
+
+                string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                Log.Information($"VisionScreens app version {version} build {BuildInfo.Version.getGitHash()} startup at {DateTime.Now}");
 
                 // Windows-only
                 // https://stackoverflow.com/a/646500/
@@ -60,7 +63,6 @@ namespace HandsLiftedApp {
                         return;
                     }
                 }
-
                 
                 Log.Information("Init LibMPV");
                 FindLibMpv();
@@ -84,7 +86,7 @@ namespace HandsLiftedApp {
             }
             finally
             {
-                Log.Information("App shutdown. Bye!");
+                Log.Information("Clean app shutdown. Bye!");
                 Log.CloseAndFlush();
             }
         }
