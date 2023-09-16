@@ -33,8 +33,8 @@ namespace HandsLiftedApp.Data.Models.Items
         // this should be a data type for the XML
         // that is the list of slide media items <by type... video song custom etc>
         [XmlIgnore]
-        public TrulyObservableCollection<MediaSlide> _items = new TrulyObservableCollection<MediaSlide>();
-        public TrulyObservableCollection<MediaSlide> Items { get => _items; set
+        public TrulyObservableCollection<Slide> _items = new TrulyObservableCollection<Slide>();
+        public TrulyObservableCollection<Slide> Items { get => _items; set
             {
                 this.RaiseAndSetIfChanged(ref _items, value);
                 _items.CollectionChanged += _items_CollectionChanged;
@@ -49,11 +49,12 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         [XmlIgnore]
-        public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>(_items.Select((item, index) =>
-        {
-            item.Index = index;
-            return item;
-        }));
+        public override ObservableCollection<Slide> Slides => _items;
+        //new ObservableCollection<Slide>(_items.Select((item, index) =>
+        //{
+        //    item.Index = index;
+        //    return item;
+        //}));
 
         ///new ObservableCollection<Slide>(_items.Select((item, index) => {
         //    item.Index = index;

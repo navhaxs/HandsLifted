@@ -5,11 +5,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="150"
+    d:DesignHeight="650"
     d:DesignWidth="400"
     Background="Transparent"
     DragDrop.AllowDrop="True"
     mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="avares://HandsLiftedApp/Assets/AddItemFlyoutResourceDictionary.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	
     <DockPanel>
         <TextBlock Name="DropState" />
 		<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
@@ -17,6 +26,8 @@
 				Name="AddButton"
 				Width="100"
 				Margin="50,0,18,0"
+				Flyout="{StaticResource addItemFlyout}"
+				DataContext="{Binding State.ItemIndex}"
 				HorizontalAlignment="Left"
 				VerticalAlignment="Top"
 				DockPanel.Dock="Left">
@@ -47,78 +58,8 @@
 					DockPanel.Dock="Top"
 					Foreground="#9a93cd"
 					Kind="Plus" />
-
-				<Button.Flyout>
-					<MenuFlyout Placement="BottomEdgeAlignedLeft">
-
-						<MenuItem Header="_Presentation">
-							<MenuItem Command="{Binding $parent[Window].DataContext.AddPresentationCommand}" Header="PowerPoint">
-								<MenuItem.Icon>
-									<material:MaterialIcon Kind="Presentation" />
-								</MenuItem.Icon>
-							</MenuItem>
-							<MenuItem Command="{Binding $parent[Window].DataContext.AddGoogleSlidesCommand}" Header="Google Slides">
-								<MenuItem.Icon>
-									<material:MaterialIcon Kind="Slideshow" />
-								</MenuItem.Icon>
-							</MenuItem>
-							<MenuItem Header="PDF Slides (Canva, etc.)">
-								<MenuItem.Icon>
-									<material:MaterialIcon Kind="Slideshow" />
-								</MenuItem.Icon>
-							</MenuItem>
-						</MenuItem>
-						<MenuItem Header="_Song">
-							<MenuItem.Icon>
-								<material:MaterialIcon Kind="Music" />
-							</MenuItem.Icon>
-							<MenuItem Command="{Binding $parent[Window].DataContext.AddSongCommand}" Header="From _File">
-							</MenuItem>
-							<MenuItem Command="{Binding $parent[Window].DataContext.AddNewSongCommand}" Header="From _New">
-								<MenuItem.Icon>
-									<material:MaterialIcon Kind="Music" />
-								</MenuItem.Icon>
-							</MenuItem>
-						</MenuItem>
-						<MenuItem Command="{Binding $parent[Window].DataContext.AddGraphicCommand}" Header="_Graphic/s">
-							<MenuItem.Icon>
-								<material:MaterialIcon Kind="Image" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Command="{Binding $parent[Window].DataContext.AddVideoCommand}" Header="_Video">
-							<MenuItem.Icon>
-								<material:MaterialIcon Kind="Video" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<Separator />
-						<MenuItem Header="_Logo"
-								  Command="{Binding $parent[Window].DataContext.AddLogoCommand}"
-								  CommandParameter="{Binding State.ItemIndex}">
-							<MenuItem.Icon>
-								<material:MaterialIcon Kind="Star" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<Separator />
-						<MenuItem Header="_Section"
-								  Command="{Binding $parent[Window].DataContext.AddSectionCommand}"
-								  CommandParameter="{Binding State.ItemIndex}">
-							<MenuItem.Icon>
-								<material:MaterialIcon Kind="Star" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<Separator />
-						<MenuItem Header="_Group">
-							<MenuItem.Icon>
-								<material:MaterialIcon Kind="ContentCopy" />
-							</MenuItem.Icon>
-
-							<MenuItem Command="{Binding $parent[Window].DataContext.AddGroupCommand}" Header="_...From Folder of Media" />
-							<MenuItem Command="{Binding $parent[Window].DataContext.AddTestEmptyGroupCommand}" Header="Blank Group" />
-							<MenuItem Command="{Binding $parent[Window].DataContext.AddCustomSlideCommand}" Header="Custom Group (Bible Reading Slide Test)" />
-						</MenuItem>	
-					</MenuFlyout>
-				</Button.Flyout>
 			</Button>
+			
 			<TextBlock Name="AddButtonTooltip" Text="Add Item" VerticalAlignment="Center" HorizontalAlignment="Left" 
 					   FontSize="14" IsVisible="False"/>
 			<!--<TextBlock Text="{Binding State.ItemIndex}" VerticalAlignment="Center" HorizontalAlignment="Left" 

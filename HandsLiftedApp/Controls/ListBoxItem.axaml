@@ -8,16 +8,21 @@
 
 	<Styles.Resources>
 		<converters:ItemToIndexConverter x:Key="itemToIndexConverter"/>
+		<converters:StringHasValueVisibilityConverter x:Key="stringHasValueVisibilityConverter"/>
 	</Styles.Resources>
 
 	<Design.PreviewWith>
 		<!-- Add Controls for Previewer Here -->
-		<ListBox>
+		<ListBox Width="500" Height="400">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel ItemHeight="160" ItemWidth="240" />
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
 			<ListBoxItem>ABC</ListBoxItem>
-			<ListBoxItem>AAAAAAAAAAAAAAAAAA</ListBoxItem>
-			<ListBoxItem>11111111111</ListBoxItem>
-			<ListBoxItem>22222222222</ListBoxItem>
-			<ListBoxItem>33333333333</ListBoxItem>
+			<ListBoxItem>111</ListBoxItem>
+			<ListBoxItem>222</ListBoxItem>
+			<ListBoxItem>333</ListBoxItem>
 		</ListBox>
 	</Design.PreviewWith>
 
@@ -71,25 +76,30 @@
 						</TextBlock.Text>
 					</TextBlock>-->
 					<StackPanel Margin="2 2 2 2" DockPanel.Dock="Bottom" Orientation="Horizontal">
-						<TextBlock Padding="0 0 2 0">
-							<TextBlock.Text>
-								<MultiBinding StringFormat="{}{0}.">
-									<!-- TODO: this breaks when rearranging items by using Move() on the source ObservableCollection -->
-									<Binding Path="DataContext.SlideNumber" RelativeSource="{RelativeSource TemplatedParent}" />
-									<!--<MultiBinding Converter="{StaticResource itemToIndexConverter}" FallbackValue="#">
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" />
-										<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}" />
-									</MultiBinding>-->
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
-						<TextBlock DockPanel.Dock="Bottom" Padding="0 0 0 0">
+						<TextBlock Padding="0 0 2 0" Classes="slideNumber">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0}">
-									<Binding Path="SlideLabel" />
+									<!-- TODO: this breaks when rearranging items by using Move() on the source ObservableCollection -->
+									<!--<Binding Path="DataContext.SlideNumber" RelativeSource="{RelativeSource TemplatedParent}" />-->
+									<MultiBinding Converter="{StaticResource itemToIndexConverter}" FallbackValue="#">
+										<Binding RelativeSource="{RelativeSource TemplatedParent}" />
+										<Binding Path="DataContext.Slides" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:ListBoxWithoutKey}, AncestorLevel=1}" />
+										<!--<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType={controls:ListBoxWithoutKey}}" />-->
+										<!--<Binding Path="$parent[ListBoxWithoutKey].DataContext.Slides"/>-->
+										<!--<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}" />-->
+									</MultiBinding>
 								</MultiBinding>
 							</TextBlock.Text>
 						</TextBlock>
+						<Border Margin="4 0 0 0" Padding="4 0" CornerRadius="2" Background="#3EFFFFFF"  IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
+							<TextBlock Foreground="White">
+								<TextBlock.Text>
+									<MultiBinding StringFormat="{}{0}">
+										<Binding Path="SlideLabel" FallbackValue="Verse 2" />
+									</MultiBinding>
+								</TextBlock.Text>
+							</TextBlock>
+						</Border>
 					</StackPanel>
 					<Border>
 						<Grid>
@@ -212,7 +222,7 @@
 		<Setter Property="BorderThickness" Value="4" />
 	</Style>
 
-	<Style Selector="ListBoxItem:selected /template/ TextBlock">
+	<Style Selector="ListBoxItem:selected /template/ TextBlock.slideNumber">
 		<Setter Property="Foreground" Value="#d24726"/>
 	</Style>
 

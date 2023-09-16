@@ -43,9 +43,9 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="ControlBackgroundBrush">#ffffff</SolidColorBrush>
-                    <SolidColorBrush x:Key="BottomBackgroundBrush">#DEDEDE</SolidColorBrush>
+                    <SolidColorBrush x:Key="BottomBackgroundBrush">#64827DA3</SolidColorBrush>
                     <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
-                    <SolidColorBrush x:Key="BackgroundBrush">#eeeef2</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#ededf1</SolidColorBrush>
                     <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
                     <SolidColorBrush x:Key="GridSplitterBrush">#deddec</SolidColorBrush>
                 </ResourceDictionary>
@@ -120,6 +120,7 @@
 
         <Grid>
 
+			<!--DEBUG INFO -->
             <StackPanel
                 Margin="60,6,0,0"
                 VerticalAlignment="Top"
@@ -138,6 +139,7 @@
                     IsVisible="{Binding Source={x:Static approot:Globals.BitmapLoadWorkerThread}, Path=IsBusy}" />
             </StackPanel>
 
+			<!-- Main Wrapper vertical dock -->
             <Grid x:Name="DockedLibraryWrapper">
 
                 <Grid.Styles>
@@ -345,8 +347,6 @@
                             </Grid.ColumnDefinitions>
 
                             <!--  Left panel  -->
-
-
                             <Border Margin="0,0,0,6">
                                 <DockPanel>
                                     <DockPanel.Styles>

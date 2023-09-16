@@ -491,6 +491,7 @@ namespace HandsLiftedApp.ViewModels
 
         public Interaction<Unit, string?> ShowOpenFileDialog { get; }
         public Interaction<Unit, string?> ShowOpenFolderDialog { get; }
+
         private async Task OpenGoogleSlidesAsync()
         {
             string SourceGooglePresentationId = "1-EGlDIgKK8cnAD_L77JI_hFNL_RZqHPAkR-rvnezmz0";
@@ -542,8 +543,10 @@ namespace HandsLiftedApp.ViewModels
                 Playlist.State.IsBlank = false;
             }
 
+            int SlideIndex = item.Slides.IndexOf(slide);
+
             Playlist.State.NavigateToReference(new SlideReference()
-            { SlideIndex = slide.Index, ItemIndex = itemIndex, Slide = slide });
+            { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
         }
 
         private async Task OpenPresentationFileAsync()

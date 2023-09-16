@@ -9,18 +9,18 @@ namespace HandsLiftedApp.Data.Slides
     public abstract class Slide : ReactiveObject, ISlideRender
     {
 
-        private int _index;
-        [XmlIgnore]
-        public int Index // does this make sense here? or should all slides have a Slides[<wrapper: index+slide>]
-        {
-            get => _index; set
-            {
-                this.RaiseAndSetIfChanged(ref _index, value);
-                this.RaisePropertyChanged(nameof(SlideNumber));
-            }
-        }
+        //private int _index;
+        //[XmlIgnore]
+        //public int Index // does this make sense here? or should all slides have a Slides[<wrapper: index+slide>]
+        //{
+        //    get => _index; set
+        //    {
+        //        this.RaiseAndSetIfChanged(ref _index, value);
+        //        this.RaisePropertyChanged(nameof(SlideNumber));
+        //    }
+        //}
 
-        public int SlideNumber { get => Index + 1; }
+        //public int SlideNumber { get => Index + 1; }
 
         // meta - group labels, slide number, etc.
         public abstract string? SlideLabel { get; }

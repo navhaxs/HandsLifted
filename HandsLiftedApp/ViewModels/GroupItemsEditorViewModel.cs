@@ -90,6 +90,12 @@ namespace HandsLiftedApp.ViewModels
 
         private async Task RemoveItemAsync(object param)
         {
+            //TODO
+            //TODO
+            //TODO
+            //TODO
+            //TODO
+            //TODO
             var m = ((IList)param);
             //var x = new List<Slide>(m);
 
@@ -100,7 +106,7 @@ namespace HandsLiftedApp.ViewModels
                 if (item is Slide)
                 {
                     var slide = (Slide)item;
-                    arrayToRemove[i++] = slide.Index;
+                    //arrayToRemove[i++] = slide.Index;
                 }
             }
 

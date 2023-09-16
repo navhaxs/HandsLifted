@@ -22,7 +22,13 @@
     </Design.DataContext>
 
     <UserControl.Resources>
-        <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
+        <ResourceDictionary>
+            <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
+			<converters:IntMinusOneConverter x:Key="intMinusOneConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://HandsLiftedApp/Assets/AddItemFlyoutResourceDictionary.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -67,7 +73,7 @@
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Background" Value="Transparent" />
-			<Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontWeight" Value="Bold" />
             <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
 
@@ -87,104 +93,110 @@
     </UserControl.Styles>
 
     <Grid>
-		<ScrollViewer>
-			<ListBox
-				Margin="0,0,0,100"
-            x:Name="itemsListBox"
-			CornerRadius="0,0,0,6"
-            Background="Transparent"
-            Classes="ItemsDragAndDrop"
-            DragDrop.AllowDrop="True"
-            ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-					<!-- TODO: AddItemButton -->
-                    <!-- disable virtualization -->
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Add Item" />
-                </ContextMenu>
-            </ListBox.ContextMenu>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel VerticalAlignment="Stretch" Margin="6,0,0,0">
+        <ScrollViewer>
+            <ListBox
+                x:Name="itemsListBox"
+                Margin="0,0,0,100"
+                Background="Transparent"
+                Classes="ItemsDragAndDrop"
+                CornerRadius="0,0,0,6"
+                DragDrop.AllowDrop="True"
+                ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!--  TODO: AddItemButton  -->
+                        <!--  disable virtualization  -->
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Add Item" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="6,0,0,0" VerticalAlignment="Stretch">
 
-                        <Viewbox
-                            Width="10"
-                            Height="10"
-                            Margin="-7,0,7,0">
-                            <Polygon
-                                Fill="#FF3400"
-                                IsVisible="{Binding State.IsSelected}"
-                                Points="0,0 8,5, 0,10" />
-                        </Viewbox>
+                            <Viewbox
+                                Width="10"
+                                Height="10"
+                                Margin="-7,0,7,0">
+                                <Polygon
+                                    Fill="#FF3400"
+                                    IsVisible="{Binding State.IsSelected}"
+                                    Points="0,0 8,5, 0,10" />
+                            </Viewbox>
 
-                        <TextBlock
-                            Padding="0,8,0,8"
-                            FontSize="13"
-                            TextTrimming="CharacterEllipsis">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}{0}">
-                                    <Binding Path="Title" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                    </DockPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-		</ScrollViewer>
-		<Button
-				Name="AddItemButton"
-				Margin="6,0,6,8"
-				Padding="12"
-				VerticalAlignment="Bottom"
-				HorizontalAlignment="Right"
-				HorizontalContentAlignment="Left"
-				Background="#3a344a"
-				BorderThickness="0"
-				ClickMode="Press"
-				CornerRadius="6"
-				DockPanel.Dock="Bottom"
-				FontSize="14"
-				Cursor="Hand"
-				Foreground="White">
-			<Button.Styles>
-				<Style Selector="ScrollViewer">
-					<Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
-				</Style>
-				<Style Selector="MenuItem">
-					<Setter Property="FontSize" Value="14" />
-					<Setter Property="Padding" Value="8 6" />
-				</Style>
-				<Style Selector="Button:pointerover /template/ ContentPresenter">
-					<Setter Property="Background" Value="#5C3AB6" />
-				</Style>
-				<Style Selector="Button:pressed /template/ ContentPresenter">
-					<Setter Property="BorderBrush" Value="#2c628b" />
-					<Setter Property="Background" Value="#5F5C2ED6" />
-				</Style>
-			</Button.Styles>
-			<Button.Effect>
-				<DropShadowEffect
+                            <TextBlock
+                                Padding="0,8,0,8"
+                                FontSize="13"
+                                TextTrimming="CharacterEllipsis">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}">
+                                        <Binding Path="Title" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+        <Button
+            Name="AddItemButton"
+            Margin="6,0,6,8"
+            Padding="12"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            HorizontalContentAlignment="Left"
+            Background="#3a344a"
+            BorderThickness="0"
+            ClickMode="Press"
+            CornerRadius="6"
+            Cursor="Hand"
+            DockPanel.Dock="Bottom"
+            Flyout="{StaticResource addItemFlyout}"
+			DataContext="{Binding Playlist.Items.Count, Converter={StaticResource intMinusOneConverter}}"
+            FontSize="14"
+            Foreground="White">
+            <Button.Styles>
+                <Style Selector="ScrollViewer">
+                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                </Style>
+                <Style Selector="MenuItem">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Padding" Value="8 6" />
+                </Style>
+                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#5C3AB6" />
+                </Style>
+                <Style Selector="Button:pressed /template/ ContentPresenter">
+                    <Setter Property="BorderBrush" Value="#2c628b" />
+                    <Setter Property="Background" Value="#5F5C2ED6" />
+                </Style>
+            </Button.Styles>
+            <Button.Effect>
+                <DropShadowEffect
                     BlurRadius="6"
                     OffsetX="0"
                     OffsetY="1"
                     Color="#55000000" />
-			</Button.Effect>
+            </Button.Effect>
 
-			<DockPanel>
-				<material:MaterialIcon DockPanel.Dock="Left" Kind="Plus"
-									   Height="20"
-									   Width="20"
-									  />
-				<TextBlock IsVisible="True" Margin="8,0,8,0" Text="Add Item" />
-			</DockPanel>
-		</Button>
+            <DockPanel>
+                <material:MaterialIcon
+                    Width="20"
+                    Height="20"
+                    DockPanel.Dock="Left"
+                    Kind="Plus" />
+                <TextBlock
+                    Margin="8,0,8,0"
+                    IsVisible="True"
+                    Text="Add Item" />
+            </DockPanel>
+        </Button>
 
-	</Grid>
+    </Grid>
 </UserControl>

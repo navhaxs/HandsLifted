@@ -1,15 +1,9 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
-using HandsLiftedApp.Models.ItemState;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace HandsLiftedApp.Converters
@@ -35,20 +29,21 @@ namespace HandsLiftedApp.Converters
 
         public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (values != null && values[0] is Control)
+            try
             {
-                Control leafControl = (Control)values[0];
-                ItemsControl parentItemsControl = ControlExtension.FindAncestor<ItemsControl>(leafControl);
-                string ret = (parentItemsControl.Items.IndexOf(values[1]) + 1).ToString();
-                Item<ItemStateImpl> z = (Item<ItemStateImpl>)values[1];
-                Debug.Print($"{ret} - {z.Title} {parentItemsControl.ItemsView}");
-                return ret;
-                //Control? containerFromItem = parentItemsControl.ContainerFromItem(values[1]);
-                //if (containerFromItem != null)
-                //{
-                //    int itemIndex = parentItemsControl.IndexFromContainer(containerFromItem);
-                //    return (itemIndex + 1).ToString(); // add 1 for human friendly item position
-                //}
+                if (values != null && values[0] is Control)
+                {
+                    Control leafControl = (Control)values[0];
+                    ItemsControl parentItemsControl = ControlExtension.FindAncestor<ItemsControl>(leafControl);
+                    if (parentItemsControl != null)
+                    {
+                        return (parentItemsControl.IndexFromContainer(leafControl) + 1).ToString();
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
             }
 
             // converter used for the wrong type

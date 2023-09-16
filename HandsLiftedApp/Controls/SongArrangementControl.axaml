@@ -35,6 +35,7 @@
 					<DataTemplate>
 						<Button Content="{Binding Name}"
 								Background="{Binding Colour}"
+								Foreground="Black"
 								Click="OnAddPartClick"
 								ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}">
 							<Button.Styles>

@@ -14,7 +14,7 @@
     Title="SongEditorWindow"
     d:DesignHeight="700"
     d:DesignWidth="1200"
-    Background="#282828"
+    Background="{DynamicResource BackgroundBrush}"
     Icon="/Assets/app.ico"
     mc:Ignorable="d">
 
@@ -23,64 +23,83 @@
     </Design.DataContext>
 
     <Window.Resources>
-        <converters:StanzaSortConverter x:Key="stanzaSortConverter" />
 
-        <Flyout x:Key="MySharedFlyout" Placement="BottomEdgeAlignedLeft">
-            <ItemsControl
-                MinWidth="150"
-                MinHeight="20"
-                Margin="4"
-                VerticalAlignment="Center"
-                ItemsSource="{Binding song.Stanzas, Converter={StaticResource stanzaSortConverter}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button
-                            Background="{Binding Colour}"
-                            Content="{Binding Name}"
-                            ToolTip.ShowDelay="0"
-                            ToolTip.Tip="{Binding Lyrics}">
-                            <Button.Styles>
-                                <Style Selector="ToolTip">
-                                    <Setter Property="IsHitTestVisible" Value="False" />
-                                </Style>
-                            </Button.Styles>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Flyout>
+        <ResourceDictionary>
+            <converters:StanzaSortConverter x:Key="stanzaSortConverter" />
+
+            <Flyout x:Key="MySharedFlyout" Placement="BottomEdgeAlignedLeft">
+                <StackPanel Margin="6">
+                    <TextBlock Padding="8,0" FontSize="16">Add item</TextBlock>
+                    <ItemsControl
+                        MinWidth="150"
+                        MinHeight="20"
+                        Margin="4"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding song.Stanzas, Converter={StaticResource stanzaSortConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Padding="10,8"
+                                    HorizontalContentAlignment="Left"
+                                    Background="{Binding Colour}"
+                                    Content="{Binding Name}"
+                                    Foreground="Black"
+                                    ToolTip.ShowDelay="0"
+                                    ToolTip.Tip="{Binding Lyrics}">
+                                    <Button.Styles>
+                                        <Style Selector="ToolTip">
+                                            <Setter Property="IsHitTestVisible" Value="False" />
+                                        </Style>
+                                    </Button.Styles>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Flyout>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="BackgroundBrush">#f6f4f2</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <DockPanel>
-		<Grid DockPanel.Dock="Top" Background="#583092">
-			<DockPanel Margin="16 6 16 8">
-				
-				<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-					<ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left">
-						<TextBlock Text="Import" />
-					</ToggleButton>
-					<Button Content="Load" DockPanel.Dock="Left" />
-					<Button Content="Save" DockPanel.Dock="Left" />
-					<Button Content="Reset Arrangement" DockPanel.Dock="Left" />
-				</StackPanel>
-				<TextBlock
-					Padding="6"
-					FontSize="22"
-					Text="Song Editor" />
-			</DockPanel>
+        <Grid Background="#583092" DockPanel.Dock="Top">
+            <DockPanel Margin="16,6,16,8">
 
-			<Grid.Effect>
-				<DropShadowEffect
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left">
+                        <TextBlock Text="Import" />
+                    </ToggleButton>
+                    <Button Content="Load" DockPanel.Dock="Left" />
+                    <Button Content="Save" DockPanel.Dock="Left" />
+                    <Button Content="Reset Arrangement" DockPanel.Dock="Left" />
+                </StackPanel>
+                <TextBlock
+                    Padding="6"
+                    FontSize="22"
+					Foreground="White"
+                    Text="Song Editor" />
+            </DockPanel>
+
+            <Grid.Effect>
+                <DropShadowEffect
                     BlurRadius="6"
                     OffsetX="0"
                     OffsetY="1"
                     Color="#55000000" />
-			</Grid.Effect>
+            </Grid.Effect>
         </Grid>
 
         <!--<Menu DockPanel.Dock="Top">
@@ -137,8 +156,7 @@
                                             Background="Transparent"
                                             FontFamily="Consolas"
                                             Foreground="Black"
-											Text="{Binding X}"
-											>
+                                            Text="{Binding X}">
                                             Manual Text Entry
                                         </TextBox>
                                         <StackPanel>
@@ -264,9 +282,6 @@
                         BorderThickness="3,0"
                         ZIndex="9999" />
 
-
-
-
                     <StackPanel Grid.Column="0" Margin="20,30,0,0">
                         <TextBlock
                             Margin="8,10,8,4"
@@ -359,7 +374,7 @@
                             Padding="6"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
-                            Background="#3a344a"
+                            Background="#5A6047A3"
                             CornerRadius="6">
 
 

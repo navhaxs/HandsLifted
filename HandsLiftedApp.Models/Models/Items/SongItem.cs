@@ -78,7 +78,7 @@ namespace HandsLiftedApp.Data.Models.Items
             // add title slide
             if (StartOnTitleSlide && TitleSlide != null)
             {
-                TitleSlide.Index = i;
+                //TitleSlide.Index = i;
 
                 if (this.StanzaSlides.ElementAtOrDefault(0) is SongTitleSlide<T>)
                 {
@@ -128,7 +128,7 @@ namespace HandsLiftedApp.Data.Models.Items
                             ((SongSlide<S>)prevIndex.data).Label = Label;
                         }
 
-                        prevIndex.data.Index = i;
+                        //prevIndex.data.Index = i;
 
                         if (prevIndex.index != i)
                         {
@@ -138,7 +138,7 @@ namespace HandsLiftedApp.Data.Models.Items
                     }
                     else
                     {
-                        var slide = new SongSlide<S>(_datum, slideId) { Text = Text, Label = Label, Index = i };
+                        var slide = new SongSlide<S>(_datum, slideId) { Text = Text, Label = Label }; //, Index = i };
                         this.StanzaSlides.Insert(i, slide);
                     }
 
@@ -151,12 +151,12 @@ namespace HandsLiftedApp.Data.Models.Items
                 var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index }).FirstOrDefault(s => (s.data) is (SongSlide<S>) && ((SongSlide<S>)s.data).Id == "BLANK");
                 if (prevIndex != null && prevIndex.index != i)
                 {
-                    prevIndex.data.Index = i;
+                    //prevIndex.data.Index = i;
                     this.StanzaSlides.Move(prevIndex.index, i);
                 }
                 else
                 {
-                    this.StanzaSlides.Insert(i, new SongSlide<S>(null, "BLANK") { Index = i });
+                    this.StanzaSlides.Insert(i, new SongSlide<S>(null, "BLANK"));// { Index = i });
                 }
                 i++;
             }

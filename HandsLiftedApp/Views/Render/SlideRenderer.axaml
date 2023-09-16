@@ -18,8 +18,6 @@
     Background="Black"
     mc:Ignorable="d">
 
-
-
     <!--  https://github.com/AvaloniaUI/Avalonia/issues/5382  -->
     <hla:XTransitioningContentControl
         Content="{Binding $parent[viewsrender:SlideRenderer].ActiveSlide}"

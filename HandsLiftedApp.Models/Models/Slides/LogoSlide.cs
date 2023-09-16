@@ -12,5 +12,9 @@
 
         public override string? SlideLabel => null;
 
+        public override bool Equals(object? obj)
+        {
+            return obj is LogoSlide slide;
+        }
     }
 }
