@@ -26,11 +26,19 @@
 		<hla:XTransitioningContentControl.DataTemplates>
             <utils:MyTemplateSelector>
                 <DataTemplate x:Key="SongTitleSlide">
-                    <views:DesignerSlideTitle />
-                </DataTemplate>
+                    <!--<views:DesignerSlideTitle />-->
+					<Image
+						RenderOptions.BitmapInterpolationMode="HighQuality"
+						Source="{Binding cached}"
+						Stretch="Uniform" />
+				</DataTemplate>
                 <DataTemplate x:Key="SongSlide">
-                    <views:DesignerSlideTemplate />
-                </DataTemplate>
+                    <!--<views:DesignerSlideTemplate />-->
+					<Image
+						RenderOptions.BitmapInterpolationMode="HighQuality"
+						Source="{Binding cached}"
+						Stretch="Uniform" />
+				</DataTemplate>
                 <DataTemplate x:Key="ImageSlide">
                     <viewsrender:ImageRenderer />
                 </DataTemplate>

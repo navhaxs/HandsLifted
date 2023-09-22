@@ -22,9 +22,9 @@ namespace HandsLiftedApp.Services.Bitmaps
 
         public class BitmapLoadRequest : IHavePriority<int>
         {
-            public int Priority {get; set;}
-            public string BitmapFilePath { get; set;}
-            public Action<Bitmap> Callback { get; set;}
+            public int Priority { get; set; }
+            public string BitmapFilePath { get; set; }
+            public Action<Bitmap> Callback { get; set; }
         }
 
         void RunWorkerLoop()
@@ -44,7 +44,6 @@ namespace HandsLiftedApp.Services.Bitmaps
                 // TODO: skip if not required (hash of filpath+file.io last modified OR already loaded)
                 var result = BitmapUtils.LoadBitmap(request.BitmapFilePath, 1920);
 
-                Thread.Sleep(200);
                 // return via callback
                 request.Callback(result);
 

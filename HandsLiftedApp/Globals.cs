@@ -1,24 +1,24 @@
-﻿using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Models;
+using HandsLiftedApp.Services.Bitmaps;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
-using ReactiveUI;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization;
-using System.IO;
-using System.Diagnostics;
-using Avalonia.Controls;
-using System;
-using Serilog;
 using LibMpv.Client;
-using HandsLiftedApp.Services.Bitmaps;
+using ReactiveUI;
+using Serilog;
+using System;
+using System.IO;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace HandsLiftedApp
 {
     public static class Globals
     {
         // note: these are public to be accessed from axaml bindings
+        public static MainWindowViewModel MainWindowViewModel;
         public static PreferencesViewModel Preferences;
         public static StageDisplayViewModel StageDisplay = new StageDisplayViewModel();
         public static Env Env;
@@ -30,7 +30,7 @@ namespace HandsLiftedApp
         {
             if (Design.IsDesignMode)
                 return;
-            
+
             LoadEnv();
 
             // Initialize app preferences state here
@@ -54,7 +54,8 @@ namespace HandsLiftedApp
             //    Log.Fatal(ex, "LibVLC failed to initialize");
             //}
 
-            if (!Design.IsDesignMode) {
+            if (!Design.IsDesignMode)
+            {
                 try
                 {
                     GlobalMpvContextInstance = new MpvContext();

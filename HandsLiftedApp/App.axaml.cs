@@ -1,11 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
-using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.Views;
-using ReactiveUI;
 using System.Diagnostics;
 
 namespace HandsLiftedApp
@@ -14,7 +11,6 @@ namespace HandsLiftedApp
     {
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
-        MainWindowViewModel mainWindowViewModel;
         public override void OnFrameworkInitializationCompleted()
         {
             // Initialize app preferences state here
@@ -31,12 +27,12 @@ namespace HandsLiftedApp
             Globals.OnStartup(ApplicationLifetime);
 
             // The rest of the normal Avalonia init
-            mainWindowViewModel = new MainWindowViewModel();
+            Globals.MainWindowViewModel = new MainWindowViewModel();
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = mainWindowViewModel,
+                    DataContext = Globals.MainWindowViewModel,
                 };
             }
 
