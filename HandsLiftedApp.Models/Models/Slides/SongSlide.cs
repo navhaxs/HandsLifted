@@ -26,7 +26,7 @@ namespace HandsLiftedApp.Data.Slides
             set
             {
                 this.RaiseAndSetIfChanged(ref _text, value);
-                cached = null;
+                //cached = null;
                 //this.RaisePropertyChanged(nameof(SlideText));
             }
         }
