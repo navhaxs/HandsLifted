@@ -65,6 +65,7 @@
 		<PackageReference Include="ByteSize" />
 		<PackageReference Include="ConcurrentPriorityQueue" />
 		<PackageReference Include="Config.Net" />
+		<PackageReference Include="DebounceThrottle" />
 		<PackageReference Include="EmbedIO" />
 		<PackageReference Include="Material.Icons.Avalonia" />
 		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />

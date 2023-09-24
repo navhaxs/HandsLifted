@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using DebounceThrottle;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Utils;
@@ -15,27 +16,39 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public class SongItem<T, S, I> : Item<I> where T : ISongTitleSlideState where S : ISongSlideState where I : IItemState
     {
+        private DebounceDispatcher debounceDispatcher;
+
+        private SongTitleSlide<T> titleSlide;
 
         public SongItem()
         {
+            debounceDispatcher = new DebounceDispatcher(200);
+            titleSlide = new SongTitleSlide<T>();
+            //{
+            //    Title = Title,
+            //    Copyright = Copyright
+            //};
             _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
                 (title, copyright) =>
                 {
-                    return new SongTitleSlide<T>() { Title = Title, Copyright = Copyright };
-                    ;
+                    // TODO do not keep re-creating the slide object, rather just update it
+                    titleSlide.Title = title;
+                    titleSlide.Copyright = copyright;
+                    return titleSlide;
                 })
+                            .ObserveOn(RxApp.MainThreadScheduler)
+            .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
                 .ToProperty(this, c => c.TitleSlide)
             ;
 
-
             this.WhenAnyValue(x => x.TitleSlide).Subscribe((d) =>
             {
-                UpdateStanzaSlides();
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
             this.WhenAnyValue(x => x.EndOnBlankSlide, x => x.StartOnTitleSlide).Subscribe((d) =>
             {
-                UpdateStanzaSlides();
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
 
@@ -46,7 +59,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         private void Arrangement_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            UpdateStanzaSlides();
+            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
 
 
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)
@@ -70,7 +83,6 @@ namespace HandsLiftedApp.Data.Models.Items
             }
             Arrangement = a;
         }
-
         void UpdateStanzaSlides()
         {
             int i = 0;
@@ -182,7 +194,7 @@ namespace HandsLiftedApp.Data.Models.Items
             set
             {
                 this.RaiseAndSetIfChanged(ref _stanzas, value);
-                UpdateStanzaSlides();
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
                 _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
                 _stanzas.CollectionChanged += _stanzas_CollectionChanged;
                 _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
@@ -202,8 +214,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         void s()
         {
-            UpdateStanzaSlides();
-
+            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
         }
 
         /*
@@ -233,7 +244,7 @@ namespace HandsLiftedApp.Data.Models.Items
                 _arrangement.CollectionChanged -= Arrangement_CollectionChanged;
                 _arrangement.CollectionChanged += Arrangement_CollectionChanged;
 
-                UpdateStanzaSlides();
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
                 this.RaisePropertyChanged("Slides");
             }
         }

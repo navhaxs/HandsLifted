@@ -26,6 +26,7 @@
     <PackageVersion Include="ConcurrentPriorityQueue" Version="2.1.0" />
     <PackageVersion Include="Config.Net" Version="5.1.5" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
+    <PackageVersion Include="DebounceThrottle" Version="2.0.0" />
     <PackageVersion Include="DynamicData" Version="7.9.1" />
     <PackageVersion Include="DynamicData.ReactiveUI" Version="6.11.0.2613" />
     <PackageVersion Include="EmbedIO" Version="3.5.2" />

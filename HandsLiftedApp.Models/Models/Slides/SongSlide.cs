@@ -50,7 +50,7 @@ namespace HandsLiftedApp.Data.Slides
         public SongStanza? OwnerSongStanza { get; } = null;
 
         Bitmap _cached;
-        public Bitmap? cached { get => _cached; set => _cached = value; }
+        public Bitmap? cached { get => _cached; set => this.RaiseAndSetIfChanged(ref _cached, value); }
 
         public override bool Equals(Object obj)
         {
@@ -68,6 +68,7 @@ namespace HandsLiftedApp.Data.Slides
         }
     }
 
-    public interface ISongSlideState : ISlideState {
+    public interface ISongSlideState : ISlideState
+    {
     }
 }

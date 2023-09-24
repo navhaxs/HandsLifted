@@ -28,6 +28,15 @@ namespace HandsLiftedApp
 
             // The rest of the normal Avalonia init
             Globals.MainWindowViewModel = new MainWindowViewModel();
+
+
+            SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow()
+            {
+                DataContext = Globals.MainWindowViewModel // this.DataContext
+            };
+            slideRendererWorkerWindow.Show();
+
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow

@@ -6,7 +6,6 @@ using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
@@ -16,13 +15,11 @@ using HandsLiftedApp.Views.Editor;
 using HandsLiftedApp.Views.Preferences;
 using ReactiveUI;
 using Serilog;
-using Swan;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views
@@ -172,7 +169,8 @@ namespace HandsLiftedApp.Views
                     if (this.DataContext is MainWindowViewModel vm)
                     {
                         vm.WhenAnyValue(value => value.IsSidebarOpen)
-                                .Subscribe(nextIsSidebarOpen => {
+                                .Subscribe(nextIsSidebarOpen =>
+                                {
                                     updateSidebarGridSplitter(nextIsSidebarOpen);
                                 });
                     }
@@ -288,7 +286,7 @@ namespace HandsLiftedApp.Views
             //MessageBus.Current.SendMessage(new MainWindowModalMessage(new PlaylistInfoEditorWindow()));
             mouseState = null;
         }
-        
+
         private void OnGCCleanupClick(object? sender, RoutedEventArgs e)
         {
             GC.Collect();
@@ -356,7 +354,7 @@ namespace HandsLiftedApp.Views
             {
                 return;
             }
-            
+
             // TODO: if a textbox, datepicker etc is selected - then skip this func.
             var focusManager = TopLevel.GetTopLevel(this).FocusManager;
             var focusedElement = focusManager.GetFocusedElement();
@@ -420,7 +418,7 @@ namespace HandsLiftedApp.Views
             MessageBus.Current.SendMessage(new FocusSelectedItem());
             //MessageBus.Current.SendMessage(new Test());
         }
-   
+
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown();

@@ -8,6 +8,6 @@
 	<!-- This is a hidden window -->
 	<Viewbox>
 		<Grid x:Name="root"
-			   Height="1920" Width="1080" />
+			   Width="1920" Height="1080" />
 	</Viewbox>
 </Window>

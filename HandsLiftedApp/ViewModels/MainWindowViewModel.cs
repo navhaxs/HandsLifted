@@ -1,5 +1,6 @@
 using Avalonia.Animation;
 using Avalonia.Threading;
+using ByteSizeLib;
 using DynamicData;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
@@ -13,10 +14,14 @@ using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.LibraryModel;
 using HandsLiftedApp.Models.PlaylistActions;
+using HandsLiftedApp.Models.SlideDesigner;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Models.UI;
+using HandsLiftedApp.Models.WebsocketsEngine;
+using HandsLiftedApp.Models.WebsocketsV1;
 using HandsLiftedApp.PropertyGridControl;
 using HandsLiftedApp.Utils;
+using HandsLiftedApp.ViewModels.Editor;
 using HandsLiftedApp.Views;
 using HandsLiftedApp.Views.App;
 using HandsLiftedApp.Views.Editor;
@@ -29,18 +34,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
 using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
-using HandsLiftedApp.Models.SlideDesigner;
-using HandsLiftedApp.ViewModels.Editor;
-using System.Reactive.Disposables;
-using HandsLiftedApp.Models.WebsocketsEngine;
-using HandsLiftedApp.Models.WebsocketsV1;
-using ByteSizeLib;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -81,7 +81,7 @@ namespace HandsLiftedApp.ViewModels
         }
 
         private string _debugInfoText = string.Empty;
-        public string DebugInfoText {  get => _debugInfoText; set => this.RaiseAndSetIfChanged(ref _debugInfoText, value); }
+        public string DebugInfoText { get => _debugInfoText; set => this.RaiseAndSetIfChanged(ref _debugInfoText, value); }
 
         public SlideDesignerViewModel SlideDesigner { get; } = new SlideDesignerViewModel();
         public Playlist<PlaylistStateImpl, ItemStateImpl> _playlist;
@@ -183,7 +183,8 @@ namespace HandsLiftedApp.ViewModels
 
             this.WhenAnyValue(x => x.ActiveSlide)
                 .ObserveOn(RxApp.MainThreadScheduler) // TODO: what does this actually do?
-                .Subscribe(slide => {
+                .Subscribe(slide =>
+                {
                     // TODO: refactor this move to own file (service?)
                     var msg = new PublishStateMessage();
                     if (slide is SongSlide<SongSlideStateImpl>)
@@ -288,21 +289,26 @@ namespace HandsLiftedApp.ViewModels
 
             _ = Update(); // calling an async function we do not want to await
 
-            if (File.Exists(TEST_SERVICE_FILE_PATH))
+
+            // TODO don't load until later...
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
-                try
+                if (File.Exists(TEST_SERVICE_FILE_PATH))
                 {
-                    OnLoadService();
+                    try
+                    {
+                        OnLoadService();
+                    }
+                    catch (Exception _)
+                    {
+                        LoadDemoSchedule();
+                    }
                 }
-                catch (Exception _)
+                else
                 {
                     LoadDemoSchedule();
                 }
-            }
-            else
-            {
-                LoadDemoSchedule();
-            }
+            });
 
             MessageBus.Current.Listen<ActionMessage>()
                .Subscribe(x =>
@@ -387,7 +393,8 @@ namespace HandsLiftedApp.ViewModels
                 Playlist.State.IsLogo = true;
         }
 
-        private void HandleDeactivation() {
+        private void HandleDeactivation()
+        {
             Log.Information("MainWindowViewModel is deactivating");
             _isRunning = false;
         }
@@ -441,7 +448,7 @@ namespace HandsLiftedApp.ViewModels
 
         private bool _IsSidebarOpen = true;
         public bool IsSidebarOpen { get => _IsSidebarOpen; set => this.RaiseAndSetIfChanged(ref _IsSidebarOpen, value); }
- 
+
         private int _BottomLeftPanelSelectedTabIndex = 0;
         public int BottomLeftPanelSelectedTabIndex { get => _BottomLeftPanelSelectedTabIndex; set => this.RaiseAndSetIfChanged(ref _BottomLeftPanelSelectedTabIndex, value); }
 
