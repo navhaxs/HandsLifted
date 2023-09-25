@@ -44,7 +44,7 @@ namespace HandsLiftedApp.Models.ItemState
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                PageTransition = new XFade(TimeSpan.FromSeconds(0.30));
+                PageTransition = new XFade(TimeSpan.FromSeconds(0.20));
             });
 
             Observable.CombineLatest(

@@ -125,6 +125,17 @@ namespace HandsLiftedApp.XTransitioningContentControl
                 return;
             }
 
+
+            if (_presenter2?.Content is ISlideRender isr)
+            {
+                isr.OnLeaveSlide();
+            }
+            if (Presenter?.Content is ISlideRender isr2)
+            {
+                isr2.OnLeaveSlide();
+            }
+
+
             var currentPresenter = _isFirstFull ? _presenter2 : Presenter;
             currentPresenter.Content = Content;
             currentPresenter.IsVisible = true;

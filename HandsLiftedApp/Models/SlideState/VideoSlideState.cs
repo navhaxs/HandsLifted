@@ -1,26 +1,23 @@
 ﻿using Avalonia.Media.Imaging;
-using Avalonia.ReactiveUI;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using HandsLiftedApp.Utils.LibMpvVideo;
 using LibMpv.Client;
+using Serilog;
 
 namespace HandsLiftedApp.Models.SlideState
 {
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
-    public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, IVideoSlideState, IDisposable
+    public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, IVideoSlideState, IDisposable, ISlideState
     {
         
         public MpvContext? Context { set; get; }
@@ -50,7 +47,23 @@ namespace HandsLiftedApp.Models.SlideState
             Context = Globals.GlobalMpvContextInstance;
             
             parentVideoSlide = videoSlide;
-            VideoPath = videoSlide.SourceMediaPath;
+
+            videoSlide.WhenAnyValue(videoSlide => videoSlide.SourceMediaPath).Subscribe(SourceMediaPath =>
+            {
+                if (SourceMediaPath != null || SourceMediaPath != "")
+                {
+                    try
+                    {
+                        ShellFile shellFile = ShellFile.FromFilePath(SourceMediaPath);
+                        var bm = shellFile.Thumbnail.Bitmap;
+                        Thumbnail = bm.ConvertToAvaloniaBitmap();
+                        Log.Debug($"Thumbnail loaded for {SourceMediaPath}");
+                    }
+                    catch {
+                        Log.Debug($"Thumbnail FAILED loading for {SourceMediaPath}");
+                    }
+                }
+            });
             
             // Register propertyes for observation
             foreach (var observableProperty in observableProperties)
@@ -136,20 +149,7 @@ namespace HandsLiftedApp.Models.SlideState
 
             }
 
-            // do I also need to check for file is on disk (e.g. GOogle Drive File Stream - will this hang here....)loading?
-
-            if (!File.Exists(VideoPath))
-            {
-                // ??
-            }
-
-            try
-            {
-                ShellFile shellFile = ShellFile.FromFilePath(VideoPath);
-                var bm = shellFile.Thumbnail.Bitmap;
-                Thumbnail = bm.ConvertToAvaloniaBitmap();
-            }
-            catch { }
+            // do I also need to check for file is on disk (e.g. Google Drive File Stream - will this hang here....)loading?
         }
 
         private Bitmap? _thumbnail;
@@ -223,24 +223,26 @@ namespace HandsLiftedApp.Models.SlideState
             }
         }
         
+        public delegate void SlideLeaveHandler(object sender, SlideLeaveEventArgs e);
+        public event SlideLeaveHandler OnSlideLeave;
 
-        // TODO: thumbnail
-        //private Bitmap? _image;
 
-        //public Bitmap? Image
-        //{
-        //    get => _image;
-        //    private set => this.RaiseAndSetIfChanged(ref _image, value);
-        //}
-        public string VideoPath { get; set; }
-        
-        public async Task OnSlideEnterEvent()
-        {
-
-        }
-        public async Task OnSlideLeaveEvent()
+        void ISlideState.OnSlideLeaveEvent()
         {
             // MediaPlayer?.Stop();
+            Log.Debug("VideoSlideStateImpl OnSlideLeaveEvent");
+
+            Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", true);
+
+            // Make sure someone is listening to event
+            if (OnSlideLeave == null) return;
+
+            SlideLeaveEventArgs args = new SlideLeaveEventArgs();
+            OnSlideLeave(this, args);
+        }
+
+        public class SlideLeaveEventArgs : EventArgs
+        {
         }
 
         // --- stuff from vlc sample ---
@@ -301,7 +303,12 @@ namespace HandsLiftedApp.Models.SlideState
             _subscriptions = null;
             // MediaPlayer.Dispose();
         }
-        
+
+        void ISlideState.OnSlideEnterEvent()
+        {
+            throw new NotImplementedException();
+        }
+
         static PropertyToObserve[] observableProperties = new PropertyToObserve[]
         {
             new() { MvvmName=nameof(Duration), LibMpvName="duration", LibMpvFormat = mpv_format.MPV_FORMAT_INT64 },

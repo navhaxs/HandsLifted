@@ -38,7 +38,7 @@ namespace HandsLiftedApp.Services.Bitmaps
 
                 // grab the next item
                 BitmapLoadRequest request = item;
-                Log.Verbose($"Bitmap load thread got new item BitmapFilePath={request.BitmapFilePath}");
+                //Log.Verbose($"Bitmap load thread got new item BitmapFilePath={request.BitmapFilePath}");
 
                 // actual work to process
                 // TODO: skip if not required (hash of filpath+file.io last modified OR already loaded)

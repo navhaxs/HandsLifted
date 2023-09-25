@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
 using LibMpv.Client;
+using Serilog;
 using System;
 using System.Threading.Tasks;
 
@@ -17,34 +18,36 @@ namespace HandsLiftedApp.Views.Render
         {
             InitializeComponent();
 
+            Log.Debug("MpvVideoSlideRenderer Init");
 
             this.DataContextChanged += VideoSlide_DataContextChanged;
             this.AttachedToVisualTree += VideoSlideRenderer_AttachedToVisualTree;
             this.DetachedFromVisualTree += MpvVideoSlideRenderer_DetachedFromVisualTree;
         }
 
+        private void OnSlideDestroy(object sender, VideoSlideStateImpl.SlideLeaveEventArgs e)
+        {
+            VideoView.MpvContext = null;
+            Log.Debug("MpvVideoSlideRenderer internally detached");
+        }
+
         private void MpvVideoSlideRenderer_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
             if (_isMounted && VideoView.MpvContext != null)
             {
-                Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", true);
+                //Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", true);
             }
+            VideoView.MpvContext = null;
             _isMounted = false;
+            Log.Debug("MpvVideoSlideRenderer detached");
         }
 
         private void VideoSlide_DataContextChanged(object? sender, EventArgs e)
         {
-            //if (this.DataContext == null)
-            //{
-            //    MediaPlayer = null;
-            //}
-            //else
-            //{
-            //    MediaPlayer = ((VideoSlide<VideoSlideStateImpl>)this.DataContext).State.MediaPlayer;
-
-            //    if (this.VisualRoot as Window is ProjectorWindow)
-            //        VideoView.MediaPlayer = MediaPlayer;
-            //}
+            if (this.DataContext is VideoSlide<VideoSlideStateImpl> v)
+            {
+                v.State.OnSlideLeave += OnSlideDestroy;
+            }
         }
 
         private void VideoSlide_TemplateApplied(object? sender, Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
@@ -58,19 +61,20 @@ namespace HandsLiftedApp.Views.Render
             {
                 if (this.DataContext is VideoSlide<VideoSlideStateImpl> videoSlide)
                 {
-
+                    Log.Debug("MpvVideoSlideRenderer Attached");
                     _isMounted = true;
                     VideoView.MpvContext = Globals.GlobalMpvContextInstance;
 
                     Task.Run(() =>
                     {
                         Task.Delay(1000).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlid
-                        
+
                         if (_isMounted)
                         {
                             // only run if slide still active
                             Globals.GlobalMpvContextInstance.Command("loadfile", videoSlide.SourceMediaPath, "replace");
                             Globals.GlobalMpvContextInstance.SetPropertyFlag("pause", false);
+                            Log.Debug("MpvVideoSlideRenderer loadfile and play");
                         }
 
                     });

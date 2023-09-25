@@ -57,6 +57,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public override void OnLeaveSlide()
         {
+            Log.Debug("VideoSlide OnLeaveSlide");
             base.OnLeaveSlide();
             State.OnSlideLeaveEvent();
         }
