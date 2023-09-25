@@ -6,14 +6,30 @@ using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
 using System;
+using HandsLiftedApp.Utils;
 
 namespace HandsLiftedApp.Views
 {
     public partial class SlideRendererWorkerWindow : Window
     {
+
+
         public SlideRendererWorkerWindow()
         {
             InitializeComponent();
+
+            if (Design.IsDesignMode)
+                return;
+
+
+            //Performing some magic to hide the form from Alt+Tab
+            IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
+            if (handle != null)
+            {
+                Win32.SetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE, (Win32.GetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE) | Win32.WS_EX_TOOLWINDOW) & ~Win32.WS_EX_APPWINDOW);
+            }
+
+            this.Opened += SlideRendererWorkerWindow_Opened;
 
             MessageBus.Current.Listen<SlideRenderRequestMessage>()
                 .Subscribe((request) =>
@@ -72,6 +88,16 @@ namespace HandsLiftedApp.Views
                     });
 
                 });
+        }
+
+        private void SlideRendererWorkerWindow_Opened(object? sender, EventArgs e)
+        {
+            //this.IsVisible = false;
+            this.Opacity = 0;
+            this.IsHitTestVisible = false;
+            this.SystemDecorations = SystemDecorations.None;
+            this.Height = 0;
+            this.Width = 0;
         }
     }
 

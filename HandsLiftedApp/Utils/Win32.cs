@@ -26,8 +26,11 @@ public static class Win32
     [DllImport("user32.dll")]
     public static extern long SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-    public const int GWL_EXSTYLE = -20;
+    public const int GWL_EX_STYLE = -20;
     public const int GWL_STYLE = -16;
     public const int WS_EX_LAYERED = 0x80000;
     public const int WS_EX_TRANSPARENT = 0x00000020;
+    public const int WS_EX_APPWINDOW = 0x00040000, WS_EX_TOOLWINDOW = 0x00000080;
+
+
 }
