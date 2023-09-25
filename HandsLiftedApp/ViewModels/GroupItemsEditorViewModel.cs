@@ -28,7 +28,7 @@ namespace HandsLiftedApp.ViewModels
             ExploreFile = ReactiveCommand.CreateFromTask(ExploreFileAsync);
 
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
-            ShowOpenFileDialog = new Interaction<Unit, string?>();
+            ShowOpenFileDialog = new Interaction<Unit, string[]?>();
         }
 
         // Properties
@@ -41,7 +41,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> MoveItemDown { get; }
         public ReactiveCommand<object, Unit> RemoveItem { get; }
         public ReactiveCommand<Unit, Unit> ExploreFile { get; }
-        public Interaction<Unit, string?> ShowOpenFileDialog { get; }
+        public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
 
         private bool canMove(int sourceIndex, int nextIndex, int count)
             => (sourceIndex > -1 && nextIndex > -1 && nextIndex < count);
@@ -50,20 +50,23 @@ namespace HandsLiftedApp.ViewModels
         {
             try
             {
-                var fileName = await ShowOpenFileDialog.Handle(Unit.Default);
+                var fileNames = await ShowOpenFileDialog.Handle(Unit.Default);
 
-                if (fileName is object)
+                foreach (var fileName in fileNames)
                 {
-                    // Put your logic for opening file here.
-                    //if (SUPPORTED_VIDEO.Contains(extNoDot) || SUPPORTED_IMAGE.Contains(extNoDot))
-                    //{
-                    //    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroupItem = createMediaGroupItem(fileName);
+                    if (fileName is object)
+                    {
+                        // Put your logic for opening file here.
+                        //if (SUPPORTED_VIDEO.Contains(extNoDot) || SUPPORTED_IMAGE.Contains(extNoDot))
+                        //{
+                        //    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroupItem = createMediaGroupItem(fileName);
 
-                    //    if (slidesGroupItem != null)
-                    //        addedItems.Add(slidesGroupItem);
-                    //}
-                    var x = PlaylistUtils.GenerateMediaContentSlide(fileName);
-                    Item.Items.Add(x);
+                        //    if (slidesGroupItem != null)
+                        //        addedItems.Add(slidesGroupItem);
+                        //}
+                        var x = PlaylistUtils.GenerateMediaContentSlide(fileName);
+                        Item.Items.Add(x);
+                    }
                 }
             }
             catch (System.Exception e)

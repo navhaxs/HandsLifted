@@ -30,11 +30,11 @@ namespace HandsLiftedApp.Views
             this.DataContextChanged += GroupItemsEditorWindow_DataContextChanged;
         }
 
-        private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)
+        private async Task ShowOpenFileDialog(InteractionContext<Unit, string[]?> interaction)
         {
-            var dialog = new OpenFileDialog();
+            var dialog = new OpenFileDialog() { AllowMultiple = true }; // TODO Pass as flag
             var fileNames = await dialog.ShowAsync(this);
-            interaction.SetOutput(fileNames.FirstOrDefault());
+            interaction.SetOutput(fileNames);
         }
 
         private void GroupItemsEditorWindow_DataContextChanged(object? sender, System.EventArgs e)

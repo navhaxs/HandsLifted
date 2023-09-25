@@ -284,7 +284,7 @@ namespace HandsLiftedApp.ViewModels
             OnAboutWindowCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new AboutWindow())));
 
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
-            ShowOpenFileDialog = new Interaction<Unit, string?>();
+            ShowOpenFileDialog = new Interaction<Unit, string[]?>();
             ShowOpenFolderDialog = new Interaction<Unit, string?>();
 
             _ = Update(); // calling an async function we do not want to await
@@ -496,7 +496,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> OnAboutWindowCommand { get; }
         public ReactiveCommand<Unit, Unit> OnPreferencesWindowCommand { get; }
 
-        public Interaction<Unit, string?> ShowOpenFileDialog { get; }
+        public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
         public Interaction<Unit, string?> ShowOpenFolderDialog { get; }
 
         private async Task OpenGoogleSlidesAsync()
@@ -566,13 +566,13 @@ namespace HandsLiftedApp.ViewModels
                 {
 
                     DateTime now = DateTime.Now;
-                    string fileName = Path.GetFileName(fullFilePath);
+                    string fileName = Path.GetFileName(fullFilePath.FirstOrDefault());
 
                     string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
                     Directory.CreateDirectory(targetDirectory);
 
                     //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
-                    PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath };
+                    PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath.FirstOrDefault() };
 
                     Playlist.Items.Add(slidesGroup);
 
@@ -601,30 +601,37 @@ namespace HandsLiftedApp.ViewModels
         {
             try
             {
-                var fullPath = await ShowOpenFileDialog.Handle(Unit.Default);
+                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
 
-                if (fullPath != null && fullPath is string)
+                foreach (var item in filePaths)
                 {
 
-                    DateTime now = DateTime.Now;
-                    string fileName = Path.GetFileName(fullPath);
-                    string folderName = Path.GetDirectoryName(fullPath);
-
-                    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
-
-                    Playlist.Items.Add(slidesGroup);
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    if (filePaths != null && filePaths is string)
                     {
-                        // wait for UI to update...
-                        Dispatcher.UIThread.RunJobs();
-                        // and now we can jump to view
-                        var count = Playlist.Items.Count;
-                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
-                    });
 
-                    slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath));
+                        DateTime now = DateTime.Now;
+                        string fileName = Path.GetFileName(item);
+                        string folderName = Path.GetDirectoryName(item);
+
+                        SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
+
+                        Playlist.Items.Add(slidesGroup);
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            // wait for UI to update...
+                            Dispatcher.UIThread.RunJobs();
+                            // and now we can jump to view
+                            var count = Playlist.Items.Count;
+                            MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                        });
+
+                        slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(item));
+                    }
+
                 }
+
+                
             }
             catch (Exception e)
             {
@@ -635,30 +642,32 @@ namespace HandsLiftedApp.ViewModels
         {
             try
             {
-                var fullPath = await ShowOpenFileDialog.Handle(Unit.Default);
+                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
 
-                if (fullPath != null && fullPath is string)
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = "New media group" };
+
+                Playlist.Items.Add(slidesGroup);
+                foreach (var filePath in filePaths)
                 {
-
-                    DateTime now = DateTime.Now;
-                    string fileName = Path.GetFileName(fullPath);
-                    string folderName = Path.GetDirectoryName(fullPath);
-
-                    SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName };
-
-                    Playlist.Items.Add(slidesGroup);
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    if (filePath != null && filePath is string)
                     {
-                        // wait for UI to update...
-                        Dispatcher.UIThread.RunJobs();
-                        // and now we can jump to view
-                        var count = Playlist.Items.Count;
-                        MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
-                    });
 
-                    slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(fullPath));
+                        DateTime now = DateTime.Now;
+                        string fileName = Path.GetFileName(filePath);
+                        string folderName = Path.GetDirectoryName(filePath);
+                        slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(filePath));
+                    }
                 }
+
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    // wait for UI to update...
+                    Dispatcher.UIThread.RunJobs();
+                    // and now we can jump to view
+                    var count = Playlist.Items.Count;
+                    MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                });
+
             }
             catch (Exception e)
             {
@@ -757,14 +766,17 @@ namespace HandsLiftedApp.ViewModels
         {
             try
             {
-                var fileName = await ShowOpenFileDialog.Handle(Unit.Default);
+                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
 
-                if (fileName != null && fileName is string)
+                foreach (var fileName in filePaths)
                 {
-                    var songItem = SongImporter.createSongItemFromTxtFile((string)fileName);
-                    Playlist.Items.Add(songItem);
-                }
 
+                    if (fileName != null && fileName is string)
+                    {
+                        var songItem = SongImporter.createSongItemFromTxtFile((string)fileName);
+                        Playlist.Items.Add(songItem);
+                    }
+                }
             }
             catch (Exception e)
             {

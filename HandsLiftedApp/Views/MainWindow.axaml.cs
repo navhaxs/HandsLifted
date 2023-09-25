@@ -384,13 +384,13 @@ namespace HandsLiftedApp.Views
             }
         }
 
-        private async Task ShowOpenFileDialog(InteractionContext<Unit, string?> interaction)
+        private async Task ShowOpenFileDialog(InteractionContext<Unit, string[]?> interaction)
         {
             try
             {
-                var dialog = new OpenFileDialog();
+                var dialog = new OpenFileDialog() { AllowMultiple = true };
                 var fileNames = await dialog.ShowAsync(this);
-                interaction.SetOutput(fileNames != null ? fileNames.FirstOrDefault() : null);
+                interaction.SetOutput(fileNames);
             }
             catch (Exception e)
             {
