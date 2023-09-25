@@ -9,9 +9,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
 
         // NOTE: waiting for https://github.com/NetOfficeFw/NetOffice/issues/343
 
-
         private static readonly object syncSlidesLock = new object();
-
 
         public static string GetTempDirPath()
         {
@@ -106,12 +104,24 @@ namespace HandsLiftedApp.Importer.PowerPoint
                 {
                     foreach (Slide slide in slides)
                     {
-                        float slideHeight = 1080; // thisPresentation.PageSetup.SlideHeight;
-                        float slideWidth = 1920; //thisPresentation.PageSetup.SlideWidth;
+                        // https://stackoverflow.com/a/2001692
+                        double canvasWidth = 1920;
+                        double canvasHeight = 1080;
+                        double originalWidth= (double)thisPresentation.PageSetup.SlideWidth;
+                        double originalHeight = (double)thisPresentation.PageSetup.SlideHeight;
+
+                        double ratioX = (double)canvasWidth / (double)originalWidth;
+                        double ratioY = (double)canvasHeight / (double)originalHeight;
+                        // use whichever multiplier is smaller
+                        double ratio = ratioX < ratioY ? ratioX : ratioY;
+
+                        // now we can get the new height and width
+                        int newHeight = Convert.ToInt32(originalHeight * ratio);
+                        int newWidth = Convert.ToInt32(originalWidth * ratio);
 
                         try
                         {
-                            slide.Export(Path.Combine(task.OutputDirectory, $"slide_{slide.SlideIndex}.png"), "PNG", slideWidth, slideHeight);
+                            slide.Export(Path.Combine(task.OutputDirectory, $"slide_{slide.SlideIndex}.png"), "PNG", newWidth, newHeight);
                         }
                         catch (Exception e)
                         {
