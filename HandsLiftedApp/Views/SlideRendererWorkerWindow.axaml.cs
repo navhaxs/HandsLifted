@@ -13,7 +13,6 @@ namespace HandsLiftedApp.Views
     public partial class SlideRendererWorkerWindow : Window
     {
 
-
         public SlideRendererWorkerWindow()
         {
             InitializeComponent();
@@ -64,18 +63,7 @@ namespace HandsLiftedApp.Views
                         {
                             templateControl = new DesignerSlideTitle() { DataContext = request.Data };
                         }
-                        //if (request.Data.GetType() == ))
-                        //{
 
-                        //}
-                        //else if (request.Data is SongTitleSlide<ISongTitleSlideState>)
-                        //{
-                        //    templateControl = new DesignerSlideTitle() { DataContext = request.Data };
-                        //}
-                        //else
-                        //{
-                        //    return;
-                        //}
                         if (templateControl != null)
                         {
                             root.Children.Add(templateControl);
@@ -92,7 +80,6 @@ namespace HandsLiftedApp.Views
 
         private void SlideRendererWorkerWindow_Opened(object? sender, EventArgs e)
         {
-            //this.IsVisible = false;
             this.Opacity = 0;
             this.IsHitTestVisible = false;
             this.SystemDecorations = SystemDecorations.None;
