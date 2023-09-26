@@ -1,13 +1,16 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.Linq;
 
@@ -50,6 +53,7 @@ namespace HandsLiftedApp.Behaviours
             var source = AssociatedObject;
             if (source is { })
             {
+                // NOTE: You need any kind of Background for hit testing to work. Transparent is fine, but null will not work. For Panel, null is default.
                 source.PointerPressed += Source_PointerPressed;
 
                 if (source.ContextMenu != null)
@@ -92,7 +96,8 @@ namespace HandsLiftedApp.Behaviours
             var target = TargetControl ?? AssociatedObject;
             if (target is { })
             {
-                _parent = (Control)target.GetLogicalParent();
+                _parent = target.FindAncestorOfType<ItemsControl>();
+                ItemsControl parentItemsControls = (ItemsControl) _parent;
 
                 if (!(target.RenderTransform is TranslateTransform))
                 {
@@ -106,19 +111,23 @@ namespace HandsLiftedApp.Behaviours
                     _parent.PointerReleased += Parent_PointerReleased;
                 }
 
-                ListBox listBox = (ListBox)target.Parent;
-                var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
+                ListBoxItem listBoxItem = target.FindAncestorOfType<ListBoxItem>();
+                var SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                Log.Debug($"SourceIndex={SourceIndex}");
+
+                listBoxItem.ZIndex = 999;
+                listBoxItem.Opacity = 0.8;
             }
         }
 
-        private ListBoxItem GetHoveredItem(ListBox listBox, Point pos, Control? target)
+        private ListBoxItem GetHoveredItem(ItemsControl listBox, Point pos, Control? target)
         {
-            return (ListBoxItem)listBox.GetLogicalChildren()
-               .Where(listBoxItem => listBoxItem != target)
-               .FirstOrDefault(x => listBox.GetVisualsAt(pos)
-                   .Contains(
-                       ((Visual)x).GetVisualChildren().First())
-               );
+            var children = listBox.GetLogicalChildren(); // ListBoxItem
+
+            var visualsAtPos = listBox.GetVisualsAt(pos); // Border
+            var itemsAtPos = visualsAtPos.Select(visual => ControlExtension.FindAncestor<ListBoxItem>((Control)visual)).ToArray(); // ContentPresenter
+
+            return (ListBoxItem)children.Where(listBoxItem => listBoxItem != target).FirstOrDefault(childItem => itemsAtPos.Contains(childItem));
         }
 
 
@@ -187,27 +196,31 @@ namespace HandsLiftedApp.Behaviours
                     return;
                 }
 
-                if (target.RenderTransform is TranslateTransform tr)
+                ListBoxItem listBoxItem = target.FindAncestorOfType<ListBoxItem>();
+                if (listBoxItem.RenderTransform is TranslateTransform tr)
                 {
                     //tr.X += pos.X - _previous.X;
                     tr.Y += pos.Y - _previous.Y;
                 }
                 _previous = pos;
 
-                ListBox listBox = (ListBox)target.Parent;
-                ListBoxItem hoveredItem = GetHoveredItem(listBox, pos, target);
+                ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
+
+                //listBoxItem.ZIndex = 999;
+
+                ListBoxItem hoveredItem = GetHoveredItem(parentItemsControls, pos, listBoxItem);
 
                 // check if dragging past the last item
-                ListBoxItem? lastItem = (ListBoxItem)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
+                ListBoxItem? lastItem = (ListBoxItem)parentItemsControls.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
                 bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom)
-                    && pos.X > 0 && pos.X < listBox.Bounds.Width;
+                    && pos.X > 0 && pos.X < parentItemsControls.Bounds.Width;
 
-                for (int i = 0; i < listBox.ItemCount; i++)
+                for (int i = 0; i < parentItemsControls.ItemCount; i++)
                 {
-                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
+                    var listBoxItemContainer = parentItemsControls.ContainerFromIndex(i);
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
                     adornerLayer.Children.Clear();
-                    listBoxItemContainer.ZIndex = 5;
+                    //listBoxItemContainer.ZIndex = 1;
                 }
 
                 if (isPastLastItem)
@@ -220,7 +233,7 @@ namespace HandsLiftedApp.Behaviours
 
                 if (hoveredItem != target)
                 {
-                    hoveredItem.ZIndex = 1;
+                    //hoveredItem.ZIndex = 1;
                     var adornerElement = hoveredItem;
                     var adornerLayer = AdornerLayer.GetAdornerLayer(adornerElement);
 
@@ -254,37 +267,41 @@ namespace HandsLiftedApp.Behaviours
             if (_parent is { })
             {
                 var target = TargetControl ?? AssociatedObject;
-                target.RenderTransform = new TranslateTransform();
+                ListBoxItem listBoxItem = target.FindAncestorOfType<ListBoxItem>();
+                listBoxItem.RenderTransform = new TranslateTransform();
 
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
                 _parent = null;
                 isDragging = false;
 
-                ListBox listBox = (ListBox)target.Parent;
-                Point pos = e.GetPosition(listBox);
+                ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
+                Point pos = e.GetPosition(parentItemsControls);
 
 
                 // check if dragging outside left/right bounds
-                if (pos.X < 0 || pos.X > listBox.Bounds.Width)
+                if (pos.X < 0 || pos.X > parentItemsControls.Bounds.Width)
                 {
                     return;
                 }
 
-                ListBoxItem hoveredItem = GetHoveredItem(listBox, pos, target);
+                ListBoxItem hoveredItem = GetHoveredItem(parentItemsControls, pos, listBoxItem);
 
                 // check if dragging past the last item
-                ListBoxItem? lastItem = (ListBoxItem)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
+                ListBoxItem? lastItem = (ListBoxItem)parentItemsControls.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
                 bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
 
-                int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
-                int DestinationIndex = isPastLastItem ? listBox.ItemCount - 1 : listBox.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                int SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                int DestinationIndex = isPastLastItem ? parentItemsControls.ItemCount - 1 : parentItemsControls.ItemContainerGenerator.IndexFromContainer(hoveredItem);
 
-                for (int i = 0; i < listBox.ItemCount; i++)
+                for (int i = 0; i < parentItemsControls.ItemCount; i++)
                 {
-                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
+                    var listBoxItemContainer = parentItemsControls.ContainerFromIndex(i);
 
                     listBoxItemContainer.Classes.Remove("draggingover");
+                    listBoxItemContainer.ZIndex = 1;
+                    listBoxItemContainer.Opacity = 1;
+
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
 
                     if (adornerLayer != null)

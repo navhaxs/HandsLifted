@@ -2,6 +2,7 @@
     x:Class="HandsLiftedApp.Controls.ItemOrderListView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avaloniaconverters="using:Avalonia.Markup.Xaml.Converters"
     xmlns:b="using:HandsLiftedApp.Behaviours"
     xmlns:behaviours="using:HandsLiftedApp.Behaviours"
     xmlns:converters="using:HandsLiftedApp.Converters"
@@ -12,6 +13,7 @@
     xmlns:item="using:HandsLiftedApp.Views.Item"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:vm="using:HandsLiftedApp.ViewModels"
     d:DesignHeight="280"
     d:DesignWidth="200"
@@ -24,7 +26,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
-			<converters:IntMinusOneConverter x:Key="intMinusOneConverter" />
+            <converters:IntMinusOneConverter x:Key="intMinusOneConverter" />
+            <avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://HandsLiftedApp/Assets/AddItemFlyoutResourceDictionary.axaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -62,13 +65,13 @@
             <Setter Property="Margin" Value="0" />
             <Setter Property="BorderThickness" Value="0 0 0 1" />
             <Setter Property="CornerRadius" Value="0 0 0 0" />
-            <Setter Property="(i:Interaction.Behaviors)">
+            <!--<Setter Property="(i:Interaction.Behaviors)">
                 <i:BehaviorCollectionTemplate>
                     <i:BehaviorCollection>
                         <behaviours:DragControlBehavior />
                     </i:BehaviorCollection>
                 </i:BehaviorCollectionTemplate>
-            </Setter>
+            </Setter>-->
         </Style>
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
@@ -105,7 +108,6 @@
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <!--  TODO: AddItemButton  -->
                         <!--  disable virtualization  -->
                         <StackPanel />
                     </ItemsPanelTemplate>
@@ -115,33 +117,59 @@
                         <MenuItem Header="Add Item" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel Margin="6,0,0,0" VerticalAlignment="Stretch">
-
-                            <Viewbox
-                                Width="10"
-                                Height="10"
-                                Margin="-7,0,7,0">
-                                <Polygon
-                                    Fill="#FF3400"
-                                    IsVisible="{Binding State.IsSelected}"
-                                    Points="0,0 8,5, 0,10" />
-                            </Viewbox>
-
-                            <TextBlock
-                                Padding="0,8,0,8"
-                                FontSize="13"
-                                TextTrimming="CharacterEllipsis">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0}">
-                                        <Binding Path="Title" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                        </DockPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                <ListBox.DataTemplates>
+                    <utils:MyTemplateSelector>
+                        <DataTemplate x:Key="SectionHeadingItem">
+                            <Border
+                                Background="#1e1e1e"
+                                BorderBrush="{Binding ItemGroupColour, Converter={StaticResource ColorToBrushConverter}, FallbackValue='#7E282828'}"
+                                BorderThickness="8,0,0,0">
+                                <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
+                                    <TextBlock
+                                        Padding="0,4,0,4"
+                                        FontSize="14"
+                                        FontWeight="Bold"
+                                        TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}">
+                                                <Binding Path="Title" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DockPanel>
+								<i:Interaction.Behaviors>
+									<behaviours:DragControlBehavior />
+								</i:Interaction.Behaviors>
+                            </Border>
+                        </DataTemplate>
+                        <DataTemplate x:Key="Fallback">
+                            <DockPanel Margin="6,0,0,0" VerticalAlignment="Stretch" Background="Transparent">
+                                <Viewbox
+                                    Width="10"
+                                    Height="10"
+                                    Margin="-7,0,7,0">
+                                    <Polygon
+                                        Fill="#FF3400"
+                                        IsVisible="{Binding State.IsSelected}"
+                                        Points="0,0 8,5, 0,10" />
+                                </Viewbox>
+                                <TextBlock
+                                    Padding="0,8,0,8"
+                                    FontSize="13"
+                                    TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}">
+                                            <Binding Path="Title" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+								<i:Interaction.Behaviors>
+									<behaviours:DragControlBehavior />
+								</i:Interaction.Behaviors>
+                            </DockPanel>
+                        </DataTemplate>
+                    </utils:MyTemplateSelector>
+                </ListBox.DataTemplates>
             </ListBox>
         </ScrollViewer>
         <Button
@@ -156,9 +184,9 @@
             ClickMode="Press"
             CornerRadius="6"
             Cursor="Hand"
+            DataContext="{Binding Playlist.Items.Count, Converter={StaticResource intMinusOneConverter}}"
             DockPanel.Dock="Bottom"
             Flyout="{StaticResource addItemFlyout}"
-			DataContext="{Binding Playlist.Items.Count, Converter={StaticResource intMinusOneConverter}}"
             FontSize="14"
             Foreground="White">
             <Button.Styles>
