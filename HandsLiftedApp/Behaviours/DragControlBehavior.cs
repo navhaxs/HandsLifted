@@ -112,7 +112,6 @@ namespace HandsLiftedApp.Behaviours
 
                 ListBoxItem listBoxItem = target.FindAncestorOfType<ListBoxItem>();
                 var SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(listBoxItem);
-                Log.Debug($"SourceIndex={SourceIndex}");
 
                 listBoxItem.ZIndex = 999;
                 listBoxItem.Opacity = 0.8;

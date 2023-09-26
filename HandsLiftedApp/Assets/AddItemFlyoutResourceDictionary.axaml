@@ -2,6 +2,14 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:material="using:Material.Icons.Avalonia">
+
+	<Design.PreviewWith>
+		<!-- Add Controls for Previewer Here -->
+		<Button Content="Arrangement"
+				Flyout="{StaticResource addItemFlayout}"
+		/>
+	</Design.PreviewWith>
+	
     <MenuFlyout x:Key="addItemFlyout" Placement="BottomEdgeAlignedLeft">
         <MenuItem Header="_Presentation">
             <MenuItem Command="{Binding $parent[Window].DataContext.AddPresentationCommand}" Header="PowerPoint">
@@ -56,7 +64,7 @@
             CommandParameter="{Binding}"
             Header="_Section">
             <MenuItem.Icon>
-                <material:MaterialIcon Kind="Star" />
+                <material:MaterialIcon Kind="FormatSection" />
             </MenuItem.Icon>
         </MenuItem>
         <Separator />

@@ -161,6 +161,22 @@
 							</MultiBinding>
 						</MenuItem.CommandParameter>
 					</MenuItem>
+					<MenuItem Header="Join group with previous item group" Command="{Binding $parent[Window].DataContext.SlideJoinBackwardsFromHere}">
+						<MenuItem.CommandParameter>
+							<MultiBinding>
+								<Binding />
+								<Binding Path="$parent[ListBox].DataContext"/>
+							</MultiBinding>
+						</MenuItem.CommandParameter>
+					</MenuItem>
+					<MenuItem Header="Join group with next item" Command="{Binding $parent[Window].DataContext.SlideJoinForwardsFromHere}">
+						<MenuItem.CommandParameter>
+							<MultiBinding>
+								<Binding />
+								<Binding Path="$parent[ListBox].DataContext"/>
+							</MultiBinding>
+						</MenuItem.CommandParameter>
+					</MenuItem>
 				</ContextMenu>
 			</Setter.Value>
 		</Setter>

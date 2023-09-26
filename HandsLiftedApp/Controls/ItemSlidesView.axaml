@@ -89,6 +89,7 @@
 								<MenuItem Header="MoveDown" />
 								<MenuItem Header="Replace" />
 								<MenuItem Header="Swap" />
+								<MenuItem Header="Remove" />
 							</ContextMenu>
 						</DockPanel.ContextMenu>
                         <!--<item:ItemIcon Margin="12,0,8,0" DockPanel.Dock="Left"

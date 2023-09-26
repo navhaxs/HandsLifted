@@ -103,6 +103,8 @@ namespace HandsLiftedApp.Behaviours
                     _parent.PointerMoved += Parent_PointerMoved;
                     _parent.PointerReleased += Parent_PointerReleased;
 
+                    _parent.Opacity = 0.6;
+
                     var m = _parent.GetVisualRoot();
                     if (m is Window)
                     {
@@ -206,6 +208,13 @@ namespace HandsLiftedApp.Behaviours
 
                 // check if dragging past the last item
                 ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
+
+                // TODO
+                // TODO
+                // TODO
+                // TODO
+                // TODO
+                // TODO
                 bool isPastLastItem = false;// (lastItem != null) && (isPastLastItem = pos1.Y > lastItem.Bounds.Bottom);
 
                 for (int i = 0; i < listBox.ItemCount; i++)
@@ -234,9 +243,9 @@ namespace HandsLiftedApp.Behaviours
                     {
                         var adornedElement = new Border()
                         {
-                            CornerRadius = new CornerRadius(3, 0, 0, 3),
-                            BorderThickness = new Thickness(2, 2, 2, 2),
-                            BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd"))
+                            //CornerRadius = new CornerRadius(3, 0, 0, 3),
+                            BorderThickness = new Thickness(4, 0, 0, 0),
+                            BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
                         };
                         adornerLayer.Children.Add(adornedElement);
                         AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
@@ -293,6 +302,7 @@ namespace HandsLiftedApp.Behaviours
                 {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
                     listBoxItemContainer.Classes.Remove("draggingover");
+                    listBoxItemContainer.Opacity = 1;
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
 
                     if (adornerLayer != null)

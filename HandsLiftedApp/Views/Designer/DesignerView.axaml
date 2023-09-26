@@ -48,7 +48,7 @@
             <DockPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                     <TextBox Text="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile}" />
-					<Button>
+					<Button Command="{Binding OnChangeLogoCommand}">
 						Change
 					</Button>
                 </StackPanel>

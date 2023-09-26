@@ -279,10 +279,58 @@ namespace HandsLiftedApp.ViewModels
                 if (newSlidesGroupItem != null)
                     Playlist.Items.Insert(Playlist.Items.IndexOf(a) + 1, newSlidesGroupItem);
             });
+            SlideJoinBackwardsFromHere = ReactiveCommand.Create<object>((ac) =>
+            {
+                // todo edge cases: active selected index?
+                ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
+
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> thisItem = args[1] as SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>;
+                var thisItemIdx = Playlist.Items.IndexOf(thisItem);
+
+                if (thisItemIdx < 1)
+                {
+                    return;
+                }
+
+                var lastItem = Playlist.Items[thisItemIdx - 1];
+                if (lastItem is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> s)
+                {
+                    s.Items.AddRange(thisItem.Items);
+                    Playlist.Items.RemoveAt(thisItemIdx);
+                }
+            });
+            SlideJoinForwardsFromHere = ReactiveCommand.Create<object>((ac) =>
+            {
+                // todo edge cases: active selected index?
+                ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
+
+                SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> thisItem = args[1] as SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>;
+                var thisItemIdx = Playlist.Items.IndexOf(thisItem);
+
+                var lastItem = Playlist.Items.ElementAtOrDefault(thisItemIdx + 1);
+                if (lastItem is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> s)
+                {
+                    thisItem.Items.AddRange(s.Items);
+                    Playlist.Items.Remove(lastItem);
+                }
+            });
 
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
             OnPreferencesWindowCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new PreferencesWindow())));
             OnAboutWindowCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new AboutWindow())));
+            OnChangeLogoCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                try
+                {
+                    var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
+                    if (filePaths.Length == 0) return;
+                    Playlist.LogoGraphicFile = filePaths.First();
+                }
+                catch (Exception e)
+                {
+                    Debug.Print(e.Message);
+                }
+            });
 
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
             ShowOpenFileDialog = new Interaction<Unit, string[]?>();
@@ -494,7 +542,10 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<object, Unit> RemoveItemCommand { get; }
         public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
         public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
+        public ReactiveCommand<object, Unit> SlideJoinBackwardsFromHere { get; }
+        public ReactiveCommand<object, Unit> SlideJoinForwardsFromHere { get; }
         public ReactiveCommand<Unit, Unit> OnAboutWindowCommand { get; }
+        public ReactiveCommand<Unit, Unit> OnChangeLogoCommand { get; }
         public ReactiveCommand<Unit, Unit> OnPreferencesWindowCommand { get; }
 
         public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
@@ -604,6 +655,7 @@ namespace HandsLiftedApp.ViewModels
         }
         private async Task AddVideoCommandAsync()
         {
+            //TODO insert index
             try
             {
                 var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
@@ -611,7 +663,7 @@ namespace HandsLiftedApp.ViewModels
                 foreach (var item in filePaths)
                 {
 
-                    if (filePaths != null && filePaths is string)
+                    if (item != null && item is string)
                     {
 
                         DateTime now = DateTime.Now;

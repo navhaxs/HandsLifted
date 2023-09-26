@@ -142,6 +142,8 @@ namespace HandsLiftedApp.ViewModels
             if (sourceIndex > -1 && nextIndex > -1 && nextIndex < Item.Items.Count)
             {
                 Item.Items.Move(sourceIndex, nextIndex);
+
+
                 SelectedIndex = nextIndex;
             }
         }

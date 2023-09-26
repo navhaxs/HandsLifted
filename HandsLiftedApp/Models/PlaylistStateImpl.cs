@@ -12,6 +12,7 @@ using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using Serilog;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -85,16 +86,16 @@ namespace HandsLiftedApp.Models
                     return;
                 }
 
-                if (AssetLoader.Exists(new Uri(Playlist.LogoGraphicFile)))
+                if (AssetLoader.Exists(new Uri(Playlist.LogoGraphicFile)) || File.Exists(Playlist.LogoGraphicFile))
                 {
                     this.RaisePropertyChanged(nameof(LogoBitmap));
-                    this.RaisePropertyChanged("LogoBitmap");
                 }
 
             });
 
         }
 
+        // TODO this could be a ObservableAsPropertyHelper
         public Bitmap LogoBitmap
         {
             get
