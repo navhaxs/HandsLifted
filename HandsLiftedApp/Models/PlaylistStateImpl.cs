@@ -122,13 +122,15 @@ namespace HandsLiftedApp.Models
             // if no selected item, attempt to select the first item
             if (SelectedItem == null || SelectedItem is BlankItem<ItemStateImpl>)
             {
-                if (Playlist.Items.Count > 0)
+                int nextNavigatableItemIndex = getNextNavigatableItem(SelectedItemIndex);
+                if (nextNavigatableItemIndex != -1)
                 {
+                    // select first slide of this next item
                     return new SlideReference()
                     {
-                        Slide = Playlist.Items[0]?.Slides?.FirstOrDefault(),
+                        Slide = Playlist.Items[nextNavigatableItemIndex].Slides.ElementAtOrDefault(0),
                         SlideIndex = 0,
-                        ItemIndex = 0,
+                        ItemIndex = nextNavigatableItemIndex
                     };
                 }
             }
