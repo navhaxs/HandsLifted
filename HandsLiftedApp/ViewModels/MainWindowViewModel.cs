@@ -298,7 +298,7 @@ namespace HandsLiftedApp.ViewModels
                 {
                     try
                     {
-                        OnLoadService();
+                        LOAD_TEST_SERVICE();
                     }
                     catch (Exception _)
                     {
@@ -561,19 +561,22 @@ namespace HandsLiftedApp.ViewModels
         {
             try
             {
-                var fullFilePath = await ShowOpenFileDialog.Handle(Unit.Default);
+                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
 
-                if (fullFilePath != null && fullFilePath is string)
+                foreach (var path in filePaths)
+                {
+
+                if (path != null && path is string)
                 {
 
                     DateTime now = DateTime.Now;
-                    string fileName = Path.GetFileName(fullFilePath.FirstOrDefault());
+                    string fileName = Path.GetFileName(path);
 
                     string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
                     Directory.CreateDirectory(targetDirectory);
 
                     //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
-                    PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = fullFilePath.FirstOrDefault() };
+                    PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = path };
 
                     Playlist.Items.Add(slidesGroup);
 
@@ -587,6 +590,7 @@ namespace HandsLiftedApp.ViewModels
                     });
 
                     slidesGroup.SyncState.SyncCommand();
+                }
                 }
             }
             catch (Exception e)
@@ -805,16 +809,26 @@ namespace HandsLiftedApp.ViewModels
         void OnSaveService()
         {
             XmlSerialization.WriteToXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH, Playlist);
+            MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}"}));
         }
 
         void OnNewService()
         {
+            MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "New Playlist", Content = $"" }));
+
             Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
             Playlist = TestPlaylistDataGenerator.Generate();
         }
 
         void OnLoadService()
         {
+            LOAD_TEST_SERVICE();
+            MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow(), true, new MessageWindowAction() { Title = "Loaded Playlist", Content = $"{TEST_SERVICE_FILE_PATH}" }));
+        }
+
+        void LOAD_TEST_SERVICE()
+        {
+
             Log.Debug("Loading test service.xml");
             Playlist = XmlSerialization.ReadFromXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH);
             Log.Debug("Loading test service.xml DONE");
@@ -844,7 +858,6 @@ namespace HandsLiftedApp.ViewModels
                 }
             }
         }
-
 
         void OnMoveUpItemCommand(object? itemState)
         {

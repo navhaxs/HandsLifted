@@ -148,13 +148,17 @@ namespace HandsLiftedApp.Behaviours
 
             if (target != null)
             {
-                target.RenderTransform = new TranslateTransform();
-                ListBox listBox = (ListBox)target.Parent;
-                for (int i = 0; i < listBox.ItemCount; i++)
+
+                ListBoxItem listBoxItem = target.FindAncestorOfType<ListBoxItem>();
+                listBoxItem.RenderTransform = new TranslateTransform();
+                ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
+
+                for (int i = 0; i < parentItemsControls.ItemCount; i++)
                 {
-                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
+                    var listBoxItemContainer = parentItemsControls.ContainerFromIndex(i);
 
                     listBoxItemContainer.Classes.Remove("draggingover");
+                    listBoxItemContainer.ZIndex = 1;
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
 
                     if (adornerLayer != null)
@@ -242,7 +246,7 @@ namespace HandsLiftedApp.Behaviours
                         var adornedElement = new Border()
                         {
                             CornerRadius = new CornerRadius(3, 0, 0, 3),
-                            BorderThickness = new Thickness(2, 2, 0, 2),
+                            BorderThickness = isPastLastItem ? new Thickness(0, 0, 0, 2) : new Thickness(0, 2, 0, 0),
                             BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd"))
                         };
                         adornerLayer.Children.Add(adornedElement);

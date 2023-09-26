@@ -34,6 +34,9 @@
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="Foreground" Value="#eee" />
                     </Style>
+                    <Style Selector="Button.link TextBlock">
+                        <Setter Property="Foreground" Value="#0a61a3" />
+                    </Style>
                 </StackPanel.Styles>
                 <WrapPanel>
                     <TextBlock

@@ -64,7 +64,11 @@ namespace HandsLiftedApp.Models
                 vm => vm.SelectedItem.Slides.Count,
                 (int index, int count) =>
                 {
-                    return $"Slide {index + 1} of {count}";
+                    if (count > 0 && index > -1)
+                    {
+                        return $"Slide {index + 1} of {count}";
+                    }
+                    return "";
                 })
                 .ToProperty(this, c => c.SelectedSlideItemDisplayText);
 
@@ -110,12 +114,8 @@ namespace HandsLiftedApp.Models
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
-            {
-                //if ()
-                //e.OldItems
-                //SelectedItemIndex = -1;
-            }
+            // TODO: implement a similar 'dirty flag' on each 'item'
+            IsDirty = true;
         }
 
         public SlideReference GetNextSlide(bool allowItemLookAhead = true)
@@ -158,17 +158,20 @@ namespace HandsLiftedApp.Models
                 };
             }
             // else attempt to navigate to next item
-            else if (allowItemLookAhead && Playlist.Items.ElementAtOrDefault(SelectedItemIndex + 1) != null)
+            else if (allowItemLookAhead)
             {
-                var nextItemIndex = SelectedItemIndex + 1;
-                // select first slide of this next item
-                return new SlideReference()
-                {
-                    Slide = Playlist.Items[nextItemIndex].Slides.ElementAtOrDefault(0),
-                    SlideIndex = 0,
-                    ItemIndex = nextItemIndex
-                };
+                int nextNavigatableItemIndex = getNextNavigatableItem(SelectedItemIndex);
 
+                if (nextNavigatableItemIndex != -1)
+                {
+                    // select first slide of this next item
+                    return new SlideReference()
+                    {
+                        Slide = Playlist.Items[nextNavigatableItemIndex].Slides.ElementAtOrDefault(0),
+                        SlideIndex = 0,
+                        ItemIndex = nextNavigatableItemIndex
+                    };
+                }
             }
             // no more next slide.
             // NOTE: do not want to navigate to "unselected" as this actually goes back to initial slide before all items!!
@@ -178,6 +181,19 @@ namespace HandsLiftedApp.Models
                 SlideIndex = null,
                 ItemIndex = -1
             };
+        }
+
+        private int getNextNavigatableItem(int startIdx)
+        {
+            for (int idx = startIdx + 1; idx < Playlist.Items.Count; idx++)
+            {
+                Item<ItemStateImpl> item = Playlist.Items[idx];
+                if (item.Slides.Count > 0)
+                {
+                    return idx;
+                }
+            }
+            return -1;
         }
 
         public SlideReference GetPreviousSlide()
@@ -218,29 +234,39 @@ namespace HandsLiftedApp.Models
                 };
             }
             // else attempt to navigate item backwards to last slide of previous item
-            else if (Playlist.Items.ElementAtOrDefault(SelectedItemIndex - 1) != null)
+            int previousNavigatableItemIndex = getPreviousNavigatableItem(SelectedItemIndex);
+            if (previousNavigatableItemIndex != -1)
             {
-                var nextItemIndex = SelectedItemIndex - 1;
-                var nextSlideIndex = Playlist.Items[nextItemIndex].Slides.Count - 1;
+                var nextSlideIndex = Playlist.Items[previousNavigatableItemIndex].Slides.Count - 1;
 
                 return new SlideReference()
                 {
-                    Slide = Playlist.Items[nextItemIndex].Slides.ElementAtOrDefault(nextSlideIndex),
+                    Slide = Playlist.Items[previousNavigatableItemIndex].Slides.ElementAtOrDefault(nextSlideIndex),
                     SlideIndex = nextSlideIndex,
-                    ItemIndex = nextItemIndex
+                    ItemIndex = previousNavigatableItemIndex
                 };
             }
             // else no item to navigate backwards to, so deselect current item and its slide
             // i.e. puts the cursor before the first item
-            else
+            return new SlideReference()
             {
-                return new SlideReference()
+                Slide = null,
+                SlideIndex = null,
+                ItemIndex = -1
+            };
+        }
+
+        private int getPreviousNavigatableItem(int startIdx)
+        {
+            for (int idx = startIdx - 1; idx >= 0; idx--)
+            {
+                Item<ItemStateImpl> item = Playlist.Items[idx];
+                if (item.Slides.Count > 0)
                 {
-                    Slide = null,
-                    SlideIndex = null,
-                    ItemIndex = -1
-                };
+                    return idx;
+                }
             }
+            return -1;
         }
 
         public string _playlistWorkingDirectory = @"C:\VisionScreens\TestPlaylist";
@@ -281,8 +307,11 @@ namespace HandsLiftedApp.Models
         private bool _isBlank = false;
         public bool IsBlank { get => _isBlank; set => this.RaiseAndSetIfChanged(ref _isBlank, value); }
 
-        private bool _isFreeze = false;
-        public bool IsFreeze { get => _isFreeze; set => this.RaiseAndSetIfChanged(ref _isFreeze, value); }
+        //private bool _isFreeze = false;
+        //public bool IsFreeze { get => _isFreeze; set => this.RaiseAndSetIfChanged(ref _isFreeze, value); }
+
+        private bool _isDirty;
+        public bool IsDirty { get => _isDirty; set => this.RaiseAndSetIfChanged(ref _isDirty, value); }
 
         public void NavigateNextSlide()
         {
@@ -339,6 +368,8 @@ namespace HandsLiftedApp.Models
                 // deselect the slide within the previous item
                 Playlist.Items[lastSelectedItemIndex].State.SelectedSlideIndex = -1;
             }
+
+            Log.Debug($"NavigateToReference {slideReference}");
 
             MessageBus.Current.SendMessage(new ActiveSlideChangedMessage());
         }

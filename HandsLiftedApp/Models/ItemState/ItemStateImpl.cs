@@ -1,13 +1,16 @@
 ﻿using Avalonia.Animation;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.SlideState;
+using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
 using HandsLiftedApp.ViewModels.Editor;
 using HandsLiftedApp.Views;
+using HandsLiftedApp.Views.App;
 using HandsLiftedApp.Views.Editor;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
@@ -120,44 +123,38 @@ namespace HandsLiftedApp.Models.ItemState
         private int _itemIndex;
         public int ItemIndex { get => _itemIndex; set => this.RaiseAndSetIfChanged(ref _itemIndex, value); }
 
-        //public Slide GenerateSlideFromSource(string filename)
-        //{
-        //    return PlaylistUtils.GenerateMediaContentSlide(filename);
-        //}
-
-        //private string? _test;
-        //public string? Test { get => _test; set => this.RaiseAndSetIfChanged(ref _test, value); }
-
         void RunTheThing()
         {
+            // todo datatemplates
+
+            Window itemEditorWindow = null;
+
             if (parent is LogoItem<ItemStateImpl> || parent is SectionHeadingItem<ItemStateImpl>)
             {
-                // todo datatemplates
-                LogoEditorWindow seq = new LogoEditorWindow() { DataContext = parent };
-                seq.Show();
+                itemEditorWindow = new LogoEditorWindow() { DataContext = parent };
             }
 
             if (parent is SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)
             {
                 SongEditorViewModel vm = new SongEditorViewModel() { song = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)parent };
-                //vm.SongDataUpdated += Vm_SongDataUpdated;
-                SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
-                seq.Show();
+                itemEditorWindow = new SongEditorWindow() { DataContext = vm };
             }
 
             if (parent is SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)
             {
-                //SongEditorViewModel vm = new SongEditorViewModel() { song = (SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent };
-                //vm.SongDataUpdated += Vm_SongDataUpdated;
-
                 GroupItemsEditorViewModel vm = new GroupItemsEditorViewModel()
                 {
                     Item = ((SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>)parent)
                 };
 
-                GroupItemsEditorWindow seq = new GroupItemsEditorWindow() { DataContext = vm };
-                seq.Show();
+                itemEditorWindow = new GroupItemsEditorWindow() { DataContext = vm };
             }
+
+            if (itemEditorWindow != null)
+            {
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(itemEditorWindow, false));
+            }
+
         }
 
     }

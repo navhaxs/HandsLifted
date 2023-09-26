@@ -1,14 +1,5 @@
-﻿using Avalonia.Media;
-using HandsLiftedApp.Data.Models.Types;
-using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
-using System;
-using System.Collections.Generic;
+﻿using HandsLiftedApp.Data.Slides;
 using System.Collections.ObjectModel;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 

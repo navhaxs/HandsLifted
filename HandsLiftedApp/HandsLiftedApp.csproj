@@ -100,6 +100,9 @@
 		<Compile Update="Controls\PlaylistSlidesView.axaml.cs">
 			<DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\App\MessageWindow.axaml.cs">
+		  <DependentUpon>MessageWindow.axaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\ControlModules\AutoAdvanceControlView.axaml.cs">
 		  <DependentUpon>AutoAdvanceControlView.axaml</DependentUpon>
 		</Compile>

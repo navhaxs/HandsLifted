@@ -99,7 +99,6 @@ namespace HandsLiftedApp.Importer.PowerPoint
                     return stats;
                 }
 
-
                 try
                 {
                     foreach (Slide slide in slides)

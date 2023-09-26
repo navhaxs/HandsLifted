@@ -47,7 +47,7 @@ namespace HandsLiftedApp
 
             if (Debugger.IsAttached)
             {
-                TestModeApp.RunSongEditorWindow();
+                //TestModeApp.RunSongEditorWindow();
             }
 
             base.OnFrameworkInitializationCompleted();

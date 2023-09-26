@@ -122,7 +122,7 @@
 
 			<!--DEBUG INFO -->
             <StackPanel
-                Margin="60,6,0,0"
+                Margin="60,10,0,0"
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
                 <TextBlock

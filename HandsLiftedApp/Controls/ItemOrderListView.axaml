@@ -120,27 +120,36 @@
                 <ListBox.DataTemplates>
                     <utils:MyTemplateSelector>
                         <DataTemplate x:Key="SectionHeadingItem">
-                            <Border
-                                Background="#1e1e1e"
-                                BorderBrush="{Binding ItemGroupColour, Converter={StaticResource ColorToBrushConverter}, FallbackValue='#7E282828'}"
-                                BorderThickness="8,0,0,0">
-                                <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
-                                    <TextBlock
-                                        Padding="0,4,0,4"
-                                        FontSize="14"
-                                        FontWeight="Bold"
-                                        TextTrimming="CharacterEllipsis">
-                                        <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0}">
-                                                <Binding Path="Title" />
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                </DockPanel>
+							<Grid>
+								<!--TODO not working-->
+								<!--<Grid.Styles>
+									<Style Selector="Border:pointerover">
+										<Setter Property="Background" Value="#214c5e" />
+									</Style>
+								</Grid.Styles>-->
+								
+								<Border
+									Background="#1e1e1e"
+									BorderBrush="{Binding ItemGroupColour, Converter={StaticResource ColorToBrushConverter}, FallbackValue='#7E282828'}"
+									BorderThickness="8,0,0,0">
+									<DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
+										<TextBlock
+											Padding="0,4,0,4"
+											FontSize="13"
+											FontWeight="Bold"
+											TextTrimming="CharacterEllipsis">
+											<TextBlock.Text>
+												<MultiBinding StringFormat="{}{0}">
+													<Binding Path="Title" />
+												</MultiBinding>
+											</TextBlock.Text>
+										</TextBlock>
+									</DockPanel>
+								</Border>
 								<i:Interaction.Behaviors>
 									<behaviours:DragControlBehavior />
 								</i:Interaction.Behaviors>
-                            </Border>
+							</Grid>
                         </DataTemplate>
                         <DataTemplate x:Key="Fallback">
                             <DockPanel Margin="6,0,0,0" VerticalAlignment="Stretch" Background="Transparent">
