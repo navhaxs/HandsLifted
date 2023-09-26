@@ -1,8 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
-using Avalonia.Skia.Helpers;
+using Avalonia.Platform;
 using Avalonia.Skia;
+using Avalonia.Skia.Helpers;
 using Avalonia.Threading;
 using NAudio.Wave;
 using NewTek;
@@ -12,13 +13,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Platform;
-using System.Diagnostics;
 
 namespace AvaloniaNDI
 {

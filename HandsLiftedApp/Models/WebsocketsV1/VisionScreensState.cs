@@ -10,12 +10,14 @@
     {
     }
 
-    class PublishedSongSlide : PublishedSlide {
+    class PublishedSongSlide : PublishedSlide
+    {
         public string SlideType = "Song";
 
         public string Text { get; set; }
     }
-    class PublishedSongTitleSlide : PublishedSlide {
+    class PublishedSongTitleSlide : PublishedSlide
+    {
         public string SlideType = "SongTitle";
         public string Title { get; set; }
         public string Copyright { get; set; }

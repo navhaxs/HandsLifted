@@ -1,14 +1,14 @@
 ﻿using static LibMpv.Client.libmpv;
 namespace LibMpv.Client;
 
-public unsafe class MpvWeakEventLoop: IEventLoop
+public unsafe class MpvWeakEventLoop : IEventLoop
 {
-    
+
     public MpvWeakEventLoop(mpv_handle* context, Action<mpv_event> eventHandler)
     {
         this.context = context;
         handleEvent = eventHandler;
-        wakeupCallback = new mpv_set_wakeup_callback_cb( WakeupCallback );
+        wakeupCallback = new mpv_set_wakeup_callback_cb(WakeupCallback);
     }
 
     private void WakeupHandleEvent()
@@ -41,7 +41,7 @@ public unsafe class MpvWeakEventLoop: IEventLoop
     {
         Console.WriteLine("WakeupCallback");
         if (isEventLoopRunning)
-            Task.Run( async () => WakeupHandleEvent());
+            Task.Run(async () => WakeupHandleEvent());
     }
 
     public void Stop()

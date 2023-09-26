@@ -1,6 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Data;
+﻿using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
@@ -21,7 +19,7 @@ public class NativeVideoView : NativeControlHost
             ContentControl.ContentProperty.AddOwner<NativeVideoView>();
 
     private IPlatformHandle? _platformHandle = null;
-    
+
     private bool _attached;
     private Window _floatingContent;
     private IDisposable _disposables;

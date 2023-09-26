@@ -1,11 +1,8 @@
-﻿using Avalonia.Controls;
-using Avalonia.Data;
+﻿using Avalonia.Data;
 using Avalonia.Data.Converters;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 

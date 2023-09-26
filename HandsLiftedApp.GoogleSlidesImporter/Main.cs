@@ -1,24 +1,21 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using Google;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
-using Google.Apis.Slides.v1.Data;
 using Google.Apis.Slides.v1;
+using Google.Apis.Slides.v1.Data;
+using Google.Apis.Util;
 using Google.Apis.Util.Store;
-using Google;
+using Newtonsoft.Json.Linq;
+using Serilog;
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using static Google.Apis.Drive.v3.FilesResource;
-using Google.Apis.Auth.OAuth2.Responses;
-using Newtonsoft.Json.Linq;
-using System.Net.Http.Json;
-using Google.Apis.Util;
-using static HandsLiftedApp.Importer.GoogleSlides.Program;
-using Google.Apis.Drive.v3.Data;
-using System.Threading;
-using Google.Apis.Auth.OAuth2.Flows;
-using Serilog;
 
-namespace HandsLiftedApp.Importer.GoogleSlides {
+namespace HandsLiftedApp.Importer.GoogleSlides
+{
     public class Main
     {
         static string[] Scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
@@ -55,7 +52,8 @@ namespace HandsLiftedApp.Importer.GoogleSlides {
                     }
 
 
-                    if (credential.Token.IsExpired(SystemClock.Default)) {
+                    if (credential.Token.IsExpired(SystemClock.Default))
+                    {
                         var m = credential.GetAccessTokenForRequestAsync().Result;
 
                         //If the token is expired recreate the token
@@ -177,7 +175,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides {
                         }
                     }
 
-                    
+
 
                     progressPercentage = 90.0d;
 

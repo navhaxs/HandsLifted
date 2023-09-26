@@ -1,8 +1,5 @@
 ﻿using EmbedIO;
-using EmbedIO.Actions;
-using EmbedIO.Files;
 using Serilog;
-using Swan;
 using Swan.Logging;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +26,7 @@ namespace HandsLiftedApp.Logic
             ctSource = new CancellationTokenSource();
 
             Log.Information("Webserver has started");
-      
+
             using (var server = CreateWebServer(url))
             {
                 if (!ctSource.IsCancellationRequested)

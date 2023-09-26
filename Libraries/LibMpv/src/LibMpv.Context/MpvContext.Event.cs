@@ -52,19 +52,19 @@ public unsafe partial class MpvContext
 
     private void LogMessageHandler(mpv_event @event)
     {
-        if (@event.data != null && LogMessage !=null)
+        if (@event.data != null && LogMessage != null)
             LogMessage?.Invoke(this, ToLogMessageEventArgs(@event));
     }
 
     private void AsyncSetPropertyHandler(mpv_event @event)
     {
-        if (@event.data != null && AsyncSetPropertyReply!=null)
+        if (@event.data != null && AsyncSetPropertyReply != null)
             AsyncSetPropertyReply?.Invoke(this, new MpvReplyEventArgs(@event.reply_userdata, @event.error));
     }
 
     private void AsyncGetPropertyHandler(mpv_event @event)
     {
-        if (@event.data != null && AsyncGetPropertyReply!=null)
+        if (@event.data != null && AsyncGetPropertyReply != null)
             AsyncGetPropertyReply?.Invoke(this, ToPropertyChangedEventArgs(@event));
     }
 
@@ -76,7 +76,7 @@ public unsafe partial class MpvContext
 
     private void PropertyChangedHandler(mpv_event @event)
     {
-        if (@event.data != null && PropertyChanged!=null)
+        if (@event.data != null && PropertyChanged != null)
             PropertyChanged?.Invoke(this, ToPropertyChangedEventArgs(@event));
     }
 
@@ -122,7 +122,7 @@ public unsafe partial class MpvContext
 
     private void EndFileHandler(mpv_event @event)
     {
-        if (@event.data != null && EndFile!=null)
+        if (@event.data != null && EndFile != null)
         {
             mpv_event_end_file endFile = MarshalHelper.PtrToStructure<mpv_event_end_file>((nint)@event.data);
             EndFile?.Invoke(this, new MpvEndFileEventArgs(endFile.reason, endFile.error, endFile.playlist_entry_id));
@@ -131,7 +131,7 @@ public unsafe partial class MpvContext
 
     private void StartFileHandler(mpv_event @event)
     {
-        if (@event.data != null && StartFile!=null)
+        if (@event.data != null && StartFile != null)
         {
             mpv_event_start_file startFile = MarshalHelper.PtrToStructure<mpv_event_start_file>((nint)@event.data);
             StartFile?.Invoke(this, new MpvStartFileEventArgs(startFile.playlist_entry_id));

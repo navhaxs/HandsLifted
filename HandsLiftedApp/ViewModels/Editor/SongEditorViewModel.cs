@@ -3,7 +3,6 @@ using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
 using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive;
 

@@ -1,17 +1,14 @@
-﻿using Avalonia.Threading;
-using Avalonia.Controls;
-using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reactive;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static HandsLiftedApp.Importer.PowerPoint.Main;
-using HandsLiftedApp.Models.UI;
 
 namespace HandsLiftedApp.Models.ItemExtensionState
 {
@@ -66,7 +63,7 @@ namespace HandsLiftedApp.Models.ItemExtensionState
         {
             FileUtils.ExploreFile(parentSlidesGroup.SourcePresentationFile);
         }
-        
+
         private void EditInExternalCommandTask()
         {
             if (File.Exists(parentSlidesGroup.SourcePresentationFile))

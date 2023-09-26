@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HandsLiftedApp.Importer.GoogleSlides
+﻿namespace HandsLiftedApp.Importer.GoogleSlides
 {
     internal class ImportFailureException : Exception
     {

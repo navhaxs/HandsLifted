@@ -1,5 +1,7 @@
-﻿namespace LibVLCSharp.Avalonia {
-    internal class VLCSharpOptions {
+﻿namespace LibVLCSharp.Avalonia
+{
+    internal class VLCSharpOptions
+    {
         /// <summary>
         /// 
         /// </summary>

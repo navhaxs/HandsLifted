@@ -1,6 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Media;
-using System.Linq;
 
 namespace HandsLiftedApp.Views.Editor
 {

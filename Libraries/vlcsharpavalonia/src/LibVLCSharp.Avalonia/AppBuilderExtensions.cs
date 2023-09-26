@@ -1,7 +1,4 @@
-﻿using Avalonia.Controls;
-using LibVLCSharp.Shared;
-
-namespace LibVLCSharp.Avalonia
+﻿namespace LibVLCSharp.Avalonia
 {
     //public static class AppBuilderExtensions
     //{

@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace HandsLiftedApp.Utils {
+namespace HandsLiftedApp.Utils
+{
     internal class UrlUtils
     {
         // https://stackoverflow.com/a/43232486/

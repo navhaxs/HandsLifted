@@ -1,6 +1,4 @@
-﻿using DynamicData;
-using DynamicData.Aggregation;
-using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
@@ -9,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Documents;
 
 namespace HandsLiftedApp.Utils
 {

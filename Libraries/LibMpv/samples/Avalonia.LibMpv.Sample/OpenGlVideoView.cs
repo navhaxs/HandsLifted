@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Data;
+﻿using Avalonia.Data;
 using Avalonia.OpenGL;
 using Avalonia.OpenGL.Controls;
 using Avalonia.Threading;
@@ -32,12 +31,12 @@ public class OpenGlVideoView : OpenGlControlBase
             _mpvContext?.StopRendering();
             _mpvContext = value;
             if (_getProcAddress != null)
-                _mpvContext?.StartOpenGlRendering( (name)=>_getProcAddress(name), this.UpdateVideoView );
+                _mpvContext?.StartOpenGlRendering((name) => _getProcAddress(name), this.UpdateVideoView);
         }
     }
     protected override void OnOpenGlRender(GlInterface gl, int fbo)
     {
-        if (_mpvContext!=null && _mpvContext.IsCustomRendering())
+        if (_mpvContext != null && _mpvContext.IsCustomRendering())
         {
             var size = GetPixelSize();
             _mpvContext.OpenGlRender(size.Width, size.Height, fbo, 1);
@@ -46,7 +45,7 @@ public class OpenGlVideoView : OpenGlControlBase
 
     protected override void OnOpenGlInit(GlInterface gl)
     {
-        if (_getProcAddress!=null) return;
+        if (_getProcAddress != null) return;
         _getProcAddress = gl.GetProcAddress;
         _mpvContext?.StopRendering();
         _mpvContext?.StartOpenGlRendering((name) => _getProcAddress(name), this.UpdateVideoView);

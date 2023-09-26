@@ -81,7 +81,7 @@ namespace HandsLiftedApp.Utils
 
             return slidesGroup;
         }
-          private static PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> createPresentationItem(string fullFilePath, PlaylistStateImpl state)
+        private static PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> createPresentationItem(string fullFilePath, PlaylistStateImpl state)
         {
             try
             {

@@ -1,7 +1,6 @@
 using Avalonia.Controls;
-using System;
-using System.Runtime.InteropServices;
 using HandsLiftedApp.Utils;
+using System;
 
 namespace HandsLiftedApp.Views
 {

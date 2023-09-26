@@ -45,11 +45,13 @@ namespace HandsLiftedApp.Data.Slides
             State.OnSlideLeaveEvent();
         }
 
-        public Bitmap GetBitmap() {
+        public Bitmap GetBitmap()
+        {
             return State.GetBitmap();
         }
     }
-    public interface IImageSlideState : ISlideState {
+    public interface IImageSlideState : ISlideState
+    {
         public Bitmap GetBitmap();
     }
 }

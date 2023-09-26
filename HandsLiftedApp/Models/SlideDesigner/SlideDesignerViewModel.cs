@@ -4,18 +4,20 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HandsLiftedApp.Models.SlideDesigner {
-    public class SlideDesignerViewModel : ReactiveObject {
+namespace HandsLiftedApp.Models.SlideDesigner
+{
+    public class SlideDesignerViewModel : ReactiveObject
+    {
 
         public List<BaseSlideTheme> ListOfDesigns { get; } = new List<BaseSlideTheme>();
         private BaseSlideTheme _ActiveDesign;
         public BaseSlideTheme ActiveDesign { get => _ActiveDesign; set => this.RaiseAndSetIfChanged(ref _ActiveDesign, value); }
 
-        public SlideDesignerViewModel() {
-            ListOfDesigns.Add(new BaseSlideTheme() {
+        public SlideDesignerViewModel()
+        {
+            ListOfDesigns.Add(new BaseSlideTheme()
+            {
                 FontFamily = TryParseFontFamily("Cambria"),
                 TextColour = Color.Parse("#a06d39"),
                 BackgroundColour = Color.Parse("#f5ede4"),
@@ -52,7 +54,8 @@ namespace HandsLiftedApp.Models.SlideDesigner {
                 LineHeight = 130,
                 BackgroundGraphicFilePath = "C:\\VisionScreens\\Designs\\76c4ea22-fb91-4b58-9b07-b709f4402b0dcatalystconf-bg.png"
             });
-            ListOfDesigns.Add(new BaseSlideTheme() {
+            ListOfDesigns.Add(new BaseSlideTheme()
+            {
                 Name = "Blue",
                 FontFamily = TryParseFontFamily("Cambria"),
                 TextColour = Color.Parse("#2b505e"),
@@ -64,7 +67,8 @@ namespace HandsLiftedApp.Models.SlideDesigner {
             ActiveDesign = ListOfDesigns[0];
         }
 
-        public FontFamily TryParseFontFamily(string fontFamilyName) {
+        public FontFamily TryParseFontFamily(string fontFamilyName)
+        {
             var installedFontFamilyNames = FontManager.Current.SystemFonts;
             if (installedFontFamilyNames.Contains(fontFamilyName))
                 return FontFamily.Parse(fontFamilyName);

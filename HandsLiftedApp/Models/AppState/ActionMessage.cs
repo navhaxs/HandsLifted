@@ -1,4 +1,5 @@
-﻿namespace HandsLiftedApp.Models.AppState {
+﻿namespace HandsLiftedApp.Models.AppState
+{
     internal class ActionMessage
     {
         public NavigateSlideAction Action { get; set; }

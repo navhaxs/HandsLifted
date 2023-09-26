@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Views.Library
 {

@@ -79,7 +79,8 @@ namespace HandsLiftedApp.Controls
 
         public void a()
         {
-            using (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> songItem = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext) {
+            using (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> songItem = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext)
+            {
                 songItem.ResetArrangement();
             }
         }

@@ -1,13 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Data.Converters;
+﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using HandsLiftedApp.Utils;
-using Serilog;
-using System;
 using System.Globalization;
-using System.IO;
 
 namespace HandsLiftedApp.Extensions
 {

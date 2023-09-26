@@ -45,7 +45,7 @@ public class MpvMvvmContext : INotifyPropertyChanged
         if (!String.IsNullOrEmpty(e.Name))
         {
             // If there will be a lot of properties, it might be better to do a dictionary lookup
-            var observableProperty = observableProperties.FirstOrDefault(it=>it.LibMpvName == e.Name);
+            var observableProperty = observableProperties.FirstOrDefault(it => it.LibMpvName == e.Name);
             if (observableProperty != null)
             {
                 RaisePropertyChanged(observableProperty.MvvmName);
@@ -84,14 +84,14 @@ public class MpvMvvmContext : INotifyPropertyChanged
     public long? Duration
     {
         get => Context?.GetPropertyLong("duration");
-        set 
+        set
         {
             if (value == null) return;
-            Context?.SetPropertyLong("duration",value.Value);
+            Context?.SetPropertyLong("duration", value.Value);
         }
     }
 
-    public long? TimePos 
+    public long? TimePos
     {
         get => Context?.GetPropertyLong("time-pos");
         set
@@ -130,15 +130,15 @@ public class MpvMvvmContext : INotifyPropertyChanged
         new() { MvvmName=nameof(PlaybackSpeed), LibMpvName="speed", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
     };
 
-    
-    
+
+
     string _mediaUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     public string MediaUrl
     {
         get => _mediaUrl;
         // set
         // {
-            // this.RaiseAndSetIfChanged(ref _mediaUrl, value);
+        // this.RaiseAndSetIfChanged(ref _mediaUrl, value);
         // }
     }
 }

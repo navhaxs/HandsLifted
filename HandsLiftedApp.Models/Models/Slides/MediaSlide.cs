@@ -1,6 +1,4 @@
-﻿using HandsLiftedApp.XTransitioningContentControl;
-using ReactiveUI;
-using Serilog;
+﻿using ReactiveUI;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Slides
@@ -17,6 +15,6 @@ namespace HandsLiftedApp.Data.Slides
 
         }
     }
-   
+
 
 }

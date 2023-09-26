@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.ReactiveUI;
-using Avalonia.Threading;
 using LibVLCSharp.Shared;
 using System;
 using System.Reactive.Linq;

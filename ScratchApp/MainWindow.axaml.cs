@@ -1,8 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,8 +41,8 @@ namespace ScratchApp
             Debug.Print($"WindowWidth={this.Width.ToString()} GetTransformedBounds={SidebarGridSplitter.GetTransformedBounds().Value} Vector={e.Vector.X.ToString()}");
             //var calc = this.Width + SidebarGridSplitter.PointToClient(PixelPoint.Origin).X;
             //Debug.Print(calc.ToString());
-            DragWidth.Text  = $"{SidebarGridSplitter.Bounds.Left + e.Vector.X}";
-            DragWidthMinus.Text  = $"{this.Bounds.Width - (SidebarGridSplitter.Bounds.Left + e.Vector.X)}";
+            DragWidth.Text = $"{SidebarGridSplitter.Bounds.Left + e.Vector.X}";
+            DragWidthMinus.Text = $"{this.Bounds.Width - (SidebarGridSplitter.Bounds.Left + e.Vector.X)}";
         }
         public class Person
         {

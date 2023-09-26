@@ -1,11 +1,6 @@
-﻿using DynamicData;
-using DynamicData.Binding;
-using HandsLiftedApp.Data.Slides;
+﻿using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
-using Serilog;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
@@ -34,7 +29,9 @@ namespace HandsLiftedApp.Data.Models.Items
         // that is the list of slide media items <by type... video song custom etc>
         [XmlIgnore]
         public TrulyObservableCollection<Slide> _items = new TrulyObservableCollection<Slide>();
-        public TrulyObservableCollection<Slide> Items { get => _items; set
+        public TrulyObservableCollection<Slide> Items
+        {
+            get => _items; set
             {
                 this.RaiseAndSetIfChanged(ref _items, value);
                 _items.CollectionChanged += _items_CollectionChanged;

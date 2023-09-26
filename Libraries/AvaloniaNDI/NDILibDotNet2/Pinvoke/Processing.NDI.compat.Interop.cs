@@ -20,18 +20,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Runtime.InteropServices;
 using System.Security;
-using System.Text;
 
 namespace NewTek
 {
-	[SuppressUnmanagedCodeSecurity]
-	public static partial class NDIlib
-	{
-		public static UInt32 INFINITE = 0xffffffff;
+    [SuppressUnmanagedCodeSecurity]
+    public static partial class NDIlib
+    {
+        public static UInt32 INFINITE = 0xffffffff;
 
-	} // class NDIlib
+    } // class NDIlib
 
 } // namespace NewTek
 

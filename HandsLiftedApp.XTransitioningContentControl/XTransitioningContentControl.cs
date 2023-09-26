@@ -2,16 +2,12 @@
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Skia;
 using Avalonia.Skia.Helpers;
-using Avalonia.Threading;
 using SkiaSharp;
-using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace HandsLiftedApp.XTransitioningContentControl

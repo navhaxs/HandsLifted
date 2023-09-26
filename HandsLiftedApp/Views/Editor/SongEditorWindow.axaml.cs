@@ -1,13 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels.Editor;
-using System.Threading.Tasks;
-using Avalonia.Interactivity;
-using HandsLiftedApp.Models.ItemState;
 using System;
+using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Views.Editor
 {

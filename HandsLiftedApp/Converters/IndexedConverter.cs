@@ -1,10 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Data.Converters;
+﻿using Avalonia.Data.Converters;
 using DynamicData;
 using DynamicData.Alias;
-using DynamicData.Binding;
 using HandsLiftedApp.Models.Data;
-using ReactiveUI;
 using System;
 using System.Collections;
 using System.Collections.Generic;

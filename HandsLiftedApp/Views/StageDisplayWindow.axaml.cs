@@ -31,5 +31,5 @@ namespace HandsLiftedApp.Views
             }
 
         }
-      }
+    }
 }

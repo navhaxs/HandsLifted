@@ -1,17 +1,15 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Models.SlideState;
+using HandsLiftedApp.Utils;
+using ReactiveUI;
+using System;
+using System.Collections;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using ReactiveUI;
-using HandsLiftedApp.Utils;
-using System.Collections.Generic;
-using HandsLiftedApp.Data.Slides;
-using System.Linq;
-using System.Collections;
-using System;
-using HandsLiftedApp.Models.SlideState;
 
 namespace HandsLiftedApp.ViewModels
 {
@@ -80,7 +78,7 @@ namespace HandsLiftedApp.ViewModels
         {
             MoveItem(SelectedIndex, SelectedIndex - 1);
         }
-        
+
         private bool CanMoveItemUp()
         {
             return true;
@@ -124,7 +122,7 @@ namespace HandsLiftedApp.ViewModels
             //if (SelectedIndex > -1)
             //    Item.Items.RemoveAt(SelectedIndex);
         }
-       private async Task ExploreFileAsync()
+        private async Task ExploreFileAsync()
         {
             if (SelectedIndex > -1)
             {

@@ -1,8 +1,7 @@
-﻿using System.Xml.Serialization;
-using Avalonia.Animation;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Animation;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
+using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Slides
 {

@@ -4,12 +4,9 @@ namespace HandsLiftedApp.Logic
 {
     using Avalonia.Threading;
     using EmbedIO.WebSockets;
-    using HandsLiftedApp.Data.Models;
     using HandsLiftedApp.Models.AppState;
-    using HandsLiftedApp.Models.PlaylistActions;
     using HandsLiftedApp.Models.UI;
     using HandsLiftedApp.Models.WebsocketsEngine;
-    using HandsLiftedApp.Utils;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using ReactiveUI;
@@ -73,7 +70,8 @@ namespace HandsLiftedApp.Logic
                         {
                             Thread.CurrentThread.IsBackground = true;
                             /* run your code here */
-                            Dispatcher.UIThread.InvokeAsync(() => {
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
                                 MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
                                 MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
                             });
@@ -86,7 +84,8 @@ namespace HandsLiftedApp.Logic
                         {
                             Thread.CurrentThread.IsBackground = true;
                             /* run your code here */
-                            Dispatcher.UIThread.InvokeAsync(() => {
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
                                 MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
                                 MessageBus.Current.SendMessage(new FocusSelectedItem()); // config item
                             });

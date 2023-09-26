@@ -13,17 +13,17 @@ public enum MpvEventLoop
 
 public unsafe partial class MpvContext : IDisposable
 {
-    public MpvContext():this(MpvEventLoop.Default)
+    public MpvContext() : this(MpvEventLoop.Default)
     {
     }
-    
+
     public MpvContext(MpvEventLoop mpvEventLoop)
     {
         ctx = mpv_create();
-        
+
         if (ctx == null)
             throw new MpvException("Unable to create mpv_context. Currently, this can happen in the following situations - out of memory or LC_NUMERIC is not set to \"C\"");
-        
+
         var code = mpv_initialize(ctx);
         CheckCode(code);
 
@@ -69,10 +69,10 @@ public unsafe partial class MpvContext : IDisposable
     {
         CheckDisposed();
         int code;
-        var value= new int[1] { 0 };
-        fixed(int* valuePtr = value)
+        var value = new int[1] { 0 };
+        fixed (int* valuePtr = value)
         {
-            code = mpv_get_property(ctx, name, mpv_format.MPV_FORMAT_FLAG, valuePtr );
+            code = mpv_get_property(ctx, name, mpv_format.MPV_FORMAT_FLAG, valuePtr);
         }
         CheckCode(code);
         return value[0] == 1 ? true : false;
@@ -82,7 +82,7 @@ public unsafe partial class MpvContext : IDisposable
     {
         CheckDisposed();
         int code;
-        var value = new int[1] { newValue ? 1:0 };
+        var value = new int[1] { newValue ? 1 : 0 };
         fixed (int* valuePtr = value)
         {
             code = mpv_set_property(ctx, name, mpv_format.MPV_FORMAT_FLAG, valuePtr);
@@ -160,12 +160,12 @@ public unsafe partial class MpvContext : IDisposable
     {
         if (args.Length == 0)
             throw new ArgumentException("Missing arguments.", nameof(args));
-        
+
         CheckDisposed();
 
         using var helper = new MarshalHelper();
         int code = mpv_command(ctx, (byte**)helper.CStringArrayForManagedUTF8StringArray(args));
-        
+
         CheckCode(code);
     }
 
@@ -220,7 +220,7 @@ public unsafe partial class MpvContext : IDisposable
             disposed = true;
         }
     }
-    
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected int CheckCode(int code)

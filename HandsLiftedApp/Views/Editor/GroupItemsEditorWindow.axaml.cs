@@ -1,15 +1,14 @@
-using Avalonia.Controls;
 using Avalonia;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models.ItemState;
-using HandsLiftedApp.Models.ItemExtensionState;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.ReactiveUI;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models.ItemExtensionState;
+using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System.Reactive;
 using System.Threading.Tasks;
-using Avalonia.ReactiveUI;
-using HandsLiftedApp.ViewModels;
-using System.Linq;
 
 namespace HandsLiftedApp.Views
 {
@@ -41,7 +40,7 @@ namespace HandsLiftedApp.Views
         {
             //this.FindControl<DataGrid>("DataGrid").ItemsSource = ViewModel.Item.Slides;
         }
-        
+
         public void AddItemFolderClick(object? sender, RoutedEventArgs args)
         {
 
@@ -76,7 +75,7 @@ namespace HandsLiftedApp.Views
                 target.Items.Move(fromIndex, nextIndex);
                 DataGrid_Items.ItemsSource = null;
                 DataGrid_Items.ItemsSource = target.Items;
-                DataGrid_Items.SelectedIndex = nextIndex ;
+                DataGrid_Items.SelectedIndex = nextIndex;
             }
         }
     }

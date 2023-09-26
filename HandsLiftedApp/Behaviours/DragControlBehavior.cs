@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
@@ -97,7 +96,7 @@ namespace HandsLiftedApp.Behaviours
             if (target is { })
             {
                 _parent = target.FindAncestorOfType<ItemsControl>();
-                ItemsControl parentItemsControls = (ItemsControl) _parent;
+                ItemsControl parentItemsControls = (ItemsControl)_parent;
 
                 if (!(target.RenderTransform is TranslateTransform))
                 {

@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Utils;
 using LibMpv.Client;
@@ -12,7 +11,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HandsLiftedApp {
+namespace HandsLiftedApp
+{
     class Program
     {
         static EventWaitHandle s_event;
@@ -63,7 +63,7 @@ namespace HandsLiftedApp {
                         return;
                     }
                 }
-                
+
                 Log.Information("Init LibMPV");
                 FindLibMpv();
                 Log.Information("Init LibMPV...OK");
@@ -131,7 +131,8 @@ namespace HandsLiftedApp {
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp() {
+        public static AppBuilder BuildAvaloniaApp()
+        {
             // workaround for https://github.com/AvaloniaUI/AvaloniaVS/issues/250
             GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
 

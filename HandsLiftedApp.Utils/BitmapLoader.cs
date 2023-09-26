@@ -1,6 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia;
 using Serilog;
 
 namespace HandsLiftedApp.Utils

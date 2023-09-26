@@ -19,7 +19,8 @@ namespace HandsLiftedApp.Converters
             return (int)values.ToArray<object>().Aggregate(1.0, (a, b) => TryParseValue(a) * TryParseValue(b)) * 0.01;
         }
 
-        double TryParseValue(object value) {
+        double TryParseValue(object value)
+        {
             if (value is int)
             {
                 return (int)value;

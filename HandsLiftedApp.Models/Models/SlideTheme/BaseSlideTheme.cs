@@ -1,16 +1,13 @@
 ﻿using Avalonia.Media;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace HandsLiftedApp.Data.SlideTheme {
-    
+namespace HandsLiftedApp.Data.SlideTheme
+{
+
     [Serializable]
-    public class BaseSlideTheme : ReactiveObject {
+    public class BaseSlideTheme : ReactiveObject
+    {
         // Slide Design Meta
         private string _Name;
         public string Name { get => _Name; set => this.RaiseAndSetIfChanged(ref _Name, value); }

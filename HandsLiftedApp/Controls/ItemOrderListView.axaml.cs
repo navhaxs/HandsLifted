@@ -21,7 +21,7 @@ namespace HandsLiftedApp.Controls
         private static readonly object syncSlidesLock = new object();
 
         ListBox listBox;
-        
+
         public ItemOrderListView()
         {
             InitializeComponent();

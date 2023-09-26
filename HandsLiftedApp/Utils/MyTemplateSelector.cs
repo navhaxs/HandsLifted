@@ -36,7 +36,7 @@ namespace HandsLiftedApp.Utils
             {
                 return null;
             }
-            
+
 
             return null;
         }

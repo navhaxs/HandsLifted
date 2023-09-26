@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LibMpv.Client;
+﻿namespace LibMpv.Client;
 
 public class MpvPropertyEventArgs : EventArgs
 {
@@ -20,7 +18,7 @@ public class MpvPropertyEventArgs : EventArgs
     public int ErrorCode { get; }
 }
 
-public class MpvReplyEventArgs: EventArgs
+public class MpvReplyEventArgs : EventArgs
 {
     public MpvReplyEventArgs(ulong replyData, int errorCode)
     {

@@ -20,8 +20,8 @@ namespace LibVLCSharp.Avalonia.Sample
                 //.With(new AvaloniaNativePlatformOptions() { UseDeferredRendering = false })
                 //.With(new Win32PlatformOptions() { UseDeferredRendering = false }) //with defered rendering false look like it's working slightly better
                 //.UseVLCSharp() //by default vlc rendering
-                               //.UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.AvaloniaCustomDrawingOperation)
-                               //.LogToDebug()
+                //.UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.AvaloniaCustomDrawingOperation)
+                //.LogToDebug()
                 ;
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI

@@ -1,10 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
-using Avalonia.Threading;
 using HandsLiftedApp.Logic;
-using System.Threading;
 
 namespace HandsLiftedApp.Views.App
 {

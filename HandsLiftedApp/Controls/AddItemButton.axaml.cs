@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
-using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace HandsLiftedApp.Controls
 {
@@ -26,10 +26,12 @@ namespace HandsLiftedApp.Controls
             InitializeComponent();
             _dropState = this.Get<TextBlock>("DropState");
 
-            AddButton.PointerEntered += (object? sender, PointerEventArgs e) => {
+            AddButton.PointerEntered += (object? sender, PointerEventArgs e) =>
+            {
                 AddButtonTooltip.IsVisible = true;
             };
-            AddButton.PointerExited += (object? sender, PointerEventArgs e) => {
+            AddButton.PointerExited += (object? sender, PointerEventArgs e) =>
+            {
                 AddButtonTooltip.IsVisible = false;
             };
 

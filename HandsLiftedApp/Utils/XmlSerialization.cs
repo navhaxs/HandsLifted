@@ -1,16 +1,13 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.ItemExtensionState;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
-using SkiaSharp;
+using Serilog;
 using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using Serilog;
-using Serilog.Core;
-using HandsLiftedApp.Data.Slides;
-using System.IO.Pipes;
 
 namespace HandsLiftedApp.Utils
 {

@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using static LibMpv.Client.libmpv;
+﻿using static LibMpv.Client.libmpv;
 
 namespace LibMpv.Client;
 
@@ -13,8 +12,8 @@ public unsafe partial class MpvContext
         if (disposed) return;
         this.StopRendering();
 
-        this.getProcAddress  = new mpv_opengl_init_params_get_proc_address(  (_,name)=>(void*)getProcAddress(name) );
-        this.updateCallback  = new mpv_render_context_set_update_callback_callback( (_)=>updateCallback() );
+        this.getProcAddress = new mpv_opengl_init_params_get_proc_address((_, name) => (void*)getProcAddress(name));
+        this.updateCallback = new mpv_render_context_set_update_callback_callback((_) => updateCallback());
 
         using MarshalHelper marshalHelper = new MarshalHelper();
 
@@ -52,7 +51,7 @@ public unsafe partial class MpvContext
         mpv_render_context* contextPtr = null;
         fixed (mpv_render_param* parametersPtr = parameters)
         {
-            errorCode = mpv_render_context_create((mpv_render_context**) &contextPtr, ctx, parametersPtr);
+            errorCode = mpv_render_context_create((mpv_render_context**)&contextPtr, ctx, parametersPtr);
         }
 
         if (errorCode >= 0)
@@ -163,12 +162,12 @@ public unsafe partial class MpvContext
 
         using MarshalHelper marshalHelper = new MarshalHelper();
 
-        var size   = new int[2] { width, height };
+        var size = new int[2] { width, height };
         var stride = new uint[1] { (uint)width * 4 };
 
-        fixed(int* sizePtr  = size)
+        fixed (int* sizePtr = size)
         {
-            fixed(uint * stridePtr = stride) 
+            fixed (uint* stridePtr = stride)
             {
                 var parameters = new mpv_render_param[]
                 {
@@ -230,7 +229,7 @@ public unsafe partial class MpvContext
 
     public bool IsCustomRendering() => renderContext != null;
 
-    private  mpv_render_context* renderContext;
-    private  mpv_opengl_init_params_get_proc_address getProcAddress;
-    private  mpv_render_context_set_update_callback_callback updateCallback;
+    private mpv_render_context* renderContext;
+    private mpv_opengl_init_params_get_proc_address getProcAddress;
+    private mpv_render_context_set_update_callback_callback updateCallback;
 }

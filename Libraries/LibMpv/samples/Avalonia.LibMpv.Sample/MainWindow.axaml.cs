@@ -1,4 +1,3 @@
-using Avalonia.Controls;
 using LibMpv.Context.MVVM;
 
 namespace Avalonia.Controls.LibMpv

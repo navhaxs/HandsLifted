@@ -1,13 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Extensions;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 

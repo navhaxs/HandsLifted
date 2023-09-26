@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Data;
+﻿using Avalonia.Data;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -8,7 +7,7 @@ using LibMpv.Client;
 
 namespace Avalonia.Controls.LibMpv;
 
-public class SoftwareVideoView: Control
+public class SoftwareVideoView : Control
 {
     WriteableBitmap renderTarget;
 
@@ -35,7 +34,7 @@ public class SoftwareVideoView: Control
 
     public SoftwareVideoView()
     {
-       ClipToBounds = true;
+        ClipToBounds = true;
     }
 
     public override void Render(DrawingContext context) // what calls this?
@@ -47,7 +46,7 @@ public class SoftwareVideoView: Control
 
         if (bitmapSize.Height == 0 || bitmapSize.Width == 0)
             return;
-            
+
         if (renderTarget == null || renderTarget.PixelSize.Width != bitmapSize.Width || renderTarget.PixelSize.Height != bitmapSize.Height)
             this.renderTarget = new WriteableBitmap(bitmapSize, new Vector(96.0, 96.0), PixelFormat.Bgra8888, AlphaFormat.Premul);
 

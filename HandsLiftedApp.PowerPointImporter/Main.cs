@@ -106,7 +106,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
                         // https://stackoverflow.com/a/2001692
                         double canvasWidth = 1920;
                         double canvasHeight = 1080;
-                        double originalWidth= (double)thisPresentation.PageSetup.SlideWidth;
+                        double originalWidth = (double)thisPresentation.PageSetup.SlideWidth;
                         double originalHeight = (double)thisPresentation.PageSetup.SlideHeight;
 
                         double ratioX = (double)canvasWidth / (double)originalWidth;

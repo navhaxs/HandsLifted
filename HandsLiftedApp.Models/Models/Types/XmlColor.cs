@@ -1,7 +1,7 @@
-﻿using System.Xml.Schema;
-using System.Xml.Serialization;
+﻿using Avalonia.Media;
 using System.Xml;
-using Avalonia.Media;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Types
 {
@@ -43,7 +43,7 @@ namespace HandsLiftedApp.Data.Models.Types
             string colorAsString = reader.ReadElementContentAsString();
 
             this.m_value = Color.Parse(colorAsString); // convert "colorAsString" to Color
-  }
+        }
 
         public XmlSchema GetSchema()
         {

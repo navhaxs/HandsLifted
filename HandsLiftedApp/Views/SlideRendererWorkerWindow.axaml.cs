@@ -4,9 +4,9 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
-using HandsLiftedApp.Utils;
 
 namespace HandsLiftedApp.Views
 {

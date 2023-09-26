@@ -3,11 +3,10 @@ using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Services.Bitmaps;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
-using System.Diagnostics;
-using System.IO;
-using static HandsLiftedApp.Services.Bitmaps.BitmapLoadWorkerThread;
 using System;
+using System.IO;
 using System.Reactive.Linq;
+using static HandsLiftedApp.Services.Bitmaps.BitmapLoadWorkerThread;
 
 namespace HandsLiftedApp.Models.SlideState
 {
@@ -30,14 +29,15 @@ namespace HandsLiftedApp.Models.SlideState
 
         public void LoadImage(string imagePath)
         {
-            System.Action<Bitmap> value = (bitmap) => {
+            System.Action<Bitmap> value = (bitmap) =>
+            {
                 //if (Image != null)
                 //{
                 //    Debug.Print("Already set");
                 //}
                 Image = bitmap;
             };
-            BitmapLoadWorkerThread.priorityQueue.Add(new BitmapLoadRequest() {  BitmapFilePath = imagePath, Callback = value });
+            BitmapLoadWorkerThread.priorityQueue.Add(new BitmapLoadRequest() { BitmapFilePath = imagePath, Callback = value });
         }
 
         public void EnsureImageLoaded()

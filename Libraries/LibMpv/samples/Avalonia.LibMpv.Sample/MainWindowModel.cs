@@ -6,18 +6,18 @@ using System;
 
 namespace Avalonia.Controls.LibMpv;
 
-public class MainWindowModel: ReactiveObject
+public class MainWindowModel : ReactiveObject
 {
-    public MpvContext OpenGLMpvContext { get; }   = new MpvContext();
+    public MpvContext OpenGLMpvContext { get; } = new MpvContext();
     public MpvContext SoftwareMpvContext { get; } = new MpvContext();
-    
+
     private MpvContext[] contexts;
 
-    int _selectedContext =-1;
+    int _selectedContext = -1;
     public int SelectedContext
     {
         get => _selectedContext;
-        set 
+        set
         {
             this.RaiseAndSetIfChanged(ref _selectedContext, value);
         }

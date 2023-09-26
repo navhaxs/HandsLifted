@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.SlideState;
-using LibMpv.Client;
 using Serilog;
 using System;
 using System.Threading.Tasks;

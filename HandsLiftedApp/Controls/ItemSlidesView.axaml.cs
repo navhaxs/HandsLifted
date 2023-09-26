@@ -1,12 +1,7 @@
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.ItemState;
-using HandsLiftedApp.Models.UI;
-using ReactiveUI;
-using System.Diagnostics;
-using System.Windows;
 
 namespace HandsLiftedApp.Controls
 {

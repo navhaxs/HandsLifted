@@ -1,9 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Input.Platform;
-using Avalonia.VisualTree;
-using System.Collections.Specialized;
 
 namespace HandsLiftedApp.Controls
 {

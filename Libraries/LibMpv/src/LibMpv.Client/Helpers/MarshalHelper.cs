@@ -32,7 +32,7 @@ public class MarshalHelper : IDisposable
     {
         public bool isHGlobal;
         public IntPtr intPtr;
-        public AllocBlock(IntPtr intPtr, bool isHGlobal=true)
+        public AllocBlock(IntPtr intPtr, bool isHGlobal = true)
         {
             this.intPtr = intPtr;
             this.isHGlobal = isHGlobal;
@@ -113,7 +113,7 @@ public class MarshalHelper : IDisposable
     public void Dispose()
     {
         if (disposed) return;
-        foreach(var item in toBeFree)
+        foreach (var item in toBeFree)
         {
             if (item.isHGlobal)
                 Marshal.FreeHGlobal(item.intPtr);

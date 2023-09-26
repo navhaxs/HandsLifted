@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AvaloniaNDI
 {

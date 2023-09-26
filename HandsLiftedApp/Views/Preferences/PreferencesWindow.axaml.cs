@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.ViewModels;
-using HandsLiftedApp.Views.Editor;
 using System;
 using System.Collections.Generic;
 using System.Linq;

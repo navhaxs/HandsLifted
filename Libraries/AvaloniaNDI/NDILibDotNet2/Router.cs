@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NewTek.NDI
 {
@@ -20,7 +18,7 @@ namespace NewTek.NDI
                 if (value.Name != _selectedSource.Name)
                 {
                     _selectedSource = value;
-                    
+
                     UpdateRouting();
 
                     NotifyPropertyChanged("FromSource");
@@ -48,7 +46,7 @@ namespace NewTek.NDI
         }
 
         // Constructor
-        public Router(String routingName="Routing", String[] groups = null)
+        public Router(String routingName = "Routing", String[] groups = null)
         {
             _groups = groups;
             _routingName = routingName;
@@ -67,7 +65,7 @@ namespace NewTek.NDI
         // Route to nowhere (black)
         public void Clear()
         {
-            if(_routingInstancePtr != IntPtr.Zero)
+            if (_routingInstancePtr != IntPtr.Zero)
                 NDIlib.routing_clear(_routingInstancePtr);
         }
 
@@ -123,7 +121,7 @@ namespace NewTek.NDI
             GC.SuppressFinalize(this);
         }
 
-        ~Router() 
+        ~Router()
         {
             Dispose(false);
         }
@@ -207,7 +205,7 @@ namespace NewTek.NDI
 
             // update in case we have enough info to start routing
             UpdateRouting();
-        }        
+        }
 
         private String[] _groups = null;
         private IntPtr _routingInstancePtr = IntPtr.Zero;

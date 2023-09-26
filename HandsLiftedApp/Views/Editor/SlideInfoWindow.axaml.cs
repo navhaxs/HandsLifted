@@ -1,8 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using System;
 using HandsLiftedApp.Utils;
+using System;
 
 namespace HandsLiftedApp.Views.Editor
 {
@@ -14,7 +14,8 @@ namespace HandsLiftedApp.Views.Editor
 
             CancelButton.Click += (s, e) => Close();
 
-            this.Loaded += (e, s) => {
+            this.Loaded += (e, s) =>
+            {
                 updateWin32Border(this.WindowState);
             };
 
@@ -22,10 +23,13 @@ namespace HandsLiftedApp.Views.Editor
                 .Subscribe(v => updateWin32Border(v));
         }
 
-        void updateWin32Border(WindowState v) {
-            if (v != WindowState.Maximized) {
+        void updateWin32Border(WindowState v)
+        {
+            if (v != WindowState.Maximized)
+            {
 
-                var margins = new Win32.MARGINS {
+                var margins = new Win32.MARGINS
+                {
                     cyBottomHeight = 1,
                     cxRightWidth = 1,
                     cxLeftWidth = 1,

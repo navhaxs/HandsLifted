@@ -2,21 +2,14 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
+using Avalonia.ReactiveUI;
 using Avalonia.Rendering.SceneGraph;
-using Avalonia.Visuals;
-using Avalonia.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia.Controls;
-using Avalonia.Logging;
-using Avalonia.Media;
-using Avalonia.Metadata;
-using Avalonia.ReactiveUI;
 
 namespace LibVLCSharp.Avalonia
 {

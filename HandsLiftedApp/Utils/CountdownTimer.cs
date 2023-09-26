@@ -10,11 +10,11 @@ namespace HandsLiftedApp.Utils
 
         Timer timer;
 
-        private int _TotalTime; 
+        private int _TotalTime;
 
         public int TotalTime { get => _TotalTime; private set => this.RaiseAndSetIfChanged(ref _TotalTime, value); }
 
-        private int _RemainingTime; 
+        private int _RemainingTime;
 
         public int RemainingTime { get => _RemainingTime; private set => this.RaiseAndSetIfChanged(ref _RemainingTime, value); }
 
@@ -24,8 +24,8 @@ namespace HandsLiftedApp.Utils
         {
             timer = new Timer() { Interval = RESOLUTION };
             timer.Elapsed += (sender, e) => HandleTimerTick();
-        } 
-        
+        }
+
         public void Start(int totalTime)
         {
             timer.Stop();
@@ -34,10 +34,11 @@ namespace HandsLiftedApp.Utils
             timer.Start();
         }
 
-        public void Stop() {
+        public void Stop()
+        {
             timer.Stop();
         }
-        
+
         private void HandleTimerTick()
         {
             if (RemainingTime > 0)

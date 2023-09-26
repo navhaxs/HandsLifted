@@ -1,39 +1,37 @@
 ﻿using Avalonia.Media.Imaging;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
+using HandsLiftedApp.Utils.LibMpvVideo;
+using LibMpv.Client;
 using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
+using Serilog;
 using System;
-using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using HandsLiftedApp.Utils.LibMpvVideo;
-using LibMpv.Client;
-using Serilog;
 
 namespace HandsLiftedApp.Models.SlideState
 {
     // state - create VLC when slide activated. destroy VLC after some timeout after slide deactive
     public class VideoSlideStateImpl : SlideStateBase<VideoSlide<VideoSlideStateImpl>>, IVideoSlideState, IDisposable, ISlideState
     {
-        
+
         public MpvContext? Context { set; get; }
 
 
         private CompositeDisposable _subscriptions;
 
         private VideoSlide<VideoSlideStateImpl> parentVideoSlide;
-        
+
         // Route property changed events to MVVM context
         private void MpvContextPropertyChanged(object? sender, MpvPropertyEventArgs e)
         {
             if (!String.IsNullOrEmpty(e.Name))
             {
                 // If there will be a lot of properties, it might be better to do a dictionary lookup
-                var observableProperty = observableProperties.FirstOrDefault(it=>it.LibMpvName == e.Name);
+                var observableProperty = observableProperties.FirstOrDefault(it => it.LibMpvName == e.Name);
                 if (observableProperty != null)
                 {
                     this.RaisePropertyChanged(observableProperty.MvvmName);
@@ -45,7 +43,7 @@ namespace HandsLiftedApp.Models.SlideState
         public VideoSlideStateImpl(ref VideoSlide<VideoSlideStateImpl> videoSlide) : base(ref videoSlide)
         {
             Context = Globals.GlobalMpvContextInstance;
-            
+
             parentVideoSlide = videoSlide;
 
             videoSlide.WhenAnyValue(videoSlide => videoSlide.SourceMediaPath).Subscribe(SourceMediaPath =>
@@ -59,16 +57,17 @@ namespace HandsLiftedApp.Models.SlideState
                         Thumbnail = bm.ConvertToAvaloniaBitmap();
                         Log.Debug($"Thumbnail loaded for {SourceMediaPath}");
                     }
-                    catch {
+                    catch
+                    {
                         Log.Debug($"Thumbnail FAILED loading for {SourceMediaPath}");
                     }
                 }
             });
-            
+
             // Register propertyes for observation
             foreach (var observableProperty in observableProperties)
                 Context.ObserveProperty(observableProperty.LibMpvName, observableProperty.LibMpvFormat, 0);
-            
+
             // Register router LibMpv => MVVM
             Context.PropertyChanged += MpvContextPropertyChanged;
 
@@ -76,73 +75,73 @@ namespace HandsLiftedApp.Models.SlideState
             // TODO init only when actually needed (on slide enter)
             try
             {
-            //    MediaPlayer = new MediaPlayer(Globals.GlobalLibVLCInstance);
-            //    MediaPlayer.EndReached += MediaPlayer_EndReached;
-            //    string absolute = new Uri(VideoPath).AbsoluteUri;
-            //    bool isfile = absolute.StartsWith("file://");
-            //    _media = new Media(Globals.GlobalLibVLCInstance, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
-            //    MediaPlayer.Media = _media;
+                //    MediaPlayer = new MediaPlayer(Globals.GlobalLibVLCInstance);
+                //    MediaPlayer.EndReached += MediaPlayer_EndReached;
+                //    string absolute = new Uri(VideoPath).AbsoluteUri;
+                //    bool isfile = absolute.StartsWith("file://");
+                //    _media = new Media(Globals.GlobalLibVLCInstance, VideoPath, isfile ? FromType.FromPath : FromType.FromLocation);
+                //    MediaPlayer.Media = _media;
 
-            //    bool operationActive = false;
-            //    var refresh = new Subject<Unit>();
+                //    bool operationActive = false;
+                //    var refresh = new Subject<Unit>();
 
-            //    //disable events while some operations active, as sometimes causing deadlocks
-            //    IObservable<Unit> Wrap(IObservable<Unit> obs)
-            //        => obs.Where(_ => !operationActive).Merge(refresh).ObserveOn(AvaloniaScheduler.Instance);
+                //    //disable events while some operations active, as sometimes causing deadlocks
+                //    IObservable<Unit> Wrap(IObservable<Unit> obs)
+                //        => obs.Where(_ => !operationActive).Merge(refresh).ObserveOn(AvaloniaScheduler.Instance);
 
-            //    IObservable<Unit> VLCEvent(string name)
-            //        => Observable.FromEventPattern(MediaPlayer, name).Select(_ => Unit.Default);
+                //    IObservable<Unit> VLCEvent(string name)
+                //        => Observable.FromEventPattern(MediaPlayer, name).Select(_ => Unit.Default);
 
-            //    void Op(Action action)
-            //    {
-            //        operationActive = true;
-            //        action();
-            //        operationActive = false;
-            //        refresh.OnNext(Unit.Default);
-            //    };
+                //    void Op(Action action)
+                //    {
+                //        operationActive = true;
+                //        action();
+                //        operationActive = false;
+                //        refresh.OnNext(Unit.Default);
+                //    };
 
-            //    var positionChanged = VLCEvent(nameof(MediaPlayer.PositionChanged));
-            //    var playingChanged = VLCEvent(nameof(MediaPlayer.Playing));
-            //    var stoppedChanged = VLCEvent(nameof(MediaPlayer.Stopped));
-            //    var timeChanged = VLCEvent(nameof(MediaPlayer.TimeChanged));
-            //    var lengthChanged = VLCEvent(nameof(MediaPlayer.LengthChanged));
-            //    var muteChanged = VLCEvent(nameof(MediaPlayer.Muted))
-            //                        .Merge(VLCEvent(nameof(MediaPlayer.Unmuted)));
-            //    var endReachedChanged = VLCEvent(nameof(MediaPlayer.EndReached));
-            //    var pausedChanged = VLCEvent(nameof(MediaPlayer.Paused));
-            //    var volumeChanged = VLCEvent(nameof(MediaPlayer.VolumeChanged));
-            //    var stateChanged = Observable.Merge(playingChanged, stoppedChanged, endReachedChanged, pausedChanged);
-            //    var hasMediaObservable = this.WhenAnyValue(v => v.MediaUrl, v => !string.IsNullOrEmpty(v));
-            //    var fullState = Observable.Merge(
-            //                        stateChanged,
-            //                        VLCEvent(nameof(MediaPlayer.NothingSpecial)),
-            //                        VLCEvent(nameof(MediaPlayer.Buffering)),
-            //                        VLCEvent(nameof(MediaPlayer.EncounteredError))
-            //                        );
+                //    var positionChanged = VLCEvent(nameof(MediaPlayer.PositionChanged));
+                //    var playingChanged = VLCEvent(nameof(MediaPlayer.Playing));
+                //    var stoppedChanged = VLCEvent(nameof(MediaPlayer.Stopped));
+                //    var timeChanged = VLCEvent(nameof(MediaPlayer.TimeChanged));
+                //    var lengthChanged = VLCEvent(nameof(MediaPlayer.LengthChanged));
+                //    var muteChanged = VLCEvent(nameof(MediaPlayer.Muted))
+                //                        .Merge(VLCEvent(nameof(MediaPlayer.Unmuted)));
+                //    var endReachedChanged = VLCEvent(nameof(MediaPlayer.EndReached));
+                //    var pausedChanged = VLCEvent(nameof(MediaPlayer.Paused));
+                //    var volumeChanged = VLCEvent(nameof(MediaPlayer.VolumeChanged));
+                //    var stateChanged = Observable.Merge(playingChanged, stoppedChanged, endReachedChanged, pausedChanged);
+                //    var hasMediaObservable = this.WhenAnyValue(v => v.MediaUrl, v => !string.IsNullOrEmpty(v));
+                //    var fullState = Observable.Merge(
+                //                        stateChanged,
+                //                        VLCEvent(nameof(MediaPlayer.NothingSpecial)),
+                //                        VLCEvent(nameof(MediaPlayer.Buffering)),
+                //                        VLCEvent(nameof(MediaPlayer.EncounteredError))
+                //                        );
 
-            //    _subscriptions = new CompositeDisposable
-            //{
-            //    Wrap(positionChanged).DistinctUntilChanged(_ => Position).Subscribe(_ => this.RaisePropertyChanged(nameof(Position))),
-            //    Wrap(timeChanged).DistinctUntilChanged(_ => CurrentTime).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentTime))),
-            //    Wrap(timeChanged).DistinctUntilChanged(_ => PrettyCurrentTime).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyCurrentTime))),
-            //    Wrap(timeChanged).DistinctUntilChanged(_ => PrettyRemainingTime).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyRemainingTime))),
-            //    Wrap(lengthChanged).DistinctUntilChanged(_ => Duration).Subscribe(_ => this.RaisePropertyChanged(nameof(Duration))),
-            //    Wrap(lengthChanged).DistinctUntilChanged(_ => PrettyDuration).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyDuration))),
-            //    Wrap(muteChanged).DistinctUntilChanged(_ => IsMuted).Subscribe(_ => this.RaisePropertyChanged(nameof(IsMuted))),
-            //    Wrap(fullState).DistinctUntilChanged(_ => State).Subscribe(_ => this.RaisePropertyChanged(nameof(State))),
-            //    Wrap(volumeChanged).DistinctUntilChanged(_ => Volume).Subscribe(_ => this.RaisePropertyChanged(nameof(Volume))),
-            //    Wrap(fullState).DistinctUntilChanged(_ => Information).Subscribe(_ => this.RaisePropertyChanged(nameof(Information))),
-            //    Wrap(fullState).DistinctUntilChanged(_ => ShouldDisplayPauseButton).Subscribe(_ => this.RaisePropertyChanged(nameof(ShouldDisplayPauseButton)))
-            //};
+                //    _subscriptions = new CompositeDisposable
+                //{
+                //    Wrap(positionChanged).DistinctUntilChanged(_ => Position).Subscribe(_ => this.RaisePropertyChanged(nameof(Position))),
+                //    Wrap(timeChanged).DistinctUntilChanged(_ => CurrentTime).Subscribe(_ => this.RaisePropertyChanged(nameof(CurrentTime))),
+                //    Wrap(timeChanged).DistinctUntilChanged(_ => PrettyCurrentTime).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyCurrentTime))),
+                //    Wrap(timeChanged).DistinctUntilChanged(_ => PrettyRemainingTime).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyRemainingTime))),
+                //    Wrap(lengthChanged).DistinctUntilChanged(_ => Duration).Subscribe(_ => this.RaisePropertyChanged(nameof(Duration))),
+                //    Wrap(lengthChanged).DistinctUntilChanged(_ => PrettyDuration).Subscribe(_ => this.RaisePropertyChanged(nameof(PrettyDuration))),
+                //    Wrap(muteChanged).DistinctUntilChanged(_ => IsMuted).Subscribe(_ => this.RaisePropertyChanged(nameof(IsMuted))),
+                //    Wrap(fullState).DistinctUntilChanged(_ => State).Subscribe(_ => this.RaisePropertyChanged(nameof(State))),
+                //    Wrap(volumeChanged).DistinctUntilChanged(_ => Volume).Subscribe(_ => this.RaisePropertyChanged(nameof(Volume))),
+                //    Wrap(fullState).DistinctUntilChanged(_ => Information).Subscribe(_ => this.RaisePropertyChanged(nameof(Information))),
+                //    Wrap(fullState).DistinctUntilChanged(_ => ShouldDisplayPauseButton).Subscribe(_ => this.RaisePropertyChanged(nameof(ShouldDisplayPauseButton)))
+                //};
 
-            //    bool active() => _subscriptions == null ? false : MediaPlayer.IsPlaying || MediaPlayer.CanPause;
+                //    bool active() => _subscriptions == null ? false : MediaPlayer.IsPlaying || MediaPlayer.CanPause;
 
-            //    stateChanged = Wrap(stateChanged);
-            // Globals.GlobalMpvContextInstance.Seek += (sender, args) =>
-            // {
-            //     Debug.Print(args.ToString());
-            // };
-            //
+                //    stateChanged = Wrap(stateChanged);
+                // Globals.GlobalMpvContextInstance.Seek += (sender, args) =>
+                // {
+                //     Debug.Print(args.ToString());
+                // };
+                //
             }
             catch
             {
@@ -171,10 +170,11 @@ namespace HandsLiftedApp.Models.SlideState
                 }
             });
         }
-        
+
         public long? Duration
         {
-            get {
+            get
+            {
                 try
                 {
                     return Globals.GlobalMpvContextInstance?.GetPropertyLong("duration");
@@ -184,20 +184,20 @@ namespace HandsLiftedApp.Models.SlideState
                     return null;
                 }
             }
-            set 
+            set
             {
                 if (value == null) return;
                 try
                 {
-                    Globals.GlobalMpvContextInstance?.SetPropertyLong("duration",value.Value);
+                    Globals.GlobalMpvContextInstance?.SetPropertyLong("duration", value.Value);
                 }
                 catch (MpvException ex)
                 {
                 }
             }
         }
-        
-        public long? TimePos 
+
+        public long? TimePos
         {
             get
             {
@@ -222,7 +222,7 @@ namespace HandsLiftedApp.Models.SlideState
                 }
             }
         }
-        
+
         public delegate void SlideLeaveHandler(object sender, SlideLeaveEventArgs e);
         public event SlideLeaveHandler OnSlideLeave;
 

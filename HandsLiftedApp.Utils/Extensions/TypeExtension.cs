@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HandsLiftedApp.Extensions
+﻿namespace HandsLiftedApp.Extensions
 {
     // https://stackoverflow.com/a/6386234
     public static class TypeExtension

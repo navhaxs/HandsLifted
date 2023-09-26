@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
-using LibVLCSharp.Shared;
 
 namespace LibVLCSharp.Avalonia.Sample
 {

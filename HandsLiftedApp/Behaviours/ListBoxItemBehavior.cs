@@ -6,7 +6,6 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
-using HandsLiftedApp.Models;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using System.Linq;
@@ -123,7 +122,8 @@ namespace HandsLiftedApp.Behaviours
                 _parent = null;
 
                 ListBox listBox = (ListBox)target.Parent;
-                for (int i = 0; i < listBox.ItemCount; i++) {
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
 
                     listBoxItemContainer.Classes.Remove("draggingover");
@@ -156,7 +156,8 @@ namespace HandsLiftedApp.Behaviours
                 ListBoxItem? lastItem = (ListBoxItem)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
                 bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
 
-                for (int i = 0; i < listBox.ItemCount; i++) {
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
                     adornerLayer.Children.Clear();
@@ -228,19 +229,22 @@ namespace HandsLiftedApp.Behaviours
                 int DestinationIndex = isPastLastItem ? listBox.ItemCount - 1 : listBox.ItemContainerGenerator.IndexFromContainer(hoveredItem);
 
 
-                for (int i = 0; i < listBox.ItemCount; i++) {
+                for (int i = 0; i < listBox.ItemCount; i++)
+                {
                     var listBoxItemContainerControl = listBox.ContainerFromIndex(i);
 
                     listBoxItemContainerControl.Classes.Remove("draggingover");
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainerControl);
 
-                    if (adornerLayer != null) {
+                    if (adornerLayer != null)
+                    {
                         adornerLayer.Children.Clear();
                     }
 
                     // deselect all entries if this is a drag operation.
                     // else, this is a single click operation so don't deselect all entries.
-                    if (-1 != DestinationIndex) {
+                    if (-1 != DestinationIndex)
+                    {
                         ((ListBoxItem)listBoxItemContainerControl).IsSelected = false;
                         //((ListBoxItem)listBoxItem.ContainerControl).IsSelected = false;
                     }

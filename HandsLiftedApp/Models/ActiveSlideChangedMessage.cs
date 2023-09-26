@@ -1,7 +1,4 @@
-﻿using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models.ItemState;
-
-namespace HandsLiftedApp.Models
+﻿namespace HandsLiftedApp.Models
 {
     internal class ActiveSlideChangedMessage
     {

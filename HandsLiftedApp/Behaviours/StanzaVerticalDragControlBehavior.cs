@@ -8,9 +8,7 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Extensions;
-using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.ViewModels.Editor;
-using ReactiveUI;
 using System;
 using System.Linq;
 

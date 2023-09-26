@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using ReactiveUI;
-using System.Reactive;
 using System.Runtime.Serialization;
 
 namespace HandsLiftedApp.ViewModels
