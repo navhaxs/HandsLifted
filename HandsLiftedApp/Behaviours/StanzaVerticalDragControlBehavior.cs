@@ -93,11 +93,13 @@ namespace HandsLiftedApp.Behaviours
             var target = TargetControl ?? AssociatedObject;
             if (target is { })
             {
-                _parent = (Control)target.GetLogicalParent();
+                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
+                _parent = listBox;
 
-                if (!(target.RenderTransform is TranslateTransform))
+                ContentPresenter thisItem = ControlExtension.FindAncestor<ContentPresenter>(target);
+                if (!(thisItem.RenderTransform is TranslateTransform))
                 {
-                    target.RenderTransform = new TranslateTransform();
+                    thisItem.RenderTransform = new TranslateTransform();
                 }
 
                 _previous = e.GetPosition(_parent);
@@ -107,8 +109,8 @@ namespace HandsLiftedApp.Behaviours
                     _parent.PointerReleased += Parent_PointerReleased;
                 }
 
-                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
-                var SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(target);
+                thisItem.Opacity = 0.5;
+                thisItem.ZIndex = 999;
             }
         }
 
@@ -187,7 +189,8 @@ namespace HandsLiftedApp.Behaviours
                     return;
                 }
 
-                if (target.RenderTransform is TranslateTransform tr)
+                ContentPresenter thisItem = ControlExtension.FindAncestor<ContentPresenter>(target);
+                if (thisItem.RenderTransform is TranslateTransform tr)
                 {
                     //tr.X += pos.X - _previous.X;
                     tr.Y += pos.Y - _previous.Y;
@@ -195,35 +198,42 @@ namespace HandsLiftedApp.Behaviours
                 _previous = pos;
 
                 ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
-                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, target);
+                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, thisItem);
 
                 // check if dragging past the last item
-                //ListBoxItem? lastItem = (ListBoxItem)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
-                //bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom)
-                //    && pos.X > 0 && pos.X < listBox.Bounds.Width;
+                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
+                bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom)
+                    && pos.X > 0 && pos.X < listBox.Bounds.Width;
 
-                bool isPastLastItem = false;
+                ContentPresenter? firstItem = (ContentPresenter)listBox.GetLogicalChildren().MinBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Top);
+                bool isBeforeFirstItem = (firstItem != null) && (isBeforeFirstItem = pos.Y < firstItem.Bounds.Top);
 
                 for (int i = 0; i < listBox.ItemCount; i++)
                 {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
                     adornerLayer.Children.Clear();
-                    listBoxItemContainer.ZIndex = 5;
+
+                    if (listBoxItemContainer != thisItem)
+                    {
+                        listBoxItemContainer.ZIndex = 1;
+                    }
                 }
 
-                //if (isPastLastItem)
-                //{
-                //    hoveredItem = lastItem;
-                //}
+                if (isPastLastItem)
+                {
+                    hoveredItem = lastItem;
+                }
+                else if (isBeforeFirstItem)
+                {
+                    hoveredItem = firstItem;
+                }
 
                 if (hoveredItem is null)
                     return;
 
                 if (hoveredItem != target)
                 {
-                    hoveredItem.ZIndex = 999999;
-                    hoveredItem.Opacity = 0.8;
                     var adornerElement = hoveredItem;
                     var adornerLayer = AdornerLayer.GetAdornerLayer(adornerElement);
 
@@ -231,9 +241,8 @@ namespace HandsLiftedApp.Behaviours
                     {
                         var adornedElement = new Border()
                         {
-                            CornerRadius = new CornerRadius(3, 0, 0, 3),
-                            BorderThickness = new Thickness(2, 2, 0, 2),
-                            BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd"))
+                            BorderThickness = isPastLastItem ? new Thickness(0, 0, 0, 4) : new Thickness(0, 4, 0, 0),
+                            BorderBrush = new SolidColorBrush(Color.Parse("#ffc107"))
                         };
                         adornerLayer.Children.Add(adornedElement);
                         AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
@@ -257,14 +266,15 @@ namespace HandsLiftedApp.Behaviours
             if (_parent is { })
             {
                 var targetVisual = TargetControl ?? AssociatedObject;
-                targetVisual.RenderTransform = new TranslateTransform();
+
+                ContentPresenter targetItem = ControlExtension.FindAncestor<ContentPresenter>(targetVisual);
+                targetItem.RenderTransform = new TranslateTransform();
 
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
                 _parent = null;
                 isDragging = false;
 
-                ContentPresenter targetItem = ControlExtension.FindAncestor<ContentPresenter>(targetVisual);
                 ItemsControl parentItemsControl = ControlExtension.FindAncestor<ItemsControl>(targetVisual);
                 Point pos = e.GetPosition(parentItemsControl);
 
@@ -274,18 +284,33 @@ namespace HandsLiftedApp.Behaviours
                     return;
                 }
 
+                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(targetVisual);
                 ContentPresenter hoveredItem = GetHoveredItem(parentItemsControl, pos, targetItem);
 
                 // check if dragging past the last item
-                // ListBoxItem? lastItem = (ListBoxItem)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
-                // bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
+                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
+                bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom)
+                    && pos.X > 0 && pos.X < listBox.Bounds.Width;
 
-                bool isPastLastItem = false;
+                ContentPresenter? firstItem = (ContentPresenter)listBox.GetLogicalChildren().MinBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Top);
+                bool isBeforeFirstItem = (firstItem != null) && (isBeforeFirstItem = pos.Y < firstItem.Bounds.Top);
 
                 targetItem.Opacity = 1;
 
                 int SourceIndex = parentItemsControl.ItemContainerGenerator.IndexFromContainer(targetItem);
-                int DestinationIndex = isPastLastItem ? parentItemsControl.ItemCount - 1 : parentItemsControl.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                int DestinationIndex;
+                if (isPastLastItem)
+                {
+                    DestinationIndex = parentItemsControl.ItemCount - 1;
+                }
+                else if (isBeforeFirstItem)
+                {
+                    DestinationIndex = 0;
+                }
+                else
+                {
+                    DestinationIndex = parentItemsControl.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                }
 
                 for (int i = 0; i < parentItemsControl.ItemCount; i++)
                 {
