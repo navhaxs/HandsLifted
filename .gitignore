@@ -3,6 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+.sync/
+
 HandsLiftedApp/BuildInfo/BuildDate.txt
 HandsLiftedApp/BuildInfo/GitHash.txt
 

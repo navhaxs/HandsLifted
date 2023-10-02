@@ -150,6 +150,7 @@ namespace HandsLiftedApp.Behaviours
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
 
                     listBoxItemContainer.Classes.Remove("draggingover");
+                    listBoxItemContainer.Opacity = 1;
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
 
                     if (adornerLayer != null)
