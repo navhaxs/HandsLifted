@@ -16,6 +16,7 @@ namespace HandsLiftedApp.Data.Models
     [XmlInclude(typeof(SlidesGroupItem<IItemState, IItemAutoAdvanceTimerState>))]
     [XmlInclude(typeof(GoogleSlidesGroupItem<IItemState, IItemAutoAdvanceTimerState, IGoogleSlidesGroupItemState>))]
     [XmlInclude(typeof(PowerPointSlidesGroupItem<IItemState, IItemAutoAdvanceTimerState, IPowerPointSlidesGroupItemState>))]
+    [XmlInclude(typeof(PDFSlidesGroupItem<IItemState, IItemAutoAdvanceTimerState>))]
     //
     [XmlInclude(typeof(ImageSlide<IImageSlideState>))]
     [XmlInclude(typeof(VideoSlide<IVideoSlideState>))]

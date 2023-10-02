@@ -29,6 +29,9 @@
 						<item:SlidesGroupItemInfo/>
 					</StackPanel>
 				</DataTemplate>
+				<DataTemplate x:Key="PDFSlidesGroupItem">
+					<item:SlidesGroupItemInfo/>
+				</DataTemplate>
 				<DataTemplate x:Key="SlidesGroupItem">
 					<item:SlidesGroupItemInfo/>
 				</DataTemplate>

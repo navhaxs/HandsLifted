@@ -254,6 +254,7 @@ namespace HandsLiftedApp.ViewModels
             AddTestEmptyGroupCommand = ReactiveCommand.CreateFromTask(OpenTestEmptyGroupAsync);
             AddCustomSlideCommand = ReactiveCommand.CreateFromTask(AddCustomSlideCommandAsync);
             AddGoogleSlidesCommand = ReactiveCommand.CreateFromTask(OpenGoogleSlidesAsync);
+            AddPDFSlidesCommand = ReactiveCommand.CreateFromTask(OpenPresentationFileAsync);
             AddSongCommand = ReactiveCommand.CreateFromTask(AddSongAsync);
             AddNewSongCommand = ReactiveCommand.CreateFromTask(AddNewSongAsync);
             SaveServiceCommand = ReactiveCommand.Create(OnSaveService);
@@ -531,6 +532,7 @@ namespace HandsLiftedApp.ViewModels
         public ReactiveCommand<Unit, Unit> AddTestEmptyGroupCommand { get; }
         public ReactiveCommand<Unit, Unit> AddCustomSlideCommand { get; }
         public ReactiveCommand<Unit, Unit> AddGoogleSlidesCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddPDFSlidesCommand { get; }
         public ReactiveCommand<Unit, Unit> AddSongCommand { get; }
         public ReactiveCommand<Unit, Unit> AddNewSongCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveServiceCommand { get; }
@@ -580,7 +582,67 @@ namespace HandsLiftedApp.ViewModels
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.Print(e.Message);
+                Debug.Print(e.Message);
+            }
+        } 
+
+        private async Task OpenPresentationFileAsync()
+        {
+            try
+            {
+                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
+
+                foreach (var path in filePaths)
+                {
+
+                    if (path != null && path is string)
+                    {
+
+                        DateTime now = DateTime.Now;
+                        string fileName = Path.GetFileName(path);
+
+                        string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                        Directory.CreateDirectory(targetDirectory);
+
+                        if (fileName.EndsWith(".pptx"))
+                        {
+                            Log.Debug($"Importing PowerPoint file: {path}");
+                            PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = path };
+
+                            Playlist.Items.Add(slidesGroup);
+
+                            slidesGroup.SyncState.SyncCommand();
+                        }
+                        else if (fileName.EndsWith(".pdf"))
+                        {
+                            Log.Debug($"Importing PDF file: {path}");
+                            PDFSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new PDFSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>() { Title = fileName, SourcePresentationFile = path };
+
+                            Playlist.Items.Add(slidesGroup);
+
+                            ConvertPDF.Convert(path, targetDirectory); // todo move into State as a SyncCommand
+                            PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
+                        }
+                        else
+                        {
+                            Log.Error($"Unsupported file type: {path}");
+                            return;
+                        }
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            // wait for UI to update...
+                            Dispatcher.UIThread.RunJobs();
+                            // and now we can jump to view
+                            var count = Playlist.Items.Count;
+                            MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Print(e.Message);
             }
         }
 
@@ -608,47 +670,6 @@ namespace HandsLiftedApp.ViewModels
             { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
         }
 
-        private async Task OpenPresentationFileAsync()
-        {
-            try
-            {
-                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
-
-                foreach (var path in filePaths)
-                {
-
-                    if (path != null && path is string)
-                    {
-
-                        DateTime now = DateTime.Now;
-                        string fileName = Path.GetFileName(path);
-
-                        string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                        Directory.CreateDirectory(targetDirectory);
-
-                        //PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<PowerPointSlidesGroupItemStateImpl>() { Title = fileName };
-                        PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl> slidesGroup = new PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>() { Title = fileName, SourcePresentationFile = path };
-
-                        Playlist.Items.Add(slidesGroup);
-
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            // wait for UI to update...
-                            Dispatcher.UIThread.RunJobs();
-                            // and now we can jump to view
-                            var count = Playlist.Items.Count;
-                            MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
-                        });
-
-                        slidesGroup.SyncState.SyncCommand();
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.Print(e.Message);
-            }
-        }
         private async Task OpenGroupAsync()
         {
 
@@ -781,6 +802,8 @@ namespace HandsLiftedApp.ViewModels
             }
         }
 
+
+        // deprecated
         private void ImportFromFile(string fullFilePath, string playlistWorkingDirectory)
         {
             if (fullFilePath != null && fullFilePath is string)
@@ -860,8 +883,16 @@ namespace HandsLiftedApp.ViewModels
         const string TEST_SERVICE_FILE_PATH = @"C:\VisionScreens\service.xml";
         void OnSaveService()
         {
-            XmlSerialization.WriteToXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH, Playlist);
-            MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
+            try
+            {
+                XmlSerialization.WriteToXmlFile<Playlist<PlaylistStateImpl, ItemStateImpl>>(TEST_SERVICE_FILE_PATH, Playlist);
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to write XML");
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Failed to Save :(", Content = $"Target was {TEST_SERVICE_FILE_PATH}\n${e.Message}" }));
+            }
         }
 
         void OnNewService()

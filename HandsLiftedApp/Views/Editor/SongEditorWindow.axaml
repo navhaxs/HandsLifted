@@ -46,10 +46,10 @@
                                     Padding="10,8"
                                     HorizontalContentAlignment="Left"
                                     Background="{Binding Colour}"
+                                    Click="OnAddPartClick"
                                     Content="{Binding Name}"
                                     Foreground="Black"
                                     ToolTip.ShowDelay="0"
-									Click="OnAddPartClick"
                                     ToolTip.Tip="{Binding Lyrics}">
                                     <Button.Styles>
                                         <Style Selector="ToolTip">
@@ -89,7 +89,7 @@
                 <TextBlock
                     Padding="6"
                     FontSize="22"
-					Foreground="White"
+                    Foreground="White"
                     Text="Song Editor" />
             </DockPanel>
 
@@ -134,7 +134,7 @@
 
 
 
-                                <StackPanel>
+                                <StackPanel x:Name="Wrapper">
                                     <TextBox
                                         Margin="12,12,12,12"
                                         Padding="0,6,0,5"
@@ -144,21 +144,25 @@
                                         Foreground="Black"
                                         Text="{Binding song.Title}"
                                         TextWrapping="Wrap"
-                                        Watermark="Song Title" />
+                                        Watermark="Song Title">
+                                        <i:Interaction.Behaviors>
+                                            <b:StanzaTextBoxBehavior />
+                                        </i:Interaction.Behaviors>
+                                    </TextBox>
                                     <!--<Rectangle
                                     Height="1"
                                     VerticalAlignment="Stretch"
                                     Fill="#ddd" />-->
 
                                     <Carousel SelectedIndex="1">
-                                        <TextBox
+                                        <!--<TextBox
                                             Margin="12,0"
                                             Background="Transparent"
                                             FontFamily="Consolas"
                                             Foreground="Black"
                                             Text="{Binding X}">
                                             Manual Text Entry
-                                        </TextBox>
+                                        </TextBox>-->
                                         <StackPanel>
                                             <ItemsControl Margin="0,0,5,0" ItemsSource="{Binding song.Stanzas}">
                                                 <!--<ItemsControl.ItemsPanel>
@@ -183,7 +187,14 @@
                                                                         </Button.Styles>
                                                                         <Button.Flyout>
                                                                             <Flyout>
-                                                                                <Button Click="DeleteThisPartClick" Content="Confirm: delete this part? This cannot be undone" />
+                                                                                <StackPanel>
+                                                                                    <TextBlock>Are you sure you want to delete this part?</TextBlock>
+                                                                                    <TextBlock>This cannot be undone</TextBlock>
+                                                                                    <Button
+                                                                                        HorizontalAlignment="Center"
+                                                                                        Click="DeleteThisPartClick"
+                                                                                        Content="Confirm" />
+                                                                                </StackPanel>
                                                                             </Flyout>
                                                                         </Button.Flyout>
                                                                         <material:MaterialIcon
@@ -206,7 +217,11 @@
                                                                         Foreground="Black"
                                                                         Text="{Binding Path=Name}"
                                                                         TextWrapping="Wrap"
-                                                                        Watermark="Stanza Name" />
+                                                                        Watermark="Stanza Name">
+                                                                        <i:Interaction.Behaviors>
+                                                                            <b:StanzaTextBoxBehavior />
+                                                                        </i:Interaction.Behaviors>
+                                                                    </TextBox>
                                                                 </DockPanel>
                                                             </Border>
 
@@ -218,7 +233,11 @@
                                                                 Foreground="Black"
                                                                 Text="{Binding Path=Lyrics}"
                                                                 TextWrapping="Wrap"
-                                                                Watermark="Stanza Lyrics" />
+                                                                Watermark="Stanza Lyrics">
+                                                                <i:Interaction.Behaviors>
+                                                                    <b:StanzaTextBoxBehavior />
+                                                                </i:Interaction.Behaviors>
+                                                            </TextBox>
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
@@ -264,7 +283,11 @@
                                         Foreground="Black"
                                         Text="{Binding song.Copyright}"
                                         TextWrapping="Wrap"
-                                        Watermark="Copyright" />
+                                        Watermark="Copyright">
+                                        <i:Interaction.Behaviors>
+                                            <b:StanzaTextBoxBehavior />
+                                        </i:Interaction.Behaviors>
+                                    </TextBox>
 
                                 </StackPanel>
 
@@ -316,8 +339,36 @@
                                                 PlacementAnchor="Bottom"
                                                 PlacementMode="Bottom"
                                                 PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
-                                                <MenuItem Click="OnRepeatPartClick" Header="Repeat" />
-                                                <MenuItem Click="OnRemovePartClick" Header="Remove" />
+                                                <MenuItem Click="OnRepeatPartClick">
+                                                    <MenuItem.Icon>
+                                                        <Border Margin="8">
+                                                            <material:MaterialIcon
+                                                                Width="24"
+                                                                Height="24"
+                                                                Kind="Repeat" />
+                                                        </Border>
+                                                    </MenuItem.Icon>
+                                                    <MenuItem.Header>
+                                                        <DockPanel>
+                                                            <TextBlock Text="Repeat" />
+                                                        </DockPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
+                                                <MenuItem Click="OnRemovePartClick">
+                                                    <MenuItem.Icon>
+                                                        <Border Margin="8">
+                                                            <material:MaterialIcon
+                                                                Width="24"
+                                                                Height="24"
+                                                                Kind="Delete" />
+                                                        </Border>
+                                                    </MenuItem.Icon>
+                                                    <MenuItem.Header>
+                                                        <DockPanel>
+                                                            <TextBlock Text="Delete" />
+                                                        </DockPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
                                             </ContextMenu>
                                         </DockPanel.ContextMenu>
 
@@ -333,29 +384,68 @@
                                                 Text="{Binding Value.Name}" />
                                         </Border>
 
-										<i:Interaction.Behaviors>
-											<b:StanzaVerticalDragControlBehavior />
-										</i:Interaction.Behaviors>
+                                        <i:Interaction.Behaviors>
+                                            <b:StanzaVerticalDragControlBehavior />
+                                        </i:Interaction.Behaviors>
                                     </DockPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <Button
+						<Button
                             x:Name="AddPartFlyoutToggleButton"
                             Padding="10"
                             HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
+                            HorizontalContentAlignment="Left"
                             Background="Transparent"
                             BorderThickness="0"
                             Flyout="{StaticResource MySharedFlyout}">
+							<Button.Styles>
+								<Style Selector="Button material|MaterialIcon">
+									<Setter Property="Foreground" Value="#888888" />
+								</Style>
+								<Style Selector="Button:pointerover material|MaterialIcon">
+									<Setter Property="Foreground" Value="White" />
+								</Style>
+								<Style Selector="Button:pressed material|MaterialIcon">
+									<Setter Property="Foreground" Value="#5FFFFF" />
+								</Style>
+								<Style Selector="Button:flyout-open material|MaterialIcon">
+									<Setter Property="Foreground" Value="#0061e0" />
+								</Style>
+								<Style Selector="Button:flyout-open TextBlock">
+									<Setter Property="IsVisible" Value="True" />
+									<Setter Property="Foreground" Value="#0061e0" />
+								</Style>
+								<Style Selector="Button TextBlock">
+									<Setter Property="IsVisible" Value="False" />
+								</Style>
+								<Style Selector="Button:pressed /template/ ContentPresenter">
+									<Setter Property="Background" Value="Transparent" />
+								</Style>
+								<Style Selector="Button:pressed TextBlock">
+									<Setter Property="IsVisible" Value="True" />
+									<Setter Property="Foreground" Value="#5FFFFF" />
+								</Style>
+								<Style Selector="Button:pointerover TextBlock">
+									<Setter Property="IsVisible" Value="True" />
+								</Style>
+							</Button.Styles>
+
+							<DockPanel MinHeight="20">
 								<material:MaterialIcon
-									DockPanel.Dock="Left"
-									Margin="-4,0,6,0"
-									VerticalAlignment="Center"
-									Foreground="#888888"
-									Kind="PlusCircleOutline" />
-                        </Button>
+                                    Margin="-4,0,6,0"
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Left"
+                                    Kind="PlusCircleOutline" />
+								<TextBlock
+                                    Name="AddButtonTooltip"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Text="Add a stanza" />
+							</DockPanel>
+						</Button>
 
                     </StackPanel>
 

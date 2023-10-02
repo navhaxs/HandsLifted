@@ -28,6 +28,7 @@ namespace HandsLiftedApp.Utils
                       typeof(SectionHeadingItem<ItemStateImpl>),
                       typeof(GoogleSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, GoogleSlidesGroupItemStateImpl>),
                       typeof(PowerPointSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl, PowerPointSlidesGroupItemStateImpl>),
+                      typeof(PDFSlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>),
                       //
                       typeof(ImageSlide<ImageSlideStateImpl>),
                       typeof(VideoSlide<VideoSlideStateImpl>),
@@ -72,10 +73,6 @@ namespace HandsLiftedApp.Utils
                         memoryStream.WriteTo(file);
                     Log.Information($"Wrote XML {filePath}");
                 }
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to write XML");
             }
             finally
             {
