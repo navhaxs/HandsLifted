@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.LibMpv;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Skia;
@@ -574,9 +575,17 @@ Description("Function to determine whether the content requires high resolution 
             using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
             // render the Avalonia visual
-            rtb.Render(this.Child);
+            var videoControl = this.Child.FindAllVisuals<SoftwareVideoView>().FirstOrDefault();
 
-            rtb.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+            if (videoControl != null)
+            {
+                videoControl.GetVideoBufferBitmap().CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+            }
+            else
+            {
+                rtb.Render(this.Child);
+                rtb.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+            }
 
             // add it to the output queue
             AddFrame(videoFrame);
