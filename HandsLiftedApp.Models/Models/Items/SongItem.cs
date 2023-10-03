@@ -51,10 +51,34 @@ namespace HandsLiftedApp.Data.Models.Items
                 debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
-
             _stanzas.CollectionChanged += _stanzas_CollectionChanged;
             _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             Arrangement.CollectionChanged += Arrangement_CollectionChanged;
+
+            _songAsPlainText = this.WhenAnyValue(t => t.Title, t => t.Copyright, t => t.Stanzas, t => t.Arrangement, (title, copyright, stanzas, arrangement) =>
+            {
+
+                string str = "";
+
+                str += title;
+                str += "\n";
+                str += "\n";
+
+                foreach (var a in arrangement)
+                {
+                    str += a.Value.Name;
+                    str += "\n";
+                    str += a.Value.Lyrics;
+                    str += "\n";
+                    str += "\n";
+                }
+
+                str += copyright;
+
+                return str;
+            })
+                .ToProperty(this, x => x.SongAsPlainText);
+
         }
 
         private void Arrangement_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -70,6 +94,7 @@ namespace HandsLiftedApp.Data.Models.Items
             }
 
             this.RaisePropertyChanged("Slides");
+            this.RaisePropertyChanged(nameof(Arrangement));
         }
 
         public BaseSlideTheme SlideTheme { get; set; }
@@ -83,6 +108,12 @@ namespace HandsLiftedApp.Data.Models.Items
             }
             Arrangement = a;
         }
+
+        void GenerateSongAsPlainText()
+        {
+
+        }
+
         void UpdateStanzaSlides()
         {
             int i = 0;
@@ -254,6 +285,10 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             public X Value { get; set; }
         }
+
+
+        private ObservableAsPropertyHelper<string> _songAsPlainText;
+        public string SongAsPlainText { get => _songAsPlainText.Value; }
 
         [XmlIgnore]
         private ObservableAsPropertyHelper<Slide> _titleSlide;

@@ -243,7 +243,7 @@
 	</Style>
 
 	<Style Selector="ListBoxItem:pointerover /template/ Border#PART_Border">
-		<Setter Property="BorderBrush" Value="#e59400"/>
+		<Setter Property="BorderBrush" Value="#CECECE"/>
 		<Setter Property="BorderThickness" Value="4" />
 	</Style>
 

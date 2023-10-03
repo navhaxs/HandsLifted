@@ -132,44 +132,25 @@
                                         Color="#55000000" />
                                 </Border.Effect>
 
-
-
-                                <StackPanel x:Name="Wrapper">
-                                    <TextBox
-                                        Margin="12,12,12,12"
-                                        Padding="0,6,0,5"
-                                        Background="White"
-                                        FontSize="30"
-                                        FontWeight="Bold"
-                                        Foreground="Black"
-                                        Text="{Binding song.Title}"
-                                        TextWrapping="Wrap"
-                                        Watermark="Song Title">
-                                        <i:Interaction.Behaviors>
-                                            <b:StanzaTextBoxBehavior />
-                                        </i:Interaction.Behaviors>
-                                    </TextBox>
-                                    <!--<Rectangle
-                                    Height="1"
-                                    VerticalAlignment="Stretch"
-                                    Fill="#ddd" />-->
-
-                                    <Carousel SelectedIndex="1">
-                                        <!--<TextBox
-                                            Margin="12,0"
-                                            Background="Transparent"
-                                            FontFamily="Consolas"
+                                <Carousel SelectedIndex="1">
+                                    <StackPanel x:Name="Wrapper">
+                                        <TextBox
+                                            Margin="12,12,12,12"
+                                            Padding="0,6,0,5"
+                                            Background="White"
+                                            FontSize="30"
+                                            FontWeight="Bold"
                                             Foreground="Black"
-                                            Text="{Binding X}">
-                                            Manual Text Entry
-                                        </TextBox>-->
+                                            Text="{Binding song.Title}"
+                                            TextWrapping="Wrap"
+                                            Watermark="Song Title">
+                                            <i:Interaction.Behaviors>
+                                                <b:StanzaTextBoxBehavior />
+                                            </i:Interaction.Behaviors>
+                                        </TextBox>
+
                                         <StackPanel>
                                             <ItemsControl Margin="0,0,5,0" ItemsSource="{Binding song.Stanzas}">
-                                                <!--<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<WrapPanel Orientation="Vertical" ItemWidth="360" />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>-->
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <StackPanel>
@@ -271,25 +252,35 @@
                                             </Button>
 
                                         </StackPanel>
-                                    </Carousel>
+
+                                        <TextBox
+                                            Margin="16,8,12,12"
+                                            Padding="0,6,0,5"
+                                            HorizontalAlignment="Stretch"
+                                            AcceptsReturn="True"
+                                            Background="Transparent"
+                                            FontSize="13"
+                                            Foreground="Black"
+                                            Text="{Binding song.Copyright}"
+                                            TextWrapping="Wrap"
+                                            Watermark="Copyright">
+                                            <i:Interaction.Behaviors>
+                                                <b:StanzaTextBoxBehavior />
+                                            </i:Interaction.Behaviors>
+                                        </TextBox>
+
+                                    </StackPanel>
 
                                     <TextBox
-                                        Margin="16,8,12,12"
-                                        Padding="0,6,0,5"
-                                        HorizontalAlignment="Stretch"
-                                        AcceptsReturn="True"
+                                        Margin="12"
                                         Background="Transparent"
-                                        FontSize="13"
+                                        FontFamily="Consolas"
                                         Foreground="Black"
-                                        Text="{Binding song.Copyright}"
-                                        TextWrapping="Wrap"
-                                        Watermark="Copyright">
-                                        <i:Interaction.Behaviors>
-                                            <b:StanzaTextBoxBehavior />
-                                        </i:Interaction.Behaviors>
+										TextWrapping="Wrap"
+                                        Text="{Binding song.SongAsPlainText}">
+                                        Manual Text Entry
                                     </TextBox>
-
-                                </StackPanel>
+                                </Carousel>
 
                             </Border>
 
@@ -392,7 +383,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-						<Button
+                        <Button
                             x:Name="AddPartFlyoutToggleButton"
                             Padding="10"
                             HorizontalAlignment="Stretch"
@@ -400,52 +391,52 @@
                             Background="Transparent"
                             BorderThickness="0"
                             Flyout="{StaticResource MySharedFlyout}">
-							<Button.Styles>
-								<Style Selector="Button material|MaterialIcon">
-									<Setter Property="Foreground" Value="#888888" />
-								</Style>
-								<Style Selector="Button:pointerover material|MaterialIcon">
-									<Setter Property="Foreground" Value="White" />
-								</Style>
-								<Style Selector="Button:pressed material|MaterialIcon">
-									<Setter Property="Foreground" Value="#5FFFFF" />
-								</Style>
-								<Style Selector="Button:flyout-open material|MaterialIcon">
-									<Setter Property="Foreground" Value="#0061e0" />
-								</Style>
-								<Style Selector="Button:flyout-open TextBlock">
-									<Setter Property="IsVisible" Value="True" />
-									<Setter Property="Foreground" Value="#0061e0" />
-								</Style>
-								<Style Selector="Button TextBlock">
-									<Setter Property="IsVisible" Value="False" />
-								</Style>
-								<Style Selector="Button:pressed /template/ ContentPresenter">
-									<Setter Property="Background" Value="Transparent" />
-								</Style>
-								<Style Selector="Button:pressed TextBlock">
-									<Setter Property="IsVisible" Value="True" />
-									<Setter Property="Foreground" Value="#5FFFFF" />
-								</Style>
-								<Style Selector="Button:pointerover TextBlock">
-									<Setter Property="IsVisible" Value="True" />
-								</Style>
-							</Button.Styles>
+                            <Button.Styles>
+                                <Style Selector="Button material|MaterialIcon">
+                                    <Setter Property="Foreground" Value="#888888" />
+                                </Style>
+                                <Style Selector="Button:pointerover material|MaterialIcon">
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                                <Style Selector="Button:pressed material|MaterialIcon">
+                                    <Setter Property="Foreground" Value="#5FFFFF" />
+                                </Style>
+                                <Style Selector="Button:flyout-open material|MaterialIcon">
+                                    <Setter Property="Foreground" Value="#0061e0" />
+                                </Style>
+                                <Style Selector="Button:flyout-open TextBlock">
+                                    <Setter Property="IsVisible" Value="True" />
+                                    <Setter Property="Foreground" Value="#0061e0" />
+                                </Style>
+                                <Style Selector="Button TextBlock">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                                <Style Selector="Button:pressed TextBlock">
+                                    <Setter Property="IsVisible" Value="True" />
+                                    <Setter Property="Foreground" Value="#5FFFFF" />
+                                </Style>
+                                <Style Selector="Button:pointerover TextBlock">
+                                    <Setter Property="IsVisible" Value="True" />
+                                </Style>
+                            </Button.Styles>
 
-							<DockPanel MinHeight="20">
-								<material:MaterialIcon
+                            <DockPanel MinHeight="20">
+                                <material:MaterialIcon
                                     Margin="-4,0,6,0"
                                     VerticalAlignment="Center"
                                     DockPanel.Dock="Left"
                                     Kind="PlusCircleOutline" />
-								<TextBlock
+                                <TextBlock
                                     Name="AddButtonTooltip"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     FontSize="14"
                                     Text="Add a stanza" />
-							</DockPanel>
-						</Button>
+                            </DockPanel>
+                        </Button>
 
                     </StackPanel>
 
