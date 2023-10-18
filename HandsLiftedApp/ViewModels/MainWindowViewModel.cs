@@ -86,7 +86,17 @@ namespace HandsLiftedApp.ViewModels
         public SlideDesignerViewModel SlideDesigner { get; } = new SlideDesignerViewModel();
         public Playlist<PlaylistStateImpl, ItemStateImpl> _playlist;
 
-        public Playlist<PlaylistStateImpl, ItemStateImpl> Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
+        public Playlist<PlaylistStateImpl, ItemStateImpl> Playlist
+        {
+            get => _playlist; set
+            {
+                this.RaiseAndSetIfChanged(ref _playlist, value);
+
+                // TODO only once playlist has loaded
+                if (Globals.Preferences != null && Globals.Preferences.OnStartupShowLogo)
+                    Playlist.State.IsLogo = true;
+            }
+        }
 
         public OverlayState OverlayState { get; set; }
 
@@ -433,14 +443,11 @@ namespace HandsLiftedApp.ViewModels
             // TODO initialise at the right place (tm)
             HandsLiftedWebServer.Start();
 
-            if (Globals.Preferences.OnStartupShowOutput)
-                ToggleProjectorWindow(true);
+            ToggleProjectorWindow(true);
 
             if (Globals.Preferences.OnStartupShowStage)
                 ToggleStageDisplayWindow(true);
 
-            if (Globals.Preferences.OnStartupShowLogo)
-                Playlist.State.IsLogo = true;
         }
 
         private void HandleDeactivation()
@@ -469,9 +476,13 @@ namespace HandsLiftedApp.ViewModels
             shouldShow = shouldShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
             if (shouldShow == true)
             {
-                ProjectorWindow = new ProjectorWindow();
-                ProjectorWindow.DataContext = this;
+                if (ProjectorWindow == null)
+                {
+                    ProjectorWindow = new ProjectorWindow();
+                    ProjectorWindow.DataContext = this;
+                }
                 ProjectorWindow.Show();
+                ProjectorWindow.UpdateWindowVisibility(true);
             }
             else
             {
@@ -584,7 +595,7 @@ namespace HandsLiftedApp.ViewModels
             {
                 Debug.Print(e.Message);
             }
-        } 
+        }
 
         private async Task OpenPresentationFileAsync()
         {

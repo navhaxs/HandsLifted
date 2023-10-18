@@ -49,6 +49,21 @@ namespace HandsLiftedApp.Views
             if (Design.IsDesignMode)
                 return;
 
+            bool initial = true;
+
+            this.Opened += (s, e) =>
+            {
+                if (initial && !Globals.Preferences.OnStartupShowOutput)
+                {
+                    UpdateWindowVisibility(false);
+                }
+
+                this.WhenAnyValue(wnd => wnd.IsVisible)
+                    .Subscribe(UpdateWindowVisibility);
+
+                initial = false;
+            };
+
             this.KeyDown += OnKeyDown;
 
             timer.Tick += (sender, e) =>
@@ -93,12 +108,22 @@ namespace HandsLiftedApp.Views
             //    Globals.GlobalMpvContext.Command("loadfile", "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "replace");
             //    Globals.GlobalMpvContext.SetPropertyFlag("pause", false);
             //});
+        }
 
+        public void UpdateWindowVisibility(bool isVisible)
+        {
+            //this.IsVisible = isVisible;
+            //this.ShowInTaskbar = !isVisible;
+            //this.Opacity = isVisible ? 1 : 0;
+            //this.IsHitTestVisible = isVisible;
+            //this.SystemDecorations = isVisible ? SystemDecorations.Full : SystemDecorations.None;
+            //this.Height = 0;
+            //this.Width = 0;
         }
 
         private void ProjectorWindow_Closing(object? sender, WindowClosingEventArgs e)
         {
-            this.IsVisible = false;
+            UpdateWindowVisibility(false);
             e.Cancel = true;
         }
 
@@ -138,5 +163,6 @@ namespace HandsLiftedApp.Views
             }
             e.Handled = true;
         }
+
     }
 }

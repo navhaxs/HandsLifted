@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Data.Models;
@@ -23,18 +22,14 @@ namespace HandsLiftedApp.Controls
     public partial class PlaylistSlidesView : UserControl
     {
         ItemsControl listBox;
-        ScrollViewer scrollViewer;
-
 
         public PlaylistSlidesView()
         {
             InitializeComponent();
 
             listBox = this.FindControl<ItemsControl>("List");
-            scrollViewer = this.FindControl<ScrollViewer>("ScrollViewer");
 
             this.DataContextChanged += PlaylistSlidesView_DataContextChanged;
-
 
             this.AddHandler(RequestBringIntoViewEvent, (s, e) =>
             {
@@ -67,7 +62,6 @@ namespace HandsLiftedApp.Controls
             MessageBus.Current.Listen<FocusSelectedItem>()
                .Subscribe(x =>
                {
-
                    // TODO add a flag so this can be conditionally skipped
                    // e.g. user can disable "auto follow mode" if they are busy editing elsewhere in the playlist
 
@@ -208,11 +202,6 @@ namespace HandsLiftedApp.Controls
             }
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
         // <summary>
         /// Attempts to bring a portion of the target visual into view by scrolling the content.
         /// </summary>
@@ -292,7 +281,9 @@ namespace HandsLiftedApp.Controls
 
             if (result)
             {
-                presenter.Offset = offset;
+                // BUG: when this is executed, using the mouse to drag the scrollbar stops working!
+                //presenter.Offset = offset;
+                scrollViewer.Offset = offset;
             }
 
             return result;

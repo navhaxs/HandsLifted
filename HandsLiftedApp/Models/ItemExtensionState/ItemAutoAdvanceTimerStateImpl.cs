@@ -3,6 +3,7 @@ using HandsLiftedApp.Models.AppState;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
+using Serilog;
 using System;
 
 namespace HandsLiftedApp.Models.ItemExtensionState
@@ -20,7 +21,7 @@ namespace HandsLiftedApp.Models.ItemExtensionState
 
             Timer = new CountdownTimer();
 
-            parentSlidesGroup.AutoAdvanceTimer.WhenAnyValue(config => config.IsEnabled, config => config.IntervalMs)
+            parentSlidesGroup.WhenAnyValue(config => config.AutoAdvanceTimer.IsEnabled, config => config.AutoAdvanceTimer.IntervalMs)
                 .Subscribe(x =>
                 {
                     ApplyTimerConfig(x.Item1, x.Item2);
@@ -39,8 +40,12 @@ namespace HandsLiftedApp.Models.ItemExtensionState
             //       }
             //   });
 
+
+
             Timer.OnElapsed += (sender, e) =>
             {
+                Log.Information($"OnElapsed {parentSlidesGroup.Uuid}");
+
                 if (!parentSlidesGroup.AutoAdvanceTimer.IsEnabled)
                     return;
 
@@ -70,6 +75,8 @@ namespace HandsLiftedApp.Models.ItemExtensionState
 
         private void ApplyTimerConfig(bool isEnabled, int intervalMs)
         {
+            Log.Information($"ApplyTimerConfig {parentSlidesGroup.Uuid}");
+
             // stop timer
             Timer.Stop();
 
@@ -81,12 +88,15 @@ namespace HandsLiftedApp.Models.ItemExtensionState
         }
         private void ResetTimer()
         {
+            Log.Information($"ResetTimer {parentSlidesGroup.Uuid}");
+
             // stop timer
             Timer.Stop();
 
             // restart timer if enabled and item is active
             if (parentSlidesGroup.State.IsSelected == true && parentSlidesGroup.AutoAdvanceTimer.IsEnabled)
             {
+                Log.Information($"ResetTimer==>Start {parentSlidesGroup.Uuid}");
                 Timer.Start(parentSlidesGroup.AutoAdvanceTimer.IntervalMs);
             }
         }

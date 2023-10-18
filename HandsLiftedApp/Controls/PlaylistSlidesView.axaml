@@ -18,7 +18,7 @@
     <Grid Name="parentWrapper">
 
         <controls:CustomScrollViewer
-            Name="ScrollViewer"
+            Name="scrollViewer"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Visible">
             <controls:CustomScrollViewer.Styles>
@@ -36,7 +36,6 @@
             <DockPanel>
 
                 <controls:AddItemButton Margin="0,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" />
-
                 <!--  "fill" the height with the last item  -->
                 <Grid DockPanel.Dock="Bottom">
                     <!--  TODO this would be a good place to put a 'add item' button  -->

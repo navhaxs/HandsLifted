@@ -49,6 +49,8 @@ namespace HandsLiftedApp
                 Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
                 Log.Information($"VisionScreens app version {version} build {BuildInfo.Version.getGitHash()} startup at {DateTime.Now}");
 
+                Log.Information("Avalonia version: " + Assembly.GetAssembly(typeof(Avalonia.Application)).GetName().Version.ToString());
+
                 // Windows-only
                 // https://stackoverflow.com/a/646500/
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

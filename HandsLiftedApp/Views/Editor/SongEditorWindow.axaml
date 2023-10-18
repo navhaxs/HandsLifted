@@ -86,11 +86,6 @@
                     <Button Content="Save" DockPanel.Dock="Left" />
                     <Button Content="Reset Arrangement" DockPanel.Dock="Left" />
                 </StackPanel>
-                <TextBlock
-                    Padding="6"
-                    FontSize="22"
-                    Foreground="White"
-                    Text="Song Editor" />
             </DockPanel>
 
             <Grid.Effect>
@@ -112,11 +107,17 @@
         <Grid Name="ContainerGrid">
             <ScrollViewer>
 
-
-
                 <Grid ColumnDefinitions="200, 1, 12*, 1, 17*">
+					
+					<TextBlock
+						DockPanel.Dock="Top"
+						Margin="12"
+						FontSize="22"
+						TextAlignment="Left"
+						HorizontalAlignment="Stretch"
+						Text="Song Editor" />
 
-                    <Grid Grid.Column="2">
+					<Grid Grid.Column="2">
                         <DockPanel>
                             <DockPanel.Styles>
                                 <Style Selector="TextBox">
@@ -305,17 +306,16 @@
                         BorderThickness="3,0"
                         ZIndex="9999" />
 
-                    <StackPanel Grid.Column="0" Margin="20,30,0,0">
+                    <StackPanel Grid.Column="0" Margin="20,40,0,0">
                         <TextBlock
-                            Margin="8,10,8,4"
-                            FontSize="14"
-                            FontWeight="Bold"
+                            Margin="0,6,0,12"
+                            FontSize="18"
+                            FontWeight="SemiBold"
                             Text="Arrangement" />
 
                         <ItemsControl
                             Name="PART_ArrangementTokens"
                             MinHeight="20"
-                            Margin="4"
                             VerticalAlignment="Center"
                             ItemsSource="{Binding song.Arrangement}">
                             <ItemsControl.Styles>
@@ -432,9 +432,11 @@
 								</Style>
 							</Button.Styles>
 
-							<DockPanel MinHeight="20">
-								<material:MaterialIcon
-                                    Margin="-4,0,6,0"
+                            <DockPanel MinHeight="24">
+                                <material:MaterialIcon
+                                    Margin="-8"
+									Width="24"
+									Height="24"
                                     VerticalAlignment="Center"
                                     DockPanel.Dock="Left"
                                     Kind="PlusCircleOutline" />
@@ -449,7 +451,6 @@
 
                     </StackPanel>
 
-
                     <GridSplitter
                         Grid.Column="3"
                         Margin="-3,0"
@@ -459,62 +460,63 @@
                         BorderThickness="3,0"
                         ZIndex="9999" />
 
-                    <StackPanel Grid.Column="4" Margin="0,32,0,0">
-                        <TextBlock
-                            Margin="8,8,8,10"
-                            FontSize="14"
-                            FontWeight="Bold"
-                            Text="Preview" />
-                        <Border
-                            Padding="6"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Background="#5A6047A3"
-                            CornerRadius="6">
+					<Border Grid.Column="4" BorderBrush="#78000000" Background="#9F000000">
+						<StackPanel Margin="16,32">
+							<TextBlock
+								Margin="0,18,8,10"
+								FontSize="18"
+								FontWeight="SemiBold"
+								Text="Preview" />
+							<Border
+								Padding="6"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Top"
+								Background="#5A6047A3"
+								CornerRadius="6">
 
+								<ListBox
+									Name="List"
+									Background="Transparent"
+									BorderThickness="0"
+									ItemsSource="{Binding song.Slides}"
+									ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+									<ListBox.Styles>
+										<StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml" />
+									</ListBox.Styles>
+									<ListBox.ItemsPanel>
+										<ItemsPanelTemplate>
+											<WrapPanel ItemHeight="160" ItemWidth="240" />
+										</ItemsPanelTemplate>
+									</ListBox.ItemsPanel>
 
-                            <ListBox
-                                Name="List"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                ItemsSource="{Binding song.Slides}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListBox.Styles>
-                                    <StyleInclude Source="avares://HandsLiftedApp/Controls/ListBoxItem.axaml" />
-                                </ListBox.Styles>
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel ItemHeight="160" ItemWidth="240" />
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
+									<ListBox.DataTemplates>
+										<utils:MyTemplateSelector>
+											<DataTemplate x:Key="SongTitleSlide">
+												<TextBlock
+													Margin="10,10,10,10"
+													FontWeight="SemiBold"
+													Foreground="White"
+													Text="{Binding Title}"
+													TextTrimming="WordEllipsis"
+													TextWrapping="Wrap" />
+											</DataTemplate>
+											<DataTemplate x:Key="SongSlide">
+												<TextBlock
+													Margin="10,10,10,10"
+													Foreground="White"
+													Text="{Binding Text}"
+													TextTrimming="WordEllipsis"
+													TextWrapping="Wrap" />
+											</DataTemplate>
+										</utils:MyTemplateSelector>
+									</ListBox.DataTemplates>
+								</ListBox>
 
-                                <ListBox.DataTemplates>
-                                    <utils:MyTemplateSelector>
-                                        <DataTemplate x:Key="SongTitleSlide">
-                                            <TextBlock
-                                                Margin="10,10,10,10"
-                                                FontWeight="SemiBold"
-                                                Foreground="White"
-                                                Text="{Binding Title}"
-                                                TextTrimming="WordEllipsis"
-                                                TextWrapping="Wrap" />
-                                        </DataTemplate>
-                                        <DataTemplate x:Key="SongSlide">
-                                            <TextBlock
-                                                Margin="10,10,10,10"
-                                                Foreground="White"
-                                                Text="{Binding Text}"
-                                                TextTrimming="WordEllipsis"
-                                                TextWrapping="Wrap" />
-                                        </DataTemplate>
-                                    </utils:MyTemplateSelector>
-                                </ListBox.DataTemplates>
-                            </ListBox>
+							</Border>
+						</StackPanel>
+					</Border>
 
-                        </Border>
-                    </StackPanel>
-
-                </Grid>
+				</Grid>
 
             </ScrollViewer>
             <Grid

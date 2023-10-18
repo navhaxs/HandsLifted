@@ -22,7 +22,7 @@ namespace HandsLiftedApp.Models.SlideDesigner
                 TextColour = Color.Parse("#a06d39"),
                 BackgroundColour = Color.Parse("#f5ede4"),
                 FontSize = 100,
-                LineHeight = 1,
+                LineHeight = 130,
                 BackgroundGraphicFilePath = "avares://HandsLiftedApp/Assets/DesignerSlideTemplate/bg.png"
             });
             ListOfDesigns.Add(new BaseSlideTheme()
@@ -61,7 +61,7 @@ namespace HandsLiftedApp.Models.SlideDesigner
                 TextColour = Color.Parse("#2b505e"),
                 BackgroundColour = Color.Parse("#b7d1d8"),
                 FontSize = 60,
-                LineHeight = 1
+                LineHeight = 130
             });
 
             ActiveDesign = ListOfDesigns[0];

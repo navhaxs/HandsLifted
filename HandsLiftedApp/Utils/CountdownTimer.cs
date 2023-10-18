@@ -16,10 +16,18 @@ namespace HandsLiftedApp.Utils
 
         private int _RemainingTime;
 
-        public int RemainingTime { get => _RemainingTime; private set => this.RaiseAndSetIfChanged(ref _RemainingTime, value); }
+        public int RemainingTime
+        {
+            get => _RemainingTime; private set
+            {
+                this.RaiseAndSetIfChanged(ref _RemainingTime, value);
+                this.RaisePropertyChanged(nameof(ElapsedTime));
+            }
+        }
+        public int ElapsedTime { get => _TotalTime - _RemainingTime; }
 
 
-        private int RESOLUTION = 100;
+        private int RESOLUTION = 10;
         public CountdownTimer()
         {
             timer = new Timer() { Interval = RESOLUTION };
@@ -50,8 +58,13 @@ namespace HandsLiftedApp.Utils
 
         private void HandleTimerElapsed()
         {
-            timer.Stop();
+            ResetTimer();
             OnElapsed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ResetTimer()
+        {
+            RemainingTime = TotalTime;
         }
     }
 }

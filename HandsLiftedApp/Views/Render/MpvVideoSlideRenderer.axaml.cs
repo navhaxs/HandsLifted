@@ -66,7 +66,7 @@ namespace HandsLiftedApp.Views.Render
 
                     Task.Run(() =>
                     {
-                        Task.Delay(1000).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlid
+                        //Task.Delay(1000).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlid
 
                         if (_isMounted)
                         {

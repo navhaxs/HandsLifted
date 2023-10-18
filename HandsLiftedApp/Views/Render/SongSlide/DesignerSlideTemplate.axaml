@@ -24,8 +24,8 @@
 							   VerticalAlignment="Center"
 							   FontFamily="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontFamily, FallbackValue='Garamond, Playfair Display'}"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
-							   Foreground="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.TextColour, Converter={StaticResource ColorToBrush}}"
-							   FontSize="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontSize}"
+							   Foreground="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.TextColour, Converter={StaticResource ColorToBrush}, FallbackValue='Red'}"
+							   FontSize="{Binding $parent[Window].DataContext.SlideDesigner.ActiveDesign.FontSize, FallbackValue=80}"
 							   TextWrapping="Wrap"
 							/>
 				<!--</Viewbox>-->
