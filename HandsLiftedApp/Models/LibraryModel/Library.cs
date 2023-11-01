@@ -2,6 +2,7 @@
 using HandsLiftedApp.Comparer;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,10 +18,14 @@ namespace HandsLiftedApp.Models.LibraryModel
     public class Library : ReactiveObject
     {
         private ObservableCollection<Item> Items { get; }
+
         private string rootDirectory;
         public ReactiveCommand<Unit, Unit> OnAddSelectedToPlaylistCommand { get; }
         private Item _selectedItem;
         public Item SelectedItem { get => _selectedItem; set => this.RaiseAndSetIfChanged(ref _selectedItem, value); }
+
+        private ObservableAsPropertyHelper<string> _selectedItemPreview;
+        public string SelectedItemPreview { get => _selectedItemPreview.Value; }
 
         private FileSystemWatcher watcher = new FileSystemWatcher();
 
@@ -32,9 +37,32 @@ namespace HandsLiftedApp.Models.LibraryModel
                 return;
             }
 
+            Globals.Preferences.WhenAnyValue(prefs => prefs.LibraryPath).Subscribe(libraryPath =>
+            {
+                rootDirectory = libraryPath;
+                Refresh();
+                watch();
+            });
+            _selectedItemPreview = this.WhenAnyValue(x => x.SelectedItem, (_SelectedItem) =>
+                  {
+                      if (_SelectedItem != null)
+                      {
+                          try
+                          {
+                              return File.ReadAllText(_SelectedItem.FullFilePath); ;
+                          }
+                          catch (Exception ex)
+                          {
+                              Log.Error("Attempt to read file for library preview failed", ex);
+                          }
+                      }
+                      return null;
+                  })
+                  .ToProperty(this, c => c.SelectedItemPreview)
+                  ;
             Items = new ObservableCollection<Item>();
-            rootDirectory = Globals.Env.SongLibraryDirectory;
-            rootDirectory = Globals.Env.SongLibraryDirectory;
+            //rootDirectory = Globals.Env.SongLibraryDirectory;
+            //rootDirectory = Globals.Env.SongLibraryDirectory;
 
             OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
             {
@@ -55,7 +83,7 @@ namespace HandsLiftedApp.Models.LibraryModel
                 .Select(term => term?.Trim().ToLower())
                 .DistinctUntilChanged()
                 //.Where(term => !string.IsNullOrWhiteSpace(term))
-                .SelectMany(SearchNuGetPackages)
+                .SelectMany(SearchLibrary)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
 
@@ -102,25 +130,25 @@ namespace HandsLiftedApp.Models.LibraryModel
         private readonly ObservableAsPropertyHelper<bool> _isAvailable;
         public bool IsAvailable => _isAvailable.Value;
 
-        // Here we search NuGet packages using the NuGet.Client library. Ideally, we should
-        // extract such code into a separate service, say, INuGetSearchService, but let's 
-        // try to avoid overcomplicating things at this time.
-        private async Task<IEnumerable<Item>> SearchNuGetPackages(
+        private async Task<IEnumerable<Item>> SearchLibrary(
             string term, CancellationToken token)
         {
             if (term == null || term.Length == 0)
                 return Items;
 
-            // TODO: filter by content as well (full-text search)
+            // TODO: filter by file *content* as well (full-text search)
             return Items.Where(item => item.Title.ToLower().Contains(term));
         }
 
         void Refresh()
         {
-            if (Directory.Exists(rootDirectory))
+            if (Directory.Exists(rootDirectory) && Items != null)
             {
                 var files = Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories)
                          .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
+
+                Log.Information($"Refreshed library at {rootDirectory}");
+                Items.Clear();
 
                 // TODO: sync the Items list properly
                 foreach (var f in files)
@@ -133,6 +161,8 @@ namespace HandsLiftedApp.Models.LibraryModel
         {
             if (!Directory.Exists(rootDirectory))
                 return;
+
+            watcher = new FileSystemWatcher();
 
             watcher.Path = rootDirectory;
             watcher.Filter = "*.*";

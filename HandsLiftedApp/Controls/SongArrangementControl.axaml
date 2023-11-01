@@ -25,7 +25,7 @@
 		<converters:StanzaSortConverter x:Key="stanzaSortConverter"/>
 
 		<Flyout Placement="BottomEdgeAlignedLeft" x:Key="MySharedFlyout">
-			<ItemsControl ItemsSource="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+			<ItemsControl ItemsSource="{Binding DataContext.Stanzas, Converter={StaticResource stanzaSortConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:SongArrangementControl}}}" MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel />
@@ -33,10 +33,11 @@
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<Button Content="{Binding Name}"
+							<Button Content="{Binding Name}"
 								Background="{Binding Colour}"
 								Foreground="Black"
 								Click="OnAddPartClick"
+								ToolTip.Placement="Right"
 								ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}">
 							<Button.Styles>
 								<Style Selector="ToolTip">
@@ -111,12 +112,16 @@
 							<i:Interaction.Behaviors>
 								<b:StanzaDragControlBehavior />
 							</i:Interaction.Behaviors>
+							<Button DockPanel.Dock="Right"
+									Flyout="{StaticResource MySharedFlyout}">Add</Button>
 						</DockPanel>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 
 			<Button Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
+			<TextBlock Background="Red" Text="{Binding DataContext.Title, Converter={StaticResource stanzaSortConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:SongArrangementControl}}}" />
+
 
 		</DockPanel>
 
