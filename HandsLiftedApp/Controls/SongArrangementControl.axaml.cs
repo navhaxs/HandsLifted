@@ -1,7 +1,10 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
@@ -41,9 +44,65 @@ namespace HandsLiftedApp.Controls
         //}
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
         {
+            var button = (Control)sender;
+
+
+            ItemsControl? arrangement = this.FindControl<ItemsControl>("PART_ArrangementTokens");
+            Popup popup = button.FindAncestor<Popup>();
+
+            int idx = 0;
+            while (idx < arrangement.Items.Count)
+            {
+                Control? control = arrangement.ContainerFromIndex(idx);
+                ContentPresenter contentPresenter = popup.FindAncestor<ContentPresenter>();
+
+                if (control == contentPresenter)
+                {
+                    break;
+                }
+
+                Debug.WriteLine(idx);
+                idx++;
+            }
+
             var stanza = (SongStanza)((Control)sender).DataContext;
-            var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<Data.Models.Items.SongStanza>() { Value = stanza };
-            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Add(m);
+            var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>() { Value = stanza };
+
+            //var g = ((Control)sender).Visua
+
+            //ItemsControl itemsControl = ((Control)sender).FindAncestor<ItemsControl>();
+            //Control? parent = (Control)button.Parent;
+            //int idx = 0;
+            //foreach (var item in parent.GetLogicalChildren())
+            //{
+            //    if (item == parent)
+            //        break;
+            //    idx++;
+            //}
+
+            //int idx = itemsControl.IndexFromContainer();
+
+            //int idx = 0;
+            //foreach (var item in itemsControl.GetRealizedContainers()
+            //{
+
+            //    //System.Collections.Generic.IEnumerable<ILogical> logicalChildren = control.GetLogicalChildren();
+            //    //System.Collections.Generic.IEnumerable<Visual> visualChildren = control.GetVisualChildren();
+
+            //    //if (visualChildren.Contains(sender) || logicalChildren.Contains(sender))
+            //    //{
+            //    //    break;
+            //    //}
+            //    if (item.GetLogicalChildren().Contains(sender))
+            //    {
+            //        break;
+            //    }
+            //    idx++;
+            //}
+
+            //Debug.WriteLine($"Inserting into position {idx}");
+            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Insert(idx + 1, m);
+
         }
         public void OnFillerButtonClick(object? sender, RoutedEventArgs args)
         {
