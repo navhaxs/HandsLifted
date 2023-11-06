@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using System;
 using System.IO;
 
 namespace HandsLiftedApp.Utils
@@ -12,7 +13,15 @@ namespace HandsLiftedApp.Utils
             {
                 using (Stream imageStream = File.OpenRead(filepath))
                 {
-                    return Bitmap.DecodeToWidth(imageStream, width);
+                    // TODO: Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
+                    try
+                    {
+                        return Bitmap.DecodeToWidth(imageStream, width);
+                    }
+                    catch (AccessViolationException)
+                    {
+                        return null;
+                    }
                 }
             }
             return null;
