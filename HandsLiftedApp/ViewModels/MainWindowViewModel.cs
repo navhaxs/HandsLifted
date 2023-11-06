@@ -125,7 +125,7 @@ namespace HandsLiftedApp.ViewModels
 
         public Library Library { get; } = new Library();
 
-        private bool _IsDisplayDebugInfo = true;
+        private bool _IsDisplayDebugInfo = false;
         public bool IsDisplayDebugInfo { get => _IsDisplayDebugInfo; set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value); }
 
         public void LoadDemoSchedule()
