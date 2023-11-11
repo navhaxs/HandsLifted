@@ -68,40 +68,8 @@ namespace HandsLiftedApp.Controls
             var stanza = (SongStanza)((Control)sender).DataContext;
             var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>() { Value = stanza };
 
-            //var g = ((Control)sender).Visua
-
-            //ItemsControl itemsControl = ((Control)sender).FindAncestor<ItemsControl>();
-            //Control? parent = (Control)button.Parent;
-            //int idx = 0;
-            //foreach (var item in parent.GetLogicalChildren())
-            //{
-            //    if (item == parent)
-            //        break;
-            //    idx++;
-            //}
-
-            //int idx = itemsControl.IndexFromContainer();
-
-            //int idx = 0;
-            //foreach (var item in itemsControl.GetRealizedContainers()
-            //{
-
-            //    //System.Collections.Generic.IEnumerable<ILogical> logicalChildren = control.GetLogicalChildren();
-            //    //System.Collections.Generic.IEnumerable<Visual> visualChildren = control.GetVisualChildren();
-
-            //    //if (visualChildren.Contains(sender) || logicalChildren.Contains(sender))
-            //    //{
-            //    //    break;
-            //    //}
-            //    if (item.GetLogicalChildren().Contains(sender))
-            //    {
-            //        break;
-            //    }
-            //    idx++;
-            //}
-
             //Debug.WriteLine($"Inserting into position {idx}");
-            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Insert(idx + 1, m);
+            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Insert(idx, m);
 
         }
         public void OnFillerButtonClick(object? sender, RoutedEventArgs args)
