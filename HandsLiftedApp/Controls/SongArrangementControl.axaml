@@ -138,7 +138,7 @@
 			</ItemsControl>
 
 			<Button Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
-			<TextBlock Background="Red" Text="{Binding DataContext.Title, Converter={StaticResource stanzaSortConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:SongArrangementControl}}}" />
+			<!--<TextBlock Background="Red" Text="{Binding DataContext.Title, Converter={StaticResource stanzaSortConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:SongArrangementControl}}}" />-->
 
 
 		</DockPanel>
