@@ -25,12 +25,32 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+			<converters:ColorToLightLuminance x:Key="ColorToLightLuminance" />
+			<converters:ColorToLightLuminance x:Key="ColorToBrightLuminance" L="0.4" S="0.8" />
+			<converters:ChainedConverter x:Key="ChainedConverter" 
+										 Converter1="{StaticResource ColorToLightLuminance}"
+										 Converter2="{StaticResource ColorToBrushConverter}"
+										 />
+			<converters:ChainedConverter x:Key="ChainedBrightConverter" 
+										 Converter1="{StaticResource ColorToBrightLuminance}"
+										 Converter2="{StaticResource ColorToBrushConverter}"
+										 />
+			<converters:StringToUppercaseConverter x:Key="StringToUppercaseConverter" />
             <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
             <converters:IntMinusOneConverter x:Key="intMinusOneConverter" />
             <avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://HandsLiftedApp/Assets/AddItemFlyoutResourceDictionary.axaml" />
             </ResourceDictionary.MergedDictionaries>
+
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<SolidColorBrush x:Key="GroupHeadingBackground">#d5cfe8</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<SolidColorBrush x:Key="GroupHeadingBackground">#1e1e1e</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -77,6 +97,7 @@
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#4d347f" />
             <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
 
@@ -127,24 +148,27 @@
 										<Setter Property="Background" Value="#214c5e" />
 									</Style>
 								</Grid.Styles>-->
-								
 								<Border
-									Background="#1e1e1e"
-									BorderBrush="{Binding ItemGroupColour, Converter={StaticResource ColorToBrushConverter}, FallbackValue='#7E282828'}"
-									BorderThickness="8,0,0,0">
-									<DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
-										<TextBlock
-											Padding="0,4,0,4"
-											FontSize="13"
-											FontWeight="Bold"
-											TextTrimming="CharacterEllipsis">
-											<TextBlock.Text>
-												<MultiBinding StringFormat="{}{0}">
-													<Binding Path="Title" />
-												</MultiBinding>
-											</TextBlock.Text>
-										</TextBlock>
-									</DockPanel>
+									Background="#dddce6"
+									CornerRadius="0 4 4 0"
+									>
+									<Border
+										BorderBrush="#9a93cd"
+										BorderThickness="0 0 0 0">
+										<DockPanel Margin="20,0,0,0" VerticalAlignment="Stretch">
+											<TextBlock
+												Padding="0,8,0,8"
+												FontSize="11"
+												FontWeight="SemiBold"
+												TextTrimming="CharacterEllipsis">
+												<TextBlock.Text>
+													<MultiBinding StringFormat="{}{0}">
+														<Binding Path="Title" Converter="{StaticResource StringToUppercaseConverter}" />
+													</MultiBinding>
+												</TextBlock.Text>
+											</TextBlock>
+										</DockPanel>
+									</Border>
 								</Border>
 								<i:Interaction.Behaviors>
 									<behaviours:DragControlBehavior />
@@ -152,17 +176,22 @@
 							</Grid>
                         </DataTemplate>
                         <DataTemplate x:Key="Fallback">
-                            <DockPanel Margin="6,0,0,0" VerticalAlignment="Stretch" Background="Transparent">
-                                <Viewbox
-                                    Width="10"
-                                    Height="10"
-                                    Margin="-7,0,7,0">
-                                    <Polygon
-                                        Fill="#FF3400"
-                                        IsVisible="{Binding State.IsSelected}"
-                                        Points="0,0 8,5, 0,10" />
-                                </Viewbox>
-                                <TextBlock
+                            <DockPanel Margin="0,0,0,0" VerticalAlignment="Stretch" Background="Transparent">
+								<Grid Width="16">
+									<Viewbox
+																		            IsVisible="{Binding State.IsSelected}"
+
+										Width="25"
+										Height="25"
+										Margin="-7,0,7,0">
+										<Polygon
+											Fill="#FF3400"
+											Points="0,0 8,5, 0,10" />
+									</Viewbox>
+								</Grid>
+								<item:ItemIcon Margin="0,0,6,0" DockPanel.Dock="Left"
+									   />
+								<TextBlock
                                     Padding="0,8,0,8"
                                     FontSize="13"
                                     TextTrimming="CharacterEllipsis">
@@ -188,7 +217,7 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             HorizontalContentAlignment="Left"
-            Background="#3a344a"
+            Background="#4d347f"
             BorderThickness="0"
             ClickMode="Press"
             CornerRadius="6"

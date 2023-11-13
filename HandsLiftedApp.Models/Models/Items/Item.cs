@@ -36,7 +36,7 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
 
-        public XmlColor _itemGroupColour = Color.Parse("#3a344a");
+        public XmlColor _itemGroupColour = Color.Parse("#ededf1");
         [XmlIgnore]
         public Color ItemGroupColour { get => _itemGroupColour; set => this.RaiseAndSetIfChanged(ref _itemGroupColour, value); }
 

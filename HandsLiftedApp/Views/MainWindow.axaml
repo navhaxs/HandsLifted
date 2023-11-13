@@ -43,10 +43,11 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="ControlBackgroundBrush">#ffffff</SolidColorBrush>
-                    <SolidColorBrush x:Key="BottomBackgroundBrush">#64827DA3</SolidColorBrush>
+                    <SolidColorBrush x:Key="BottomBackgroundBrush">#257E78A8</SolidColorBrush>
                     <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
                     <SolidColorBrush x:Key="BackgroundBrush">#ededf1</SolidColorBrush>
                     <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentBackgroundBrush">#4D347F</SolidColorBrush>
                     <SolidColorBrush x:Key="GridSplitterBrush">#deddec</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
@@ -55,6 +56,7 @@
                     <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#444</SolidColorBrush>
                     <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
                     <SolidColorBrush x:Key="ForegroundBrush">White</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentBackgroundBrush">#377D61C6</SolidColorBrush>
                     <SolidColorBrush x:Key="GridSplitterBrush">Black</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
@@ -120,7 +122,7 @@
 
         <Grid>
 
-			<!--DEBUG INFO -->
+            <!--  DEBUG INFO  -->
             <StackPanel
                 Margin="60,10,0,0"
                 VerticalAlignment="Top"
@@ -139,7 +141,7 @@
                     IsVisible="{Binding Source={x:Static approot:Globals.BitmapLoadWorkerThread}, Path=IsBusy}" />
             </StackPanel>
 
-			<!-- Main Wrapper vertical dock -->
+            <!--  Main Wrapper vertical dock  -->
             <Grid x:Name="DockedLibraryWrapper">
 
                 <Grid.Styles>
@@ -256,14 +258,14 @@
                                     IsLightDismissEnabled="True"
                                     PlacementMode="BottomEdgeAlignedLeft"
                                     PlacementTarget="{Binding #AppMenuButton}">
-                                    <ContextMenu>
+                                    <ContextMenu MinWidth="200">
 
                                         <ContextMenu.Styles>
 
                                             <Style Selector="ContextMenu">
                                                 <Setter Property="CornerRadius" Value="6" />
                                                 <Setter Property="BorderBrush" Value="#9a93cd" />
-                                                <Setter Property="Background" Value="#1d1d1d" />
+                                                <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
                                             </Style>
                                             <Style Selector="MenuItem">
                                                 <Setter Property="Padding" Value="12 8" />
@@ -332,6 +334,65 @@
 								<TextBlock Text="Debug" />
 							</DockPanel>-->
 
+                        </Border>
+
+
+                        <Border DockPanel.Dock="Top">
+                            <Button
+                                Name="PlaylistTitleButton"
+                                Padding="18,0,0,8"
+								Background="Transparent"
+                                BorderThickness="0"
+                                CornerRadius="0,6,6,0"
+								HorizontalAlignment="Left"
+                                Cursor="Hand">
+                                <Button.Styles>
+                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#5C3AB6" />
+                                    </Style>
+                                    <Style Selector="Button:pressed /template/ ContentPresenter">
+                                        <Setter Property="BorderBrush" Value="#2c628b" />
+                                        <Setter Property="Background" Value="#5F5C2ED6" />
+                                    </Style>
+                                    <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
+                                        <Setter Property="RenderTransform" Value="none" />
+                                    </Style>
+                                    <Style Selector="Button material|MaterialIcon">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </Style>
+                                    <Style Selector="Button:pointerover material|MaterialIcon">
+                                        <Setter Property="IsVisible" Value="True" />
+                                    </Style>
+                                </Button.Styles>
+                                <Grid>
+                                    <StackPanel IsHitTestVisible="False" Orientation="Horizontal">
+                                        <!--<controls:EditableLabelControl />-->
+                                        <TextBlock
+                                            FontSize="20"
+											Foreground="#2f2f30"
+                                            TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}">
+                                                    <Binding FallbackValue="Untitled Playlist" Path="Playlist.Title" />
+                                                    <!--<Binding Path="Playlist.State.IsUnsaved"
+																 FallbackValue="*" />-->
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock
+											Margin="8 0 0 0"
+                                            FontSize="20"
+											Foreground="#888a8a"
+                                            Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <material:MaterialIcon
+                                        Margin="0,0,12,0"
+                                        HorizontalAlignment="Right"
+                                        Kind="Pencil" />
+                                </Grid>
+                            </Button>
+
 
                         </Border>
 
@@ -395,62 +456,6 @@
                                             <Setter Property="RenderTransform" Value="none" />
                                         </Style>
                                     </DockPanel.Styles>
-
-                                    <Button
-                                        Name="PlaylistTitleButton"
-                                        Padding="18,8,0,8"
-                                        HorizontalContentAlignment="Stretch"
-                                        Background="#377D61C6"
-                                        BorderThickness="0"
-                                        CornerRadius="0,6,6,0"
-                                        Cursor="Hand"
-                                        DockPanel.Dock="Top">
-                                        <Button.Styles>
-                                            <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                <Setter Property="Background" Value="#5C3AB6" />
-                                            </Style>
-                                            <Style Selector="Button:pressed /template/ ContentPresenter">
-                                                <Setter Property="BorderBrush" Value="#2c628b" />
-                                                <Setter Property="Background" Value="#5F5C2ED6" />
-                                            </Style>
-                                            <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
-                                                <Setter Property="RenderTransform" Value="none" />
-                                            </Style>
-                                            <Style Selector="Button material|MaterialIcon">
-                                                <Setter Property="IsVisible" Value="False" />
-                                            </Style>
-                                            <Style Selector="Button:pointerover material|MaterialIcon">
-                                                <Setter Property="IsVisible" Value="True" />
-                                            </Style>
-                                        </Button.Styles>
-                                        <Grid>
-                                            <StackPanel IsHitTestVisible="False">
-                                                <!--<controls:EditableLabelControl />-->
-                                                <TextBlock
-                                                    FontSize="20"
-                                                    FontWeight="Bold"
-                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                    TextTrimming="CharacterEllipsis">
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0}">
-                                                            <Binding FallbackValue="Untitled Playlist" Path="Playlist.Title" />
-                                                            <!--<Binding Path="Playlist.State.IsUnsaved"
-																 FallbackValue="*" />-->
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                                <TextBlock
-                                                    FontSize="20"
-                                                    Foreground="{DynamicResource ForegroundBrush}"
-                                                    Text="{Binding Playlist.PrettyDate, FallbackValue='22 May 2022'}"
-                                                    TextTrimming="CharacterEllipsis" />
-                                            </StackPanel>
-                                            <material:MaterialIcon
-                                                Margin="0,0,12,0"
-                                                HorizontalAlignment="Right"
-                                                Kind="Pencil" />
-                                        </Grid>
-                                    </Button>
 
                                     <!--<Border
                                         Height="1"
@@ -732,6 +737,12 @@
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style>
+											<Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="#D8CEEC" />
+											</Style>
+											<Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="#b7a6e7" />
+											</Style>
                                         </UniformGrid.Styles>
                                         <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton>
                                         <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton>
