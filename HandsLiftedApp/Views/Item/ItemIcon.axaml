@@ -29,6 +29,8 @@
 				<DataTemplate x:Key="LogoItem">
 					<material:MaterialIcon Kind="Star" />
 				</DataTemplate>
+				<DataTemplate x:Key="SectionHeadingItem">
+				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
 					<material:MaterialIcon Kind="CheckboxBlankOutline" />
 				</DataTemplate>

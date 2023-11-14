@@ -27,6 +27,13 @@ namespace HandsLiftedApp.Views
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
             this.DataContextChanged += GroupItemsEditorWindow_DataContextChanged;
+
+            this.LostFocus += GroupItemsEditorWindow_LostFocus;
+        }
+
+        private void GroupItemsEditorWindow_LostFocus(object? sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
 
         private async Task ShowOpenFileDialog(InteractionContext<Unit, string[]?> interaction)

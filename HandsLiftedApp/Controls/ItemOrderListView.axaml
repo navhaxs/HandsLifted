@@ -25,6 +25,9 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+			<converters:ColorToBrush x:Key="ColorToLightLuminanceBrush" A="0.2" L="0.4" S="0.4" />
+			<converters:ColorToBrush x:Key="ColorToDarkLuminanceBrush" L="0.4" S="0.4" />
+			<converters:ColorToConstrastingBrush x:Key="ColorToConstrastingBrush" />
 			<converters:ColorToLightLuminance x:Key="ColorToLightLuminance" />
 			<converters:ColorToLightLuminance x:Key="ColorToBrightLuminance" L="0.4" S="0.8" />
 			<converters:ChainedConverter x:Key="ChainedConverter" 
@@ -100,6 +103,10 @@
             <Setter Property="Foreground" Value="#4d347f" />
             <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
+		
+        <Style Selector="ListBoxItem:selected material|MaterialIcon">
+            <Setter Property="Foreground" Value="#4d347f" />
+        </Style>
 
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#C11F576F" />
@@ -153,13 +160,13 @@
 									CornerRadius="0 4 4 0"
 									>
 									<Border
-										BorderBrush="#9a93cd"
-										BorderThickness="0 0 0 0">
-										<DockPanel Margin="20,0,0,0" VerticalAlignment="Stretch">
+										Background="{Binding ItemGroupColour, Converter={StaticResource ColorToLightLuminanceBrush}, FallbackValue='#9a93cd'}"
+										BorderBrush="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}"
+										BorderThickness="4 0 0 0">
+										<DockPanel Margin="16,0,0,0" VerticalAlignment="Stretch">
 											<TextBlock
 												Padding="0,8,0,8"
 												FontSize="11"
-												FontWeight="SemiBold"
 												TextTrimming="CharacterEllipsis">
 												<TextBlock.Text>
 													<MultiBinding StringFormat="{}{0}">

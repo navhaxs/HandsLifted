@@ -75,10 +75,10 @@
     </Window.Resources>
 
     <DockPanel>
-        <Grid Background="#583092" DockPanel.Dock="Top">
+        <Grid Background="#edeafc" DockPanel.Dock="Top">
             <DockPanel Margin="16,6,16,8">
 
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+				<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                     <ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left">
                         <TextBlock Text="Import" />
                     </ToggleButton>
@@ -86,7 +86,17 @@
                     <Button Content="Save" DockPanel.Dock="Left" />
                     <Button Content="Reset Arrangement" DockPanel.Dock="Left" />
                 </StackPanel>
-            </DockPanel>
+
+				<TextBlock
+			DockPanel.Dock="Right"
+			Margin="4"
+			FontSize="20"
+			TextAlignment="Left"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Left"
+			Text="Song Editor" />
+
+			</DockPanel>
 
             <Grid.Effect>
                 <DropShadowEffect
@@ -105,38 +115,28 @@
         </Menu>-->
 
         <Grid Name="ContainerGrid">
-            <ScrollViewer>
 
                 <Grid ColumnDefinitions="200, 1, 12*, 1, 17*">
-					
-					<TextBlock
-						DockPanel.Dock="Top"
-						Margin="12"
-						FontSize="22"
-						TextAlignment="Left"
-						HorizontalAlignment="Stretch"
-						Text="Song Editor" />
-
+				
 					<Grid Grid.Column="2">
-                        <DockPanel>
-                            <DockPanel.Styles>
-                                <Style Selector="TextBox">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </DockPanel.Styles>
-                            <Border Margin="20,40" Background="White">
-                                <Border.Effect>
-                                    <DropShadowEffect
+						<DockPanel>
+							<DockPanel.Styles>
+								<Style Selector="TextBox">
+									<Setter Property="BorderThickness" Value="0" />
+								</Style>
+							</DockPanel.Styles>
+							<Border Margin="20,40" Background="White">
+								<Border.Effect>
+									<DropShadowEffect
                                         BlurRadius="6"
                                         OffsetX="0"
                                         OffsetY="1"
                                         Color="#55000000" />
-                                </Border.Effect>
+								</Border.Effect>
 
-
-
-                                <StackPanel x:Name="Wrapper">
-                                    <TextBox
+								<ScrollViewer>
+								<StackPanel x:Name="Wrapper">
+									<TextBox
                                         Margin="12,12,12,12"
                                         Padding="0,6,0,5"
                                         Background="White"
@@ -146,17 +146,17 @@
                                         Text="{Binding song.Title}"
                                         TextWrapping="Wrap"
                                         Watermark="Song Title">
-                                        <i:Interaction.Behaviors>
-                                            <b:StanzaTextBoxBehavior />
-                                        </i:Interaction.Behaviors>
-                                    </TextBox>
-                                    <!--<Rectangle
+										<i:Interaction.Behaviors>
+											<b:StanzaTextBoxBehavior />
+										</i:Interaction.Behaviors>
+									</TextBox>
+									<!--<Rectangle
                                     Height="1"
                                     VerticalAlignment="Stretch"
                                     Fill="#ddd" />-->
 
-                                    <Carousel SelectedIndex="1">
-                                        <!--<TextBox
+									<Carousel SelectedIndex="1">
+										<!--<TextBox
                                             Margin="12,0"
                                             Background="Transparent"
                                             FontFamily="Consolas"
@@ -164,41 +164,41 @@
                                             Text="{Binding X}">
                                             Manual Text Entry
                                         </TextBox>-->
-                                        <StackPanel>
-                                            <ItemsControl Margin="0,0,5,0" ItemsSource="{Binding song.Stanzas}">
-                                                <!--<ItemsControl.ItemsPanel>
+										<StackPanel>
+											<ItemsControl Margin="0,0,5,0" ItemsSource="{Binding song.Stanzas}">
+												<!--<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<WrapPanel Orientation="Vertical" ItemWidth="360" />
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>-->
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel>
+												<ItemsControl.ItemTemplate>
+													<DataTemplate>
+														<StackPanel>
 
-                                                            <Border BorderBrush="#ddd" BorderThickness="0,1,0,1">
-                                                                <DockPanel>
-                                                                    <Button
+															<Border BorderBrush="#ddd" BorderThickness="0,1,0,1">
+																<DockPanel>
+																	<Button
                                                                         Padding="0"
                                                                         Background="Transparent"
                                                                         DockPanel.Dock="Right">
-                                                                        <Button.Styles>
-                                                                            <Style Selector="Button">
-                                                                                <Setter Property="BorderThickness" Value="0" />
-                                                                            </Style>
-                                                                        </Button.Styles>
-                                                                        <Button.Flyout>
-                                                                            <Flyout>
-                                                                                <StackPanel>
-                                                                                    <TextBlock>Are you sure you want to delete this part?</TextBlock>
-                                                                                    <TextBlock>This cannot be undone</TextBlock>
-                                                                                    <Button
+																		<Button.Styles>
+																			<Style Selector="Button">
+																				<Setter Property="BorderThickness" Value="0" />
+																			</Style>
+																		</Button.Styles>
+																		<Button.Flyout>
+																			<Flyout>
+																				<StackPanel>
+																					<TextBlock>Are you sure you want to delete this part?</TextBlock>
+																					<TextBlock>This cannot be undone</TextBlock>
+																					<Button
                                                                                         HorizontalAlignment="Center"
                                                                                         Click="DeleteThisPartClick"
                                                                                         Content="Confirm" />
-                                                                                </StackPanel>
-                                                                            </Flyout>
-                                                                        </Button.Flyout>
-                                                                        <material:MaterialIcon
+																				</StackPanel>
+																			</Flyout>
+																		</Button.Flyout>
+																		<material:MaterialIcon
                                                                             Width="24"
                                                                             Height="24"
                                                                             Margin="8,0"
@@ -206,8 +206,8 @@
                                                                             DockPanel.Dock="Right"
                                                                             Foreground="#AAA"
                                                                             Kind="BinOutline" />
-                                                                    </Button>
-                                                                    <TextBox
+																	</Button>
+																	<TextBox
                                                                         Padding="6,8,80,8"
                                                                         AcceptsReturn="False"
                                                                         Background="Transparent"
@@ -219,14 +219,14 @@
                                                                         Text="{Binding Path=Name}"
                                                                         TextWrapping="Wrap"
                                                                         Watermark="Stanza Name">
-                                                                        <i:Interaction.Behaviors>
-                                                                            <b:StanzaTextBoxBehavior />
-                                                                        </i:Interaction.Behaviors>
-                                                                    </TextBox>
-                                                                </DockPanel>
-                                                            </Border>
+																		<i:Interaction.Behaviors>
+																			<b:StanzaTextBoxBehavior />
+																		</i:Interaction.Behaviors>
+																	</TextBox>
+																</DockPanel>
+															</Border>
 
-                                                            <TextBox
+															<TextBox
                                                                 Padding="16,10,16,12"
                                                                 AcceptsReturn="True"
                                                                 Background="Transparent"
@@ -235,16 +235,16 @@
                                                                 Text="{Binding Path=Lyrics}"
                                                                 TextWrapping="Wrap"
                                                                 Watermark="Stanza Lyrics">
-                                                                <i:Interaction.Behaviors>
-                                                                    <b:StanzaTextBoxBehavior />
-                                                                </i:Interaction.Behaviors>
-                                                            </TextBox>
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
+																<i:Interaction.Behaviors>
+																	<b:StanzaTextBoxBehavior />
+																</i:Interaction.Behaviors>
+															</TextBox>
+														</StackPanel>
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+											</ItemsControl>
 
-                                            <Button
+											<Button
                                                 MinWidth="160"
                                                 Padding="20,12,20,12"
                                                 HorizontalAlignment="Center"
@@ -254,8 +254,8 @@
                                                 BorderThickness="1,1,1,1"
                                                 Command="{Binding OnClickCommand}"
                                                 CornerRadius="20 20 20 20">
-                                                <DockPanel>
-                                                    <material:MaterialIcon
+												<DockPanel>
+													<material:MaterialIcon
                                                         Width="20"
                                                         Height="20"
                                                         Margin="-4"
@@ -263,18 +263,18 @@
                                                         DockPanel.Dock="Left"
                                                         Foreground="Black"
                                                         Kind="PlusCircleOutline" />
-                                                    <TextBlock
+													<TextBlock
                                                         Margin="12,0,0,0"
                                                         FontSize="14"
                                                         Foreground="Black"
                                                         Text="Add New Stanza" />
-                                                </DockPanel>
-                                            </Button>
+												</DockPanel>
+											</Button>
 
-                                        </StackPanel>
-                                    </Carousel>
+										</StackPanel>
+									</Carousel>
 
-                                    <TextBox
+									<TextBox
                                         Margin="16,8,12,12"
                                         Padding="0,6,0,5"
                                         HorizontalAlignment="Stretch"
@@ -285,17 +285,18 @@
                                         Text="{Binding song.Copyright}"
                                         TextWrapping="Wrap"
                                         Watermark="Copyright">
-                                        <i:Interaction.Behaviors>
-                                            <b:StanzaTextBoxBehavior />
-                                        </i:Interaction.Behaviors>
-                                    </TextBox>
+										<i:Interaction.Behaviors>
+											<b:StanzaTextBoxBehavior />
+										</i:Interaction.Behaviors>
+									</TextBox>
 
-                                </StackPanel>
+								</StackPanel>
+								</ScrollViewer>
+							</Border>
 
-                            </Border>
+						</DockPanel>
 
-                        </DockPanel>
-                    </Grid>
+					</Grid>
 
                     <GridSplitter
                         Grid.Column="1"
@@ -460,7 +461,7 @@
                         BorderThickness="3,0"
                         ZIndex="9999" />
 
-					<Border Grid.Column="4" BorderBrush="#78000000" Background="#9F000000">
+					<Border Grid.Column="4">
 						<StackPanel Margin="16,32">
 							<TextBlock
 								Margin="0,18,8,10"
@@ -518,7 +519,6 @@
 
 				</Grid>
 
-            </ScrollViewer>
             <Grid
                 Name="ImportOverlayGrid"
                 ColumnDefinitions="1*, 2*"
@@ -547,7 +547,7 @@
                                 FontSize="24"
                                 Foreground="White"
                                 TextWrapping="Wrap">
-                                1. Search for the song in<Span Foreground="#2ECAFF" TextDecorations="Underline">
+                                1. Search for the song in <Span Foreground="#2ECAFF" TextDecorations="Underline">
                                     songselect.ccli.com
                                 </Span>
                                 <material:MaterialIcon
