@@ -7,6 +7,12 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<TargetFramework>net7.0-windows</TargetFramework>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <WarningsAsErrors>SYSLIB0011</WarningsAsErrors>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <WarningsAsErrors>SYSLIB0011</WarningsAsErrors>
+	</PropertyGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<PropertyGroup>
 			<CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd))</CurrentDate>
@@ -74,6 +80,7 @@
 		<PackageReference Include="Serilog.Sinks.Console" />
 		<PackageReference Include="Serilog.Sinks.Debug" />
 		<PackageReference Include="Serilog.Sinks.File" />
+		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="System.Collections.Concurrent" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>

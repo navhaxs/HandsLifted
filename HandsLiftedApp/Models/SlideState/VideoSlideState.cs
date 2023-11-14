@@ -48,7 +48,7 @@ namespace HandsLiftedApp.Models.SlideState
 
             videoSlide.WhenAnyValue(videoSlide => videoSlide.SourceMediaPath).Subscribe(SourceMediaPath =>
             {
-                if (SourceMediaPath != null || SourceMediaPath != "")
+                if (SourceMediaPath != null && SourceMediaPath != "")
                 {
                     try
                     {

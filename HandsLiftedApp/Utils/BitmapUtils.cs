@@ -1,24 +1,29 @@
 ﻿using Avalonia.Media.Imaging;
-using System;
+using Serilog;
 using System.IO;
+using System.Runtime.ExceptionServices;
+using System.Security;
 
 namespace HandsLiftedApp.Utils
 {
     internal static class BitmapUtils
     {
+        [HandleProcessCorruptedStateExceptions]
+        [SecurityCritical]
         public static Bitmap? LoadBitmap(string filepath, int width)
         {
             // TODO logging
+            Log.Information($"Loading {filepath} @ {width}");
             if (File.Exists(filepath))
             {
                 using (Stream imageStream = File.OpenRead(filepath))
                 {
-                    // TODO: Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
+                    // TODO: AccessViolationException thrown here cannot be caught, crashes entire app :(
                     try
                     {
                         return Bitmap.DecodeToWidth(imageStream, width);
                     }
-                    catch (AccessViolationException)
+                    catch (System.AccessViolationException)
                     {
                         return null;
                     }
