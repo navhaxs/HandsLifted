@@ -152,6 +152,9 @@ namespace HandsLiftedApp.ViewModels
                 var song = PlaylistUtils.CreateSong();
                 Playlist.Items.Add(song);
                 Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
+                Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
+                Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
+                Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
                 return;
             }
 

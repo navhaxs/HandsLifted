@@ -16,7 +16,17 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="avares://HandsLiftedApp/Assets/AddItemFlyoutResourceDictionary.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
+
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<SolidColorBrush x:Key="BackgroundBrush">#5AE5E2F1</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<SolidColorBrush x:Key="BackgroundBrush">#171423</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
 		</ResourceDictionary>
+
 	</UserControl.Resources>
 	
     <DockPanel>
@@ -37,7 +47,7 @@
 						<Setter Property="HorizontalAlignment" Value="Stretch" />
 						<Setter Property="BorderThickness" Value="0" />
 						<Setter Property="CornerRadius" Value="6" />
-						<Setter Property="Background" Value="#5AE5E2F1" />
+						<Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
 						<Setter Property="BorderBrush" Value="#9a93cd" />
 					</Style>
 					<Style Selector="Button:pointerover">

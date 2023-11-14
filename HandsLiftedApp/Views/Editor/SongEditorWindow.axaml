@@ -23,7 +23,6 @@
     </Design.DataContext>
 
     <Window.Resources>
-
         <ResourceDictionary>
             <converters:StanzaSortConverter x:Key="stanzaSortConverter" />
 
@@ -66,16 +65,18 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="BackgroundBrush">#f6f4f2</SolidColorBrush>
+                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#edeafc</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
+                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#4d347f</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
     <DockPanel>
-        <Grid Background="#edeafc" DockPanel.Dock="Top">
+        <Grid Background="{DynamicResource HeaderBackgroundBrush}" DockPanel.Dock="Top">
             <DockPanel Margin="16,6,16,8">
 
 				<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">

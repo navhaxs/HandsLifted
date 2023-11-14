@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Models.ItemState;
+using HandsLiftedApp.Utils;
 
 namespace HandsLiftedApp.Controls
 {
@@ -10,6 +11,12 @@ namespace HandsLiftedApp.Controls
         public ItemSlidesView()
         {
             InitializeComponent();
+
+            if (Design.IsDesignMode)
+            {
+                this.DataContext = new SectionHeadingItem<ItemStateImpl>();
+                this.DataContext = PlaylistUtils.CreateSong();
+            }
         }
 
         private void InitializeComponent()

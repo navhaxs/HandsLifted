@@ -98,27 +98,17 @@ namespace HandsLiftedApp.Views
                 //this.Width = this.Screens.All[1].Bounds.Width;
                 //this.Height= this.Screens.All[1].Bounds.Height;
             }
-
-
-            //Task.Run(() =>
-            //{
-
-            //    VideoView.MpvContext = Globals.GlobalMpvContext;
-            //    Task.Delay(10000).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlide
-            //    Globals.GlobalMpvContext.Command("loadfile", "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "replace");
-            //    Globals.GlobalMpvContext.SetPropertyFlag("pause", false);
-            //});
         }
 
         public void UpdateWindowVisibility(bool isVisible)
         {
-            //this.IsVisible = isVisible;
-            //this.ShowInTaskbar = !isVisible;
-            //this.Opacity = isVisible ? 1 : 0;
-            //this.IsHitTestVisible = isVisible;
-            //this.SystemDecorations = isVisible ? SystemDecorations.Full : SystemDecorations.None;
-            //this.Height = 0;
-            //this.Width = 0;
+            this.IsVisible = isVisible;
+            this.ShowInTaskbar = !isVisible;
+            this.Opacity = isVisible ? 1 : 0;
+            this.IsHitTestVisible = isVisible;
+            this.SystemDecorations = isVisible ? SystemDecorations.Full : SystemDecorations.None;
+            this.Height = 0;
+            this.Width = 0;
         }
 
         private void ProjectorWindow_Closing(object? sender, WindowClosingEventArgs e)

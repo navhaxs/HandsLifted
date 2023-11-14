@@ -9,7 +9,6 @@ using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
-using Serilog;
 using System;
 using System.Linq;
 
@@ -29,6 +28,7 @@ namespace HandsLiftedApp.Behaviours
         private Control? _parent;
         private Point _previous;
         private bool isDragging = false;
+        private DateTime? _whenPointerPressed;
 
         /// <summary>
         /// Gets or sets the target control to be moved around instead of <see cref="IBehavior.AssociatedObject"/>. This is a avalonia property.
@@ -115,6 +115,8 @@ namespace HandsLiftedApp.Behaviours
 
                 listBoxItem.ZIndex = 999;
                 listBoxItem.Opacity = 0.8;
+
+                _whenPointerPressed = DateTime.Now;
             }
         }
 
@@ -188,7 +190,7 @@ namespace HandsLiftedApp.Behaviours
                 Point pos = args.GetPosition(_parent);
 
 
-                if (!isDragging && Math.Abs(pos.Y - _previous.Y) > 4)
+                if (!isDragging && Math.Abs(pos.Y - _previous.Y) > 6) // deadzone
                 {
                     isDragging = true;
                 }
@@ -280,9 +282,15 @@ namespace HandsLiftedApp.Behaviours
                 ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
                 Point pos = e.GetPosition(parentItemsControls);
 
-
                 // check if dragging outside left/right bounds
                 if (pos.X < 0 || pos.X > parentItemsControls.Bounds.Width)
+                {
+                    return;
+                }
+
+                double totalMilliseconds = DateTime.Now.Subtract((DateTime)_whenPointerPressed).TotalMilliseconds;
+                System.Diagnostics.Debug.WriteLine(totalMilliseconds);
+                if (_whenPointerPressed == null || totalMilliseconds < 100)
                 {
                     return;
                 }

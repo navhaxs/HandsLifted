@@ -25,20 +25,30 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-			<converters:ColorToBrush x:Key="ColorToLightLuminanceBrush" A="0.2" L="0.4" S="0.4" />
-			<converters:ColorToBrush x:Key="ColorToDarkLuminanceBrush" L="0.4" S="0.4" />
-			<converters:ColorToConstrastingBrush x:Key="ColorToConstrastingBrush" />
-			<converters:ColorToLightLuminance x:Key="ColorToLightLuminance" />
-			<converters:ColorToLightLuminance x:Key="ColorToBrightLuminance" L="0.4" S="0.8" />
-			<converters:ChainedConverter x:Key="ChainedConverter" 
-										 Converter1="{StaticResource ColorToLightLuminance}"
-										 Converter2="{StaticResource ColorToBrushConverter}"
-										 />
-			<converters:ChainedConverter x:Key="ChainedBrightConverter" 
-										 Converter1="{StaticResource ColorToBrightLuminance}"
-										 Converter2="{StaticResource ColorToBrushConverter}"
-										 />
-			<converters:StringToUppercaseConverter x:Key="StringToUppercaseConverter" />
+            <converters:ColorToBrush
+                x:Key="ColorToLightLuminanceBrush"
+                A="0.2"
+                L="0.4"
+                S="0.4" />
+            <converters:ColorToBrush
+                x:Key="ColorToDarkLuminanceBrush"
+                L="0.28"
+                S="0.5" />
+            <converters:ColorToConstrastingBrush x:Key="ColorToConstrastingBrush" />
+            <converters:ColorToLightLuminance x:Key="ColorToLightLuminance" />
+            <converters:ColorToLightLuminance
+                x:Key="ColorToBrightLuminance"
+                L="0.4"
+                S="0.8" />
+            <converters:ChainedConverter
+                x:Key="ChainedConverter"
+                Converter1="{StaticResource ColorToLightLuminance}"
+                Converter2="{StaticResource ColorToBrushConverter}" />
+            <converters:ChainedConverter
+                x:Key="ChainedBrightConverter"
+                Converter1="{StaticResource ColorToBrightLuminance}"
+                Converter2="{StaticResource ColorToBrushConverter}" />
+            <converters:StringToUppercaseConverter x:Key="StringToUppercaseConverter" />
             <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
             <converters:IntMinusOneConverter x:Key="intMinusOneConverter" />
             <avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
@@ -46,14 +56,18 @@
                 <ResourceInclude Source="avares://HandsLiftedApp/Assets/AddItemFlyoutResourceDictionary.axaml" />
             </ResourceDictionary.MergedDictionaries>
 
-			<ResourceDictionary.ThemeDictionaries>
-				<ResourceDictionary x:Key="Light">
-					<SolidColorBrush x:Key="GroupHeadingBackground">#d5cfe8</SolidColorBrush>
-				</ResourceDictionary>
-				<ResourceDictionary x:Key="Dark">
-					<SolidColorBrush x:Key="GroupHeadingBackground">#1e1e1e</SolidColorBrush>
-				</ResourceDictionary>
-			</ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="GroupHeadingBackground">#d5cfe8</SolidColorBrush>
+                    <SolidColorBrush x:Key="GroupHeadingForeground">#383838</SolidColorBrush>
+                    <SolidColorBrush x:Key="ActiveItemForeground">#4d347f</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="GroupHeadingBackground">#1e1e1e</SolidColorBrush>
+                    <SolidColorBrush x:Key="GroupHeadingForeground">#DBDBDB</SolidColorBrush>
+                    <SolidColorBrush x:Key="ActiveItemForeground">White</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -100,17 +114,37 @@
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Foreground" Value="#4d347f" />
+            <Setter Property="Foreground" Value="{DynamicResource ActiveItemForeground}" />
             <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
-		
+
+        <Style Selector="ListBoxItem TextBlock.SectionHeadingTextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource GroupHeadingForeground}" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
+        <Style Selector="ListBoxItem:selected TextBlock.SectionHeadingTextBlock">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style Selector="ListBoxItem material|MaterialIcon">
+            <Setter Property="Foreground" Value="#888888" />
+        </Style> 
         <Style Selector="ListBoxItem:selected material|MaterialIcon">
-            <Setter Property="Foreground" Value="#4d347f" />
+            <Setter Property="Foreground" Value="{DynamicResource ActiveItemForeground}" />
         </Style>
 
         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#C11F576F" />
             <!--<Setter Property="BorderBrush" Value="#1f576f" />-->
+        </Style>
+		
+        <Style Selector="ListBoxItem Border.SectionHeadingBorder">
+            <Setter Property="Background" Value="{DynamicResource GroupHeadingBackground}" />
+            <Setter Property="BorderBrush" Value="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
+        </Style>
+         <Style Selector="ListBoxItem:pointerover Border.SectionHeadingBorder">
+            <Setter Property="Background" Value="#C11F576F" />
         </Style>
 
         <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
@@ -148,57 +182,50 @@
                 <ListBox.DataTemplates>
                     <utils:MyTemplateSelector>
                         <DataTemplate x:Key="SectionHeadingItem">
-							<Grid>
-								<!--TODO not working-->
-								<!--<Grid.Styles>
+                            <Grid>
+                                <!--  TODO not working  -->
+                                <!--<Grid.Styles>
 									<Style Selector="Border:pointerover">
 										<Setter Property="Background" Value="#214c5e" />
 									</Style>
 								</Grid.Styles>-->
-								<Border
-									Background="#dddce6"
-									CornerRadius="0 4 4 0"
-									>
-									<Border
-										Background="{Binding ItemGroupColour, Converter={StaticResource ColorToLightLuminanceBrush}, FallbackValue='#9a93cd'}"
-										BorderBrush="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}"
-										BorderThickness="4 0 0 0">
-										<DockPanel Margin="16,0,0,0" VerticalAlignment="Stretch">
-											<TextBlock
-												Padding="0,8,0,8"
-												FontSize="11"
-												TextTrimming="CharacterEllipsis">
-												<TextBlock.Text>
-													<MultiBinding StringFormat="{}{0}">
-														<Binding Path="Title" Converter="{StaticResource StringToUppercaseConverter}" />
-													</MultiBinding>
-												</TextBlock.Text>
-											</TextBlock>
-										</DockPanel>
-									</Border>
-								</Border>
-								<i:Interaction.Behaviors>
-									<behaviours:DragControlBehavior />
-								</i:Interaction.Behaviors>
-							</Grid>
+                                <Border BorderThickness="6 0 0 0"
+										Classes="SectionHeadingBorder">
+                                    <DockPanel Margin="12,0,0,0" VerticalAlignment="Stretch">
+                                        <TextBlock
+                                            Padding="0,8,0,8"
+                                            Classes="SectionHeadingTextBlock"
+                                            FontSize="14"
+                                            TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}">
+                                                    <Binding Path="Title" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DockPanel>
+                                </Border>
+                                <i:Interaction.Behaviors>
+                                    <behaviours:DragControlBehavior />
+                                </i:Interaction.Behaviors>
+                            </Grid>
                         </DataTemplate>
                         <DataTemplate x:Key="Fallback">
-                            <DockPanel Margin="0,0,0,0" VerticalAlignment="Stretch" Background="Transparent">
-								<Grid Width="16">
-									<Viewbox
-																		            IsVisible="{Binding State.IsSelected}"
-
-										Width="25"
-										Height="25"
-										Margin="-7,0,7,0">
-										<Polygon
-											Fill="#FF3400"
-											Points="0,0 8,5, 0,10" />
-									</Viewbox>
-								</Grid>
-								<item:ItemIcon Margin="0,0,6,0" DockPanel.Dock="Left"
-									   />
-								<TextBlock
+                            <DockPanel
+                                Margin="0,0,0,0"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent">
+                                <Grid Width="16">
+                                    <Viewbox
+                                        Width="25"
+                                        Height="25"
+                                        Margin="-7,0,7,0"
+                                        IsVisible="{Binding State.IsSelected}">
+                                        <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
+                                    </Viewbox>
+                                </Grid>
+                                <item:ItemIcon Margin="0,0,6,0" DockPanel.Dock="Left" />
+                                <TextBlock
                                     Padding="0,8,0,8"
                                     FontSize="13"
                                     TextTrimming="CharacterEllipsis">
@@ -208,9 +235,9 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-								<i:Interaction.Behaviors>
-									<behaviours:DragControlBehavior />
-								</i:Interaction.Behaviors>
+                                <i:Interaction.Behaviors>
+                                    <behaviours:DragControlBehavior />
+                                </i:Interaction.Behaviors>
                             </DockPanel>
                         </DataTemplate>
                     </utils:MyTemplateSelector>

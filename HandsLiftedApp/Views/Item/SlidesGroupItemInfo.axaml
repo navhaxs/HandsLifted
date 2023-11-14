@@ -19,9 +19,6 @@
 		</Expander.Header>
         <Border Padding="5" CornerRadius="5">
             <StackPanel>
-				<ProgressBar Value="{Binding TimerState.Timer.ElapsedTime}" Maximum="{Binding AutoAdvanceTimer.IntervalMs}" />
-				<TextBlock Text="{Binding TimerState.Timer.RemainingTime}" />
-
 				<HeaderedContentControl BorderBrush="#a2a2a4" Header="Auto-advance Timer">
                     <HeaderedContentControl.Styles>
                         <Style Selector="HeaderedContentControl">

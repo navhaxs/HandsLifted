@@ -20,7 +20,7 @@ namespace HandsLiftedApp.Data.Models.Items
             Title = "(New Section)";
         }
 
-        public XmlColor _itemGroupColour = Color.Parse("#ededf1");
+        public XmlColor _itemGroupColour = Color.Parse("#4d347f");
         [XmlIgnore]
         public Color ItemGroupColour { get => _itemGroupColour; set => this.RaiseAndSetIfChanged(ref _itemGroupColour, value); }
 

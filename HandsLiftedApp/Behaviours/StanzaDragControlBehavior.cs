@@ -105,7 +105,7 @@ namespace HandsLiftedApp.Behaviours
                     _parent.PointerMoved += Parent_PointerMoved;
                     _parent.PointerReleased += Parent_PointerReleased;
 
-                    _parent.Opacity = 0.6;
+                    //_parent.Opacity = 0.6;
 
                     var m = _parent.GetVisualRoot();
                     if (m is Window)
@@ -257,7 +257,10 @@ namespace HandsLiftedApp.Behaviours
                 p = _parent;
 
             Window? window = p.GetVisualRoot() as Window;
-            window.Cursor = (cursor == null) ? Cursor.Default : cursor;
+            if (window != null)
+            {
+                window.Cursor = (cursor == null) ? Cursor.Default : cursor;
+            }
         }
 
         private void ResetDraggingState()

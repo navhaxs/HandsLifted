@@ -39,7 +39,7 @@
                 </MenuItem.Icon>
             </MenuItem>
         </MenuItem>
-        <MenuItem Command="{Binding $parent[Window].DataContext.AddGraphicCommand}" Header="_Graphic/s">
+        <MenuItem Command="{Binding $parent[Window].DataContext.AddGraphicCommand}" Header="_Graphics">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Image" />
             </MenuItem.Icon>
