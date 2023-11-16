@@ -256,7 +256,7 @@ namespace HandsLiftedApp.Behaviours
             if (p == null)
                 p = _parent;
 
-            Window? window = p.GetVisualRoot() as Window;
+            Window? window = p?.GetVisualRoot() as Window;
             if (window != null)
             {
                 window.Cursor = (cursor == null) ? Cursor.Default : cursor;
