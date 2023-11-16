@@ -14,8 +14,8 @@ namespace HandsLiftedApp.Controls
 
             if (Design.IsDesignMode)
             {
-                this.DataContext = new SectionHeadingItem<ItemStateImpl>();
                 this.DataContext = PlaylistUtils.CreateSong();
+                this.DataContext = new SectionHeadingItem<ItemStateImpl>();
             }
         }
 

@@ -26,7 +26,7 @@ namespace HandsLiftedApp.Utils
             _designs.Add(new BaseSlideTheme()
             {
                 Name = "Basic",
-                FontFamily = TryParseFontFamily("Times New Roman"),
+                FontFamily = TryParseFontFamily("Cambria"),
                 TextColour = Color.Parse("White"),
                 BackgroundColour = Color.Parse("Black"),
                 FontSize = 80,

@@ -91,7 +91,7 @@
 								</MultiBinding>
 							</TextBlock.Text>
 						</TextBlock>
-						<Border Margin="4 0 0 0" Padding="4 0" CornerRadius="2" Background="#3EFFFFFF"  IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
+						<Border Margin="4 0 0 0" Padding="4 0" CornerRadius="2"  IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
 							<TextBlock Foreground="White">
 								<TextBlock.Text>
 									<MultiBinding StringFormat="{}{0}">
@@ -229,8 +229,8 @@
 
 
 	<Style Selector="ListBoxItem /template/ Border#PART_Border">
-		<Setter Property="BorderBrush" Value="#724bab"/>
-		<Setter Property="BorderThickness" Value="2" />
+		<Setter Property="BorderBrush" Value="#4E4E4E"/>
+		<Setter Property="BorderThickness" Value="1" />
 	</Style>
 
 	<Style Selector="ListBoxItem:selected /template/ Border#PART_Border">
@@ -243,7 +243,7 @@
 	</Style>
 
 	<Style Selector="ListBoxItem:pointerover /template/ Border#PART_Border">
-		<Setter Property="BorderBrush" Value="#e59400"/>
+		<Setter Property="BorderBrush" Value="#724bab"/>
 		<Setter Property="BorderThickness" Value="4" />
 	</Style>
 

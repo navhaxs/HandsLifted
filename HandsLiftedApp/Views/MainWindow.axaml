@@ -211,7 +211,7 @@
 
                                 <ToggleButton
                                     Name="AppMenuButton"
-                                    Margin="8"
+                                    Margin="8,8,8,0"
                                     Padding="0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
@@ -320,34 +320,15 @@
                                     </ContextMenu>
                                 </Popup>
 
-                                <!--<ToggleButton
-								Name="EditTitleButton" VerticalAlignment="Center"
-								Background="Transparent"
-								BorderThickness="0"
-								IsChecked="{Binding #editTitleFlyout.IsOpen, Mode=TwoWay}"
-								CornerRadius="12">
-								<material:MaterialIcon Kind="Edit" Foreground="#8f9090" />
-							</ToggleButton>
-							<Popup Name="editTitleFlyout" StaysOpen="False"
-							   PlacementMode="Bottom"
-							   PlacementTarget="{Binding #EditTitleButton}">
-							</Popup>-->
-
                                 <Grid IsHitTestVisible="False" />
                             </DockPanel>
-                            <!--<DockPanel>
-								<material:MaterialIcon DockPanel.Dock="Left" Kind="Alert" />
-								<TextBlock Text="Debug" />
-							</DockPanel>-->
-
                         </Border>
-
 
                         <Border DockPanel.Dock="Top">
                             <Button
                                 Name="PlaylistTitleButton"
                                 Padding="12,4"
-                                Margin="10,0,0,0"
+                                Margin="10,0,0,8"
 								Background="Transparent"
                                 BorderThickness="0"
                                 CornerRadius="6"
@@ -475,7 +456,7 @@
 
                                     <controls:ItemOrderListView
                                         Name="itemOrderListView"
-                                        Margin="0,8,0,0"
+                                        Margin="0,0,0,0"
                                         Opacity="0">
                                         <i:Interaction.Behaviors>
                                             <!--  TODO do this manually  -->

@@ -189,13 +189,13 @@
 										<Setter Property="Background" Value="#214c5e" />
 									</Style>
 								</Grid.Styles>-->
-                                <Border BorderThickness="6 0 0 0"
+                                <Border BorderThickness="0 0 0 0"
 										Classes="SectionHeadingBorder">
                                     <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
                                         <TextBlock
-                                            Padding="0,6,0,6"
+                                            Padding="0,4"
                                             Classes="SectionHeadingTextBlock"
-                                            FontSize="14"
+                                            FontSize="13"
                                             TextTrimming="CharacterEllipsis">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0}">

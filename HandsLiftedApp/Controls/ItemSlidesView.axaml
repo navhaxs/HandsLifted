@@ -37,7 +37,7 @@
                     <SolidColorBrush x:Key="TitleBrush">Black</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="BackgroundBrush">#3a3449</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#3b3349</SolidColorBrush>
                     <SolidColorBrush x:Key="TitleBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
@@ -68,7 +68,8 @@
             <ContentControl.ContentTemplate>
                 <utils:MyTemplateSelector>
                     <DataTemplate x:Key="SectionHeadingItem">
-                        <Border Margin="0,14,0,14" Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ECE8F9'}">
+						<!--{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ECE8F9'}-->
+                        <Border Margin="0,14,0,14" Background="#124449">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding State.IsSelected}"
@@ -101,6 +102,7 @@
                                         Margin="6"
                                         Padding="22,6"
                                         BorderBrush="#b3aed9"
+										Background="#15FFFFFF"
                                         BorderThickness="1"
                                         Command="{Binding State.EditCommand}"
                                         CornerRadius="4"
@@ -179,6 +181,7 @@
                                             Margin="6"
                                             Padding="22,6"
                                             BorderBrush="#b3aed9"
+                                            Background="#15FFFFFF"
                                             BorderThickness="1"
                                             Command="{Binding State.EditCommand}"
                                             CornerRadius="4"
