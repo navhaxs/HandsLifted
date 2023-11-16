@@ -6,13 +6,13 @@ using HandsLiftedApp.Views;
 using System.Diagnostics;
 
 namespace HandsLiftedApp
-{
-    public class App : Application
     {
+    public class App : Application
+        {
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
         public override void OnFrameworkInitializationCompleted()
-        {
+            {
             // Initialize app preferences state here
 
             // Create the AutoSuspendHelper.
@@ -29,28 +29,27 @@ namespace HandsLiftedApp
             // The rest of the normal Avalonia init
             Globals.MainWindowViewModel = new MainWindowViewModel();
 
-
-            SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow()
-            {
-                DataContext = Globals.MainWindowViewModel // this.DataContext
-            };
+            Views.SlideRendererWorkerWindow slideRendererWorkerWindow = new Views.SlideRendererWorkerWindow()
+                {
+                mainWindowViewModel = Globals.MainWindowViewModel
+                };
             slideRendererWorkerWindow.Show();
 
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow = new MainWindow
                 {
+                desktop.MainWindow = new MainWindow
+                    {
                     DataContext = Globals.MainWindowViewModel,
-                };
-            }
+                    };
+                }
 
             if (Debugger.IsAttached)
-            {
+                {
                 //TestModeApp.RunSongEditorWindow();
-            }
+                }
 
             base.OnFrameworkInitializationCompleted();
+            }
         }
     }
-}

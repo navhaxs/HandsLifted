@@ -1,22 +1,19 @@
 ﻿using Avalonia.Media;
 using HandsLiftedApp.Data.SlideTheme;
-using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HandsLiftedApp.Models.SlideDesigner
+namespace HandsLiftedApp.Utils
 {
-    public class SlideDesignerViewModel : ReactiveObject
+    public static class DesignUtils
     {
 
-        public List<BaseSlideTheme> ListOfDesigns { get; } = new List<BaseSlideTheme>();
-        private BaseSlideTheme _ActiveDesign;
-        public BaseSlideTheme ActiveDesign { get => _ActiveDesign; set => this.RaiseAndSetIfChanged(ref _ActiveDesign, value); }
-
-        public SlideDesignerViewModel()
+        public static List<BaseSlideTheme> GeneratePreloadedDesigns()
         {
-            ListOfDesigns.Add(new BaseSlideTheme()
+
+            List<BaseSlideTheme> _designs = new List<BaseSlideTheme>();
+
+            _designs.Add(new BaseSlideTheme()
             {
                 Name = "Design1",
                 FontFamily = TryParseFontFamily("Cambria"),
@@ -26,7 +23,7 @@ namespace HandsLiftedApp.Models.SlideDesigner
                 LineHeight = 130,
                 BackgroundGraphicFilePath = "avares://HandsLiftedApp/Assets/DesignerSlideTemplate/bg.png"
             });
-            ListOfDesigns.Add(new BaseSlideTheme()
+            _designs.Add(new BaseSlideTheme()
             {
                 Name = "Basic",
                 FontFamily = TryParseFontFamily("Times New Roman"),
@@ -35,7 +32,7 @@ namespace HandsLiftedApp.Models.SlideDesigner
                 FontSize = 80,
                 LineHeight = 130,
             });
-            ListOfDesigns.Add(new BaseSlideTheme()
+            _designs.Add(new BaseSlideTheme()
             {
                 Name = "Default",
                 FontFamily = TryParseFontFamily("Cambria"),
@@ -45,7 +42,7 @@ namespace HandsLiftedApp.Models.SlideDesigner
                 LineHeight = 130,
                 BackgroundGraphicFilePath = @"avares://HandsLiftedApp/Assets/DefaultTheme/VisionScreens_1440_background.png"
             });
-            ListOfDesigns.Add(new BaseSlideTheme()
+            _designs.Add(new BaseSlideTheme()
             {
                 Name = "SWEC",
                 FontFamily = TryParseFontFamily("Cambria"),
@@ -55,7 +52,7 @@ namespace HandsLiftedApp.Models.SlideDesigner
                 LineHeight = 130,
                 BackgroundGraphicFilePath = "C:\\VisionScreens\\Designs\\76c4ea22-fb91-4b58-9b07-b709f4402b0dcatalystconf-bg.png"
             });
-            ListOfDesigns.Add(new BaseSlideTheme()
+            _designs.Add(new BaseSlideTheme()
             {
                 Name = "Blue",
                 FontFamily = TryParseFontFamily("Cambria"),
@@ -65,10 +62,10 @@ namespace HandsLiftedApp.Models.SlideDesigner
                 LineHeight = 130
             });
 
-            ActiveDesign = ListOfDesigns[0];
+            return _designs;
         }
 
-        public FontFamily TryParseFontFamily(string fontFamilyName)
+        public static FontFamily TryParseFontFamily(string fontFamilyName)
         {
             var installedFontFamilyNames = FontManager.Current.SystemFonts;
             if (installedFontFamilyNames.Contains(fontFamilyName))

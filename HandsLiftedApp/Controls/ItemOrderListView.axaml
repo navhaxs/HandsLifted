@@ -32,8 +32,8 @@
                 S="0.4" />
             <converters:ColorToBrush
                 x:Key="ColorToDarkLuminanceBrush"
-                L="0.28"
-                S="0.5" />
+                L="0.6"
+                S="0.7" />
             <converters:ColorToConstrastingBrush x:Key="ColorToConstrastingBrush" />
             <converters:ColorToLightLuminance x:Key="ColorToLightLuminance" />
             <converters:ColorToLightLuminance
@@ -120,7 +120,7 @@
 
         <Style Selector="ListBoxItem TextBlock.SectionHeadingTextBlock">
             <Setter Property="Foreground" Value="{DynamicResource GroupHeadingForeground}" />
-            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
 
         <Style Selector="ListBoxItem:selected TextBlock.SectionHeadingTextBlock">
@@ -143,9 +143,9 @@
             <Setter Property="Background" Value="{DynamicResource GroupHeadingBackground}" />
             <Setter Property="BorderBrush" Value="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
         </Style>
-         <Style Selector="ListBoxItem:pointerover Border.SectionHeadingBorder">
+         <!--<Style Selector="ListBoxItem:pointerover Border.SectionHeadingBorder">
             <Setter Property="Background" Value="#C11F576F" />
-        </Style>
+        </Style>-->
 
         <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
             <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
@@ -191,9 +191,9 @@
 								</Grid.Styles>-->
                                 <Border BorderThickness="6 0 0 0"
 										Classes="SectionHeadingBorder">
-                                    <DockPanel Margin="12,0,0,0" VerticalAlignment="Stretch">
+                                    <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
                                         <TextBlock
-                                            Padding="0,8,0,8"
+                                            Padding="0,6,0,6"
                                             Classes="SectionHeadingTextBlock"
                                             FontSize="14"
                                             TextTrimming="CharacterEllipsis">
@@ -224,7 +224,7 @@
                                         <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
                                     </Viewbox>
                                 </Grid>
-                                <item:ItemIcon Margin="0,0,6,0" DockPanel.Dock="Left" />
+                                <item:ItemIcon Margin="0,0,12,0" DockPanel.Dock="Left" />
                                 <TextBlock
                                     Padding="0,8,0,8"
                                     FontSize="13"

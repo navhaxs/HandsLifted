@@ -45,7 +45,7 @@
             MaxWidth="400"
             Padding="8,4,8,4"
             HorizontalAlignment="Left"
-            Background="Transparent"
+            Background="#35000000"
             BorderThickness="1"
             DockPanel.Dock="Top"
             FontSize="16"
@@ -68,7 +68,7 @@
 				Grid.Column="1"
 				Margin="-3,0"
 				HorizontalAlignment="Stretch"
-				Background="Red"
+				Background="#808080"
 				BorderBrush="Transparent"
 				BorderThickness="3,0"
 				ZIndex="9999" />
@@ -81,6 +81,7 @@
                         Background="Transparent"
                         ItemsSource="{Binding Library.SearchResults}"
                         SelectedItem="{Binding Library.SelectedItem}"
+						HorizontalAlignment="Stretch"
 						BorderThickness="0" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -109,7 +110,7 @@
 				Grid.Column="3"
 				Margin="-3,0"
 				HorizontalAlignment="Stretch"
-				Background="Red"
+				Background="#808080"
 				BorderBrush="Transparent"
 				BorderThickness="3,0"
 				ZIndex="9999" />

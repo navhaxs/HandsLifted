@@ -1,6 +1,7 @@
 ﻿using Avalonia.Animation;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 

@@ -14,15 +14,14 @@ namespace HandsLiftedApp.Models.SlideState
         {
             this._songTitleSlide = songTitleSlide;
 
+            // TODO: get parent playlist -> list of designs
+            // TODO: get parent item -> selected design
             MessageBus.Current.SendMessage(new SlideRenderRequestMessage()
             {
                 Data = this._songTitleSlide,
                 Callback = (bitmap) =>
                 {
-                    //Dispatcher.UIThread.InvokeAsync(() =>
-                    //{
                     this._songTitleSlide.cached = bitmap;
-                    //});
                 }
             });
 

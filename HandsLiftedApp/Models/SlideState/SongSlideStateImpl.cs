@@ -5,13 +5,13 @@ using System;
 using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Models.SlideState
-{
-    public class SongSlideStateImpl : SlideStateBase<SongSlide<SongSlideStateImpl>>, ISongSlideState
     {
+    public class SongSlideStateImpl : SlideStateBase<SongSlide<SongSlideStateImpl>>, ISongSlideState
+        {
         readonly SongSlide<SongSlideStateImpl> songSlide;
 
         public SongSlideStateImpl(ref SongSlide<SongSlideStateImpl> songSlide) : base(ref songSlide)
-        {
+            {
             this.songSlide = songSlide;
 
             songSlide.WhenAnyValue(s => s.Text) // todo dirty bit?
@@ -20,17 +20,17 @@ namespace HandsLiftedApp.Models.SlideState
             .Subscribe(text =>
                   {
                       MessageBus.Current.SendMessage(new SlideRenderRequestMessage()
-                      {
+                          {
                           Data = this.songSlide,
                           Callback = (bitmap) =>
                           {
                               this.songSlide.cached = bitmap;
                           }
-                      });
+                          });
                   });
 
 
-        }
+            }
 
+        }
     }
-}
