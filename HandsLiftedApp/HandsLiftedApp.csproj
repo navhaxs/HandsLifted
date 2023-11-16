@@ -24,9 +24,13 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <AvaloniaXaml Remove="Binaries\**" />
+	  <AvaloniaXaml Remove="Views\Render\Video\**" />
 	  <Compile Remove="Binaries\**" />
+	  <Compile Remove="Views\Render\Video\**" />
 	  <EmbeddedResource Remove="Binaries\**" />
+	  <EmbeddedResource Remove="Views\Render\Video\**" />
 	  <None Remove="Binaries\**" />
+	  <None Remove="Views\Render\Video\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Assets\app_logo - Copy.png" />
@@ -175,8 +179,5 @@
 		<Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
 		  <DependentUpon>DefaultLayout.axaml</DependentUpon>
 		</Compile>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Views\Render\Video\" />
 	</ItemGroup>
 </Project>

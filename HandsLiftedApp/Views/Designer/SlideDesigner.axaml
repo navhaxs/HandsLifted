@@ -23,7 +23,7 @@
 				 MinWidth="80"
 				 Name="designsListBox"
 				 ItemsSource="{Binding Playlist.Designs}">
-			<ListBox.ItemTemplate>
+			<!--<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Viewbox MaxHeight="60">
 						
@@ -39,7 +39,7 @@
 					</Grid>
 					</Viewbox>
 				</DataTemplate>
-			</ListBox.ItemTemplate>
+			</ListBox.ItemTemplate>-->
 		</ListBox>
 		<Grid ColumnDefinitions="3*, *">
 			<Viewbox Grid.Column="0" VerticalAlignment="Top">

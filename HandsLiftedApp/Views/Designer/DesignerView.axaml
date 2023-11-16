@@ -32,6 +32,9 @@
             <Setter Property="FontSize" Value="24" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
+        <Style Selector="TabItem">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
     </UserControl.Styles>
 
     <TabControl SelectedIndex="0" TabStripPlacement="Left">

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Animation;
 using HandsLiftedApp.XTransitioningContentControl;
 using ReactiveUI;
+using System;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Slides
@@ -22,6 +23,7 @@ namespace HandsLiftedApp.Data.Slides
         //public int SlideNumber { get => Index + 1; }
 
         // meta - group labels, slide number, etc.
+        public Guid ParentItemUUID { get; set; }
         public abstract string? SlideLabel { get; }
         public abstract string? SlideText { get; }
 

@@ -92,6 +92,7 @@
                     <CheckBox ClipToBounds="False" IsChecked="{Binding IsDisplayDebugInfo}" />
                 </MenuItem.Icon>
             </MenuItem>
+            <MenuItem Click="InvalidateSlideBitmapMessage" Header="InvalidateSlideBitmapMessage" />
             <MenuItem Click="OnGCCleanupClick" Header="OnGCCleanupClick" />
             <MenuItem Click="OnScrollToItemClick" Header="ScrollToActiveItem" />
             <TextBox Text="{Binding BottomLeftPanelSelectedTabIndex}" />

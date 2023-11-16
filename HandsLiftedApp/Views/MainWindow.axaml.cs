@@ -7,6 +7,7 @@ using Avalonia.ReactiveUI;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using HandsLiftedApp.Models.AppState;
+using HandsLiftedApp.Models.Events;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.ViewModels;
@@ -290,6 +291,11 @@ namespace HandsLiftedApp.Views
         private void OnGCCleanupClick(object? sender, RoutedEventArgs e)
         {
             GC.Collect();
+        }
+
+        private void InvalidateSlideBitmapMessage(object? sender, RoutedEventArgs e)
+        {
+            MessageBus.Current.SendMessage(new InvalidateSlideBitmapMessage());
         }
 
         bool isLibraryVisible = false;

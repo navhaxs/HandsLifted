@@ -68,7 +68,7 @@
             <ContentControl.ContentTemplate>
                 <utils:MyTemplateSelector>
                     <DataTemplate x:Key="SectionHeadingItem">
-						<!--{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ECE8F9'}-->
+                        <!--  {Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ECE8F9'}  -->
                         <Border Margin="0,14,0,14" Background="#124449">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
@@ -101,8 +101,8 @@
                                     <Button
                                         Margin="6"
                                         Padding="22,6"
+                                        Background="#15FFFFFF"
                                         BorderBrush="#b3aed9"
-										Background="#15FFFFFF"
                                         BorderThickness="1"
                                         Command="{Binding State.EditCommand}"
                                         CornerRadius="4"
@@ -180,8 +180,8 @@
                                         <Button
                                             Margin="6"
                                             Padding="22,6"
-                                            BorderBrush="#b3aed9"
                                             Background="#15FFFFFF"
+                                            BorderBrush="#b3aed9"
                                             BorderThickness="1"
                                             Command="{Binding State.EditCommand}"
                                             CornerRadius="4"
@@ -201,9 +201,10 @@
                                             FontSize="18"
                                             Foreground="{DynamicResource TitleBrush}"
                                             Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
-                                    </DockPanel>
-                                    <item:ItemInfo VerticalAlignment="Top" />
 
+                                    </DockPanel>
+
+                                    <item:ItemInfo VerticalAlignment="Top" />
 
                                     <controls:ListBoxWithoutKey
                                         Name="List"
@@ -262,9 +263,13 @@
                                         <controls:ListBoxWithoutKey.DataTemplates>
                                             <utils:MyTemplateSelector>
                                                 <DataTemplate x:Key="SongTitleSlide">
-                                                    <Viewbox>
+                                                    <Image
+                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                        Source="{Binding cached}"
+                                                        Stretch="Uniform" />
+                                                    <!--<Viewbox>
                                                         <views:DesignerSlideTitle Width="1920" Height="1080" />
-                                                    </Viewbox>
+                                                    </Viewbox>-->
                                                     <!--<TextBlock
                                         FontWeight="SemiBold"
                                         Foreground="White"
@@ -272,21 +277,27 @@
                                         TextTrimming="CharacterEllipsis" />-->
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="SongSlide">
+                                                    <Image
+                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                        Source="{Binding cached}"
+                                                        Stretch="Uniform" />
                                                     <!--<Viewbox>
-										-->
+										
+                                                    -->
                                                     <!--  TODO: cache as image  -->
                                                     <!--
+
                                         <views:DesignerSlideTemplate
                                             Width="1920"
                                             Height="1080" />
                                     </Viewbox>-->
-                                                    <TextBlock
+                                                    <!--<TextBlock
                                                         Height="9999"
                                                         VerticalAlignment="Top"
                                                         ClipToBounds="True"
                                                         Foreground="White"
                                                         Text="{Binding Text}"
-                                                        TextTrimming="WordEllipsis" />
+                                                        TextTrimming="WordEllipsis" />-->
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="ImageSlide">
                                                     <controls:SlideThumbnail>
@@ -312,12 +323,10 @@
 								</Border>-->
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="LogoSlide">
-                                                    <Grid>
-                                                        <Image
-                                                            RenderOptions.BitmapInterpolationMode="LowQuality"
-                                                            Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
-                                                            Stretch="Uniform" />
-                                                    </Grid>
+                                                    <Image
+                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                        Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
+                                                        Stretch="Uniform" />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="MyKey">
                                                     <TextBlock Background="Red" Text="{Binding Text}" />

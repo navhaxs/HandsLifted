@@ -12,7 +12,7 @@ namespace HandsLiftedApp.Data.Models.Items
     public abstract class Item<T> : ReactiveObject, IDisposable where T : IItemState
     {
         [XmlIgnore]
-        public Guid Uuid { get; set; }
+        public Guid UUID { get; set; }
 
         private T _state;
         [XmlIgnore]
@@ -20,7 +20,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         protected Item()
         {
-            Uuid = Guid.NewGuid();
+            UUID = Guid.NewGuid();
             State = (T)Activator.CreateInstance(typeof(T), this);
         }
 

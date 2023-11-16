@@ -44,7 +44,7 @@ namespace HandsLiftedApp.Models.ItemExtensionState
 
             Timer.OnElapsed += (sender, e) =>
             {
-                Log.Information($"OnElapsed {parentSlidesGroup.Uuid}");
+                Log.Information($"OnElapsed {parentSlidesGroup.UUID}");
 
                 if (!parentSlidesGroup.AutoAdvanceTimer.IsEnabled)
                     return;
@@ -75,7 +75,7 @@ namespace HandsLiftedApp.Models.ItemExtensionState
 
         private void ApplyTimerConfig(bool isEnabled, int intervalMs)
         {
-            Log.Information($"ApplyTimerConfig {parentSlidesGroup.Uuid}");
+            Log.Information($"ApplyTimerConfig {parentSlidesGroup.UUID}");
 
             // stop timer
             Timer.Stop();
@@ -88,15 +88,12 @@ namespace HandsLiftedApp.Models.ItemExtensionState
         }
         private void ResetTimer()
         {
-            Log.Information($"ResetTimer {parentSlidesGroup.Uuid}");
-
             // stop timer
             Timer.Stop();
 
             // restart timer if enabled and item is active
             if (parentSlidesGroup.State.IsSelected == true && parentSlidesGroup.AutoAdvanceTimer.IsEnabled)
             {
-                Log.Information($"ResetTimer==>Start {parentSlidesGroup.Uuid}");
                 Timer.Start(parentSlidesGroup.AutoAdvanceTimer.IntervalMs);
             }
         }
