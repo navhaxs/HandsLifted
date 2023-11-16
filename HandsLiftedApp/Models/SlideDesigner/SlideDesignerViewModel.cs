@@ -18,6 +18,7 @@ namespace HandsLiftedApp.Models.SlideDesigner
         {
             ListOfDesigns.Add(new BaseSlideTheme()
             {
+                Name = "Design1",
                 FontFamily = TryParseFontFamily("Cambria"),
                 TextColour = Color.Parse("#a06d39"),
                 BackgroundColour = Color.Parse("#f5ede4"),

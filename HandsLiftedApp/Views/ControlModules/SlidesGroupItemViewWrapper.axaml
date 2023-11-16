@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"	
+ 			 xmlns:utils="using:HandsLiftedApp.Utils"
+			 xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 Height="4"
+             x:Class="HandsLiftedApp.Views.ControlModules.SlidesGroupItemViewWrapper">
+	<ContentControl Content="{Binding}">
+		<ContentControl.ContentTemplate>
+			<utils:MyTemplateSelector>
+				<DataTemplate x:Key="SlidesGroupItem">
+					<ProgressBar Value="{Binding TimerState.Timer.ElapsedTime}" Maximum="{Binding AutoAdvanceTimer.IntervalMs}" />
+				</DataTemplate>
+				<DataTemplate x:Key="PDFSlidesGroupItem">
+					<ProgressBar Value="{Binding TimerState.Timer.ElapsedTime}" Maximum="{Binding AutoAdvanceTimer.IntervalMs}" />
+				</DataTemplate>
+				<DataTemplate x:Key="PowerPointSlidesGroupItem">
+					<ProgressBar Value="{Binding TimerState.Timer.ElapsedTime}" Maximum="{Binding AutoAdvanceTimer.IntervalMs}" />
+				</DataTemplate>
+				<DataTemplate x:Key="GoogleSlidesSlidesGroupItem">
+					<ProgressBar Value="{Binding TimerState.Timer.ElapsedTime}" Maximum="{Binding AutoAdvanceTimer.IntervalMs}" />
+				</DataTemplate>
+			</utils:MyTemplateSelector>
+		</ContentControl.ContentTemplate>
+	</ContentControl>
+</UserControl>

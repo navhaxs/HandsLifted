@@ -1,4 +1,5 @@
 ﻿using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models.Events;
 using HandsLiftedApp.Views;
 using ReactiveUI;
 using System;
@@ -15,21 +16,32 @@ namespace HandsLiftedApp.Models.SlideState
             this.songSlide = songSlide;
 
             songSlide.WhenAnyValue(s => s.Text) // todo dirty bit?
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
-            .Subscribe(text =>
-                  {
-                      MessageBus.Current.SendMessage(new SlideRenderRequestMessage()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                .Subscribe(text =>
                       {
-                          Data = this.songSlide,
-                          Callback = (bitmap) =>
+                          MessageBus.Current.SendMessage(new SlideRenderRequestMessage()
                           {
-                              this.songSlide.cached = bitmap;
-                          }
+                              Data = this.songSlide,
+                              Callback = (bitmap) =>
+                              {
+                                  this.songSlide.cached = bitmap;
+                              }
+                          });
                       });
-                  });
 
-
+            MessageBus.Current.Listen<InvalidateSlideBitmapMessage>()
+               .Subscribe(x =>
+               {
+                   MessageBus.Current.SendMessage(new SlideRenderRequestMessage()
+                   {
+                       Data = this.songSlide,
+                       Callback = (bitmap) =>
+                       {
+                           this.songSlide.cached = bitmap;
+                       }
+                   });
+               });
         }
 
     }

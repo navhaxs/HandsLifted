@@ -2,16 +2,24 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using HandsLiftedApp.Utils;
+using HandsLiftedApp.ViewModels;
 using ReactiveUI;
 using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace HandsLiftedApp.Views
 {
-    public partial class SlideRendererWorkerWindow : Window
+    public partial class SlideRendererWorkerWindow : Window, INotifyPropertyChanged
     {
+
+        public MainWindowViewModel mainWindowViewModel { get; set; }
+        public SlideRendererWorkerWindowViewModel viewModel { get; set; }
 
         public SlideRendererWorkerWindow()
         {
@@ -20,6 +28,7 @@ namespace HandsLiftedApp.Views
             if (Design.IsDesignMode)
                 return;
 
+            this.DataContext = viewModel = new SlideRendererWorkerWindowViewModel();
 
             //Performing some magic to hide the form from Alt+Tab
             IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
@@ -54,6 +63,14 @@ namespace HandsLiftedApp.Views
                         RenderTargetBitmap rtb = new RenderTargetBitmap(new PixelSize(1920, 1080));
 
                         Control? templateControl = null;
+
+                        var matches = mainWindowViewModel.Playlist.Items.Where(x => x.UUID.Equals(request.Data.ParentItemUUID));
+                        var designName =
+                            (matches.Count() == 0)
+                            ? "Default"
+                            : ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)matches.First()).Design;
+
+                        viewModel.SlideTheme = mainWindowViewModel.Playlist.Designs.Find(d => d.Name == designName);
 
                         if (typeof(SongSlide<SongSlideStateImpl>) == request.Data.GetType())
                         {

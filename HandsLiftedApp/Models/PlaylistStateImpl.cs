@@ -25,6 +25,11 @@ namespace HandsLiftedApp.Models
         {
             Playlist = playlist;
 
+            if (Playlist.Designs.Count == 0)
+            {
+                Playlist.Designs = DesignUtils.GeneratePreloadedDesigns();
+            }
+
             _selectedItem = Observable.CombineLatest(
             this.WhenAnyValue(x => x.SelectedItemIndex),
                 Playlist.Items.ObserveCollectionChanges(),
@@ -92,7 +97,6 @@ namespace HandsLiftedApp.Models
                 }
 
             });
-
         }
 
         // TODO this could be a ObservableAsPropertyHelper

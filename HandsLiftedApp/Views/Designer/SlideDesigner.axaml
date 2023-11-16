@@ -20,11 +20,10 @@
 	<DockPanel>
 		<ListBox DockPanel.Dock="Left"
 				 SelectedIndex="0"
-				 SelectedItem="{Binding	SlideDesigner.ActiveDesign}"
 				 MinWidth="80"
 				 Name="designsListBox"
-				 ItemsSource="{Binding SlideDesigner.ListOfDesigns}">
-			<ListBox.ItemTemplate>
+				 ItemsSource="{Binding Playlist.Designs}">
+			<!--<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Viewbox MaxHeight="60">
 						
@@ -35,12 +34,12 @@
 						<TextBlock Text="A"
 								   FontSize="80"
 								   Margin="20"
-								   FontFamily="{Binding FontFamily, FallbackValue='Garamond, Playfair Display'}"
+								   FontFamily="{Binding FontFamily, FallbackValue='Arial'}"
 								   FontWeight="SemiBold"/>
 					</Grid>
 					</Viewbox>
 				</DataTemplate>
-			</ListBox.ItemTemplate>
+			</ListBox.ItemTemplate>-->
 		</ListBox>
 		<Grid ColumnDefinitions="3*, *">
 			<Viewbox Grid.Column="0" VerticalAlignment="Top">
@@ -86,7 +85,7 @@
 
 					<!-- "Garamond, Playfair Display" -->
 					<TextBlock Text="Font" />
-					<ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamily, FallbackValue='Arial'}">
+					<ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamily}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<TextBlock Text="{Binding Name}" FontFamily="{Binding}" />

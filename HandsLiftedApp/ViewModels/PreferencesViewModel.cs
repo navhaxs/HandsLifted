@@ -95,16 +95,21 @@ namespace HandsLiftedApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref _outputDisplayBounds, value);
         }
 
-        private string _myCombo;
+        //private string _myCombo;
+        //[DataMember]
+        //public string ComboSelection
+        //{
+        //    get => _myCombo;
+        //    set => this.RaiseAndSetIfChanged(ref _myCombo, value);
+        //}
+
+        private string _libraryPath = @"C:\VisionScreens\TestSongs\";
         [DataMember]
-        public string ComboSelection
+        public string LibraryPath
         {
-            get => _myCombo;
-            set => this.RaiseAndSetIfChanged(ref _myCombo, value);
+            get => _libraryPath;
+            set => this.RaiseAndSetIfChanged(ref _libraryPath, value);
         }
-
-
-
 
         // testing
         private int _SlideThumbnailSizeMultiplier = 100;

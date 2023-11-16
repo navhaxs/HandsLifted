@@ -23,71 +23,96 @@
 				<TextBlock Text="Set Up" Padding="16 20" VerticalAlignment="Center" FontSize="16" />
 			</DockPanel>
 		</Border>
-		<ScrollViewer>
-			<StackPanel Margin="16 6">
-				<StackPanel.Styles>
-					<Style Selector="Label">
-						<Setter Property="FontSize" Value="22" />
-						<Setter Property="Margin" Value="0 12 0 6" />
-						<Setter Property="Padding" Value="0" />
-					</Style>
-					<!--<Style Selector="TextBlock">
+		<TabControl SelectedIndex="2">
+			<TabItem>
+				<TabItem.Header>
+					Display
+				</TabItem.Header>
+				<ScrollViewer>
+					<StackPanel Margin="16 6">
+						<StackPanel.Styles>
+							<Style Selector="Label">
+								<Setter Property="FontSize" Value="22" />
+								<Setter Property="Margin" Value="0 12 0 6" />
+								<Setter Property="Padding" Value="0" />
+							</Style>
+							<!--<Style Selector="TextBlock">
 						<Setter Property="Margin" Value="0 0 8 0" />
 					</Style>-->
-					<Style Selector="ComboBox">
-						<Setter Property="Background" Value="White" />
-						<Setter Property="HorizontalAlignment" Value="Left" />
-						<Setter Property="MinWidth" Value="260" />
-						<Setter Property="MinHeight" Value="30" />
-					</Style>
-				</StackPanel.Styles>
-				<StackPanel>
-					<Label>Output Display (Projector)</Label>
-					<ComboBox SelectedItem="{Binding Source={x:Static app:Globals.Preferences}, Path=OutputDisplayBounds}"
-							  							  ItemsSource="{Binding AllAvailableScreens}" />
-					<Label>Stage Display</Label>
-					<ComboBox Name="StageDisplayComboBox" SelectedItem="{Binding preferencesViewModel.StageDisplayBounds}"
-							  ItemsSource="{Binding AllAvailableScreens}" />
-					<Label>Startup</Label>
-					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowOutput}">Show output display on startup</CheckBox>
-					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowStage}">Show stage display on startup</CheckBox>
-					<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowLogo}">Show logo on startup</CheckBox>
-				</StackPanel>
-				<Label>Render</Label>
-				<StackPanel>
-					<TextBlock Text="Render Resolution" />
-					<StackPanel Orientation="Horizontal">
-						<StackPanel.Styles>
-							<Style Selector="TextBox">
-								<Setter Property="MinWidth" Value="60" />
-								<Setter Property="Padding" Value="4" />
+							<Style Selector="ComboBox">
+								<Setter Property="Background" Value="White" />
+								<Setter Property="HorizontalAlignment" Value="Left" />
+								<Setter Property="MinWidth" Value="260" />
+								<Setter Property="MinHeight" Value="30" />
 							</Style>
 						</StackPanel.Styles>
-						<TextBox Text="1920" />
-						<material:MaterialIcon Kind="Close" Foreground="#888888" Margin="4" VerticalAlignment="Center" />
-						<TextBox Text="1080" />
+						<StackPanel>
+							<Label>Output Display (Projector)</Label>
+							<ComboBox SelectedItem="{Binding Source={x:Static app:Globals.Preferences}, Path=OutputDisplayBounds}"
+																  ItemsSource="{Binding AllAvailableScreens}" />
+							<Label>Stage Display</Label>
+							<ComboBox Name="StageDisplayComboBox" SelectedItem="{Binding preferencesViewModel.StageDisplayBounds}"
+									  ItemsSource="{Binding AllAvailableScreens}" />
+							<Label>Startup</Label>
+							<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowOutput}">Show output display on startup</CheckBox>
+							<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowStage}">Show stage display on startup</CheckBox>
+							<CheckBox IsChecked="{Binding preferencesViewModel.OnStartupShowLogo}">Show logo on startup</CheckBox>
+						</StackPanel>
+						<Label>Render</Label>
+						<StackPanel>
+							<TextBlock Text="Render Resolution" />
+							<StackPanel Orientation="Horizontal">
+								<StackPanel.Styles>
+									<Style Selector="TextBox">
+										<Setter Property="MinWidth" Value="60" />
+										<Setter Property="Padding" Value="4" />
+									</Style>
+								</StackPanel.Styles>
+								<TextBox Text="1920" />
+								<material:MaterialIcon Kind="Close" Foreground="#888888" Margin="4" VerticalAlignment="Center" />
+								<TextBox Text="1080" />
+							</StackPanel>
+						</StackPanel>
+						<Label>View</Label>
+						<StackPanel>
+							<TextBlock Text="Slide thumbnail" />
+							<StackPanel Orientation="Horizontal">
+								<StackPanel.Styles>
+									<Style Selector="TextBox">
+										<Setter Property="MinWidth" Value="60" />
+										<Setter Property="Padding" Value="4" />
+									</Style>
+								</StackPanel.Styles>
+								<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />
+								<material:MaterialIcon Kind="Close" Foreground="#888888" Margin="4" VerticalAlignment="Center" />
+								<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" />
+							</StackPanel>
+						</StackPanel>
+						<Label>NDI</Label>
+						<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableOutputNDI}">Enable Main Output NDI</CheckBox>
+						<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableLyricsOutputNDI}">Enable Lyrics Output NDI</CheckBox>
+						<!--<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableStageDisplayNDI}">Enable Stage Display NDI</CheckBox>-->
 					</StackPanel>
-				</StackPanel>
-				<Label>View</Label>
-				<StackPanel>
-					<TextBlock Text="Slide thumbnail" />
-					<StackPanel Orientation="Horizontal">
-						<StackPanel.Styles>
-							<Style Selector="TextBox">
-								<Setter Property="MinWidth" Value="60" />
-								<Setter Property="Padding" Value="4" />
-							</Style>
-						</StackPanel.Styles>
-						<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />
-						<material:MaterialIcon Kind="Close" Foreground="#888888" Margin="4" VerticalAlignment="Center" />
-						<TextBox Text="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" />
+				</ScrollViewer>
+
+			</TabItem>
+			<TabItem>
+				<TabItem.Header>
+					Startup
+				</TabItem.Header>
+			</TabItem>
+			<TabItem>
+				<TabItem.Header>
+					Library
+				</TabItem.Header>
+				<ScrollViewer>
+					<StackPanel>
+						<TextBox Watermark="Library Path"
+								 Text="{Binding Source={x:Static app:Globals.Preferences}, Path=LibraryPath}" />
+						<Button Content="Pick..." />
 					</StackPanel>
-				</StackPanel>
-				<Label>NDI</Label>
-				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableOutputNDI}">Enable Main Output NDI</CheckBox>
-				<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableLyricsOutputNDI}">Enable Lyrics Output NDI</CheckBox>
-				<!--<CheckBox IsChecked="{Binding Source={x:Static app:Globals.Preferences}, Path=EnableStageDisplayNDI}">Enable Stage Display NDI</CheckBox>-->
-			</StackPanel>
-		</ScrollViewer>
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
 	</DockPanel>
 </Window>

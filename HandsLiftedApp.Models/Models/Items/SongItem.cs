@@ -182,6 +182,9 @@ namespace HandsLiftedApp.Data.Models.Items
             }
         }
 
+        private string _design = "";
+        public string Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
+
         [XmlIgnore]
         private string _copyright = "";
         public string Copyright { get => _copyright; set => this.RaiseAndSetIfChanged(ref _copyright, value); }

@@ -7,6 +7,12 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<TargetFramework>net7.0-windows</TargetFramework>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <WarningsAsErrors>SYSLIB0011</WarningsAsErrors>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <WarningsAsErrors>SYSLIB0011</WarningsAsErrors>
+	</PropertyGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<PropertyGroup>
 			<CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd))</CurrentDate>
@@ -18,9 +24,13 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <AvaloniaXaml Remove="Binaries\**" />
+	  <AvaloniaXaml Remove="Views\Render\Video\**" />
 	  <Compile Remove="Binaries\**" />
+	  <Compile Remove="Views\Render\Video\**" />
 	  <EmbeddedResource Remove="Binaries\**" />
+	  <EmbeddedResource Remove="Views\Render\Video\**" />
 	  <None Remove="Binaries\**" />
+	  <None Remove="Views\Render\Video\**" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Assets\app_logo - Copy.png" />
@@ -74,13 +84,13 @@
 		<PackageReference Include="Serilog.Sinks.Console" />
 		<PackageReference Include="Serilog.Sinks.Debug" />
 		<PackageReference Include="Serilog.Sinks.File" />
+		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="System.Collections.Concurrent" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
-		<ProjectReference Include="..\HandsLiftedApp.Models\HandsLiftedApp.Data.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.PowerPointImporter\HandsLiftedApp.Importer.PowerPoint.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.PropertyGridControl\HandsLiftedApp.PropertyGridControl.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Utils.csproj" />
@@ -105,6 +115,9 @@
 		</Compile>
 		<Compile Update="Views\ControlModules\AutoAdvanceControlView.axaml.cs">
 		  <DependentUpon>AutoAdvanceControlView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\ControlModules\SlidesGroupItemViewWrapper.axaml.cs">
+		  <DependentUpon>SlidesGroupItemViewWrapper.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\DisplayIdentifyWindow.axaml.cs">
 		  <DependentUpon>DisplayIdentifyWindow.axaml</DependentUpon>
@@ -166,8 +179,5 @@
 		<Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
 		  <DependentUpon>DefaultLayout.axaml</DependentUpon>
 		</Compile>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Views\Render\Video\" />
 	</ItemGroup>
 </Project>

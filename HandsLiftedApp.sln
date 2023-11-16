@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibVLCSharp.Avalonia", "Lib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaNDI.Sample", "Libraries\AvaloniaNDI\AvaloniaNDI.Sample\AvaloniaNDI.Sample.csproj", "{16B34400-9320-47C7-92AF-6E90E79D05C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Data", "HandsLiftedApp.Models\HandsLiftedApp.Data.csproj", "{CF068750-B490-4363-8826-8FF406540324}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stocklibvlcsharp", "stocklibvlcsharp", "{185F6A79-3344-4E11-A2FE-FB067B06059B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestVlcSharpAvaloniaApplication", "Libraries\nativevlcsharpavalonia\TestVlcSharpAvaloniaApplication\TestVlcSharpAvaloniaApplication.csproj", "{54DF9FA2-053C-45BC-8248-0106D10DED75}"
@@ -42,6 +40,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		HandsLiftedApp.sln = HandsLiftedApp.sln
 		nuget.config = nuget.config
 		README.md = README.md
+		R:\screenshot-nov2023.jpg = R:\screenshot-nov2023.jpg
 		screenshot.jpg = screenshot.jpg
 	EndProjectSection
 EndProject
@@ -165,18 +164,6 @@ Global
 		{16B34400-9320-47C7-92AF-6E90E79D05C7}.Release|x64.Build.0 = Release|Any CPU
 		{16B34400-9320-47C7-92AF-6E90E79D05C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{16B34400-9320-47C7-92AF-6E90E79D05C7}.Release|x86.Build.0 = Release|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Debug|x64.Build.0 = Debug|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Debug|x86.Build.0 = Debug|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Release|x64.ActiveCfg = Release|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Release|x64.Build.0 = Release|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Release|x86.ActiveCfg = Release|Any CPU
-		{CF068750-B490-4363-8826-8FF406540324}.Release|x86.Build.0 = Release|Any CPU
 		{54DF9FA2-053C-45BC-8248-0106D10DED75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54DF9FA2-053C-45BC-8248-0106D10DED75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54DF9FA2-053C-45BC-8248-0106D10DED75}.Debug|x64.ActiveCfg = Debug|Any CPU

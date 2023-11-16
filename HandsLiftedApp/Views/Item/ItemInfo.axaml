@@ -43,6 +43,4 @@
 		<!--<ContentControl.DataTemplates>
 		</ContentControl.DataTemplates>-->
 	</ContentControl>
-
-
 </UserControl>

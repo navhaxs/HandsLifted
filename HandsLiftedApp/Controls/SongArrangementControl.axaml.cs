@@ -1,7 +1,10 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.ItemState;
 using HandsLiftedApp.Models.SlideState;
 using ReactiveUI;
@@ -41,9 +44,33 @@ namespace HandsLiftedApp.Controls
         //}
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
         {
+            var button = (Control)sender;
+
+
+            ItemsControl? arrangement = this.FindControl<ItemsControl>("PART_ArrangementTokens");
+            Popup popup = button.FindAncestor<Popup>();
+
+            int idx = 0;
+            while (idx < arrangement.Items.Count)
+            {
+                Control? control = arrangement.ContainerFromIndex(idx);
+                ContentPresenter contentPresenter = popup.FindAncestor<ContentPresenter>();
+
+                if (control == contentPresenter)
+                {
+                    break;
+                }
+
+                Debug.WriteLine(idx);
+                idx++;
+            }
+
             var stanza = (SongStanza)((Control)sender).DataContext;
-            var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<Data.Models.Items.SongStanza>() { Value = stanza };
-            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Add(m);
+            var m = new SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>() { Value = stanza };
+
+            //Debug.WriteLine($"Inserting into position {idx}");
+            ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)this.DataContext).Arrangement.Insert(idx, m);
+
         }
         public void OnFillerButtonClick(object? sender, RoutedEventArgs args)
         {

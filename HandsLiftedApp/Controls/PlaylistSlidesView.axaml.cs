@@ -68,7 +68,10 @@ namespace HandsLiftedApp.Controls
                    var container = listBox.GetRealizedContainers().FirstOrDefault(container =>
                     {
                         ListBoxWithoutKey listBoxWithoutKey = container.FindDescendantOfType<ListBoxWithoutKey>();
-                        return (listBoxWithoutKey.SelectedIndex > -1);
+                        if (listBoxWithoutKey != null)
+                            return (listBoxWithoutKey.SelectedIndex > -1);
+
+                        return false;
                     });
 
                    //if (itemContainerInfo == null)

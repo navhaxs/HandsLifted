@@ -15,6 +15,8 @@
     xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:viewsrender="using:HandsLiftedApp.Views.Render"
     xmlns:vm="using:HandsLiftedApp.ViewModels"
+	xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     d:DesignHeight="350"
     d:DesignWidth="1100"
     mc:Ignorable="d">
@@ -43,7 +45,7 @@
             MaxWidth="400"
             Padding="8,4,8,4"
             HorizontalAlignment="Left"
-            Background="Transparent"
+            Background="#35000000"
             BorderThickness="1"
             DockPanel.Dock="Top"
             FontSize="16"
@@ -66,7 +68,7 @@
 				Grid.Column="1"
 				Margin="-3,0"
 				HorizontalAlignment="Stretch"
-				Background="Red"
+				Background="#808080"
 				BorderBrush="Transparent"
 				BorderThickness="3,0"
 				ZIndex="9999" />
@@ -79,6 +81,7 @@
                         Background="Transparent"
                         ItemsSource="{Binding Library.SearchResults}"
                         SelectedItem="{Binding Library.SelectedItem}"
+						HorizontalAlignment="Stretch"
 						BorderThickness="0" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -86,6 +89,18 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+					<i:Interaction.Behaviors>
+						<!--TODO create separate 'selectors' for status messages -->
+						<!--<ia:DataTriggerBehavior Binding="{Binding Library.SearchResults.Size}"
+												ComparisonCondition="Equal"
+												Value="0">
+							<ia:ChangePropertyAction TargetObject="NoItemsLabel"
+													 PropertyName="IsVisible"
+													 Value="True" />
+						</ia:DataTriggerBehavior>-->
+					</i:Interaction.Behaviors>
+					<TextBlock Name="NoItemsLabel" Text="No items" IsVisible="False" />
+					<!--<TextBlock Name="NoResultsLabel" Text="No results" />-->
                 </DockPanel>
 
                 <DockPanel Grid.Column="1" />
@@ -95,14 +110,16 @@
 				Grid.Column="3"
 				Margin="-3,0"
 				HorizontalAlignment="Stretch"
-				Background="Red"
+				Background="#808080"
 				BorderBrush="Transparent"
 				BorderThickness="3,0"
 				ZIndex="9999" />
 
 			<!--  Right box  -->
-            <Grid Grid.Column="4">
-                <TextBlock Text="preview content goes here" />
+            <Grid Grid.Column="4" Margin="8 0">
+				<ScrollViewer>
+                    <TextBlock Text="{Binding Path=Library.SelectedItemPreview, FallbackValue='preview content goes here'}" />
+				</ScrollViewer>
                 <Button
                     Margin="20"
                     Padding="16"

@@ -125,7 +125,7 @@ namespace HandsLiftedApp.ViewModels
 
         public Library Library { get; } = new Library();
 
-        private bool _IsDisplayDebugInfo = true;
+        private bool _IsDisplayDebugInfo = false;
         public bool IsDisplayDebugInfo { get => _IsDisplayDebugInfo; set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value); }
 
         public void LoadDemoSchedule()
@@ -150,7 +150,10 @@ namespace HandsLiftedApp.ViewModels
             {
                 Playlist = new Playlist<PlaylistStateImpl, ItemStateImpl>();
                 var song = PlaylistUtils.CreateSong();
+                Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
                 Playlist.Items.Add(song);
+                Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
+                Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
                 Playlist.Items.Add(new SectionHeadingItem<ItemStateImpl>());
                 return;
             }
@@ -168,7 +171,6 @@ namespace HandsLiftedApp.ViewModels
                     {
                         return blankSlideInstance;
                     }
-
 
                     // TODO Implement nextSlide and previousSlide properly
                     // which will load slides from NEXT and PREV *item* into consideration!!
@@ -325,7 +327,6 @@ namespace HandsLiftedApp.ViewModels
                     Playlist.Items.Remove(lastItem);
                 }
             });
-
             RemoveItemCommand = ReactiveCommand.Create<object>(OnRemoveItemCommand);
             OnPreferencesWindowCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new PreferencesWindow())));
             OnAboutWindowCommand = ReactiveCommand.Create(() => MessageBus.Current.SendMessage(new MainWindowModalMessage(new AboutWindow())));
@@ -342,13 +343,11 @@ namespace HandsLiftedApp.ViewModels
                     Debug.Print(e.Message);
                 }
             });
-
             // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
             ShowOpenFileDialog = new Interaction<Unit, string[]?>();
             ShowOpenFolderDialog = new Interaction<Unit, string?>();
 
             _ = Update(); // calling an async function we do not want to await
-
 
             // TODO don't load until later...
             Dispatcher.UIThread.InvokeAsync(() =>
@@ -676,9 +675,9 @@ namespace HandsLiftedApp.ViewModels
             }
 
             int SlideIndex = item.Slides.IndexOf(slide);
+            Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
 
-            Playlist.State.NavigateToReference(new SlideReference()
-            { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
+            Playlist.State.NavigateToReference(new SlideReference() { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
         }
 
         private async Task OpenGroupAsync()

@@ -73,18 +73,20 @@ namespace HandsLiftedApp.Behaviours
         {
         }
 
+        private ContentPresenter GetItem(Control target) => ControlExtension.FindAncestor<ContentPresenter>(target);
+        private ItemsControl GetParent(Control target) => ControlExtension.FindAncestor<ItemsControl>(target);
+
         private void Source_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             var target = TargetControl ?? AssociatedObject;
             if (target is { })
             {
-                _parent = (Control)target.GetLogicalParent();
-
+                _parent = GetParent(target);
 
                 if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
                 {
-                    ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
-                    int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer((Control)target.GetLogicalParent());
+                    ItemsControl listBox = GetParent(target);
+                    int SourceIndex = listBox.IndexFromContainer(GetItem(target));
 
                     Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
                     ctx.Arrangement.RemoveAt(SourceIndex);
@@ -103,7 +105,7 @@ namespace HandsLiftedApp.Behaviours
                     _parent.PointerMoved += Parent_PointerMoved;
                     _parent.PointerReleased += Parent_PointerReleased;
 
-                    _parent.Opacity = 0.6;
+                    //_parent.Opacity = 0.6;
 
                     var m = _parent.GetVisualRoot();
                     if (m is Window)
@@ -135,15 +137,15 @@ namespace HandsLiftedApp.Behaviours
                .Where(listBoxItem => listBoxItem != target)
                .FirstOrDefault(x =>
                {
-                   var nn = ((Visual)x).GetVisualChildren(); // DockPanel
-                   IEnumerable<Visual> m = listBox.GetVisualsAt(pos); // children
+                   var listItemVisuals = ((Visual)x).GetVisualChildren(); // Grid
+                   IEnumerable<Visual> targetPosVisuals = listBox.GetVisualsAt(pos); // children
 
-                   if (m.Count() > 0)
+                   if (targetPosVisuals.Count() > 0)
                    {
-                       return nn.Any(source =>
+                       return listItemVisuals.Any(source =>
                        {
                            var mm = source.GetVisualDescendants();
-                           return mm.Any(targetDecendant => m.Contains(targetDecendant));
+                           return mm.Any(targetDecendant => targetPosVisuals.Contains(targetDecendant));
                        });
 
                    }
@@ -170,7 +172,7 @@ namespace HandsLiftedApp.Behaviours
 
                 ResetDraggingState();
 
-                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
+                ItemsControl listBox = GetParent(target);
 
                 for (int i = 0; i < listBox.ItemCount; i++)
                 {
@@ -191,7 +193,7 @@ namespace HandsLiftedApp.Behaviours
 
             if (target is { })
             {
-                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
+                ItemsControl listBox = GetParent(target);
 
                 Point pos = args.GetPosition((Control)_parent.Parent);
                 Point pos1 = args.GetPosition(_parent);
@@ -204,16 +206,11 @@ namespace HandsLiftedApp.Behaviours
                 }
                 _previous = pos1;
 
-                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, (Control)target.Parent);
+                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, GetItem(target));
 
                 // check if dragging past the last item
                 ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
 
-                // TODO
-                // TODO
-                // TODO
-                // TODO
-                // TODO
                 // TODO
                 bool isPastLastItem = false;// (lastItem != null) && (isPastLastItem = pos1.Y > lastItem.Bounds.Bottom);
 
@@ -259,8 +256,11 @@ namespace HandsLiftedApp.Behaviours
             if (p == null)
                 p = _parent;
 
-            Window? window = p.GetVisualRoot() as Window;
-            window.Cursor = (cursor == null) ? Cursor.Default : cursor;
+            Window? window = p?.GetVisualRoot() as Window;
+            if (window != null)
+            {
+                window.Cursor = (cursor == null) ? Cursor.Default : cursor;
+            }
         }
 
         private void ResetDraggingState()
@@ -287,15 +287,15 @@ namespace HandsLiftedApp.Behaviours
             {
                 var target = TargetControl ?? AssociatedObject;
 
-                ItemsControl listBox = ControlExtension.FindAncestor<ItemsControl>(target);
+                ItemsControl listBox = GetParent(target);
                 Point pos = e.GetPosition(listBox);
-                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, (Control)target.GetLogicalParent());
+                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, GetItem(target));
 
                 // check if dragging past the last item
                 ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
                 bool isPastLastItem = false; // (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
 
-                int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer((Control)target.GetLogicalParent());
+                int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(((Control)target).FindAncestorOfType<ContentPresenter>());
                 int DestinationIndex = isPastLastItem ? listBox.ItemCount - 1 : listBox.ItemContainerGenerator.IndexFromContainer(hoveredItem);
 
                 for (int i = 0; i < listBox.ItemCount; i++)
@@ -312,7 +312,9 @@ namespace HandsLiftedApp.Behaviours
                 }
 
                 ResetDraggingState();
-                if (SourceIndex != DestinationIndex && DestinationIndex > -1)
+                if (SourceIndex != DestinationIndex
+                    && SourceIndex > -1
+                    && DestinationIndex > -1)
                 {
                     //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
                     Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl> ctx = (Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, ItemStateImpl>)listBox.DataContext;
