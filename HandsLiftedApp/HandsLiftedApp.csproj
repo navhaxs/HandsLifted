@@ -84,7 +84,6 @@
 		<PackageReference Include="Serilog.Sinks.Console" />
 		<PackageReference Include="Serilog.Sinks.Debug" />
 		<PackageReference Include="Serilog.Sinks.File" />
-		<PackageReference Include="SkiaSharp" />
 		<PackageReference Include="System.Collections.Concurrent" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
