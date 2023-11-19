@@ -41,6 +41,7 @@ namespace HandsLiftedApp.Data.Slides
             State = (T)Activator.CreateInstance(typeof(T), this);
         }
 
+        // TODO make this an interface
         public Bitmap? cached { get => _cached; set => this.RaiseAndSetIfChanged(ref _cached, value); }
     }
     public interface ISongTitleSlideState : ISlideState { }

@@ -26,6 +26,8 @@ namespace HandsLiftedApp.Models.SlideState
                               Callback = (bitmap) =>
                               {
                                   this.songSlide.cached = bitmap;
+                                  // https://github.com/AvaloniaUI/Avalonia/issues/8444
+                                  // TODO
                               }
                           });
                       });
