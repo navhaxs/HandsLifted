@@ -69,7 +69,7 @@
                 <utils:MyTemplateSelector>
                     <DataTemplate x:Key="SectionHeadingItem">
                         <!--  {Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ECE8F9'}  -->
-                        <Border Margin="0,14,0,14" Background="#124449">
+                        <Border Margin="0 14" Background="#124449">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding State.IsSelected}"
@@ -87,7 +87,7 @@
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
 
-                            <StackPanel Margin="8,0,14,0">
+                            <StackPanel Margin="0,0,0,0">
                                 <DockPanel>
                                     <DockPanel.ContextMenu>
                                         <ContextMenu>
@@ -99,13 +99,13 @@
                                         </ContextMenu>
                                     </DockPanel.ContextMenu>
                                     <Button
-                                        Margin="6"
+                                        Margin="0"
                                         Padding="22,6"
                                         Background="#15FFFFFF"
                                         BorderBrush="#b3aed9"
-                                        BorderThickness="1"
+                                        BorderThickness="0"
+										CornerRadius="0"
                                         Command="{Binding State.EditCommand}"
-                                        CornerRadius="4"
                                         DockPanel.Dock="Right">
                                         Edit
                                     </Button>
@@ -116,6 +116,12 @@
 								Margin="12 0 0 0"
 								Fill="#c43e1c"
 								/>-->
+									<Button
+										Background="Transparent"
+										CornerRadius="0"
+										BorderThickness="0"
+										HorizontalContentAlignment="Left"
+										>
                                     <TextBlock
                                         Margin="16,0,8,0"
                                         Padding="0"
@@ -124,6 +130,7 @@
                                         FontWeight="SemiBold"
                                         Foreground="{Binding ItemGroupColour, Converter={StaticResource ColorToConstrastingBrush}}"
                                         Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+									</Button>
                                 </DockPanel>
                                 <item:ItemInfo VerticalAlignment="Top" />
                             </StackPanel>
@@ -166,7 +173,7 @@
                                 </i:Interaction.Behaviors>
 
                                 <StackPanel>
-                                    <DockPanel Margin="0,6,0,0">
+                                    <DockPanel Margin="0,0,0,0">
                                         <DockPanel.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="MoveUp" />
@@ -176,13 +183,12 @@
                                                 <MenuItem Header="Remove" />
                                             </ContextMenu>
                                         </DockPanel.ContextMenu>
-                                        <item:ItemIcon Margin="14,0,10,0" DockPanel.Dock="Left" />
+                                        <item:ItemIcon Margin="14,8,10,8" DockPanel.Dock="Left" />
                                         <Button
-                                            Margin="6"
                                             Padding="22,6"
                                             Background="#15FFFFFF"
                                             BorderBrush="#b3aed9"
-                                            BorderThickness="1"
+                                            BorderThickness="0"
                                             Command="{Binding State.EditCommand}"
                                             CornerRadius="4"
                                             DockPanel.Dock="Right">
@@ -196,7 +202,7 @@
 								Fill="#c43e1c"
 								/>-->
                                         <TextBlock
-                                            Padding="0"
+                                            Padding="0,8,0,8"
                                             VerticalAlignment="Center"
                                             FontSize="18"
                                             Foreground="{DynamicResource TitleBrush}"
