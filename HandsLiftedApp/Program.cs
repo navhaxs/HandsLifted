@@ -69,6 +69,8 @@ namespace HandsLiftedApp
                 Log.Information("Init LibMPV");
                 FindLibMpv();
                 Log.Information("Init LibMPV...OK");
+                
+                Caffeine.KeepAwake(true);
 
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
