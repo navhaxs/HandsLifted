@@ -55,7 +55,8 @@
                     </Grid>
                 </DataTemplate>
                 <DataTemplate x:Key="CustomSlide">
-                    <customSlide:BibleReadingSlideTemplate />
+                    <!--<customSlide:BibleReadingSlideTemplate />-->
+                    <customSlide:CustomAxamlSlide />
                 </DataTemplate>
                 <DataTemplate x:Key="MyKey">
                     <TextBlock Background="Red" Text="{Binding Text}" />

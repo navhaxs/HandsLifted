@@ -5,6 +5,7 @@
     xmlns:app="using:HandsLiftedApp"
     xmlns:avaloniaconverters="using:Avalonia.Markup.Xaml.Converters"
     xmlns:behaviours="using:HandsLiftedApp.Behaviours"
+	xmlns:customSlide="using:HandsLiftedApp.Views.Render.CustomSlide"
     xmlns:controls="using:HandsLiftedApp.Controls"
     xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -328,7 +329,10 @@
                                                         Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
                                                         Stretch="Uniform" />
                                                 </DataTemplate>
-                                                <DataTemplate x:Key="MyKey">
+												<DataTemplate x:Key="CustomSlide">
+													<customSlide:CustomAxamlSlide />
+												</DataTemplate>
+												<DataTemplate x:Key="MyKey">
                                                     <TextBlock Background="Red" Text="{Binding Text}" />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="MyKey2">
@@ -336,8 +340,9 @@
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="Fallback">
                                                     <TextBlock
-                                                        Background="Red"
-                                                        Text="{Binding FallbackValue='Not good'}"
+                                                        Background="Green"
+														FontSize="80"
+                                                        Text="{Binding FallbackValue='ItemSlidesView.DataTemplateBindingError'}"
                                                         TextWrapping="Wrap" />
                                                 </DataTemplate>
                                             </utils:MyTemplateSelector>
