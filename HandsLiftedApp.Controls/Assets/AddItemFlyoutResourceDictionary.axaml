@@ -1,0 +1,87 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="HandsLiftedApp.Controls.Assets.AddItemFlyoutResourceDictionary"
+    xmlns:material="using:Material.Icons.Avalonia"
+    x:CompileBindings="False">
+
+	<Design.PreviewWith>
+		<!-- Add Controls for Previewer Here -->
+		<Button Content="Arrangement"
+				Flyout="{StaticResource addItemFlayout}"
+		/>
+	</Design.PreviewWith>
+	
+    <MenuFlyout x:Key="addItemFlyout" Placement="BottomEdgeAlignedLeft">
+        <MenuItem Header="_Presentation">
+			<MenuItem Click="OnMenuItemClick" CommandParameter="Presentation" Header="PowerPoint">
+                <MenuItem.Icon>
+                    <material:MaterialIcon Kind="Presentation" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Click="OnMenuItemClick" CommandParameter="GoogleSlides" Header="Google Slides">
+                <MenuItem.Icon>
+                    <material:MaterialIcon Kind="Slideshow" />
+                </MenuItem.Icon>
+            </MenuItem>
+			<MenuItem Click="OnMenuItemClick" CommandParameter="PDF" Header="PDF Slides (Canva, etc.)">
+                <MenuItem.Icon>
+                    <material:MaterialIcon Kind="Slideshow" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </MenuItem>
+        <MenuItem Header="_Song">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="Music" />
+            </MenuItem.Icon>
+            <MenuItem Click="OnMenuItemClick" CommandParameter="ExistingSong" Header="From _File" />
+			<MenuItem Click="OnMenuItemClick" CommandParameter="NewSong" Header="From _New">
+                <MenuItem.Icon>
+                    <material:MaterialIcon Kind="Music" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </MenuItem>
+        <MenuItem Click="OnMenuItemClick" CommandParameter="Media" Header="_Graphics">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="Image" />
+            </MenuItem.Icon>
+        </MenuItem>
+		<MenuItem Click="OnMenuItemClick" CommandParameter="Media" Header="_Video">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="Video" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem
+            Click="OnMenuItemClick" CommandParameter="Logo"
+            Header="_Logo">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="Star" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem
+            Click="OnMenuItemClick" CommandParameter="SectionHeading"
+            Header="_Section">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="FormatSection" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="_Group">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="ContentCopy" />
+            </MenuItem.Icon>
+
+            <MenuItem
+                Click="OnMenuItemClick" CommandParameter="MediaGroup"
+                Header="_...From Folder of Media" />
+            <MenuItem 
+                Click="OnMenuItemClick" CommandParameter="BlankGroup"
+                Header="Blank Group" />
+            <MenuItem 
+                Click="OnMenuItemClick" CommandParameter="BibleReadingSlideGroup"
+                Header="Custom Group (Bible Reading Slide Test)" />
+        </MenuItem>
+    </MenuFlyout>
+</ResourceDictionary>

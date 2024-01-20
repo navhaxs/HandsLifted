@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.ReactiveUI" />
+        <PackageReference Include="Avalonia.Themes.Fluent" />
+        <PackageReference Include="Avalonia.Fonts.Inter" />
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
+        <PackageReference Include="Avalonia.Xaml.Behaviors" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" />
+        <PackageReference Include="Avalonia.Xaml.Interactivity" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Compile Update="Navigation\ItemOrderListView.axaml.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <None Update="Navigation\ItemOrderListView.axaml">
+        <SubType>Designer</SubType>
+      </None>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="NewFolder\" />
+    </ItemGroup>
+</Project>

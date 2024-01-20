@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    </PropertyGroup>
+    <ItemGroup>
+      <None Remove="Assets\avalonia-logo.ico" />
+    </ItemGroup>
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\avalonia-logo.ico" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.ReactiveUI" />
+        <PackageReference Include="Avalonia.Themes.Fluent" />
+        <PackageReference Include="Avalonia.Fonts.Inter" />
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj" />
+      <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Compile Update="Views\Editors\SongEditorWindow.axaml.cs">
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
+    </ItemGroup>
+</Project>

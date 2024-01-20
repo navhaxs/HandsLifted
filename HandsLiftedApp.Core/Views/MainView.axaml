@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
+             xmlns:core="clr-namespace:HandsLiftedApp.Core"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="HandsLiftedApp.Core.Views.MainView"
+             Background="Yellow"
+             x:DataType="vm:MainViewModel">
+    <Design.DataContext>
+    <vm:MainViewModel />
+  </Design.DataContext>
+
+    <Grid ColumnDefinitions="* 1 2*">
+
+        <DockPanel>
+			<TextBlock 
+				Text="{Binding CurrentPlaylist.Playlist.Title, FallbackValue='Untitled Playlist'}" 
+				Padding="22 16"
+				FontSize="16"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center" 
+				DockPanel.Dock="Top"/>
+            <UniformGrid Rows="1" DockPanel.Dock="Top">
+                <Button Click="OpenFileButton_Clicked" HorizontalAlignment="Stretch">Open file</Button>
+                <Button Click="SaveFileButton_Clicked" HorizontalAlignment="Stretch">Save file</Button>
+                <Button Click="TestButton_Clicked" HorizontalAlignment="Stretch">Update title</Button>
+			</UniformGrid>
+			<controls:ItemOrderListView DataContext="{Binding CurrentPlaylist}"
+										DockPanel.Dock="Left"/>
+
+		</DockPanel>
+
+		<GridSplitter Grid.Column="1" />
+
+		<DockPanel Grid.Column="2">
+            <StackPanel Background="Aquamarine">
+                <DockPanel>
+                    <ListBox
+                        DockPanel.Dock="Left"
+                        ItemsSource="{Binding CurrentPlaylist.Playlist.Items}"
+                        SelectedIndex="{Binding CurrentPlaylist.SelectedItemIndex}"
+                        />
+                    <core:SongLyricEditor DataContext="{Binding CurrentPlaylist.SelectedItem}" />
+                </DockPanel>
+            </StackPanel>
+		</DockPanel>
+
+    </Grid>
+</UserControl>

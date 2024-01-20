@@ -64,7 +64,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Importer.Goo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Importer.PDF", "HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj", "{D8246774-516C-4E7C-8926-41812E5500B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Utils", "HandsLiftedApp.Utils\HandsLiftedApp.Utils.csproj", "{320D673C-DAE7-4501-A376-213D6A104410}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Common", "HandsLiftedApp.Utils\HandsLiftedApp.Common.csproj", "{320D673C-DAE7-4501-A376-213D6A104410}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Tests", "HandsLiftedApp.Tests\HandsLiftedApp.Tests.csproj", "{09638816-89B1-4DC0-B713-4E78F0E99165}"
 EndProject
@@ -82,9 +82,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Controls.LibMpv", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LibMpv", "LibMpv", "{21CE3976-E587-426A-9F52-8720F4939B09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.WebEditor", "HandsLiftedApp.WebEditor\HandsLiftedApp.WebEditor.csproj", "{851972C5-0A3C-46A5-9267-B1ADAF8F3C6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.WebEditor", "HandsLiftedApp.WebEditor\HandsLiftedApp.WebEditor.csproj", "{851972C5-0A3C-46A5-9267-B1ADAF8F3C6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.App", "HandsLiftedApp.App\HandsLiftedApp.App.csproj", "{47050343-94CA-48E3-A018-9325B9137408}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Core", "HandsLiftedApp.Core\HandsLiftedApp.Core.csproj", "{47050343-94CA-48E3-A018-9325B9137408}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Desktop", "HandsLiftedApp.Desktop\HandsLiftedApp.Desktop.csproj", "{725086A0-31B4-4A0C-9726-0C85970B8022}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Controls", "HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj", "{4A07DB05-1879-4202-A04C-B36747EED57A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Data", "HandsLiftedApp.Data\HandsLiftedApp.Data.csproj", "{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -408,6 +414,42 @@ Global
 		{47050343-94CA-48E3-A018-9325B9137408}.Release|x64.Build.0 = Release|Any CPU
 		{47050343-94CA-48E3-A018-9325B9137408}.Release|x86.ActiveCfg = Release|Any CPU
 		{47050343-94CA-48E3-A018-9325B9137408}.Release|x86.Build.0 = Release|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Debug|x64.Build.0 = Debug|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Debug|x86.Build.0 = Debug|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Release|x64.ActiveCfg = Release|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Release|x64.Build.0 = Release|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Release|x86.ActiveCfg = Release|Any CPU
+		{725086A0-31B4-4A0C-9726-0C85970B8022}.Release|x86.Build.0 = Release|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Debug|x64.Build.0 = Debug|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Debug|x86.Build.0 = Debug|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Release|x64.ActiveCfg = Release|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Release|x64.Build.0 = Release|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Release|x86.ActiveCfg = Release|Any CPU
+		{4A07DB05-1879-4202-A04C-B36747EED57A}.Release|x86.Build.0 = Release|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Debug|x64.Build.0 = Debug|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Debug|x86.Build.0 = Debug|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|x64.ActiveCfg = Release|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|x64.Build.0 = Release|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|x86.ActiveCfg = Release|Any CPU
+		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

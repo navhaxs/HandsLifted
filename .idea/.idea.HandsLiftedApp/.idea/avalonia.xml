@@ -7,6 +7,11 @@
         <entry key="HandsLiftedApp.App/MainWindow.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.App/Views/MainView.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.App/Views/MainWindow.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
+        <entry key="HandsLiftedApp.Controls/Assets/AddItemFlyoutResourceDictionary.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Controls/Navigation/ItemOrderListView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/App.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/MainView.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/MainWindow.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.PropertyGridControl/CollectionInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp.PropertyGridControl/ObjectInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor/App.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
