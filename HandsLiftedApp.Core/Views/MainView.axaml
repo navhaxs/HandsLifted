@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
              xmlns:core="clr-namespace:HandsLiftedApp.Core"
+             xmlns:controls1="clr-namespace:HandsLiftedApp.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Core.Views.MainView"
              Background="Yellow"
@@ -43,7 +44,10 @@
                         ItemsSource="{Binding CurrentPlaylist.Playlist.Items}"
                         SelectedIndex="{Binding CurrentPlaylist.SelectedItemIndex}"
                         />
-                    <core:SongLyricEditor DataContext="{Binding CurrentPlaylist.SelectedItem}" />
+                    <StackPanel>
+                        <core:SongLyricEditor DataContext="{Binding CurrentPlaylist.SelectedItem}" />
+                        <controls1:ItemSlidesView DataContext="{Binding CurrentPlaylist.SelectedItem}" />
+                    </StackPanel>
                 </DockPanel>
             </StackPanel>
 		</DockPanel>

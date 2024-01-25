@@ -1,0 +1,294 @@
+﻿<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:CompileBindings="False"
+    mc:Ignorable="d">
+
+    <Styles.Resources>
+        <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
+        <converters:StringHasValueVisibilityConverter x:Key="stringHasValueVisibilityConverter" />
+    </Styles.Resources>
+
+    <Design.PreviewWith>
+        <!--  Add Controls for Previewer Here  -->
+        <ListBox Width="500" Height="400">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel ItemHeight="160" ItemWidth="240" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBoxItem>ABC</ListBoxItem>
+            <ListBoxItem>111</ListBoxItem>
+            <ListBoxItem>222</ListBoxItem>
+            <ListBoxItem>333</ListBoxItem>
+        </ListBox>
+    </Design.PreviewWith>
+
+    <!--  Add Styles Here  -->
+    <Style Selector="controls|ListBoxWithoutKey">
+        <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    Name="border"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <ItemsPresenter
+                        Name="PART_ItemsPresenter"
+                        Margin="{TemplateBinding Padding}"
+                        ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    <!--
+                        TODO 									Items="{TemplateBinding Items}"
+                        ItemTemplate="{TemplateBinding ItemTemplate}"
+                    -->
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="ListBox:disabled /template/ Border#border">
+        <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+    </Style>
+
+    <Style Selector="ListBoxItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="4 8" />
+        <Setter Property="Margin" Value="4 8" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DockPanel>
+                    <!--<TextBlock DockPanel.Dock="Bottom" Padding="2 0 2 2">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}{0}. {1}">
+								-->
+                    <!--  TODO in avalonia 0.11, make this bold  -->
+                    <!--
+								<Binding RelativeSource="{RelativeSource TemplatedParent}" Converter="{StaticResource itemToIndexConverter}" FallbackValue="#" />
+								<Binding Path="SlideLabel" />
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>-->
+                    <StackPanel
+                        Margin="2,2,2,2"
+                        DockPanel.Dock="Bottom"
+                        Orientation="Horizontal">
+                        <TextBlock Classes="slideNumber">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}">
+                                    <!--  TODO: this breaks when rearranging items by using Move() on the source ObservableCollection  -->
+                                    <!--<Binding Path="DataContext.SlideNumber" RelativeSource="{RelativeSource TemplatedParent}" />-->
+                                    <MultiBinding Converter="{StaticResource itemToIndexConverter}" FallbackValue="#">
+                                        <Binding RelativeSource="{RelativeSource TemplatedParent}" />
+                                        <Binding Path="DataContext.Slides" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:ListBoxWithoutKey}, AncestorLevel=1}" />
+                                        <!--<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType={controls:ListBoxWithoutKey}}" />-->
+                                        <!--<Binding Path="$parent[ListBoxWithoutKey].DataContext.Slides"/>-->
+                                        <!--<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}" />-->
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Margin="8,0,0,0" IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}">
+                                    <Binding FallbackValue="Verse 2" Path="SlideLabel" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                    <Grid>
+                       <Viewbox HorizontalAlignment="Left" x:Name="PART_Thumbnail">
+                            <Grid Width="1280" Height="720">
+								<Grid.Background>
+									<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+										<VisualBrush.Visual>
+											<Canvas
+												Width="16"
+												Height="16"
+												Background="#1a1a1a">
+												<Rectangle
+													Width="8"
+													Height="8"
+													Fill="#1c1c1c" />
+												<Rectangle
+													Canvas.Left="8"
+													Canvas.Top="8"
+													Width="8"
+													Height="8"
+													Fill="#1c1c1c" />
+											</Canvas>
+										</VisualBrush.Visual>
+									</VisualBrush>
+								</Grid.Background>
+                                <ContentPresenter
+                                    Name="PART_ContentPresenter"
+                                    Margin="4"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    IsHitTestVisible="False" />
+                            </Grid>
+                        </Viewbox>
+						<Border
+							HorizontalAlignment="Left"
+							Width="{Binding #PART_Thumbnail.Bounds.Width}"
+							Height="{Binding #PART_Thumbnail.Bounds.Height}"
+					  Name="PART_Border"
+					  DockPanel.Dock="Bottom">
+						</Border>
+					</Grid>
+
+					<Interaction.Behaviors>
+						<EventTriggerBehavior EventName="PointerPressed">
+							<InvokeCommandAction Command="{Binding ViewModel.SlideClickCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+								<InvokeCommandAction.CommandParameter>
+									<MultiBinding>
+										<Binding />
+										<Binding Path="$parent[ListBox].DataContext" />
+									</MultiBinding>
+								</InvokeCommandAction.CommandParameter>
+							</InvokeCommandAction>
+						</EventTriggerBehavior>
+					</Interaction.Behaviors>
+				</DockPanel>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding $parent[Window].DataContext.EditSlideInfoCommand}"
+                        CommandParameter="{Binding}"
+                        Header="Edit / Slide / Info" />
+                    <MenuItem
+                        Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}"
+                        CommandParameter="{Binding}"
+                        Header="Move Up" />
+                    <MenuItem
+                        Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}"
+                        CommandParameter="{Binding}"
+                        Header="Move Down" />
+                    <MenuItem
+                        Command="{Binding $parent[Window].DataContext.RemoveItemCommand}"
+                        CommandParameter="{Binding}"
+                        Header="Remove Item" />
+                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideSplitFromHere}" Header="Split group from here">
+                        <MenuItem.CommandParameter>
+                            <MultiBinding>
+                                <Binding />
+                                <Binding Path="$parent[ListBox].DataContext" />
+                            </MultiBinding>
+                        </MenuItem.CommandParameter>
+                    </MenuItem>
+                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinBackwardsFromHere}" Header="Join group with previous item group">
+                        <MenuItem.CommandParameter>
+                            <MultiBinding>
+                                <Binding />
+                                <Binding Path="$parent[ListBox].DataContext" />
+                            </MultiBinding>
+                        </MenuItem.CommandParameter>
+                    </MenuItem>
+                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinForwardsFromHere}" Header="Join group with next item">
+                        <MenuItem.CommandParameter>
+                            <MultiBinding>
+                                <Binding />
+                                <Binding Path="$parent[ListBox].DataContext" />
+                            </MultiBinding>
+                        </MenuItem.CommandParameter>
+                    </MenuItem>
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeControlHighlightMidBrush}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush4}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:selected:focus:pointerover /template/ ContentPresenter">
+		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush2}"/>
+	</Style>
+	
+	<Style Selector="ListBoxItem:pointerover /template/ DockPanel > Border">
+		<Setter Property="BorderBrush" Value="Yellow"/>
+	</Style>
+
+	<Style Selector="ListBoxItem:pointerover /template/ Border">
+		<Setter Property="BorderBrush" Value="Yellow"/>
+		<Setter Property="BorderThickness" Value="24"/>
+	</Style>-->
+
+    <!--<Style Selector="ListBoxItem:pointerover /template/ Border">
+	</Style>-->
+
+    <!--<Style Selector="Border:selected">
+		<Setter Property="BorderBrush" Value="Green"/>
+	</Style>-->
+
+    <!--<Style Selector="ListBoxItem:pointerover /template/ DockPanel TextBlock">
+		<Setter Property="Foreground" Value="#a92b1a"/>
+	</Style>-->
+
+    <!--<Style Selector="ListBoxItem /template/ DockPanel">
+		<Setter Property="Background" Value="Red"/>
+	</Style>-->
+
+    <Style Selector="ListBoxItem /template/ Border#PART_Border">
+        <Setter Property="BorderBrush" Value="#4E4E4E" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style Selector="ListBoxItem:selected /template/ Border#PART_Border">
+        <Setter Property="BorderBrush" Value="#c43e1c" />
+        <Setter Property="BorderThickness" Value="4" />
+    </Style>
+
+    <Style Selector="ListBoxItem:selected /template/ TextBlock.slideNumber">
+        <Setter Property="Foreground" Value="#d24726" />
+    </Style>
+
+    <Style Selector="ListBoxItem:pointerover /template/ Border#PART_Border">
+        <Setter Property="BorderBrush" Value="#724bab" />
+        <Setter Property="BorderThickness" Value="4" />
+    </Style>
+
+    <!--  TODO see https://github.com/AvaloniaUI/Avalonia/issues/2427#issuecomment-827659511  -->
+    <!--<Style Selector="ListBoxItem[ContextMenu.IsOpen=true] /template/ Border#PART_Border">
+		<Setter Property="BorderBrush" Value="#e59400"/>
+		<Setter Property="BorderThickness" Value="4" />
+	</Style>-->
+
+    <Style Selector="ListBoxItem:selected:pointerover /template/ Border#PART_Border">
+        <Setter Property="BorderBrush" Value="#a92b1a" />
+    </Style>
+
+</Styles>

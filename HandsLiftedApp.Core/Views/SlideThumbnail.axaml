@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
+			 x:CompileBindings="False"
+             x:Class="HandsLiftedApp.Core.Views.SlideThumbnail">
+	<DockPanel Background="Red">
+		<TextBlock DockPanel.Dock="Bottom" Background="Transparent" Padding="2 0 2 2" Text="#" />
+		<Border DockPanel.Dock="Bottom" BorderBrush="#724bab" BorderThickness="2" CornerRadius="2">
+			<Border.Background>
+				<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+					<VisualBrush.Visual>
+						<Canvas Width="16" Height="16" Background="#1a1a1a">
+							<Rectangle Height="8" Width="8" Fill="#1d1d1d" />
+							<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+						</Canvas>
+					</VisualBrush.Visual>
+				</VisualBrush>
+			</Border.Background>
+			<ContentPresenter HorizontalAlignment="Stretch" Content="{Binding}" />
+		</Border>
+	</DockPanel>
+</UserControl>

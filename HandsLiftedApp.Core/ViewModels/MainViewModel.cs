@@ -7,6 +7,7 @@ using HandsLiftedApp.Data.ViewModels;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 
@@ -47,6 +48,23 @@ public class MainViewModel : ViewModelBase
                         SongEditorViewModel vm = new SongEditorViewModel() { song = song };
                         SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
                         seq.Show();
+                        break;
+                    case AddItemMessage.AddItemType.MediaGroup:
+                        filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
+                        SlidesGroupItem slidesGroup = new SlidesGroupItem() { Title = "New media group" };
+
+                        CurrentPlaylist.Playlist.Items.Add(slidesGroup);
+                        foreach (var filePath in filePaths)
+                        {
+                            if (filePath != null && filePath is string)
+                            {
+
+                                DateTime now = DateTime.Now;
+                                string fileName = Path.GetFileName(filePath);
+                                string folderName = Path.GetDirectoryName(filePath);
+                                //slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(filePath));
+                            }
+                        }
                         break;
                     default:
                         Debug.Print($"Unknown AddItemType: [${addItemMessage.Type}]");

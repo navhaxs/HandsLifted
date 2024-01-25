@@ -33,5 +33,11 @@
       <Compile Update="Views\Editors\SongEditorWindow.axaml.cs">
         <DependentUpon>%(Filename)</DependentUpon>
       </Compile>
+      <Compile Update="Views\ItemSlidesView.axaml.cs">
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
+      <Compile Update="Views\SlideThumbnail.axaml.cs">
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>
