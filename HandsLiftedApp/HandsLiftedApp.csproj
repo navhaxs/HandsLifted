@@ -5,7 +5,7 @@
 		<ApplicationIcon>Assets\app.ico</ApplicationIcon>
 		<AvaloniaXamlIlDebuggerLaunch>false</AvaloniaXamlIlDebuggerLaunch>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<TargetFramework>net7.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	  <WarningsAsErrors>SYSLIB0011</WarningsAsErrors>

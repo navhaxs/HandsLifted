@@ -42,7 +42,15 @@ public partial class MainView : UserControl
 
             if (this.DataContext is MainViewModel vm)
             {
-                vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
+                try
+                {
+                    vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("[DOC] Failed to parse playlist XML");
+                    Console.WriteLine(e);
+                }
             }
         }
     }

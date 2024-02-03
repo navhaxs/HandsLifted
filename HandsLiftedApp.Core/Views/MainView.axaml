@@ -14,27 +14,34 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-    <Grid ColumnDefinitions="* 1 2*">
+    <Grid>
+	    
+	    <Grid.ColumnDefinitions>
+		    <ColumnDefinition Width="*" MaxWidth="400" />
+		    <ColumnDefinition Width="6" />
+		    <ColumnDefinition Width="2*" />
+	    </Grid.ColumnDefinitions>
 
-        <DockPanel>
-			<TextBlock 
-				Text="{Binding CurrentPlaylist.Playlist.Title, FallbackValue='Untitled Playlist'}" 
+	    <DockPanel>
+	        <TextBox
+		        Text="{Binding CurrentPlaylist.Playlist.Title, FallbackValue='Untitled Playlist'}" 
 				Padding="22 16"
 				FontSize="16"
-				HorizontalAlignment="Left"
+				HorizontalAlignment="Stretch"
+		        BorderThickness="0"
 				VerticalAlignment="Center" 
 				DockPanel.Dock="Top"/>
             <UniformGrid Rows="1" DockPanel.Dock="Top">
                 <Button Click="OpenFileButton_Clicked" HorizontalAlignment="Stretch">Open file</Button>
                 <Button Click="SaveFileButton_Clicked" HorizontalAlignment="Stretch">Save file</Button>
-                <Button Click="TestButton_Clicked" HorizontalAlignment="Stretch">Update title</Button>
+                <Button Click="TestButton_Clicked" HorizontalAlignment="Stretch">Info</Button>
 			</UniformGrid>
 			<controls:ItemOrderListView DataContext="{Binding CurrentPlaylist}"
 										DockPanel.Dock="Left"/>
 
 		</DockPanel>
 
-		<GridSplitter Grid.Column="1" />
+		<GridSplitter Grid.Column="1" Background="Red" />
 
 		<DockPanel Grid.Column="2">
             <StackPanel Background="Aquamarine">

@@ -179,10 +179,10 @@
                         <MenuItem Header="Add Item" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
-                <ListBox.DataTemplates>
+                <ListBox.ItemTemplate>
                     <utils:MyTemplateSelector>
                         <DataTemplate x:Key="SectionHeadingItem">
-                            <Grid>
+                            <Grid Background="Aqua">
                                 <!--  TODO not working  -->
                                 <!--<Grid.Styles>
 									<Style Selector="Border:pointerover">
@@ -214,7 +214,7 @@
                             <DockPanel
                                 Margin="0,0,0,0"
                                 VerticalAlignment="Stretch"
-                                Background="Transparent">
+                                Background="Red">
                                 <Grid Width="16">
                                     <Viewbox
                                         Width="25"
@@ -241,7 +241,7 @@
                             </DockPanel>
                         </DataTemplate>
                     </utils:MyTemplateSelector>
-                </ListBox.DataTemplates>
+                </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>
         <Button

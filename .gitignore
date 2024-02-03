@@ -8,7 +8,7 @@
 HandsLiftedApp/BuildInfo/BuildDate.txt
 HandsLiftedApp/BuildInfo/GitHash.txt
 
-global-packages/
+global-packages/*
 
 # User-specific files
 *.rsuser
