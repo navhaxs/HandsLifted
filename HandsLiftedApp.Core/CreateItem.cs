@@ -7,12 +7,19 @@ using ReactiveUI;
 using Serilog;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core
 {
     internal class CreateItem
     {
+        public static readonly string[] SUPPORTED_SONG = { "txt", "xml" };
+        public static readonly string[] SUPPORTED_POWERPOINT = { "ppt", "pptx", "odp" };
+        public static readonly string[] SUPPORTED_VIDEO = { "mp4", "flv", "mov", "mkv", "avi", "wmv" };
+        public static readonly string[] SUPPORTED_IMAGE = { "bmp", "png", "jpg", "jpeg" };
+        
         public static async Task OpenPresentationFileAsync(string path, PlaylistInstance currentPlaylist)
         {
             //try
@@ -74,5 +81,18 @@ namespace HandsLiftedApp.Core
             //}
         }
 
+        public static MediaSlide GenerateMediaContentSlide(Uri path) //, int index)
+        {
+            var filename = path.AbsolutePath;
+            string _filename = filename.ToLower();
+
+            // TODO: make VideoSlide and ImageSlide both share common MediaSlide parent class
+            if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x)))
+            {
+                return new VideoSlide(filename); // { Index = index };
+            }
+
+            return new ImageSlide(filename); // { Index = index };
+        }
     }
 }

@@ -21,9 +21,8 @@ namespace HandsLiftedApp.Data.Models.Items
             Title = "(New Section)";
         }
 
-        public XmlColor _itemGroupColour = Color.Parse("#4d347f");
-        [XmlIgnore]
-        public Color ItemGroupColour { get => _itemGroupColour; set => this.RaiseAndSetIfChanged(ref _itemGroupColour, value); }
+        public XmlColor GroupColour = Color.Parse("#4d347f");
+        public Color ItemGroupAvaloniaColor { get => GroupColour; set => this.RaiseAndSetIfChanged(ref GroupColour, value); }
 
         // A section heading item itself has no slides (it is empty)
         public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>() { };

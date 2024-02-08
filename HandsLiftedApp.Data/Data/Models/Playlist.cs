@@ -41,7 +41,7 @@ namespace HandsLiftedApp.Data.Models
         private List<BaseSlideTheme> _designs = new List<BaseSlideTheme>();
         public List<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
 
-        public DateTimeOffset _date = DateTimeOffset.Now;
+        private DateTimeOffset _date = DateTimeOffset.Now;
         public DateTimeOffset Date { get => _date; set => this.RaiseAndSetIfChanged(ref _date, value); }
 
         [XmlIgnore]

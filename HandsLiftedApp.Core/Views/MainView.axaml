@@ -6,58 +6,172 @@
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
              xmlns:core="clr-namespace:HandsLiftedApp.Core"
              xmlns:controls1="clr-namespace:HandsLiftedApp.Controls"
+             xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:material="using:Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Core.Views.MainView"
-             Background="Yellow"
+             Background="#282828"
              x:DataType="vm:MainViewModel">
+    <DockPanel>
+        <DockPanel
+            DockPanel.Dock="Top">
+            <ToggleButton
+                Name="AppMenuButton"
+                Margin="8,8,8,0"
+                Padding="0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Stretch"
+                Background="Transparent"
+                BorderThickness="0"
+                Classes="MenuItem"
+                ClickMode="Press"
+                DockPanel.Dock="Left"
+                HotKey="Alt+M"
+                IsChecked="{Binding #AppMenuFlyout.IsOpen, Mode=TwoWay}">
+
+                <ToggleButton.Styles>
+                    <Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
+                        <Setter Property="Background" Value="#5c3ab6" />
+                    </Style>
+                    <Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="#9a93cd" />
+                        <!--<Setter Property="Background" Value="Transparent" />-->
+                    </Style>
+                    <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                    <Style Selector="ToggleButton:checked TextBlock">
+                        <Setter Property="Foreground" Value="White" />
+                    </Style>
+                    <Style Selector="ToggleButton:pressed Border.AppButtonBorder">
+                        <Setter Property="Background" Value="#9a93cd" />
+                    </Style>
+                    <Style Selector="ToggleButton:checked Border.AppButtonBorder">
+                        <Setter Property="Background" Value="#5E3593" />
+                    </Style>
+                    <Style Selector="ToggleButton:checked material|MaterialIcon">
+                        <Setter Property="Foreground" Value="White" />
+                    </Style>
+
+                </ToggleButton.Styles>
+                <Border Classes="AppButtonBorder" CornerRadius="6">
+                    <avalonia:MaterialIcon
+                        Width="20"
+                        Height="20"
+                        Margin="12,0"
+                        Kind="DotsHorizontal" />
+                </Border>
+            </ToggleButton>
+            <Popup
+                Name="AppMenuFlyout"
+                IsLightDismissEnabled="True"
+                PlacementMode="BottomEdgeAlignedLeft"
+                PlacementTarget="{Binding #AppMenuButton}">
+                <ContextMenu MinWidth="200" Background="#1d1d1d">
+
+                    <ContextMenu.Styles>
+
+                        <Style Selector="ContextMenu">
+                            <Setter Property="CornerRadius" Value="6" />
+                            <Setter Property="BorderBrush" Value="#9a93cd" />
+                            <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
+                        </Style>
+                        <Style Selector="MenuItem">
+                            <Setter Property="Padding" Value="12 8" />
+                            <Setter Property="FontSize" Value="14" />
+                        </Style>
+
+                    </ContextMenu.Styles>
+
+                    <MenuItem Click="NewFileButton_Clicked" Header="New">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Foreground="#888888" Kind="Shimmer" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <MenuItem Click="OpenFileButton_Clicked" Header="Load">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <MenuItem Click="SaveFileButton_Clicked" Header="Save">
+                        <MenuItem.Icon>
+                            <material:MaterialIcon Foreground="#888888" Kind="ContentSave" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <!-- -->
+                    <!-- <MenuItem Command="{Binding EditPlaylistInfoCommand}" Header="Rename"> -->
+                    <!--     <MenuItem.Icon> -->
+                    <!--         <material:MaterialIcon Foreground="#888888" Kind="Abc" /> -->
+                    <!--     </MenuItem.Icon> -->
+                    <!-- </MenuItem> -->
+                    <!-- -->
+                    <!-- <MenuItem Header="-" /> -->
+                    <!-- -->
+                    <!-- <MenuItem -->
+                    <!--     Command="{Binding OnDebugClickCommand}" -->
+                    <!--     Header="Object Inspector" -->
+                    <!--     IsVisible="{Binding IsDisplayDebugInfo}" /> -->
+                    <!-- -->
+                    <!-- <MenuItem Header="-" IsVisible="{Binding IsDisplayDebugInfo}" /> -->
+                    <!-- -->
+                    <!-- <MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" /> -->
+                    <!-- <MenuItem Command="{Binding OnAboutWindowCommand}" Header="About" /> -->
+                    <MenuItem Click="CloseWindow" Header="Exit" />
+
+                </ContextMenu>
+            </Popup>
+            <TextBox
+                Text="{Binding CurrentPlaylist.Playlist.Title, FallbackValue='Untitled Playlist'}"
+                Padding="22 16"
+                FontSize="16"
+                HorizontalAlignment="Stretch"
+                BorderThickness="0"
+                VerticalAlignment="Center" />
+        </DockPanel>
+
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MaxWidth="400" />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <DockPanel>
+
+                <!-- <UniformGrid Rows="1" DockPanel.Dock="Top"> -->
+                <!--     <Button Click="OpenFileButton_Clicked" HorizontalAlignment="Stretch">Open file</Button> -->
+                <!--     <Button Click="SaveFileButton_Clicked" HorizontalAlignment="Stretch">Save file</Button> -->
+                <!--     <Button Click="TestButton_Clicked" HorizontalAlignment="Stretch">Info</Button> -->
+                <!-- </UniformGrid> -->
+                <controls:ItemOrderListView DataContext="{Binding CurrentPlaylist}"
+                                            DockPanel.Dock="Left" />
+
+            </DockPanel>
+
+            <GridSplitter Grid.Column="1" Background="#282828" />
+
+            <DockPanel Grid.Column="2" Background="#1e1e1e">
+                <!-- <core:SongLyricEditor DataContext="{Binding CurrentPlaylist.SelectedItem}" /> -->
+                <controls1:ItemSlidesView DataContext="{Binding CurrentPlaylist.SelectedItem}" />
+            </DockPanel>
+
+            <GridSplitter Grid.Column="3" Background="#282828" />
+
+            <views:ItemContentView Grid.Column="4" DataContext="{Binding CurrentPlaylist.SelectedItem}" />
+
+        </Grid>
+
+    </DockPanel>
     <Design.DataContext>
-    <vm:MainViewModel />
-  </Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
 
-    <Grid>
-	    
-	    <Grid.ColumnDefinitions>
-		    <ColumnDefinition Width="*" MaxWidth="400" />
-		    <ColumnDefinition Width="6" />
-		    <ColumnDefinition Width="2*" />
-	    </Grid.ColumnDefinitions>
-
-	    <DockPanel>
-	        <TextBox
-		        Text="{Binding CurrentPlaylist.Playlist.Title, FallbackValue='Untitled Playlist'}" 
-				Padding="22 16"
-				FontSize="16"
-				HorizontalAlignment="Stretch"
-		        BorderThickness="0"
-				VerticalAlignment="Center" 
-				DockPanel.Dock="Top"/>
-            <UniformGrid Rows="1" DockPanel.Dock="Top">
-                <Button Click="OpenFileButton_Clicked" HorizontalAlignment="Stretch">Open file</Button>
-                <Button Click="SaveFileButton_Clicked" HorizontalAlignment="Stretch">Save file</Button>
-                <Button Click="TestButton_Clicked" HorizontalAlignment="Stretch">Info</Button>
-			</UniformGrid>
-			<controls:ItemOrderListView DataContext="{Binding CurrentPlaylist}"
-										DockPanel.Dock="Left"/>
-
-		</DockPanel>
-
-		<GridSplitter Grid.Column="1" Background="Red" />
-
-		<DockPanel Grid.Column="2">
-            <StackPanel Background="Aquamarine">
-                <DockPanel>
-                    <ListBox
-                        DockPanel.Dock="Left"
-                        ItemsSource="{Binding CurrentPlaylist.Playlist.Items}"
-                        SelectedIndex="{Binding CurrentPlaylist.SelectedItemIndex}"
-                        />
-                    <StackPanel>
-                        <core:SongLyricEditor DataContext="{Binding CurrentPlaylist.SelectedItem}" />
-                        <controls1:ItemSlidesView DataContext="{Binding CurrentPlaylist.SelectedItem}" />
-                    </StackPanel>
-                </DockPanel>
-            </StackPanel>
-		</DockPanel>
-
-    </Grid>
 </UserControl>

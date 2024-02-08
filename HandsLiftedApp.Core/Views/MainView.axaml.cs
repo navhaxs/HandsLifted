@@ -6,6 +6,7 @@ using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Utils;
 using Serilog;
 using System;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace HandsLiftedApp.Core.Views;
 
@@ -20,9 +21,15 @@ public partial class MainView : UserControl
     {
         if (this.DataContext is MainViewModel vm)
         {
-            vm.CurrentPlaylist.Playlist.Title = "Hello";
+            // vm.CurrentPlaylist.Playlist.Title = "Hello";
         }
     }
+
+    private async void NewFileButton_Clicked(object sender, RoutedEventArgs args)
+    {
+        
+    }
+    
     private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args)
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
@@ -74,6 +81,7 @@ public partial class MainView : UserControl
                 {
                     XmlSerialization.WriteToXmlFile<Playlist>(file.Path.AbsolutePath, vm.CurrentPlaylist.Playlist);
                     //MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
+                    vm.settings.LastOpenedPlaylistFullPath = file.Path.AbsolutePath;
                 }
                 catch (Exception e)
                 {
@@ -83,4 +91,12 @@ public partial class MainView : UserControl
             }
         }
     }
+    
+    private void CloseWindow(object sender, RoutedEventArgs e)
+    {
+        // MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
+        ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown();
+    }
+
+
 }

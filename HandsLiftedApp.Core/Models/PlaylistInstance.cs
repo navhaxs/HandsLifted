@@ -12,19 +12,35 @@ namespace HandsLiftedApp.Core.Models
     {
         public PlaylistInstance()
         {
-            _selectedItem = Observable.CombineLatest(
-                this.WhenAnyValue(x => x.SelectedItemIndex),
-                Playlist.Items.ObserveCollectionChanges(),
-                (selectedIndex, items) =>
-                {
-                    if (selectedIndex != -1)
+            // _selectedItem = Observable.CombineLatest(
+            //     this.WhenAnyValue(x => x.SelectedItemIndex),
+            //     Playlist.Items.ObserveCollectionChanges(),
+            //     (selectedIndex, items) =>
+            //     {
+            //         if (selectedIndex != -1)
+            //         {
+            //             return Playlist.Items.ElementAtOrDefault(selectedIndex);
+            //         }
+            //
+            //         return new BlankItem();
+            //     }
+            //     
+            //     
+            // )   
+            //     
+            _selectedItem = this.WhenAnyValue(
+                    (x => x.SelectedItemIndex),
+                    (int selectedIndex) =>
                     {
-                        return Playlist.Items.ElementAtOrDefault(selectedIndex);
-                    }
+                        if (selectedIndex != -1)
+                        {
+                            return Playlist.Items.ElementAtOrDefault(selectedIndex);
+                        }
 
-                    return new BlankItem();
-                }
-            ).ToProperty(this, x => x.SelectedItem);
+                        return new BlankItem();
+                    })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.SelectedItem);
         }
 
         private DateTime? _lastSaved;

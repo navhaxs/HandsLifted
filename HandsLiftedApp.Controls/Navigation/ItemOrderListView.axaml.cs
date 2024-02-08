@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
+using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Controls
 {
@@ -193,45 +194,24 @@ namespace HandsLiftedApp.Controls
 
         private void MoveUpItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            // get the index of itemState
-            // move the source "item" position (in the "item source")
-            // update the rest
-
-            // int v = Playlist.Items.IndexOf(itemState);
-            //
-            // if (v > 0)
-            // {
-            //     Playlist.Items.Move(v, v - 1);
-
-            MessageBus.Current.SendMessage(new MoveItemMessage());
+            if (sender is Control control)
+            {
+                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.UP });
+            }
         }
         private void MoveDownItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            // get the index of itemState
-            // move the source "item" position (in the "item source")
-            // update the rest
-
-            // int v = Playlist.Items.IndexOf(itemState);
-            //
-            // if (v > 0)
-            // {
-            //     Playlist.Items.Move(v, v - 1);
-
-            MessageBus.Current.SendMessage(new MoveItemMessage());
+            if (sender is Control control)
+            {
+                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.DOWN });
+            }
         }
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            // get the index of itemState
-            // move the source "item" position (in the "item source")
-            // update the rest
-
-            // int v = Playlist.Items.IndexOf(itemState);
-            //
-            // if (v > 0)
-            // {
-            //     Playlist.Items.Move(v, v - 1);
-
-            MessageBus.Current.SendMessage(new MoveItemMessage());
+            if (sender is Control control)
+            {
+                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
+            }
         }
     }
 }

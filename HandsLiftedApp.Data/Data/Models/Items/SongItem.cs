@@ -22,7 +22,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         public SongItem()
         {
-            titleSlide = new SongTitleSlide{ ParentItemUUID = this.UUID };
+            titleSlide = new SongTitleSlide{ };
             //{
             //    Title = Title,
             //    Copyright = Copyright
@@ -151,7 +151,7 @@ namespace HandsLiftedApp.Data.Models.Items
                         }
                         else
                         {
-                            var slide = new SongSlide(_datum, slideId) { Text = Text, Label = Label, ParentItemUUID = this.UUID }; //, Index = i };
+                            var slide = new SongSlide(_datum, slideId) { Text = Text, Label = Label, }; //, Index = i };
                             this.StanzaSlides.Insert(i, slide);
                         }
 
@@ -169,7 +169,7 @@ namespace HandsLiftedApp.Data.Models.Items
                     }
                     else
                     {
-                        this.StanzaSlides.Insert(i, new SongSlide(null, "BLANK") { ParentItemUUID = this.UUID });// { Index = i });
+                        this.StanzaSlides.Insert(i, new SongSlide(null, "BLANK") { });// { Index = i });
                     }
                     i++;
                 }

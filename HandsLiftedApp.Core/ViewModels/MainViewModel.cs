@@ -10,13 +10,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
+using Config.Net;
+using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Utils;
 
 namespace HandsLiftedApp.Core.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
+    public IMySettings settings;
+
     public MainViewModel()
     {
+        settings = new ConfigurationBuilder<IMySettings>()
+            .UseJsonFile("HandsLiftedApp.UserConfig.json")
+            .Build();
+
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<Unit, string[]?>();
 
@@ -73,6 +82,26 @@ public class MainViewModel : ViewModelBase
 
             });
 
+        MessageBus.Current.Listen<MoveItemCommand>()
+            .Subscribe((moveItemCommand) =>
+            {
+                var theSelectedIndex = CurrentPlaylist.Playlist.Items.IndexOf(moveItemCommand.SourceItem);
+
+                switch (moveItemCommand.Direction)
+                {
+                    case MoveItemCommand.DirectionValue.UP:
+                        CurrentPlaylist.Playlist.Items.Move(theSelectedIndex, theSelectedIndex-1);
+                        break;
+                    case MoveItemCommand.DirectionValue.DOWN:
+                        CurrentPlaylist.Playlist.Items.Move(theSelectedIndex, theSelectedIndex+1);
+                        break;
+                    case MoveItemCommand.DirectionValue.REMOVE:
+                        CurrentPlaylist.Playlist.Items.RemoveAt(theSelectedIndex);
+                        break;
+                }
+
+            });
+
         MessageBus.Current.Listen<MoveItemMessage>()
             .Subscribe((moveItemMessage) =>
             {
@@ -112,6 +141,21 @@ public class MainViewModel : ViewModelBase
                 //     });
                 // }).Start();
             });
+
+        // Open reading stream from the first file.
+        if (settings.LastOpenedPlaylistFullPath != null)
+        {
+            try
+            {
+                using var stream = File.Open(settings.LastOpenedPlaylistFullPath, FileMode.Open);
+                CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
+            }
+            catch (Exception e)
+            {
+                // ignored
+            }
+        }
+
     }
 
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }

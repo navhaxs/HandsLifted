@@ -1,5 +1,4 @@
 ﻿using Avalonia.Media.Imaging;
-using ReactiveUI;
 using System;
 using System.IO;
 using System.Xml.Serialization;

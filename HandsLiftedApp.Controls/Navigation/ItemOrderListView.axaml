@@ -141,7 +141,7 @@
 		
         <Style Selector="ListBoxItem Border.SectionHeadingBorder">
             <Setter Property="Background" Value="{DynamicResource GroupHeadingBackground}" />
-            <Setter Property="BorderBrush" Value="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
+            <Setter Property="BorderBrush" Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
         </Style>
          <!--<Style Selector="ListBoxItem:pointerover Border.SectionHeadingBorder">
             <Setter Property="Background" Value="#C11F576F" />
@@ -167,6 +167,7 @@
                 CornerRadius="0,0,0,6"
                 DragDrop.AllowDrop="True"
                 ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
+                SelectedIndex="{Binding SelectedItemIndex}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -193,7 +194,7 @@
 										Classes="SectionHeadingBorder">
                                     <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
                                         <TextBlock
-                                            Padding="0,4"
+                                            Padding="0,8"
                                             Classes="SectionHeadingTextBlock"
                                             FontSize="13"
                                             TextTrimming="CharacterEllipsis">
@@ -213,14 +214,14 @@
                         <DataTemplate x:Key="Fallback">
                             <DockPanel
                                 Margin="0,0,0,0"
-                                VerticalAlignment="Stretch"
-                                Background="Red">
+                                Background="Transparent"
+                                VerticalAlignment="Stretch">
                                 <Grid Width="16">
                                     <Viewbox
                                         Width="25"
                                         Height="25"
                                         Margin="-7,0,7,0"
-                                        IsVisible="{Binding State.IsSelected}">
+                                        IsVisible="{Binding State.IsSelected, FallbackValue=False}">
                                         <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
                                     </Viewbox>
                                 </Grid>

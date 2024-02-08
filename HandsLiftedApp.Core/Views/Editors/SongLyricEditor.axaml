@@ -7,7 +7,7 @@
              xmlns:material="using:Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:CompileBindings="False"
-             x:Class="HandsLiftedApp.Core.SongLyricEditor">
+             x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricEditor">
 	<StackPanel>
 		<TextBox
 			Margin="12,12,12,12"
@@ -125,7 +125,7 @@
 					Background="#F4ECFF"
 					BorderBrush="#dddddd"
 					BorderThickness="1,1,1,1"
-					Command="{Binding OnClickCommand}"
+					Click="Button_OnClick"
 					CornerRadius="20 20 20 20">
 					<DockPanel>
 						<material:MaterialIcon

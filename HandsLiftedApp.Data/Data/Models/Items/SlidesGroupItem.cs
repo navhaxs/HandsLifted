@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models.Items
@@ -24,8 +25,8 @@ namespace HandsLiftedApp.Data.Models.Items
         // this should be a data type for the XML
         // that is the list of slide media items <by type... video song custom etc>
         [XmlIgnore]
-        public TrulyObservableCollection<Slide> _items = new TrulyObservableCollection<Slide>();
-        public TrulyObservableCollection<Slide> Items
+        public TrulyObservableCollection<MediaSlide> _items = new TrulyObservableCollection<MediaSlide>();
+        public TrulyObservableCollection<MediaSlide> Items
         {
             get => _items; set
             {
@@ -42,7 +43,7 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         [XmlIgnore]
-        public override ObservableCollection<Slide> Slides => _items;
+        public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>(_items.Cast<Slide>());
         //new ObservableCollection<Slide>(_items.Select((item, index) =>
         //{
         //    item.Index = index;

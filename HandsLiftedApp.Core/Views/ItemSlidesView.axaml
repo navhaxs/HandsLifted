@@ -126,7 +126,7 @@
                                         VerticalAlignment="Center"
                                         FontSize="20"
                                         FontWeight="SemiBold"
-                                        Foreground="{Binding ItemGroupColour, Converter={StaticResource ColorToConstrastingBrush}}"
+                                        Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}"
                                         Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
 									</Button>
                                 </DockPanel>
