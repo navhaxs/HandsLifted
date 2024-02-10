@@ -5,7 +5,7 @@
         xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HandsLiftedApp.Core.Views.MainWindow"
-        Icon="avares://HandsLiftedApp.Core/Assets/avalonia-logo.ico"
+        Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
         Title="Presentation Editor">
         <views:MainView />
 </Window>

@@ -1,0 +1,18 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:CompileBindings="False"
+             x:Class="HandsLiftedApp.Core.Models.RuntimeData.Items.LogoSlideView">
+    <UserControl.Resources>
+        <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
+    </UserControl.Resources>
+    <!-- make this load from playlist cache of bitmaps...-->
+    <Image
+        RenderOptions.BitmapInterpolationMode="HighQuality"
+    Source="{Binding $parent[Window].DataContext.Playlist.LogoGraphicFile, FallbackValue='D:\VisionScreensApp-TestData\TestImages\VisionScreens_1440_placeholder.png', Converter={StaticResource variableImage}}"
+        Stretch="Uniform" />
+</UserControl>

@@ -6,6 +6,8 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Utils;
 using System;
 using System.Threading.Tasks;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using SongStanza = HandsLiftedApp.Core.Models.RuntimeData.Items.SongStanza;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {
@@ -38,35 +40,35 @@ namespace HandsLiftedApp.Core.Views.Editors
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
         {
             var stanza = (SongStanza)((Control)sender).DataContext;
-            var m = new SongItem.Ref<Data.Models.Items.SongStanza>() { Value = stanza };
-            ((SongEditorViewModel)this.DataContext).song.Arrangement.Add(m);
+            var m = new SongItemInstance.Ref<SongStanza>() { Value = stanza };
+            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Add(m);
         }
 
         public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
         {
-            SongItem.Ref<SongStanza> stanza = (SongItem.Ref<SongStanza>)((Control)sender).DataContext;
+            SongItemInstance.Ref<SongStanza> stanza = (SongItemInstance.Ref<SongStanza>)((Control)sender).DataContext;
 
-            SongItem.Ref<SongStanza> clonedStanza = new SongItem.Ref<SongStanza> { Value = stanza.Value };
+            SongItemInstance.Ref<SongStanza> clonedStanza = new SongItemInstance.Ref<SongStanza> { Value = stanza.Value };
 
-            var lastIndex = ((SongEditorViewModel)this.DataContext).song.Arrangement.IndexOf(stanza);
+            var lastIndex = ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(stanza);
 
-            ((SongEditorViewModel)this.DataContext).song.Arrangement.Insert(lastIndex + 1, clonedStanza);
+            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Insert(lastIndex + 1, clonedStanza);
         }
 
         public void OnRemovePartClick(object? sender, RoutedEventArgs args)
         {
-            SongItem.Ref<SongStanza> stanza = (SongItem.Ref<SongStanza>)((Control)sender).DataContext;
+            SongItemInstance.Ref<SongStanza> stanza = (SongItemInstance.Ref<SongStanza>)((Control)sender).DataContext;
 
-            ((SongEditorViewModel)this.DataContext).song.Arrangement.Remove(stanza);
+            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Remove(stanza);
         }
 
         private void ImportPasteHereTextBox_TextChanged(object? sender, TextChangedEventArgs e)
         {
             try
             {
-                SongItem songItem = SongImporter.createSongItemFromStringData(ImportPasteHereTextBox.Text);
+                SongItemInstance songItemInstance = SongImporter.createSongItemFromStringData(ImportPasteHereTextBox.Text);
 
-                ((SongEditorViewModel)this.DataContext).song.ReplaceWith(songItem);
+                ((SongEditorViewModel)this.DataContext).Song.ReplaceWith(songItemInstance);
             }
             catch (Exception ex)
             {
@@ -91,7 +93,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             if (result != null)
             {
                 //_wavFileSplitter.GetWavHeader(result, text => _textOutput.Text = text);
-                ((SongEditorViewModel)this.DataContext).song = SongImporter.createSongItemFromTxtFile(result[0]);
+                ((SongEditorViewModel)this.DataContext).Song = SongImporter.createSongItemFromTxtFile(result[0]);
             }
         }
 
@@ -110,7 +112,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             var result = await dlg.ShowAsync(window);
             if (result != null)
             {
-                XmlSerialization.WriteToXmlFile<SongItem>(result, ((SongEditorViewModel)this.DataContext).song);
+                XmlSerialization.WriteToXmlFile<SongItemInstance>(result, ((SongEditorViewModel)this.DataContext).Song);
             }
         }
 
@@ -130,15 +132,22 @@ namespace HandsLiftedApp.Core.Views.Editors
             var result = await dlg.ShowAsync(window);
             if (result != null)
             {
-                ((SongEditorViewModel)this.DataContext).song = XmlSerialization.ReadFromXmlFile<SongItem>(result[0]);
+                ((SongEditorViewModel)this.DataContext).Song = XmlSerialization.ReadFromXmlFile<SongItemInstance>(result[0]);
             }
         }
 
         public void DeleteThisPartClick(object? sender, RoutedEventArgs args)
         {
             SongStanza stanza = (SongStanza)((Control)sender).DataContext;
-            ((SongEditorViewModel)this.DataContext).song.Stanzas.Remove(stanza);
+            ((SongEditorViewModel)this.DataContext).Song.Stanzas.Remove(stanza);
         }
 
+        private void GenerateSlides_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SongEditorViewModel songEditorViewModel)
+            {
+                songEditorViewModel.Song.GenerateSlides();
+            }
+        }
     }
 }

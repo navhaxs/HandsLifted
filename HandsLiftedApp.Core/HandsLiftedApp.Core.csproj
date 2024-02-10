@@ -9,7 +9,10 @@
       <None Remove="Assets\avalonia-logo.ico" />
     </ItemGroup>
     <ItemGroup>
+      <AvaloniaResource Include="Assets\app.ico" />
       <AvaloniaResource Include="Assets\avalonia-logo.ico" />
+      <None Remove="Assets\DefaultTheme\VisionScreens_1440_placeholder.png" />
+      <AvaloniaResource Include="Assets\DefaultTheme\VisionScreens_1440_placeholder.png" />
     </ItemGroup>
 
 

@@ -12,6 +12,7 @@
     xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:items="clr-namespace:HandsLiftedApp.Controls.Items;assembly=HandsLiftedApp.Controls"
     xmlns:views1="clr-namespace:HandsLiftedApp.Core.Views"
+    xmlns:items1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -105,7 +106,8 @@
                                         BorderBrush="#b3aed9"
                                         BorderThickness="0"
                                         CornerRadius="0"
-                                        Command="{Binding State.EditCommand}"
+                                        x:Name="EditButton"
+                                        Click="EditButton_OnClick"
                                         DockPanel.Dock="Right">
                                         Edit
                                     </Button>
@@ -136,6 +138,7 @@
 
                         </Border>
                     </DataTemplate>
+                    <!-- default template for all other item types -->
                     <DataTemplate x:Key="Fallback">
 
                         <DockPanel>
@@ -188,8 +191,9 @@
                                             Background="#15FFFFFF"
                                             BorderBrush="#b3aed9"
                                             BorderThickness="0"
-                                            Command="{Binding State.EditCommand}"
                                             CornerRadius="4"
+                                            x:Name="EditButton"
+                                            Click="EditButton_OnClick"
                                             DockPanel.Dock="Right">
                                             Edit
                                         </Button>
@@ -216,7 +220,7 @@
                                         AutoScrollToSelectedItem="False"
                                         Background="Transparent"
                                         ItemsSource="{Binding Slides}"
-                                        SelectedIndex="{Binding State.SelectedSlideIndex, Mode=OneWay}"
+                                        SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}"
                                         SelectionChanged="OnSelectionChanged"
                                         SelectionMode="Single">
                                         <controls:ListBoxWithoutKey.Styles>
@@ -330,10 +334,7 @@
 								</Border>-->
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="LogoSlide">
-                                                    <Image
-                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                                                        Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
-                                                        Stretch="Uniform" />
+                                                    <items1:LogoSlideView />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="CustomSlide">
                                                     <!--<customSlide:CustomAxamlSlide />-->

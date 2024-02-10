@@ -82,6 +82,12 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         private readonly object stantaSlidesLock = new object();
+
+        public void GenerateSlides()
+        {
+            UpdateStanzaSlides();
+        }
+        
         void UpdateStanzaSlides()
         {
             lock (stantaSlidesLock)

@@ -1,5 +1,11 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels.Editor;
+using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Data.Models.Items;
+
 //using HandsLiftedApp.Data.Models.Items;
 //using HandsLiftedApp.Models.ItemState;
 //using HandsLiftedApp.Utils;
@@ -39,6 +45,22 @@ namespace HandsLiftedApp.Controls
         internal class OnSelectionClickedMessage
         {
             //public Item<ItemStateImpl> SourceItem { get; set; }
+        }
+
+        private void EditButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Control { DataContext: SongItemInstance item })
+            {
+                return;
+            }
+
+            SongEditorViewModel songEditorViewModel = new SongEditorViewModel() { Song = item };
+            songEditorViewModel.SongDataUpdated += (ex, ey) =>
+            {
+                        
+            };
+            SongEditorWindow songEditorWindow = new SongEditorWindow() { DataContext = songEditorViewModel };
+            songEditorWindow.Show();
         }
     }
 }

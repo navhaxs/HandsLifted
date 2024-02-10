@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using SongStanza = HandsLiftedApp.Core.Models.RuntimeData.Items.SongStanza;
 
 namespace HandsLiftedApp.Core
 {
@@ -49,18 +51,18 @@ namespace HandsLiftedApp.Core
             });
         }
 
-        public static SongItem createSongItemFromTxtFile(string txtFilePath)
+        public static SongItemInstance createSongItemFromTxtFile(string txtFilePath)
         {
             string text = File.ReadAllText(txtFilePath);
             return createSongItemFromStringData(text);
         }
 
-        public static SongItem createSongItemFromStringData(string text)
+        public static SongItemInstance createSongItemFromStringData(string text)
         {
             // strip off LRLF --> LF (i.e. \r\n --> \n)
             List<string> parsed = new List<string>(text.Replace("\r\n", "\n").Split("\n\n").Select(str => str.Trim()));
 
-            SongItem song = new SongItem()
+            SongItemInstance song = new SongItemInstance()
             {
                 Title = parsed.First().Trim(),
             };

@@ -15,6 +15,8 @@ using Avalonia.Controls;
 using ByteSizeLib;
 using Config.Net;
 using DynamicData;
+using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Utils;
 
@@ -30,7 +32,8 @@ public class MainViewModel : ViewModelBase
         if (Design.IsDesignMode)
         {
             Playlist = new PlaylistInstance();
-            Playlist.Items.Add(new LogoItem());
+            Playlist.Items.Add(new SongItemInstance());
+            Playlist.Items.Add(new LogoItemInstance());
 
             return;
         }
@@ -65,9 +68,9 @@ public class MainViewModel : ViewModelBase
                         Playlist.Items.Add(new SlidesGroupItem());
                         break;
                     case AddItemMessage.AddItemType.NewSong:
-                        var song = new SongItem();
+                        var song = new SongItemInstance();
                         Playlist.Items.Add(song);
-                        SongEditorViewModel vm = new SongEditorViewModel() { song = song };
+                        SongEditorViewModel vm = new SongEditorViewModel() { Song = song };
                         SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
                         seq.Show();
                         break;

@@ -9,7 +9,7 @@
         <local:ViewLocator />
     </Application.DataTemplates>
     <Application.Styles>
-        <FluentTheme />
+        <SimpleTheme />
         <avalonia:MaterialIconStyles />
     </Application.Styles>
 </Application>

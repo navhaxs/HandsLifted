@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using DynamicData;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -18,30 +19,32 @@ namespace HandsLiftedApp.Core
         public static void SerializePlaylist(PlaylistInstance playlist, string filePath)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Playlist));
-
-            using (FileStream stream = new FileStream(filePath, FileMode.Create))
+            Playlist playlistSerialized = new Playlist
             {
-                Playlist playlistSerialized = new Playlist
-                {
-                    Title = playlist.Title,
-                    Meta = playlist.Meta,
-                    LogoGraphicFile = playlist.LogoGraphicFile,
-                    Designs = playlist.Designs,
-                    Items = new ObservableCollection<Item>()
-                };
+                Title = playlist.Title,
+                Meta = playlist.Meta,
+                LogoGraphicFile = playlist.LogoGraphicFile,
+                Designs = playlist.Designs,
+                Items = new ObservableCollection<Item>()
+            };
 
-                // TODO: convert all 'instance/runtime' classes to 'serialized document' classes
-                playlistSerialized.Items.AddRange(playlist.Items.ToList().ConvertAll(item =>
+            // TODO: convert all 'instance/runtime' classes to 'serialized document' classes
+            playlistSerialized.Items.AddRange(playlist.Items.ToList().ConvertAll(item =>
+            {
+                if (item is LogoItemInstance i)
                 {
-                    return item;
-                    // return new Item
-                    // {
-                    //     Slides = item.Slides.ConvertAll(slide => new SlideSerialized()),
-                    // };
-                }));
+                    return new LogoItem() { Title = i.Title };
+                }
+                return item;
+                // return new Item
+                // {
+                //     Slides = item.Slides.ConvertAll(slide => new SlideSerialized()),
+                // };
+            }));
 
-                serializer.Serialize(stream, playlistSerialized);
-            }
+            // only once all serialization is OK, now write to disk
+            using FileStream stream = new FileStream(filePath, FileMode.Create);
+            serializer.Serialize(stream, playlistSerialized);
         }
         
         // Deserialize Playlist from XML
@@ -59,7 +62,16 @@ namespace HandsLiftedApp.Core
                     var Items = new ObservableCollection<Item>();
                     foreach (var deserializedItem in deserialized.Items)
                     {
-                        Items.Add(deserializedItem);
+                        Item convereted;
+                        if (deserializedItem is LogoItem i)
+                        {
+                            convereted = new LogoItemInstance() {Title = i.Title } ;
+                        }
+                        else
+                        {
+                            convereted = deserializedItem;
+                        }
+                        Items.Add(convereted);
                     }
                     
                     // Map properties from PlaylistSerialized to Playlist

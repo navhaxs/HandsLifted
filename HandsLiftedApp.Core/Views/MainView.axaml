@@ -199,11 +199,14 @@
         <Grid>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MaxWidth="400" />
+                <ColumnDefinition Width="3*" MaxWidth="400" />
                 <ColumnDefinition Width="6" />
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="5*" />
                 <ColumnDefinition Width="6" />
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition
+                    Width="2*"
+                    MinWidth="200"
+                    MaxWidth="800" />
             </Grid.ColumnDefinitions>
 
             <DockPanel>

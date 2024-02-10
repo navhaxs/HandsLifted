@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+             xmlns:utils="clr-namespace:HandsLiftedApp.Utils;assembly=HandsLiftedApp.Common"
+             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:CompileBindings="False"
+             x:Class="HandsLiftedApp.Core.Render.RenderedSlideView">
+
+    <ContentControl Content="{Binding $parent[render:RenderedSlideView].ActiveSlide}">
+        <ContentControl.ContentTemplate>
+            <utils:MyTemplateSelector>
+                <DataTemplate x:Key="LogoSlide">
+                    <items:LogoSlideView />
+                </DataTemplate>
+                <DataTemplate x:Key="Fallback">
+                    <TextBlock Text="{Binding $parent[render:RenderedSlideView].ActiveSlide}" />
+                </DataTemplate>
+            </utils:MyTemplateSelector>
+        </ContentControl.ContentTemplate>
+        <!-- NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down -->
+        <!--<ContentControl.DataTemplates>
+		</ContentControl.DataTemplates>-->
+    </ContentControl>
+</UserControl>
+
+<!-- <Image -->
+<!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
+<!--     Source="{Binding cached}" -->
+<!--     Stretch="Uniform" /> -->
