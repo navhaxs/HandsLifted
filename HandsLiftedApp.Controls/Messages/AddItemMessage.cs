@@ -11,7 +11,7 @@
             PDF,
             ExistingSong,
             NewSong,
-            Media,
+            // Media,
             Logo,
             SectionHeading,
             MediaGroup,

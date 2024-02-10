@@ -1,5 +1,4 @@
-﻿using DynamicData.Binding;
-using HandsLiftedApp.Data.Models;
+﻿using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
 using System;
@@ -8,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Core.Models
 {
-    public class PlaylistInstance : ReactiveObject
+    public class PlaylistInstance : Playlist
     {
         public PlaylistInstance()
         {
@@ -34,7 +33,7 @@ namespace HandsLiftedApp.Core.Models
                     {
                         if (selectedIndex != -1)
                         {
-                            return Playlist.Items.ElementAtOrDefault(selectedIndex);
+                            return Items.ElementAtOrDefault(selectedIndex);
                         }
 
                         return new BlankItem();
@@ -61,9 +60,6 @@ namespace HandsLiftedApp.Core.Models
 
         private readonly ObservableAsPropertyHelper<Item?> _selectedItem;
         public Item? SelectedItem { get => _selectedItem.Value; }
-
-        private Playlist _playlist = new();
-        public Playlist Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
 
     }
 }

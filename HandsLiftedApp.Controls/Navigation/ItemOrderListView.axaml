@@ -14,14 +14,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:items="clr-namespace:HandsLiftedApp.Controls.Items"
-    d:DesignHeight="280"
+    xmlns:mockData="clr-namespace:HandsLiftedApp.Controls.MockData"
+    d:DesignHeight="400"
     d:DesignWidth="200"
     mc:Ignorable="d"
     x:CompileBindings="False">
 
-    <!--<Design.DataContext>
-        <vm:MainWindowViewModel />
-    </Design.DataContext>-->
+    <Design.DataContext>
+        <mockData:MockMainWindowViewModel />
+    </Design.DataContext>
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -166,7 +167,7 @@
                 Classes="ItemsDragAndDrop"
                 CornerRadius="0,0,0,6"
                 DragDrop.AllowDrop="True"
-                ItemsSource="{Binding Playlist.Items, Mode=OneWay}"
+                ItemsSource="{Binding Items, Mode=OneWay}"
                 SelectedIndex="{Binding SelectedItemIndex}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>

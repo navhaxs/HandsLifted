@@ -1,0 +1,183 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:MainViewModel"
+             x:Class="HandsLiftedApp.Core.Views.LivePane">
+    <DockPanel>
+
+        <Border
+            Height="70"
+            VerticalAlignment="Center"
+            DockPanel.Dock="Top">
+            <DockPanel>
+
+                <ToggleButton
+                    Name="LiveButton"
+                    Margin="2,0,0,6"
+                    Padding="0"
+                    VerticalAlignment="Bottom"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ClickMode="Press"
+                    DockPanel.Dock="Left"
+                    FontSize="18"
+                    HotKey="Ctrl+L"
+                    IsChecked="{Binding #liveFlyout.IsOpen, Mode=TwoWay}">
+                    <ToggleButton.Styles>
+                        <!--  override default styles  -->
+                        <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                        <!--  custom styles  -->
+                        <Style Selector="ToggleButton:pointerover Border">
+                            <Setter Property="Background" Value="#505050" />
+                        </Style>
+                        <Style Selector="ToggleButton:pressed Border">
+                            <Setter Property="Background" Value="#9a93cd" />
+                        </Style>
+                        <Style Selector="ToggleButton:checked Border">
+                            <Setter Property="Background" Value="#5C3AB6" />
+                        </Style>
+                    </ToggleButton.Styles>
+                    <Border Padding="12,6" CornerRadius="4">
+                        <DockPanel>
+                            <avalonia:MaterialIcon
+                                Width="26"
+                                Height="22"
+                                Margin="0"
+                                Padding="0"
+                                VerticalAlignment="Bottom"
+                                DockPanel.Dock="Right"
+                                Foreground="{DynamicResource ForegroundBrush}"
+                                Kind="ChevronRight" />
+                            <TextBlock VerticalAlignment="Bottom" Text="Live" />
+                        </DockPanel>
+                    </Border>
+                </ToggleButton>
+
+                <Popup
+                    Name="liveFlyout"
+                    IsLightDismissEnabled="True"
+                    PlacementMode="BottomEdgeAlignedLeft"
+                    PlacementTarget="{Binding #LiveButton}">
+                    <!-- <controls:LiveOutputsFlyoutContent Margin="0" /> -->
+                </Popup>
+
+            </DockPanel>
+        </Border>
+
+        <Border Background="{DynamicResource BackgroundBrush}">
+            <DockPanel>
+
+                <Grid DockPanel.Dock="Top">
+                    <Grid.Background>
+                        <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+                            <VisualBrush.Visual>
+                                <Canvas
+                                    Width="16"
+                                    Height="16"
+                                    Background="#1a1a1a">
+                                    <Rectangle
+                                        Width="8"
+                                        Height="8"
+                                        Fill="#1c1c1c" />
+                                    <Rectangle
+                                        Canvas.Left="8"
+                                        Canvas.Top="8"
+                                        Width="8"
+                                        Height="8"
+                                        Fill="#1c1c1c" />
+                                </Canvas>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Grid.Background>
+                    <Viewbox>
+                        <!-- NEW -->
+                        <!-- <viewsrender:SlideRenderer -->
+                        <!--     ActiveSlide="{Binding ActiveSlide}" -->
+                        <!--     IsLive="False" -->
+                        <!--     PageTransition="{Binding ActiveItemPageTransition}" /> -->
+
+                        <!-- OLD -->
+                        <!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
+                        <!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
+                        <!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
+                    </Viewbox>
+                </Grid>
+                <!-- <controlmodules:SlidesGroupItemViewWrapper DataContext="{Binding Playlist.State.SelectedItem}" -->
+                <!--                                            DockPanel.Dock="Top" /> -->
+
+                <Border
+                    Height="35"
+                    Margin="6,6"
+                    Background="#505050"
+                    CornerRadius="6"
+                    DockPanel.Dock="Top">
+                    <UniformGrid Columns="2" Rows="1">
+                        <UniformGrid.Styles>
+                            <Style Selector="RadioButton">
+                                <Setter Property="Background" Value="#505050" />
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <ToggleButton
+                                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                            <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                <Setter Property="Background"
+                                        Value="{DynamicResource ActiveToggleButtonBackgroundBrush}" />
+                            </Style>
+                            <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#b7a6e7" />
+                            </Style>
+                        </UniformGrid.Styles>
+                        <!-- <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsLogo}">Logo</RadioButton> -->
+                        <!-- <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.State.IsBlank}">Blank</RadioButton> -->
+                        <!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
+                    </UniformGrid>
+                </Border>
+
+                <!-- <views:DebugInfoView HorizontalAlignment="Stretch" /> -->
+                <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
+
+                <TextBlock
+                    Padding="5,5,5,4"
+                    HorizontalAlignment="Center"
+                    DockPanel.Dock="Bottom"
+                    FontSize="25"
+                    Text="{Binding CurrentTime, StringFormat='{}{0:h:mm tt}'}" />
+
+                <!--  controlmodules  -->
+                <!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
+                <!-- <controlmodules:VideoSlideControlViewWrapper DataContext="{Binding ActiveSlide}" -->
+                <!--                                              DockPanel.Dock="Bottom" /> -->
+                <!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
+                <!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
+						<DockPanel Margin="10 8">
+							<material:MaterialIcon DockPanel.Dock="Right" Kind="Record" Foreground="#c43e1c" />
+							<StackPanel>
+								<TextBlock Text="Audio Recording" FontWeight="Medium" />
+								<TextBlock Text="00:00:00" FontSize="18" />
+							</StackPanel>
+						</DockPanel>
+					</Border>-->
+            </DockPanel>
+
+        </Border>
+
+    </DockPanel>
+</UserControl>

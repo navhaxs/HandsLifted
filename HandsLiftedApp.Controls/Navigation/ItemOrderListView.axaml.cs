@@ -28,6 +28,11 @@ namespace HandsLiftedApp.Controls
         {
             InitializeComponent();
 
+            if (Design.IsDesignMode)
+            {
+                return;
+            }
+
             listBox = this.FindControl<ListBox>("itemsListBox");
             listBox.SelectionChanged += ListBox_SelectionChanged;
 

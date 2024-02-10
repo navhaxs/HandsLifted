@@ -10,7 +10,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using ByteSizeLib;
 using Config.Net;
+using DynamicData;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Utils;
 
@@ -22,6 +26,15 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+
+        if (Design.IsDesignMode)
+        {
+            Playlist = new PlaylistInstance();
+            Playlist.Items.Add(new LogoItem());
+
+            return;
+        }
+        
         settings = new ConfigurationBuilder<IMySettings>()
             .UseJsonFile("HandsLiftedApp.UserConfig.json")
             .Build();
@@ -38,31 +51,31 @@ public class MainViewModel : ViewModelBase
                         var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
                         foreach (var path in filePaths)
                         {
-                            await CreateItem.OpenPresentationFileAsync(path, CurrentPlaylist);
+                            await CreateItem.OpenPresentationFileAsync(path, Playlist);
                         }
 
                         break;
                     case AddItemMessage.AddItemType.Logo:
-                        CurrentPlaylist.Playlist.Items.Add(new LogoItem());
+                        Playlist.Items.Add(new LogoItem());
                         break;
                     case AddItemMessage.AddItemType.SectionHeading:
-                        CurrentPlaylist.Playlist.Items.Add(new SectionHeadingItem());
+                        Playlist.Items.Add(new SectionHeadingItem());
                         break;
                     case AddItemMessage.AddItemType.BlankGroup:
-                        CurrentPlaylist.Playlist.Items.Add(new SlidesGroupItem());
+                        Playlist.Items.Add(new SlidesGroupItem());
                         break;
                     case AddItemMessage.AddItemType.NewSong:
                         var song = new SongItem();
-                        CurrentPlaylist.Playlist.Items.Add(song);
+                        Playlist.Items.Add(song);
                         SongEditorViewModel vm = new SongEditorViewModel() { song = song };
                         SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
                         seq.Show();
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:
-                        filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
+                        filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
                         SlidesGroupItem slidesGroup = new SlidesGroupItem() { Title = "New media group" };
 
-                        CurrentPlaylist.Playlist.Items.Add(slidesGroup);
+                        Playlist.Items.Add(slidesGroup);
                         foreach (var filePath in filePaths)
                         {
                             if (filePath != null && filePath is string)
@@ -85,18 +98,18 @@ public class MainViewModel : ViewModelBase
         MessageBus.Current.Listen<MoveItemCommand>()
             .Subscribe((moveItemCommand) =>
             {
-                var theSelectedIndex = CurrentPlaylist.Playlist.Items.IndexOf(moveItemCommand.SourceItem);
+                var theSelectedIndex = Playlist.Items.IndexOf(moveItemCommand.SourceItem);
 
                 switch (moveItemCommand.Direction)
                 {
                     case MoveItemCommand.DirectionValue.UP:
-                        CurrentPlaylist.Playlist.Items.Move(theSelectedIndex, theSelectedIndex-1);
+                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex-1);
                         break;
                     case MoveItemCommand.DirectionValue.DOWN:
-                        CurrentPlaylist.Playlist.Items.Move(theSelectedIndex, theSelectedIndex+1);
+                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex+1);
                         break;
                     case MoveItemCommand.DirectionValue.REMOVE:
-                        CurrentPlaylist.Playlist.Items.RemoveAt(theSelectedIndex);
+                        Playlist.Items.RemoveAt(theSelectedIndex);
                         break;
                 }
 
@@ -106,12 +119,12 @@ public class MainViewModel : ViewModelBase
             .Subscribe((moveItemMessage) =>
             {
 
-                // var theSelectedItem = CurrentPlaylist.Playlist.State.SelectedItem;
+                // var theSelectedItem = CurrentPlaylist.State.SelectedItem;
 
-                CurrentPlaylist.Playlist.Items.Move(moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
+                Playlist.Items.Move(moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
 
                 // Is this working??
-                // var theSelectedIndex = CurrentPlaylist.Playlist.Items.IndexOf(theSelectedItem);
+                // var theSelectedIndex = CurrentPlaylist.Items.IndexOf(theSelectedItem);
 
                 Debug.Print($"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
 
@@ -147,8 +160,8 @@ public class MainViewModel : ViewModelBase
         {
             try
             {
-                using var stream = File.Open(settings.LastOpenedPlaylistFullPath, FileMode.Open);
-                CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
+                var x = XmlSerializerForDummies.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
+                Playlist = x;
             }
             catch (Exception e)
             {
@@ -156,13 +169,53 @@ public class MainViewModel : ViewModelBase
             }
         }
 
+        _ = Update(); // calling an async function we do not want to await
+
     }
 
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
 
-#pragma warning disable CA1822 // Mark members as static
     public string Greeting => "Welcome to the VisionScreens Web Editor! :D";
 
-    public PlaylistInstance CurrentPlaylist { get; set; } = new PlaylistInstance();
-#pragma warning restore CA1822 // Mark members as static
+    private PlaylistInstance _playlist = new PlaylistInstance();
+    public PlaylistInstance Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
+    
+    private bool _IsDisplayDebugInfo = false;
+    public bool IsDisplayDebugInfo { get => _IsDisplayDebugInfo; set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value); }
+    private string _debugInfoText = string.Empty;
+    public string DebugInfoText { get => _debugInfoText; set => this.RaiseAndSetIfChanged(ref _debugInfoText, value); }
+ 
+    public DateTime CurrentTime
+    {
+        get => DateTime.Now;
+    }
+    private bool _isRunning = true;
+ 
+    private async Task Update()
+    {
+        while (_isRunning)
+        {
+            await Task.Delay(100);
+            if (_isRunning)
+            {
+                this.RaisePropertyChanged(nameof(CurrentTime));
+
+                if (Debugger.IsAttached && IsDisplayDebugInfo)
+                {
+                    await Task.Delay(400);
+
+                    // for debug stat #1
+                    long memory = GC.GetTotalMemory(false);
+
+                    // for debug stat #2
+                    Process currentProc = Process.GetCurrentProcess();
+                    long memoryUsed = currentProc.PrivateMemorySize64;
+
+                    DebugInfoText = $"{ByteSize.FromBytes(memory).ToString("#.#")} {ByteSize.FromBytes(memoryUsed).ToString("#.#")}";
+                }
+            }
+        }
+    }
+
+
 }

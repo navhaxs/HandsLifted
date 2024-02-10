@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Avalonia.Logging;
 
 namespace HandsLiftedApp.Utils
 {
@@ -39,6 +40,10 @@ namespace HandsLiftedApp.Utils
         /// <typeparam name="T">The type of object being written to the file.</typeparam>
         /// <param name="filePath">The file path to write the object instance to.</param>
         /// <param name="objectToWrite">The object instance to write to the file.</param>
+        ///
+        ///
+        ///
+        /// 
         public static void WriteToXmlFile<T>(string filePath, T objectToWrite) where T : new()
         {
             TextWriter writer = null;
@@ -68,6 +73,10 @@ namespace HandsLiftedApp.Utils
                     using (FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                         memoryStream.WriteTo(file);
                 }
+            }
+            catch (Exception ex)
+            {
+                // Logger
             }
             finally
             {

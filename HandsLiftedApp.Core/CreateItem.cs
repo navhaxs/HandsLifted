@@ -44,7 +44,7 @@ namespace HandsLiftedApp.Core
                     Log.Debug($"Importing PowerPoint file: {path}");
                     PowerPointSlidesGroupItem slidesGroup = new PowerPointSlidesGroupItem() { Title = fileName, SourcePresentationFile = path };
 
-                    currentPlaylist.Playlist.Items.Add(slidesGroup);
+                    currentPlaylist.Items.Add(slidesGroup);
 
                     //slidesGroup.SyncState.SyncCommand();
                 }
@@ -53,7 +53,7 @@ namespace HandsLiftedApp.Core
                     Log.Debug($"Importing PDF file: {path}");
                     PDFSlidesGroupItem slidesGroup = new PDFSlidesGroupItem() { Title = fileName, SourcePresentationFile = path };
 
-                    currentPlaylist.Playlist.Items.Add(slidesGroup);
+                    currentPlaylist.Items.Add(slidesGroup);
 
                     //ConvertPDF.Convert(path, targetDirectory); // todo move into State as a SyncCommand
                     //PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
@@ -69,7 +69,7 @@ namespace HandsLiftedApp.Core
                     // wait for UI to update...
                     Dispatcher.UIThread.RunJobs();
                     // and now we can jump to view
-                    var count = currentPlaylist.Playlist.Items.Count;
+                    var count = currentPlaylist.Items.Count;
                     MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                 });
             }

@@ -26,51 +26,39 @@ namespace HandsLiftedApp.Data.Models
     [Serializable]
     public class Playlist : ReactiveObject
     {
-
-        // TODO can this Dictionary have elements that can have bindings to?
-        public SerializableDictionary<String, Object> Meta { get; set; } = new SerializableDictionary<String, Object>();
-
-        private String _title = "Untitled Playlist";
-        public String Title { get => _title; set => this.RaiseAndSetIfChanged(ref _title, value); }
-
-        // TODO move into Dictionary
-
-        private String _logoGraphicFile = @"avares://HandsLiftedApp/Assets/DefaultTheme/VisionScreens_1440_placeholder.png";
-        public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
-
-        private List<BaseSlideTheme> _designs = new List<BaseSlideTheme>();
-        public List<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
-
-        private DateTimeOffset _date = DateTimeOffset.Now;
-        public DateTimeOffset Date { get => _date; set => this.RaiseAndSetIfChanged(ref _date, value); }
-
-        [XmlIgnore]
-        public String PrettyDate => Date.ToString("d MMM yyyy", CultureInfo.InvariantCulture);
-
         public Playlist()
         {
             Items = new ObservableCollection<Item>();
             if (Design.IsDesignMode)
                 return;
         }
+    
+        private String _title = "Untitled Playlist";
+        public String Title { get => _title; set => this.RaiseAndSetIfChanged(ref _title, value); }
 
+        // TODO can this Dictionary have elements that can have bindings to?
+        public SerializableDictionary<String, Object> Meta { get; set; } = new SerializableDictionary<String, Object>();
+        
+        // TODO move into Dictionary
+        private String _logoGraphicFile = @"avares://HandsLiftedApp/Assets/DefaultTheme/VisionScreens_1440_placeholder.png";
+        public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
+
+        private List<BaseSlideTheme> _designs = new List<BaseSlideTheme>();
+        public List<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
+
+        // // TODO move into Dictionary
+        // private DateTimeOffset _date = DateTimeOffset.Now;
+        // public DateTimeOffset Date { get => _date; set => this.RaiseAndSetIfChanged(ref _date, value); }
+
+        // [XmlIgnore]
+        // public String PrettyDate => Date.ToString("d MMM yyyy", CultureInfo.InvariantCulture);
+        //
         private ObservableCollection<Item> _items;
 
         public ObservableCollection<Item> Items
         {
             get => _items;
-            set
-            {
-                value.CollectionChanged += (s, e) =>
-                {
-                    int idx = 0;
-                    foreach (var item in value)
-                    {
-                        // item.State.ItemIndex = idx++;
-                    }
-                };
-                this.RaiseAndSetIfChanged(ref _items, value);
-            }
+            set => this.RaiseAndSetIfChanged(ref _items, value);
         }
     }
 }

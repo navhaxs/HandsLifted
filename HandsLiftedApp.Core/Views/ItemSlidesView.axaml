@@ -65,6 +65,8 @@
         <ContentControl Content="{Binding}">
             <ContentControl.ContentTemplate>
                 <utils:MyTemplateSelector>
+                    <DataTemplate x:Key="BlankItem">
+                    </DataTemplate>
                     <DataTemplate x:Key="SectionHeadingItem">
                         <!--  {Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ECE8F9'}  -->
                         <Border Margin="0 14" Background="#124449">
@@ -102,7 +104,7 @@
                                         Background="#15FFFFFF"
                                         BorderBrush="#b3aed9"
                                         BorderThickness="0"
-										CornerRadius="0"
+                                        CornerRadius="0"
                                         Command="{Binding State.EditCommand}"
                                         DockPanel.Dock="Right">
                                         Edit
@@ -114,21 +116,20 @@
 								Margin="12 0 0 0"
 								Fill="#c43e1c"
 								/>-->
-									<Button
-										Background="Transparent"
-										CornerRadius="0"
-										BorderThickness="0"
-										HorizontalContentAlignment="Left"
-										>
-                                    <TextBlock
-                                        Margin="16,0,8,0"
-                                        Padding="0"
-                                        VerticalAlignment="Center"
-                                        FontSize="20"
-                                        FontWeight="SemiBold"
-                                        Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}"
-                                        Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
-									</Button>
+                                    <Button
+                                        Background="Transparent"
+                                        CornerRadius="0"
+                                        BorderThickness="0"
+                                        HorizontalContentAlignment="Left">
+                                        <TextBlock
+                                            Margin="16,0,8,0"
+                                            Padding="0"
+                                            VerticalAlignment="Center"
+                                            FontSize="20"
+                                            FontWeight="SemiBold"
+                                            Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}"
+                                            Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+                                    </Button>
                                 </DockPanel>
                                 <!--<item:ItemInfo VerticalAlignment="Top" />-->
                             </StackPanel>
@@ -234,7 +235,7 @@
                                                 <WrapPanel>
                                                     <WrapPanel.ItemHeight>
                                                         200
-														<!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                                        <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
                                                             <Binding
                                                                 FallbackValue="200"
                                                                 Path="ItemHeight"
@@ -247,7 +248,7 @@
                                                     </WrapPanel.ItemHeight>
                                                     <WrapPanel.ItemWidth>
                                                         290
-														<!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                                        <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
                                                             <Binding
                                                                 FallbackValue="290"
                                                                 Path="ItemWidth"
@@ -334,10 +335,10 @@
                                                         Source="{Binding $parent[Window].DataContext.Playlist.State.LogoBitmap}"
                                                         Stretch="Uniform" />
                                                 </DataTemplate>
-												<DataTemplate x:Key="CustomSlide">
-													<!--<customSlide:CustomAxamlSlide />-->
-												</DataTemplate>
-												<DataTemplate x:Key="MyKey">
+                                                <DataTemplate x:Key="CustomSlide">
+                                                    <!--<customSlide:CustomAxamlSlide />-->
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="MyKey">
                                                     <TextBlock Background="Red" Text="{Binding Text}" />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="MyKey2">
@@ -346,7 +347,7 @@
                                                 <DataTemplate x:Key="Fallback">
                                                     <TextBlock
                                                         Background="Green"
-														FontSize="80"
+                                                        FontSize="80"
                                                         Text="{Binding FallbackValue='ItemSlidesView.DataTemplateBindingError'}"
                                                         TextWrapping="Wrap" />
                                                 </DataTemplate>
@@ -356,7 +357,6 @@
                                     </controls:ListBoxWithoutKey>
 
 
-
                                 </StackPanel>
 
                             </Border>
@@ -364,8 +364,6 @@
                             <!--<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">-->
 
                         </DockPanel>
-
-
 
                     </DataTemplate>
                 </utils:MyTemplateSelector>

@@ -41,16 +41,19 @@
                 </MenuItem.Icon>
             </MenuItem>
         </MenuItem>
-        <MenuItem Click="OnMenuItemClick" CommandParameter="Media" Header="_Graphics">
-            <MenuItem.Icon>
-                <material:MaterialIcon Kind="Image" />
-            </MenuItem.Icon>
-        </MenuItem>
-		<MenuItem Click="OnMenuItemClick" CommandParameter="Media" Header="_Video">
-            <MenuItem.Icon>
-                <material:MaterialIcon Kind="Video" />
-            </MenuItem.Icon>
-        </MenuItem>
+  <!--       <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Graphics"> -->
+  <!--           <MenuItem.Icon> -->
+  <!--               <material:MaterialIcon Kind="Image" /> -->
+  <!--           </MenuItem.Icon> -->
+  <!--       </MenuItem> -->
+		<!-- <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Video"> -->
+  <!--           <MenuItem.Icon> -->
+  <!--               <material:MaterialIcon Kind="Video" /> -->
+  <!--           </MenuItem.Icon> -->
+  <!--       </MenuItem> -->
+  <MenuItem
+      Click="OnMenuItemClick" CommandParameter="MediaGroup"
+      Header="_...From Folder of Media" />
         <Separator />
         <MenuItem
             Click="OnMenuItemClick" CommandParameter="Logo"
@@ -73,9 +76,7 @@
                 <material:MaterialIcon Kind="ContentCopy" />
             </MenuItem.Icon>
 
-            <MenuItem
-                Click="OnMenuItemClick" CommandParameter="MediaGroup"
-                Header="_...From Folder of Media" />
+
             <MenuItem 
                 Click="OnMenuItemClick" CommandParameter="BlankGroup"
                 Header="Blank Group" />

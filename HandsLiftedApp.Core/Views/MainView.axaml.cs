@@ -7,6 +7,7 @@ using HandsLiftedApp.Utils;
 using Serilog;
 using System;
 using Avalonia.Controls.ApplicationLifetimes;
+using HandsLiftedApp.Core.Models;
 
 namespace HandsLiftedApp.Core.Views;
 
@@ -27,7 +28,10 @@ public partial class MainView : UserControl
 
     private async void NewFileButton_Clicked(object sender, RoutedEventArgs args)
     {
-        
+        if (this.DataContext is MainViewModel vm)
+        {
+            vm.Playlist = new PlaylistInstance();
+        }
     }
     
     private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args)
@@ -45,13 +49,15 @@ public partial class MainView : UserControl
         if (files.Count >= 1)
         {
             // Open reading stream from the first file.
-            await using var stream = await files[0].OpenReadAsync();
+            // await using var stream = await files[0].OpenReadAsync();
 
             if (this.DataContext is MainViewModel vm)
             {
                 try
                 {
-                    vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
+                    var x = XmlSerializerForDummies.DeserializePlaylist(files[0].Path.AbsolutePath);
+                    vm.Playlist = x;
+                    // vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
                 }
                 catch (Exception e)
                 {
@@ -79,7 +85,8 @@ public partial class MainView : UserControl
             {
                 try
                 {
-                    XmlSerialization.WriteToXmlFile<Playlist>(file.Path.AbsolutePath, vm.CurrentPlaylist.Playlist);
+                    XmlSerializerForDummies.SerializePlaylist(vm.Playlist, file.Path.AbsolutePath);
+                    // XmlSerialization.WriteToXmlFile<Playlist>(file.Path.AbsolutePath, vm.CurrentPlaylist.Playlist);
                     //MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
                     vm.settings.LastOpenedPlaylistFullPath = file.Path.AbsolutePath;
                 }
