@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core.Models
@@ -43,14 +44,26 @@ namespace HandsLiftedApp.Core.Models
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItem);
 
-            _activeSlide = this.WhenAnyValue(x => x.SelectedItem, (Item selectedItem) =>
-                {
-                    if (selectedItem is IItemInstance s)
+            _selectedItemAsIItemInstance = this.WhenAnyValue(
+                    (x => x.SelectedItemIndex),
+                    (int selectedIndex) =>
                     {
-                        return s.ActiveSlide;
-                    }
+                        if (selectedIndex != -1)
+                        {
+                            if (Items.ElementAtOrDefault(selectedIndex) is IItemInstance iItemInstance)
+                            {
+                                return iItemInstance;
+                            }
+                        }
 
-                    return new BlankSlide();
+                        return new BlankItemInstance();
+                    })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.SelectedItemAsIItemInstance);
+
+            _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide, (Slide activeSlide) =>
+                {
+                    return activeSlide;
                 })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
@@ -71,7 +84,30 @@ namespace HandsLiftedApp.Core.Models
 
                 if (found)
                 {
-                    Items[i] = updateEditedItemMessage.Item;
+                    
+                    // Items[i] = updateEditedItemMessage.Item;
+                    if (Items[i] is SongItemInstance dest)
+                    {
+                        if (updateEditedItemMessage.Item is SongItemInstance source)
+                        {
+
+                            if (dest == source)
+                            {
+                                return;
+                            }
+                            dest.Title = source.Title;
+                            dest.SlideTheme = source.SlideTheme;
+                            dest.Arrangement = source.Arrangement;
+                            dest.Arrangements = source.Arrangements;
+                            dest.SelectedArrangementId = source.SelectedArrangementId;
+                            dest.Stanzas = source.Stanzas;
+                            dest.Copyright = source.Copyright;
+                            dest.Design = source.Design;
+                            dest.StartOnTitleSlide = source.StartOnTitleSlide;
+                            dest.EndOnBlankSlide = source.EndOnBlankSlide;
+                        }
+                        
+                    }
                 }
 
             });
@@ -110,10 +146,15 @@ namespace HandsLiftedApp.Core.Models
         }
 
         private readonly ObservableAsPropertyHelper<Item?> _selectedItem;
+        private readonly ObservableAsPropertyHelper<IItemInstance?> _selectedItemAsIItemInstance;
 
         public Item? SelectedItem
         {
             get => _selectedItem.Value;
+        }
+        public IItemInstance? SelectedItemAsIItemInstance
+        {
+            get => _selectedItemAsIItemInstance.Value;
         }
 
         private ObservableAsPropertyHelper<Slide> _activeSlide;

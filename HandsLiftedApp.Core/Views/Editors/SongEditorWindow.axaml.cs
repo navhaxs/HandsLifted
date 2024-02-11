@@ -7,7 +7,6 @@ using HandsLiftedApp.Utils;
 using System;
 using System.Threading.Tasks;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using SongStanza = HandsLiftedApp.Core.Models.RuntimeData.Items.SongStanza;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {

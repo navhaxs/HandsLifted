@@ -4,7 +4,6 @@ using Avalonia.Interactivity;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
-using SongStanza = HandsLiftedApp.Core.Models.RuntimeData.Items.SongStanza;
 
 namespace HandsLiftedApp.Core.Views.Editors;
 

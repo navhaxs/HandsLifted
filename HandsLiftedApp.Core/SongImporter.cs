@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using SongStanza = HandsLiftedApp.Core.Models.RuntimeData.Items.SongStanza;
 
 namespace HandsLiftedApp.Core
 {

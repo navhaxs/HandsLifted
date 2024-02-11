@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Reactive;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using SongStanza = HandsLiftedApp.Core.Models.RuntimeData.Items.SongStanza;
 
 namespace HandsLiftedApp.Core.ViewModels.Editor
 {

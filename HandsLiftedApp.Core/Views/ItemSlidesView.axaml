@@ -214,13 +214,16 @@
                                     </DockPanel>
 
                                     <!--<item:ItemInfo VerticalAlignment="Top" />-->
+                                    <!-- SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}" -->
+                                    
+                                    <NumericUpDown Value="{Binding SelectedSlideIndex}" />
 
                                     <controls:ListBoxWithoutKey
                                         Name="List"
                                         AutoScrollToSelectedItem="False"
                                         Background="Transparent"
                                         ItemsSource="{Binding Slides}"
-                                        SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}"
+                                        SelectedIndex="{Binding SelectedSlideIndex}"
                                         SelectionChanged="OnSelectionChanged"
                                         SelectionMode="Single">
                                         <controls:ListBoxWithoutKey.Styles>
@@ -274,10 +277,11 @@
                                         <controls:ListBoxWithoutKey.DataTemplates>
                                             <utils:MyTemplateSelector>
                                                 <DataTemplate x:Key="SongTitleSlide">
-                                                    <Image
-                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                                                        Source="{Binding cached}"
-                                                        Stretch="Uniform" />
+                                                    <TextBox Text="{Binding Text}"></TextBox>
+                                                    <!-- <Image -->
+                                                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
+                                                    <!--     Source="{Binding cached}" -->
+                                                    <!--     Stretch="Uniform" /> -->
                                                     <!--<Viewbox>
                                                         <views:DesignerSlideTitle Width="1920" Height="1080" />
                                                     </Viewbox>-->
@@ -288,10 +292,11 @@
                                         TextTrimming="CharacterEllipsis" />-->
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="SongSlide">
-                                                    <Image
-                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                                                        Source="{Binding cached}"
-                                                        Stretch="Uniform" />
+                                                    <TextBox Text="{Binding Text}"></TextBox>
+                                                    <!-- <Image -->
+                                                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
+                                                    <!--     Source="{Binding cached}" -->
+                                                    <!--     Stretch="Uniform" /> -->
                                                     <!--<Viewbox>
 										
                                                     -->

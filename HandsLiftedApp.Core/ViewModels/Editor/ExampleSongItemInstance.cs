@@ -1,7 +1,6 @@
 ﻿using HandsLiftedApp.Data.Models.Items;
 using System;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using SongStanza = HandsLiftedApp.Core.Models.RuntimeData.Items.SongStanza;
 
 namespace HandsLiftedApp.ViewModels.Editor
 {

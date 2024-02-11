@@ -53,5 +53,13 @@
         <DependentUpon>GroupItemsEditorWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Render\SongThemes\DesignerSlideTemplate.axaml.cs">
+        <DependentUpon>DesignerSlideTemplate.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Render\SongThemes\DesignerSlideTitle.axaml.cs">
+        <DependentUpon>DesignerSlideTitle.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

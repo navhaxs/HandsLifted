@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using DynamicData;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -34,6 +35,23 @@ namespace HandsLiftedApp.Core
                 if (item is LogoItemInstance i)
                 {
                     return new LogoItem() { Title = i.Title };
+                }
+                else if (item is SongItemInstance songItemInstance)
+                {
+                    return new SongItem()
+                    {
+                        UUID = songItemInstance.UUID,
+                        Title = songItemInstance.Title,
+                        SlideTheme = songItemInstance.SlideTheme,
+                        Arrangement = songItemInstance.Arrangement,
+                        Arrangements = songItemInstance.Arrangements,
+                        SelectedArrangementId = songItemInstance.SelectedArrangementId,
+                        Stanzas = songItemInstance.Stanzas,
+                        Copyright = songItemInstance.Copyright,
+                        Design = songItemInstance.Design,
+                        StartOnTitleSlide = songItemInstance.StartOnTitleSlide,
+                        EndOnBlankSlide = songItemInstance.EndOnBlankSlide
+                    };
                 }
                 return item;
                 // return new Item
@@ -66,6 +84,23 @@ namespace HandsLiftedApp.Core
                         if (deserializedItem is LogoItem i)
                         {
                             convereted = new LogoItemInstance() {Title = i.Title } ;
+                        }
+                        else if (deserializedItem is SongItem songItem)
+                        {
+                            convereted = new SongItemInstance()
+                            {
+                                UUID = songItem.UUID,
+                                Title = songItem.Title,
+                                SlideTheme = songItem.SlideTheme,
+                                Arrangement = songItem.Arrangement,
+                                Arrangements = songItem.Arrangements,
+                                SelectedArrangementId = songItem.SelectedArrangementId,
+                                Stanzas = songItem.Stanzas,
+                                Copyright = songItem.Copyright,
+                                Design = songItem.Design,
+                                StartOnTitleSlide = songItem.StartOnTitleSlide,
+                                EndOnBlankSlide = songItem.EndOnBlankSlide
+                            };
                         }
                         else
                         {
