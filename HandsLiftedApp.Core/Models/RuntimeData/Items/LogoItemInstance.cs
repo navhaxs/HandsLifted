@@ -13,7 +13,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData
         public Slide ActiveSlide
         {
             get => _activeSlide;
-            set => this.RaiseAndSetIfChanged(ref _activeSlide, value);
         }
 
     }

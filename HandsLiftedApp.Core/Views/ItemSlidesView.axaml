@@ -13,6 +13,7 @@
     xmlns:items="clr-namespace:HandsLiftedApp.Controls.Items;assembly=HandsLiftedApp.Controls"
     xmlns:views1="clr-namespace:HandsLiftedApp.Core.Views"
     xmlns:items1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+    xmlns:views="clr-namespace:HandsLiftedApp.Views"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -215,8 +216,6 @@
 
                                     <!--<item:ItemInfo VerticalAlignment="Top" />-->
                                     <!-- SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}" -->
-                                    
-                                    <NumericUpDown Value="{Binding SelectedSlideIndex}" />
 
                                     <controls:ListBoxWithoutKey
                                         Name="List"
@@ -277,14 +276,14 @@
                                         <controls:ListBoxWithoutKey.DataTemplates>
                                             <utils:MyTemplateSelector>
                                                 <DataTemplate x:Key="SongTitleSlide">
-                                                    <TextBox Text="{Binding Text}"></TextBox>
+                                                    <!-- <TextBox Text="{Binding Text}"></TextBox> -->
                                                     <!-- <Image -->
                                                     <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
                                                     <!--     Source="{Binding cached}" -->
                                                     <!--     Stretch="Uniform" /> -->
-                                                    <!--<Viewbox>
+                                                    <Viewbox>
                                                         <views:DesignerSlideTitle Width="1920" Height="1080" />
-                                                    </Viewbox>-->
+                                                    </Viewbox>
                                                     <!--<TextBlock
                                         FontWeight="SemiBold"
                                         Foreground="White"
@@ -292,21 +291,17 @@
                                         TextTrimming="CharacterEllipsis" />-->
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="SongSlide">
-                                                    <TextBox Text="{Binding Text}"></TextBox>
+                                                    <!-- <TextBox Text="{Binding Text}"></TextBox> -->
                                                     <!-- <Image -->
                                                     <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
                                                     <!--     Source="{Binding cached}" -->
                                                     <!--     Stretch="Uniform" /> -->
-                                                    <!--<Viewbox>
-										
-                                                    -->
-                                                    <!--  TODO: cache as image  -->
-                                                    <!--
-
-                                        <views:DesignerSlideTemplate
-                                            Width="1920"
-                                            Height="1080" />
-                                    </Viewbox>-->
+                                                    <Viewbox>
+                                                        <!--  TODO: cache as image  -->
+                                                        <views:DesignerSlideTemplate
+                                                            Width="1920"
+                                                            Height="1080" />
+                                                    </Viewbox>
                                                     <!--<TextBlock
                                                         Height="9999"
                                                         VerticalAlignment="Top"

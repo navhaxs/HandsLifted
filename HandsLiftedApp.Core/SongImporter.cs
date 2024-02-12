@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 
@@ -122,6 +123,24 @@ namespace HandsLiftedApp.Core
             song.ResetArrangement();
 
             return song;
+        }
+
+        public static string songItemToFreeText(SongItemInstance songItem)
+        {
+            var stringBuilder = new StringBuilder();
+            
+            stringBuilder.AppendLine(songItem.Title);
+            stringBuilder.AppendLine("");
+            foreach (var stanza in songItem.Stanzas)
+            {
+                stringBuilder.AppendLine(stanza.Name);
+                stringBuilder.AppendLine(stanza.Lyrics);
+                stringBuilder.AppendLine("");
+            }
+
+            stringBuilder.AppendLine(songItem.Copyright);
+
+            return stringBuilder.ToString();
         }
 
         private static SongStanza createStanza(string partName, string stanzaBody)

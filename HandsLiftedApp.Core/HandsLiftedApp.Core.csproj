@@ -61,5 +61,9 @@
         <DependentUpon>DesignerSlideTitle.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\MessageWindow.axaml.cs">
+        <DependentUpon>MessageWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

@@ -87,7 +87,8 @@
                         <TextBlock Text="Import" />
                     </ToggleButton>
                     <Button Content="GenerateSlides" DockPanel.Dock="Left" Click="GenerateSlides_OnClick" />
-                    <Button Content="Reset Arrangement" DockPanel.Dock="Left" />
+                    <Button Content="SongDataUpdateCommand" Command="{Binding SongDataUpdateCommand}" DockPanel.Dock="Left" />
+                    <Button Content="ReverseSync" DockPanel.Dock="Left" Click="ReverseSyncButton_OnClick" />
                     <TextBox Text="{Binding Song.Design}" Width="200" />
                 </StackPanel>
 

@@ -5,6 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
              x:Class="HandsLiftedApp.Views.DesignerSlideTitle"
              xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
+             x:CompileBindings="False"
              xmlns:ext="using:HandsLiftedApp.Extensions">
 
     <UserControl.Resources>

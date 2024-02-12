@@ -148,5 +148,13 @@ namespace HandsLiftedApp.Core.Views.Editors
                 songEditorViewModel.Song.GenerateSlides();
             }
         }
+
+        private void ReverseSyncButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SongEditorViewModel songEditorViewModel)
+            {
+                songEditorViewModel.FreeTextEntryField = SongImporter.songItemToFreeText(songEditorViewModel.Song);
+            }
+        }
     }
 }

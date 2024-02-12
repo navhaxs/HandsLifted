@@ -26,6 +26,7 @@
         <entry key="HandsLiftedApp.Core/Views/LivePane.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/MainView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/MainWindow.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/MessageWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ProjectorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/SlideThumbnail.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.PropertyGridControl/CollectionInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
@@ -38,6 +39,7 @@
         <entry key="HandsLiftedApp/Controls/ListBoxItem.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Controls/PlaylistSlidesView.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/ActiveSlideOutput.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/App/MessageWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/ControlModules/VideoSlideControlView.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/DebugInfoView.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/DisplayIdentifyWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />

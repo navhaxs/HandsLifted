@@ -5,6 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
              x:Class="HandsLiftedApp.Views.DesignerSlideTemplate"
  			 xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
+             x:CompileBindings="False"
  			 xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common">
 
 	<UserControl.Resources>
@@ -12,7 +13,7 @@
 		<extensions:BitmapAssetValueConverter x:Key="variableImage"/>
 	</UserControl.Resources>
 
-	<Grid Background="{Binding $parent[Window].SlideTheme.BackgroundColour, Converter={StaticResource ColorToBrush}}">
+	<Grid Background="{Binding SlideTheme.BackgroundColour, Converter={StaticResource ColorToBrush}}">
 		<Border RenderOptions.BitmapInterpolationMode="HighQuality">
 			<Grid HorizontalAlignment="Stretch" Margin="60 80">
 				<!--<Viewbox StretchDirection="DownOnly" Stretch="Uniform">-->

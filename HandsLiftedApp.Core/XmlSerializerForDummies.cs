@@ -87,7 +87,7 @@ namespace HandsLiftedApp.Core
                         }
                         else if (deserializedItem is SongItem songItem)
                         {
-                            convereted = new SongItemInstance()
+                            var song = new SongItemInstance()
                             {
                                 UUID = songItem.UUID,
                                 Title = songItem.Title,
@@ -101,6 +101,8 @@ namespace HandsLiftedApp.Core
                                 StartOnTitleSlide = songItem.StartOnTitleSlide,
                                 EndOnBlankSlide = songItem.EndOnBlankSlide
                             };
+                            song.GenerateSlides();
+                            convereted = song;
                         }
                         else
                         {

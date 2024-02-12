@@ -14,14 +14,16 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
     {
         public event EventHandler SongDataUpdated;
 
-        private SongItemInstance? _song;
-        public SongItemInstance? Song
+        private SongItemInstance _song;
+        public SongItemInstance Song
         {
             get => _song;
             set
             {
+                if (_song != null)
+                    _song.PropertyChanged -= _song_PropertyChanged;
+                
                 this.RaiseAndSetIfChanged(ref _song, value);
-
                 _song.PropertyChanged += _song_PropertyChanged;
                 //OnPropertyChanged();
             }
@@ -29,7 +31,8 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 
         private void _song_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            OnSongDataUpdateCommand();
+            // OnSongDataUpdateCommand();
+            FreeTextEntryField = SongImporter.songItemToFreeText(Song);
         }
 
         public SongEditorViewModel()

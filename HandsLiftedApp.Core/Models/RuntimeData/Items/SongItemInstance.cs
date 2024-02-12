@@ -229,11 +229,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             get => _stanzas;
             set
             {
+                _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
+                _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
                 this.RaiseAndSetIfChanged(ref _stanzas, value);
                 // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-                _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
                 _stanzas.CollectionChanged += _stanzas_CollectionChanged;
-                _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
                 _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             }
         }

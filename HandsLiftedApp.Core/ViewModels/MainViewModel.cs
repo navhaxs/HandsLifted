@@ -59,7 +59,7 @@ public class MainViewModel : ViewModelBase
 
                         break;
                     case AddItemMessage.AddItemType.Logo:
-                        Playlist.Items.Add(new LogoItem());
+                        Playlist.Items.Add(new LogoItemInstance());
                         break;
                     case AddItemMessage.AddItemType.SectionHeading:
                         Playlist.Items.Add(new SectionHeadingItem());

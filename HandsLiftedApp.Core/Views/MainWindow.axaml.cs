@@ -6,6 +6,8 @@ using System;
 using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
+using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Views.App;
 
 namespace HandsLiftedApp.Core.Views;
 
@@ -31,6 +33,12 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         
         projectorWindow = new ProjectorWindow { DataContext = this.DataContext };
         projectorWindow.Show();
+        
+        MessageBus.Current.Listen<MessageWindowViewModel>().Subscribe(mwvm =>
+        {
+            MessageWindow mw = new MessageWindow() { DataContext = mwvm };
+            mw.ShowDialog(this);
+        });
     }
 
     private async Task ShowOpenFileDialog(InteractionContext<Unit, string[]?> interaction)
