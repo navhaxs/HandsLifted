@@ -38,7 +38,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static HandsLiftedApp.Importer.PowerPoint.Main;
 using Design = Avalonia.Controls.Design;
 using Slide = HandsLiftedApp.Data.Slides.Slide;
 
@@ -833,12 +832,12 @@ namespace HandsLiftedApp.ViewModels
                 if (fileName.EndsWith(".pptx"))
                 {
                     // kick off
-                    ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
-                    PlaylistUtils.AddPowerPointToPlaylist(importTask, (_) => { })
-                        .ContinueWith((s) =>
-                        {
-                            PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
-                        });
+                    // ImportTask importTask = new ImportTask() { PPTXFilePath = (string)fullFilePath, OutputDirectory = targetDirectory };
+                    // PlaylistUtils.AddPowerPointToPlaylist(importTask, (_) => { })
+                    //     .ContinueWith((s) =>
+                    //     {
+                    //         PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
+                    //     });
                 }
                 else if (fileName.EndsWith(".pdf"))
                 {

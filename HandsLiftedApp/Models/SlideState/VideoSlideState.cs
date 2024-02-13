@@ -3,7 +3,6 @@ using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Utils.LibMpvVideo;
 using LibMpv.Client;
-using Microsoft.WindowsAPICodePack.Shell;
 using ReactiveUI;
 using Serilog;
 using System;
@@ -52,10 +51,10 @@ namespace HandsLiftedApp.Models.SlideState
                 {
                     try
                     {
-                        ShellFile shellFile = ShellFile.FromFilePath(SourceMediaPath);
-                        var bm = shellFile.Thumbnail.Bitmap;
-                        Thumbnail = bm.ConvertToAvaloniaBitmap();
-                        Log.Debug($"Thumbnail loaded for {SourceMediaPath}");
+                        // ShellFile shellFile = ShellFile.FromFilePath(SourceMediaPath);
+                        // var bm = shellFile.Thumbnail.Bitmap;
+                        // Thumbnail = bm.ConvertToAvaloniaBitmap();
+                        // Log.Debug($"Thumbnail loaded for {SourceMediaPath}");
                     }
                     catch
                     {

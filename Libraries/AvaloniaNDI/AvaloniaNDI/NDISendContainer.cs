@@ -347,6 +347,10 @@ Description("Function to determine whether the content requires high resolution 
 
                 InitializeNdi();
             }
+            catch (DllNotFoundException ex)
+            {
+                return;
+            }
             catch (Exception)
             {
                 // Cannot run NDI. Most likely because the CPU is not sufficient (see SDK documentation).

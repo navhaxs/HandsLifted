@@ -5,7 +5,7 @@
 		<ApplicationIcon>Assets\app.ico</ApplicationIcon>
 		<AvaloniaXamlIlDebuggerLaunch>false</AvaloniaXamlIlDebuggerLaunch>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	  <WarningsAsErrors>SYSLIB0011</WarningsAsErrors>
@@ -78,7 +78,6 @@
 		<PackageReference Include="DebounceThrottle" />
 		<PackageReference Include="EmbedIO" />
 		<PackageReference Include="Material.Icons.Avalonia" />
-		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />
 		<PackageReference Include="Serilog" />
 		<PackageReference Include="Serilog.Expressions" />
 		<PackageReference Include="Serilog.Sinks.Console" />
@@ -90,7 +89,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
-		<ProjectReference Include="..\HandsLiftedApp.PowerPointImporter\HandsLiftedApp.Importer.PowerPoint.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.PropertyGridControl\HandsLiftedApp.PropertyGridControl.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Common.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />

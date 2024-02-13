@@ -5,7 +5,7 @@
     <RootNamespace>NewTek.NDI</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>false</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+<!--    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>-->
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\Bin\AnyCPU\Debug\</OutputPath>

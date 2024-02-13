@@ -40,7 +40,6 @@
     <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.8.2" />
     <PackageVersion Include="Magick.NET-Q16-HDRI-AnyCPU" Version="13.4.0" />
     <PackageVersion Include="Material.Icons.Avalonia" Version="2.1.0" />
-    <PackageVersion Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageVersion Include="Microsoft.Reactive.Testing" Version="5.0.0" />

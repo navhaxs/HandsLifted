@@ -17,7 +17,6 @@ namespace HandsLiftedApp.Views
 {
     public partial class SlideRendererWorkerWindow : Window, INotifyPropertyChanged
     {
-
         public MainWindowViewModel mainWindowViewModel { get; set; }
         public SlideRendererWorkerWindowViewModel viewModel { get; set; }
 
@@ -31,10 +30,15 @@ namespace HandsLiftedApp.Views
             this.DataContext = viewModel = new SlideRendererWorkerWindowViewModel();
 
             //Performing some magic to hide the form from Alt+Tab
-            IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
-            if (handle != null)
+            if (OperatingSystem.IsWindows())
             {
-                Win32.SetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE, (Win32.GetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE) | Win32.WS_EX_TOOLWINDOW) & ~Win32.WS_EX_APPWINDOW);
+                IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
+                if (handle != null)
+                {
+                    Win32.SetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE,
+                        (Win32.GetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE) | Win32.WS_EX_TOOLWINDOW) &
+                        ~Win32.WS_EX_APPWINDOW);
+                }
             }
 
             this.Opened += SlideRendererWorkerWindow_Opened;
@@ -64,11 +68,13 @@ namespace HandsLiftedApp.Views
 
                         Control? templateControl = null;
 
-                        var matches = mainWindowViewModel.Playlist.Items.Where(x => x.UUID.Equals(request.Data.ParentItemUUID));
+                        var matches =
+                            mainWindowViewModel.Playlist.Items.Where(x => x.UUID.Equals(request.Data.ParentItemUUID));
                         var designName =
                             (matches.Count() == 0)
-                            ? "Default"
-                            : ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)matches.First()).Design;
+                                ? "Default"
+                                : ((SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>)matches
+                                    .First()).Design;
 
                         viewModel.SlideTheme = mainWindowViewModel.Playlist.Designs.Find(d => d.Name == designName);
 
@@ -88,10 +94,10 @@ namespace HandsLiftedApp.Views
                             rtb.Render(templateControl);
                             //rtb.Save(@"R:\buffer.bmp");
                         }
+
                         request.Callback(rtb);
                         root.Children.Clear();
                     });
-
                 });
         }
 

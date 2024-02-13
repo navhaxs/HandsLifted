@@ -56,6 +56,7 @@
         <entry key="HandsLiftedApp/Views/Render/SongSlide/DesignerSlideTitle.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/Render/VideoSlideRenderer.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/Render/VlcVideoSlideRenderer.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp/Views/SplashWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/StageDisplayLayout/SongLayout.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/StageDisplayWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="Libraries/AvaloniaNDI/AvaloniaNDI.Sample/AnimationPage.axaml" value="Libraries/AvaloniaNDI/AvaloniaNDI.Sample/AvaloniaNDI.Sample.csproj" />

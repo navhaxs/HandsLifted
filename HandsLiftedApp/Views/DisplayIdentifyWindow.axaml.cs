@@ -19,6 +19,11 @@ namespace HandsLiftedApp.Views
 
         private void DisplayIdentifyWindow_Opened(object? sender, EventArgs e)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
             IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
             if (handle == null)
                 return;

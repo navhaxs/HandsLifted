@@ -26,7 +26,10 @@ namespace HandsLiftedApp
         {
             try
             {
-                ConsoleUtils.AllocConsole();
+                if (OperatingSystem.IsWindows())
+                {
+                    ConsoleUtils.AllocConsole();
+                }
                 //var myWriter = new ConsoleTraceListener();
                 //Trace.Listeners.Add(myWriter);
 

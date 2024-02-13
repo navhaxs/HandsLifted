@@ -16,7 +16,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static HandsLiftedApp.Importer.PowerPoint.Main;
 
 namespace HandsLiftedApp.Utils
 {
@@ -108,41 +107,41 @@ namespace HandsLiftedApp.Utils
             }
             return null;
         }
-        public async static Task<ImportStats?> AddPowerPointToPlaylist(ImportTask importTaskAction, Action<ImportStats> onProgressUpdate)
-        {
-            ImportStats? value = null;
-            Exception? threadEx = null;
-
-            await Task.Factory.StartNew(() =>
-            {
-                var progress = new Progress<ImportStats>();
-                progress.ProgressChanged += (object? sender, ImportStats e) =>
-                    {
-                        Debug.Print(e.JobPercentage.ToString());
-                        onProgressUpdate(e);
-                    };
-                var outDir = GetTempDirPath();
-
-                Thread staThread = new Thread(
-                    delegate ()
-                    {
-                        try
-                        {
-                            value = RunPowerPointImportTask(progress, importTaskAction);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            threadEx = ex;
-                        }
-                    });
-                staThread.SetApartmentState(ApartmentState.STA);
-                staThread.Start();
-                staThread.Join();
-            });
-
-            return value;
-        }
+        // public async static Task<ImportStats?> AddPowerPointToPlaylist(ImportTask importTaskAction, Action<ImportStats> onProgressUpdate)
+        // {
+        //     ImportStats? value = null;
+        //     Exception? threadEx = null;
+        //
+        //     await Task.Factory.StartNew(() =>
+        //     {
+        //         var progress = new Progress<ImportStats>();
+        //         progress.ProgressChanged += (object? sender, ImportStats e) =>
+        //             {
+        //                 Debug.Print(e.JobPercentage.ToString());
+        //                 onProgressUpdate(e);
+        //             };
+        //         var outDir = GetTempDirPath();
+        //
+        //         Thread staThread = new Thread(
+        //             delegate ()
+        //             {
+        //                 try
+        //                 {
+        //                     value = RunPowerPointImportTask(progress, importTaskAction);
+        //
+        //                 }
+        //                 catch (Exception ex)
+        //                 {
+        //                     threadEx = ex;
+        //                 }
+        //             });
+        //         staThread.SetApartmentState(ApartmentState.STA);
+        //         staThread.Start();
+        //         staThread.Join();
+        //     });
+        //
+        //     return value;
+        // }
 
         public async static Task<Importer.GoogleSlides.Main.ImportStats?> AddGoogleSlidesToPlaylist(Importer.GoogleSlides.Main.ImportTask importTaskAction, Action<Importer.GoogleSlides.Main.ImportStats> onProgressUpdate)
         {
@@ -157,7 +156,7 @@ namespace HandsLiftedApp.Utils
                     Debug.Print(e.JobPercentage.ToString());
                     onProgressUpdate(e);
                 };
-                var outDir = GetTempDirPath();
+                // var outDir = GetTempDirPath();
 
                 Thread staThread = new Thread(
                     delegate ()
@@ -179,10 +178,10 @@ namespace HandsLiftedApp.Utils
             return value;
         }
 
-        private static void Progress_ProgressChanged1(object? sender, ImportStats e)
-        {
-            Debug.Print(e.JobPercentage.ToString());
-        }
+        // private static void Progress_ProgressChanged1(object? sender, ImportStats e)
+        // {
+        //     Debug.Print(e.JobPercentage.ToString());
+        // }
         public static SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> CreateSlidesGroup(string directory)
         {
             SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl> slidesGroup = new SlidesGroupItem<ItemStateImpl, ItemAutoAdvanceTimerStateImpl>();

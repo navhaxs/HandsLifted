@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
-using static HandsLiftedApp.Importer.PowerPoint.Main;
 
 namespace HandsLiftedApp.Models.ItemExtensionState
 {
@@ -81,29 +80,29 @@ namespace HandsLiftedApp.Models.ItemExtensionState
 
         public void SyncCommand()
         {
-            DateTime now = DateTime.Now;
-            string fileName = Path.GetFileName(parentSlidesGroup.SourcePresentationFile);
+            // DateTime now = DateTime.Now;
+            // string fileName = Path.GetFileName(parentSlidesGroup.SourcePresentationFile);
 
             // decision: where to import? do we import the source file? or just the exported data?
             // OR relative to PLAYLIST directory
-            string targetDirectory = Path.Join(Globals.Env.TempDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
-            //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
-
-            ImportTask importTask = new ImportTask() { PPTXFilePath = parentSlidesGroup.SourcePresentationFile, OutputDirectory = targetDirectory };
-            PlaylistUtils.AddPowerPointToPlaylist(importTask, (e) =>
-            {
-                Progress = e.JobPercentage;
-            }).ContinueWith((s) =>
-            {
-                PlaylistUtils.UpdateSlidesGroup(ref parentSlidesGroup, targetDirectory);
-                IsSyncBusy = false;
-
-                //// TODO cleanup: delete old dir after completion
-                var old = parentSlidesGroup.SourceSlidesExportDirectory;
-                parentSlidesGroup.SourceSlidesExportDirectory = targetDirectory;
-
-                FileUtils.DeleteDirectory(old);
-            });
+            // string targetDirectory = Path.Join(Globals.Env.TempDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            // //string targetDirectory = Path.Join(Playlist.State.PlaylistWorkingDirectory, ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            //
+            // ImportTask importTask = new ImportTask() { PPTXFilePath = parentSlidesGroup.SourcePresentationFile, OutputDirectory = targetDirectory };
+            // PlaylistUtils.AddPowerPointToPlaylist(importTask, (e) =>
+            // {
+            //     Progress = e.JobPercentage;
+            // }).ContinueWith((s) =>
+            // {
+            //     PlaylistUtils.UpdateSlidesGroup(ref parentSlidesGroup, targetDirectory);
+            //     IsSyncBusy = false;
+            //
+            //     //// TODO cleanup: delete old dir after completion
+            //     var old = parentSlidesGroup.SourceSlidesExportDirectory;
+            //     parentSlidesGroup.SourceSlidesExportDirectory = targetDirectory;
+            //
+            //     FileUtils.DeleteDirectory(old);
+            // });
         }
     }
 }

@@ -25,6 +25,11 @@ namespace HandsLiftedApp.Views.Editor
 
         void updateWin32Border(WindowState v)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+            
             if (v != WindowState.Maximized)
             {
 

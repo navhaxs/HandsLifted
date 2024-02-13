@@ -32,6 +32,7 @@
     <ItemGroup>
       <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj" />
       <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj" />
+      <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
     </ItemGroup>
 
 

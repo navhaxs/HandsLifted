@@ -212,12 +212,15 @@ public unsafe partial class MpvContext : IDisposable
     {
         if (!disposed)
         {
-            StopRendering();
-            eventLoop.Stop();
-            if (eventLoop is IDisposable disposable)
-                disposable.Dispose();
-            mpv_terminate_destroy(ctx);
-            disposed = true;
+            try
+            {
+                StopRendering();
+                eventLoop.Stop();
+                if (eventLoop is IDisposable disposable)
+                    disposable.Dispose();
+                mpv_terminate_destroy(ctx);
+                disposed = true;
+            } catch (Exception _ignored) {}
         }
     }
 
