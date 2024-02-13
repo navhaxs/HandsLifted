@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.LibMpv;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Skia;
@@ -20,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls.LibMpv;
 
 namespace AvaloniaNDI
 {

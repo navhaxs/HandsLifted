@@ -47,6 +47,7 @@
     <PackageVersion Include="Moq" Version="4.17.2" />
     <PackageVersion Include="MSTest.TestAdapter" Version="3.1.1" />
     <PackageVersion Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageVersion Include="NDILibDotNetCoreBase" Version="2023.12.20.2" />
     <PackageVersion Include="NetOfficeFw.PowerPoint" Version="1.9.3" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageVersion Include="PDFiumCore" Version="121.0.6110" />
