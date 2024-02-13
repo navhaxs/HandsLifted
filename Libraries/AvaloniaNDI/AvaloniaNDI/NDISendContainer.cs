@@ -535,7 +535,7 @@ Description("Function to determine whether the content requires high resolution 
 
             // allocate some memory for a video buffer
             IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
-
+            
             // We are going to create a progressive frame at 60Hz.
             NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()
             {
@@ -543,7 +543,7 @@ Description("Function to determine whether the content requires high resolution 
                 xres = NdiWidth,
                 yres = NdiHeight,
                 // Use BGRA video
-                FourCC = NDIlib.FourCC_type_e.FourCC_type_BGRA,
+                FourCC = OperatingSystem.IsMacOS() ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA,
                 // The frame-eate
                 frame_rate_N = frNum,
                 frame_rate_D = frDen,
