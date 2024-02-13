@@ -3,11 +3,12 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using AvaloniaNDI;
 using LibMpv.Client;
 
 namespace Avalonia.Controls.LibMpv;
 
-public class SoftwareVideoView : Control
+public class SoftwareVideoView : Control, IGetVideoBufferBitmap
 {
     WriteableBitmap renderTarget;
 

@@ -19,7 +19,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls.LibMpv;
 
 namespace AvaloniaNDI
 {
@@ -575,8 +574,7 @@ Description("Function to determine whether the content requires high resolution 
             using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
             // render the Avalonia visual
-            var videoControl = this.Child.FindAllVisuals<SoftwareVideoView>().FirstOrDefault();
-
+            var videoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
             if (videoControl != null)
             {
                 videoControl.GetVideoBufferBitmap().CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);

@@ -10,12 +10,6 @@
   <ItemGroup>
     <None Remove="NDISDK\Processing.NDI.Lib.x64.dll" />
     <None Remove="NDISDK\Processing.NDI.Lib.x86.dll" />
-    <None Update="NDISDK\NDILib.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="NDISDK\libndi_licenses.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -51,10 +45,6 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <TargetPath>Processing.NDI.Lib.x86.dll</TargetPath>
 	  </ContentWithTargetPath>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj" />
   </ItemGroup>
 
 </Project>
