@@ -4,9 +4,12 @@ using ReactiveUI;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Slides;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Models
 {
@@ -44,6 +47,11 @@ namespace HandsLiftedApp.Core.Models
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItem);
 
+            this.WhenAnyValue(x => x.SelectedItem).Subscribe((item) =>
+            {
+                this.RaisePropertyChanged(nameof(ActiveSlide));
+            });
+
             _selectedItemAsIItemInstance = this.WhenAnyValue(
                     (x => x.SelectedItemIndex),
                     (int selectedIndex) =>
@@ -61,10 +69,8 @@ namespace HandsLiftedApp.Core.Models
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItemAsIItemInstance);
 
-            _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide, (Slide activeSlide) =>
-                {
-                    return activeSlide;
-                })
+            _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide,
+                    (Slide activeSlide) => { return activeSlide; })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
@@ -84,17 +90,16 @@ namespace HandsLiftedApp.Core.Models
 
                 if (found)
                 {
-                    
                     // Items[i] = updateEditedItemMessage.Item;
                     if (Items[i] is SongItemInstance dest)
                     {
                         if (updateEditedItemMessage.Item is SongItemInstance source)
                         {
-
                             if (dest == source)
                             {
                                 return;
                             }
+
                             dest.Title = source.Title;
                             dest.SlideTheme = source.SlideTheme;
                             dest.Arrangement = source.Arrangement;
@@ -106,11 +111,24 @@ namespace HandsLiftedApp.Core.Models
                             dest.StartOnTitleSlide = source.StartOnTitleSlide;
                             dest.EndOnBlankSlide = source.EndOnBlankSlide;
                         }
-                        
                     }
                 }
-
             });
+
+
+            MessageBus.Current.Listen<ActionMessage>()
+                .Subscribe(x =>
+                {
+                    switch (x.Action)
+                    {
+                        case ActionMessage.NavigateSlideAction.NextSlide:
+                            NavigateNextSlide();
+                            break;
+                        case ActionMessage.NavigateSlideAction.PreviousSlide:
+                            NavigatePreviousSlide();
+                            break;
+                    }
+                });
         }
 
         private DateTime? _lastSaved;
@@ -152,6 +170,7 @@ namespace HandsLiftedApp.Core.Models
         {
             get => _selectedItem.Value;
         }
+
         public IItemInstance? SelectedItemAsIItemInstance
         {
             get => _selectedItemAsIItemInstance.Value;
@@ -167,6 +186,242 @@ namespace HandsLiftedApp.Core.Models
         public class UpdateEditedItemMessage
         {
             public Item Item { get; set; }
+        }
+
+        private PresentationStateEnum _presentationState;
+
+        public PresentationStateEnum PresentationState
+        {
+            get => _presentationState;
+            set => this.RaiseAndSetIfChanged(ref _presentationState, value);
+        }
+
+        public enum PresentationStateEnum
+        {
+            Logo,
+            Blank,
+            Slides
+        }
+
+        public void NavigateNextSlide()
+        {
+            if (PresentationState != PresentationStateEnum.Slides)
+            {
+                PresentationState = PresentationStateEnum.Slides;
+                return;
+            }
+
+            SlideReference slideReference = GetNextSlide();
+
+            // the next slide is NEVER itemIndex > -1
+            // that -1 is however used for StageDisplay and Previews
+            if (slideReference.ItemIndex > -1)
+            {
+                NavigateToReference(slideReference);
+            }
+        }
+
+        public void NavigatePreviousSlide()
+        {
+            if (PresentationState != PresentationStateEnum.Slides)
+            {
+                PresentationState = PresentationStateEnum.Slides;
+                return;
+            }
+
+            SlideReference slideReference = GetPreviousSlide();
+            NavigateToReference(slideReference);
+        }
+
+        public void NavigateToReference(SlideReference slideReference)
+        {
+            var lastSelectedItemIndex = SelectedItemIndex;
+
+            if (slideReference.SlideIndex != null)
+            {
+                var item = Items[slideReference.ItemIndex];
+                if (item is IItemInstance itemInstance)
+                {
+                    itemInstance.SelectedSlideIndex = (int)slideReference.SlideIndex;
+                }
+            }
+
+            SelectedItemIndex = slideReference.ItemIndex;
+
+            if (lastSelectedItemIndex != slideReference.ItemIndex && lastSelectedItemIndex > -1 &&
+                Items.ElementAtOrDefault(lastSelectedItemIndex) != null)
+            {
+                // deselect the slide within the previous item
+                var lastItem = Items[lastSelectedItemIndex];
+                if (lastItem is IItemInstance itemInstance)
+                    itemInstance.SelectedSlideIndex = -1;
+            }
+
+            // Log.Debug($"NavigateToReference {slideReference}");
+
+            // MessageBus.Current.SendMessage(new ActiveSlideChangedMessage());
+        }
+
+        public SlideReference GetNextSlide(bool allowItemLookAhead = true)
+        {
+            // if no selected item, attempt to select the first item
+            if (SelectedItem == null || SelectedItem is BlankItem)
+            {
+                int nextNavigatableItemIndex = getNextNavigatableItem(SelectedItemIndex);
+                if (nextNavigatableItemIndex != -1)
+                {
+                    // select first slide of this next item
+                    return new SlideReference()
+                    {
+                        Slide = Items[nextNavigatableItemIndex].Slides.ElementAtOrDefault(0),
+                        SlideIndex = 0,
+                        ItemIndex = nextNavigatableItemIndex
+                    };
+                }
+            }
+            // for selected item, attempt to navigate slide forwards (unless at last slide of this item)
+            else if (SelectedItemAsIItemInstance != null &&
+                     SelectedItem.Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex + 1) != null)
+            {
+                var nextSlideIndex = SelectedItemAsIItemInstance.SelectedSlideIndex + 1;
+                return new SlideReference()
+                {
+                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    SlideIndex = nextSlideIndex,
+                    ItemIndex = SelectedItemIndex
+                };
+            }
+            // for selected item, if slide group that is loopable, then loop back to first slide of this item
+            else if (SelectedItem is SlidesGroupItem &&
+                     ((SlidesGroupItem)SelectedItem).IsLooping == true &&
+                     SelectedItemAsIItemInstance != null &&
+                     (SelectedItem.Slides.Count == SelectedItemAsIItemInstance.SelectedSlideIndex + 1))
+            {
+                var nextSlideIndex = 0;
+                return new SlideReference()
+                {
+                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    SlideIndex = nextSlideIndex,
+                    ItemIndex = SelectedItemIndex
+                };
+            }
+            // else attempt to navigate to next item
+            else if (allowItemLookAhead)
+            {
+                int nextNavigatableItemIndex = getNextNavigatableItem(SelectedItemIndex);
+
+                if (nextNavigatableItemIndex != -1)
+                {
+                    // select first slide of this next item
+                    return new SlideReference()
+                    {
+                        Slide = Items[nextNavigatableItemIndex].Slides.ElementAtOrDefault(0),
+                        SlideIndex = 0,
+                        ItemIndex = nextNavigatableItemIndex
+                    };
+                }
+            }
+
+            // no more next slide.
+            // NOTE: do not want to navigate to "unselected" as this actually goes back to initial slide before all items!!
+            return new SlideReference()
+            {
+                Slide = null,
+                SlideIndex = null,
+                ItemIndex = -1
+            };
+        }
+
+        private int getNextNavigatableItem(int startIdx)
+        {
+            for (int idx = startIdx + 1; idx < Items.Count; idx++)
+            {
+                Item item = Items[idx];
+                if (item.Slides.Count > 0)
+                {
+                    return idx;
+                }
+            }
+
+            return -1;
+        }
+
+        public SlideReference GetPreviousSlide()
+        {
+            // if no selected item, cannot go futher back, so do nothing 
+            if (SelectedItem == null || SelectedItem is BlankItem)
+            {
+                return new SlideReference()
+                {
+                    Slide = null,
+                    SlideIndex = null,
+                    ItemIndex = -1
+                };
+            }
+            // for selected item, attempt to navigate slide backwards within the item
+            // (unless at first slide)
+            else if (SelectedItemAsIItemInstance != null &&
+                     SelectedItem.Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex - 1) != null)
+            {
+                var nextSlideIndex = SelectedItemAsIItemInstance.SelectedSlideIndex - 1;
+                return new SlideReference()
+                {
+                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    SlideIndex = nextSlideIndex,
+                    ItemIndex = SelectedItemIndex
+                };
+            }
+            // for selected item, if slide group that is loopable, then loop back to last slide of this item
+            else if (SelectedItem is SlidesGroupItem &&
+                     ((SlidesGroupItem)SelectedItem).IsLooping == true &&
+                     SelectedItemAsIItemInstance != null &&
+                     (SelectedItemAsIItemInstance.SelectedSlideIndex == 0))
+            {
+                var nextSlideIndex = SelectedItem.Slides.Count - 1;
+                return new SlideReference()
+                {
+                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    SlideIndex = nextSlideIndex,
+                    ItemIndex = SelectedItemIndex
+                };
+            }
+
+            // else attempt to navigate item backwards to last slide of previous item
+            int previousNavigatableItemIndex = getPreviousNavigatableItem(SelectedItemIndex);
+            if (previousNavigatableItemIndex != -1)
+            {
+                var nextSlideIndex = Items[previousNavigatableItemIndex].Slides.Count - 1;
+
+                return new SlideReference()
+                {
+                    Slide = Items[previousNavigatableItemIndex].Slides.ElementAtOrDefault(nextSlideIndex),
+                    SlideIndex = nextSlideIndex,
+                    ItemIndex = previousNavigatableItemIndex
+                };
+            }
+
+            // else no item to navigate backwards to, so deselect current item and its slide
+            // i.e. puts the cursor before the first item
+            return new SlideReference()
+            {
+                Slide = null,
+                SlideIndex = null,
+                ItemIndex = -1
+            };
+        }
+
+        private int getPreviousNavigatableItem(int startIdx)
+        {
+            for (int idx = startIdx - 1; idx >= 0; idx--)
+            {
+                Item item = Items[idx];
+                if (item.Slides.Count > 0)
+                {
+                    return idx;
+                }
+            }
+
+            return -1;
         }
     }
 }

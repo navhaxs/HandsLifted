@@ -17,8 +17,10 @@ using Config.Net;
 using DynamicData;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Utils;
+using Serilog;
 
 namespace HandsLiftedApp.Core.ViewModels;
 
@@ -168,6 +170,8 @@ public class MainViewModel : ViewModelBase
             }
             catch (Exception e)
             {
+                Log.Error($"[DOC] Failed to parse playlist XML: [{settings.LastOpenedPlaylistFullPath}]");
+                Console.WriteLine(e); 
                 // ignored
             }
         }

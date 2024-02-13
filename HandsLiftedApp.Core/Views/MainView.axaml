@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
-             xmlns:core="clr-namespace:HandsLiftedApp.Core"
              xmlns:controls1="clr-namespace:HandsLiftedApp.Controls"
              xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -26,7 +25,6 @@
                 VerticalContentAlignment="Stretch"
                 Background="Transparent"
                 BorderThickness="0"
-                Classes="MenuItem"
                 ClickMode="Press"
                 DockPanel.Dock="Left"
                 HotKey="Alt+M">
@@ -226,7 +224,9 @@
 
             <DockPanel Grid.Column="2" Background="#1e1e1e">
                 <!-- <core:SongLyricEditor DataContext="{Binding CurrentPlaylist.SelectedItem}" /> -->
-                <controls1:ItemSlidesView DataContext="{Binding Playlist.SelectedItem}" />
+                <ScrollViewer>
+                    <controls1:ItemSlidesView DataContext="{Binding Playlist.SelectedItem}" />
+                </ScrollViewer>
             </DockPanel>
 
             <GridSplitter Grid.Column="3" Background="#282828" />

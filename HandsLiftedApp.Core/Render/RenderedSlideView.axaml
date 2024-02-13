@@ -8,6 +8,9 @@
              xmlns:views="clr-namespace:HandsLiftedApp.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:CompileBindings="False"
+             Width="1920" 
+             Height="1080"
+             Background="Black"
              x:Class="HandsLiftedApp.Core.Render.RenderedSlideView">
 
     <ContentControl Content="{Binding $parent[render:RenderedSlideView].ActiveSlide}">

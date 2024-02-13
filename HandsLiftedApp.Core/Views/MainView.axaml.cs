@@ -7,7 +7,9 @@ using HandsLiftedApp.Utils;
 using Serilog;
 using System;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
 using ReactiveUI;
 
@@ -18,6 +20,54 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
+        
+        this.AttachedToVisualTree += (sender, args) =>
+        {
+            var window = TopLevel.GetTopLevel(this);
+            window.KeyDown += MainWindow_KeyDown;
+        };
+    }
+    
+    private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        var window = TopLevel.GetTopLevel(this);
+
+        // if (!window.IsFocused)
+        // {
+        //     return;
+        // }
+
+        // TODO: if a textbox, datepicker etc is selected - then skip this func.
+        var focusManager = TopLevel.GetTopLevel(this).FocusManager;
+        var focusedElement = focusManager.GetFocusedElement();
+
+        if (focusedElement is TextBox || focusedElement is DatePicker)
+            return;
+
+        switch (e.Key)
+        {
+            case Key.F1:
+                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.GotoBlank });
+                e.Handled = true;
+                break;
+            case Key.F12:
+                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.GotoLogo });
+                e.Handled = true;
+                break;
+            case Key.PageDown:
+            case Key.Right:
+            case Key.Space:
+                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                // MessageBus.Current.SendMessage(new FocusSelectedItem());
+                e.Handled = true;
+                break;
+            case Key.PageUp:
+            case Key.Left:
+                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                // MessageBus.Current.SendMessage(new FocusSelectedItem());
+                e.Handled = true;
+                break;
+        }
     }
 
     private async void TestButton_Clicked(object sender, RoutedEventArgs args)
@@ -96,10 +146,11 @@ public partial class MainView : UserControl
             {
                 try
                 {
-                    XmlSerializerForDummies.SerializePlaylist(vm.Playlist, Uri.UnescapeDataString(file.Path.AbsolutePath));
+                    var filePath = Uri.UnescapeDataString(file.Path.AbsolutePath);
+                    XmlSerializerForDummies.SerializePlaylist(vm.Playlist, filePath);
                     // XmlSerialization.WriteToXmlFile<Playlist>(file.Path.AbsolutePath, vm.CurrentPlaylist.Playlist);
                     //MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
-                    vm.settings.LastOpenedPlaylistFullPath = file.Path.AbsolutePath;
+                    vm.settings.LastOpenedPlaylistFullPath = filePath;
                 }
                 catch (Exception e)
                 {

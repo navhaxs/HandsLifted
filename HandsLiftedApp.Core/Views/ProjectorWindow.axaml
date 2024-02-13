@@ -8,6 +8,9 @@
         Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
         x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
         x:DataType="viewModels:MainViewModel"
+        Background="Black"
         Title="ProjectorWindow">
-    <render:RenderedSlideView ActiveSlide="{Binding Playlist.ActiveSlide}" />
+    <Viewbox>
+        <render:RenderedSlideView ActiveSlide="{Binding Playlist.ActiveSlide}" />
+    </Viewbox>
 </Window>
