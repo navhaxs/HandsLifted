@@ -182,10 +182,20 @@ public class MainViewModel : ViewModelBase
 
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
 
-    public string Greeting => "Welcome to the VisionScreens Web Editor! :D";
-
     private PlaylistInstance _playlist = new PlaylistInstance();
     public PlaylistInstance Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
+    
+    public void OnNextSlideClickCommand()
+    {
+        Playlist.NavigateNextSlide();
+        MessageBus.Current.SendMessage(new FocusSelectedItem());
+    }
+
+    public void OnPrevSlideClickCommand()
+    {
+        Playlist.NavigatePreviousSlide();
+        MessageBus.Current.SendMessage(new FocusSelectedItem());
+    }
     
     private bool _IsDisplayDebugInfo = false;
     public bool IsDisplayDebugInfo { get => _IsDisplayDebugInfo; set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value); }

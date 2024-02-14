@@ -43,8 +43,8 @@ namespace HandsLiftedApp.Data.Models
         private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png";
         public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
 
-        private List<BaseSlideTheme> _designs = new List<BaseSlideTheme>();
-        public List<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
+        private ObservableCollection<BaseSlideTheme> _designs = new();
+        public ObservableCollection<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
 
         // // TODO move into Dictionary
         // private DateTimeOffset _date = DateTimeOffset.Now;

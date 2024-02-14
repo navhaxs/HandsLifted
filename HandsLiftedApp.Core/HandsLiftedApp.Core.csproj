@@ -66,5 +66,40 @@
         <DependentUpon>MessageWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\PlaylistSlidesView.axaml.cs">
+        <DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Designer\DesignerView.axaml.cs">
+        <DependentUpon>DesignerView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Designer\SlideThemeDesigner.axaml.cs">
+        <DependentUpon>SlideThemeDesigner.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Designer\SlideDesignerWindow.axaml.cs">
+        <DependentUpon>SlideDesignerWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Designer\DesignerView.axaml.cs">
+        <DependentUpon>DesignerView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Designer\SlideDesigner.axaml.cs">
+        <DependentUpon>SlideDesigner.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Designer\SlideDesignerWindow.axaml.cs">
+        <DependentUpon>SlideDesignerWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <AdditionalFiles Include="Views\Designer\DesignerView.axaml" />
+      <AdditionalFiles Include="Views\Designer\SlideDesigner.axaml" />
+      <AdditionalFiles Include="Views\Designer\SlideDesignerWindow.axaml" />
     </ItemGroup>
 </Project>

@@ -1,0 +1,80 @@
+<UserControl
+    x:Class="HandsLiftedApp.Controls.AddItemButton"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="50"
+    d:DesignWidth="400"
+    Background="Transparent"
+    DragDrop.AllowDrop="True"
+    x:CompileBindings="False"
+    mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="avares://HandsLiftedApp.Controls/Assets/AddItemFlyoutResourceDictionary.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<SolidColorBrush x:Key="BackgroundBrush">#5AE5E2F1</SolidColorBrush>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<SolidColorBrush x:Key="BackgroundBrush">#171423</SolidColorBrush>
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+
+	</UserControl.Resources>
+	
+    <DockPanel>
+        <TextBlock Name="DropState" />
+		<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+			<Button
+				Name="AddButton"
+				Width="100"
+				Margin="0,0,18,0"
+				Flyout="{StaticResource addItemFlyout}"
+				DataContext="{Binding State.ItemIndex}"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Top"
+				DockPanel.Dock="Left">
+				<Button.Styles>
+					<Style Selector="Button">
+						<Setter Property="Padding" Value="12 8" />
+						<Setter Property="HorizontalAlignment" Value="Stretch" />
+						<Setter Property="BorderThickness" Value="0" />
+						<Setter Property="CornerRadius" Value="6" />
+						<Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+						<Setter Property="BorderBrush" Value="#9a93cd" />
+					</Style>
+					<Style Selector="Button:pointerover">
+						<Setter Property="Background" Value="#5c3ab6" />
+						<Setter Property="BorderBrush" Value="#f6f4ff" />
+					</Style>
+					<Style Selector="MenuItem">
+						<Setter Property="Padding" Value="6 10" />
+						<Setter Property="FontSize" Value="14" />
+					</Style>
+				</Button.Styles>
+
+				<material:MaterialIcon
+					Width="24"
+					Height="24"
+					Margin="-4"
+					VerticalAlignment="Center"
+					DockPanel.Dock="Top"
+					Foreground="#9a93cd"
+					Kind="Plus" />
+			</Button>
+			
+			<TextBlock Name="AddButtonTooltip" Text="Add Item" VerticalAlignment="Center" HorizontalAlignment="Left" 
+					   FontSize="14" IsVisible="False"/>
+			<!--<TextBlock Text="{Binding State.ItemIndex}" VerticalAlignment="Center" HorizontalAlignment="Left" 
+					   FontSize="14" />-->
+		</StackPanel>
+    </DockPanel>
+</UserControl>

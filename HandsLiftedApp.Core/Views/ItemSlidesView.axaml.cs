@@ -49,18 +49,18 @@ namespace HandsLiftedApp.Controls
 
         private void EditButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (sender is not Control { DataContext: SongItemInstance item })
+            if (sender is Control { DataContext: SongItemInstance item })
             {
+                SongEditorViewModel songEditorViewModel = new SongEditorViewModel() { Song = item };
+                songEditorViewModel.SongDataUpdated += (ex, ey) =>
+                {
+                            
+                };
+                SongEditorWindow songEditorWindow = new SongEditorWindow() { DataContext = songEditorViewModel };
+                songEditorWindow.Show();
                 return;
             }
 
-            SongEditorViewModel songEditorViewModel = new SongEditorViewModel() { Song = item };
-            songEditorViewModel.SongDataUpdated += (ex, ey) =>
-            {
-                        
-            };
-            SongEditorWindow songEditorWindow = new SongEditorWindow() { DataContext = songEditorViewModel };
-            songEditorWindow.Show();
         }
     }
 }

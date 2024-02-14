@@ -14,20 +14,21 @@ namespace HandsLiftedApp.Data.SlideTheme
         public string Name { get => _Name; set => this.RaiseAndSetIfChanged(ref _Name, value); }
 
         // Slide Design Properties
-        private FontFamily _FontFamily;
+        private FontFamily _FontFamily = FontFamily.Parse("Arial");
         [XmlIgnore]
         public FontFamily FontFamily { get => _FontFamily; set => this.RaiseAndSetIfChanged(ref _FontFamily, value); }
-        private FontWeight _FontWeight;
+        private FontWeight _FontWeight = FontWeight.Normal;
         [XmlIgnore]
         public FontWeight FontWeight { get => _FontWeight; set => this.RaiseAndSetIfChanged(ref _FontWeight, value); }
-        private Color _TextColour;
+        private Color _TextColour = Colors.White;
         public Color TextColour { get => _TextColour; set => this.RaiseAndSetIfChanged(ref _TextColour, value); }
-        private Color _BackgroundColour;
+        private Color _BackgroundColour = Colors.Black;
         public Color BackgroundColour { get => _BackgroundColour; set => this.RaiseAndSetIfChanged(ref _BackgroundColour, value); }
-        private int _FontSize;
+        private int _FontSize = 100;
         public int FontSize { get => _FontSize; set => this.RaiseAndSetIfChanged(ref _FontSize, value); }
-        private int _LineHeight;
+        private int _LineHeight = 150;
         public int LineHeight { get => _LineHeight; set => this.RaiseAndSetIfChanged(ref _LineHeight, value); }
+        
         private string _BackgroundGraphicFilePath;
         public string BackgroundGraphicFilePath { get => _BackgroundGraphicFilePath; set => this.RaiseAndSetIfChanged(ref _BackgroundGraphicFilePath, value); }
 

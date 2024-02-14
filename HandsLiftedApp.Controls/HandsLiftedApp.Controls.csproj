@@ -41,6 +41,10 @@
         <SubType>Code</SubType>
         <DependentUpon>%(Filename)</DependentUpon>
       </Compile>
+      <Compile Update="AddItemButton.axaml.cs">
+        <DependentUpon>AddItemButton.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 

@@ -17,10 +17,9 @@
 	<ContentControl Content="{Binding}" >
 		<ContentControl.ContentTemplate>
 			<utils:MyTemplateSelector>
-				<DataTemplate x:Key="SongItem">
-					<editors:SongLyricEditor DataContext="{Binding}" />
+				<DataTemplate x:Key="SongItemInstance">
 			   	</DataTemplate>
-				<DataTemplate x:Key="SlidesGroupItem">
+				<DataTemplate x:Key="SlidesGroupItemInstance">
 					<editors:GroupItemsEditor DataContext="{Binding}" />
 				</DataTemplate>
 				<DataTemplate x:Key="GoogleSlidesGroupItem">

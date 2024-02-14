@@ -160,6 +160,7 @@
 
     <Grid>
         <ScrollViewer>
+            <!-- SelectedIndex="{Binding SelectedItemIndex}" -->
             <ListBox
                 x:Name="itemsListBox"
                 Margin="0,0,0,100"
@@ -168,7 +169,6 @@
                 CornerRadius="0,0,0,6"
                 DragDrop.AllowDrop="True"
                 ItemsSource="{Binding Items, Mode=OneWay}"
-                SelectedIndex="{Binding SelectedItemIndex}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>

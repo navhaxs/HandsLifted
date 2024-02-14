@@ -11,6 +11,7 @@ using Avalonia.Input;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views;
@@ -20,14 +21,14 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        
+
         this.AttachedToVisualTree += (sender, args) =>
         {
             var window = TopLevel.GetTopLevel(this);
             window.KeyDown += MainWindow_KeyDown;
         };
     }
-    
+
     private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
     {
         var window = TopLevel.GetTopLevel(this);
@@ -47,24 +48,28 @@ public partial class MainView : UserControl
         switch (e.Key)
         {
             case Key.F1:
-                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.GotoBlank });
+                MessageBus.Current.SendMessage(new ActionMessage()
+                    { Action = ActionMessage.NavigateSlideAction.GotoBlank });
                 e.Handled = true;
                 break;
             case Key.F12:
-                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.GotoLogo });
+                MessageBus.Current.SendMessage(new ActionMessage()
+                    { Action = ActionMessage.NavigateSlideAction.GotoLogo });
                 e.Handled = true;
                 break;
             case Key.PageDown:
             case Key.Right:
             case Key.Space:
-                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.NextSlide });
-                // MessageBus.Current.SendMessage(new FocusSelectedItem());
+                MessageBus.Current.SendMessage(new ActionMessage()
+                    { Action = ActionMessage.NavigateSlideAction.NextSlide });
+                MessageBus.Current.SendMessage(new FocusSelectedItem());
                 e.Handled = true;
                 break;
             case Key.PageUp:
             case Key.Left:
-                MessageBus.Current.SendMessage(new ActionMessage() { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
-                // MessageBus.Current.SendMessage(new FocusSelectedItem());
+                MessageBus.Current.SendMessage(new ActionMessage()
+                    { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+                MessageBus.Current.SendMessage(new FocusSelectedItem());
                 e.Handled = true;
                 break;
         }
@@ -107,7 +112,8 @@ public partial class MainView : UserControl
             {
                 try
                 {
-                    var x = XmlSerializerForDummies.DeserializePlaylist(Uri.UnescapeDataString(files[0].Path.AbsolutePath));
+                    var x = XmlSerializerForDummies.DeserializePlaylist(
+                        Uri.UnescapeDataString(files[0].Path.AbsolutePath));
                     vm.Playlist = x;
                     // vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
                 }
@@ -166,5 +172,11 @@ public partial class MainView : UserControl
     {
         // MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
         ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown();
+    }
+
+    private void Slide_OnClick(object? sender, RoutedEventArgs e)
+    {
+        SlideDesignerWindow slideDesignerWindow = new SlideDesignerWindow() { DataContext = this.DataContext };
+        slideDesignerWindow.Show();
     }
 }

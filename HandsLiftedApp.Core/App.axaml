@@ -12,5 +12,6 @@
     <Application.Styles>
         <SimpleTheme />
         <avalonia:MaterialIconStyles />
+        <StyleInclude Source="avares://HandsLiftedApp.Controls/ScrollViewer.axaml" />
     </Application.Styles>
 </Application>
