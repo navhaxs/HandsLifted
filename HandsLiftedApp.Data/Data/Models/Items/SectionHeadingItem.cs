@@ -1,10 +1,10 @@
 ﻿using Avalonia.Media;
-using HandsLiftedApp.Data.Models.Types;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
+using HandsLiftedApp.Data.Data.Models.Types;
 
 
 namespace HandsLiftedApp.Data.Models.Items

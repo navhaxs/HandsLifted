@@ -21,6 +21,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Utils;
 using Serilog;
 
@@ -39,6 +40,7 @@ public class MainViewModel : ViewModelBase
             Playlist = new PlaylistInstance();
             Playlist.Items.Add(new SongItemInstance());
             Playlist.Items.Add(new LogoItemInstance());
+            Playlist.Designs.Add(new BaseSlideTheme() {Name = "Default"});
 
             return;
         }

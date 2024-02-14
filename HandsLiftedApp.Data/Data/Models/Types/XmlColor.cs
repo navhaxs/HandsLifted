@@ -1,9 +1,10 @@
-﻿using Avalonia.Media;
+﻿using System;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Avalonia.Media;
 
-namespace HandsLiftedApp.Data.Models.Types
+namespace HandsLiftedApp.Data.Data.Models.Types
 {
     public class XmlColor : IXmlSerializable
     {
@@ -42,7 +43,15 @@ namespace HandsLiftedApp.Data.Models.Types
         {
             string colorAsString = reader.ReadElementContentAsString();
 
-            this.m_value = Color.Parse(colorAsString); // convert "colorAsString" to Color
+            try
+            {
+                this.m_value = Color.Parse(colorAsString); // convert "colorAsString" to Color
+            }
+            catch (Exception e)
+            {
+                // Log
+                this.m_value = Colors.Transparent; // set default color if parsing fails (e.g. if colorAsString is empty)
+            }
         }
 
         public XmlSchema GetSchema()

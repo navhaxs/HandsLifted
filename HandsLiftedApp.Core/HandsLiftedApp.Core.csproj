@@ -18,6 +18,7 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.Controls.ColorPicker" />
         <PackageReference Include="Avalonia.ReactiveUI" />
         <PackageReference Include="Avalonia.Themes.Fluent" />
         <PackageReference Include="Avalonia.Fonts.Inter" />
@@ -99,7 +100,6 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Views\Designer\DesignerView.axaml" />
-      <AdditionalFiles Include="Views\Designer\SlideDesigner.axaml" />
       <AdditionalFiles Include="Views\Designer\SlideDesignerWindow.axaml" />
     </ItemGroup>
 </Project>

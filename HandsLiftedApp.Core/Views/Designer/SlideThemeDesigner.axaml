@@ -6,11 +6,13 @@
              xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
              xmlns:ext="using:HandsLiftedApp.Extensions"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
              x:DataType="viewModels:MainViewModel"
              x:CompileBindings="False"
              x:Class="HandsLiftedApp.Core.Views.Designer.SlideThemeDesigner">
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <converters1:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
         <ext:BitmapAssetValueConverter x:Key="variableImage" />
     </UserControl.Resources>
 
@@ -35,23 +37,25 @@
                         </Setter>
                     </Style>
                 </ListBox.Styles>
-                <!--<ListBox.ItemTemplate>
+                <ListBox.ItemTemplate>
 				<DataTemplate>
-					<Viewbox MaxHeight="60">
-						
-					<Grid
-						Height="130"
-						Width="130"
-						Background="{Binding BackgroundColour, Converter={StaticResource ColorToBrush}}">
-						<TextBlock Text="A"
-								   FontSize="80"
-								   Margin="20"
-								   FontFamily="{Binding FontFamily, FallbackValue='Arial'}"
-								   FontWeight="SemiBold"/>
-					</Grid>
-					</Viewbox>
+                    <DockPanel>
+                        <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="0 6 0 0" />
+                        <Viewbox Height="60">
+                            <Grid
+                                Height="130"
+                                Width="130"
+                                Background="{Binding BackgroundColour, Converter={StaticResource XmlColorToBrush}}">
+                                <TextBlock Text="A"
+                                           FontSize="80"
+                                           Margin="20"
+                                           FontFamily="{Binding FontFamily, FallbackValue='Arial'}"
+                                           FontWeight="SemiBold" />
+                            </Grid>
+                        </Viewbox>
+                    </DockPanel>
 				</DataTemplate>
-			</ListBox.ItemTemplate>-->
+			</ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
         <Grid ColumnDefinitions="3*, *">
@@ -59,14 +63,15 @@
                 <Grid Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
                       Height="1080" Width="1920">
                     <Border>
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="60 80">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="60 80">
                             <Viewbox StretchDirection="DownOnly"
-                                     HorizontalAlignment="Left">
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch">
                                 <TextBlock
-                                    Text="Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I\'ll never be the same&#x0a;Forever I am changed"
+                                    Text="Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I'll never be the same&#x0a;Forever I am changed"
+                                    TextAlignment="{Binding #TextAlignmentComboBox.SelectedItem}"
                                     LineHeight="{Binding #LineHeightTextBox.Text}"
                                     FontWeight="SemiBold"
-                                    TextAlignment="Left"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     FontFamily="{Binding #fontComboBox.SelectedItem, FallbackValue='Garamond, Playfair Display'}"
@@ -113,11 +118,11 @@
 
                     <TextBlock Text="Colour" />
                     <ColorPicker Name="TextColour"
-                                 Color="{Binding #designsListBox.SelectedItem.TextColour, FallbackValue='White'}" />
+                                 Color="{Binding #designsListBox.SelectedItem.TextAvaloniaColour, FallbackValue='White'}" />
 
                     <TextBlock Text="Background" />
                     <ColorPicker Name="BackgroundColour"
-                                 Color="{Binding #designsListBox.SelectedItem.BackgroundColour, FallbackValue='Black'}" />
+                                 Color="{Binding #designsListBox.SelectedItem.BackgroundAvaloniaColour, FallbackValue='Black'}" />
 
                     <TextBlock Text="Font Size" />
                     <DockPanel>
@@ -138,6 +143,9 @@
                                 TickFrequency="1"
                                 Value="{Binding #LineHeightTextBox.Text}" />
                     </DockPanel>
+                    
+                    <TextBlock Text="TextAlignment" />
+                    <ComboBox Name="TextAlignmentComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.TextAlignment}" />
 
                     <TextBlock Text="BgGraphicFilePath" />
                     <TextBox Name="bgGraphicFilePath" Watermark=""

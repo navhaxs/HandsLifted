@@ -70,8 +70,8 @@
                     <DataTemplate x:Key="BlankItem">
                     </DataTemplate>
                     <DataTemplate x:Key="SectionHeadingItem">
-                        <!--  {Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ECE8F9'}  -->
-                        <Border Margin="0 14" Background="#124449">
+                        <!--    -->
+                        <Border Margin="0 14" Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#124449'}">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding State.IsSelected}"
