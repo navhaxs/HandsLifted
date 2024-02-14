@@ -6,7 +6,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData
 {
     public class LogoItemInstance : LogoItem, IItemInstance
     {
-        private int _selectedSlideIndex;
+        private int _selectedSlideIndex = -1;
         public int SelectedSlideIndex { get => _selectedSlideIndex; set => this.RaiseAndSetIfChanged(ref _selectedSlideIndex, value); }
         
         private Slide _activeSlide = new LogoSlide();

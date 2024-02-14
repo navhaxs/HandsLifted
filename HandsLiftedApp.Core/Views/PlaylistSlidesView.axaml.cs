@@ -161,7 +161,7 @@ namespace HandsLiftedApp.Core.Views
                 case Key.Space:
                     MessageBus.Current.SendMessage(new ActionMessage()
                         { Action = ActionMessage.NavigateSlideAction.NextSlide });
-                    // MessageBus.Current.SendMessage(new FocusSelectedItem());
+                    MessageBus.Current.SendMessage(new FocusSelectedItem());
 
                     e.Handled = true;
                     break;
@@ -169,7 +169,7 @@ namespace HandsLiftedApp.Core.Views
                 case Key.Left:
                     MessageBus.Current.SendMessage(new ActionMessage()
                         { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
-                    // MessageBus.Current.SendMessage(new FocusSelectedItem());
+                    MessageBus.Current.SendMessage(new FocusSelectedItem());
 
                     e.Handled = true;
                     break;

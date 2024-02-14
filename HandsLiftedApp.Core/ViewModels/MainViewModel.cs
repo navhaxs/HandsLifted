@@ -6,6 +6,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.ViewModels;
 using ReactiveUI;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reactive;
@@ -19,6 +20,7 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using Serilog;
 
@@ -27,6 +29,7 @@ namespace HandsLiftedApp.Core.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     public IMySettings settings;
+    public ReactiveCommand<object, Unit> SlideClickCommand { get; }
 
     public MainViewModel()
     {
@@ -44,6 +47,8 @@ public class MainViewModel : ViewModelBase
             .UseJsonFile("HandsLiftedApp.UserConfig.json")
             .Build();
 
+        SlideClickCommand = ReactiveCommand.CreateFromTask<object>(OnSlideClickCommand);
+        
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<Unit, string[]?>();
 
@@ -177,7 +182,6 @@ public class MainViewModel : ViewModelBase
         }
 
         _ = Update(); // calling an async function we do not want to await
-
     }
 
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
@@ -201,6 +205,25 @@ public class MainViewModel : ViewModelBase
     public bool IsDisplayDebugInfo { get => _IsDisplayDebugInfo; set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value); }
     private string _debugInfoText = string.Empty;
     public string DebugInfoText { get => _debugInfoText; set => this.RaiseAndSetIfChanged(ref _debugInfoText, value); }
+    
+    private async Task OnSlideClickCommand(object? ac)
+    {
+        ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
+        Slide slide = (Slide)args[0];
+        Item item = (Item)args[1];
+
+        int itemIndex = Playlist.Items.IndexOf(item);
+
+        if (Playlist.PresentationState != PlaylistInstance.PresentationStateEnum.Slides)
+        {
+            Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
+        }
+
+        int SlideIndex = item.Slides.IndexOf(slide);
+        Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
+
+        Playlist.NavigateToReference(new SlideReference() { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
+    }
  
     public DateTime CurrentTime
     {

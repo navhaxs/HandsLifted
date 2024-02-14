@@ -89,7 +89,7 @@
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
 
-                            <StackPanel Margin="0,0,0,0">
+                            <StackPanel Margin="0,8">
                                 <DockPanel>
                                     <DockPanel.ContextMenu>
                                         <ContextMenu>
@@ -222,7 +222,7 @@
                                         AutoScrollToSelectedItem="False"
                                         Background="Transparent"
                                         ItemsSource="{Binding Slides}"
-                                        SelectedIndex="{Binding SelectedSlideIndex}"
+                                        SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}"
                                         SelectionChanged="OnSelectionChanged"
                                         SelectionMode="Single">
                                         <controls:ListBoxWithoutKey.Styles>

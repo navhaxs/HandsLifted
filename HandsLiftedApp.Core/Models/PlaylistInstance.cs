@@ -115,7 +115,6 @@ namespace HandsLiftedApp.Core.Models
                 }
             });
 
-
             MessageBus.Current.Listen<ActionMessage>()
                 .Subscribe(x =>
                 {

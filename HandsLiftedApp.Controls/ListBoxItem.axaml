@@ -91,7 +91,8 @@
                                     <!--<Binding Path="DataContext.SlideNumber" RelativeSource="{RelativeSource TemplatedParent}" />-->
                                     <MultiBinding Converter="{StaticResource itemToIndexConverter}" FallbackValue="#">
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}" />
-                                        <Binding Path="DataContext.Slides" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:ListBoxWithoutKey}, AncestorLevel=1}" />
+                                        <Binding Path="DataContext.Slides"
+                                                 RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls:ListBoxWithoutKey}, AncestorLevel=1}" />
                                         <!--<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType={controls:ListBoxWithoutKey}}" />-->
                                         <!--<Binding Path="$parent[ListBoxWithoutKey].DataContext.Slides"/>-->
                                         <!--<Binding Path="Items" RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}" />-->
@@ -99,7 +100,8 @@
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-                        <TextBlock Margin="8,0,0,0" IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
+                        <TextBlock Margin="8,0,0,0"
+                                   IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">
                                     <Binding FallbackValue="Verse 2" Path="SlideLabel" />
@@ -108,29 +110,29 @@
                         </TextBlock>
                     </StackPanel>
                     <Grid>
-                       <Viewbox HorizontalAlignment="Left" x:Name="PART_Thumbnail">
+                        <Viewbox HorizontalAlignment="Left" x:Name="PART_Thumbnail">
                             <Grid Width="1280" Height="720">
-								<Grid.Background>
-									<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
-										<VisualBrush.Visual>
-											<Canvas
-												Width="16"
-												Height="16"
-												Background="#1a1a1a">
-												<Rectangle
-													Width="8"
-													Height="8"
-													Fill="#1c1c1c" />
-												<Rectangle
-													Canvas.Left="8"
-													Canvas.Top="8"
-													Width="8"
-													Height="8"
-													Fill="#1c1c1c" />
-											</Canvas>
-										</VisualBrush.Visual>
-									</VisualBrush>
-								</Grid.Background>
+                                <Grid.Background>
+                                    <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+                                        <VisualBrush.Visual>
+                                            <Canvas
+                                                Width="16"
+                                                Height="16"
+                                                Background="#1a1a1a">
+                                                <Rectangle
+                                                    Width="8"
+                                                    Height="8"
+                                                    Fill="#1c1c1c" />
+                                                <Rectangle
+                                                    Canvas.Left="8"
+                                                    Canvas.Top="8"
+                                                    Width="8"
+                                                    Height="8"
+                                                    Fill="#1c1c1c" />
+                                            </Canvas>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Grid.Background>
                                 <ContentPresenter
                                     Name="PART_ContentPresenter"
                                     Margin="4"
@@ -146,28 +148,29 @@
                                     IsHitTestVisible="False" />
                             </Grid>
                         </Viewbox>
-						<Border
-							HorizontalAlignment="Left"
-							Width="{Binding #PART_Thumbnail.Bounds.Width}"
-							Height="{Binding #PART_Thumbnail.Bounds.Height}"
-					  Name="PART_Border"
-					  DockPanel.Dock="Bottom">
-						</Border>
-					</Grid>
+                        <Border
+                            HorizontalAlignment="Left"
+                            Width="{Binding #PART_Thumbnail.Bounds.Width}"
+                            Height="{Binding #PART_Thumbnail.Bounds.Height}"
+                            Name="PART_Border"
+                            DockPanel.Dock="Bottom">
+                        </Border>
+                    </Grid>
 
-					<Interaction.Behaviors>
-						<EventTriggerBehavior EventName="PointerPressed">
-							<InvokeCommandAction Command="{Binding ViewModel.SlideClickCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
-								<InvokeCommandAction.CommandParameter>
-									<MultiBinding>
-										<Binding />
-										<Binding Path="$parent[ListBox].DataContext" />
-									</MultiBinding>
-								</InvokeCommandAction.CommandParameter>
-							</InvokeCommandAction>
-						</EventTriggerBehavior>
-					</Interaction.Behaviors>
-				</DockPanel>
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="PointerPressed">
+                            <InvokeCommandAction
+                                Command="{Binding ViewModel.SlideClickCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                                <InvokeCommandAction.CommandParameter>
+                                    <MultiBinding>
+                                        <Binding />
+                                        <Binding Path="$parent[ListBox].DataContext" />
+                                    </MultiBinding>
+                                </InvokeCommandAction.CommandParameter>
+                            </InvokeCommandAction>
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
+                </DockPanel>
             </ControlTemplate>
         </Setter>
         <Setter Property="ContextMenu">
@@ -189,7 +192,8 @@
                         Command="{Binding $parent[Window].DataContext.RemoveItemCommand}"
                         CommandParameter="{Binding}"
                         Header="Remove Item" />
-                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideSplitFromHere}" Header="Split group from here">
+                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideSplitFromHere}"
+                              Header="Split group from here">
                         <MenuItem.CommandParameter>
                             <MultiBinding>
                                 <Binding />
@@ -197,7 +201,8 @@
                             </MultiBinding>
                         </MenuItem.CommandParameter>
                     </MenuItem>
-                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinBackwardsFromHere}" Header="Join group with previous item group">
+                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinBackwardsFromHere}"
+                              Header="Join group with previous item group">
                         <MenuItem.CommandParameter>
                             <MultiBinding>
                                 <Binding />
@@ -205,7 +210,8 @@
                             </MultiBinding>
                         </MenuItem.CommandParameter>
                     </MenuItem>
-                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinForwardsFromHere}" Header="Join group with next item">
+                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinForwardsFromHere}"
+                              Header="Join group with next item">
                         <MenuItem.CommandParameter>
                             <MultiBinding>
                                 <Binding />
