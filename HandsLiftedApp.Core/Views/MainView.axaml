@@ -215,7 +215,7 @@
                         Text="{Binding Playlist.Title, FallbackValue='Untitled Playlist'}"
                         Padding="22 16"
                         FontSize="16"
-                        HorizontalAlignment="Stretch"
+                        HorizontalAlignment="Left"
                         BorderThickness="0"
                         VerticalAlignment="Center" />
                 </DockPanel>

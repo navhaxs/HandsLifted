@@ -347,7 +347,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.ResetArrangement();
         }
 
-        private int _selectedSlideIndex;
+        private int _selectedSlideIndex = -1;
 
         public int SelectedSlideIndex
         {

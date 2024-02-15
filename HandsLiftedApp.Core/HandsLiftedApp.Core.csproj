@@ -95,6 +95,10 @@
         <DependentUpon>SlideDesignerWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\LiveOutputsFlyoutContent.axaml.cs">
+        <DependentUpon>LiveOutputsFlyoutContent.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 

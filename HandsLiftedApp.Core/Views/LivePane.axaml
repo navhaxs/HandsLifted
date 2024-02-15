@@ -5,6 +5,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:MainViewModel"
              x:Class="HandsLiftedApp.Core.Views.LivePane">
@@ -65,7 +66,7 @@
                     IsLightDismissEnabled="True"
                     PlacementMode="BottomEdgeAlignedLeft"
                     PlacementTarget="{Binding #LiveButton}">
-                    <!-- <controls:LiveOutputsFlyoutContent Margin="0" /> -->
+                    <controls:LiveOutputsFlyoutContent Margin="0" />
                 </Popup>
 
             </DockPanel>

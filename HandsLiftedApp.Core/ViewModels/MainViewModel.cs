@@ -19,6 +19,7 @@ using DynamicData;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
@@ -258,6 +259,53 @@ public class MainViewModel : ViewModelBase
             }
         }
     }
+    
+    private ProjectorWindow _projectorWindow;
+    public ProjectorWindow ProjectorWindow { get => _projectorWindow; set => this.RaiseAndSetIfChanged(ref _projectorWindow, value); }
+    public void OnProjectorClickCommand()
+    {
+        ToggleProjectorWindow();
+    }
+    public void ToggleProjectorWindow(bool? shouldShow = null)
+    {
+        shouldShow = shouldShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
+        if (shouldShow == true)
+        {
+            if (ProjectorWindow == null)
+            {
+                ProjectorWindow = new ProjectorWindow();
+                ProjectorWindow.DataContext = this;
+            }
+            ProjectorWindow.Show();
+        }
+        else
+        {
+            if (ProjectorWindow != null)
+                ProjectorWindow.Hide();
+        }
+    }
+    
+    private StageDisplayWindow _stageDisplayWindow;
+    public StageDisplayWindow StageDisplayWindow { get => _stageDisplayWindow; set => this.RaiseAndSetIfChanged(ref _stageDisplayWindow, value); }
+    
+    public void OnStageDisplayClickCommand()
+    {
+        ToggleStageDisplayWindow();
+    }
 
-
+    public void ToggleStageDisplayWindow(bool? shouldShow = null)
+    {
+        shouldShow = shouldShow ?? (StageDisplayWindow == null || !StageDisplayWindow.IsVisible);
+        if (shouldShow == true)
+        {
+            StageDisplayWindow = new StageDisplayWindow();
+            StageDisplayWindow.DataContext = this;
+            StageDisplayWindow.Show();
+        }
+        else
+        {
+            if (StageDisplayWindow != null)
+                StageDisplayWindow.Hide();
+        }
+    }
 }
