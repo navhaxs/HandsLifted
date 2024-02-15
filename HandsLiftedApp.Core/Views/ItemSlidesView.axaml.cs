@@ -60,7 +60,12 @@ namespace HandsLiftedApp.Controls
                 songEditorWindow.Show();
                 return;
             }
-
+            if (sender is Control { DataContext: MediaGroupItemInstance mediaGroupItemInstance })
+            {
+                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow () { DataContext = mediaGroupItemInstance };
+                songEditorWindow.Show();
+                return;
+            }
         }
     }
 }

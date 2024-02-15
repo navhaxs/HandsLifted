@@ -53,6 +53,24 @@ namespace HandsLiftedApp.Core
                         EndOnBlankSlide = songItemInstance.EndOnBlankSlide
                     };
                 }
+                else if (item is SlidesGroupItemInstance slidesGroupItemInstance)
+                {
+                    return new SlidesGroupItem()
+                    {
+                        UUID = slidesGroupItemInstance.UUID,
+                        Title = slidesGroupItemInstance.Title,
+                    };
+                }
+                else if (item is MediaGroupItemInstance mediaGroupItemInstance)
+                {
+                    return new MediaGroupItem()
+                    {
+                        UUID = mediaGroupItemInstance.UUID,
+                        Title = mediaGroupItemInstance.Title,
+                        Items = mediaGroupItemInstance.Items
+                    };
+                }
+
                 return item;
                 // return new Item
                 // {
@@ -60,11 +78,17 @@ namespace HandsLiftedApp.Core
                 // };
             }));
 
+            MemoryStream memoryStream = new MemoryStream();
+            serializer.Serialize(memoryStream, playlistSerialized);
+
             // only once all serialization is OK, now write to disk
-            using FileStream stream = new FileStream(filePath, FileMode.Create);
-            serializer.Serialize(stream, playlistSerialized);
+            memoryStream.Position = 0;
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                memoryStream.CopyTo(fileStream);
+            }
         }
-        
+
         // Deserialize Playlist from XML
         public static PlaylistInstance DeserializePlaylist(string filePath)
         {
@@ -83,7 +107,7 @@ namespace HandsLiftedApp.Core
                         Item convereted;
                         if (deserializedItem is LogoItem i)
                         {
-                            convereted = new LogoItemInstance() {Title = i.Title } ;
+                            convereted = new LogoItemInstance() { Title = i.Title };
                         }
                         else if (deserializedItem is SongItem songItem)
                         {
@@ -104,13 +128,25 @@ namespace HandsLiftedApp.Core
                             song.GenerateSlides();
                             convereted = song;
                         }
+                        else if (deserializedItem is MediaGroupItem mediaGroupItem)
+                        {
+                            var g = new MediaGroupItemInstance()
+                            {
+                                UUID = mediaGroupItem.UUID,
+                                Title = mediaGroupItem.Title,
+                                Items = mediaGroupItem.Items
+                            };
+                            g.GenerateSlides();
+                            convereted = g;
+                        }
                         else
                         {
                             convereted = deserializedItem;
                         }
+
                         Items.Add(convereted);
                     }
-                    
+
                     // Map properties from PlaylistSerialized to Playlist
                     PlaylistInstance playlist = new PlaylistInstance
                     {

@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace HandsLiftedApp.Core.Views
 {
-    public partial class ItemContentView : UserControl
+    public partial class GenericContentEditorView : UserControl
     {
-        public ItemContentView()
+        public GenericContentEditorView()
         {
             InitializeComponent();
         }

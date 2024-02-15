@@ -136,14 +136,14 @@ public partial class MainView : UserControl
         // Start async operation to open the dialog.
         var xmlFileType = new FilePickerFileType("XML Document")
         {
-            Patterns = new[] { ".xml" },
+            Patterns = new[] { "*.xml" },
             MimeTypes = new[] { "text/xml" }
         };
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = "Save File",
-            FileTypeChoices = new FilePickerFileType[] { xmlFileType }
+            FileTypeChoices = new[] { xmlFileType }
         });
 
         if (file != null)
@@ -157,6 +157,8 @@ public partial class MainView : UserControl
                     // XmlSerialization.WriteToXmlFile<Playlist>(file.Path.AbsolutePath, vm.CurrentPlaylist.Playlist);
                     //MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
                     vm.settings.LastOpenedPlaylistFullPath = filePath;
+                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                        { Title = "Playlist Saved" });
                 }
                 catch (Exception e)
                 {

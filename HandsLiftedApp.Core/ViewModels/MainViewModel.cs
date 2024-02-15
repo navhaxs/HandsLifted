@@ -39,8 +39,14 @@ public class MainViewModel : ViewModelBase
         if (Design.IsDesignMode)
         {
             Playlist = new PlaylistInstance();
+            Playlist.Items.Add(new SectionHeadingItem());
+            Playlist.Items.Add(new LogoItemInstance());
             Playlist.Items.Add(new SongItemInstance());
             Playlist.Items.Add(new LogoItemInstance());
+            Playlist.Items.Add(new SectionHeadingItem());
+            Playlist.Items.Add(new SongItemInstance());
+            Playlist.Items.Add(new SectionHeadingItem());
+            Playlist.Items.Add(new MediaGroupItemInstance());
             Playlist.Designs.Add(new BaseSlideTheme() {Name = "Default"});
 
             return;
@@ -75,7 +81,7 @@ public class MainViewModel : ViewModelBase
                         Playlist.Items.Add(new SectionHeadingItem());
                         break;
                     case AddItemMessage.AddItemType.BlankGroup:
-                        Playlist.Items.Add(new SlidesGroupItem());
+                        Playlist.Items.Add(new MediaGroupItemInstance());
                         break;
                     case AddItemMessage.AddItemType.NewSong:
                         var song = new SongItemInstance();
@@ -86,9 +92,8 @@ public class MainViewModel : ViewModelBase
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:
                         filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
-                        SlidesGroupItem slidesGroup = new SlidesGroupItem() { Title = "New media group" };
+                        MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance() { Title = "New media group" };
 
-                        Playlist.Items.Add(slidesGroup);
                         foreach (var filePath in filePaths)
                         {
                             if (filePath != null && filePath is string)
@@ -97,9 +102,11 @@ public class MainViewModel : ViewModelBase
                                 DateTime now = DateTime.Now;
                                 string fileName = Path.GetFileName(filePath);
                                 string folderName = Path.GetDirectoryName(filePath);
-                                //slidesGroup.Items.Add(PlaylistUtils.GenerateMediaContentSlide(filePath));
+                                mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = filePath });
                             }
                         }
+                        Playlist.Items.Add(mediaGroupItem);
+
                         break;
                     default:
                         Debug.Print($"Unknown AddItemType: [${addItemMessage.Type}]");

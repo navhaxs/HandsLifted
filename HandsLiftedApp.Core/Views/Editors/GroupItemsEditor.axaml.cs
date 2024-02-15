@@ -1,9 +1,11 @@
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using DynamicData;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
 
@@ -103,27 +105,60 @@ namespace HandsLiftedApp.Core.Views.Editors
                 //    if (slidesGroupItem != null)
                 //        addedItems.Add(slidesGroupItem);
                 //}
-                var x = CreateItem.GenerateMediaContentSlide(fileName.Path);
-                if (this.DataContext is SlidesGroupItem sgi)
+                // var x = CreateItem.GenerateMediaContentSlide(fileName.Path);
+                if (this.DataContext is MediaGroupItem mediaGroupItem)
                 {
-                    sgi.Items.Add(x);
+                    mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
+                        { SourceMediaFilePath = fileName.Path.AbsolutePath });
                 }
             }
         }
 
         private void MoveItemUpButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            if (this.DataContext is MediaGroupItem mediaGroupItem)
+            {
+                if (mediaGroupItem.Items.ElementAtOrDefault(listBox.SelectedIndex) == null || mediaGroupItem.Items.ElementAtOrDefault(listBox.SelectedIndex - 1) == null)
+                {
+                    return;
+                }
+
+                mediaGroupItem.Items.Move(listBox.SelectedIndex, listBox.SelectedIndex - 1);
+            }
         }
 
         private void MoveItemDownButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            if (this.DataContext is MediaGroupItem mediaGroupItem)
+            {
+                if (mediaGroupItem.Items.ElementAtOrDefault(listBox.SelectedIndex) == null || mediaGroupItem.Items.ElementAtOrDefault(listBox.SelectedIndex + 1) == null)
+                {
+                    return;
+                }
+
+                mediaGroupItem.Items.Move(listBox.SelectedIndex, listBox.SelectedIndex + 1);
+            }
+        }
+
+        private void Button_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MediaGroupItemInstance mediaGroupItem)
+            {
+                mediaGroupItem.GenerateSlides();
+            }
         }
 
         private void RemoveItemButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            if (this.DataContext is MediaGroupItem mediaGroupItem)
+            {
+                if (mediaGroupItem.Items.ElementAtOrDefault(listBox.SelectedIndex) == null)
+                {
+                    return;
+                }
+
+                mediaGroupItem.Items.RemoveAt(listBox.SelectedIndex);
+            }
         }
     }
 }

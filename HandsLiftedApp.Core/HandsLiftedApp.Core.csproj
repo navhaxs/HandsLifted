@@ -47,10 +47,6 @@
       <Compile Update="Views\SlideThumbnail.axaml.cs">
         <DependentUpon>%(Filename)</DependentUpon>
       </Compile>
-      <Compile Update="Views\ItemContentView.axaml.cs">
-        <DependentUpon>ItemIcon.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Views\Editors\GroupItemsEditor.axaml.cs">
         <DependentUpon>GroupItemsEditorWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
@@ -97,6 +93,10 @@
       </Compile>
       <Compile Update="Views\LiveOutputsFlyoutContent.axaml.cs">
         <DependentUpon>LiveOutputsFlyoutContent.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Editors\GenericContentEditorView.axaml.cs">
+        <DependentUpon>ItemContentView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

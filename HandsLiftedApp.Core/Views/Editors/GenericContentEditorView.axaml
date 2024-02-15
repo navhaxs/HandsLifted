@@ -7,7 +7,7 @@
 	 		 xmlns:material="using:Material.Icons.Avalonia"
 	 		 xmlns:core="clr-namespace:HandsLiftedApp.Core"
 	 		 xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
-	 		 x:Class="HandsLiftedApp.Core.Views.ItemContentView"
+	 		 x:Class="HandsLiftedApp.Core.Views.GenericContentEditorView"
              x:CompileBindings="False">
 	<!--<UserControl.Styles>
 		<Style Selector="material|MaterialIcon">
@@ -19,7 +19,7 @@
 			<utils:MyTemplateSelector>
 				<DataTemplate x:Key="SongItemInstance">
 			   	</DataTemplate>
-				<DataTemplate x:Key="SlidesGroupItemInstance">
+				<DataTemplate x:Key="MediaGroupItemInstance">
 					<editors:GroupItemsEditor DataContext="{Binding}" />
 				</DataTemplate>
 				<DataTemplate x:Key="GoogleSlidesGroupItem">

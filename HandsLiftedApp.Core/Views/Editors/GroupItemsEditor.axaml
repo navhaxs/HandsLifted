@@ -5,11 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:HandsLiftedApp.Data.Models.Items"
-    x:DataType="vm:SlidesGroupItem"
+    xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+    xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+    xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+    x:DataType="items:MediaGroupItemInstance"
     d:DesignHeight="650"
-    d:DesignWidth="800"
+    d:DesignWidth="400"
     mc:Ignorable="d">
+
+    <Design.DataContext>
+        <editor:ExampleMediaGroupItemInstance />
+    </Design.DataContext>
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
@@ -22,6 +29,7 @@
                     <SolidColorBrush x:Key="ForegroundBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
+        <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -32,11 +40,28 @@
             BorderThickness="0,0,0,1"
             DockPanel.Dock="Top">
             <DockPanel>
-                <TextBlock
-                    Padding="16,20,16,14"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="Editor" />
+                <Button Click="AddItemButton_OnClick" DockPanel.Dock="Left">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Width="24"
+                            Height="24"
+                            Margin="-4,-4,-4,-4"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Foreground="#888888"
+                            Kind="PlusCircleOutline" />
+                        <TextBlock
+                            Margin="12,0,0,0"
+                            Text="Add item" />
+                    </DockPanel>
+                </Button>
+                <Button Click="Button_OnClick">GenerateSlides</Button>
+                <!-- <TextBlock -->
+                <!--     Padding="16,20,16,14" -->
+                <!--     VerticalAlignment="Center" -->
+                <!--     FontSize="14" -->
+                <!--     Text="Editor" /> -->
+                <Grid />
             </DockPanel>
         </Border>
 
@@ -52,21 +77,7 @@
                 <Button>Add Items from multiselect</Button>
                 <Button>Add Items from folder</Button>-->
                 <Separator />
-                <Button Click="AddItemButton_OnClick">
-                    <DockPanel>
-                        <material:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Margin="-4,-4,-4,-4"
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Foreground="#888888"
-                            Kind="PlusCircleOutline" />
-                        <TextBlock
-                            Margin="12,0,0,0"
-                            Text="Add item" />
-                    </DockPanel>
-                </Button>
+
                 <Separator />
                 <TextBlock>Move</TextBlock>
                 <Button Click="MoveItemUpButton_OnClick">
@@ -140,22 +151,36 @@
         </ScrollViewer>
 
 
-        <ListBox ItemsSource="{Binding Items}"></ListBox>
-   <!--      <DataGrid -->
-   <!--          Name="DataGrid_Items" -->
-   <!--          AutoGenerateColumns="False" -->
-   <!--          ItemsSource="{Binding Items, Mode=TwoWay}" -->
-   <!--          > -->
-			<!-- <DataGrid.Columns> -->
-			<!-- 	<DataGridTemplateColumn Header="Image"> -->
-			<!-- 		<DataGridTemplateColumn.CellTemplate> -->
-			<!-- 			<DataTemplate> -->
-			<!-- 				~1~ <Image Source="{Binding State.Image}" Height="64"/> @1@ -->
-			<!-- 			</DataTemplate> -->
-			<!-- 		</DataGridTemplateColumn.CellTemplate> -->
-			<!-- 	</DataGridTemplateColumn> -->
-			<!-- 	<DataGridTextColumn Header="SourceMediaPath" Binding="{Binding SourceMediaPath}"/> -->
-			<!-- </DataGrid.Columns> -->
-   <!--      </DataGrid> -->
+        <ListBox x:Name="listBox" ItemsSource="{Binding Items}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel>
+                        <Image
+                            Height="48"
+                            Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill"
+                            />
+                        <TextBlock 
+                            Margin="8"
+                            Text="{Binding SourceMediaFilePath}" />
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <!--      <DataGrid -->
+        <!--          Name="DataGrid_Items" -->
+        <!--          AutoGenerateColumns="False" -->
+        <!--          ItemsSource="{Binding Items, Mode=TwoWay}" -->
+        <!--          > -->
+        <!-- <DataGrid.Columns> -->
+        <!-- 	<DataGridTemplateColumn Header="Image"> -->
+        <!-- 		<DataGridTemplateColumn.CellTemplate> -->
+        <!-- 			<DataTemplate> -->
+        <!-- 				~1~ <Image Source="{Binding State.Image}" Height="64"/> @1@ -->
+        <!-- 			</DataTemplate> -->
+        <!-- 		</DataGridTemplateColumn.CellTemplate> -->
+        <!-- 	</DataGridTemplateColumn> -->
+        <!-- 	<DataGridTextColumn Header="SourceMediaPath" Binding="{Binding SourceMediaPath}"/> -->
+        <!-- </DataGrid.Columns> -->
+        <!--      </DataGrid> -->
     </DockPanel>
 </UserControl>

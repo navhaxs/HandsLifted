@@ -69,8 +69,20 @@ namespace HandsLiftedApp.Core.Models
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItemAsIItemInstance);
 
-            _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide,
-                    (Slide activeSlide) => { return activeSlide; })
+            _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide, x => x.PresentationState,
+                    (Slide activeSlide, PresentationStateEnum presentationState) =>
+                    {
+                        switch (presentationState)
+                        {
+                            case PresentationStateEnum.Slides:
+                                return activeSlide;
+                            case PresentationStateEnum.Logo:
+                                return new LogoSlide();
+                            case PresentationStateEnum.Blank:
+                                return new BlankSlide();
+                        }
+                        return activeSlide;
+                    })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
@@ -187,19 +199,39 @@ namespace HandsLiftedApp.Core.Models
             public Item Item { get; set; }
         }
 
-        private PresentationStateEnum _presentationState;
+        private PresentationStateEnum _presentationState = PresentationStateEnum.Slides;
 
         public PresentationStateEnum PresentationState
         {
             get => _presentationState;
-            set => this.RaiseAndSetIfChanged(ref _presentationState, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _presentationState, value);
+                this.RaisePropertyChanged(nameof(IsLogo));
+                this.RaisePropertyChanged(nameof(IsBlank));
+            }
         }
 
         public enum PresentationStateEnum
         {
+            Slides,
             Logo,
-            Blank,
-            Slides
+            Blank
+        }
+
+        public bool IsLogo
+        {
+            get => PresentationState == PresentationStateEnum.Logo;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _presentationState,
+                    value ? PresentationStateEnum.Logo : PresentationStateEnum.Slides, nameof(PresentationState));
+            }
+        }
+
+        public bool IsBlank
+        {
+            get => PresentationState == PresentationStateEnum.Blank; set => this.RaiseAndSetIfChanged(ref _presentationState, value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides, nameof(PresentationState));
         }
 
         public void NavigateNextSlide()

@@ -8,7 +8,7 @@
         xmlns:ndi="using:AvaloniaNDI"
         xmlns:material="using:Material.Icons.Avalonia"
         xmlns:app="using:HandsLiftedApp"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="120"
         x:Class="HandsLiftedApp.Views.ProjectorWindow"
         x:Name="window"
 		Icon="/Assets/app.ico"

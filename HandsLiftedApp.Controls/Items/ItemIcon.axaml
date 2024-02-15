@@ -15,20 +15,23 @@
 	<ContentControl Content="{Binding}" >
 		<ContentControl.ContentTemplate>
 			<utils:MyTemplateSelector>
-				<DataTemplate x:Key="SongItem">
+				<DataTemplate x:Key="SongItemInstance">
 					<material:MaterialIcon Kind="MusicNote" />
 			   	</DataTemplate>
+				<DataTemplate x:Key="MediaGroupItemInstance">
+					<material:MaterialIcon Kind="ImageMultiple" />
+				</DataTemplate>
+				<DataTemplate x:Key="SlidesGroupItemInstance">
+					<material:MaterialIcon Kind="ImageMultiple" />
+				</DataTemplate>
+				<DataTemplate x:Key="LogoItemInstance">
+					<material:MaterialIcon Kind="Star" />
+				</DataTemplate>
 				<DataTemplate x:Key="GoogleSlidesGroupItem">
 					<material:MaterialIcon Kind="Slideshow" />
 				</DataTemplate>
 				<DataTemplate x:Key="PowerPointSlidesGroupItem">
 					<material:MaterialIcon Kind="Presentation" />
-				</DataTemplate>
-				<DataTemplate x:Key="SlidesGroupItem">
-					<material:MaterialIcon Kind="Image" />
-				</DataTemplate>
-				<DataTemplate x:Key="LogoItem">
-					<material:MaterialIcon Kind="Star" />
 				</DataTemplate>
 				<DataTemplate x:Key="SectionHeadingItem">
 				</DataTemplate>

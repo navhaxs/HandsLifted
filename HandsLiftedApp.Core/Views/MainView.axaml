@@ -10,7 +10,7 @@
              xmlns:material="using:Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Core.Views.MainView"
-             Background="#282828"
+             Background="#353535"
              x:DataType="vm:MainViewModel">
     <DockPanel>
 
@@ -247,7 +247,7 @@
                             Height="50"
                             Margin="6,0,6,6"
                             Padding="10,5,10,5"
-                            Background="{DynamicResource BottomBackgroundBrush}"
+                            Background="#282828"
                             CornerRadius="0,0,6,6"
                             DockPanel.Dock="Bottom">
                             <Grid>

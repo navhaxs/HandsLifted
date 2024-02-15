@@ -87,7 +87,8 @@
                         <TextBlock Text="Import" />
                     </ToggleButton>
                     <Button Content="GenerateSlides" DockPanel.Dock="Left" Click="GenerateSlides_OnClick" />
-                    <Button Content="SongDataUpdateCommand" Command="{Binding SongDataUpdateCommand}" DockPanel.Dock="Left" />
+                    <Button Content="SongDataUpdateCommand" Command="{Binding SongDataUpdateCommand}"
+                            DockPanel.Dock="Left" />
                     <Button Content="ReverseSync" DockPanel.Dock="Left" Click="ReverseSyncButton_OnClick" />
                     <TextBox Text="{Binding Song.Design}" Width="200" />
                 </StackPanel>
@@ -121,16 +122,16 @@
 
         <Grid Name="ContainerGrid">
 
-            <Grid ColumnDefinitions="200, 1, 12*, 1, 17*">
+            <Grid ColumnDefinitions="600, 1, 12*, 1, 17*">
 
-                <Grid Grid.Column="2">
+                <Grid Grid.Column="0">
                     <DockPanel>
                         <DockPanel.Styles>
                             <Style Selector="TextBox">
                                 <Setter Property="BorderThickness" Value="0" />
                             </Style>
                         </DockPanel.Styles>
-                        <Border Margin="20,40" Background="White">
+                        <Border Background="White">
                             <Border.Effect>
                                 <DropShadowEffect
                                     BlurRadius="6"
@@ -139,9 +140,7 @@
                                     Color="#55000000" />
                             </Border.Effect>
 
-                            <ScrollViewer>
-                                <editors:SongLyricEditor />
-                            </ScrollViewer>
+                            <editors:SongLyricEditor />
                         </Border>
                     </DockPanel>
 
@@ -156,7 +155,17 @@
                     BorderThickness="3,0"
                     ZIndex="9999" />
 
-                <StackPanel Grid.Column="0" Margin="20,40,0,0">
+
+                <GridSplitter
+                    Grid.Column="3"
+                    Margin="-3,0"
+                    HorizontalAlignment="Stretch"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="3,0"
+                    ZIndex="9999" />
+
+                <StackPanel Grid.Column="2" Margin="20,40,0,0">
                     <TextBlock
                         Margin="0,6,0,12"
                         FontSize="18"
@@ -302,15 +311,6 @@
                     </Button>
 
                 </StackPanel>
-
-                <GridSplitter
-                    Grid.Column="3"
-                    Margin="-3,0"
-                    HorizontalAlignment="Stretch"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    BorderThickness="3,0"
-                    ZIndex="9999" />
 
                 <Border Grid.Column="4">
                     <StackPanel Margin="16,32">
