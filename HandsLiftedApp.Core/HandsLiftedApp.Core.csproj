@@ -27,6 +27,10 @@
         <PackageReference Include="ByteSize" />
         <PackageReference Include="Config.Net" />
         <PackageReference Include="Material.Icons.Avalonia" />
+        <PackageReference Include="Serilog.Expressions" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.Debug" />
+        <PackageReference Include="Serilog.Sinks.File" />
     </ItemGroup>
 
 
