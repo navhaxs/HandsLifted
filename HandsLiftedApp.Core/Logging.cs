@@ -39,12 +39,14 @@ namespace HandsLiftedApp.Core
 
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            var frameworkDescription = RuntimeInformation.FrameworkDescription;
             Log.Information(
                 $"VisionScreens app version {version} startup at {DateTime.Now}");
             //build {BuildInfo.Version.getGitHash()}
 
             Log.Information("Avalonia version: " +
                             Assembly.GetAssembly(typeof(Avalonia.Application)).GetName().Version.ToString());
+            Log.Information(frameworkDescription);
 
             // Windows-only
             // https://stackoverflow.com/a/646500/
@@ -61,7 +63,7 @@ namespace HandsLiftedApp.Core
             //     }
             // }
         }
-        
+
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Log.Fatal("CurrentDomain_UnhandledExceptionEventArgs. Please report this error.", e);
@@ -71,6 +73,5 @@ namespace HandsLiftedApp.Core
         {
             Log.Fatal("TaskScheduler_UnobservedTaskException. Please report this error.", e);
         }
-
     }
 }

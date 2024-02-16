@@ -38,6 +38,7 @@
       <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj" />
       <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj" />
       <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
+      <ProjectReference Include="..\Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj" />
     </ItemGroup>
 
 

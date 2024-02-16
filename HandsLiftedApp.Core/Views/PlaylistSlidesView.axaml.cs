@@ -154,26 +154,28 @@ namespace HandsLiftedApp.Core.Views
 
         private void PlaylistSlidesView_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
-            switch (e.Key)
-            {
-                case Key.PageDown:
-                case Key.Right:
-                case Key.Space:
-                    MessageBus.Current.SendMessage(new ActionMessage()
-                        { Action = ActionMessage.NavigateSlideAction.NextSlide });
-                    MessageBus.Current.SendMessage(new FocusSelectedItem());
-
-                    e.Handled = true;
-                    break;
-                case Key.PageUp:
-                case Key.Left:
-                    MessageBus.Current.SendMessage(new ActionMessage()
-                        { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
-                    MessageBus.Current.SendMessage(new FocusSelectedItem());
-
-                    e.Handled = true;
-                    break;
-            }
+            
+            //
+            // switch (e.Key)
+            // {
+            //     case Key.PageDown:
+            //     case Key.Right:
+            //     case Key.Space:
+            //         MessageBus.Current.SendMessage(new ActionMessage()
+            //             { Action = ActionMessage.NavigateSlideAction.NextSlide });
+            //         MessageBus.Current.SendMessage(new FocusSelectedItem());
+            //
+            //         e.Handled = true;
+            //         break;
+            //     case Key.PageUp:
+            //     case Key.Left:
+            //         MessageBus.Current.SendMessage(new ActionMessage()
+            //             { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+            //         MessageBus.Current.SendMessage(new FocusSelectedItem());
+            //
+            //         e.Handled = true;
+            //         break;
+            // }
         }
 
         // <summary>

@@ -10,6 +10,7 @@
         x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
         x:DataType="viewModels:MainViewModel"
         Background="Black"
+        DoubleTapped="ProjectorWindow_DoubleTapped"
         Title="ProjectorWindow">
     <Viewbox>
         <avaloniaNdi:NDISendContainer NdiName="VisionScreens Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080">
