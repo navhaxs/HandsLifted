@@ -213,6 +213,7 @@
                     <!-- </Popup> -->
                     <TextBox
                         Text="{Binding Playlist.Title, FallbackValue='Untitled Playlist'}"
+                        MinWidth="100"
                         Padding="22 16"
                         FontSize="16"
                         HorizontalAlignment="Left"

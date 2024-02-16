@@ -106,6 +106,7 @@ public class MainViewModel : ViewModelBase
                                     { SourceMediaFilePath = filePath });
                             }
                         }
+                        mediaGroupItem.GenerateSlides();
 
                         itemToInsert = mediaGroupItem;
 

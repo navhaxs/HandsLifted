@@ -5,16 +5,15 @@
     xmlns:material="using:Material.Icons.Avalonia"
     x:CompileBindings="False">
 
-	<Design.PreviewWith>
-		<!-- Add Controls for Previewer Here -->
-		<Button Content="Arrangement"
-				Flyout="{StaticResource addItemFlayout}"
-		/>
-	</Design.PreviewWith>
-	
+    <Design.PreviewWith>
+        <!-- Add Controls for Previewer Here -->
+        <Button Content="Arrangement"
+                Flyout="{StaticResource addItemFlayout}" />
+    </Design.PreviewWith>
+
     <MenuFlyout x:Key="addItemFlyout" Placement="BottomEdgeAlignedLeft">
         <MenuItem Header="_Presentation">
-			<MenuItem Click="OnMenuItemClick" CommandParameter="Presentation" Header="PowerPoint">
+            <MenuItem Click="OnMenuItemClick" CommandParameter="Presentation" Header="PowerPoint">
                 <MenuItem.Icon>
                     <material:MaterialIcon Kind="Presentation" />
                 </MenuItem.Icon>
@@ -24,7 +23,7 @@
                     <material:MaterialIcon Kind="Slideshow" />
                 </MenuItem.Icon>
             </MenuItem>
-			<MenuItem Click="OnMenuItemClick" CommandParameter="PDF" Header="PDF Slides (Canva, etc.)">
+            <MenuItem Click="OnMenuItemClick" CommandParameter="PDF" Header="PDF Slides (Canva, etc.)">
                 <MenuItem.Icon>
                     <material:MaterialIcon Kind="Slideshow" />
                 </MenuItem.Icon>
@@ -35,25 +34,29 @@
                 <material:MaterialIcon Kind="Music" />
             </MenuItem.Icon>
             <MenuItem Click="OnMenuItemClick" CommandParameter="ExistingSong" Header="From _File" />
-			<MenuItem Click="OnMenuItemClick" CommandParameter="NewSong" Header="From _New">
+            <MenuItem Click="OnMenuItemClick" CommandParameter="NewSong" Header="From _New">
                 <MenuItem.Icon>
                     <material:MaterialIcon Kind="Music" />
                 </MenuItem.Icon>
             </MenuItem>
         </MenuItem>
-  <!--       <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Graphics"> -->
-  <!--           <MenuItem.Icon> -->
-  <!--               <material:MaterialIcon Kind="Image" /> -->
-  <!--           </MenuItem.Icon> -->
-  <!--       </MenuItem> -->
-		<!-- <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Video"> -->
-  <!--           <MenuItem.Icon> -->
-  <!--               <material:MaterialIcon Kind="Video" /> -->
-  <!--           </MenuItem.Icon> -->
-  <!--       </MenuItem> -->
-  <MenuItem
-      Click="OnMenuItemClick" CommandParameter="MediaGroup"
-      Header="_...From Folder of Media" />
+        <!--       <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Graphics"> -->
+        <!--           <MenuItem.Icon> -->
+        <!--               <material:MaterialIcon Kind="Image" /> -->
+        <!--           </MenuItem.Icon> -->
+        <!--       </MenuItem> -->
+        <!-- <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Video"> -->
+        <!--           <MenuItem.Icon> -->
+        <!--               <material:MaterialIcon Kind="Video" /> -->
+        <!--           </MenuItem.Icon> -->
+        <!--       </MenuItem> -->
+        <MenuItem
+            Click="OnMenuItemClick" CommandParameter="MediaGroup"
+            Header="_Media">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="ImageMultiple" />
+            </MenuItem.Icon>
+        </MenuItem>
         <Separator />
         <MenuItem
             Click="OnMenuItemClick" CommandParameter="Logo"
@@ -77,10 +80,10 @@
             </MenuItem.Icon>
 
 
-            <MenuItem 
+            <MenuItem
                 Click="OnMenuItemClick" CommandParameter="BlankGroup"
                 Header="Blank Group" />
-            <MenuItem 
+            <MenuItem
                 Click="OnMenuItemClick" CommandParameter="BibleReadingSlideGroup"
                 Header="Custom Group (Bible Reading Slide Test)" />
         </MenuItem>

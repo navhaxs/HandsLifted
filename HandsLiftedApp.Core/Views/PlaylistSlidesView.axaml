@@ -36,7 +36,7 @@
 
             <DockPanel>
 
-                <controls:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" />
+                <controls:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" />
                 <!--  "fill" the height with the last item  -->
                 <Grid DockPanel.Dock="Bottom">
                     <!--  TODO this would be a good place to put a 'add item' button  -->
@@ -51,7 +51,7 @@
                 </Grid>
                 <ItemsControl
                     Name="List"
-                    ItemsSource="{Binding Items}">
+                    ItemsSource="{Binding Items}" Margin="0 0 0 14">
                     <ItemsControl.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="0" />
@@ -70,7 +70,7 @@
                         <DataTemplate>
                             <StackPanel>
                                 <controls:ItemSlidesView />
-                                <controls:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" DataContext="{Binding}" />
+                                <controls:AddItemButton Margin="14,0,0,0" DockPanel.Dock="Top" DataContext="{Binding}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

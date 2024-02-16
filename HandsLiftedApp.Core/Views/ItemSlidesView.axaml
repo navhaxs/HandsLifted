@@ -135,6 +135,7 @@
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             FontSize="20"
+                                            MinWidth="100"
                                             FontWeight="SemiBold"
                                             Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}"
                                             Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
@@ -212,7 +213,11 @@
 								Margin="12 0 0 0"
 								Fill="#c43e1c"
 								/>-->
-                                        <TextBlock
+                                        <TextBox
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            MinWidth="100"
+                                            HorizontalAlignment="Left"
                                             Padding="0,8,0,8"
                                             VerticalAlignment="Center"
                                             FontSize="18"
@@ -379,8 +384,6 @@
                 </utils:MyTemplateSelector>
             </ContentControl.ContentTemplate>
         </ContentControl>
-
-        <!--<controls:AddItemButton Margin="14,0,0,0" ItemInsertIndex="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}}" />-->
 
     </StackPanel>
 
