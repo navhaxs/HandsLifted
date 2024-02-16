@@ -318,14 +318,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             set => this.RaiseAndSetIfChanged(ref _endOnBlankSlide, value);
         }
 
-        [XmlIgnore] private Boolean _startOnTitleSlide = true;
-
-        public Boolean StartOnTitleSlide
-        {
-            get => _startOnTitleSlide;
-            set => this.RaiseAndSetIfChanged(ref _startOnTitleSlide, value);
-        }
-
         // Stanzas + Arrangement = _stanzaSlides
         [XmlIgnore] private TrulyObservableCollection<Slide> _stanzaSlides = new TrulyObservableCollection<Slide>();
 

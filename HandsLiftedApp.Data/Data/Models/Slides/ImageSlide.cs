@@ -11,7 +11,7 @@ namespace HandsLiftedApp.Data.Slides
     {
         public ImageSlide(string imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png") : this()
         {
-            SourceMediaPath = imagePath;
+            SourceMediaFilePath = imagePath;
         }
 
         public ImageSlide()
@@ -20,7 +20,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public override string? SlideText => null;
 
-        public override string? SlideLabel => Path.GetFileName(SourceMediaPath);
+        public override string? SlideLabel => Path.GetFileName(SourceMediaFilePath);
 
         public override void OnPreloadSlide()
         {

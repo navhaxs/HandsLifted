@@ -8,8 +8,8 @@ namespace HandsLiftedApp.Data.Slides
     [Serializable]
     public abstract class MediaSlide : Slide
     {
-        public string SourceMediaPath { get => _sourceMediaPath; set => this.RaiseAndSetIfChanged(ref _sourceMediaPath, value); }
-        private string _sourceMediaPath;
+        public string SourceMediaFilePath { get => _sourceMediaFilePath; set => this.RaiseAndSetIfChanged(ref _sourceMediaFilePath, value); }
+        private string _sourceMediaFilePath;
 
         public MediaSlide()
         {

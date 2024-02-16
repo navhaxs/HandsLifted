@@ -16,6 +16,7 @@
     xmlns:views="clr-namespace:HandsLiftedApp.Views"
     xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
     xmlns:items2="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+    xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -43,6 +44,7 @@
                     <SolidColorBrush x:Key="TitleBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
+            <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -329,7 +331,7 @@
                                                         <Grid>
                                                             <Image
                                                                 RenderOptions.BitmapInterpolationMode="LowQuality"
-                                                                Source="{Binding State.Thumbnail}"
+                                                                Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
                                                                 Stretch="Uniform" />
                                                         </Grid>
                                                     </views1:SlideThumbnail>
@@ -339,7 +341,7 @@
                                                         <Grid>
                                                             <Image
                                                                 RenderOptions.BitmapInterpolationMode="LowQuality"
-                                                                Source="{Binding State.Thumbnail}"
+                                                                Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
                                                                 Stretch="Uniform" />
                                                         </Grid>
                                                     </views1:SlideThumbnail>

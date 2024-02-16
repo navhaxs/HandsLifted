@@ -23,7 +23,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public VideoSlide(String videoPath = @"C:\VisionScreens\TestImages\WA22 Speaker Interview.mp4") : this()
         {
-            SourceMediaPath = videoPath;
+            SourceMediaFilePath = videoPath;
         }
 
         public VideoSlide()
@@ -32,7 +32,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public override string? SlideText => null;
 
-        public override string? SlideLabel => Path.GetFileName(SourceMediaPath);
+        public override string? SlideLabel => Path.GetFileName(SourceMediaFilePath);
 
         public override void OnEnterSlide()
         {

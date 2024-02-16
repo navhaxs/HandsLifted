@@ -18,7 +18,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             ParentPlaylist = parentPlaylist;  
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x=> x.Slides, (selectedSlideIndex, slides) =>
                 {
-                    return slides.ElementAtOrDefault(selectedSlideIndex); //new BlankSlide()
+                    try
+                    {
+                        return slides.ElementAt(selectedSlideIndex);
+                    }
+                    catch (System.Exception _ignored)
+                    {
+                        return new BlankSlide();
+                    }
                 })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);

@@ -237,12 +237,12 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             public X Value { get; set; }
         }
-
-        [XmlIgnore]
-        private ObservableAsPropertyHelper<Slide> _titleSlide;
-
-        [XmlIgnore]
-        public Slide TitleSlide { get => _titleSlide.Value; }
+        //
+        // [XmlIgnore]
+        // private ObservableAsPropertyHelper<Slide> _titleSlide;
+        //
+        // [XmlIgnore]
+        // public Slide TitleSlide { get => _titleSlide.Value; }
 
         [XmlIgnore]
         private Boolean _endOnBlankSlide = true;

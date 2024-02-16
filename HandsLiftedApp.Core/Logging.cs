@@ -29,7 +29,7 @@ namespace HandsLiftedApp.Core
                 .Enrich.FromLogContext()
                 .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
                 .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
-                .WriteTo.Console()
+                // .WriteTo.Console()
                 .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

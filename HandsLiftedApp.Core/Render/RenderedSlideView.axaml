@@ -7,12 +7,17 @@
              xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
              xmlns:views="clr-namespace:HandsLiftedApp.Views"
              xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:CompileBindings="False"
-             Width="1920" 
+             Width="1920"
              Height="1080"
              Background="Black"
              x:Class="HandsLiftedApp.Core.Render.RenderedSlideView">
+    <UserControl.Resources>
+        <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
+    </UserControl.Resources>
 
     <ContentControl Content="{Binding $parent[render:RenderedSlideView].ActiveSlide}">
         <ContentControl.ContentTemplate>
@@ -28,6 +33,12 @@
                 </DataTemplate>
                 <DataTemplate x:Key="LogoSlide">
                     <items:LogoSlideView />
+                </DataTemplate>
+                <DataTemplate x:Key="ImageSlide" x:DataType="slides:ImageSlide">
+                    <Image
+                        RenderOptions.BitmapInterpolationMode="LowQuality"
+                        Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
+                        Stretch="Uniform" />
                 </DataTemplate>
                 <DataTemplate x:Key="BlankSlide">
                 </DataTemplate>
