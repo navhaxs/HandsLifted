@@ -103,18 +103,18 @@
                                             <MenuItem Header="Remove" />
                                         </ContextMenu>
                                     </DockPanel.ContextMenu>
-                                    <Button
-                                        Margin="0"
-                                        Padding="22,6"
-                                        Background="#15FFFFFF"
-                                        BorderBrush="#b3aed9"
-                                        BorderThickness="0"
-                                        CornerRadius="0"
-                                        x:Name="EditButton"
-                                        Click="EditButton_OnClick"
-                                        DockPanel.Dock="Right">
-                                        Edit
-                                    </Button>
+                                    <!-- <Button -->
+                                    <!--     Margin="0" -->
+                                    <!--     Padding="22,6" -->
+                                    <!--     Background="#15FFFFFF" -->
+                                    <!--     BorderBrush="#b3aed9" -->
+                                    <!--     BorderThickness="0" -->
+                                    <!--     CornerRadius="0" -->
+                                    <!--     x:Name="EditButton" -->
+                                    <!--     Click="EditButton_OnClick" -->
+                                    <!--     DockPanel.Dock="Right"> -->
+                                    <!--     Edit -->
+                                    <!-- </Button> -->
                                     <!--<Ellipse
 								IsVisible="{Binding State.IsSelected, FallbackValue=False}"
 								Width="8"
@@ -195,6 +195,7 @@
                                         <items:ItemIcon Margin="14,8,10,8" DockPanel.Dock="Left" />
                                         <Button
                                             Padding="22,6"
+                                            Margin="6"
                                             Background="#15FFFFFF"
                                             BorderBrush="#b3aed9"
                                             BorderThickness="0"

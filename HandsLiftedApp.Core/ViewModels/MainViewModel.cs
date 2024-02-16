@@ -35,7 +35,6 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-
         if (Design.IsDesignMode)
         {
             Playlist = new PlaylistInstance();
@@ -47,23 +46,24 @@ public class MainViewModel : ViewModelBase
             Playlist.Items.Add(new SongItemInstance(Playlist));
             Playlist.Items.Add(new SectionHeadingItem());
             Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
-            Playlist.Designs.Add(new BaseSlideTheme() {Name = "Default"});
+            Playlist.Designs.Add(new BaseSlideTheme() { Name = "Default" });
 
             return;
         }
-        
+
         settings = new ConfigurationBuilder<IMySettings>()
             .UseJsonFile("HandsLiftedApp.UserConfig.json")
             .Build();
 
         SlideClickCommand = ReactiveCommand.CreateFromTask<object>(OnSlideClickCommand);
-        
+
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<Unit, string[]?>();
 
         MessageBus.Current.Listen<AddItemMessage>()
             .Subscribe(async addItemMessage =>
             {
+                Item? itemToInsert = null;
                 switch (addItemMessage.Type)
                 {
                     case AddItemMessage.AddItemType.Presentation:
@@ -75,37 +75,39 @@ public class MainViewModel : ViewModelBase
 
                         break;
                     case AddItemMessage.AddItemType.Logo:
-                        Playlist.Items.Add(new LogoItemInstance(Playlist));
+                        itemToInsert = new LogoItemInstance(Playlist);
                         break;
                     case AddItemMessage.AddItemType.SectionHeading:
-                        Playlist.Items.Add(new SectionHeadingItem());
+                        itemToInsert = new SectionHeadingItem();
                         break;
                     case AddItemMessage.AddItemType.BlankGroup:
-                        Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
+                        itemToInsert = new MediaGroupItemInstance(Playlist);
                         break;
                     case AddItemMessage.AddItemType.NewSong:
                         var song = new SongItemInstance(Playlist);
-                        Playlist.Items.Add(song);
+                        itemToInsert = song;
                         SongEditorViewModel vm = new SongEditorViewModel() { Song = song, Playlist = Playlist };
                         SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
                         seq.Show();
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:
                         filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
-                        MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(Playlist) { Title = "New media group" };
+                        MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(Playlist)
+                            { Title = "New media group" };
 
                         foreach (var filePath in filePaths)
                         {
                             if (filePath != null && filePath is string)
                             {
-
                                 DateTime now = DateTime.Now;
                                 string fileName = Path.GetFileName(filePath);
                                 string folderName = Path.GetDirectoryName(filePath);
-                                mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = filePath });
+                                mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
+                                    { SourceMediaFilePath = filePath });
                             }
                         }
-                        Playlist.Items.Add(mediaGroupItem);
+
+                        itemToInsert = mediaGroupItem;
 
                         break;
                     default:
@@ -113,6 +115,18 @@ public class MainViewModel : ViewModelBase
                         break;
                 }
 
+                if (itemToInsert != null)
+                {
+                    if (addItemMessage.ItemToInsertAfter != null)
+                    {
+                        var indexOf = Playlist.Items.IndexOf(addItemMessage.ItemToInsertAfter);
+                        Playlist.Items.Insert(indexOf + 1, itemToInsert);
+                    }
+                    else
+                    {
+                        Playlist.Items.Add(itemToInsert);
+                    }
+                }
             });
 
         MessageBus.Current.Listen<MoveItemCommand>()
@@ -123,22 +137,20 @@ public class MainViewModel : ViewModelBase
                 switch (moveItemCommand.Direction)
                 {
                     case MoveItemCommand.DirectionValue.UP:
-                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex-1);
+                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex - 1);
                         break;
                     case MoveItemCommand.DirectionValue.DOWN:
-                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex+1);
+                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex + 1);
                         break;
                     case MoveItemCommand.DirectionValue.REMOVE:
                         Playlist.Items.RemoveAt(theSelectedIndex);
                         break;
                 }
-
             });
 
         MessageBus.Current.Listen<MoveItemMessage>()
             .Subscribe((moveItemMessage) =>
             {
-
                 // var theSelectedItem = CurrentPlaylist.State.SelectedItem;
 
                 Playlist.Items.Move(moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
@@ -146,7 +158,8 @@ public class MainViewModel : ViewModelBase
                 // Is this working??
                 // var theSelectedIndex = CurrentPlaylist.Items.IndexOf(theSelectedItem);
 
-                Debug.Print($"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
+                Debug.Print(
+                    $"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
 
                 // TODO we MUST update SelectedItemIndex
                 //
@@ -186,7 +199,7 @@ public class MainViewModel : ViewModelBase
             catch (Exception e)
             {
                 Log.Error($"[DOC] Failed to parse playlist XML: [{settings.LastOpenedPlaylistFullPath}]");
-                Console.WriteLine(e); 
+                Console.WriteLine(e);
                 // ignored
             }
         }
@@ -197,8 +210,13 @@ public class MainViewModel : ViewModelBase
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
 
     private PlaylistInstance _playlist = new PlaylistInstance();
-    public PlaylistInstance Playlist { get => _playlist; set => this.RaiseAndSetIfChanged(ref _playlist, value); }
-    
+
+    public PlaylistInstance Playlist
+    {
+        get => _playlist;
+        set => this.RaiseAndSetIfChanged(ref _playlist, value);
+    }
+
     public void OnNextSlideClickCommand()
     {
         Playlist.NavigateNextSlide();
@@ -210,12 +228,23 @@ public class MainViewModel : ViewModelBase
         Playlist.NavigatePreviousSlide();
         MessageBus.Current.SendMessage(new FocusSelectedItem());
     }
-    
+
     private bool _IsDisplayDebugInfo = false;
-    public bool IsDisplayDebugInfo { get => _IsDisplayDebugInfo; set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value); }
+
+    public bool IsDisplayDebugInfo
+    {
+        get => _IsDisplayDebugInfo;
+        set => this.RaiseAndSetIfChanged(ref _IsDisplayDebugInfo, value);
+    }
+
     private string _debugInfoText = string.Empty;
-    public string DebugInfoText { get => _debugInfoText; set => this.RaiseAndSetIfChanged(ref _debugInfoText, value); }
-    
+
+    public string DebugInfoText
+    {
+        get => _debugInfoText;
+        set => this.RaiseAndSetIfChanged(ref _debugInfoText, value);
+    }
+
     private async Task OnSlideClickCommand(object? ac)
     {
         ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
@@ -232,15 +261,17 @@ public class MainViewModel : ViewModelBase
         int SlideIndex = item.Slides.IndexOf(slide);
         Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
 
-        Playlist.NavigateToReference(new SlideReference() { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
+        Playlist.NavigateToReference(new SlideReference()
+            { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
     }
- 
+
     public DateTime CurrentTime
     {
         get => DateTime.Now;
     }
+
     private bool _isRunning = true;
- 
+
     private async Task Update()
     {
         while (_isRunning)
@@ -261,18 +292,26 @@ public class MainViewModel : ViewModelBase
                     Process currentProc = Process.GetCurrentProcess();
                     long memoryUsed = currentProc.PrivateMemorySize64;
 
-                    DebugInfoText = $"{ByteSize.FromBytes(memory).ToString("#.#")} {ByteSize.FromBytes(memoryUsed).ToString("#.#")}";
+                    DebugInfoText =
+                        $"{ByteSize.FromBytes(memory).ToString("#.#")} {ByteSize.FromBytes(memoryUsed).ToString("#.#")}";
                 }
             }
         }
     }
-    
+
     private ProjectorWindow _projectorWindow;
-    public ProjectorWindow ProjectorWindow { get => _projectorWindow; set => this.RaiseAndSetIfChanged(ref _projectorWindow, value); }
+
+    public ProjectorWindow ProjectorWindow
+    {
+        get => _projectorWindow;
+        set => this.RaiseAndSetIfChanged(ref _projectorWindow, value);
+    }
+
     public void OnProjectorClickCommand()
     {
         ToggleProjectorWindow();
     }
+
     public void ToggleProjectorWindow(bool? shouldShow = null)
     {
         shouldShow = shouldShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
@@ -283,6 +322,7 @@ public class MainViewModel : ViewModelBase
                 ProjectorWindow = new ProjectorWindow();
                 ProjectorWindow.DataContext = this;
             }
+
             ProjectorWindow.Show();
         }
         else
@@ -291,10 +331,15 @@ public class MainViewModel : ViewModelBase
                 ProjectorWindow.Hide();
         }
     }
-    
+
     private StageDisplayWindow _stageDisplayWindow;
-    public StageDisplayWindow StageDisplayWindow { get => _stageDisplayWindow; set => this.RaiseAndSetIfChanged(ref _stageDisplayWindow, value); }
-    
+
+    public StageDisplayWindow StageDisplayWindow
+    {
+        get => _stageDisplayWindow;
+        set => this.RaiseAndSetIfChanged(ref _stageDisplayWindow, value);
+    }
+
     public void OnStageDisplayClickCommand()
     {
         ToggleStageDisplayWindow();

@@ -1,8 +1,11 @@
-﻿namespace HandsLiftedApp.Controls.Messages
+﻿using HandsLiftedApp.Data.Models.Items;
+
+namespace HandsLiftedApp.Controls.Messages
 {
     public class AddItemMessage
     {
-        public AddItemType Type { get; set; }
+        public Item? ItemToInsertAfter { get; init; }
+        public AddItemType Type { get; init; }
 
         public enum AddItemType
         {
