@@ -22,7 +22,7 @@
 
     <DockPanel>
         <DockPanel DockPanel.Dock="Left">
-            <Button DockPanel.Dock="Bottom" Click="Button_OnClick">Add new theme</Button>
+            <Button DockPanel.Dock="Bottom" Click="AddItem_OnClick">Add new theme</Button>
             <ListBox
                 SelectedIndex="0"
                 MinWidth="80"
@@ -32,7 +32,8 @@
                     <Style Selector="ListBoxItem">
                         <Setter Property="ContextMenu">
                             <ContextMenu>
-                                <MenuItem Header="Remove" />
+                                <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick" />
+                                <MenuItem Header="Remove" Click="RemoveItem_OnClick" />
                             </ContextMenu>
                         </Setter>
                     </Style>
@@ -45,7 +46,7 @@
                             <Grid
                                 Height="130"
                                 Width="130"
-                                Background="{Binding BackgroundColour, Converter={StaticResource XmlColorToBrush}}">
+                                Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}">
                                 <TextBlock Text="A"
                                            FontSize="80"
                                            Margin="20"

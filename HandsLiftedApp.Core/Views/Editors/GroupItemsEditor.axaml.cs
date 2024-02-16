@@ -81,19 +81,20 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private void AddItemButton_OnClick(object? sender, RoutedEventArgs e)
         {
+            AddItemsWorkflow();
+        }
+
+        private async Task AddItemsWorkflow()
+        {
             // Get top level from the current control. Alternatively, you can use Window reference instead.
             var topLevel = TopLevel.GetTopLevel(this);
 
             // Start async operation to open the dialog.
-            var task = topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Open Media File(s)",
                 AllowMultiple = true
             });
-
-            task.Wait();
-
-            var files = task.Result;
 
             foreach (var fileName in files)
             {

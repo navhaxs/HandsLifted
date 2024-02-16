@@ -6,6 +6,7 @@
              xmlns:utils="clr-namespace:HandsLiftedApp.Utils;assembly=HandsLiftedApp.Common"
              xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
              xmlns:views="clr-namespace:HandsLiftedApp.Views"
+             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:CompileBindings="False"
              Width="1920" 
@@ -18,6 +19,9 @@
             <utils:MyTemplateSelector>
                 <DataTemplate x:Key="SongTitleSlide">
                     <views:DesignerSlideTitle Width="1920" Height="1080" />
+                </DataTemplate>
+                <DataTemplate x:Key="SongSlideInstance">
+                    <designer:SongSlideView Width="1920" Height="1080" />
                 </DataTemplate>
                 <DataTemplate x:Key="SongSlide">
                     <views:DesignerSlideTemplate Width="1920" Height="1080" />

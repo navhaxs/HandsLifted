@@ -43,7 +43,7 @@
                         Padding="0,0,4,0"
                         FontWeight="Bold"
                         Text="VisionScreens" />
-                    <TextBlock Text="© Jeremy Wong 2015-2023" />
+                    <TextBlock Text="© Jeremy Wong 2015-2024" />
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Text="Build #" />

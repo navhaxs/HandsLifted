@@ -40,13 +40,13 @@ public class MainViewModel : ViewModelBase
         {
             Playlist = new PlaylistInstance();
             Playlist.Items.Add(new SectionHeadingItem());
-            Playlist.Items.Add(new LogoItemInstance());
-            Playlist.Items.Add(new SongItemInstance());
-            Playlist.Items.Add(new LogoItemInstance());
+            Playlist.Items.Add(new LogoItemInstance(Playlist));
+            Playlist.Items.Add(new SongItemInstance(Playlist));
+            Playlist.Items.Add(new LogoItemInstance(Playlist));
             Playlist.Items.Add(new SectionHeadingItem());
-            Playlist.Items.Add(new SongItemInstance());
+            Playlist.Items.Add(new SongItemInstance(Playlist));
             Playlist.Items.Add(new SectionHeadingItem());
-            Playlist.Items.Add(new MediaGroupItemInstance());
+            Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
             Playlist.Designs.Add(new BaseSlideTheme() {Name = "Default"});
 
             return;
@@ -75,24 +75,24 @@ public class MainViewModel : ViewModelBase
 
                         break;
                     case AddItemMessage.AddItemType.Logo:
-                        Playlist.Items.Add(new LogoItemInstance());
+                        Playlist.Items.Add(new LogoItemInstance(Playlist));
                         break;
                     case AddItemMessage.AddItemType.SectionHeading:
                         Playlist.Items.Add(new SectionHeadingItem());
                         break;
                     case AddItemMessage.AddItemType.BlankGroup:
-                        Playlist.Items.Add(new MediaGroupItemInstance());
+                        Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
                         break;
                     case AddItemMessage.AddItemType.NewSong:
-                        var song = new SongItemInstance();
+                        var song = new SongItemInstance(Playlist);
                         Playlist.Items.Add(song);
-                        SongEditorViewModel vm = new SongEditorViewModel() { Song = song };
+                        SongEditorViewModel vm = new SongEditorViewModel() { Song = song, Playlist = Playlist };
                         SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
                         seq.Show();
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:
                         filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
-                        MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance() { Title = "New media group" };
+                        MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(Playlist) { Title = "New media group" };
 
                         foreach (var filePath in filePaths)
                         {

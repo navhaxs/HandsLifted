@@ -15,12 +15,19 @@ using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
+
     public class SongItemInstance : SongItem, IItemInstance
     {
+        public PlaylistInstance? ParentPlaylist { get; set; } 
         private SongTitleSlide titleSlide;
 
-        public SongItemInstance() : base()
+        public SongItemInstance() : this(null)
         {
+            
+        }
+        public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
+        {
+            ParentPlaylist = parentPlaylist;   
             titleSlide = new SongTitleSlide { };
             //{
             //    Title = Title,
@@ -49,10 +56,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
-            _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x=> x.Slides, (selectedSlideIndex, slides) =>
-                {
-                    return slides.ElementAtOrDefault(selectedSlideIndex);
-                })
+            _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides,
+                    (selectedSlideIndex, slides) => { return slides.ElementAtOrDefault(selectedSlideIndex); })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
@@ -168,7 +173,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         }
                         else
                         {
-                            var slide = new SongSlide(_datum, slideId) { Text = Text, Label = Label, }; //, Index = i };
+                            var slide = new SongSlideInstance(this, _datum, slideId) { Text = Text, Label = Label, }; //, Index = i };
                             this.StanzaSlides.Insert(i, slide);
                         }
 
@@ -187,7 +192,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }
                     else
                     {
-                        this.StanzaSlides.Insert(i, new SongSlide(null, "BLANK") { }); // { Index = i });
+                        this.StanzaSlides.Insert(i, new SongSlideInstance(this, null, "BLANK") { }); // { Index = i });
                     }
 
                     i++;
@@ -205,13 +210,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.RaisePropertyChanged("Slides");
         }
 
-        private string _design = "";
-
-        public string Design
-        {
-            get => _design;
-            set => this.RaiseAndSetIfChanged(ref _design, value);
-        }
+        // private string _design = "";
+        //
+        // public string Design
+        // {
+        //     get => _design;
+        //     set => this.RaiseAndSetIfChanged(ref _design, value);
+        // }
 
         [XmlIgnore] private string _copyright = "";
 

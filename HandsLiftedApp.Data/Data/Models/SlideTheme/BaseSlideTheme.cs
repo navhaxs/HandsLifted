@@ -10,6 +10,9 @@ namespace HandsLiftedApp.Data.SlideTheme
     [Serializable]
     public class BaseSlideTheme : ReactiveObject
     {
+        private Guid _id = Guid.NewGuid();
+        public Guid Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+
         // Slide Design Meta
         private string _name = "My new theme";
         public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
@@ -33,7 +36,7 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref  _textAlignment, value);
         }
         
-        private XmlColor BackgroundColour = Color.Parse("#4d347f");
+        public XmlColor BackgroundColour = Color.Parse("#4d347f");
         [XmlIgnore]
         public Color BackgroundAvaloniaColour { get => BackgroundColour; set => this.RaiseAndSetIfChanged(ref BackgroundColour, value); }
         

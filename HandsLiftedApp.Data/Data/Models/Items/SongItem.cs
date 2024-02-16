@@ -162,8 +162,8 @@ namespace HandsLiftedApp.Data.Models.Items
         //     this.RaisePropertyChanged("Slides");
         // }
         //
-        private string _design = "";
-        public string Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
+        private Guid _design = Guid.Empty;
+        public Guid Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
 
         [XmlIgnore]
         private string _copyright = "";

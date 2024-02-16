@@ -4,9 +4,11 @@ using HandsLiftedApp.ViewModels.Editor;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Data.SlideTheme;
 
 namespace HandsLiftedApp.Core.ViewModels.Editor
 {
@@ -15,6 +17,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         public event EventHandler SongDataUpdated;
 
         private SongItemInstance _song;
+
         public SongItemInstance Song
         {
             get => _song;
@@ -22,10 +25,13 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             {
                 if (_song != null)
                     _song.PropertyChanged -= _song_PropertyChanged;
-                
+
                 this.RaiseAndSetIfChanged(ref _song, value);
                 _song.PropertyChanged += _song_PropertyChanged;
                 //OnPropertyChanged();
+
+                this.RaiseAndSetIfChanged(ref _selectedSlideTheme, Globals.MainViewModel.Playlist.Designs.FirstOrDefault(d => d.Id == _song.Design, null), nameof(SelectedSlideTheme));
+
             }
         }
 
@@ -40,7 +46,16 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             OnClickCommand = ReactiveCommand.Create(RunTheThing);
             SongDataUpdateCommand = ReactiveCommand.Create(OnSongDataUpdateCommand);
 
-            Song = new ExampleSongItemInstance();
+            Song = new ExampleSongItemInstance(null);
+            
+            this.WhenAnyValue(x => x.SelectedSlideTheme)
+                .Subscribe((BaseSlideTheme theme) =>
+                {
+                    if (theme != null)
+                    {
+                        Song.Design = theme.Id;
+                    }
+                });
         }
 
         public ReactiveCommand<Unit, Unit> OnClickCommand { get; }
@@ -77,11 +92,21 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         }
 
         private string _freeTextEntryField;
+
         public string FreeTextEntryField
         {
             get => _freeTextEntryField;
             set => this.RaiseAndSetIfChanged(ref _freeTextEntryField, value);
         }
-        
+
+        private BaseSlideTheme? _selectedSlideTheme;
+
+        public BaseSlideTheme? SelectedSlideTheme
+        {
+            get => _selectedSlideTheme;
+            set => this.RaiseAndSetIfChanged(ref _selectedSlideTheme, value);
+        }
+
+        public PlaylistInstance Playlist { get; set; }
     }
 }

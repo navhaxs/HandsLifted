@@ -1,9 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 
 //using HandsLiftedApp.Data.Models.Items;
@@ -51,7 +53,7 @@ namespace HandsLiftedApp.Controls
         {
             if (sender is Control { DataContext: SongItemInstance item })
             {
-                SongEditorViewModel songEditorViewModel = new SongEditorViewModel() { Song = item };
+                SongEditorViewModel songEditorViewModel = new SongEditorViewModel() { Song = item, Playlist = Globals.MainViewModel.Playlist };
                 songEditorViewModel.SongDataUpdated += (ex, ey) =>
                 {
                             

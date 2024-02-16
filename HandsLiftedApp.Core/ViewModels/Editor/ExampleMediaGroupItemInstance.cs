@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models.Items;
 
@@ -6,7 +7,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     internal class ExampleMediaGroupItemInstance : MediaGroupItemInstance
     {
-        public ExampleMediaGroupItemInstance()
+        public ExampleMediaGroupItemInstance(PlaylistInstance parentPlaylist) : base(parentPlaylist)
         {
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide1.PNG" });
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide2.PNG" });

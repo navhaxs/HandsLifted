@@ -14,6 +14,8 @@
     xmlns:views1="clr-namespace:HandsLiftedApp.Core.Views"
     xmlns:items1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
     xmlns:views="clr-namespace:HandsLiftedApp.Views"
+    xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
+    xmlns:items2="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -69,9 +71,10 @@
                 <utils:MyTemplateSelector>
                     <DataTemplate x:Key="BlankItem">
                     </DataTemplate>
-                    <DataTemplate x:Key="SectionHeadingItem">
+                    <DataTemplate x:Key="SectionHeadingItem" x:DataType="items2:SectionHeadingItem">
                         <!--    -->
-                        <Border Margin="0 14" Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#124449'}">
+                        <Border Margin="0 14"
+                                Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#124449'}">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding State.IsSelected}"
@@ -119,20 +122,23 @@
 								Margin="12 0 0 0"
 								Fill="#c43e1c"
 								/>-->
-                                    <Button
-                                        Background="Transparent"
-                                        CornerRadius="0"
-                                        BorderThickness="0"
-                                        HorizontalContentAlignment="Left">
-                                        <TextBlock
+                                    <!-- <Button -->
+                                    <!--     Background="Transparent" -->
+                                    <!--     CornerRadius="0" -->
+                                    <!--     BorderThickness="0" -->
+                                    <!--     HorizontalContentAlignment="Left"> -->
+                                        <TextBox
                                             Margin="16,0,8,0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
                                             Padding="0"
+                                            HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             FontSize="20"
                                             FontWeight="SemiBold"
                                             Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}"
                                             Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
-                                    </Button>
+                                    <!-- </Button> -->
                                 </DockPanel>
                                 <!--<item:ItemInfo VerticalAlignment="Top" />-->
                             </StackPanel>
@@ -290,7 +296,7 @@
                                         Text="{Binding Title}"
                                         TextTrimming="CharacterEllipsis" />-->
                                                 </DataTemplate>
-                                                <DataTemplate x:Key="SongSlide">
+                                                <DataTemplate x:Key="SongSlideInstance">
                                                     <!-- <TextBox Text="{Binding Text}"></TextBox> -->
                                                     <!-- <Image -->
                                                     <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
@@ -298,9 +304,11 @@
                                                     <!--     Stretch="Uniform" /> -->
                                                     <Viewbox>
                                                         <!--  TODO: cache as image  -->
-                                                        <views:DesignerSlideTemplate
-                                                            Width="1920"
+                                                        <designer:SongSlideView Width="1920"
                                                             Height="1080" />
+                                                        <!-- <views:DesignerSlideTemplate -->
+                                                        <!--     Width="1920" -->
+                                                        <!--     Height="1080" /> -->
                                                     </Viewbox>
                                                     <!--<TextBlock
                                                         Height="9999"

@@ -100,6 +100,18 @@ namespace HandsLiftedApp.Core
                 if (x != null)
                 {
                     Playlist deserialized = (Playlist)x;
+                    
+                    // Map properties from PlaylistSerialized to Playlist
+                    PlaylistInstance playlist = new PlaylistInstance
+                    {
+                        Title = deserialized.Title,
+                        Meta = deserialized.Meta,
+                        LogoGraphicFile = deserialized.LogoGraphicFile,
+                        Designs = deserialized.Designs,
+                        // Date = deserialized.Date,
+                        // Items = Items
+                    };
+
 
                     var Items = new ObservableCollection<Item>();
                     foreach (var deserializedItem in deserialized.Items)
@@ -107,11 +119,11 @@ namespace HandsLiftedApp.Core
                         Item convereted;
                         if (deserializedItem is LogoItem i)
                         {
-                            convereted = new LogoItemInstance() { Title = i.Title };
+                            convereted = new LogoItemInstance(playlist) { Title = i.Title };
                         }
                         else if (deserializedItem is SongItem songItem)
                         {
-                            var song = new SongItemInstance()
+                            var song = new SongItemInstance(playlist)
                             {
                                 UUID = songItem.UUID,
                                 Title = songItem.Title,
@@ -130,7 +142,7 @@ namespace HandsLiftedApp.Core
                         }
                         else if (deserializedItem is MediaGroupItem mediaGroupItem)
                         {
-                            var g = new MediaGroupItemInstance()
+                            var g = new MediaGroupItemInstance(playlist)
                             {
                                 UUID = mediaGroupItem.UUID,
                                 Title = mediaGroupItem.Title,
@@ -147,17 +159,8 @@ namespace HandsLiftedApp.Core
                         Items.Add(convereted);
                     }
 
-                    // Map properties from PlaylistSerialized to Playlist
-                    PlaylistInstance playlist = new PlaylistInstance
-                    {
-                        Title = deserialized.Title,
-                        Meta = deserialized.Meta,
-                        LogoGraphicFile = deserialized.LogoGraphicFile,
-                        Designs = deserialized.Designs,
-                        // Date = deserialized.Date,
-                        Items = Items
-                    };
-
+                    playlist.Items = Items;
+                    
                     return playlist;
                 }
             }

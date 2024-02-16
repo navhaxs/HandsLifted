@@ -9,9 +9,10 @@ namespace HandsLiftedApp.Data.Slides
     {
         public string Id { get; set; }
 
-        public SongSlide(SongStanza? ownerSongStanza, string id)
+        public SongSlide(SongItem? parentSongItem, SongStanza? parentSongStanza, string id)
         {
-            OwnerSongStanza = ownerSongStanza;
+            ParentSongItem = parentSongItem;
+            ParentSongStanza = parentSongStanza;
             Id = id;
         }
 
@@ -42,11 +43,9 @@ namespace HandsLiftedApp.Data.Slides
 
         public override string? SlideLabel => Label;
 
-        // ref
-        public SongStanza? OwnerSongStanza { get; } = null;
-
-        Bitmap _cached;
-        public Bitmap? cached { get => _cached; set => this.RaiseAndSetIfChanged(ref _cached, value); }
+        // refs
+        public SongItem? ParentSongItem { get; } = null;
+        public SongStanza? ParentSongStanza { get; } = null;
 
         public override bool Equals(Object obj)
         {
@@ -62,9 +61,5 @@ namespace HandsLiftedApp.Data.Slides
                 return (Id == p.Id);
             }
         }
-    }
-
-    public interface ISongSlideState : ISlideState
-    {
     }
 }

@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:HandsLiftedApp.Converters;assembly=HandsLiftedApp.Controls"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides"
+             xmlns:converters1="clr-namespace:Avalonia.Markup.Xaml.Converters;assembly=Avalonia.Markup.Xaml"
+             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:DataType="slides1:SongSlideInstance"
+             x:Class="HandsLiftedApp.Core.Views.Designer.SongSlideView">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters1:ColorToBrushConverter x:Key="ColorToBrush" />
+            <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid
+    Background="{Binding Theme.BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
+       >
+        <Border>
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="60 80">
+                <Viewbox StretchDirection="DownOnly"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch">
+                    <TextBlock
+                        Text="{Binding Text}"
+                        TextAlignment="{Binding Theme.TextAlignment}"
+                        LineHeight="{Binding Theme.LineHeight}"
+                        FontWeight="{Binding Theme.FontWeight}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        FontFamily="Garamond"
+                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                        Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}}"
+                        FontSize="{Binding Theme.FontSize}" />
+                </Viewbox>
+            </Grid>
+            <Border.Background>
+                <ImageBrush
+                    Source="{Binding Theme.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
+                    Stretch="UniformToFill" />
+            </Border.Background>
+        </Border>
+    </Grid>
+</UserControl>

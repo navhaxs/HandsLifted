@@ -11,9 +11,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
     public class MediaGroupItemInstance : MediaGroupItem, IItemInstance
     {
-        public MediaGroupItemInstance()
+        public PlaylistInstance ParentPlaylist { get; set; } 
+
+        public MediaGroupItemInstance(PlaylistInstance parentPlaylist)
         {
-            
+            ParentPlaylist = parentPlaylist;  
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x=> x.Slides, (selectedSlideIndex, slides) =>
                 {
                     return slides.ElementAtOrDefault(selectedSlideIndex); //new BlankSlide()

@@ -14,10 +14,12 @@
     xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
     xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
     xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+    xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
     Title="SongEditorWindow"
     d:DesignHeight="700"
     d:DesignWidth="1200"
     Background="{DynamicResource BackgroundBrush}"
+    x:DataType="editor:SongEditorViewModel"
     x:CompileBindings="False"
     mc:Ignorable="d">
 
@@ -91,6 +93,7 @@
                             DockPanel.Dock="Left" />
                     <Button Content="ReverseSync" DockPanel.Dock="Left" Click="ReverseSyncButton_OnClick" />
                     <TextBox Text="{Binding Song.Design}" Width="200" />
+                    <ComboBox ItemsSource="{Binding Playlist.Designs}" SelectedItem="{Binding SelectedSlideTheme}" />
                 </StackPanel>
 
                 <TextBlock
@@ -341,27 +344,11 @@
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
 
-                                <ListBox.DataTemplates>
-                                    <utils:MyTemplateSelector>
-                                        <DataTemplate x:Key="SongTitleSlide">
-                                            <TextBlock
-                                                Margin="10,10,10,10"
-                                                FontWeight="SemiBold"
-                                                Foreground="White"
-                                                Text="{Binding Title}"
-                                                TextTrimming="WordEllipsis"
-                                                TextWrapping="Wrap" />
-                                        </DataTemplate>
-                                        <DataTemplate x:Key="SongSlide">
-                                            <TextBlock
-                                                Margin="10,10,10,10"
-                                                Foreground="White"
-                                                Text="{Binding Text}"
-                                                TextTrimming="WordEllipsis"
-                                                TextWrapping="Wrap" />
-                                        </DataTemplate>
-                                    </utils:MyTemplateSelector>
-                                </ListBox.DataTemplates>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <render:RenderedSlideView />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
 
                         </Border>

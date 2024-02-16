@@ -64,7 +64,7 @@ namespace HandsLiftedApp.Core.Models
                             }
                         }
 
-                        return new BlankItemInstance();
+                        return new BlankItemInstance(this);
                     })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItemAsIItemInstance);
