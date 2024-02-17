@@ -17,6 +17,7 @@
     xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
     xmlns:items2="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -70,7 +71,7 @@
     <StackPanel>
         <ContentControl Content="{Binding}">
             <ContentControl.ContentTemplate>
-                <utils:MyTemplateSelector>
+                <common:MyTemplateSelector>
                     <DataTemplate x:Key="BlankItem">
                     </DataTemplate>
                     <DataTemplate x:Key="SectionHeadingItem" x:DataType="items2:SectionHeadingItem">
@@ -288,7 +289,7 @@
 					</controls:ListBoxWithoutKey.Control>-->
 
                                         <controls:ListBoxWithoutKey.DataTemplates>
-                                            <utils:MyTemplateSelector>
+                                            <common:MyTemplateSelector>
                                                 <DataTemplate x:Key="SongTitleSlide">
                                                     <!-- <TextBox Text="{Binding Text}"></TextBox> -->
                                                     <!-- <Image -->
@@ -368,7 +369,7 @@
                                                         Text="{Binding FallbackValue='ItemSlidesView.DataTemplateBindingError'}"
                                                         TextWrapping="Wrap" />
                                                 </DataTemplate>
-                                            </utils:MyTemplateSelector>
+                                            </common:MyTemplateSelector>
                                         </controls:ListBoxWithoutKey.DataTemplates>
 
                                     </controls:ListBoxWithoutKey>
@@ -383,7 +384,7 @@
                         </DockPanel>
 
                     </DataTemplate>
-                </utils:MyTemplateSelector>
+                </common:MyTemplateSelector>
             </ContentControl.ContentTemplate>
         </ContentControl>
 

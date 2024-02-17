@@ -9,6 +9,8 @@
              xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             xmlns:slides1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:CompileBindings="False"
              Width="1920"
@@ -21,7 +23,7 @@
 
     <ContentControl Content="{Binding $parent[render:RenderedSlideView].ActiveSlide}">
         <ContentControl.ContentTemplate>
-            <utils:MyTemplateSelector>
+            <common:MyTemplateSelector>
                 <DataTemplate x:Key="SongTitleSlide">
                     <views:DesignerSlideTitle Width="1920" Height="1080" />
                 </DataTemplate>
@@ -40,12 +42,15 @@
                         Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
                         Stretch="Uniform" />
                 </DataTemplate>
+                <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides1:VideoSlideInstance">
+                    <render:MpvVideoSlideRenderer />
+                </DataTemplate>
                 <DataTemplate x:Key="BlankSlide">
                 </DataTemplate>
                 <DataTemplate x:Key="Fallback">
                     <TextBlock Text="{Binding $parent[render:RenderedSlideView].ActiveSlide}" />
                 </DataTemplate>
-            </utils:MyTemplateSelector>
+            </common:MyTemplateSelector>
         </ContentControl.ContentTemplate>
         <!-- NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down -->
         <!--<ContentControl.DataTemplates>

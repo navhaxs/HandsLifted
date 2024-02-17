@@ -12,11 +12,14 @@ public static class FunctionResolverFactory
 
     public static IFunctionResolver Create()
     {
-        var os = System.Environment.OSVersion;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+                return new MacFunctionResolver();
+        }
+        // var os = System.Environment.OSVersion;
         switch (GetPlatformId())
         {
-            case PlatformID.MacOSX:
-                return new MacFunctionResolver();
+            // case PlatformID.MacOSX:
             case PlatformID.Unix:
                 {
                     var isAndroid = RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID"));

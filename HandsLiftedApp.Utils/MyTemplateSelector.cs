@@ -1,10 +1,10 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Metadata;
 using HandsLiftedApp.Extensions;
-using System.Collections.Generic;
 
-namespace HandsLiftedApp.Utils
+namespace HandsLiftedApp.Common
 {
     public class MyTemplateSelector : IDataTemplate
     {
@@ -26,6 +26,15 @@ namespace HandsLiftedApp.Utils
                 {
                     return Templates[dataType].Build(data);
                 }
+
+                // TODO possible to loop by x:DataType ???
+                // experiment:
+                // var keyValuePair = Templates.First().Value;
+                // if (keyValuePair is DataTemplate dt)
+                // {
+                //     dt.DataType.GetNameWithoutGenericArity() == dataType;
+                // }
+                // if (Templates.First(template => template.Value.))
 
                 else if (Templates.ContainsKey("Fallback"))
                 {

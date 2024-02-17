@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core
@@ -81,18 +82,17 @@ namespace HandsLiftedApp.Core
             //}
         }
 
-        public static MediaSlide GenerateMediaContentSlide(Uri path) //, int index)
+        public static MediaSlide GenerateMediaContentSlide(string filePath) //, int index)
         {
-            var filename = path.AbsolutePath;
-            string _filename = filename.ToLower();
+            string _filename = filePath.ToLower();
 
             // TODO: make VideoSlide and ImageSlide both share common MediaSlide parent class
             if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x)))
             {
-                return new VideoSlide(filename); // { Index = index };
+                return new VideoSlideInstance(filePath); // { Index = index };
             }
 
-            return new ImageSlide(filename); // { Index = index };
+            return new ImageSlide(filePath); // { Index = index };
         }
     }
 }

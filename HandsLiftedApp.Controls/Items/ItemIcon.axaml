@@ -5,7 +5,8 @@
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="50"
  			 xmlns:utils="using:HandsLiftedApp.Utils"
 	 		 xmlns:material="using:Material.Icons.Avalonia"
-             x:Class="HandsLiftedApp.Controls.Items.ItemIcon"
+	 		 xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+	 		 x:Class="HandsLiftedApp.Controls.Items.ItemIcon"
              x:CompileBindings="False">
 	<!--<UserControl.Styles>
 		<Style Selector="material|MaterialIcon">
@@ -14,7 +15,7 @@
 	</UserControl.Styles>-->
 	<ContentControl Content="{Binding}" >
 		<ContentControl.ContentTemplate>
-			<utils:MyTemplateSelector>
+			<common:MyTemplateSelector>
 				<DataTemplate x:Key="SongItemInstance">
 					<material:MaterialIcon Kind="MusicNote" />
 			   	</DataTemplate>
@@ -38,7 +39,7 @@
 				<DataTemplate x:Key="Fallback">
 					<material:MaterialIcon Kind="CheckboxBlankOutline" />
 				</DataTemplate>
-			</utils:MyTemplateSelector>
+			</common:MyTemplateSelector>
 		</ContentControl.ContentTemplate>
 		<!-- NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down -->
 		<!--<ContentControl.DataTemplates>

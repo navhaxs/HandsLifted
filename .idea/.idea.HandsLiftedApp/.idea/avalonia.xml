@@ -16,6 +16,7 @@
         <entry key="HandsLiftedApp.Core/App.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.Core/Models/RuntimeData/Items/LogoItemRender.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Models/RuntimeData/Items/LogoSlideView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Render/MpvVideoSlideRenderer.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Render/RenderedSlideView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Render/SongThemes/DesignerSlideTemplate.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Render/SongThemes/DesignerSlideTitle.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

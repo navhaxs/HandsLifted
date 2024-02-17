@@ -1,4 +1,6 @@
-﻿namespace LibMpv.Client;
+﻿using System.Runtime.InteropServices;
+
+namespace LibMpv.Client;
 
 public partial class libmpv
 {
@@ -12,11 +14,10 @@ public partial class libmpv
 
     static libmpv()
     {
-        EAGAIN = FunctionResolverFactory.GetPlatformId() switch
-        {
-            PlatformID.MacOSX => 35,
-            _ => 11
-        };
+        EAGAIN = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+            ? 35
+            : 11
+        ;
 
         DynamicallyLoadedBindings.Initialize();
     }

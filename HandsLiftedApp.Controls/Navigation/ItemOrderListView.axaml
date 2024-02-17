@@ -15,6 +15,7 @@
     xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:items="clr-namespace:HandsLiftedApp.Controls.Items"
     xmlns:mockData="clr-namespace:HandsLiftedApp.Controls.MockData"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     d:DesignHeight="400"
     d:DesignWidth="200"
     mc:Ignorable="d"
@@ -182,7 +183,7 @@
                     </ContextMenu>
                 </ListBox.ContextMenu>
                 <ListBox.ItemTemplate>
-                    <utils:MyTemplateSelector>
+                    <common:MyTemplateSelector>
                         <DataTemplate x:Key="SectionHeadingItem">
                             <Grid Background="Aqua">
                                 <!--  TODO not working  -->
@@ -242,7 +243,7 @@
                                 </i:Interaction.Behaviors>
                             </DockPanel>
                         </DataTemplate>
-                    </utils:MyTemplateSelector>
+                    </common:MyTemplateSelector>
                 </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>

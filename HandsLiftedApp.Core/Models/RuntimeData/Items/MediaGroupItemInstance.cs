@@ -37,7 +37,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             var x = new List<Slide>();
             foreach (var item in Items)
             {
-                x.Add(new ImageSlide(item.SourceMediaFilePath));
+                var generateMediaContentSlide = CreateItem.GenerateMediaContentSlide(item.SourceMediaFilePath);
+                x.Add(generateMediaContentSlide);
             }
 
             _Slides = x;

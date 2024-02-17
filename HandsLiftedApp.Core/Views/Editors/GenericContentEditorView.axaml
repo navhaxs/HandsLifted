@@ -7,6 +7,7 @@
 	 		 xmlns:material="using:Material.Icons.Avalonia"
 	 		 xmlns:core="clr-namespace:HandsLiftedApp.Core"
 	 		 xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+	 		 xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
 	 		 x:Class="HandsLiftedApp.Core.Views.GenericContentEditorView"
              x:CompileBindings="False">
 	<!--<UserControl.Styles>
@@ -16,7 +17,7 @@
 	</UserControl.Styles>-->
 	<ContentControl Content="{Binding}" >
 		<ContentControl.ContentTemplate>
-			<utils:MyTemplateSelector>
+			<common:MyTemplateSelector>
 				<DataTemplate x:Key="SongItemInstance">
 			   	</DataTemplate>
 				<DataTemplate x:Key="MediaGroupItemInstance">
@@ -37,7 +38,7 @@
 				<DataTemplate x:Key="Fallback">
 					<material:MaterialIcon Kind="CheckboxBlankOutline" />
 				</DataTemplate>
-			</utils:MyTemplateSelector>
+			</common:MyTemplateSelector>
 		</ContentControl.ContentTemplate>
 		<!-- NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down -->
 		<!--<ContentControl.DataTemplates>

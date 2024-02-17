@@ -526,6 +526,9 @@ Description("Function to determine whether the content requires high resolution 
             if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
                 return;
 
+            // directly copy buffer for video playback content
+            var videoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
+
             if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
             {
                 // Create a properly sized RenderTargetBitmap
@@ -547,7 +550,7 @@ Description("Function to determine whether the content requires high resolution 
                 xres = NdiWidth,
                 yres = NdiHeight,
                 // Use BGRA video
-                FourCC = OperatingSystem.IsMacOS() ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA,
+                FourCC = (OperatingSystem.IsMacOS() && videoControl == null) ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA,
                 // The frame-eate
                 frame_rate_N = frNum,
                 frame_rate_D = frDen,
@@ -578,7 +581,6 @@ Description("Function to determine whether the content requires high resolution 
             using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
             // render the Avalonia visual
-            var videoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
             if (videoControl != null)
             {
                 videoControl.GetVideoBufferBitmap().CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
