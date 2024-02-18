@@ -12,3 +12,24 @@ Find out more at https://visionscreens.twohandslifted.com
 
 ![Screenshot](screenshot-nov2023.jpg?raw=true "Screenshot")
 ![Screenshot](screenshot.jpg?raw=true "Screenshot")
+
+## Acknowledgements
+
+Avalonia UI
+* https://avaloniaui.net
+
+LibMPV
+* https://github.com/mpv-player/mpv
+* https://gist.github.com/dbrookman/74b8bcfb37a23452f7137b83bca9580f
+* https://github.com/homov/LibMpv
+
+NewTek NDI SDK
+* https://www.ndi.tv
+
+Material Icons
+
+Config.Net
+
+Serilog
+
+PDFiumCore
