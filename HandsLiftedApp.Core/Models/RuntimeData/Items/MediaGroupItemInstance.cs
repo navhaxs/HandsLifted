@@ -49,7 +49,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public List<Slide> _Slides = new List<Slide>();
         public override ObservableCollection<Slide> Slides => new(_Slides);
 
-        public int _selectedSlideIndex;
+        public int _selectedSlideIndex = -1;
 
         public int SelectedSlideIndex
         {
