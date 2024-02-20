@@ -3,24 +3,45 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
-             xmlns:utils="clr-namespace:HandsLiftedApp.Utils;assembly=HandsLiftedApp.Common"
-             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
-             xmlns:views="clr-namespace:HandsLiftedApp.Views"
-             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
-             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
-             xmlns:slides1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
-             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:xTransitioningContentControl="clr-namespace:HandsLiftedApp.XTransitioningContentControl;assembly=HandsLiftedApp.XTransitioningContentControl"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:CompileBindings="False"
              Width="1920"
              Height="1080"
              Background="Black"
              x:Class="HandsLiftedApp.Core.Render.ActiveSlideRender">
-    <render:SlideRender DataContext="{Binding $parent[render:ActiveSlideRender].ActiveSlide}" />
-</UserControl>
 
-<!-- <Image -->
-<!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
-<!--     Source="{Binding cached}" -->
-<!--     Stretch="Uniform" /> -->
+    <UserControl.Resources>
+        <extensions:BitmapAssetValueConverter x:Key="variableImage" />
+    </UserControl.Resources>
+
+    <!-- <Grid ColumnDefinitions="*,*"> -->
+
+        <xTransitioningContentControl:XTransitioningContentControl
+            Content="{Binding $parent[render:ActiveSlideRender].ActiveSlide}"
+
+            RenderOptions.BitmapInterpolationMode="HighQuality">
+
+            <xTransitioningContentControl:XTransitioningContentControl.PageTransition>
+                <xTransitioningContentControl:XFade Duration="0.100" />
+                <!--<CompositePageTransition>
+				<CrossFade Duration="0:00:00.500" />
+				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
+				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
+				<ext:CustomTransition Duration="0:00:00.250" />
+			</CompositePageTransition>-->
+            </xTransitioningContentControl:XTransitioningContentControl.PageTransition>
+
+            <xTransitioningContentControl:XTransitioningContentControl.ContentTemplate>
+                <DataTemplate>
+                    <render:SlideRender Grid.Column="1" DataContext="{Binding .}" />
+                </DataTemplate>
+            </xTransitioningContentControl:XTransitioningContentControl.ContentTemplate>
+        </xTransitioningContentControl:XTransitioningContentControl>
+
+    <!--     <render:SlideRender Grid.Column="1" DataContext="{Binding $parent[render:ActiveSlideRender].ActiveSlide}" /> -->
+    <!-- -->
+    <!-- </Grid> -->
+    <!-- -->
+</UserControl>
