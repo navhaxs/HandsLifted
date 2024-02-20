@@ -156,7 +156,7 @@ namespace HandsLiftedApp.Core.Views.Editors
         {
             if (this.DataContext is SongEditorViewModel songEditorViewModel)
             {
-                // songEditorViewModel.Song.GenerateSlides();
+                songEditorViewModel.Song.GenerateSlides();
             }
         }
 

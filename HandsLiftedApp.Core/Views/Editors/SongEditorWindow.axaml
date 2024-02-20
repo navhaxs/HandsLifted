@@ -88,7 +88,7 @@
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
 
-                    <!-- <Button Content="GenerateSlides" DockPanel.Dock="Left" Click="GenerateSlides_OnClick" /> -->
+                    <Button Content="GenerateSlides" DockPanel.Dock="Left" Click="GenerateSlides_OnClick" />
                     <!-- <Button Content="SongDataUpdateCommand" Command="{Binding SongDataUpdateCommand}" -->
                     <!--         DockPanel.Dock="Left" /> -->
                     <Button Content="ReverseSync" DockPanel.Dock="Left" Click="ReverseSyncButton_OnClick" />

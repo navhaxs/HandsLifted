@@ -99,7 +99,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private readonly object stantaSlidesLock = new object();
 
-        private void GenerateSlides()
+        public void GenerateSlides()
         {
             UpdateStanzaSlides();
         }
