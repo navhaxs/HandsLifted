@@ -385,7 +385,9 @@
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <render:SlideRender />
+                                            <Viewbox>
+                                                <render:SlideRender />
+                                            </Viewbox>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
