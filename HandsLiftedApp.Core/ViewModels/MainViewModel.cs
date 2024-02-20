@@ -23,14 +23,19 @@ using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
+using HandsLiftedApp.Models.LibraryModel;
 using HandsLiftedApp.Utils;
 using Serilog;
+using Item = HandsLiftedApp.Data.Models.Items.Item;
 
 namespace HandsLiftedApp.Core.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
     public IMySettings settings;
+    
+    public Library Library { get; } = new Library();
+
     public ReactiveCommand<object, Unit> SlideClickCommand { get; }
 
     public MainViewModel()
@@ -361,4 +366,11 @@ public class MainViewModel : ViewModelBase
                 StageDisplayWindow.Hide();
         }
     }
+
+    #region UI
+
+    private int _BottomLeftPanelSelectedTabIndex = 0;
+    public int BottomLeftPanelSelectedTabIndex { get => _BottomLeftPanelSelectedTabIndex; set => this.RaiseAndSetIfChanged(ref _BottomLeftPanelSelectedTabIndex, value); }
+
+    #endregion
 }

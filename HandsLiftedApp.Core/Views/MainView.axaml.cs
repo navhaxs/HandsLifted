@@ -27,6 +27,54 @@ public partial class MainView : UserControl
             var window = TopLevel.GetTopLevel(this);
             window.KeyDown += MainWindow_KeyDown;
         };
+        
+        LibraryToggleButton.Click += (object? sender, RoutedEventArgs e) =>
+        {
+            if (this.DataContext is MainViewModel vm)
+            {
+                bool forceVisible = vm.BottomLeftPanelSelectedTabIndex != 0;
+                vm.BottomLeftPanelSelectedTabIndex = 0;
+                ToggleBottomPanel(forceVisible);
+            }
+            DesignerToggleButton.IsChecked = false;
+        };
+        DesignerToggleButton.Click += (object? sender, RoutedEventArgs e) =>
+        {
+            if (this.DataContext is MainViewModel vm)
+            {
+                bool forceVisible = vm.BottomLeftPanelSelectedTabIndex != 1;
+                vm.BottomLeftPanelSelectedTabIndex = 1;
+                ToggleBottomPanel(forceVisible);
+            }
+            LibraryToggleButton.IsChecked = false;
+        };
+    }
+    bool isLibraryVisible = false;
+    GridLength lastLibraryContentGridLength = new GridLength(260);
+    GridLength lastLibrarySplitterGridLength = new GridLength(0);
+
+ 
+    private void ToggleBottomPanel(bool forceVisible = false)
+    {
+        if (forceVisible && isLibraryVisible)
+        {
+            // do nothing if already visible
+            return;
+        }
+
+        if (isLibraryVisible)
+        {
+            lastLibraryContentGridLength = DockedLibraryWrapper.RowDefinitions[2].Height;
+            lastLibrarySplitterGridLength = DockedLibraryWrapper.RowDefinitions[1].Height;
+            DockedLibraryWrapper.RowDefinitions[2].Height = new GridLength(0);
+            DockedLibraryWrapper.RowDefinitions[1].Height = new GridLength(0);
+        }
+        else
+        {
+            DockedLibraryWrapper.RowDefinitions[2].Height = lastLibraryContentGridLength;
+            DockedLibraryWrapper.RowDefinitions[1].Height = lastLibrarySplitterGridLength;
+        }
+        isLibraryVisible = !isLibraryVisible;
     }
 
     private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)

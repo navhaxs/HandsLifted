@@ -39,9 +39,11 @@
         <entry key="HandsLiftedApp.Core/Views/ItemContentView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemIcon.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemSlidesView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Library/LibraryView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/LiveOutputsFlyoutContent.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/LivePane.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/MainView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/MainViewDockedContainer.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/MainWindow.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.Core/Views/MessageWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/PlaylistSlidesView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

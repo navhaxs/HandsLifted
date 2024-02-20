@@ -133,10 +133,19 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 foreach (var a in Arrangement)
                 {
                     // todo match Stanzas by first match, so content is up to date. dont trust the cached copy in Arrangement
-                    var _datum = a.Value;
+                    SongStanza _datum = a.Value;
 
                     stanzaSeenCount[_datum.Uuid] =
                         stanzaSeenCount.ContainsKey(_datum.Uuid) ? stanzaSeenCount[_datum.Uuid] + 1 : 0;
+                    
+                    
+                    // TODO
+                    // TODO
+                    // TODO
+                    // TODO
+                    // TODO
+                    // TODO
+                    
                     // break slides by newlines
                     string[] lines = _datum.Lyrics.Replace("\r\n", "\n").Split(new string[] { "\n\n" },
                         StringSplitOptions.RemoveEmptyEntries);

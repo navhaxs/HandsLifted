@@ -120,11 +120,20 @@
         <DependentUpon>SongLyricFreeTextEditor.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Library\LibraryView.axaml.cs">
+        <DependentUpon>LibraryView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Library\LibraryView.axaml.cs">
+        <DependentUpon>LibraryView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 
     <ItemGroup>
       <AdditionalFiles Include="Views\Designer\DesignerView.axaml" />
       <AdditionalFiles Include="Views\Designer\SlideDesignerWindow.axaml" />
+      <AdditionalFiles Include="Views\Library\LibraryView.axaml" />
     </ItemGroup>
 </Project>
