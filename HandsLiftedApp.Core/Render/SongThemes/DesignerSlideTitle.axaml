@@ -5,8 +5,9 @@
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
              x:Class="HandsLiftedApp.Views.DesignerSlideTitle"
              xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
-             x:CompileBindings="False"
-             xmlns:ext="using:HandsLiftedApp.Extensions">
+             x:DataType="slides1:SongTitleSlideInstance"
+             xmlns:ext="using:HandsLiftedApp.Extensions"
+             xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides">
 
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
@@ -14,7 +15,7 @@
     </UserControl.Resources>
 
     <Grid
-        Background="{Binding $parent[Window].DataContext.SlideTheme.BackgroundColour, Converter={StaticResource ColorToBrush}}">
+        Background="{Binding Theme.BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}}">
 
         <Border>
 
@@ -30,9 +31,9 @@
                                    TextWrapping="Wrap"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
-                                   FontFamily="{Binding $parent[Window].DataContext.SlideTheme.FontFamily, FallbackValue='Garamond, Playfair Display'}"
+                                   FontFamily="{Binding Theme.FontFamily, FallbackValue='Garamond, Playfair Display'}"
                                    RenderOptions.BitmapInterpolationMode="HighQuality"
-                                   Foreground="{Binding $parent[Window].DataContext.SlideTheme.TextColour, Converter={StaticResource ColorToBrush}, FallbackValue=Red}"
+                                   Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue=Red}"
                                    FontSize="170" />
                     </Viewbox>
 
@@ -40,8 +41,8 @@
                              MinHeight="260">
                         <TextBlock
                             Text="{Binding Copyright, FallbackValue='CCLI Song # 7127647&#x0a;Brooke Ligertwood | Jason Ingram | Scott Ligertwood&#x0a;© 2019 Fellow Ships Music (Admin. by Essential Music  Publishing LLC)&#x0a;So Essential Tunes (Admin. by Essential Music Publishing LLC)&#x0a;Hillsong Music Publishing Australia&#x0a;For use solely with the SongSelect® Terms of Use. All rights reserved. www.ccli.com&#x0a;Note: Reproduction of this sheet music requires a CCLI Music Reproduction License. Please report all copies.&#x0a;CCLI Licence # 317371'}"
-                            Foreground="{Binding $parent[Window].DataContext.SlideTheme.TextColour, Converter={StaticResource ColorToBrush}, FallbackValue=Red}"
-                            FontFamily="{Binding $parent[Window].DataContext.SlideTheme.FontFamily, FallbackValue='Garamond, Playfair Display'}"
+                            Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue=Red}"
+                            FontFamily="{Binding Theme.FontFamily, FallbackValue='Garamond, Playfair Display'}"
                             FontSize="30"
                             Width="1760" />
                     </Viewbox>
@@ -50,7 +51,7 @@
             </Grid>
             <Border.Background>
                 <ImageBrush
-                    Source="{Binding  $parent[Window].DataContext.SlideTheme.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
+                    Source="{Binding  Theme.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
                     Stretch="UniformToFill" />
             </Border.Background>
         </Border>

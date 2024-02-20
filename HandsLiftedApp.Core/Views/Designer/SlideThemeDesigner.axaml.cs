@@ -21,6 +21,8 @@ namespace HandsLiftedApp.Core.Views.Designer
             fontComboBox.ItemsSource = fontFamilies;
             fontComboBox.SelectedIndex = 0;
 
+            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetValues(typeof(FontWeight));
+
             TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
 
             // designsListBox.DataContextChanged += (sender, args) =>

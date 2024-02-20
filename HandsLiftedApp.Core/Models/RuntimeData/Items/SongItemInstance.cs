@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Avalonia.Media;
+using DebounceThrottle;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -20,15 +21,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
     {
         public PlaylistInstance? ParentPlaylist { get; set; } 
         private SongTitleSlide titleSlide;
+        private DebounceDispatcher debounceDispatcher = new DebounceDispatcher(200);
 
-        public SongItemInstance() : this(null)
-        {
-            
-        }
+
+        // public SongItemInstance() : this(null)
+        // {
+        //     
+        // }
         public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
         {
             ParentPlaylist = parentPlaylist;   
-            titleSlide = new SongTitleSlide { };
+            titleSlide = new SongTitleSlideInstance(this) { };
             //{
             //    Title = Title,
             //    Copyright = Copyright
@@ -48,12 +51,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             this.WhenAnyValue(x => x.TitleSlide).Subscribe((d) =>
             {
-                // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
             this.WhenAnyValue(x => x.EndOnBlankSlide, x => x.StartOnTitleSlide).Subscribe((d) =>
             {
-                // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides,
@@ -69,7 +72,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         private void Arrangement_CollectionChanged(object? sender,
             System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
 
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)
             {
@@ -96,7 +99,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private readonly object stantaSlidesLock = new object();
 
-        public void GenerateSlides()
+        private void GenerateSlides()
         {
             UpdateStanzaSlides();
         }
@@ -237,7 +240,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
                 _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
                 this.RaiseAndSetIfChanged(ref _stanzas, value);
-                // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
                 _stanzas.CollectionChanged += _stanzas_CollectionChanged;
                 _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             }
@@ -256,7 +259,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         void s()
         {
-            // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
         }
 
         /*

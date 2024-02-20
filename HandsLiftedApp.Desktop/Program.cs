@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.ReactiveUI;
+using HandsLiftedApp.Common;
 using HandsLiftedApp.Core;
 
 namespace HandsLiftedApp.Desktop;
@@ -14,6 +15,11 @@ sealed class Program
     public static void Main(string[] args)
     {
         Logging.InitLogging();
+        if (OperatingSystem.IsWindows())
+        {
+            Caffeine.KeepAwake(true);
+            // TODO macOS: keep awake
+        }
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
@@ -22,7 +28,7 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
+            // .WithInterFont() this font is gross
             .LogToTrace()
             .UseReactiveUI();
 }

@@ -51,7 +51,7 @@
                                            FontSize="80"
                                            Margin="20"
                                            FontFamily="{Binding FontFamily, FallbackValue='Arial'}"
-                                           FontWeight="SemiBold" />
+                                           FontWeight="{Binding FontWeight, FallbackValue='SemiBold'}" />
                             </Grid>
                         </Viewbox>
                     </DockPanel>
@@ -72,7 +72,7 @@
                                     Text="Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I'll never be the same&#x0a;Forever I am changed"
                                     TextAlignment="{Binding #TextAlignmentComboBox.SelectedItem}"
                                     LineHeight="{Binding #LineHeightTextBox.Text}"
-                                    FontWeight="SemiBold"
+                                    FontWeight="{Binding #FontWeightComboBox.SelectedValue, FallbackValue='SemiBold'}"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     FontFamily="{Binding #fontComboBox.SelectedItem, FallbackValue='Garamond, Playfair Display'}"
@@ -133,6 +133,13 @@
                                 IsSnapToTickEnabled="True"
                                 TickFrequency="1"
                                 Value="{Binding #FontSizeTextBox.Text}" />
+                    </DockPanel>    
+                    
+                    <TextBlock Text="Font Weight" />
+                    <DockPanel>
+                        <ComboBox Name="FontWeightComboBox" 
+                                  SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold}"
+                                />
                     </DockPanel>
 
                     <TextBlock Text="Line Height" />

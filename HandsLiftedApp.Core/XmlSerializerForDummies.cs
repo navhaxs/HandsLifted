@@ -137,7 +137,7 @@ namespace HandsLiftedApp.Core
                                 StartOnTitleSlide = songItem.StartOnTitleSlide,
                                 EndOnBlankSlide = songItem.EndOnBlankSlide
                             };
-                            song.GenerateSlides();
+                            // song.GenerateSlides();
                             convereted = song;
                         }
                         else if (deserializedItem is MediaGroupItem mediaGroupItem)

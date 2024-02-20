@@ -14,7 +14,7 @@ namespace HandsLiftedApp.Core
     {
         public static void InitLogging()
         {
-            if (OperatingSystem.IsWindows())
+            if (OperatingSystem.IsWindows() && !Debugger.IsAttached)
             {
                 ConsoleUtils.AllocConsole();
             }
@@ -29,13 +29,13 @@ namespace HandsLiftedApp.Core
                 .Enrich.FromLogContext()
                 .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
                 .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
-                // .WriteTo.Console()
+                .WriteTo.Console()
                 .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-            Trace.Listeners.Add(new ConsoleTraceListener());
+            // Trace.Listeners.Add(new ConsoleTraceListener());
 
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -44,7 +44,7 @@ namespace HandsLiftedApp.Core
                 $"VisionScreens app version {version} startup at {DateTime.Now}");
             //build {BuildInfo.Version.getGitHash()}
 
-            Log.Information("Avalonia version: " +
+            Log.Information("Avalonia " +
                             Assembly.GetAssembly(typeof(Avalonia.Application)).GetName().Version.ToString());
             Log.Information(frameworkDescription);
 

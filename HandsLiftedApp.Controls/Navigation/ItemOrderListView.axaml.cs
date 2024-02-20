@@ -215,6 +215,8 @@ namespace HandsLiftedApp.Controls
         {
             if (sender is Control control)
             {
+                // TODO confirmation window
+                
                 MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
             }
         }

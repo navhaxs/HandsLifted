@@ -2,29 +2,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
-             xmlns:utils="clr-namespace:HandsLiftedApp.Utils;assembly=HandsLiftedApp.Common"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
+             xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
              xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
              xmlns:views="clr-namespace:HandsLiftedApp.Views"
-             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
-             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
-             xmlns:slides1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
-             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:CompileBindings="False"
-             Width="1920"
-             Height="1080"
-             Background="Black"
-             x:Class="HandsLiftedApp.Core.Render.RenderedSlideView">
+             x:DataType="slides1:Slide"
+             x:Class="HandsLiftedApp.Core.Render.SlideRender">
     <UserControl.Resources>
         <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
     </UserControl.Resources>
 
-    <ContentControl Content="{Binding $parent[render:RenderedSlideView].ActiveSlide}">
+    <ContentControl Content="{Binding}">
         <ContentControl.ContentTemplate>
             <common:MyTemplateSelector>
-                <DataTemplate x:Key="SongTitleSlide">
+                <DataTemplate x:Key="SongTitleSlideInstance">
                     <views:DesignerSlideTitle Width="1920" Height="1080" />
                 </DataTemplate>
                 <DataTemplate x:Key="SongSlideInstance">
@@ -36,19 +32,19 @@
                 <DataTemplate x:Key="LogoSlide">
                     <items:LogoSlideView />
                 </DataTemplate>
-                <DataTemplate x:Key="ImageSlide" x:DataType="slides:ImageSlide">
+                <DataTemplate x:Key="ImageSlide" x:DataType="slides1:ImageSlide">
                     <Image
                         RenderOptions.BitmapInterpolationMode="LowQuality"
                         Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
                         Stretch="Uniform" />
                 </DataTemplate>
-                <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides1:VideoSlideInstance">
+                <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides:VideoSlideInstance">
                     <render:MpvVideoSlideRenderer />
                 </DataTemplate>
                 <DataTemplate x:Key="BlankSlide">
                 </DataTemplate>
-                <DataTemplate x:Key="Fallback">
-                    <TextBlock Text="{Binding $parent[render:RenderedSlideView].ActiveSlide}" />
+                <DataTemplate x:Key="Fallback" x:DataType="slides1:Slide">
+                    <TextBlock Text="{Binding }" />
                 </DataTemplate>
             </common:MyTemplateSelector>
         </ContentControl.ContentTemplate>
@@ -57,8 +53,3 @@
 		</ContentControl.DataTemplates>-->
     </ContentControl>
 </UserControl>
-
-<!-- <Image -->
-<!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
-<!--     Source="{Binding cached}" -->
-<!--     Stretch="Uniform" /> -->

@@ -43,21 +43,18 @@ namespace HandsLiftedApp.Behaviours
         /// <inheritdoc />
         protected override void OnAttachedToVisualTree()
         {
-        }
-
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-
+            base.OnAttachedToVisualTree();
+            
             var source = AssociatedObject;
             if (source is { })
             {
                 // NOTE: You need any kind of Background for hit testing to work. Transparent is fine, but null will not work. For Panel, null is default.
                 source.PointerPressed += Source_PointerPressed;
 
-                if (source.ContextMenu != null)
+                ListBoxItem? listBoxItem = source?.FindAncestorOfType<ListBoxItem>();
+                if (listBoxItem is { ContextMenu: not null })
                 {
-                    source.ContextMenu.Opened += ContextMenu_MenuOpened;
+                    listBoxItem.ContextMenu.Opened += ContextMenu_MenuOpened;
                 }
             }
         }
@@ -298,7 +295,7 @@ namespace HandsLiftedApp.Behaviours
                 }
 
                 double totalMilliseconds = DateTime.Now.Subtract((DateTime)_whenPointerPressed).TotalMilliseconds;
-                System.Diagnostics.Debug.WriteLine(totalMilliseconds);
+                // System.Diagnostics.Debug.WriteLine(totalMilliseconds);
                 if (_whenPointerPressed == null || totalMilliseconds < 100)
                 {
                     return;

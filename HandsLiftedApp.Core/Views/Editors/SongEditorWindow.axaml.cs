@@ -7,6 +7,7 @@ using HandsLiftedApp.Utils;
 using System;
 using System.Threading.Tasks;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {
@@ -33,7 +34,17 @@ namespace HandsLiftedApp.Core.Views.Editors
             //TextBox tb = new TextBox();
             //tb.WhenAny
 
-            ImportPasteHereTextBox.TextChanged += ImportPasteHereTextBox_TextChanged;
+            // ImportPasteHereTextBox.TextChanged += ImportPasteHereTextBox_TextChanged;
+            if (this.DataContext is SongEditorViewModel songEditorViewModel)
+            {
+                songEditorViewModel.FreeTextEntryField = SongImporter.songItemToFreeText(songEditorViewModel.Song);
+
+                songEditorViewModel.WhenAnyValue(x => x.Song.Slides).Subscribe((slides) =>
+                {
+                    songEditorViewModel.FreeTextEntryField = SongImporter.songItemToFreeText(songEditorViewModel.Song);
+                });
+            }
+            
         }
 
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
@@ -61,19 +72,19 @@ namespace HandsLiftedApp.Core.Views.Editors
             ((SongEditorViewModel)this.DataContext).Song.Arrangement.Remove(stanza);
         }
 
-        private void ImportPasteHereTextBox_TextChanged(object? sender, TextChangedEventArgs e)
-        {
-            try
-            {
-                SongItemInstance songItemInstance = SongImporter.createSongItemFromStringData(ImportPasteHereTextBox.Text);
-
-                ((SongEditorViewModel)this.DataContext).Song.ReplaceWith(songItemInstance);
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
+        // private void ImportPasteHereTextBox_TextChanged(object? sender, TextChangedEventArgs e)
+        // {
+        //     try
+        //     {
+        //         SongItemInstance songItemInstance = SongImporter.createSongItemFromStringData(ImportPasteHereTextBox.Text);
+        //
+        //         ((SongEditorViewModel)this.DataContext).Song.ReplaceWith(songItemInstance);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //
+        //     }
+        // }
 
         private async Task GetWavHeader()
         {
@@ -96,44 +107,44 @@ namespace HandsLiftedApp.Core.Views.Editors
             }
         }
 
-        private async Task SaveToXML()
-        {
-            var dlg = new SaveFileDialog();
-            dlg.Filters.Add(new FileDialogFilter() { Name = "XML Files", Extensions = { "xml" } });
-            dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
+        // private async Task SaveToXML()
+        // {
+        //     var dlg = new SaveFileDialog();
+        //     dlg.Filters.Add(new FileDialogFilter() { Name = "XML Files", Extensions = { "xml" } });
+        //     dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
+        //
+        //     var window = this.VisualRoot as Window;
+        //     if (window is null)
+        //     {
+        //         return;
+        //     }
+        //
+        //     var result = await dlg.ShowAsync(window);
+        //     if (result != null)
+        //     {
+        //         XmlSerialization.WriteToXmlFile<SongItemInstance>(result, ((SongEditorViewModel)this.DataContext).Song);
+        //     }
+        // }
 
-            var window = this.VisualRoot as Window;
-            if (window is null)
-            {
-                return;
-            }
-
-            var result = await dlg.ShowAsync(window);
-            if (result != null)
-            {
-                XmlSerialization.WriteToXmlFile<SongItemInstance>(result, ((SongEditorViewModel)this.DataContext).Song);
-            }
-        }
-
-        private async Task LoadFromXML()
-        {
-            var dlg = new OpenFileDialog();
-            dlg.Filters.Add(new FileDialogFilter() { Name = "XML Files", Extensions = { "xml" } });
-            dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
-            dlg.AllowMultiple = false;
-
-            var window = this.VisualRoot as Window;
-            if (window is null)
-            {
-                return;
-            }
-
-            var result = await dlg.ShowAsync(window);
-            if (result != null)
-            {
-                ((SongEditorViewModel)this.DataContext).Song = XmlSerialization.ReadFromXmlFile<SongItemInstance>(result[0]);
-            }
-        }
+        // private async Task LoadFromXML()
+        // {
+        //     var dlg = new OpenFileDialog();
+        //     dlg.Filters.Add(new FileDialogFilter() { Name = "XML Files", Extensions = { "xml" } });
+        //     dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
+        //     dlg.AllowMultiple = false;
+        //
+        //     var window = this.VisualRoot as Window;
+        //     if (window is null)
+        //     {
+        //         return;
+        //     }
+        //
+        //     var result = await dlg.ShowAsync(window);
+        //     if (result != null)
+        //     {
+        //         ((SongEditorViewModel)this.DataContext).Song = XmlSerialization.ReadFromXmlFile<SongItemInstance>(result[0]);
+        //     }
+        // }
 
         public void DeleteThisPartClick(object? sender, RoutedEventArgs args)
         {
@@ -145,7 +156,7 @@ namespace HandsLiftedApp.Core.Views.Editors
         {
             if (this.DataContext is SongEditorViewModel songEditorViewModel)
             {
-                songEditorViewModel.Song.GenerateSlides();
+                // songEditorViewModel.Song.GenerateSlides();
             }
         }
 

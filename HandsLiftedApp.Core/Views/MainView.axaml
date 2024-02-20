@@ -10,7 +10,6 @@
              xmlns:material="using:Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Core.Views.MainView"
-             Background="#353535"
              x:DataType="vm:MainViewModel">
     <DockPanel>
 
@@ -34,7 +33,7 @@
                         Padding="8,8"
                         CornerRadius="0"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
+                        VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Stretch"
                         Background="Transparent"
@@ -94,6 +93,12 @@
 
                                 <Separator />
 
+                                <MenuItem Click="About_OnClick" Header="About">
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Foreground="#888888" Kind="HelpCircle" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
                                 <!-- -->
                                 <!-- <MenuItem Command="{Binding EditPlaylistInfoCommand}" Header="Rename"> -->
                                 <!--     <MenuItem.Icon> -->
@@ -117,7 +122,11 @@
                             </MenuFlyout>
                         </ToggleButton.Flyout>
 
+
                         <ToggleButton.Styles>
+                            <Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
+                                <Setter Property="Background" Value="#5c3ab6" />
+                            </Style>
                             <Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
                                 <Setter Property="Background" Value="#9a93cd" />
                                 <!--<Setter Property="Background" Value="Transparent" />-->
@@ -128,14 +137,10 @@
                             <Style Selector="ToggleButton:checked TextBlock">
                                 <Setter Property="Foreground" Value="White" />
                             </Style>
-                            <Style
-                                Selector="ToggleButton:pointerover  /template/ ContentPresenter#PART_ContentPresenter">
-                                <Setter Property="Background" Value="#5c3ab6" />
-                            </Style>
-                            <Style Selector="ToggleButton:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+                            <Style Selector="ToggleButton:pressed Border.AppButtonBorder">
                                 <Setter Property="Background" Value="#9a93cd" />
                             </Style>
-                            <Style Selector="ToggleButton:checked  /template/ ContentPresenter#PART_ContentPresenter">
+                            <Style Selector="ToggleButton:checked Border.AppButtonBorder">
                                 <Setter Property="Background" Value="#5E3593" />
                             </Style>
                             <Style Selector="ToggleButton:checked material|MaterialIcon">
@@ -143,8 +148,8 @@
                             </Style>
 
                         </ToggleButton.Styles>
-                        <Border Classes="AppButtonBorder">
-                            <avalonia:MaterialIcon
+                        <Border Classes="AppButtonBorder" CornerRadius="6">
+                            <material:MaterialIcon
                                 Width="20"
                                 Height="20"
                                 Margin="12,0"
@@ -214,7 +219,8 @@
                     <TextBox
                         Text="{Binding Playlist.Title, FallbackValue='Untitled Playlist'}"
                         MinWidth="100"
-                        Padding="22 16"
+                        Padding="22 0"
+                        Margin="0 16"
                         FontSize="16"
                         HorizontalAlignment="Left"
                         BorderThickness="0"
@@ -248,7 +254,7 @@
                             Height="50"
                             Margin="6,0,6,6"
                             Padding="10,5,10,5"
-                            Background="#282828"
+                            Background="#1e1e1e"
                             CornerRadius="0,0,6,6"
                             DockPanel.Dock="Bottom">
                             <Grid>
@@ -338,7 +344,13 @@
 
             </DockPanel>
 
-            <GridSplitter Grid.Column="1" Background="#121212" />
+            <GridSplitter Grid.Column="1"
+                          Background="#121212"
+                          Margin="-3,0"
+                          HorizontalAlignment="Stretch"
+                          BorderBrush="Transparent"
+                          BorderThickness="3,0"
+                          ZIndex="9999" />
 
             <!-- <views:ItemContentView Grid.Column="4" DataContext="{Binding Playlist.SelectedItem}" /> -->
 

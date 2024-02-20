@@ -87,15 +87,27 @@
                         <MenuItem
                             Click="MoveUpItem_OnClick"
                             CommandParameter="{Binding}"
-                            Header="Move Up" />
+                            Header="Move Up">
+                            <MenuItem.Icon>
+                                <material:MaterialIcon Kind="ArrowUp" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem
                             Click="MoveDownItem_OnClick"
                             CommandParameter="{Binding}"
-                            Header="Move Down" />
+                            Header="Move Down">
+                            <MenuItem.Icon>
+                                <material:MaterialIcon Kind="ArrowDown" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem
                             Click="DeleteItem_OnClick"
                             CommandParameter="{Binding}"
-                            Header="Remove Item" />
+                            Header="Remove Item">
+                            <MenuItem.Icon>
+                                <material:MaterialIcon Kind="Times" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </ContextMenu>
                 </Setter.Value>
             </Setter>
@@ -131,7 +143,7 @@
 
         <Style Selector="ListBoxItem material|MaterialIcon">
             <Setter Property="Foreground" Value="#888888" />
-        </Style> 
+        </Style>
         <Style Selector="ListBoxItem:selected material|MaterialIcon">
             <Setter Property="Foreground" Value="{DynamicResource ActiveItemForeground}" />
         </Style>
@@ -140,12 +152,13 @@
             <Setter Property="Background" Value="#C11F576F" />
             <!--<Setter Property="BorderBrush" Value="#1f576f" />-->
         </Style>
-		
+
         <Style Selector="ListBoxItem Border.SectionHeadingBorder">
             <Setter Property="Background" Value="{DynamicResource GroupHeadingBackground}" />
-            <Setter Property="BorderBrush" Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
+            <Setter Property="BorderBrush"
+                    Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
         </Style>
-         <!--<Style Selector="ListBoxItem:pointerover Border.SectionHeadingBorder">
+        <!--<Style Selector="ListBoxItem:pointerover Border.SectionHeadingBorder">
             <Setter Property="Background" Value="#C11F576F" />
         </Style>-->
 
@@ -185,33 +198,31 @@
                 <ListBox.ItemTemplate>
                     <common:MyTemplateSelector>
                         <DataTemplate x:Key="SectionHeadingItem">
-                            <Grid Background="Aqua">
-                                <!--  TODO not working  -->
-                                <!--<Grid.Styles>
+                            <!--  TODO not working  -->
+                            <!--<Grid.Styles>
 									<Style Selector="Border:pointerover">
 										<Setter Property="Background" Value="#214c5e" />
 									</Style>
 								</Grid.Styles>-->
-                                <Border BorderThickness="0 0 0 0"
-										Classes="SectionHeadingBorder">
-                                    <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
-                                        <TextBlock
-                                            Padding="0,8"
-                                            Classes="SectionHeadingTextBlock"
-                                            FontSize="13"
-                                            TextTrimming="CharacterEllipsis">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0}">
-                                                    <Binding Path="Title" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </DockPanel>
-                                </Border>
+                            <Border BorderThickness="0 0 0 0"
+                                    Classes="SectionHeadingBorder">
+                                <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
+                                    <TextBlock
+                                        Padding="0,8"
+                                        Classes="SectionHeadingTextBlock"
+                                        FontSize="13"
+                                        TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}">
+                                                <Binding Path="Title" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DockPanel>
                                 <i:Interaction.Behaviors>
                                     <behaviours:DragControlBehavior />
                                 </i:Interaction.Behaviors>
-                            </Grid>
+                            </Border>
                         </DataTemplate>
                         <DataTemplate x:Key="Fallback">
                             <DockPanel

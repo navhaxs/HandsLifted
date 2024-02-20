@@ -200,9 +200,9 @@
                                         <Button
                                             Padding="22,6"
                                             Margin="6"
-                                            Background="#15FFFFFF"
+                                            Background="#242131"
                                             BorderBrush="#b3aed9"
-                                            BorderThickness="0"
+                                            BorderThickness="1"
                                             CornerRadius="4"
                                             x:Name="EditButton"
                                             Click="EditButton_OnClick"
@@ -290,7 +290,7 @@
 
                                         <controls:ListBoxWithoutKey.DataTemplates>
                                             <common:MyTemplateSelector>
-                                                <DataTemplate x:Key="SongTitleSlide">
+                                                <DataTemplate x:Key="SongTitleSlideInstance">
                                                     <!-- <TextBox Text="{Binding Text}"></TextBox> -->
                                                     <!-- <Image -->
                                                     <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->

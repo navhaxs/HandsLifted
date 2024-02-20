@@ -14,7 +14,7 @@
         Title="ProjectorWindow">
     <Viewbox>
         <avaloniaNdi:NDISendContainer NdiName="VisionScreens Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080">
-            <render:RenderedSlideView ActiveSlide="{Binding Playlist.ActiveSlide}" />
+            <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
         </avaloniaNdi:NDISendContainer>
     </Viewbox>
 </Window>

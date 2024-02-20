@@ -14,6 +14,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     public class SongEditorViewModel : ViewModelBase
     {
+
         public event EventHandler SongDataUpdated;
 
         private SongItemInstance _song;
@@ -46,7 +47,8 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             OnClickCommand = ReactiveCommand.Create(RunTheThing);
             SongDataUpdateCommand = ReactiveCommand.Create(OnSongDataUpdateCommand);
 
-            Song = new ExampleSongItemInstance(null);
+            Playlist = Globals.MainViewModel.Playlist;
+            Song = new ExampleSongItemInstance(Playlist);
             
             this.WhenAnyValue(x => x.SelectedSlideTheme)
                 .Subscribe((BaseSlideTheme theme) =>
@@ -56,6 +58,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                         Song.Design = theme.Id;
                     }
                 });
+
         }
 
         public ReactiveCommand<Unit, Unit> OnClickCommand { get; }

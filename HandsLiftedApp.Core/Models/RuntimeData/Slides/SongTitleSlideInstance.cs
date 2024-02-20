@@ -8,10 +8,9 @@ using HandsLiftedApp.Data.SlideTheme;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class SongSlideInstance : SongSlide
+    public class SongTitleSlideInstance : SongTitleSlide
     {
-        public SongSlideInstance(SongItemInstance? parentSongItem, SongStanza? parentSongStanza, string id) : base(
-            parentSongItem, parentSongStanza, id)
+        public SongTitleSlideInstance(SongItemInstance? parentSongItem) : base()
         {
             this._theme =
                 parentSongItem.WhenAnyValue(parentSongItem => parentSongItem.Design,

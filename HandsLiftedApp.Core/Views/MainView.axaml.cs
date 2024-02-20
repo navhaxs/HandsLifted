@@ -181,4 +181,9 @@ public partial class MainView : UserControl
         SlideDesignerWindow slideDesignerWindow = new SlideDesignerWindow() { DataContext = this.DataContext };
         slideDesignerWindow.Show();
     }
+    
+    private void About_OnClick(object? sender, RoutedEventArgs e)
+    {
+        MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.AboutWindow));
+    }
 }

@@ -15,8 +15,9 @@
     xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
     xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
     xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
-    Title="SongEditorWindow"
-    d:DesignHeight="700"
+    xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
+    Title="Song Editor"
+    d:DesignHeight="400"
     d:DesignWidth="1200"
     Background="{DynamicResource BackgroundBrush}"
     x:DataType="editor:SongEditorViewModel"
@@ -30,6 +31,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <converters:StanzaSortConverter x:Key="stanzaSortConverter" />
+            <converters1:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
 
             <Flyout x:Key="MySharedFlyout" Placement="BottomEdgeAlignedLeft">
                 <StackPanel Margin="6">
@@ -74,7 +76,7 @@
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
-                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#4d347f</SolidColorBrush>
+                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#383838</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -82,28 +84,56 @@
 
     <DockPanel>
         <Grid Background="{DynamicResource HeaderBackgroundBrush}" DockPanel.Dock="Top">
-            <DockPanel Margin="16,6,16,8">
+            <DockPanel Margin="0">
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left">
-                        <TextBlock Text="Import" />
-                    </ToggleButton>
-                    <Button Content="GenerateSlides" DockPanel.Dock="Left" Click="GenerateSlides_OnClick" />
-                    <Button Content="SongDataUpdateCommand" Command="{Binding SongDataUpdateCommand}"
-                            DockPanel.Dock="Left" />
-                    <Button Content="ReverseSync" DockPanel.Dock="Left" Click="ReverseSyncButton_OnClick" />
-                    <TextBox Text="{Binding Song.Design}" Width="200" />
-                    <ComboBox ItemsSource="{Binding Playlist.Designs}" SelectedItem="{Binding SelectedSlideTheme}" />
-                </StackPanel>
 
-                <TextBlock
-                    Margin="4"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right"
-                    FontSize="20"
-                    Text="Song Editor"
-                    TextAlignment="Left" />
+                    <!-- <Button Content="GenerateSlides" DockPanel.Dock="Left" Click="GenerateSlides_OnClick" /> -->
+                    <!-- <Button Content="SongDataUpdateCommand" Command="{Binding SongDataUpdateCommand}" -->
+                    <!--         DockPanel.Dock="Left" /> -->
+                    <Button Content="ReverseSync" DockPanel.Dock="Left" Click="ReverseSyncButton_OnClick" />
+                    <!-- <TextBox Text="{Binding Song.Design}" Width="200" /> -->
+                    <ComboBox ItemsSource="{Binding Playlist.Designs}" SelectedItem="{Binding SelectedSlideTheme}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom"
+                                               HorizontalAlignment="Center" Margin="0 6 0 0" />
+                                    <Viewbox Height="30">
+                                        <Grid
+                                            Height="130"
+                                            Width="130"
+                                            Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}">
+                                            <TextBlock Text="A"
+                                                       FontSize="80"
+                                                       Margin="20"
+                                                       FontFamily="{Binding FontFamily, FallbackValue='Arial'}"
+                                                       FontWeight="SemiBold" />
+                                        </Grid>
+                                    </Viewbox>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Kind="Import"
+                            Margin="8 6" />
+                        <TextBlock Text="Import from text"
+                                   Margin="0 6 8 6" />
+                    </DockPanel>
+                </ToggleButton>
+                <!-- <TextBlock -->
+                <!--     Margin="4" -->
+                <!--     HorizontalAlignment="Left" -->
+                <!--     VerticalAlignment="Center" -->
+                <!--     DockPanel.Dock="Right" -->
+                <!--     FontSize="14" -->
+                <!--     Text="Song Editor" -->
+                <!--     TextAlignment="Left" /> -->
+                <Grid />
 
             </DockPanel>
 
@@ -125,28 +155,44 @@
 
         <Grid Name="ContainerGrid">
 
-            <Grid ColumnDefinitions="600, 1, 12*, 1, 17*">
+            <Grid>
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="1" />
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1" />
+                    <ColumnDefinition Width="1*" MaxWidth="200" />
+                </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
-                    <DockPanel>
-                        <DockPanel.Styles>
-                            <Style Selector="TextBox">
-                                <Setter Property="BorderThickness" Value="0" />
-                            </Style>
-                        </DockPanel.Styles>
-                        <Border Background="White">
-                            <Border.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="6"
-                                    OffsetX="0"
-                                    OffsetY="1"
-                                    Color="#55000000" />
-                            </Border.Effect>
+                    <ThemeVariantScope RequestedThemeVariant="Light">
+                        <ScrollViewer>
 
-                            <editors:SongLyricEditor />
-                        </Border>
-                    </DockPanel>
+                            <DockPanel>
+                                <DockPanel.Styles>
+                                    <Style Selector="TextBox">
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Style>
+                                </DockPanel.Styles>
+                                <Border Background="White">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="6"
+                                            OffsetX="0"
+                                            OffsetY="1"
+                                            Color="#55000000" />
+                                    </Border.Effect>
 
+                                    <Grid>
+                                        <editors:SongLyricBlockEditor
+                                            IsVisible="{Binding !#ToggleButtonShowImportHelp.IsChecked}" />
+                                        <editors:SongLyricFreeTextEditor
+                                            IsVisible="{Binding #ToggleButtonShowImportHelp.IsChecked}" />
+                                    </Grid>
+                                </Border>
+                            </DockPanel>
+                        </ScrollViewer>
+                    </ThemeVariantScope>
                 </Grid>
 
                 <GridSplitter
@@ -158,7 +204,6 @@
                     BorderThickness="3,0"
                     ZIndex="9999" />
 
-
                 <GridSplitter
                     Grid.Column="3"
                     Margin="-3,0"
@@ -168,7 +213,7 @@
                     BorderThickness="3,0"
                     ZIndex="9999" />
 
-                <StackPanel Grid.Column="2" Margin="20,40,0,0">
+                <StackPanel Grid.Column="4" Margin="0,40,20,0">
                     <TextBlock
                         Margin="0,6,0,12"
                         FontSize="18"
@@ -315,99 +360,93 @@
 
                 </StackPanel>
 
-                <Border Grid.Column="4">
-                    <StackPanel Margin="16,32">
-                        <TextBlock
-                            Margin="0,18,8,10"
-                            FontSize="18"
-                            FontWeight="SemiBold"
-                            Text="Preview" />
+                <Border Grid.Column="2">
+                    <DockPanel Margin="16,32, 20, 32">
                         <Border
                             Padding="6"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             Background="#5A6047A3"
                             CornerRadius="6">
-
-                            <ListBox
-                                Name="List"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                ItemsSource="{Binding Song.Slides}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListBox.Styles>
-                                    <StyleInclude Source="avares://HandsLiftedApp.Controls/ListBoxItem.axaml" />
-                                </ListBox.Styles>
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel ItemHeight="160" ItemWidth="240" />
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <render:RenderedSlideView />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-
+                            <ScrollViewer>
+                                <ListBox
+                                    Name="List"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    ItemsSource="{Binding Song.Slides}"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.Styles>
+                                        <StyleInclude Source="avares://HandsLiftedApp.Controls/ListBoxItem.axaml" />
+                                    </ListBox.Styles>
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel ItemHeight="160" ItemWidth="240" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <render:SlideRender />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
                         </Border>
-                    </StackPanel>
-                </Border>
-
-            </Grid>
-
-            <Grid
-                Name="ImportOverlayGrid"
-                ColumnDefinitions="1*, 2*"
-                IsVisible="{Binding #ToggleButtonShowImportHelp.IsChecked}">
-                <TextBox
-                    Name="ImportPasteHereTextBox"
-                    Grid.Column="0"
-                    Padding="16,14,16,22"
-                    VerticalAlignment="Stretch"
-                    AcceptsReturn="True"
-                    BorderThickness="0"
-                    FontSize="16"
-                    TextWrapping="Wrap"
-                    Watermark="Paste lyrics here to import..." />
-                <Border Grid.Column="1" Background="#CDFFFFFF">
-                    <DockPanel Background="#DC000000">
-                        <material:MaterialIcon
-                            Width="40"
-                            Height="40"
-                            Margin="20"
-                            HorizontalAlignment="Left"
-                            Foreground="White"
-                            Kind="ArrowLeft" />
-                        <StackPanel Margin="0,20,40,20" VerticalAlignment="Center">
-                            <TextBlock
-                                FontSize="24"
-                                Foreground="White"
-                                TextWrapping="Wrap">
-                                1. Search for the song in
-                                <Span Foreground="#2ECAFF" TextDecorations="Underline">
-                                    songselect.ccli.com
-                                </Span>
-                                <material:MaterialIcon
-                                    Width="12"
-                                    Height="12"
-                                    Margin="-4"
-                                    HorizontalAlignment="Left"
-                                    Foreground="#2ECAFF"
-                                    Kind="OpenInNew" />
-                                <LineBreak />
-                                <LineBreak />
-                                2. Copy the lyrics<LineBreak />
-                                <LineBreak />
-                                3. Paste here
-                            </TextBlock>
-                            <TextBlock />
-                        </StackPanel>
                     </DockPanel>
                 </Border>
+
             </Grid>
 
+            <!-- <Grid -->
+            <!--     Name="ImportOverlayGrid" -->
+            <!--     ColumnDefinitions="1*, 2*" -->
+            <!--     IsVisible="{Binding #ToggleButtonShowImportHelp.IsChecked}"> -->
+            <!--     <TextBox -->
+            <!--         Name="ImportPasteHereTextBox" -->
+            <!--         Grid.Column="0" -->
+            <!--         Padding="16,14,16,22" -->
+            <!--         VerticalAlignment="Stretch" -->
+            <!--         AcceptsReturn="True" -->
+            <!--         BorderThickness="0" -->
+            <!--         FontSize="16" -->
+            <!--         TextWrapping="Wrap" -->
+            <!--         Watermark="Paste lyrics here to import..." /> -->
+            <!--     <Border Grid.Column="1" Background="#CDFFFFFF"> -->
+            <!--         <DockPanel Background="#DC000000"> -->
+            <!--             <material:MaterialIcon -->
+            <!--                 Width="40" -->
+            <!--                 Height="40" -->
+            <!--                 Margin="20" -->
+            <!--                 HorizontalAlignment="Left" -->
+            <!--                 Foreground="White" -->
+            <!--                 Kind="ArrowLeft" /> -->
+            <!--             <StackPanel Margin="0,20,40,20" VerticalAlignment="Center"> -->
+            <!--                 <TextBlock -->
+            <!--                     FontSize="24" -->
+            <!--                     Foreground="White" -->
+            <!--                     TextWrapping="Wrap"> -->
+            <!--                     1. Search for the song in -->
+            <!--                     <Span Foreground="#2ECAFF" TextDecorations="Underline"> -->
+            <!--                         songselect.ccli.com -->
+            <!--                     </Span> -->
+            <!--                     <material:MaterialIcon -->
+            <!--                         Width="12" -->
+            <!--                         Height="12" -->
+            <!--                         Margin="-4" -->
+            <!--                         HorizontalAlignment="Left" -->
+            <!--                         Foreground="#2ECAFF" -->
+            <!--                         Kind="OpenInNew" /> -->
+            <!--                     <LineBreak /> -->
+            <!--                     <LineBreak /> -->
+            <!--                     2. Copy the lyrics<LineBreak /> -->
+            <!--                     <LineBreak /> -->
+            <!--                     3. Paste here -->
+            <!--                 </TextBlock> -->
+            <!--                 <TextBlock /> -->
+            <!--             </StackPanel> -->
+            <!--         </DockPanel> -->
+            <!--     </Border> -->
+            <!-- </Grid> -->
+            <!-- -->
         </Grid>
 
     </DockPanel>

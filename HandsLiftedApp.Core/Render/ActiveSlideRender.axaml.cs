@@ -5,9 +5,9 @@ using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core.Render
 {
-    public partial class RenderedSlideView : UserControl
+    public partial class ActiveSlideRender : UserControl
     {
-        public RenderedSlideView()
+        public ActiveSlideRender()
         {
             InitializeComponent();
         }
@@ -22,8 +22,8 @@ namespace HandsLiftedApp.Core.Render
             set => SetAndRaise(ActiveSlideProperty, ref _activeSlide, value);
         }
 
-        public static readonly DirectProperty<RenderedSlideView, Slide?> ActiveSlideProperty =
-            AvaloniaProperty.RegisterDirect<RenderedSlideView, Slide?>(
+        public static readonly DirectProperty<ActiveSlideRender, Slide?> ActiveSlideProperty =
+            AvaloniaProperty.RegisterDirect<ActiveSlideRender, Slide?>(
                 nameof(ActiveSlide),
                 o => o.ActiveSlide,
                 (o, v) => o.ActiveSlide = v);

@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Config.Net;
@@ -18,12 +19,20 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         Globals.OnStartup(ApplicationLifetime);
-        
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            WindowState windowState = WindowState.Normal;
+
+            if (Globals.MainViewModel.settings.LastWindowState != null)
+            {
+                windowState = (WindowState)Globals.MainViewModel.settings.LastWindowState;
+            }
+
             desktop.MainWindow = new MainWindow
             {
-                DataContext = Globals.MainViewModel
+                DataContext = Globals.MainViewModel,
+                WindowState = windowState
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)

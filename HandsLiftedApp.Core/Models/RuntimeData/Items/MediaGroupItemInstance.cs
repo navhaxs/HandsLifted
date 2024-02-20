@@ -20,12 +20,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 {
                     try
                     {
-                        return slides.ElementAt(selectedSlideIndex);
+                        if (selectedSlideIndex > -1 && selectedSlideIndex < slides.Count)
+                        {
+                            return slides.ElementAt(selectedSlideIndex);
+                        }
                     }
-                    catch (System.Exception _ignored)
-                    {
-                        return new BlankSlide();
-                    }
+                    catch (System.Exception _ignored) {}
+                    return new BlankSlide();
                 })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);

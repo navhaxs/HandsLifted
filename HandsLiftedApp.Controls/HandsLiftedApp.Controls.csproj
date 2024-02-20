@@ -53,4 +53,9 @@
         <SubType>Designer</SubType>
       </None>
     </ItemGroup>
+
+
+    <ItemGroup>
+      <AdditionalFiles Include="Styles\AppStyles.axaml" />
+    </ItemGroup>
 </Project>

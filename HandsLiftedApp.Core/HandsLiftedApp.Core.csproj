@@ -13,6 +13,8 @@
       <AvaloniaResource Include="Assets\avalonia-logo.ico" />
       <None Remove="Assets\DefaultTheme\VisionScreens_1440_placeholder.png" />
       <AvaloniaResource Include="Assets\DefaultTheme\VisionScreens_1440_placeholder.png" />
+      <None Remove="Assets\app.png" />
+      <AvaloniaResource Include="Assets\app.png" />
     </ItemGroup>
 
 
@@ -26,6 +28,7 @@
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
         <PackageReference Include="ByteSize" />
         <PackageReference Include="Config.Net" />
+        <PackageReference Include="DebounceThrottle" />
         <PackageReference Include="Material.Icons.Avalonia" />
         <PackageReference Include="Serilog.Expressions" />
         <PackageReference Include="Serilog.Sinks.Console" />
@@ -107,6 +110,14 @@
       </Compile>
       <Compile Update="Render\MpvVideoSlideRenderer.axaml.cs">
         <DependentUpon>MpvVideoSlideRenderer.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\AboutWindow.axaml.cs">
+        <DependentUpon>AboutWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Editors\SongLyricFreeTextEditor.axaml.cs">
+        <DependentUpon>SongLyricFreeTextEditor.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
