@@ -18,6 +18,7 @@
     xmlns:items2="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+    xmlns:item="clr-namespace:HandsLiftedApp.Views.Item"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -229,8 +230,7 @@
 
                                     </DockPanel>
 
-                                    <!--<item:ItemInfo VerticalAlignment="Top" />-->
-                                    <!-- SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}" -->
+                                    <item:ItemInfo VerticalAlignment="Top" />
 
                                     <controls:ListBoxWithoutKey
                                         Name="List"

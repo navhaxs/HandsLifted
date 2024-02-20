@@ -1,13 +1,13 @@
-﻿using HandsLiftedApp.Data.Models.Items;
-using System;
-using HandsLiftedApp.Core.Models;
+﻿using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Data.Models.Items;
+using System;
 
 namespace HandsLiftedApp.ViewModels.Editor
 {
     public class ExampleSongItemInstance : SongItemInstance
     {
-        public ExampleSongItemInstance(PlaylistInstance? parentPlaylist) : base(parentPlaylist)
+        public ExampleSongItemInstance(PlaylistInstance? parentPlaylist = null) : base(parentPlaylist)
         {
 
             this.Title = "Rock Of Ages";

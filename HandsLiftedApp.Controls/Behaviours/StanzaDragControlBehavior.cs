@@ -9,6 +9,8 @@ using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Behaviours;
 using HandsLiftedApp.Extensions;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -317,7 +319,15 @@ namespace HandsLiftedApp.Controls.Behaviours
                 {
                     //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
                     Data.Models.Items.SongItem ctx = (Data.Models.Items.SongItem)listBox.DataContext;
-                    ctx.Arrangement.Move(SourceIndex, DestinationIndex);
+
+                    try
+                    {
+                        ctx.Arrangement.Move(SourceIndex, DestinationIndex);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Failed to move item", ex);
+                    }
 
                     //ctx.Slides.ElementAt(0)
                     //var ctx = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)target.DataContext;

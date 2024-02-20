@@ -48,7 +48,13 @@
 
 
     <ItemGroup>
+      <Compile Update="Controls\SongArrangementControl.axaml.cs">
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
       <Compile Update="Views\Editors\SongEditorWindow.axaml.cs">
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
+      <Compile Update="Views\ItemInfo.axaml.cs">
         <DependentUpon>%(Filename)</DependentUpon>
       </Compile>
       <Compile Update="Views\ItemSlidesView.axaml.cs">

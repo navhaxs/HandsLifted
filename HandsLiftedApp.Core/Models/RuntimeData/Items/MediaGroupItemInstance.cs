@@ -1,22 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Slides;
+using ReactiveUI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
-using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
     public class MediaGroupItemInstance : MediaGroupItem, IItemInstance
     {
-        public PlaylistInstance ParentPlaylist { get; set; } 
+        public PlaylistInstance ParentPlaylist { get; set; }
+
+        private BlankSlide _blankSlide = new BlankSlide();
 
         public MediaGroupItemInstance(PlaylistInstance parentPlaylist)
         {
-            ParentPlaylist = parentPlaylist;  
-            _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x=> x.Slides, (selectedSlideIndex, slides) =>
+            ParentPlaylist = parentPlaylist;
+            _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides, (selectedSlideIndex, slides) =>
                 {
                     try
                     {
@@ -25,8 +26,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             return slides.ElementAt(selectedSlideIndex);
                         }
                     }
-                    catch (System.Exception _ignored) {}
-                    return new BlankSlide();
+                    catch (System.Exception _ignored) { }
+
+                    return _blankSlide;
                 })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
