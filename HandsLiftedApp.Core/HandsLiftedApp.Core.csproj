@@ -129,6 +129,10 @@
         <DependentUpon>LibraryView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\ExitConfirmationWindow.axaml.cs">
+        <DependentUpon>ExitConfirmationWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 

@@ -3,11 +3,14 @@ using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core.ViewModels;
 using ReactiveUI;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views.App;
 
@@ -48,6 +51,32 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             mw.ShowDialog(this);
         });
 
+        MessageBus.Current.Listen<MainWindowModalMessage>()
+            .Subscribe(x =>
+            {
+                if (x.ShowAsDialog)
+                    Shade.IsVisible = true;
+
+                //TODO do not always want to set DataContext if object has set it itself
+                if (x.Window.DataContext == null)
+                    x.Window.DataContext = x.DataContext ?? this.DataContext;
+
+                x.Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                x.Window.Closed += (object? sender, EventArgs e) =>
+                {
+                    Shade.IsVisible = false;
+                };
+
+                if (x.ShowAsDialog)
+                {
+                    this.IsEnabled = false;
+                    x.Window.ShowDialog(this);
+                    this.IsEnabled = true;
+                }
+                else
+                    x.Window.Show(this);
+            });
+
         this.Loaded += (e, s) =>
         {
             if (DataContext is MainViewModel vm)
@@ -58,6 +87,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 }
             }
         };
+        
+        this.Closing += MainWindow_Closing;
 
         this.GetObservable(Window.WindowStateProperty)
             .Subscribe(v =>
@@ -102,28 +133,31 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         });
     }
 
-    void UpdateWin32Border(WindowState v)
+    bool _isConfirmedExiting = false;
+
+    public void ExitApp()
     {
-        if (!OperatingSystem.IsWindows())
+        _isConfirmedExiting = true;
+        
+        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {
-            return;
+            desktopLifetime.Shutdown();
         }
-
-        // set border thickness to 0 when maximised
-        RootBorder.BorderThickness = new Thickness((v == WindowState.Maximized) ? 0 : 1);
-
-        // apply workaround for avalonia bug:
-        if (v != WindowState.Maximized)
+        else
         {
-            var margins = new Win32.MARGINS
-            {
-                cyBottomHeight = 1,
-                cxRightWidth = 1,
-                cxLeftWidth = 1,
-                cyTopHeight = 1
-            };
+            MainWindow hostWindow = (MainWindow)this.VisualRoot;
+            hostWindow.Close();
+        }
+    }
 
-            Win32.DwmExtendFrameIntoClientArea(this.TryGetPlatformHandle().Handle, ref margins);
+    private void MainWindow_Closing(object? sender, CancelEventArgs e)
+    {
+        if (!_isConfirmedExiting)
+        {
+            e.Cancel = true;
+
+            MessageBus.Current.SendMessage(new MainWindowModalMessage(new ExitConfirmationWindow()
+                { parentWindow = this }));
         }
     }
 
