@@ -7,7 +7,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     internal class ExampleMediaGroupItemInstance : MediaGroupItemInstance
     {
-        public ExampleMediaGroupItemInstance(PlaylistInstance parentPlaylist) : base(parentPlaylist)
+        public ExampleMediaGroupItemInstance(PlaylistInstance parentPlaylist = null) : base(parentPlaylist)
         {
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide1.PNG" });
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide2.PNG" });

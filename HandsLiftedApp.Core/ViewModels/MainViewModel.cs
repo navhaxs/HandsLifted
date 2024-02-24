@@ -213,7 +213,7 @@ public class MainViewModel : ViewModelBase
         {
             try
             {
-                var x = XmlSerializerForDummies.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
+                var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
                 Playlist = x;
             }
             catch (Exception e)

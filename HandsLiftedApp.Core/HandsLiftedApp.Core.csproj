@@ -139,6 +139,14 @@
         <DependentUpon>ExitConfirmationWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\ContentControl\VideoSlideControlView.axaml.cs">
+        <DependentUpon>VideoSlideControlView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\ContentControl\VideoSlideControlViewWrapper.axaml.cs">
+        <DependentUpon>VideoSlideControlViewWrapper.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 

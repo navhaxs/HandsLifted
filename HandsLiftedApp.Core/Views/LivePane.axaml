@@ -6,13 +6,14 @@
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+             xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
              x:DataType="viewModels:MainViewModel"
              x:Class="HandsLiftedApp.Core.Views.LivePane">
     <DockPanel>
 
         <Border
-            Height="52"
+            Height="70"
             VerticalAlignment="Center"
             DockPanel.Dock="Top">
             <DockPanel>
@@ -167,8 +168,8 @@
 
                 <!--  controlmodules  -->
                 <!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
-                <!-- <controlmodules:VideoSlideControlViewWrapper DataContext="{Binding ActiveSlide}" -->
-                <!--                                              DockPanel.Dock="Bottom" /> -->
+                <controlModules:VideoSlideControlViewWrapper DataContext="{Binding Playlist.ActiveSlide}"
+                                                             DockPanel.Dock="Bottom" />
                 <!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
                 <!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
 						<DockPanel Margin="10 8">

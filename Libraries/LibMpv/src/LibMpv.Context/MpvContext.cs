@@ -22,7 +22,8 @@ public unsafe partial class MpvContext : IDisposable
         ctx = mpv_create();
 
         if (ctx == null)
-            throw new MpvException("Unable to create mpv_context. Currently, this can happen in the following situations - out of memory or LC_NUMERIC is not set to \"C\"");
+            throw new MpvException(
+                "Unable to create mpv_context. Currently, this can happen in the following situations - out of memory or LC_NUMERIC is not set to \"C\"");
 
         var code = mpv_initialize(ctx);
         CheckCode(code);
@@ -51,6 +52,7 @@ public unsafe partial class MpvContext : IDisposable
     }
 
     #region Properties
+
     public string GetPropertyString(string name)
     {
         CheckDisposed();
@@ -74,6 +76,7 @@ public unsafe partial class MpvContext : IDisposable
         {
             code = mpv_get_property(ctx, name, mpv_format.MPV_FORMAT_FLAG, valuePtr);
         }
+
         CheckCode(code);
         return value[0] == 1 ? true : false;
     }
@@ -87,6 +90,7 @@ public unsafe partial class MpvContext : IDisposable
         {
             code = mpv_set_property(ctx, name, mpv_format.MPV_FORMAT_FLAG, valuePtr);
         }
+
         CheckCode(code);
     }
 
@@ -99,6 +103,7 @@ public unsafe partial class MpvContext : IDisposable
         {
             code = mpv_get_property(ctx, name, mpv_format.MPV_FORMAT_INT64, valuePtr);
         }
+
         CheckCode(code);
         return value[0];
     }
@@ -112,6 +117,7 @@ public unsafe partial class MpvContext : IDisposable
         {
             code = mpv_set_property(ctx, name, mpv_format.MPV_FORMAT_INT64, valuePtr);
         }
+
         CheckCode(code);
     }
 
@@ -124,6 +130,7 @@ public unsafe partial class MpvContext : IDisposable
         {
             code = mpv_get_property(ctx, name, mpv_format.MPV_FORMAT_DOUBLE, valuePtr);
         }
+
         CheckCode(code);
         return value[0];
     }
@@ -137,6 +144,7 @@ public unsafe partial class MpvContext : IDisposable
         {
             code = mpv_set_property(ctx, name, mpv_format.MPV_FORMAT_DOUBLE, valuePtr);
         }
+
         CheckCode(code);
     }
 
@@ -202,6 +210,14 @@ public unsafe partial class MpvContext : IDisposable
         return mpv_event_name(@event);
     }
 
+    public string GetMpvClientApiGetApiVersion()
+    {
+        ulong raw = mpv_client_api_version();
+        byte major = (byte)(raw >> 16);
+        byte minor = (byte)(raw & 0x00FF);
+        return $"{major}.{minor}";
+    }
+
     public void Dispose()
     {
         Dispose(true);
@@ -220,7 +236,10 @@ public unsafe partial class MpvContext : IDisposable
                     disposable.Dispose();
                 mpv_terminate_destroy(ctx);
                 disposed = true;
-            } catch (Exception _ignored) {}
+            }
+            catch (Exception _ignored)
+            {
+            }
         }
     }
 
