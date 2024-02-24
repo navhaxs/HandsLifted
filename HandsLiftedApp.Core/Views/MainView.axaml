@@ -61,8 +61,8 @@
             <RowDefinition Height="1" />
             <RowDefinition Height="0" />
             <RowDefinition Height="40" />
-        </Grid.RowDefinitions> 
-        
+        </Grid.RowDefinitions>
+
         <!-- root grid: content and right panel -->
         <Grid Grid.Row="0">
 
@@ -91,6 +91,7 @@
                         ClickMode="Press"
                         DockPanel.Dock="Left"
                         HotKey="Alt+M">
+
                         <!-- IsChecked="{Binding #AppMenuFlyout.IsOpen, Mode=TwoWay}"> -->
                         <ToggleButton.Flyout>
                             <MenuFlyout
@@ -100,20 +101,6 @@
                                 <!-- IsLightDismissEnabled="True" -->
                                 <!-- -->
                                 <!-- PlacementTarget="{Binding #AppMenuButton}"> -->
-
-                                <!-- <ContextMenu.Styles> -->
-                                <!-- -->
-                                <!--     <Style Selector="ContextMenu"> -->
-                                <!--         <Setter Property="CornerRadius" Value="6" /> -->
-                                <!--         <Setter Property="BorderBrush" Value="#9a93cd" /> -->
-                                <!--         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" /> -->
-                                <!--     </Style> -->
-                                <!--     <Style Selector="MenuItem"> -->
-                                <!--         <Setter Property="Padding" Value="12 8" /> -->
-                                <!--         <Setter Property="FontSize" Value="14" /> -->
-                                <!--     </Style> -->
-                                <!-- -->
-                                <!-- </ContextMenu.Styles> -->
 
                                 <MenuItem Click="NewFileButton_Clicked" Header="New">
                                     <MenuItem.Icon>
@@ -172,7 +159,6 @@
                             </MenuFlyout>
                         </ToggleButton.Flyout>
 
-
                         <ToggleButton.Styles>
                             <Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
                                 <Setter Property="Background" Value="#5c3ab6" />
@@ -196,7 +182,6 @@
                             <Style Selector="ToggleButton:checked material|MaterialIcon">
                                 <Setter Property="Foreground" Value="White" />
                             </Style>
-
                         </ToggleButton.Styles>
                         <Border Classes="AppButtonBorder" CornerRadius="6">
                             <material:MaterialIcon
@@ -269,7 +254,7 @@
                     <TextBox
                         Text="{Binding Playlist.Title, FallbackValue='Untitled Playlist'}"
                         MinWidth="100"
-                        Padding="22 0"
+                        Padding="0 0 22 0"
                         Margin="0 16"
                         FontSize="16"
                         HorizontalAlignment="Left"

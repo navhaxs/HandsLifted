@@ -11,7 +11,17 @@
 		<Setter Property="CornerRadius" Value="4" />
     </Style>
     
-	<Style Selector="MenuFlyoutPresenter">
+    <Style Selector="MenuFlyoutPresenter">
+	    <Setter Property="Effect">
+		    <Setter.Value>
+			    <DropShadowEffect
+				    BlurRadius="12"
+				    OffsetX="0"
+				    OffsetY="1"
+				    Color="#88000000" />
+		    </Setter.Value>
+	    </Setter>
+	    <Setter Property="Margin" Value="6 0 12 12" />
 		<Setter Property="CornerRadius" Value="4" />
     </Style>
 	
