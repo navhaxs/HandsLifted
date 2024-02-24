@@ -1,8 +1,14 @@
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
@@ -25,8 +31,6 @@ namespace HandsLiftedApp.Core.Views.Designer
 
             TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
 
-            // designsListBox.DataContextChanged += (sender, args) =>
-            // {
             this.WhenAnyValue(v => v.designsListBox.ItemsSource)
                 .Subscribe((x) =>
                 {
@@ -35,7 +39,6 @@ namespace HandsLiftedApp.Core.Views.Designer
                         designsListBox.SelectedIndex = 0;
                     }
                 });
-            // };
         }
 
         private void RemoveItem_OnClick(object? sender, RoutedEventArgs e)
@@ -46,7 +49,18 @@ namespace HandsLiftedApp.Core.Views.Designer
                 {
                     if (control.DataContext is BaseSlideTheme item)
                     {
-                        mainViewModel.Playlist.Designs.Remove(item);
+                        if (mainViewModel.Playlist.Designs.Count > 1)
+                        {
+                            // TODO what happens if this theme is in use?
+                            designsListBox.SelectedIndex =
+                                0; // hack, keep at least 1 selected valid item to avoid avalonia crashing on some null font error
+                            mainViewModel.Playlist.Designs.Remove(item);
+                        }
+                        else
+                        {
+                            MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                                { Title = "Must have at least one slide theme" });
+                        }
                     }
                 }
             }
@@ -71,7 +85,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                         mainViewModel.Playlist.Designs.Add(new BaseSlideTheme()
                         {
                             Name = $"{item.Name} (Copy)",
-                            FontFamily = FontFamily.Parse("Arial"),//dxitem.FontFamily,
+                            FontFamily = FontFamily.Parse("Arial"), //dxitem.FontFamily,
                             FontWeight = item.FontWeight,
                             TextColour = item.TextColour,
                             TextAlignment = item.TextAlignment,
@@ -83,6 +97,24 @@ namespace HandsLiftedApp.Core.Views.Designer
                     }
                 }
             }
+        }
+
+        private async void ChangeThemeBgGraphic_OnClick(object? sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var filePaths = await Globals.MainViewModel.ShowOpenFileDialog.Handle(Unit.Default);
+                if (filePaths == null || filePaths.Length == 0) return;
+
+                if (AssetLoader.Exists(new Uri(filePaths[0])) || File.Exists(filePaths[0]))
+                {
+                    bgGraphicFilePath.Text = filePaths[0];
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }        
         }
     }
 }

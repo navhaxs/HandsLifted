@@ -2,13 +2,17 @@
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Utils;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Models
@@ -140,6 +144,22 @@ namespace HandsLiftedApp.Core.Models
                             break;
                     }
                 });
+            
+            this.WhenAnyValue(p => p.LogoGraphicFile)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                .Subscribe(_ =>
+            {
+                if (LogoGraphicFile == "")
+                {
+                    return;
+                }
+
+                if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+                {
+                    this.RaisePropertyChanged(nameof(LogoBitmap));
+                }
+
+            });
         }
 
         private DateTime? _lastSaved;
@@ -454,5 +474,26 @@ namespace HandsLiftedApp.Core.Models
 
             return -1;
         }
+
+        #region CachedBitmaps
+
+        // TODO this could be a ObservableAsPropertyHelper
+        public Bitmap? LogoBitmap
+        {
+            get
+            {
+                try
+                {
+                    return BitmapLoader.LoadBitmap(LogoGraphicFile);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Unable to load Bitmap for LogoBitmap {LogoGraphicFile}", (LogoGraphicFile));
+                    return null;
+                }
+            }
+        }
+
+        #endregion
     }
 }

@@ -158,6 +158,7 @@
                     <TextBlock Text="BgGraphicFilePath" />
                     <TextBox Name="bgGraphicFilePath" Watermark=""
                              Text="{Binding #designsListBox.SelectedItem.BackgroundGraphicFilePath}" />
+                    <Button Click="ChangeThemeBgGraphic_OnClick">Change</Button>
 
                 </StackPanel>
             </ScrollViewer>

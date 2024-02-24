@@ -64,6 +64,20 @@ public class MainViewModel : ViewModelBase
 
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<Unit, string[]?>();
+        
+        OnChangeLogoCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            try
+            {
+                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
+                if (filePaths == null || filePaths.Length == 0) return;
+                Playlist.LogoGraphicFile = filePaths[0];
+            }
+            catch (Exception e)
+            {
+                Debug.Print(e.Message);
+            }
+        });
 
         MessageBus.Current.Listen<AddItemMessage>()
             .Subscribe(async addItemMessage =>
@@ -214,6 +228,7 @@ public class MainViewModel : ViewModelBase
     }
 
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
+    public ReactiveCommand<Unit, Unit> OnChangeLogoCommand { get; }
 
     private PlaylistInstance _playlist = new PlaylistInstance();
 
