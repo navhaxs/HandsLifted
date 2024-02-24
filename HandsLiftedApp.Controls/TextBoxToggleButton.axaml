@@ -1,0 +1,81 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="80"
+             x:DataType="system:String"
+             MinWidth="100"
+             x:Class="HandsLiftedApp.Controls.TextBoxToggleButton">
+    <Carousel x:Name="Carousel">
+        <Button
+            Name="EditButton"
+            Click="EditButton_OnClick"
+            DockPanel.Dock="Top"
+            Padding="12,4"
+            Background="Transparent"
+            BorderThickness="0"
+            CornerRadius="6"
+            Cursor="Hand">
+            <Button.Styles>
+                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#5C3AB6" />
+                </Style>
+                <Style Selector="Button:pressed /template/ ContentPresenter">
+                    <Setter Property="BorderBrush" Value="#2c628b" />
+                    <Setter Property="Background" Value="#5F5C2ED6" />
+                </Style>
+                <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
+                    <Setter Property="RenderTransform" Value="none" />
+                </Style>
+                <Style Selector="Button avalonia|MaterialIcon">
+                    <Setter Property="IsVisible" Value="False" />
+                </Style>
+                <Style Selector="Button:pointerover avalonia|MaterialIcon">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+            </Button.Styles>
+            <DockPanel>
+                <avalonia:MaterialIcon
+                    DockPanel.Dock="Right"
+                    Margin="14,0,0,0"
+                    Kind="Pencil" />
+                <TextBlock
+                    FontSize="20"
+                    Foreground="White"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Text="{Binding $parent[controls:TextBoxToggleButton].Text}"
+                    TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Button>
+        <Border
+            CornerRadius="6"
+            Background="#666666">
+            <DockPanel VerticalAlignment="Stretch">
+                <Button x:Name="SubmitButton"
+                        Click="SubmitButton_OnClick"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        DockPanel.Dock="Right">
+                    <avalonia:MaterialIcon
+                        Margin="14,0,14,0"
+                        Kind="KeyboardReturn" />
+                </Button>
+                <TextBox x:Name="EntryTextBox" KeyDown="InputElement_OnKeyDown"
+                         LostFocus="EntryTextBox_OnLostFocus"
+                         Padding="12,4"
+                         Foreground="White"
+                         VerticalContentAlignment="Center"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         FontSize="20"
+                         MinWidth="100"
+                         Watermark="{Binding $parent[controls:TextBoxToggleButton].Watermark}"
+                         Text="{Binding $parent[controls:TextBoxToggleButton].Text}" />
+            </DockPanel>
+        </Border>
+    </Carousel>
+</UserControl>
