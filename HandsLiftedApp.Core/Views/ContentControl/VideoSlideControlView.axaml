@@ -10,24 +10,18 @@
 	<Border Background="#3a344a" CornerRadius="6" VerticalAlignment="Top" Margin="6">
 		<StackPanel Margin="6">
 			<DockPanel>
-				<TextBlock DockPanel.Dock="Right" Text="{Binding PrettyRemainingTime, FallbackValue='RemainingTime'}" />
+				<TextBlock DockPanel.Dock="Right" Text="{Binding PrettyRemainingTime, FallbackValue='Remaining'}" />
 				<TextBlock>
 					<TextBlock.Text>
 						<MultiBinding StringFormat="{}{0} / {1}">
-							<Binding Path="PrettyTimePos" />
-							<Binding Path="PrettyDuration" />
+							<Binding Path="PrettyTimePos" FallbackValue="Elapsed" />
+							<Binding Path="PrettyDuration" FallbackValue="Total" />
 						</MultiBinding>
 					</TextBlock.Text>
 				</TextBlock>
 			</DockPanel>
-			<Slider Minimum="0" Maximum="{Binding Duration}" Value="{Binding TimePos}" Grid.Column="1" />
+			<Slider Minimum="0" Maximum="{Binding Duration}" Value="{Binding TimePos}" />
 			<DockPanel>
-				<!-- <CheckBox Content="IsMuted" -->
-				<!-- 		  Margin="6 0 0 0" -->
-				<!-- 		  IsChecked="{Binding IsMuted}" -->
-				<!-- 		   DockPanel.Dock="Right"/> -->
-				<!-- <TextBlock Text="{Binding State.State, FallbackValue='(Stopped)'}" -->
-				<!-- 		   DockPanel.Dock="Right" VerticalAlignment="Center"/> -->
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
 					<Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click" FontSize="24"
 							IsVisible="{Binding Paused}">

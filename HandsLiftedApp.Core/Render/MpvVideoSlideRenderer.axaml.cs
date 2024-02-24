@@ -15,9 +15,6 @@ namespace HandsLiftedApp.Core.Render
         {
             InitializeComponent();
 
-            Log.Debug("MpvVideoSlideRenderer Init");
-
-            // this.DataContextChanged += VideoSlide_DataContextChanged;
             this.AttachedToVisualTree += VideoSlideRenderer_AttachedToVisualTree;
             this.DetachedFromVisualTree += MpvVideoSlideRenderer_DetachedFromVisualTree;
         }
@@ -57,9 +54,10 @@ namespace HandsLiftedApp.Core.Render
         {
             if (this.VisualRoot as Window is ProjectorWindow)
             {
+                NonProjectorWindowText.IsVisible = false;
                 if (this.DataContext is VideoSlideInstance videoSlide)
                 {
-                    Log.Debug("MpvVideoSlideRenderer Attached");
+                    Log.Debug("MpvVideoSlideRenderer Attached in ProjectorWindow");
                     _isMounted = true;
                     VideoView.MpvContext = Globals.MpvContextInstance;
 
@@ -80,6 +78,7 @@ namespace HandsLiftedApp.Core.Render
             else if (VideoView != null)
             {
                 VideoView.IsVisible = false;
+                NonProjectorWindowText.IsVisible = true;
             }
         }
     }

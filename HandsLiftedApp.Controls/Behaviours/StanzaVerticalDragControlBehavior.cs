@@ -11,6 +11,7 @@ using HandsLiftedApp.Behaviours;
 using HandsLiftedApp.Extensions;
 using System;
 using System.Linq;
+using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Controls.Behaviours
 {
@@ -344,10 +345,10 @@ namespace HandsLiftedApp.Controls.Behaviours
                     //});
 
                     // TODO 2024
-                    //if (parentItemsControl.DataContext is SongEditorViewModel vm)
-                    //{
-                    //    vm.song.Arrangement.Move(SourceIndex, DestinationIndex);
-                    //}
+                    if (parentItemsControl.DataContext is SongItem songItem)
+                    {
+                        songItem.Arrangement.Move(SourceIndex, DestinationIndex);
+                    }
                 }
             }
         }

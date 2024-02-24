@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
+using Avalonia.Controls;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.SlideTheme;
@@ -29,7 +30,6 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 
                 this.RaiseAndSetIfChanged(ref _song, value);
                 _song.PropertyChanged += _song_PropertyChanged;
-                //OnPropertyChanged();
 
                 this.RaiseAndSetIfChanged(ref _selectedSlideTheme, Globals.MainViewModel.Playlist.Designs.FirstOrDefault(d => d.Id == _song.Design, null), nameof(SelectedSlideTheme));
 
@@ -47,7 +47,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             OnClickCommand = ReactiveCommand.Create(RunTheThing);
             SongDataUpdateCommand = ReactiveCommand.Create(OnSongDataUpdateCommand);
 
-            Playlist = Globals.MainViewModel.Playlist;
+            Playlist = (Design.IsDesignMode) ? new PlaylistInstance() : Globals.MainViewModel?.Playlist;
             Song = new ExampleSongItemInstance(Playlist);
             
             this.WhenAnyValue(x => x.SelectedSlideTheme)

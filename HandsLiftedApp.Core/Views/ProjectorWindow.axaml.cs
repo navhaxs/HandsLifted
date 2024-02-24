@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Extensions;
 
 namespace HandsLiftedApp.Core.Views
@@ -28,5 +29,24 @@ namespace HandsLiftedApp.Core.Views
             //this.Topmost = isFullScreenNext;
         }
 
+
+        private void ProjectorWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+        {
+            // var window = TopLevel.GetTopLevel(this);
+            //
+            // // if (!window.IsFocused)
+            // // {
+            // //     return;
+            // // }
+            //
+            // // TODO: if a textbox, datepicker etc is selected - then skip this func.
+            // var focusManager = TopLevel.GetTopLevel(this).FocusManager;
+            // var focusedElement = focusManager.GetFocusedElement();
+            //
+            // if (focusedElement is TextBox || focusedElement is DatePicker)
+            //     return;
+
+            KeyboardSlideNavigation.OnKeyDown(e);
+        }
     }
 }

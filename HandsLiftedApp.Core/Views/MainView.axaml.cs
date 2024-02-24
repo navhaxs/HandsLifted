@@ -8,6 +8,7 @@ using Serilog;
 using System;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
@@ -93,34 +94,7 @@ public partial class MainView : UserControl
         if (focusedElement is TextBox || focusedElement is DatePicker)
             return;
 
-        switch (e.Key)
-        {
-            case Key.F1:
-                MessageBus.Current.SendMessage(new ActionMessage()
-                    { Action = ActionMessage.NavigateSlideAction.GotoBlank });
-                e.Handled = true;
-                break;
-            case Key.F12:
-                MessageBus.Current.SendMessage(new ActionMessage()
-                    { Action = ActionMessage.NavigateSlideAction.GotoLogo });
-                e.Handled = true;
-                break;
-            case Key.PageDown:
-            case Key.Right:
-            case Key.Space:
-                MessageBus.Current.SendMessage(new ActionMessage()
-                    { Action = ActionMessage.NavigateSlideAction.NextSlide });
-                MessageBus.Current.SendMessage(new FocusSelectedItem());
-                e.Handled = true;
-                break;
-            case Key.PageUp:
-            case Key.Left:
-                MessageBus.Current.SendMessage(new ActionMessage()
-                    { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
-                MessageBus.Current.SendMessage(new FocusSelectedItem());
-                e.Handled = true;
-                break;
-        }
+        KeyboardSlideNavigation.OnKeyDown(e);
     }
 
     private async void TestButton_Clicked(object sender, RoutedEventArgs args)

@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:libmpv="using:Avalonia.Controls.LibMpv"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 Background="Black"
+             Background="Black"
              x:Class="HandsLiftedApp.Core.Render.MpvVideoSlideRenderer">
-	<libmpv:SoftwareVideoView x:Name="VideoView" />
+    <Grid>
+        <TextBlock x:Name="NonProjectorWindowText" Text="Video" FontSize="200" VerticalAlignment="Center" HorizontalAlignment="Center" IsVisible="False" />
+        <libmpv:SoftwareVideoView x:Name="VideoView" />
+    </Grid>
 </UserControl>

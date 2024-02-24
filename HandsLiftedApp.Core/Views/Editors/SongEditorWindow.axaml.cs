@@ -13,9 +13,6 @@ namespace HandsLiftedApp.Core.Views.Editors
 {
     public partial class SongEditorWindow : Window
     {
-        private MenuItem _btnGetWavHeader;
-        private MenuItem _btnFileLoad;
-        private MenuItem _btnFileSave;
         public SongEditorWindow()
         {
             InitializeComponent();
@@ -23,18 +20,6 @@ namespace HandsLiftedApp.Core.Views.Editors
             this.AttachDevTools();
 #endif
 
-            //_btnGetWavHeader = this.FindControl<MenuItem>("btnGetWavHeader");
-            //_btnGetWavHeader.Click += async (sender, e) => await GetWavHeader();
-            //_btnFileLoad = this.FindControl<MenuItem>("btnFileLoad");
-            //_btnFileLoad.Click += async (sender, e) => await LoadFromXML();
-            //_btnFileSave = this.FindControl<MenuItem>("btnFileSave");
-            //_btnFileSave.Click += async (sender, e) => await SaveToXML();
-
-            // TODO skip caret between textbox
-            //TextBox tb = new TextBox();
-            //tb.WhenAny
-
-            // ImportPasteHereTextBox.TextChanged += ImportPasteHereTextBox_TextChanged;
             if (this.DataContext is SongEditorViewModel songEditorViewModel)
             {
                 songEditorViewModel.FreeTextEntryField = SongImporter.songItemToFreeText(songEditorViewModel.Song);
@@ -71,80 +56,6 @@ namespace HandsLiftedApp.Core.Views.Editors
 
             ((SongEditorViewModel)this.DataContext).Song.Arrangement.Remove(stanza);
         }
-
-        // private void ImportPasteHereTextBox_TextChanged(object? sender, TextChangedEventArgs e)
-        // {
-        //     try
-        //     {
-        //         SongItemInstance songItemInstance = SongImporter.createSongItemFromStringData(ImportPasteHereTextBox.Text);
-        //
-        //         ((SongEditorViewModel)this.DataContext).Song.ReplaceWith(songItemInstance);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //
-        //     }
-        // }
-
-        private async Task GetWavHeader()
-        {
-            var dlg = new OpenFileDialog();
-            dlg.Filters.Add(new FileDialogFilter() { Name = "TXT Files", Extensions = { "txt" } });
-            dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
-            dlg.AllowMultiple = false;
-
-            var window = this.VisualRoot as Window;
-            if (window is null)
-            {
-                return;
-            }
-
-            var result = await dlg.ShowAsync(window);
-            if (result != null)
-            {
-                //_wavFileSplitter.GetWavHeader(result, text => _textOutput.Text = text);
-                ((SongEditorViewModel)this.DataContext).Song = SongImporter.createSongItemFromTxtFile(result[0]);
-            }
-        }
-
-        // private async Task SaveToXML()
-        // {
-        //     var dlg = new SaveFileDialog();
-        //     dlg.Filters.Add(new FileDialogFilter() { Name = "XML Files", Extensions = { "xml" } });
-        //     dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
-        //
-        //     var window = this.VisualRoot as Window;
-        //     if (window is null)
-        //     {
-        //         return;
-        //     }
-        //
-        //     var result = await dlg.ShowAsync(window);
-        //     if (result != null)
-        //     {
-        //         XmlSerialization.WriteToXmlFile<SongItemInstance>(result, ((SongEditorViewModel)this.DataContext).Song);
-        //     }
-        // }
-
-        // private async Task LoadFromXML()
-        // {
-        //     var dlg = new OpenFileDialog();
-        //     dlg.Filters.Add(new FileDialogFilter() { Name = "XML Files", Extensions = { "xml" } });
-        //     dlg.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
-        //     dlg.AllowMultiple = false;
-        //
-        //     var window = this.VisualRoot as Window;
-        //     if (window is null)
-        //     {
-        //         return;
-        //     }
-        //
-        //     var result = await dlg.ShowAsync(window);
-        //     if (result != null)
-        //     {
-        //         ((SongEditorViewModel)this.DataContext).Song = XmlSerialization.ReadFromXmlFile<SongItemInstance>(result[0]);
-        //     }
-        // }
 
         public void DeleteThisPartClick(object? sender, RoutedEventArgs args)
         {

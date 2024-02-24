@@ -147,6 +147,22 @@
         <DependentUpon>VideoSlideControlViewWrapper.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
+        <DependentUpon>DefaultLayout.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\StageDisplayLayout\SongLayout.axaml.cs">
+        <DependentUpon>SongLayout.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
+        <DependentUpon>DefaultLayout.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\StageDisplayLayout\SongLayout.axaml.cs">
+        <DependentUpon>SongLayout.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 
@@ -154,5 +170,7 @@
       <AdditionalFiles Include="Views\Designer\DesignerView.axaml" />
       <AdditionalFiles Include="Views\Designer\SlideDesignerWindow.axaml" />
       <AdditionalFiles Include="Views\Library\LibraryView.axaml" />
+      <AdditionalFiles Include="Views\StageDisplayLayout\DefaultLayout.axaml" />
+      <AdditionalFiles Include="Views\StageDisplayLayout\SongLayout.axaml" />
     </ItemGroup>
 </Project>

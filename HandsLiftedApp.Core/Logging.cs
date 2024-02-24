@@ -37,16 +37,12 @@ namespace HandsLiftedApp.Core
 
             // Trace.Listeners.Add(new ConsoleTraceListener());
 
-            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            var frameworkDescription = RuntimeInformation.FrameworkDescription;
-            Log.Information(
-                $"VisionScreens app version {version} startup at {DateTime.Now}");
+            Log.Information("VisionScreens App {Version}", Assembly.GetExecutingAssembly().GetName().Version);
+            Log.Information("Startup at {Now}", DateTime.Now);
             //build {BuildInfo.Version.getGitHash()}
 
-            Log.Information("Avalonia " +
-                            Assembly.GetAssembly(typeof(Avalonia.Application)).GetName().Version.ToString());
-            Log.Information(frameworkDescription);
+            Log.Information("Avalonia {Version}", Assembly.GetAssembly(typeof(Avalonia.Application))?.GetName().Version);
+            Log.Information("{DotNetVersion}", RuntimeInformation.FrameworkDescription);
 
             // Windows-only
             // https://stackoverflow.com/a/646500/

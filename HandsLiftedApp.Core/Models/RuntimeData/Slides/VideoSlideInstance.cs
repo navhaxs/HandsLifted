@@ -79,23 +79,18 @@ Read MPV documentation:
                 }
             }
         }
-        
-        
+
+
         public string? PrettyDuration
         {
             get
             {
                 if (Duration != null)
                 {
-                    TimeSpan time = TimeSpan.FromSeconds((double)Duration);
-
-//here backslash is must to tell that colon is
-//not the part of format, it just a character that we want in output
-                    string str = time.ToString(@"hh\:mm\:ss");
-                    return str;
+                    return TimeSpan.FromSeconds((double)Duration).ToString(@"hh\:mm\:ss");
                 }
 
-                return "";
+                return null;
             }
         }
 
@@ -103,17 +98,18 @@ Read MPV documentation:
         {
             get
             {
-                if (Duration != null && TimePos != null)
+                try
                 {
-                    TimeSpan time = TimeSpan.FromSeconds((double)Duration - (double)TimePos);
-
-//here backslash is must to tell that colon is
-//not the part of format, it just a character that we want in output
-                    string str = time.ToString(@"hh\:mm\:ss");
-                    return str;
+                    if (Duration != null && TimePos != null)
+                    {
+                        return TimeSpan.FromSeconds((double)Duration - (double)TimePos).ToString(@"hh\:mm\:ss");
+                    }
+                }
+                catch (Exception)
+                {
                 }
 
-                return "";
+                return null;
             }
         }
 
@@ -148,17 +144,18 @@ Read MPV documentation:
         {
             get
             {
-                if (TimePos != null)
+                try
                 {
-                    TimeSpan time = TimeSpan.FromSeconds((double)TimePos);
-
-//here backslash is must to tell that colon is
-//not the part of format, it just a character that we want in output
-                    string str = time.ToString(@"hh\:mm\:ss");
-                    return str;
+                    if (TimePos != null)
+                    {
+                        return TimeSpan.FromSeconds((double)TimePos).ToString(@"hh\:mm\:ss");
+                    }
+                }
+                catch (Exception)
+                {
                 }
 
-                return "";
+                return null;
             }
         }
 

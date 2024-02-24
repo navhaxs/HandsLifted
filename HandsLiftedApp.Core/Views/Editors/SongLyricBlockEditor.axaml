@@ -73,7 +73,7 @@
                                     Background="Transparent"
                                     BorderBrush="#f6f6f6"
                                     BorderThickness="10,0,0,0"
-                                    FontSize="18"
+                                    FontSize="16"
                                     FontWeight="SemiBold"
                                     Foreground="Black"
                                     Text="{Binding Path=Name}"

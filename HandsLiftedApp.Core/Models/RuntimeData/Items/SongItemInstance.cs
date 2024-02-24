@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using Avalonia.Media;
 using DebounceThrottle;
 using HandsLiftedApp.Data;
+using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
@@ -30,6 +31,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         // }
         public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
         {
+            if (Avalonia.Controls.Design.IsDesignMode)
+            {
+                return;
+            }
+            
             ParentPlaylist = parentPlaylist;   
             titleSlide = new SongTitleSlideInstance(this) { };
             //{
@@ -269,49 +275,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         void s()
         {
             debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-        }
-
-        /*
-         * Arrangements
-         *
-         * a dictionary of arrangements by "Arrangement Id"
-         *
-         * e.g.
-         * "Standard" : ["Verse 1", "Chorus", "Verse 2", "Chorus", "Verse 3", "Chorus", "Verse 4", "Chorus", "Chorus"]
-         * "Special" : ["Verse 1", "Chorus", "Verse 2", "Chorus", "Verse 3", "Chorus", "Chorus"]
-         */
-        [XmlIgnore] private SerializableDictionary<string, List<Guid>> _arrangements =
-            new SerializableDictionary<string, List<Guid>>();
-
-        public SerializableDictionary<string, List<Guid>> Arrangements
-        {
-            get => _arrangements;
-            set => this.RaiseAndSetIfChanged(ref _arrangements, value);
-        }
-
-        private string _selectedArrangementId;
-
-        public string SelectedArrangementId
-        {
-            get => _selectedArrangementId;
-            set => this.RaiseAndSetIfChanged(ref _selectedArrangementId, value);
-        }
-
-        [XmlIgnore] private ObservableCollection<Ref<SongStanza>> _arrangement =
-            new ObservableCollection<Ref<SongStanza>>();
-
-        public ObservableCollection<Ref<SongStanza>> Arrangement
-        {
-            get => _arrangement;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _arrangement, value);
-                _arrangement.CollectionChanged -= Arrangement_CollectionChanged;
-                _arrangement.CollectionChanged += Arrangement_CollectionChanged;
-
-                // debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-                this.RaisePropertyChanged("Slides");
-            }
         }
 
         [XmlIgnore] private ObservableAsPropertyHelper<Slide> _titleSlide;

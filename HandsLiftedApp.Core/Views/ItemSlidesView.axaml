@@ -353,6 +353,9 @@
                                                 <DataTemplate x:Key="LogoSlide">
                                                     <items1:LogoSlideView />
                                                 </DataTemplate>
+                                                <DataTemplate x:Key="VideoSlideInstance">
+                                                    <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                </DataTemplate>
                                                 <DataTemplate x:Key="CustomSlide">
                                                     <!--<customSlide:CustomAxamlSlide />-->
                                                 </DataTemplate>
