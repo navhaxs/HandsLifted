@@ -10,11 +10,10 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core
 {
-    public class XmlSerializerForDummies
+    public class HandsLiftedDocXmlSerializer
     {
         // Serialize Playlist to XML
         public static void SerializePlaylist(PlaylistInstance playlist, string filePath)

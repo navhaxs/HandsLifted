@@ -160,7 +160,7 @@ public partial class MainView : UserControl
             {
                 try
                 {
-                    var x = XmlSerializerForDummies.DeserializePlaylist(
+                    var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(
                         Uri.UnescapeDataString(files[0].Path.AbsolutePath));
                     vm.Playlist = x;
                     // vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
@@ -201,7 +201,7 @@ public partial class MainView : UserControl
                 try
                 {
                     var filePath = Uri.UnescapeDataString(file.Path.AbsolutePath);
-                    XmlSerializerForDummies.SerializePlaylist(vm.Playlist, filePath);
+                    HandsLiftedDocXmlSerializer.SerializePlaylist(vm.Playlist, filePath);
                     // XmlSerialization.WriteToXmlFile<Playlist>(file.Path.AbsolutePath, vm.CurrentPlaylist.Playlist);
                     //MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
                     vm.settings.LastOpenedPlaylistFullPath = filePath;
