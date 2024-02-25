@@ -1,12 +1,10 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Utils;
-using System;
-using System.Threading.Tasks;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Editors
@@ -34,33 +32,22 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
         {
-            var stanza = (SongStanza)((Control)sender).DataContext;
-            var m = new SongItemInstance.Ref<SongStanza>() { Value = stanza };
-            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Add(m);
+            var clickedStanza = (SongStanza)((Control)sender).DataContext;
+            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Add(clickedStanza.Id);
         }
 
         public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
         {
-            SongItemInstance.Ref<SongStanza> stanza = (SongItemInstance.Ref<SongStanza>)((Control)sender).DataContext;
-
-            SongItemInstance.Ref<SongStanza> clonedStanza = new SongItemInstance.Ref<SongStanza> { Value = stanza.Value };
-
-            var lastIndex = ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(stanza);
-
-            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Insert(lastIndex + 1, clonedStanza);
+            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            var lastIndex = ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(clickedStanza.SongStanza.Id);
+            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Insert(lastIndex + 1, clickedStanza.SongStanza.Id);
         }
 
         public void OnRemovePartClick(object? sender, RoutedEventArgs args)
         {
-            SongItemInstance.Ref<SongStanza> stanza = (SongItemInstance.Ref<SongStanza>)((Control)sender).DataContext;
-
-            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Remove(stanza);
-        }
-
-        public void DeleteThisPartClick(object? sender, RoutedEventArgs args)
-        {
-            SongStanza stanza = (SongStanza)((Control)sender).DataContext;
-            ((SongEditorViewModel)this.DataContext).Song.Stanzas.Remove(stanza);
+            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            var lastIndex = ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(clickedStanza.SongStanza.Id);
+            ((SongEditorViewModel)this.DataContext).Song.Arrangement.RemoveAt(lastIndex);
         }
 
         private void GenerateSlides_OnClick(object? sender, RoutedEventArgs e)

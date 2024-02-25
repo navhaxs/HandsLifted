@@ -217,16 +217,17 @@
 								Margin="12 0 0 0"
 								Fill="#c43e1c"
 								/>-->
-                                        <TextBox
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            MinWidth="100"
-                                            HorizontalAlignment="Left"
-                                            Padding="0,8,0,8"
-                                            VerticalAlignment="Center"
-                                            FontSize="18"
-                                            Foreground="{DynamicResource TitleBrush}"
-                                            Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+                                        <controls:TextBoxToggleButton Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+                                        <!-- <TextBox -->
+                                        <!--     Background="Transparent" -->
+                                        <!--     BorderThickness="0" -->
+                                        <!--     MinWidth="100" -->
+                                        <!--     HorizontalAlignment="Left" -->
+                                        <!--     Padding="0,8,0,8" -->
+                                        <!--     VerticalAlignment="Center" -->
+                                        <!--     FontSize="18" -->
+                                        <!--     Foreground="{DynamicResource TitleBrush}" -->
+                                        <!--      /> -->
 
                                     </DockPanel>
 

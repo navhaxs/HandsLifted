@@ -5,13 +5,9 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="220"
 	         xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-			 xmlns:b="using:HandsLiftedApp.Behaviours"
-	 		 xmlns:material="using:Material.Icons.Avalonia"
-			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"
-             xmlns:controls="using:HandsLiftedApp.Controls"
+             xmlns:material="using:Material.Icons.Avalonia"
              xmlns:converters="using:HandsLiftedApp.Converters"
-			 xmlns:vm="using:HandsLiftedApp.ViewModels"
-			 xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
 			 xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
 			 x:Name="root"
 			 x:DataType="items:SongItemInstance"
@@ -63,9 +59,7 @@
 					Background="Transparent"
 					Click="ArrangementButtonClick">
 				<Button.Flyout>
-					<MenuFlyout>
-						
-					</MenuFlyout>
+					<MenuFlyout />
 				</Button.Flyout>
 			</Button>
 
@@ -73,7 +67,7 @@
 				<material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
 			</Button>
 
-			<ItemsControl ItemsSource="{Binding Arrangement}" MinHeight="20" Margin="4" VerticalAlignment="Center" Name="PART_ArrangementTokens">
+			<ItemsControl ItemsSource="{Binding ArrangementAsRefList}" MinHeight="20" Margin="4" VerticalAlignment="Center" Name="PART_ArrangementTokens">
 				<ItemsControl.Styles>
 					<Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter DockPanel#PART_Container">
 						<Setter Property="Margin" Value="0 2 -5 2" />
@@ -116,12 +110,12 @@
 									</ContextMenu>
 								</DockPanel.ContextMenu>
 
-								<Path Name="PART_Before" Data="M0,0 10,0 10,20 0,20 10,10" Fill="{Binding Value.Colour}" />
-								<Border Name="PART_Content" Background="{Binding Value.Colour}" BorderBrush="#aaaaaa"
+								<Path Name="PART_Before" Data="M0,0 10,0 10,20 0,20 10,10" Fill="{Binding SongStanza.Colour}" />
+								<Border Name="PART_Content" Background="{Binding SongStanza.Colour}" BorderBrush="#aaaaaa"
 										Margin="-1 0 -0 0">
-									<TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="12" Text="{Binding Value.Name}" />
+									<TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="12" Text="{Binding SongStanza.Name}" />
 								</Border>
-								<Path Name="PART_After" Data="M0,0 8,10 0,20" Fill="{Binding Value.Colour}" />
+								<Path Name="PART_After" Data="M0,0 8,10 0,20" Fill="{Binding SongStanza.Colour}" />
 								<i:Interaction.Behaviors>
 									<behaviours:StanzaDragControlBehavior />
 								</i:Interaction.Behaviors>

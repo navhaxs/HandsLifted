@@ -217,9 +217,9 @@ namespace HandsLiftedApp.Data.Models.Items
         public string SelectedArrangementId { get => _selectedArrangementId; set => this.RaiseAndSetIfChanged(ref _selectedArrangementId, value); }
 
         [XmlIgnore]
-        private ObservableCollection<Ref<SongStanza>> _arrangement = new ObservableCollection<Ref<SongStanza>>();
+        private ObservableCollection<Guid> _arrangement = new ObservableCollection<Guid>();
 
-        public ObservableCollection<Ref<SongStanza>> Arrangement
+        public ObservableCollection<Guid> Arrangement
         {
             get => _arrangement; set
             {
@@ -231,18 +231,6 @@ namespace HandsLiftedApp.Data.Models.Items
                 this.RaisePropertyChanged("Slides");
             }
         }
-
-        //[XmlType(TypeName = "Ref")]
-        public class Ref<X>
-        {
-            public X Value { get; set; }
-        }
-        //
-        // [XmlIgnore]
-        // private ObservableAsPropertyHelper<Slide> _titleSlide;
-        //
-        // [XmlIgnore]
-        // public Slide TitleSlide { get => _titleSlide.Value; }
 
         [XmlIgnore]
         private Boolean _endOnBlankSlide = true;
@@ -277,7 +265,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
     public class SongStanza : ReactiveObject
     {
-        public Guid Uuid { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         private string name;
         public string Name
@@ -351,9 +339,9 @@ namespace HandsLiftedApp.Data.Models.Items
         {
         }
 
-        public SongStanza(Guid Uuid, string Name, string Lyrics)
+        public SongStanza(Guid id, string Name, string Lyrics)
         {
-            this.Uuid = Uuid;
+            this.Id = id;
             this.Name = Name;
             this.Lyrics = Lyrics;
         }

@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using Avalonia.Media;
 using DebounceThrottle;
 using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
-using HandsLiftedApp.Utils;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
@@ -22,13 +20,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
     {
         public PlaylistInstance? ParentPlaylist { get; set; } 
         private SongTitleSlide titleSlide;
-        private DebounceDispatcher debounceDispatcher = new DebounceDispatcher(200);
+        private DebounceDispatcher debounceDispatcher = new(200);
 
-
-        // public SongItemInstance() : this(null)
-        // {
-        //     
-        // }
         public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
         {
             if (Avalonia.Controls.Design.IsDesignMode)
@@ -37,11 +30,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
             
             ParentPlaylist = parentPlaylist;   
-            titleSlide = new SongTitleSlideInstance(this) { };
-            //{
-            //    Title = Title,
-            //    Copyright = Copyright
-            //};
+            titleSlide = new SongTitleSlideInstance(this);
+            
             _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
                         (title, copyright) =>
                         {
@@ -53,6 +43,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
                     .ToProperty(this, c => c.TitleSlide)
+                ;
+            
+            // TODO not working, change to Subscribe --> setting a basic ObservableList
+            _arrangementAsRefList = this.WhenAnyValue(x => x.Arrangement, x => x.Stanzas,
+                        (arrangement, stanzas) =>
+                        {
+                            return arrangement.Select(id => new ArrangementRef()
+                                { Index = 1, SongStanza = stanzas.First(stanza => stanza.Id == id) }).ToList();
+                        })
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                    .ToProperty(this, c => c.ArrangementAsRefList)
                 ;
 
             this.WhenAnyValue(x => x.TitleSlide).Subscribe((d) =>
@@ -70,17 +72,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
-            _stanzas.CollectionChanged += _stanzas_CollectionChanged;
-            _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
+            Stanzas.CollectionChanged += _stanzas_CollectionChanged;
+            Stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             Arrangement.CollectionChanged += Arrangement_CollectionChanged;
         }
 
         private void Arrangement_CollectionChanged(object? sender,
-            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            NotifyCollectionChangedEventArgs e)
         {
             debounceDispatcher.Debounce(() => UpdateStanzaSlides());
 
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move)
+            if (e.Action == NotifyCollectionChangedAction.Move)
             {
                 // deselect last slide
                 //StanzaSlides.ElementAt(e.OldStartingIndex).State
@@ -94,10 +96,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public void ResetArrangement()
         {
-            var a = new ObservableCollection<SongItemInstance.Ref<SongStanza>>();
+            var a = new ObservableCollection<Guid>();
             foreach (var stanza in Stanzas)
             {
-                a.Add(new SongItemInstance.Ref<SongStanza>() { Value = stanza });
+                a.Add(stanza.Id);
             }
 
             Arrangement = a;
@@ -139,11 +141,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 foreach (var a in Arrangement)
                 {
                     // todo match Stanzas by first match, so content is up to date. dont trust the cached copy in Arrangement
-                    SongStanza _datum = a.Value;
+                    SongStanza _datum = Stanzas.First(stanza => stanza.Id == a);
+                    if (_datum == null)
+                    {
+                        continue;
+                    }
 
-                    stanzaSeenCount[_datum.Uuid] =
-                        stanzaSeenCount.ContainsKey(_datum.Uuid) ? stanzaSeenCount[_datum.Uuid] + 1 : 0;
-                    
+                    stanzaSeenCount[_datum.Id] =
+                        stanzaSeenCount.ContainsKey(_datum.Id) ? stanzaSeenCount[_datum.Id] + 1 : 0;
                     
                     // TODO
                     // TODO
@@ -161,7 +166,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         var Text = x.line;
                         var Label = (x.index == 0) ? $"{_datum.Name}" : null;
 
-                        var slideId = $"{_datum.Uuid}:{stanzaSeenCount[_datum.Uuid]}:{x.index}";
+                        var slideId = $"{_datum.Id}:{stanzaSeenCount[_datum.Id]}:{x.index}";
 
                         //var prev = this.StanzaSlides.ElementAtOrDefault(i);
                         //var prev = this.StanzaSlides.SingleOrDefault(s => s is (SongSlide<S>) && ((SongSlide<S>)s).Id == slideId);
@@ -228,46 +233,30 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.RaisePropertyChanged("Slides");
         }
 
-        // private string _design = "";
+        // [XmlIgnore]
+        // private TrulyObservableCollection<SongStanza> _stanzas = new TrulyObservableCollection<SongStanza>();
         //
-        // public string Design
+        // public TrulyObservableCollection<SongStanza> Stanzas
         // {
-        //     get => _design;
-        //     set => this.RaiseAndSetIfChanged(ref _design, value);
+        //     get => _stanzas;
+        //     set
+        //     {
+        //         _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
+        //         _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
+        //         this.RaiseAndSetIfChanged(ref _stanzas, value);
+        //         debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+        //         _stanzas.CollectionChanged += _stanzas_CollectionChanged;
+        //         _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
+        //     }
         // }
 
-        [XmlIgnore] private string _copyright = "";
-
-        public string Copyright
-        {
-            get => _copyright;
-            set => this.RaiseAndSetIfChanged(ref _copyright, value);
-        }
-
-        [XmlIgnore]
-        private TrulyObservableCollection<SongStanza> _stanzas = new TrulyObservableCollection<SongStanza>();
-
-        public TrulyObservableCollection<SongStanza> Stanzas
-        {
-            get => _stanzas;
-            set
-            {
-                _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
-                _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
-                this.RaiseAndSetIfChanged(ref _stanzas, value);
-                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-                _stanzas.CollectionChanged += _stanzas_CollectionChanged;
-                _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
-            }
-        }
-
-        private void _stanzas_CollectionItemChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void _stanzas_CollectionItemChanged(object? sender, PropertyChangedEventArgs e)
         {
             s();
         }
 
         private void _stanzas_CollectionChanged(object? sender,
-            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            NotifyCollectionChangedEventArgs e)
         {
             s();
         }
@@ -332,6 +321,19 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public Slide ActiveSlide
         {
             get => _activeSlide?.Value;
+        }
+
+        public class ArrangementRef
+        {
+             public int Index { get; init; }
+             public SongStanza SongStanza { get; init; }
+        }
+
+        private ObservableAsPropertyHelper<List<ArrangementRef>> _arrangementAsRefList;
+
+        public List<ArrangementRef> ArrangementAsRefList
+        {
+            get => _arrangementAsRefList?.Value;
         }
     }
 }

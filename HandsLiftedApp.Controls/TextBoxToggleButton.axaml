@@ -8,6 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="80"
              x:DataType="system:String"
              MinWidth="100"
+             HorizontalAlignment="Left"
              x:Class="HandsLiftedApp.Controls.TextBoxToggleButton">
     <Carousel x:Name="Carousel">
         <Button
@@ -18,10 +19,13 @@
             Background="Transparent"
             BorderThickness="0"
             CornerRadius="6"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Left"
             Cursor="Hand">
             <Button.Styles>
                 <Style Selector="Button:pointerover /template/ ContentPresenter">
-                    <Setter Property="Background" Value="#5C3AB6" />
+                    <Setter Property="Background" Value="{Binding $parent[controls:TextBoxToggleButton].HoverBrush}" />
                 </Style>
                 <Style Selector="Button:pressed /template/ ContentPresenter">
                     <Setter Property="BorderBrush" Value="#2c628b" />
@@ -53,21 +57,30 @@
         </Button>
         <Border
             CornerRadius="6"
-            Background="#666666">
+            Background="White">
             <DockPanel VerticalAlignment="Stretch">
                 <Button x:Name="SubmitButton"
                         Click="SubmitButton_OnClick"
                         BorderThickness="0"
-                        Background="Transparent"
+                        Margin="3"
+                        Background="#3574f0"
                         DockPanel.Dock="Right">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background"
+                                    Value="#4b9bff" />
+                        </Style>
+                    </Button.Styles>
                     <avalonia:MaterialIcon
+                        Foreground="White"
                         Margin="14,0,14,0"
                         Kind="KeyboardReturn" />
                 </Button>
                 <TextBox x:Name="EntryTextBox" KeyDown="InputElement_OnKeyDown"
                          LostFocus="EntryTextBox_OnLostFocus"
                          Padding="12,4"
-                         Foreground="White"
+                         Foreground="Black"
+                         CaretBrush="Black"
                          VerticalContentAlignment="Center"
                          Background="Transparent"
                          BorderThickness="0"

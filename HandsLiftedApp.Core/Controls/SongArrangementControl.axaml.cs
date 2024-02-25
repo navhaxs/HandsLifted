@@ -10,6 +10,7 @@ using Serilog;
 using System;
 using System.Diagnostics;
 using System.Reactive;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 
 namespace HandsLiftedApp.Controls
 {
@@ -66,12 +67,11 @@ namespace HandsLiftedApp.Controls
             }
 
             var stanza = (SongStanza)((Control)sender).DataContext;
-            var m = new SongItem.Ref<SongStanza>() { Value = stanza };
 
             //Debug.WriteLine($"Inserting into position {idx}");
             try
             {
-                ((SongItem)this.DataContext).Arrangement.Insert(idx, m);
+                ((SongItem)this.DataContext).Arrangement.Insert(idx, stanza.Id);
             }
             catch (Exception ex)
             {
@@ -95,20 +95,14 @@ namespace HandsLiftedApp.Controls
         //insert clone
         public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
         {
-            SongItem.Ref<SongStanza> stanza = (SongItem.Ref<SongStanza>)((Control)sender).DataContext;
-
-            SongItem.Ref<SongStanza> clonedStanza = new SongItem.Ref<SongStanza> { Value = stanza.Value };
-
-            var lastIndex = ((SongItem)this.DataContext).Arrangement.IndexOf(stanza);
-
-            ((SongItem)this.DataContext).Arrangement.Insert(lastIndex + 1, clonedStanza);
+            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            ((SongItem)this.DataContext).Arrangement.Insert(clickedStanza.Index + 1, clickedStanza.SongStanza.Id);
         }
 
         public void OnRemovePartClick(object? sender, RoutedEventArgs args)
         {
-            SongItem.Ref<SongStanza> stanza = (SongItem.Ref<SongStanza>)((Control)sender).DataContext;
-
-            ((SongItem)this.DataContext).Arrangement.Remove(stanza);
+            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            ((SongItem)this.DataContext).Arrangement.RemoveAt(clickedStanza.Index);
         }
 
         public void a()

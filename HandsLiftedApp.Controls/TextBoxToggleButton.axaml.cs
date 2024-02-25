@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Threading;
 
 namespace HandsLiftedApp.Controls
@@ -16,11 +17,28 @@ namespace HandsLiftedApp.Controls
             this.KeyDown += (s, e) => { e.Handled = true; };
         }
 
+        public static readonly DirectProperty<TextBoxToggleButton, Color> HoverBrushProperty =
+            AvaloniaProperty.RegisterDirect<TextBoxToggleButton, Color>(
+                nameof(HoverBrush),
+                o => o.HoverBrush,
+                (o, v) => o.HoverBrush = v,
+                Color.Parse("#5C3AB6")
+            );
+
+        private Color _hoverBrush = Colors.Transparent;
+
+        public Color HoverBrush
+        {
+            get { return _hoverBrush; }
+            set { SetAndRaise(HoverBrushProperty, ref _hoverBrush, value); }
+        }
+
         public static readonly DirectProperty<TextBoxToggleButton, string> TextProperty =
             AvaloniaProperty.RegisterDirect<TextBoxToggleButton, string>(
                 nameof(Text),
                 o => o.Text,
-                (o, v) => o.Text = v);
+                (o, v) => o.Text = v
+            );
 
         private string _text = "";
 

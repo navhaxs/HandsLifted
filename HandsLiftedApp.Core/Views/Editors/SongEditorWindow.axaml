@@ -221,7 +221,7 @@
                         MinHeight="20"
                         VerticalAlignment="Center"
                         DataContext="{Binding Song}"
-                        ItemsSource="{Binding Arrangement}">
+                        ItemsSource="{Binding ArrangementAsRefList}">
                         <ItemsControl.Styles>
                             <Style
                                 Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter DockPanel#PART_Container">
