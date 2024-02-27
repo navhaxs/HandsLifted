@@ -50,7 +50,7 @@
                                 <TextBlock Text="A"
                                            FontSize="80"
                                            Margin="20"
-                                           FontFamily="{Binding FontFamily, FallbackValue='Arial'}"
+                                           FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}"
                                            FontWeight="{Binding FontWeight, FallbackValue='SemiBold'}" />
                             </Grid>
                         </Viewbox>
@@ -92,39 +92,39 @@
 
             <ScrollViewer Grid.Column="1">
                 <StackPanel Margin="8">
-
-
+            
+            
                     <StackPanel.Styles>
                         <Style Selector="ColorPicker">
                             <Setter Property="HorizontalAlignment" Value="Left" />
                         </Style>
                     </StackPanel.Styles>
-
-
+            
+            
                     <TextBlock Text="Name" />
                     <TextBox Name="Name" Watermark="" Text="{Binding #designsListBox.SelectedItem.Name}" />
-
-
+            
+            
                     <!-- "Garamond, Playfair Display" -->
                     <TextBlock Text="Font" />
-                    <ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamily}">
+                    <ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamilyAsAvalonia}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-
+                    
                     <Grid Height="10" />
-
+            
                     <TextBlock Text="Colour" />
                     <ColorPicker Name="TextColour"
                                  Color="{Binding #designsListBox.SelectedItem.TextAvaloniaColour, FallbackValue='White'}" />
-
+            
                     <TextBlock Text="Background" />
                     <ColorPicker Name="BackgroundColour"
                                  Color="{Binding #designsListBox.SelectedItem.BackgroundAvaloniaColour, FallbackValue='Black'}" />
-
+            
                     <TextBlock Text="Font Size" />
                     <DockPanel>
                         <TextBox Name="FontSizeTextBox"
@@ -133,15 +133,15 @@
                                 IsSnapToTickEnabled="True"
                                 TickFrequency="1"
                                 Value="{Binding #FontSizeTextBox.Text}" />
-                    </DockPanel>    
+                    </DockPanel>
                     
                     <TextBlock Text="Font Weight" />
                     <DockPanel>
-                        <ComboBox Name="FontWeightComboBox" 
+                        <ComboBox Name="FontWeightComboBox"
                                   SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold}"
                                 />
                     </DockPanel>
-
+            
                     <TextBlock Text="Line Height" />
                     <DockPanel>
                         <TextBox Name="LineHeightTextBox"
@@ -151,15 +151,15 @@
                                 TickFrequency="1"
                                 Value="{Binding #LineHeightTextBox.Text}" />
                     </DockPanel>
-                    
+            
                     <TextBlock Text="TextAlignment" />
                     <ComboBox Name="TextAlignmentComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.TextAlignment}" />
-
+            
                     <TextBlock Text="BgGraphicFilePath" />
                     <TextBox Name="bgGraphicFilePath" Watermark=""
                              Text="{Binding #designsListBox.SelectedItem.BackgroundGraphicFilePath}" />
                     <Button Click="ChangeThemeBgGraphic_OnClick">Change</Button>
-
+            
                 </StackPanel>
             </ScrollViewer>
         </Grid>

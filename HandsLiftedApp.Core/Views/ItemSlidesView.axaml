@@ -131,18 +131,22 @@
                                     <!--     CornerRadius="0" -->
                                     <!--     BorderThickness="0" -->
                                     <!--     HorizontalContentAlignment="Left"> -->
-                                        <TextBox
-                                            Margin="16,0,8,0"
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            FontSize="20"
-                                            MinWidth="100"
-                                            FontWeight="SemiBold"
-                                            Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}"
-                                            Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+                                        <!-- <TextBox -->
+                                        <!--     Margin="16,0,8,0" -->
+                                        <!--     Background="Transparent" -->
+                                        <!--     BorderThickness="0" -->
+                                        <!--     Padding="0" -->
+                                        <!--     HorizontalAlignment="Left" -->
+                                        <!--     VerticalAlignment="Center" -->
+                                        <!--     FontSize="20" -->
+                                        <!--     MinWidth="100" -->
+                                        <!--     FontWeight="SemiBold" -->
+                                        <!--     Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}" -->
+                                        <!--     Text="{Binding Title, FallbackValue='Rock Of Ages'}" /> -->
+                                    <controls:TextBoxToggleButton
+                                        Margin="16,0,8,0"
+                                        Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+
                                     <!-- </Button> -->
                                 </DockPanel>
                                 <!--<item:ItemInfo VerticalAlignment="Top" />-->

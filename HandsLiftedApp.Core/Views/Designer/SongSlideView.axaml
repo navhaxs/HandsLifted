@@ -22,9 +22,9 @@
         Background="{Binding Theme.BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}">
         <Border>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="60 80">
-                <Viewbox StretchDirection="DownOnly"
-                         VerticalAlignment="Stretch"
-                         HorizontalAlignment="Stretch">
+                <!-- <Viewbox StretchDirection="DownOnly" -->
+                <!--          VerticalAlignment="Stretch" -->
+                <!--          HorizontalAlignment="Stretch"> -->
                     <TextBlock
                         Text="{Binding Text}"
                         TextAlignment="{Binding Theme.TextAlignment}"
@@ -32,11 +32,11 @@
                         FontWeight="{Binding Theme.FontWeight}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        FontFamily="{Binding Theme.FontFamily}"
+                        FontFamily="{Binding Theme.FontFamilyAsAvalonia}"
                         RenderOptions.BitmapInterpolationMode="HighQuality"
                         Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}}"
                         FontSize="{Binding Theme.FontSize}" />
-                </Viewbox>
+                <!-- </Viewbox> -->
             </Grid>
             <Border.Background>
                 <ImageBrush

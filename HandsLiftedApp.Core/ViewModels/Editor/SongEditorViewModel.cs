@@ -16,7 +16,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
     public class SongEditorViewModel : ViewModelBase
     {
 
-        public event EventHandler SongDataUpdated;
+        // public event EventHandler SongDataUpdated;
 
         private SongItemInstance _song;
 
@@ -42,13 +42,14 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             FreeTextEntryField = SongImporter.songItemToFreeText(Song);
         }
 
-        public SongEditorViewModel()
+        public SongEditorViewModel(SongItemInstance song, PlaylistInstance playlistInstance)
         {
             OnClickCommand = ReactiveCommand.Create(RunTheThing);
-            SongDataUpdateCommand = ReactiveCommand.Create(OnSongDataUpdateCommand);
-
-            Playlist = (Design.IsDesignMode) ? new PlaylistInstance() : Globals.MainViewModel?.Playlist;
-            Song = new ExampleSongItemInstance(Playlist);
+            // SongDataUpdateCommand = ReactiveCommand.Create(OnSongDataUpdateCommand);
+            
+            // Playlist = (Design.IsDesignMode) ? new PlaylistInstance() : Globals.MainViewModel?.Playlist;
+            Song = song;
+            Playlist = playlistInstance; // song.ParentPlaylist;
             
             this.WhenAnyValue(x => x.SelectedSlideTheme)
                 .Subscribe((BaseSlideTheme theme) =>
@@ -58,7 +59,6 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                         Song.Design = theme.Id;
                     }
                 });
-
         }
 
         public ReactiveCommand<Unit, Unit> OnClickCommand { get; }
@@ -68,7 +68,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             Song.Stanzas.Add(new SongStanza(Guid.NewGuid(), "", ""));
         }
 
-        public ReactiveCommand<Unit, Unit> SongDataUpdateCommand { get; }
+        // public ReactiveCommand<Unit, Unit> SongDataUpdateCommand { get; }
 
         void OnSongDataUpdateCommand()
         {
@@ -86,12 +86,6 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             // TODO debounce this
             // TODO debounce this
             MessageBus.Current.SendMessage(new PlaylistInstance.UpdateEditedItemMessage { Item = Song });
-            SongDataUpdated?.Invoke(this, new ThresholdReachedEventArgs() { UpdatedSongData = Song });
-        }
-
-        public class ThresholdReachedEventArgs : EventArgs
-        {
-            public SongItemInstance UpdatedSongData { get; set; }
         }
 
         private string _freeTextEntryField;
@@ -110,6 +104,6 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             set => this.RaiseAndSetIfChanged(ref _selectedSlideTheme, value);
         }
 
-        public PlaylistInstance Playlist { get; set; }
+        public PlaylistInstance Playlist { get; init; }
     }
 }

@@ -105,7 +105,7 @@ public class MainViewModel : ViewModelBase
                     case AddItemMessage.AddItemType.NewSong:
                         var song = new SongItemInstance(Playlist);
                         itemToInsert = song;
-                        SongEditorViewModel vm = new SongEditorViewModel() { Song = song, Playlist = Playlist };
+                        SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
                         SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
                         seq.Show();
                         break;
@@ -279,7 +279,7 @@ public class MainViewModel : ViewModelBase
             Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
         }
 
-        int SlideIndex = item.Slides.IndexOf(slide);
+        int SlideIndex = item.GetAsIItemInstance().Slides.IndexOf(slide);
         Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
 
         Playlist.NavigateToReference(new SlideReference()

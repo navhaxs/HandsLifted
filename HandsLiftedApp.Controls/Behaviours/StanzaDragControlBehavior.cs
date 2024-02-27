@@ -173,6 +173,11 @@ namespace HandsLiftedApp.Controls.Behaviours
 
                 ResetDraggingState();
 
+                if (target == null)
+                {
+                    return;
+                }
+                
                 ItemsControl listBox = GetParent(target);
 
                 for (int i = 0; i < listBox.ItemCount; i++)

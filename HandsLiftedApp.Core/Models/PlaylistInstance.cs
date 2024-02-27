@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using HandsLiftedApp.Core.Models;
@@ -21,22 +22,6 @@ namespace HandsLiftedApp.Core.Models
     {
         public PlaylistInstance()
         {
-            // _selectedItem = Observable.CombineLatest(
-            //     this.WhenAnyValue(x => x.SelectedItemIndex),
-            //     Playlist.Items.ObserveCollectionChanges(),
-            //     (selectedIndex, items) =>
-            //     {
-            //         if (selectedIndex != -1)
-            //         {
-            //             return Playlist.Items.ElementAtOrDefault(selectedIndex);
-            //         }
-            //
-            //         return new BlankItem();
-            //     }
-            //     
-            //     
-            // )   
-            //     
             _selectedItem = this.WhenAnyValue(
                     (x => x.SelectedItemIndex),
                     (int selectedIndex) =>
@@ -117,7 +102,6 @@ namespace HandsLiftedApp.Core.Models
                             }
 
                             dest.Title = source.Title;
-                            dest.SlideTheme = source.SlideTheme;
                             dest.Arrangement = source.Arrangement;
                             dest.Arrangements = source.Arrangements;
                             dest.SelectedArrangementId = source.SelectedArrangementId;
@@ -324,7 +308,7 @@ namespace HandsLiftedApp.Core.Models
                     // select first slide of this next item
                     return new SlideReference()
                     {
-                        Slide = Items[nextNavigatableItemIndex].Slides.ElementAtOrDefault(0),
+                        Slide = Items[nextNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(0),
                         SlideIndex = 0,
                         ItemIndex = nextNavigatableItemIndex
                     };
@@ -332,12 +316,12 @@ namespace HandsLiftedApp.Core.Models
             }
             // for selected item, attempt to navigate slide forwards (unless at last slide of this item)
             else if (SelectedItemAsIItemInstance != null &&
-                     SelectedItem.Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex + 1) != null)
+                     SelectedItem.GetAsIItemInstance().Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex + 1) != null)
             {
                 var nextSlideIndex = SelectedItemAsIItemInstance.SelectedSlideIndex + 1;
                 return new SlideReference()
                 {
-                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    Slide = SelectedItem.GetAsIItemInstance().Slides[nextSlideIndex],
                     SlideIndex = nextSlideIndex,
                     ItemIndex = SelectedItemIndex
                 };
@@ -346,12 +330,12 @@ namespace HandsLiftedApp.Core.Models
             else if (SelectedItem is SlidesGroupItem &&
                      ((SlidesGroupItem)SelectedItem).IsLooping == true &&
                      SelectedItemAsIItemInstance != null &&
-                     (SelectedItem.Slides.Count == SelectedItemAsIItemInstance.SelectedSlideIndex + 1))
+                     (SelectedItem.GetAsIItemInstance().Slides.Count == SelectedItemAsIItemInstance.SelectedSlideIndex + 1))
             {
                 var nextSlideIndex = 0;
                 return new SlideReference()
                 {
-                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    Slide = SelectedItem.GetAsIItemInstance().Slides[nextSlideIndex],
                     SlideIndex = nextSlideIndex,
                     ItemIndex = SelectedItemIndex
                 };
@@ -366,7 +350,7 @@ namespace HandsLiftedApp.Core.Models
                     // select first slide of this next item
                     return new SlideReference()
                     {
-                        Slide = Items[nextNavigatableItemIndex].Slides.ElementAtOrDefault(0),
+                        Slide = Items[nextNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(0),
                         SlideIndex = 0,
                         ItemIndex = nextNavigatableItemIndex
                     };
@@ -388,7 +372,7 @@ namespace HandsLiftedApp.Core.Models
             for (int idx = startIdx + 1; idx < Items.Count; idx++)
             {
                 Item item = Items[idx];
-                if (item.Slides.Count > 0)
+                if (item.GetAsIItemInstance().Slides.Count > 0)
                 {
                     return idx;
                 }
@@ -412,12 +396,12 @@ namespace HandsLiftedApp.Core.Models
             // for selected item, attempt to navigate slide backwards within the item
             // (unless at first slide)
             else if (SelectedItemAsIItemInstance != null &&
-                     SelectedItem.Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex - 1) != null)
+                     SelectedItem.GetAsIItemInstance().Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex - 1) != null)
             {
                 var nextSlideIndex = SelectedItemAsIItemInstance.SelectedSlideIndex - 1;
                 return new SlideReference()
                 {
-                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    Slide = SelectedItem.GetAsIItemInstance().Slides[nextSlideIndex],
                     SlideIndex = nextSlideIndex,
                     ItemIndex = SelectedItemIndex
                 };
@@ -428,10 +412,10 @@ namespace HandsLiftedApp.Core.Models
                      SelectedItemAsIItemInstance != null &&
                      (SelectedItemAsIItemInstance.SelectedSlideIndex == 0))
             {
-                var nextSlideIndex = SelectedItem.Slides.Count - 1;
+                var nextSlideIndex = SelectedItem.GetAsIItemInstance().Slides.Count - 1;
                 return new SlideReference()
                 {
-                    Slide = SelectedItem.Slides[nextSlideIndex],
+                    Slide = SelectedItem.GetAsIItemInstance().Slides[nextSlideIndex],
                     SlideIndex = nextSlideIndex,
                     ItemIndex = SelectedItemIndex
                 };
@@ -441,11 +425,11 @@ namespace HandsLiftedApp.Core.Models
             int previousNavigatableItemIndex = getPreviousNavigatableItem(SelectedItemIndex);
             if (previousNavigatableItemIndex != -1)
             {
-                var nextSlideIndex = Items[previousNavigatableItemIndex].Slides.Count - 1;
+                var nextSlideIndex = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides.Count - 1;
 
                 return new SlideReference()
                 {
-                    Slide = Items[previousNavigatableItemIndex].Slides.ElementAtOrDefault(nextSlideIndex),
+                    Slide = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(nextSlideIndex),
                     SlideIndex = nextSlideIndex,
                     ItemIndex = previousNavigatableItemIndex
                 };
@@ -466,7 +450,7 @@ namespace HandsLiftedApp.Core.Models
             for (int idx = startIdx - 1; idx >= 0; idx--)
             {
                 Item item = Items[idx];
-                if (item.Slides.Count > 0)
+                if (item.GetAsIItemInstance().Slides.Count > 0)
                 {
                     return idx;
                 }
@@ -482,6 +466,10 @@ namespace HandsLiftedApp.Core.Models
         {
             get
             {
+                if (Design.IsDesignMode)
+                {
+                    return null;
+                }
                 try
                 {
                     return BitmapLoader.LoadBitmap(LogoGraphicFile);

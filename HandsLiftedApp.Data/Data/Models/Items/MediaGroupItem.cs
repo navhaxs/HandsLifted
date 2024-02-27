@@ -36,19 +36,6 @@ namespace HandsLiftedApp.Data.Models.Items
             this.RaisePropertyChanged(nameof(Slides));
         }
 
-        [XmlIgnore]// should this NOT be part of the base class?
-        public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>();
-        //new ObservableCollection<Slide>(_items.Select((item, index) =>
-        //{
-        //    item.Index = index;
-        //    return item;
-        //}));
-
-        ///new ObservableCollection<Slide>(_items.Select((item, index) => {
-        //    item.Index = index;
-        //    return item;
-        //}));
-
         private bool _IsLooping = false;
 
         /// <summary>

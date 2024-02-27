@@ -38,14 +38,14 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
         {
-            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            var clickedStanza = (ArrangementRef)((Control)sender).DataContext;
             var lastIndex = ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(clickedStanza.SongStanza.Id);
             ((SongEditorViewModel)this.DataContext).Song.Arrangement.Insert(lastIndex + 1, clickedStanza.SongStanza.Id);
         }
 
         public void OnRemovePartClick(object? sender, RoutedEventArgs args)
         {
-            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            var clickedStanza = (ArrangementRef)((Control)sender).DataContext;
             var lastIndex = ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(clickedStanza.SongStanza.Id);
             ((SongEditorViewModel)this.DataContext).Song.Arrangement.RemoveAt(lastIndex);
         }

@@ -41,7 +41,6 @@ namespace HandsLiftedApp.Core
                     {
                         UUID = songItemInstance.UUID,
                         Title = songItemInstance.Title,
-                        SlideTheme = songItemInstance.SlideTheme,
                         Arrangement = songItemInstance.Arrangement,
                         Arrangements = songItemInstance.Arrangements,
                         SelectedArrangementId = songItemInstance.SelectedArrangementId,
@@ -126,7 +125,6 @@ namespace HandsLiftedApp.Core
                             {
                                 UUID = songItem.UUID,
                                 Title = songItem.Title,
-                                SlideTheme = songItem.SlideTheme,
                                 Arrangement = songItem.Arrangement,
                                 Arrangements = songItem.Arrangements,
                                 SelectedArrangementId = songItem.SelectedArrangementId,

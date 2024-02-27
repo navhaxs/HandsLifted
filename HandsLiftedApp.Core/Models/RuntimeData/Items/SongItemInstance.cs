@@ -3,35 +3,49 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using DebounceThrottle;
+using DynamicData;
+using DynamicData.Binding;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
-
     public class SongItemInstance : SongItem, IItemInstance
     {
-        public PlaylistInstance? ParentPlaylist { get; set; } 
+        public PlaylistInstance? ParentPlaylist { get; set; }
         private SongTitleSlide titleSlide;
         private DebounceDispatcher debounceDispatcher = new(200);
 
+        public void GenerateArrangementViews()
+        {
+            var result = new ObservableCollection<ArrangementRef>();
+            foreach (var stanzaId in Arrangement)
+            {
+                var stanza = Stanzas.FirstOrDefault(stanza => stanza.Id == stanzaId);
+                if (stanza != null)
+                {
+                    result.Add(new ArrangementRef()
+                        { Index = 1, SongStanza = stanza });
+                }
+            }
+
+            ArrangementAsRefList = result;
+        }
+
         public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
         {
-            if (Avalonia.Controls.Design.IsDesignMode)
-            {
-                return;
-            }
-            
-            ParentPlaylist = parentPlaylist;   
+            ParentPlaylist = parentPlaylist;
             titleSlide = new SongTitleSlideInstance(this);
-            
+
             _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
                         (title, copyright) =>
                         {
@@ -44,18 +58,24 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
                     .ToProperty(this, c => c.TitleSlide)
                 ;
-            
-            // TODO not working, change to Subscribe --> setting a basic ObservableList
-            _arrangementAsRefList = this.WhenAnyValue(x => x.Arrangement, x => x.Stanzas,
-                        (arrangement, stanzas) =>
-                        {
-                            return arrangement.Select(id => new ArrangementRef()
-                                { Index = 1, SongStanza = stanzas.First(stanza => stanza.Id == id) }).ToList();
-                        })
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
-                    .ToProperty(this, c => c.ArrangementAsRefList)
-                ;
+
+            // TODO: reorder...
+            this.WhenAnyValue(x => x.Arrangement)
+                .Subscribe(a =>
+                {
+                    a.CollectionChanged -= AOnCollectionChanged;
+                    GenerateArrangementViews();
+                    a.CollectionChanged += AOnCollectionChanged;
+                });
+            // TODO: reorder...
+            this.WhenAnyValue(x => x.Stanzas)
+                .Subscribe(a =>
+                {
+                    a.CollectionChanged -= AOnCollectionChanged;
+                    GenerateArrangementViews();
+                    a.CollectionChanged += AOnCollectionChanged;
+                });
+            GenerateArrangementViews();
 
             this.WhenAnyValue(x => x.TitleSlide).Subscribe((d) =>
             {
@@ -77,6 +97,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             Arrangement.CollectionChanged += Arrangement_CollectionChanged;
         }
 
+        private void AOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            GenerateArrangementViews();
+            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+        }
+
         private void Arrangement_CollectionChanged(object? sender,
             NotifyCollectionChangedEventArgs e)
         {
@@ -91,8 +117,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             //this.RaisePropertyChanged("Slides");
         }
-
-        public BaseSlideTheme SlideTheme { get; set; }
 
         public void ResetArrangement()
         {
@@ -149,14 +173,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     stanzaSeenCount[_datum.Id] =
                         stanzaSeenCount.ContainsKey(_datum.Id) ? stanzaSeenCount[_datum.Id] + 1 : 0;
-                    
+
                     // TODO
                     // TODO
                     // TODO
                     // TODO
                     // TODO
                     // TODO
-                    
+
                     // break slides by newlines
                     string[] lines = _datum.Lyrics.Replace("\r\n", "\n").Split(new string[] { "\n\n" },
                         StringSplitOptions.RemoveEmptyEntries);
@@ -196,7 +220,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         }
                         else
                         {
-                            var slide = new SongSlideInstance(this, _datum, slideId) { Text = Text, Label = Label, }; //, Index = i };
+                            var slide = new SongSlideInstance(this, _datum, slideId)
+                                { Text = Text, Label = Label, }; //, Index = i };
                             this.StanzaSlides.Insert(i, slide);
                         }
 
@@ -294,8 +319,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         //private ObservableAsPropertyHelper<ObservableCollection<Slide>> _slides;
 
-        [XmlIgnore]
-        public override TrulyObservableCollection<Slide> Slides
+        public ObservableCollection<Slide> Slides
         {
             get => _stanzaSlides;
         }
@@ -320,20 +344,63 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public Slide ActiveSlide
         {
-            get => _activeSlide?.Value;
+            get => _activeSlide.Value;
         }
 
-        public class ArrangementRef
+        // private ObservableAsPropertyHelper<ObservableCollection<ArrangementRef>> _arrangementAsRefList;
+        //
+        // public ObservableCollection<ArrangementRef> ArrangementAsRefList
+        // {
+        //     get => _arrangementAsRefList.Value;
+        // }
+
+        private ObservableCollection<ArrangementRef> _arrangementAsRefList;
+
+        public ObservableCollection<ArrangementRef> ArrangementAsRefList
         {
-             public int Index { get; init; }
-             public SongStanza SongStanza { get; init; }
+            get => _arrangementAsRefList;
+            set => this.RaiseAndSetIfChanged(ref _arrangementAsRefList, value);
         }
+    }
 
-        private ObservableAsPropertyHelper<List<ArrangementRef>> _arrangementAsRefList;
+    public class ArrangementRef
+    {
+        public int Index { get; init; }
+        public SongStanza SongStanza { get; init; }
 
-        public List<ArrangementRef> ArrangementAsRefList
+        private sealed class IndexEqualityComparer : IEqualityComparer<ArrangementRef>
         {
-            get => _arrangementAsRefList?.Value;
+            public bool Equals(ArrangementRef x, ArrangementRef y)
+            {
+                if (ReferenceEquals(x, y))
+                {
+                    return true;
+                }
+
+                if (ReferenceEquals(x, null))
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(y, null))
+                {
+                    return false;
+                }
+
+                if (x.GetType() != y.GetType())
+                {
+                    return false;
+                }
+
+                return x.SongStanza.Id == y.SongStanza.Id;
+            }
+
+            public int GetHashCode(ArrangementRef obj)
+            {
+                return obj.Index;
+            }
         }
+
+        public static IEqualityComparer<ArrangementRef> IndexComparer { get; } = new IndexEqualityComparer();
     }
 }

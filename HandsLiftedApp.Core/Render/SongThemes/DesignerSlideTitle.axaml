@@ -31,7 +31,7 @@
                                    TextWrapping="Wrap"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
-                                   FontFamily="{Binding Theme.FontFamily, FallbackValue='Garamond, Playfair Display'}"
+                                   FontFamily="{Binding Theme.FontFamilyAsAvalonia, FallbackValue='Garamond, Playfair Display'}"
                                    RenderOptions.BitmapInterpolationMode="HighQuality"
                                    Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue=Red}"
                                    FontSize="170" />
@@ -42,7 +42,7 @@
                         <TextBlock
                             Text="{Binding Copyright, FallbackValue='CCLI Song # 7127647&#x0a;Brooke Ligertwood | Jason Ingram | Scott Ligertwood&#x0a;© 2019 Fellow Ships Music (Admin. by Essential Music  Publishing LLC)&#x0a;So Essential Tunes (Admin. by Essential Music Publishing LLC)&#x0a;Hillsong Music Publishing Australia&#x0a;For use solely with the SongSelect® Terms of Use. All rights reserved. www.ccli.com&#x0a;Note: Reproduction of this sheet music requires a CCLI Music Reproduction License. Please report all copies.&#x0a;CCLI Licence # 317371'}"
                             Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue=Red}"
-                            FontFamily="{Binding Theme.FontFamily, FallbackValue='Garamond, Playfair Display'}"
+                            FontFamily="{Binding Theme.FontFamilyAsAvalonia, FallbackValue='Garamond, Playfair Display'}"
                             FontSize="30"
                             Width="1760" />
                     </Viewbox>

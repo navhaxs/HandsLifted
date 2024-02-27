@@ -28,9 +28,9 @@ namespace HandsLiftedApp.Data.Models.Items
                 this.RaisePropertyChanged(nameof(Slides));
             }
         }
-
-        [XmlIgnore]
-        public abstract ObservableCollection<Slide?> Slides { get; }
+        //
+        // [XmlIgnore]
+        // public abstract ObservableCollection<Slide?> Slides { get; }
 
     }
 

@@ -5,6 +5,7 @@
     xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
@@ -17,11 +18,10 @@
     d:DesignWidth="1200"
     Background="{DynamicResource BackgroundBrush}"
     x:DataType="editor:SongEditorViewModel"
-    x:CompileBindings="False"
     mc:Ignorable="d">
-
+    
     <Design.DataContext>
-        <editor:SongEditorViewModel />
+        <editor:ExampleSongEditorViewModel />
     </Design.DataContext>
 
     <Window.Resources>
@@ -103,7 +103,7 @@
                                             <TextBlock Text="A"
                                                        FontSize="80"
                                                        Margin="20"
-                                                       FontFamily="{Binding FontFamily, FallbackValue='Arial'}"
+                                                       FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}"
                                                        FontWeight="SemiBold" />
                                         </Grid>
                                     </Viewbox>
@@ -215,7 +215,7 @@
                         FontSize="18"
                         FontWeight="SemiBold"
                         Text="Arrangement" />
-
+                    
                     <ItemsControl
                         Name="PART_ArrangementTokens"
                         MinHeight="20"
@@ -239,11 +239,11 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel Name="PART_Container" Cursor="Hand">
+                                <DockPanel Name="PART_Container" Cursor="Hand" x:DataType="items:ArrangementRef">
                                     <DockPanel.ContextMenu>
                                         <ContextMenu
                                             PlacementAnchor="Bottom"
-                                            PlacementMode="Bottom"
+                                            Placement="Bottom"
                                             PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
                                             <MenuItem Click="OnRepeatPartClick">
                                                 <MenuItem.Icon>
@@ -280,14 +280,14 @@
 
                                     <Border
                                         Name="PART_Content"
-                                        Background="{Binding Value.Colour}"
+                                        Background="{Binding SongStanza.Colour}"
                                         BorderBrush="#BDBDBD"
                                         BorderThickness="1">
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             FontSize="14"
                                             Foreground="Black"
-                                            Text="{Binding Value.Name}" />
+                                            Text="{Binding SongStanza.Name}" />
                                     </Border>
 
                                     <i:Interaction.Behaviors>

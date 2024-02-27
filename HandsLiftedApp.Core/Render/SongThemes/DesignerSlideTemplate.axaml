@@ -23,7 +23,7 @@
 							   TextAlignment="Center"
 							   HorizontalAlignment="Stretch"
 							   VerticalAlignment="Center"
-							   FontFamily="{Binding $parent[Window].DataContext.SlideTheme.FontFamily, FallbackValue='Garamond, Playfair Display'}"
+							   FontFamily="{Binding $parent[Window].DataContext.SlideTheme.FontFamilyAsAvalonia, FallbackValue='Garamond, Playfair Display'}"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
 							   Foreground="{Binding $parent[Window].DataContext.SlideTheme.TextColour, Converter={StaticResource ColorToBrush}, FallbackValue='Red'}"
 							   FontSize="{Binding $parent[Window].DataContext.SlideTheme.FontSize, FallbackValue=80}"

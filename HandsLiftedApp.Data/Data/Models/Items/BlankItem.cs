@@ -17,7 +17,5 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             Title = "(Blank)";
         }
-
-        public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>() { new LogoSlide() };
     }
 }

@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Data.Slides;
+﻿using System.Collections.ObjectModel;
+using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -9,8 +10,15 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             ParentPlaylist = parentPlaylist;
         }
 
-        public PlaylistInstance ParentPlaylist { get; set; } 
+        public PlaylistInstance ParentPlaylist { get; set; }
         public int SelectedSlideIndex { get; set; }
-        public Slide ActiveSlide { get => new BlankSlide(); }
+        private BlankSlide _blankSlide = new();
+
+        public Slide ActiveSlide
+        {
+            get => _blankSlide;
+        }
+
+        public ObservableCollection<Slide> Slides => new() { _blankSlide };
     }
 }

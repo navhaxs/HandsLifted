@@ -53,11 +53,11 @@ namespace HandsLiftedApp.Controls
         {
             if (sender is Control { DataContext: SongItemInstance item })
             {
-                SongEditorViewModel songEditorViewModel = new SongEditorViewModel() { Song = item, Playlist = Globals.MainViewModel.Playlist };
-                songEditorViewModel.SongDataUpdated += (ex, ey) =>
-                {
-                            
-                };
+                SongEditorViewModel songEditorViewModel = new SongEditorViewModel(item, Globals.MainViewModel.Playlist);
+                // songEditorViewModel.SongDataUpdated += (ex, ey) =>
+                // {
+                //             
+                // };
                 SongEditorWindow songEditorWindow = new SongEditorWindow() { DataContext = songEditorViewModel };
                 songEditorWindow.Show();
                 return;

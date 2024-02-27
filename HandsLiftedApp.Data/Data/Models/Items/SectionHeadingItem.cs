@@ -23,8 +23,5 @@ namespace HandsLiftedApp.Data.Models.Items
 
         public XmlColor GroupColour = Color.Parse("#4d347f");
         public Color ItemGroupAvaloniaColor { get => GroupColour; set => this.RaiseAndSetIfChanged(ref GroupColour, value); }
-
-        // A section heading item itself has no slides (it is empty)
-        public override ObservableCollection<Slide> Slides => new ObservableCollection<Slide>() { };
     }
 }

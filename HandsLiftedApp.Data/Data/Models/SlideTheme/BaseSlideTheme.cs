@@ -18,11 +18,11 @@ namespace HandsLiftedApp.Data.SlideTheme
         public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
 
         // Slide Design Properties
-        private FontFamily _fontFamily = FontFamily.Parse("Arial");
-        [XmlIgnore]// TODO XmlSerialize
-        public FontFamily FontFamily { get => _fontFamily; set => this.RaiseAndSetIfChanged(ref _fontFamily, value); }
-        private FontWeight _fontWeight = FontWeight.Normal;
+        public XmlFontFamily FontFamily = new();
         [XmlIgnore]
+        public FontFamily FontFamilyAsAvalonia { get => FontFamily; set => this.RaiseAndSetIfChanged(ref FontFamily, value); }
+        private FontWeight _fontWeight = FontWeight.Normal;
+        // [XmlIgnore]
         public FontWeight FontWeight { get => _fontWeight; set => this.RaiseAndSetIfChanged(ref _fontWeight, value); }
         
         public XmlColor TextColour = Colors.White;

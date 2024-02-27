@@ -95,13 +95,13 @@ namespace HandsLiftedApp.Controls
         //insert clone
         public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
         {
-            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            var clickedStanza = (ArrangementRef)((Control)sender).DataContext;
             ((SongItem)this.DataContext).Arrangement.Insert(clickedStanza.Index + 1, clickedStanza.SongStanza.Id);
         }
 
         public void OnRemovePartClick(object? sender, RoutedEventArgs args)
         {
-            var clickedStanza = (SongItemInstance.ArrangementRef)((Control)sender).DataContext;
+            var clickedStanza = (ArrangementRef)((Control)sender).DataContext;
             ((SongItem)this.DataContext).Arrangement.RemoveAt(clickedStanza.Index);
         }
 

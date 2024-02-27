@@ -27,7 +27,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             fontComboBox.ItemsSource = fontFamilies;
             fontComboBox.SelectedIndex = 0;
 
-            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetValues(typeof(FontWeight));
+            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight)).Select(x => Enum.Parse<FontWeight>(x)).ToArray();
 
             TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
 
@@ -85,7 +85,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                         mainViewModel.Playlist.Designs.Add(new BaseSlideTheme()
                         {
                             Name = $"{item.Name} (Copy)",
-                            FontFamily = FontFamily.Parse("Arial"), //dxitem.FontFamily,
+                            FontFamilyAsAvalonia = FontFamily.Parse("Arial"), //dxitem.FontFamily,
                             FontWeight = item.FontWeight,
                             TextColour = item.TextColour,
                             TextAlignment = item.TextAlignment,
@@ -108,7 +108,7 @@ namespace HandsLiftedApp.Core.Views.Designer
 
                 if (AssetLoader.Exists(new Uri(filePaths[0])) || File.Exists(filePaths[0]))
                 {
-                    bgGraphicFilePath.Text = filePaths[0];
+                    // bgGraphicFilePath.Text = filePaths[0];
                 }
             }
             catch (Exception ex)
