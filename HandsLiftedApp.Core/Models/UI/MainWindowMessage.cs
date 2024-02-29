@@ -2,7 +2,7 @@ namespace HandsLiftedApp.Core.Models.UI
 {
     public enum ActionType
     {
-        // CloseWindow,
+        CloseWindow,
         AboutWindow,
         // PreferencesWindow
     }

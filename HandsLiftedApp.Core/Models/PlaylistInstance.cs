@@ -372,7 +372,8 @@ namespace HandsLiftedApp.Core.Models
             for (int idx = startIdx + 1; idx < Items.Count; idx++)
             {
                 Item item = Items[idx];
-                if (item.GetAsIItemInstance().Slides.Count > 0)
+                IItemInstance? itemInstance = item.GetAsIItemInstance();
+                if (itemInstance?.Slides.Count > 0)
                 {
                     return idx;
                 }
@@ -450,7 +451,8 @@ namespace HandsLiftedApp.Core.Models
             for (int idx = startIdx - 1; idx >= 0; idx--)
             {
                 Item item = Items[idx];
-                if (item.GetAsIItemInstance().Slides.Count > 0)
+                IItemInstance? itemInstance = item.GetAsIItemInstance();
+                if (itemInstance?.Slides.Count > 0)
                 {
                     return idx;
                 }

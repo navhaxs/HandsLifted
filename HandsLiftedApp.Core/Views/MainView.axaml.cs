@@ -194,8 +194,8 @@ public partial class MainView : UserControl
 
     private void CloseWindow(object sender, RoutedEventArgs e)
     {
-        // MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
-        ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown();
+        MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.CloseWindow));
+        // ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown();
     }
 
     private void Slide_OnClick(object? sender, RoutedEventArgs e)

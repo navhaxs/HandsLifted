@@ -40,15 +40,25 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         MessageBus.Current.Listen<MainWindowMessage>().Subscribe(mwvm =>
         {
-            Shade.IsVisible = true;
-            AboutWindow mw = new AboutWindow() { DataContext = mwvm };
-            mw.Closed += (object? sender, EventArgs e) =>
+            Window wnd;
+            switch (mwvm.Action)
             {
-                Shade.IsVisible = false;
-                IsEnabled = true;
-            };
-            IsEnabled = false;
-            mw.ShowDialog(this);
+                case ActionType.AboutWindow:
+                    wnd = new AboutWindow() { DataContext = mwvm };
+                    Shade.IsVisible = true;
+                    wnd.Closed += (object? sender, EventArgs e) =>
+                    {
+                        Shade.IsVisible = false;
+                        IsEnabled = true;
+                    };
+                    IsEnabled = false;
+                    wnd.ShowDialog(this);
+                    break;
+                case ActionType.CloseWindow:
+                    Close();
+                    break;
+            }
+
         });
 
         MessageBus.Current.Listen<MainWindowModalMessage>()
