@@ -34,7 +34,6 @@ namespace HandsLiftedApp.Core.Render
 
             VideoView.MpvContext = null;
             _isMounted = false;
-            Log.Debug("MpvVideoSlideRenderer detached");
         }
 
         // private void VideoSlide_DataContextChanged(object? sender, EventArgs e)

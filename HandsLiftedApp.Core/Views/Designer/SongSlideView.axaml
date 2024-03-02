@@ -34,6 +34,7 @@
                         VerticalAlignment="Center"
                         FontFamily="{Binding Theme.FontFamilyAsAvalonia}"
                         RenderOptions.BitmapInterpolationMode="HighQuality"
+                        TextWrapping="Wrap"
                         Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}}"
                         FontSize="{Binding Theme.FontSize}" />
                 <!-- </Viewbox> -->

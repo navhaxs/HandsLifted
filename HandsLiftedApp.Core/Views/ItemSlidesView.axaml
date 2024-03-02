@@ -19,6 +19,7 @@
     xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:item="clr-namespace:HandsLiftedApp.Views.Item"
+    xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -46,7 +47,7 @@
                     <SolidColorBrush x:Key="TitleBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-            <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
+            <extensions:BitmapAssetValueConverter x:Key="variableImage" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -131,18 +132,18 @@
                                     <!--     CornerRadius="0" -->
                                     <!--     BorderThickness="0" -->
                                     <!--     HorizontalContentAlignment="Left"> -->
-                                        <!-- <TextBox -->
-                                        <!--     Margin="16,0,8,0" -->
-                                        <!--     Background="Transparent" -->
-                                        <!--     BorderThickness="0" -->
-                                        <!--     Padding="0" -->
-                                        <!--     HorizontalAlignment="Left" -->
-                                        <!--     VerticalAlignment="Center" -->
-                                        <!--     FontSize="20" -->
-                                        <!--     MinWidth="100" -->
-                                        <!--     FontWeight="SemiBold" -->
-                                        <!--     Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}" -->
-                                        <!--     Text="{Binding Title, FallbackValue='Rock Of Ages'}" /> -->
+                                    <!-- <TextBox -->
+                                    <!--     Margin="16,0,8,0" -->
+                                    <!--     Background="Transparent" -->
+                                    <!--     BorderThickness="0" -->
+                                    <!--     Padding="0" -->
+                                    <!--     HorizontalAlignment="Left" -->
+                                    <!--     VerticalAlignment="Center" -->
+                                    <!--     FontSize="20" -->
+                                    <!--     MinWidth="100" -->
+                                    <!--     FontWeight="SemiBold" -->
+                                    <!--     Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}" -->
+                                    <!--     Text="{Binding Title, FallbackValue='Rock Of Ages'}" /> -->
                                     <controls:TextBoxToggleButton
                                         Margin="16,0,8,0"
                                         Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
@@ -221,7 +222,8 @@
 								Margin="12 0 0 0"
 								Fill="#c43e1c"
 								/>-->
-                                        <controls:TextBoxToggleButton Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+                                        <controls:TextBoxToggleButton
+                                            Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
                                         <!-- <TextBox -->
                                         <!--     Background="Transparent" -->
                                         <!--     BorderThickness="0" -->
@@ -295,42 +297,19 @@
 
                                         <controls:ListBoxWithoutKey.DataTemplates>
                                             <common:MyTemplateSelector>
-                                                <DataTemplate x:Key="SongTitleSlideInstance">
-                                                    <!-- <TextBox Text="{Binding Text}"></TextBox> -->
-                                                    <!-- <Image -->
-                                                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
-                                                    <!--     Source="{Binding cached}" -->
-                                                    <!--     Stretch="Uniform" /> -->
-                                                    <Viewbox>
-                                                        <views:DesignerSlideTitle Width="1920" Height="1080" />
-                                                    </Viewbox>
-                                                    <!--<TextBlock
-                                        FontWeight="SemiBold"
-                                        Foreground="White"
-                                        Text="{Binding Title}"
-                                        TextTrimming="CharacterEllipsis" />-->
+                                                <DataTemplate x:Key="SongTitleSlideInstance"
+                                                              x:DataType="slides:SongTitleSlideInstance">
+                                                    <Image
+                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                        Source="{Binding cached}"
+                                                        Stretch="Uniform" />
                                                 </DataTemplate>
-                                                <DataTemplate x:Key="SongSlideInstance">
-                                                    <!-- <TextBox Text="{Binding Text}"></TextBox> -->
-                                                    <!-- <Image -->
-                                                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
-                                                    <!--     Source="{Binding cached}" -->
-                                                    <!--     Stretch="Uniform" /> -->
-                                                    <Viewbox>
-                                                        <!--  TODO: cache as image  -->
-                                                        <designer:SongSlideView Width="1920"
-                                                            Height="1080" />
-                                                        <!-- <views:DesignerSlideTemplate -->
-                                                        <!--     Width="1920" -->
-                                                        <!--     Height="1080" /> -->
-                                                    </Viewbox>
-                                                    <!--<TextBlock
-                                                        Height="9999"
-                                                        VerticalAlignment="Top"
-                                                        ClipToBounds="True"
-                                                        Foreground="White"
-                                                        Text="{Binding Text}"
-                                                        TextTrimming="WordEllipsis" />-->
+                                                <DataTemplate x:Key="SongSlideInstance"
+                                                              x:DataType="slides:SongSlideInstance">
+                                                    <Image
+                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                        Source="{Binding cached}"
+                                                        Stretch="Uniform" />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="ImageSlide">
                                                     <views1:SlideThumbnail>
@@ -359,7 +338,8 @@
                                                     <items1:LogoSlideView />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="VideoSlideInstance">
-                                                    <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center"
+                                                               HorizontalAlignment="Center" />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="CustomSlide">
                                                     <!--<customSlide:CustomAxamlSlide />-->

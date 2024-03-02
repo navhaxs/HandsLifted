@@ -18,6 +18,10 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // must create renderer BEFORE slides start loading during Globals.OnStartup (auto-loading previous playlist)
+        SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow();
+        slideRendererWorkerWindow.Show();
+        
         Globals.OnStartup(ApplicationLifetime);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

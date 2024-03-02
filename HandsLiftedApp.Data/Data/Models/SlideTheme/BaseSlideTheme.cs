@@ -48,7 +48,6 @@ namespace HandsLiftedApp.Data.SlideTheme
         private string? _backgroundGraphicFilePath;
         public string? BackgroundGraphicFilePath { get => _backgroundGraphicFilePath; set => this.RaiseAndSetIfChanged(ref _backgroundGraphicFilePath, value); }
         
-        
         // [XmlAttribute]
 
         // TODO - KV map for additional properties

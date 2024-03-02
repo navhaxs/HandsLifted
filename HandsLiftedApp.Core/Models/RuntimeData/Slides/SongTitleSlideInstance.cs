@@ -1,41 +1,69 @@
-﻿using Avalonia.Media.Imaging;
-using HandsLiftedApp.Data.Models.Items;
-using ReactiveUI;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
+using Avalonia.Media.Imaging;
+using DebounceThrottle;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.SlideTheme;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Slides
 {
     public class SongTitleSlideInstance : SongTitleSlide
     {
+        private DebounceDispatcher debounceDispatcher = new(200);
+
         public SongTitleSlideInstance(SongItemInstance? parentSongItem) : base()
         {
-            this._theme =
-                parentSongItem.WhenAnyValue(parentSongItem => parentSongItem.Design,
-                        (target =>
+            parentSongItem.WhenAnyValue(parentSongItem => parentSongItem.Design)
+                .Subscribe(target =>
+                {
+                    if (target != Guid.Empty)
+                    {
+                        var baseSlideTheme = parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target);
+                        if (baseSlideTheme != null)
                         {
-                            if (target != Guid.Empty)
+                            baseSlideTheme.PropertyChanged += (sender, args) =>
                             {
-                                var baseSlideTheme = parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target);
-                                if (baseSlideTheme != null)
-                                {
-                                    return baseSlideTheme;
-                                }
-                            }
+                                debounceDispatcher.Debounce(() => GenerateBitmaps());
+                            };
+                            Theme = baseSlideTheme;
+                            return;
+                        }
+                    }
 
-                            return new BaseSlideTheme();
-                        })
-                    )
-                    .ToProperty(this, x => x.Theme);
+                    Theme = new BaseSlideTheme();
+                });
+
+            this.WhenAnyValue(s => s.Title, s => s.Copyright, s => s.Theme) // todo dirty bit?
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(text =>
+                {
+                    debounceDispatcher.Debounce(() => GenerateBitmaps());
+                });
         }
 
-        private ObservableAsPropertyHelper<BaseSlideTheme?> _theme;
-
-        public BaseSlideTheme Theme
+        private void GenerateBitmaps()
         {
-            get => _theme.Value;
+            MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
+                this,
+                (bitmap) =>
+                {
+                    this.cached = bitmap;
+                    // https://github.com/AvaloniaUI/Avalonia/issues/8444
+                    // TODO
+                }
+            )); 
+        }
+
+        private BaseSlideTheme? _theme;
+
+        public BaseSlideTheme? Theme
+        {
+            get => _theme;
+            set => this.RaiseAndSetIfChanged(ref _theme, value);
         }
 
         // refs

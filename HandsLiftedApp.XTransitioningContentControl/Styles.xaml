@@ -6,9 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!--<Styles.Resources>-->
-    <!--<Style Selector="local|VideoView">-->
-
     <Style Selector="local|XTransitioningContentControl">
         <!--  Set Defaults  -->
         <Setter Property="Template">
@@ -38,5 +35,4 @@
             </ControlTemplate>
         </Setter>
     </Style>
-    <!--</Styles.Resources>-->
 </Styles>

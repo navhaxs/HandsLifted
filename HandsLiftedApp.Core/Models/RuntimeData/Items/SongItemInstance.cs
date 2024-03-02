@@ -3,19 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using DebounceThrottle;
-using DynamicData;
-using DynamicData.Binding;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
-using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -174,13 +169,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     stanzaSeenCount[_datum.Id] =
                         stanzaSeenCount.ContainsKey(_datum.Id) ? stanzaSeenCount[_datum.Id] + 1 : 0;
 
-                    // TODO
-                    // TODO
-                    // TODO
-                    // TODO
-                    // TODO
-                    // TODO
-
                     // break slides by newlines
                     string[] lines = _datum.Lyrics.Replace("\r\n", "\n").Split(new string[] { "\n\n" },
                         StringSplitOptions.RemoveEmptyEntries);
@@ -192,8 +180,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                         var slideId = $"{_datum.Id}:{stanzaSeenCount[_datum.Id]}:{x.index}";
 
-                        //var prev = this.StanzaSlides.ElementAtOrDefault(i);
-                        //var prev = this.StanzaSlides.SingleOrDefault(s => s is (SongSlide<S>) && ((SongSlide<S>)s).Id == slideId);
                         var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
                             .FirstOrDefault(s => (s.data) is SongSlide && ((SongSlide)s.data).Id == slideId);
 
@@ -257,23 +243,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             this.RaisePropertyChanged("Slides");
         }
-
-        // [XmlIgnore]
-        // private TrulyObservableCollection<SongStanza> _stanzas = new TrulyObservableCollection<SongStanza>();
-        //
-        // public TrulyObservableCollection<SongStanza> Stanzas
-        // {
-        //     get => _stanzas;
-        //     set
-        //     {
-        //         _stanzas.CollectionChanged -= _stanzas_CollectionChanged;
-        //         _stanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
-        //         this.RaiseAndSetIfChanged(ref _stanzas, value);
-        //         debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-        //         _stanzas.CollectionChanged += _stanzas_CollectionChanged;
-        //         _stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
-        //     }
-        // }
 
         private void _stanzas_CollectionItemChanged(object? sender, PropertyChangedEventArgs e)
         {

@@ -164,6 +164,10 @@
         <DependentUpon>SongLayout.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\SlideRendererWorkerWindow.axaml.cs">
+        <DependentUpon>SlideRendererWorkerWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 
