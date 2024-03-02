@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -34,7 +35,9 @@ namespace HandsLiftedApp.Controls
             AvaloniaProperty.RegisterDirect<TextBoxToggleButton, string>(
                 nameof(Text),
                 o => o.Text,
-                (o, v) => o.Text = v
+                (o, v) => o.Text = v,
+                "",
+                BindingMode.TwoWay
             );
 
         private string _text = "";
@@ -61,6 +64,7 @@ namespace HandsLiftedApp.Controls
 
         private void EditButton_OnClick(object? sender, RoutedEventArgs e)
         {
+            EntryTextBox.Text = Text;
             Carousel.SelectedIndex = 1;
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -74,6 +78,10 @@ namespace HandsLiftedApp.Controls
             switch (e.Key)
             {
                 case Key.Enter:
+                    Carousel.SelectedIndex = 0;
+                    Text = EntryTextBox.Text ?? string.Empty;
+                    e.Handled = true;
+                    break;
                 case Key.Escape:
                     Carousel.SelectedIndex = 0;
                     e.Handled = true;
@@ -84,6 +92,7 @@ namespace HandsLiftedApp.Controls
         private void SubmitButton_OnClick(object? sender, RoutedEventArgs e)
         {
             Carousel.SelectedIndex = 0;
+            Text = EntryTextBox.Text ?? string.Empty;
             e.Handled = true;
         }
 
