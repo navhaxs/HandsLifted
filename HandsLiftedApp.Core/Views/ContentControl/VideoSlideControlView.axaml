@@ -9,6 +9,7 @@
              x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
 	<Border Background="#3a344a" CornerRadius="6" VerticalAlignment="Top" Margin="6">
 		<StackPanel Margin="6">
+			<TextBlock Text="{Binding SourceMediaFilePath, FallbackValue='(SourceMediaFilePath is null)'}" TextTrimming="CharacterEllipsis" />
 			<DockPanel>
 				<TextBlock DockPanel.Dock="Right" Text="{Binding PrettyRemainingTime, FallbackValue='Remaining'}" />
 				<TextBlock>

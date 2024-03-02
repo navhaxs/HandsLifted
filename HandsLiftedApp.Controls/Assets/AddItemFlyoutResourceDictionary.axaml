@@ -12,22 +12,10 @@
     </Design.PreviewWith>
 
     <MenuFlyout x:Key="addItemFlyout" Placement="BottomEdgeAlignedLeft">
-        <MenuItem Header="_Presentation">
-            <MenuItem Click="OnMenuItemClick" CommandParameter="Presentation" Header="PowerPoint">
-                <MenuItem.Icon>
-                    <material:MaterialIcon Kind="Presentation" />
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Click="OnMenuItemClick" CommandParameter="GoogleSlides" Header="Google Slides">
-                <MenuItem.Icon>
-                    <material:MaterialIcon Kind="Slideshow" />
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Click="OnMenuItemClick" CommandParameter="PDF" Header="PDF Slides (Canva, etc.)">
-                <MenuItem.Icon>
-                    <material:MaterialIcon Kind="Slideshow" />
-                </MenuItem.Icon>
-            </MenuItem>
+        <MenuItem Click="OnMenuItemClick" CommandParameter="Presentation" Header="_Presentation">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="Presentation" />
+            </MenuItem.Icon>
         </MenuItem>
         <MenuItem Header="_Song">
             <MenuItem.Icon>

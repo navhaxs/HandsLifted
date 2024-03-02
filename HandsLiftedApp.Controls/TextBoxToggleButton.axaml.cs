@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
 
@@ -23,7 +22,7 @@ namespace HandsLiftedApp.Controls
                 Color.Parse("#5C3AB6")
             );
 
-        private Color _hoverBrush = Colors.Transparent;
+        private Color _hoverBrush = Color.Parse("#5C3AB6");
 
         public Color HoverBrush
         {

@@ -30,6 +30,7 @@
         <PackageReference Include="Config.Net" />
         <PackageReference Include="DebounceThrottle" />
         <PackageReference Include="Material.Icons.Avalonia" />
+        <PackageReference Include="PDFiumCore" />
         <PackageReference Include="Serilog.Expressions" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.Debug" />
@@ -40,7 +41,6 @@
     <ItemGroup>
       <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj" />
       <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj" />
-      <ProjectReference Include="..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
       <ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
       <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
       <ProjectReference Include="..\Libraries\LibMpv\Avalonia.Controls.LibMpv\Avalonia.Controls.LibMpv.csproj" />

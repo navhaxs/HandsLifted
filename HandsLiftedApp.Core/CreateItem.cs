@@ -9,6 +9,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using HandsLiftedApp.Core.Importers;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Data.Slides;
 
@@ -20,8 +22,9 @@ namespace HandsLiftedApp.Core
         public static readonly string[] SUPPORTED_POWERPOINT = { "ppt", "pptx", "odp" };
         public static readonly string[] SUPPORTED_VIDEO = { "mp4", "flv", "mov", "mkv", "avi", "wmv" };
         public static readonly string[] SUPPORTED_IMAGE = { "bmp", "png", "jpg", "jpeg" };
+        public static readonly string[] SUPPORTED_PDF= { "pdf" };
         
-        public static async Task OpenPresentationFileAsync(string path, PlaylistInstance currentPlaylist)
+        public static async Task OpenPresentationFileAsync(string filePath, PlaylistInstance currentPlaylist)
         {
             //try
             //{
@@ -30,11 +33,11 @@ namespace HandsLiftedApp.Core
             //foreach (var path in filePaths)
             //{
 
-            if (path != null && path is string)
+            if (filePath != null && filePath is string)
             {
 
                 DateTime now = DateTime.Now;
-                string fileName = Path.GetFileName(path);
+                string fileName = Path.GetFileName(filePath);
 
                 string targetDirectory = Path.Join(currentPlaylist
                     .PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
@@ -42,26 +45,35 @@ namespace HandsLiftedApp.Core
 
                 if (fileName.EndsWith(".pptx"))
                 {
-                    Log.Debug($"Importing PowerPoint file: {path}");
-                    PowerPointSlidesGroupItem slidesGroup = new PowerPointSlidesGroupItem() { Title = fileName, SourcePresentationFile = path };
+                    Log.Debug($"Importing PowerPoint file: {filePath}");
+                    PowerPointSlidesGroupItem slidesGroup = new PowerPointSlidesGroupItem() { Title = fileName, SourcePresentationFile = filePath };
 
                     currentPlaylist.Items.Add(slidesGroup);
 
                     //slidesGroup.SyncState.SyncCommand();
                 }
-                else if (fileName.EndsWith(".pdf"))
+                else if (filePath.EndsWith(".pdf"))
                 {
-                    Log.Debug($"Importing PDF file: {path}");
-                    PDFSlidesGroupItem slidesGroup = new PDFSlidesGroupItem() { Title = fileName, SourcePresentationFile = path };
+                    Log.Debug($"Importing PDF file: {filePath}");
+                    // PDFSlidesGroupItem slidesGroup = new PDFSlidesGroupItem() { Title = fileName, SourcePresentationFile = filePath };
 
-                    currentPlaylist.Items.Add(slidesGroup);
+                    ConvertPDF.Convert(filePath, targetDirectory); // todo move into State as a SyncCommand
+                    
+                    MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(currentPlaylist)
+                        { Title = "New media group" };
+ 
+                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory))
+                    {
+                        mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
+                            { SourceMediaFilePath = convertedFilePath }); 
+                    }
 
-                    //ConvertPDF.Convert(path, targetDirectory); // todo move into State as a SyncCommand
-                    //PlaylistUtils.UpdateSlidesGroup(ref slidesGroup, targetDirectory);
+                    currentPlaylist.Items.Add(mediaGroupItem);
+                    mediaGroupItem.GenerateSlides();
                 }
                 else
                 {
-                    Log.Error($"Unsupported file type: {path}");
+                    Log.Error($"Unsupported file type: {filePath}");
                     return;
                 }
 

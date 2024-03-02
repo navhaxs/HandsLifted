@@ -24,9 +24,9 @@
             HorizontalContentAlignment="Left"
             Cursor="Hand">
             <Button.Styles>
-                <Style Selector="Button:pointerover /template/ ContentPresenter">
-                    <Setter Property="Background" Value="{Binding $parent[controls:TextBoxToggleButton].HoverBrush}" />
-                </Style>
+                <!-- <Style Selector="Button:pointerover /template/ ContentPresenter"> -->
+                <!--     <Setter Property="Background" Value="{Binding $parent[controls:TextBoxToggleButton].HoverBrush}" /> -->
+                <!-- </Style> -->
                 <Style Selector="Button:pressed /template/ ContentPresenter">
                     <Setter Property="BorderBrush" Value="#2c628b" />
                     <Setter Property="Background" Value="#5F5C2ED6" />
@@ -34,18 +34,23 @@
                 <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
                     <Setter Property="RenderTransform" Value="none" />
                 </Style>
-                <Style Selector="Button avalonia|MaterialIcon">
+                <Style Selector="Button > DockPanel > Border">
                     <Setter Property="IsVisible" Value="False" />
                 </Style>
-                <Style Selector="Button:pointerover avalonia|MaterialIcon">
+                <Style Selector="Button:pointerover > DockPanel > Border">
                     <Setter Property="IsVisible" Value="True" />
                 </Style>
             </Button.Styles>
             <DockPanel>
-                <avalonia:MaterialIcon
-                    DockPanel.Dock="Right"
+                <Border
+                    CornerRadius="6"
+                    Background="#33ffffff"
                     Margin="14,0,0,0"
-                    Kind="Pencil" />
+                    DockPanel.Dock="Right">
+                    <avalonia:MaterialIcon
+                        Margin="14,0,14,0"
+                        Kind="Pencil" />
+                </Border>
                 <TextBlock
                     FontSize="20"
                     Foreground="White"
