@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Avalonia" />
+      <PackageReference Include="Avalonia.ReactiveUI" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
+      <ProjectReference Include="..\src\LibMpv.Client\LibMpv.Client.csproj" />
+      <ProjectReference Include="..\src\LibMpv.Context\LibMpv.Context.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\mpv\mpv-dev-x86_64\libmpv-2.dll">
+        <Link>libmpv-2.dll</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
