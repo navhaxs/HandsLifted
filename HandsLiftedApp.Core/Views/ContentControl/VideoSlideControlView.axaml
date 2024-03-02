@@ -9,7 +9,9 @@
              x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
 	<Border Background="#3a344a" CornerRadius="6" VerticalAlignment="Top" Margin="6">
 		<StackPanel Margin="6">
-			<TextBlock Text="{Binding SourceMediaFilePath, FallbackValue='(SourceMediaFilePath is null)'}" TextTrimming="CharacterEllipsis" />
+			<TextBlock Text="{Binding SlideLabel, FallbackValue='(SlideLabel is null)'}" TextTrimming="CharacterEllipsis"
+			           ToolTip.ShowDelay="0" ToolTip.Tip="{Binding SourceMediaFilePath, FallbackValue='(SourceMediaFilePath is null)'}"
+			           />
 			<DockPanel>
 				<TextBlock DockPanel.Dock="Right" Text="{Binding PrettyRemainingTime, FallbackValue='Remaining'}" />
 				<TextBlock>
