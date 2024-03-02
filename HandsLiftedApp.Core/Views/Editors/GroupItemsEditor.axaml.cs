@@ -110,7 +110,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                 if (this.DataContext is MediaGroupItem mediaGroupItem)
                 {
                     mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
-                        { SourceMediaFilePath = fileName.Path.AbsolutePath });
+                        { SourceMediaFilePath = fileName.Path.LocalPath });
                 }
             }
         }

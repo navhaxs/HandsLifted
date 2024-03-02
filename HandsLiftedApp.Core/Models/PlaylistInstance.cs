@@ -164,15 +164,15 @@ namespace HandsLiftedApp.Core.Models
             set => this.RaiseAndSetIfChanged(ref _lastSaved, value);
         }
 
-        private string _playlistFilePath = @"D:\VisionScreensCore-TestData\test.xml";
-
-        public string PlaylistFilePath
-        {
-            get => _playlistFilePath;
-            set => this.RaiseAndSetIfChanged(ref _playlistFilePath, value);
-        }
-
-        private string _playlistWorkingDirectory = @"D:\VisionScreensCore-TestData\_Data";
+        // private string _playlistFilePath = @"VisionScreensCore-TestData\test.xml";
+        //
+        // public string PlaylistFilePath
+        // {
+        //     get => _playlistFilePath;
+        //     set => this.RaiseAndSetIfChanged(ref _playlistFilePath, value);
+        // }
+        //
+        private string _playlistWorkingDirectory = @"VisionScreensUserData\";
 
         public string PlaylistWorkingDirectory
         {
