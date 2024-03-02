@@ -12,6 +12,7 @@
         Background="Black"
         DoubleTapped="ProjectorWindow_DoubleTapped"
         KeyDown="ProjectorWindow_KeyDown"
+        Closing="Window_OnClosing"
         Title="ProjectorWindow">
     <Viewbox>
         <avaloniaNdi:NDISendContainer NdiName="VisionScreens Main Output" NdiWidth="1920" NdiHeight="1080" Width="1920" Height="1080">

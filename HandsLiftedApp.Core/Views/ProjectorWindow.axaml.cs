@@ -1,7 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Extensions;
 
@@ -47,6 +45,12 @@ namespace HandsLiftedApp.Core.Views
             //     return;
 
             KeyboardSlideNavigation.OnKeyDown(e);
+        }
+
+        private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
+        {
+            this.IsVisible = false;
+            e.Cancel = true;
         }
     }
 }
