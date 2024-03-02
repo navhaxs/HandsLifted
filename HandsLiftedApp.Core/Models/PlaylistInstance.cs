@@ -70,11 +70,22 @@ namespace HandsLiftedApp.Core.Models
                             case PresentationStateEnum.Blank:
                                 return new BlankSlide();
                         }
+
                         return activeSlide;
                     })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
+            // TODO: what if the next item changes, without the active slide changing this will never get retriggered...!!
+            _nextSlide = this.WhenAnyValue(x => x.ActiveSlide,
+                    (Slide activeSlide) =>
+                    {
+                        SlideReference slideReference = GetNextSlide();
+                        return slideReference.Slide;
+                    })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.NextSlide);
+            
             MessageBus.Current.Listen<UpdateEditedItemMessage>().Subscribe(updateEditedItemMessage =>
             {
                 bool found = false;
@@ -128,22 +139,21 @@ namespace HandsLiftedApp.Core.Models
                             break;
                     }
                 });
-            
+
             this.WhenAnyValue(p => p.LogoGraphicFile)
                 .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
                 .Subscribe(_ =>
-            {
-                if (LogoGraphicFile == "")
                 {
-                    return;
-                }
+                    if (LogoGraphicFile == "")
+                    {
+                        return;
+                    }
 
-                if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
-                {
-                    this.RaisePropertyChanged(nameof(LogoBitmap));
-                }
-
-            });
+                    if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+                    {
+                        this.RaisePropertyChanged(nameof(LogoBitmap));
+                    }
+                });
         }
 
         private DateTime? _lastSaved;
@@ -198,6 +208,13 @@ namespace HandsLiftedApp.Core.Models
             get => _activeSlide.Value;
         }
 
+        private ObservableAsPropertyHelper<Slide> _nextSlide;
+
+        public Slide NextSlide
+        {
+            get => _nextSlide.Value;
+        }
+
         public class UpdateEditedItemMessage
         {
             public Item Item { get; set; }
@@ -235,7 +252,9 @@ namespace HandsLiftedApp.Core.Models
 
         public bool IsBlank
         {
-            get => PresentationState == PresentationStateEnum.Blank; set => this.RaiseAndSetIfChanged(ref _presentationState, value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides, nameof(PresentationState));
+            get => PresentationState == PresentationStateEnum.Blank;
+            set => this.RaiseAndSetIfChanged(ref _presentationState,
+                value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides, nameof(PresentationState));
         }
 
         public void NavigateNextSlide()
@@ -316,7 +335,8 @@ namespace HandsLiftedApp.Core.Models
             }
             // for selected item, attempt to navigate slide forwards (unless at last slide of this item)
             else if (SelectedItemAsIItemInstance != null &&
-                     SelectedItem.GetAsIItemInstance().Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex + 1) != null)
+                     SelectedItem.GetAsIItemInstance().Slides
+                         .ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex + 1) != null)
             {
                 var nextSlideIndex = SelectedItemAsIItemInstance.SelectedSlideIndex + 1;
                 return new SlideReference()
@@ -330,7 +350,8 @@ namespace HandsLiftedApp.Core.Models
             else if (SelectedItem is SlidesGroupItem &&
                      ((SlidesGroupItem)SelectedItem).IsLooping == true &&
                      SelectedItemAsIItemInstance != null &&
-                     (SelectedItem.GetAsIItemInstance().Slides.Count == SelectedItemAsIItemInstance.SelectedSlideIndex + 1))
+                     (SelectedItem.GetAsIItemInstance().Slides.Count ==
+                      SelectedItemAsIItemInstance.SelectedSlideIndex + 1))
             {
                 var nextSlideIndex = 0;
                 return new SlideReference()
@@ -397,7 +418,8 @@ namespace HandsLiftedApp.Core.Models
             // for selected item, attempt to navigate slide backwards within the item
             // (unless at first slide)
             else if (SelectedItemAsIItemInstance != null &&
-                     SelectedItem.GetAsIItemInstance().Slides.ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex - 1) != null)
+                     SelectedItem.GetAsIItemInstance().Slides
+                         .ElementAtOrDefault(SelectedItemAsIItemInstance.SelectedSlideIndex - 1) != null)
             {
                 var nextSlideIndex = SelectedItemAsIItemInstance.SelectedSlideIndex - 1;
                 return new SlideReference()
@@ -430,7 +452,8 @@ namespace HandsLiftedApp.Core.Models
 
                 return new SlideReference()
                 {
-                    Slide = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(nextSlideIndex),
+                    Slide = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides
+                        .ElementAtOrDefault(nextSlideIndex),
                     SlideIndex = nextSlideIndex,
                     ItemIndex = previousNavigatableItemIndex
                 };
@@ -472,6 +495,7 @@ namespace HandsLiftedApp.Core.Models
                 {
                     return null;
                 }
+
                 try
                 {
                     return BitmapLoader.LoadBitmap(LogoGraphicFile);

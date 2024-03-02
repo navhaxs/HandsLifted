@@ -371,8 +371,7 @@ public class MainViewModel : ViewModelBase
         shouldShow = shouldShow ?? (StageDisplayWindow == null || !StageDisplayWindow.IsVisible);
         if (shouldShow == true)
         {
-            StageDisplayWindow = new StageDisplayWindow();
-            StageDisplayWindow.DataContext = this;
+            StageDisplayWindow = new StageDisplayWindow() { DataContext = this };
             StageDisplayWindow.Show();
         }
         else

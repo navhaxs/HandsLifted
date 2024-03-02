@@ -9,42 +9,43 @@
 			 x:Class="HandsLiftedApp.Views.StageDisplayLayout.SongLayout">
 	<Grid RowDefinitions="6*, 6*, *" ColumnDefinitions="9*, *">
 
-		<!-- <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0"> -->
-		<!-- 	<StackPanel> -->
-		<!-- 		<StackPanel.Styles> -->
-		<!-- 			<Style Selector="TextBlock"> -->
-		<!-- 				<Setter Property="FontSize" Value="120" /> -->
-		<!-- 				<Setter Property="Foreground" Value="White" /> -->
-		<!-- 				<Setter Property="TextWrapping" Value="Wrap" /> -->
-		<!-- 			</Style> -->
-		<!-- 		</StackPanel.Styles> -->
-		<!-- 		~1~<TextBlock Text="{Binding ActiveSlide.SlideLabel, FallbackValue=''}" />@1@ -->
-		<!-- 		<TextBlock Text="{Binding ActiveSlide.SlideText, FallbackValue=''}" /> -->
-		<!-- 	</StackPanel> -->
-		<!-- </Viewbox> -->
-		<!-- -->
-		<!-- <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" -->
-		<!-- 		 Margin="0 60 0 0"> -->
-		<!-- 	<StackPanel> -->
-		<!-- 		<StackPanel.Styles> -->
-		<!-- 			<Style Selector="TextBlock"> -->
-		<!-- 				<Setter Property="FontSize" Value="60" /> -->
-		<!-- 				<Setter Property="Foreground" Value="#af7b05" /> -->
-		<!-- 				<Setter Property="TextWrapping" Value="Wrap" /> -->
-		<!-- 			</Style> -->
-		<!-- 		</StackPanel.Styles> -->
-		<!-- 		~1~<TextBlock Text="{Binding NextSlideWithinItem.SlideLabel, FallbackValue=''}" />@1@ -->
-		<!-- 		<TextBlock Text="{Binding NextSlideWithinItem.SlideText, FallbackValue=''}" /> -->
-		<!-- 	</StackPanel> -->
-		<!-- </Viewbox> -->
-		<!-- -->
-		<!-- <Viewbox Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"  StretchDirection="DownOnly"> -->
-		<!-- 	<TextBlock Foreground="White" -->
-		<!-- 			   VerticalAlignment="Bottom" -->
-		<!-- 			   Padding="15" -->
-		<!-- 			   FontSize="100" -->
-		<!-- 			   Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}', FallbackValue='time'}" -->
-		<!-- 		/> -->
-		<!-- </Viewbox> -->
+		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0">
+			<StackPanel>
+				<StackPanel.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="FontSize" Value="120" />
+						<Setter Property="Foreground" Value="White" />
+						<Setter Property="TextWrapping" Value="Wrap" />
+					</Style>
+				</StackPanel.Styles>
+				<!--<TextBlock Text="{Binding ActiveSlide.SlideLabel, FallbackValue=''}" />-->
+				<TextBlock Text="{Binding Playlist.ActiveSlide.SlideText, FallbackValue=''}" />
+			</StackPanel>
+		</Viewbox>
+		
+		<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"
+				 Margin="0 60 0 0">
+			<StackPanel>
+				<StackPanel.Styles>
+					<Style Selector="TextBlock">
+						<Setter Property="FontSize" Value="60" />
+						<Setter Property="Foreground" Value="#af7b05" />
+						<Setter Property="TextWrapping" Value="Wrap" />
+					</Style>
+				</StackPanel.Styles>
+				<!--<TextBlock Text="{Binding NextSlideWithinItem.SlideLabel, FallbackValue=''}" />-->
+				<!-- NextSlide Within Item -->
+				<TextBlock Text="{Binding Playlist.NextSlide.SlideText, FallbackValue=''}" />
+			</StackPanel>
+		</Viewbox>
+		
+		<Viewbox Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"  StretchDirection="DownOnly">
+			<TextBlock Foreground="White"
+					   VerticalAlignment="Bottom"
+					   Padding="15"
+					   FontSize="100"
+					   Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}', FallbackValue='time'}"
+				/>
+		</Viewbox>
 	</Grid>
 </UserControl>

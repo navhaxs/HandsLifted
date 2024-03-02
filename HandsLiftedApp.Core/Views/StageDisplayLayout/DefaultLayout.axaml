@@ -31,7 +31,7 @@
 					</Grid.Background>
 					<Border>
 						<Viewbox>
-							<render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" />
+							<render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" Height="1080" Width="1920" />
 						</Viewbox>
 					</Border>
 				</Grid>
@@ -64,7 +64,7 @@
 							</VisualBrush>
 						</Grid.Background>
 						<Viewbox>
-							<!-- <render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" /> -->
+							<render:SlideRender DataContext="{Binding  Playlist.NextSlide}" Height="1080" Width="1920" />
 						</Viewbox>
 					</Grid>
 				</StackPanel>
