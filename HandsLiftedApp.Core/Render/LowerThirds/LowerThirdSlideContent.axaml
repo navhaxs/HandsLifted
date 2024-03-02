@@ -18,13 +18,13 @@
 							   HorizontalAlignment="Center"
 							   VerticalAlignment="Center"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
-							   Foreground="White" FontSize="60" TextAlignment="Center"/>
+							   Foreground="#1f1717" FontSize="60" TextAlignment="Center"/>
 					<TextBlock Text="{Binding Copyright, FallbackValue=''}"
 							   FontFamily="Arial"
 							   HorizontalAlignment="Center"
 							   VerticalAlignment="Center"
 							   RenderOptions.BitmapInterpolationMode="HighQuality"
-							   Foreground="White" FontSize="34" TextAlignment="Center"/>
+							   Foreground="#1f1717" FontSize="34" TextAlignment="Center"/>
 				</StackPanel>
 			</DataTemplate>
 			<DataTemplate x:Key="SongSlideInstance" x:DataType="slides:SongSlideInstance">
@@ -35,7 +35,7 @@
 										   VerticalAlignment="Center"
 										   Margin="0 30 0 40"
 										   RenderOptions.BitmapInterpolationMode="HighQuality"
-										   Foreground="White" FontSize="49" TextAlignment="Center"/>
+										   Foreground="#1f1717" FontSize="49" TextAlignment="Center"/>
 			</DataTemplate>
 		</common:MyTemplateSelector>
 	</UserControl.DataTemplates>

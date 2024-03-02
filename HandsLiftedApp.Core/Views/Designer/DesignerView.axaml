@@ -8,6 +8,7 @@
     xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
     xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
     xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+    xmlns:render="clr-namespace:HandsLiftedApp.Views.Render"
     x:DataType="viewModels:MainViewModel"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -64,7 +65,12 @@
             <TabItem.Header>
                 <TextBlock VerticalAlignment="Center">Captions</TextBlock>
             </TabItem.Header>
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">Livestream video feed lyrics coming soon</TextBlock>
+            <DockPanel>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">Livestream video feed lyrics coming soon</TextBlock>
+                <Viewbox>
+                    <render:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
+                </Viewbox>
+            </DockPanel>
             <!-- <Viewbox> -->
             <!--     ~1~ <render:AltSlideRenderer @1@ -->
             <!--     ~1~     Width="1920" @1@ -->

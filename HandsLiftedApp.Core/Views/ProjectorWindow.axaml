@@ -16,6 +16,14 @@
         Closing="Window_OnClosing"
         Title="ProjectorWindow">
     <Grid>
+        <avaloniaNdi:NDISendContainer NdiName="VisionScreens Lower Thirds" NdiWidth="1920" NdiHeight="1080"
+                                      Width="1920"
+                                      Height="1080">
+            <render1:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
+        </avaloniaNdi:NDISendContainer>
+        
+        <Grid Background="Black" />
+        
         <Viewbox>
             <avaloniaNdi:NDISendContainer NdiName="VisionScreens Main Output" NdiWidth="1920" NdiHeight="1080"
                                           Width="1920"
@@ -23,13 +31,5 @@
                 <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
             </avaloniaNdi:NDISendContainer>
         </Viewbox>
-        
-        <Grid Background="Black" />
-        
-        <avaloniaNdi:NDISendContainer NdiName="VisionScreens Lower Thirds" NdiWidth="1920" NdiHeight="1080"
-                                      Width="1920"
-                                      Height="1080">
-            <render1:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
-        </avaloniaNdi:NDISendContainer>
     </Grid>
 </Window>
