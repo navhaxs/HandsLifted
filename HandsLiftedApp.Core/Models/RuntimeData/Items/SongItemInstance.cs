@@ -11,6 +11,7 @@ using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -135,109 +136,117 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             lock (stantaSlidesLock)
             {
-                int i = 0;
-
-                // add title slide
-                if (StartOnTitleSlide && TitleSlide != null)
+                try
                 {
-                    //TitleSlide.Index = i;
+                    int i = 0;
 
-                    if (this.StanzaSlides.ElementAtOrDefault(0) is SongTitleSlide)
+                    // add title slide
+                    if (StartOnTitleSlide && TitleSlide != null)
                     {
-                        ((SongTitleSlide)this.StanzaSlides.ElementAt(0)).Title = Title;
-                        ((SongTitleSlide)this.StanzaSlides.ElementAt(0)).Copyright = Copyright;
-                    }
-                    else
-                    {
-                        this.StanzaSlides.Insert(i, TitleSlide);
-                    }
+                        //TitleSlide.Index = i;
 
-                    i++;
-                }
-
-                Dictionary<Guid, int> stanzaSeenCount = new Dictionary<Guid, int>();
-
-                foreach (var a in Arrangement)
-                {
-                    // todo match Stanzas by first match, so content is up to date. dont trust the cached copy in Arrangement
-                    SongStanza _datum = Stanzas.First(stanza => stanza.Id == a);
-                    if (_datum == null)
-                    {
-                        continue;
-                    }
-
-                    stanzaSeenCount[_datum.Id] =
-                        stanzaSeenCount.ContainsKey(_datum.Id) ? stanzaSeenCount[_datum.Id] + 1 : 0;
-
-                    // break slides by newlines
-                    string[] lines = _datum.Lyrics.Replace("\r\n", "\n").Split(new string[] { "\n\n" },
-                        StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (var x in lines.Select((line, index) => new { line, index }))
-                    {
-                        var Text = x.line;
-                        var Label = (x.index == 0) ? $"{_datum.Name}" : null;
-
-                        var slideId = $"{_datum.Id}:{stanzaSeenCount[_datum.Id]}:{x.index}";
-
-                        var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
-                            .FirstOrDefault(s => (s.data) is SongSlide && ((SongSlide)s.data).Id == slideId);
-
-                        if (prevIndex != null)
+                        if (this.StanzaSlides.ElementAtOrDefault(0) is SongTitleSlide)
                         {
-                            // update the existing slide object of the same id
-                            if (((SongSlide)prevIndex.data).Text != Text)
-                            {
-                                ((SongSlide)prevIndex.data).Text = Text;
-                            }
-
-                            if (((SongSlide)prevIndex.data).Label != Label)
-                            {
-                                ((SongSlide)prevIndex.data).Label = Label;
-                            }
-
-                            //prevIndex.data.Index = i;
-
-                            if (prevIndex.index != i)
-                            {
-                                //re-order to index i
-                                this.StanzaSlides.Move(prevIndex.index, i);
-                            }
+                            ((SongTitleSlide)this.StanzaSlides.ElementAt(0)).Title = Title;
+                            ((SongTitleSlide)this.StanzaSlides.ElementAt(0)).Copyright = Copyright;
                         }
                         else
                         {
-                            var slide = new SongSlideInstance(this, _datum, slideId)
-                                { Text = Text, Label = Label, }; //, Index = i };
-                            this.StanzaSlides.Insert(i, slide);
+                            this.StanzaSlides.Insert(i, TitleSlide);
                         }
 
                         i++;
                     }
-                }
 
-                if (EndOnBlankSlide == true)
-                {
-                    var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
-                        .FirstOrDefault(s => (s.data) is (SongSlide) && ((SongSlide)s.data).Id == "BLANK");
-                    if (prevIndex != null && prevIndex.index != i)
+                    Dictionary<Guid, int> stanzaSeenCount = new Dictionary<Guid, int>();
+
+                    foreach (var a in Arrangement)
                     {
-                        //prevIndex.data.Index = i;
-                        this.StanzaSlides.Move(prevIndex.index, i);
+                        // todo match Stanzas by first match, so content is up to date. dont trust the cached copy in Arrangement
+                        SongStanza _datum = Stanzas.First(stanza => stanza.Id == a);
+                        if (_datum == null)
+                        {
+                            continue;
+                        }
+
+                        stanzaSeenCount[_datum.Id] =
+                            stanzaSeenCount.ContainsKey(_datum.Id) ? stanzaSeenCount[_datum.Id] + 1 : 0;
+
+                        // break slides by newlines
+                        string[] lines = _datum.Lyrics.Replace("\r\n", "\n").Split(new string[] { "\n\n" },
+                            StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var x in lines.Select((line, index) => new { line, index }))
+                        {
+                            var Text = x.line;
+                            var Label = (x.index == 0) ? $"{_datum.Name}" : null;
+
+                            var slideId = $"{_datum.Id}:{stanzaSeenCount[_datum.Id]}:{x.index}";
+
+                            var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
+                                .FirstOrDefault(s => (s.data) is SongSlide && ((SongSlide)s.data).Id == slideId);
+
+                            if (prevIndex != null)
+                            {
+                                // update the existing slide object of the same id
+                                if (((SongSlide)prevIndex.data).Text != Text)
+                                {
+                                    ((SongSlide)prevIndex.data).Text = Text;
+                                }
+
+                                if (((SongSlide)prevIndex.data).Label != Label)
+                                {
+                                    ((SongSlide)prevIndex.data).Label = Label;
+                                }
+
+                                //prevIndex.data.Index = i;
+
+                                if (prevIndex.index != i)
+                                {
+                                    //re-order to index i
+                                    this.StanzaSlides.Move(prevIndex.index, i);
+                                }
+                            }
+                            else
+                            {
+                                var slide = new SongSlideInstance(this, _datum, slideId)
+                                    { Text = Text, Label = Label, }; //, Index = i };
+                                this.StanzaSlides.Insert(i, slide);
+                            }
+
+                            i++;
+                        }
                     }
-                    else
+
+                    if (EndOnBlankSlide == true)
                     {
-                        this.StanzaSlides.Insert(i, new SongSlideInstance(this, null, "BLANK") { }); // { Index = i });
+                        var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
+                            .FirstOrDefault(s => (s.data) is (SongSlide) && ((SongSlide)s.data).Id == "BLANK");
+                        if (prevIndex != null && prevIndex.index != i)
+                        {
+                            //prevIndex.data.Index = i;
+                            this.StanzaSlides.Move(prevIndex.index, i);
+                        }
+                        else
+                        {
+                            this.StanzaSlides.Insert(i,
+                                new SongSlideInstance(this, null, "BLANK") { }); // { Index = i });
+                        }
+
+                        i++;
                     }
 
-                    i++;
+                    // need to delete old items
+                    while (i < this.StanzaSlides.Count)
+                    {
+                        //this.StanzaSlides.RemoveAt(i); -- BUG: wont remove unless index remove from last backwards. think about it!
+                        this.StanzaSlides.RemoveAt(this.StanzaSlides.Count - 1); // remove last
+                        i++;
+                    }
                 }
-
-                // need to delete old items
-                while (i < this.StanzaSlides.Count)
+                catch (Exception ex)
                 {
-                    //this.StanzaSlides.RemoveAt(i); -- BUG: wont remove unless index remove from last backwards. think about it!
-                    this.StanzaSlides.RemoveAt(this.StanzaSlides.Count - 1); // remove last
-                    i++;
+                    Log.Error("SongItemInstance.GenerateSlides", ex);
                 }
             }
 

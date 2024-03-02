@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Core.Views.Editors;
@@ -15,14 +15,17 @@ public partial class SongLyricBlockEditor : UserControl
     public void DeleteThisPartClick(object? sender, RoutedEventArgs args)
     {
         SongStanza stanza = (SongStanza)((Control)sender).DataContext;
-        ((SongItemInstance)this.DataContext).Stanzas.Remove(stanza);
+        if (this.DataContext is SongEditorViewModel viewModel)
+        {
+            viewModel.Song.Stanzas.Remove(stanza);
+        }
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (this.DataContext is SongItemInstance song)
+        if (this.DataContext is SongEditorViewModel viewModel)
         {
-            song.Stanzas.Add(new SongStanza(Guid.NewGuid(), "", ""));
+            viewModel.Song.Stanzas.Add(new SongStanza(Guid.NewGuid(), "", ""));
         }
     }
 }

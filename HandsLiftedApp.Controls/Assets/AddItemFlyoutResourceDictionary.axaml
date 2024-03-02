@@ -17,27 +17,11 @@
                 <material:MaterialIcon Kind="Presentation" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="_Song">
+        <MenuItem Click="OnMenuItemClick" CommandParameter="NewSong" Header="_Song">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Music" />
             </MenuItem.Icon>
-            <MenuItem Click="OnMenuItemClick" CommandParameter="ExistingSong" Header="From _File" />
-            <MenuItem Click="OnMenuItemClick" CommandParameter="NewSong" Header="From _New">
-                <MenuItem.Icon>
-                    <material:MaterialIcon Kind="Music" />
-                </MenuItem.Icon>
-            </MenuItem>
         </MenuItem>
-        <!--       <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Graphics"> -->
-        <!--           <MenuItem.Icon> -->
-        <!--               <material:MaterialIcon Kind="Image" /> -->
-        <!--           </MenuItem.Icon> -->
-        <!--       </MenuItem> -->
-        <!-- <MenuItem Click="OnMenuItemClick" CommandParameter="MediaGroup" Header="_Video"> -->
-        <!--           <MenuItem.Icon> -->
-        <!--               <material:MaterialIcon Kind="Video" /> -->
-        <!--           </MenuItem.Icon> -->
-        <!--       </MenuItem> -->
         <MenuItem
             Click="OnMenuItemClick" CommandParameter="MediaGroup"
             Header="_Media">
@@ -66,8 +50,6 @@
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="ContentCopy" />
             </MenuItem.Icon>
-
-
             <MenuItem
                 Click="OnMenuItemClick" CommandParameter="BlankGroup"
                 Header="Blank Group" />

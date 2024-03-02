@@ -40,6 +40,7 @@ sealed class Program
             }
 
             // TODO UI here
+            Console.ReadKey();
         }
         finally
         {

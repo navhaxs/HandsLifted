@@ -12,6 +12,7 @@ namespace HandsLiftedApp.Core
 {
     public static class SongImporter
     {
+        // TODO make this config item
         public static readonly string[] PART_NAME_TOKENS = {  "Intro",
             "Chorus",
             "Verse",
@@ -25,7 +26,8 @@ namespace HandsLiftedApp.Core
             "Pre-chorus",
             "Refrain",
             "Outro",
-            "Hook"
+            "Hook",
+            "Vamp"
         };
 
         public static bool isPartName(string input)
