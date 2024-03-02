@@ -111,8 +111,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
         private void UpdateContent(bool withTransition)
         {
-            Debug.Print("UpdateContent");
-
             if (VisualRoot is null || _presenter2 is null || Presenter is null)
             {
                 return;
@@ -148,7 +146,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
 
         private void HideOldPresenter()
         {
-            Debug.Print("HideOldPresenter");
             var oldPresenter = _isFirstFull ? _presenter2 : Presenter;
             if (oldPresenter is not null)
             {

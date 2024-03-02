@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+			 xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+			 xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="slides1:Slide"
+             x:Class="HandsLiftedApp.Views.Render.SongSlide.LowerThirdSlideContent">
+	<UserControl.DataTemplates>
+		<common:MyTemplateSelector>
+			<DataTemplate x:Key="SongTitleSlideInstance" x:DataType="slides:SongTitleSlideInstance">
+				<StackPanel VerticalAlignment="Center" Margin="0 30">
+					<TextBlock Text="{Binding Title, FallbackValue=''}"
+							   FontFamily="Arial"
+							   FontWeight="Bold"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"
+							   Foreground="White" FontSize="60" TextAlignment="Center"/>
+					<TextBlock Text="{Binding Copyright, FallbackValue=''}"
+							   FontFamily="Arial"
+							   HorizontalAlignment="Center"
+							   VerticalAlignment="Center"
+							   RenderOptions.BitmapInterpolationMode="HighQuality"
+							   Foreground="White" FontSize="34" TextAlignment="Center"/>
+				</StackPanel>
+			</DataTemplate>
+			<DataTemplate x:Key="SongSlideInstance" x:DataType="slides:SongSlideInstance">
+				<TextBlock Text="{Binding Text, FallbackValue=''}"
+										   FontFamily="Arial"
+										   FontWeight="Bold"
+										   HorizontalAlignment="Center"
+										   VerticalAlignment="Center"
+										   Margin="0 30 0 40"
+										   RenderOptions.BitmapInterpolationMode="HighQuality"
+										   Foreground="White" FontSize="49" TextAlignment="Center"/>
+			</DataTemplate>
+		</common:MyTemplateSelector>
+	</UserControl.DataTemplates>
+	<ContentPresenter Content="{Binding}" />
+</UserControl>

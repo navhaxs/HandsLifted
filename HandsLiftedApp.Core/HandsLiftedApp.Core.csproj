@@ -168,6 +168,18 @@
         <DependentUpon>SlideRendererWorkerWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Render\AltSlideRenderer.axaml.cs">
+        <DependentUpon>AltSlideRenderer.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Render\LowerThirds\LowerThirdSlideContent.axaml.cs">
+        <DependentUpon>LowerThirdSlideContent.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Render\LowerThirds\LowerThirdSlideTemplate.axaml.cs">
+        <DependentUpon>LowerThirdSlideTemplate.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 
