@@ -98,8 +98,9 @@ namespace HandsLiftedApp.Controls
 
         private void EntryTextBox_OnLostFocus(object? sender, RoutedEventArgs e)
         {
+            // TODO
             Carousel.SelectedIndex = 0;
             e.Handled = true;
         }
     }
-}
+}   
