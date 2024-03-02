@@ -13,8 +13,6 @@ namespace HandsLiftedApp.Controls
         public TextBoxToggleButton()
         {
             InitializeComponent();
-
-            this.KeyDown += (s, e) => { e.Handled = true; };
         }
 
         public static readonly DirectProperty<TextBoxToggleButton, Color> HoverBrushProperty =
