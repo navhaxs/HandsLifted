@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:HandsLiftedApp.Core.Models"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="models:PlaylistInstance"
@@ -35,6 +36,25 @@
             </controls:CustomScrollViewer.Styles>
 
             <DockPanel>
+
+                <Border
+                    Padding="15 10"
+                    BorderThickness="0"
+                    Margin="14,12,14,0"
+                    CornerRadius="6"
+                    Background="#4E4315"
+                    DockPanel.Dock="Top">
+                    <DockPanel>
+                        <avalonia:MaterialIcon DockPanel.Dock="Left"
+                                               VerticalAlignment="Center"
+                                               Height="32" Width="32"
+                                               Foreground="#B2A02F"
+                                               Kind="InformationCircle" Margin="0 0 8 0" Padding="0" />
+                        <TextBox Text="{Binding Notes, FallbackValue='hello '}"
+                                 Background="Transparent"
+                                 BorderThickness="0" />
+                    </DockPanel>
+                </Border>
 
                 <controls:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" />
                 <!--  "fill" the height with the last item  -->

@@ -22,6 +22,7 @@ namespace HandsLiftedApp.Core
             Playlist playlistSerialized = new Playlist
             {
                 Title = playlist.Title,
+                Notes = playlist.Notes,
                 Meta = playlist.Meta,
                 LogoGraphicFile = playlist.LogoGraphicFile,
                 Designs = playlist.Designs,
@@ -103,6 +104,7 @@ namespace HandsLiftedApp.Core
                     PlaylistInstance playlist = new PlaylistInstance
                     {
                         Title = deserialized.Title,
+                        Notes = deserialized.Notes,
                         Meta = deserialized.Meta,
                         LogoGraphicFile = deserialized.LogoGraphicFile,
                         Designs = deserialized.Designs,
