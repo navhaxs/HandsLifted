@@ -78,7 +78,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpv.Context", "Libraries
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpv.Context.MVVM", "Libraries\LibMpv\samples\LibMpv.Context.MVVM\LibMpv.Context.MVVM.csproj", "{338D0EBE-92AE-4056-B780-CA047CF8E9C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Controls.LibMpv", "Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj", "{31880C0E-F852-4BD2-8FA9-B1D8B9725D5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Controls.LibMpv.Sample", "Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.Sample.csproj", "{31880C0E-F852-4BD2-8FA9-B1D8B9725D5D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LibMpv", "LibMpv", "{21CE3976-E587-426A-9F52-8720F4939B09}"
 EndProject
@@ -89,6 +89,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Controls", "HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj", "{4A07DB05-1879-4202-A04C-B36747EED57A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandsLiftedApp.Data", "HandsLiftedApp.Data\HandsLiftedApp.Data.csproj", "{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.Controls.LibMpv", "Libraries\LibMpv\Avalonia.Controls.LibMpv\Avalonia.Controls.LibMpv.csproj", "{23E20C47-6239-4EF5-800D-1006DB0FB81D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -436,6 +438,18 @@ Global
 		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|x64.Build.0 = Release|Any CPU
 		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|x86.ActiveCfg = Release|Any CPU
 		{8DB16CB3-E9B1-41D8-A473-84F54AB081C1}.Release|x86.Build.0 = Release|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Debug|x64.Build.0 = Debug|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Debug|x86.Build.0 = Debug|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Release|x64.ActiveCfg = Release|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Release|x64.Build.0 = Release|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Release|x86.ActiveCfg = Release|Any CPU
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -461,6 +475,7 @@ Global
 		{338D0EBE-92AE-4056-B780-CA047CF8E9C7} = {21CE3976-E587-426A-9F52-8720F4939B09}
 		{31880C0E-F852-4BD2-8FA9-B1D8B9725D5D} = {21CE3976-E587-426A-9F52-8720F4939B09}
 		{21CE3976-E587-426A-9F52-8720F4939B09} = {DF9D61D4-EE1B-4212-914D-C74223DDC1EF}
+		{23E20C47-6239-4EF5-800D-1006DB0FB81D} = {21CE3976-E587-426A-9F52-8720F4939B09}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F842927-3492-494F-A1CE-4A9ECF57C018}

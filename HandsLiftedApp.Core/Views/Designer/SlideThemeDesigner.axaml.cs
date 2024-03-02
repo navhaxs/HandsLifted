@@ -22,8 +22,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             InitializeComponent();
 
             var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            var fontFamilies = FontManager.Current.SystemFonts.ToList();
-            //fontFamilies.Sort();
+            var fontFamilies = FontManager.Current.SystemFonts.ToList().OrderBy(x => x.Name);
             fontComboBox.ItemsSource = fontFamilies;
             fontComboBox.SelectedIndex = 0;
 

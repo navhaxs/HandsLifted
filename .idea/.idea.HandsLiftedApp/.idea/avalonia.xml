@@ -15,7 +15,7 @@
         <entry key="HandsLiftedApp.Controls/ScrollViewer.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Controls/Styles/AppStyles.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Controls/TextBoxToggleButton.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
-        <entry key="HandsLiftedApp.Core/App.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
+        <entry key="HandsLiftedApp.Core/App.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Controls/SongArrangementControl.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Models/RuntimeData/Items/LogoItemRender.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Models/RuntimeData/Items/LogoSlideView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

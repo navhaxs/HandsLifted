@@ -93,7 +93,7 @@
 		<ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Common.csproj" />
 		<ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
 		<ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
-		<ProjectReference Include="..\Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj" />
+		<ProjectReference Include="..\Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.Sample.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="BuildInfo\BuildDate.txt" />

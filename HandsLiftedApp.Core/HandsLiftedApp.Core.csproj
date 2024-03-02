@@ -43,7 +43,8 @@
       <ProjectReference Include="..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
       <ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
       <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
-      <ProjectReference Include="..\Libraries\LibMpv\samples\Avalonia.LibMpv.Sample\Avalonia.Controls.LibMpv.csproj" />
+      <ProjectReference Include="..\Libraries\LibMpv\Avalonia.Controls.LibMpv\Avalonia.Controls.LibMpv.csproj" />
+      <ProjectReference Include="..\Libraries\LibMpv\samples\LibMpv.Context.MVVM\LibMpv.Context.MVVM.csproj" />
     </ItemGroup>
 
 
@@ -172,5 +173,12 @@
       <AdditionalFiles Include="Views\Library\LibraryView.axaml" />
       <AdditionalFiles Include="Views\StageDisplayLayout\DefaultLayout.axaml" />
       <AdditionalFiles Include="Views\StageDisplayLayout\SongLayout.axaml" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Reference Include="Avalonia.Themes.Simple">
+        <HintPath>..\global-packages\avalonia.themes.simple\11.0.9\lib\net6.0\Avalonia.Themes.Simple.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>
