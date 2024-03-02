@@ -110,8 +110,36 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             });
         //
         SubscribeToWindowState();
-    }
+        
+        // HACK for Windows 10 drop shadows 
+        this.Loaded += (e, s) =>
+        {
+            updateWin32Border(this.WindowState);
+        };
 
+        this.GetObservable(Window.WindowStateProperty)
+            .Subscribe(v =>
+            {
+                updateWin32Border(v);
+            });
+    }
+    private void updateWin32Border(WindowState v)
+    {
+        if (v != WindowState.Maximized && OperatingSystem.IsWindows())
+        {
+
+            var margins = new Win32.MARGINS
+            {
+                cyBottomHeight = 1,
+                cxRightWidth = 1,
+                cxLeftWidth = 1,
+                cyTopHeight = 1
+            };
+
+            Win32.DwmExtendFrameIntoClientArea(this.TryGetPlatformHandle().Handle, ref margins);
+        }
+    }
+    
     private async void SubscribeToWindowState()
     {
         Window hostWindow = (Window)this.VisualRoot;
