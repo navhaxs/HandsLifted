@@ -44,7 +44,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             switch (mwvm.Action)
             {
                 case ActionType.AboutWindow:
-                    wnd = new AboutWindow() { DataContext = mwvm };
+                    wnd = new AboutWindow();
                     Shade.IsVisible = true;
                     wnd.Closed += (object? sender, EventArgs e) =>
                     {

@@ -1,9 +1,9 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using System;
 
-namespace HandsLiftedApp.Views.App
+namespace HandsLiftedApp.Core.Views
 {
     public partial class AboutWindow : Window
     {
@@ -24,8 +24,9 @@ namespace HandsLiftedApp.Views.App
         {
             AvaloniaXamlLoader.Load(this);
         }
-        // public String BuildDate { get { return BuildInfo.Version.getBuildDate(); } }
-        // public String GitHash { get { return BuildInfo.Version.getGitHash(); } }
+        
+        public String BuildDateTime { get { return BuildInfo.Version.GetBuildDateTime(); } }
+        public String GitHash { get { return BuildInfo.Version.GetGitHash(); } }
 
     }
 }

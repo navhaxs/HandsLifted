@@ -62,12 +62,12 @@ namespace HandsLiftedApp.Core
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.Fatal("CurrentDomain_UnhandledExceptionEventArgs. Please report this error.", e);
+            Log.Fatal("CurrentDomain_UnhandledExceptionEventArgs. Please report this error. {}", e.ExceptionObject);
         }
 
         private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
-            Log.Fatal("TaskScheduler_UnobservedTaskException. Please report this error.", e);
+            Log.Fatal( e.Exception, "TaskScheduler_UnobservedTaskException. Please report this error.");
         }
     }
 }

@@ -4,199 +4,214 @@
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <BuildDateTime>$([System.DateTime]::Now)</BuildDateTime>
     </PropertyGroup>
     <ItemGroup>
-      <None Remove="Assets\avalonia-logo.ico" />
+        <None Remove="Assets\avalonia-logo.ico"/>
     </ItemGroup>
     <ItemGroup>
-      <AvaloniaResource Include="Assets\app.ico" />
-      <AvaloniaResource Include="Assets\avalonia-logo.ico" />
-      <None Remove="Assets\DefaultTheme\VisionScreens_1440_placeholder.png" />
-      <AvaloniaResource Include="Assets\DefaultTheme\VisionScreens_1440_placeholder.png" />
-      <None Remove="Assets\app.png" />
-      <AvaloniaResource Include="Assets\app.png" />
-      <None Remove="Assets\DefaultTheme\default-bg.png" />
-      <AvaloniaResource Include="Assets\DefaultTheme\default-bg.png" />
+        <AvaloniaResource Include="Assets\app.ico"/>
+        <AvaloniaResource Include="Assets\avalonia-logo.ico"/>
+        <None Remove="Assets\DefaultTheme\VisionScreens_1440_placeholder.png"/>
+        <AvaloniaResource Include="Assets\DefaultTheme\VisionScreens_1440_placeholder.png"/>
+        <None Remove="Assets\app.png"/>
+        <AvaloniaResource Include="Assets\app.png"/>
+        <None Remove="Assets\DefaultTheme\default-bg.png"/>
+        <AvaloniaResource Include="Assets\DefaultTheme\default-bg.png"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" />
-        <PackageReference Include="Avalonia.Controls.ColorPicker" />
-        <PackageReference Include="Avalonia.ReactiveUI" />
-        <PackageReference Include="Avalonia.Themes.Fluent" />
-        <PackageReference Include="Avalonia.Fonts.Inter" />
+        <PackageReference Include="Avalonia"/>
+        <PackageReference Include="Avalonia.Controls.ColorPicker"/>
+        <PackageReference Include="Avalonia.ReactiveUI"/>
+        <PackageReference Include="Avalonia.Themes.Fluent"/>
+        <PackageReference Include="Avalonia.Fonts.Inter"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
-        <PackageReference Include="ByteSize" />
-        <PackageReference Include="Config.Net" />
-        <PackageReference Include="DebounceThrottle" />
-        <PackageReference Include="Material.Icons.Avalonia" />
-        <PackageReference Include="PDFiumCore" />
-        <PackageReference Include="Serilog.Expressions" />
-        <PackageReference Include="Serilog.Sinks.Console" />
-        <PackageReference Include="Serilog.Sinks.Debug" />
-        <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics"/>
+        <PackageReference Include="ByteSize"/>
+        <PackageReference Include="Config.Net"/>
+        <PackageReference Include="DebounceThrottle"/>
+        <PackageReference Include="Material.Icons.Avalonia"/>
+        <PackageReference Include="PDFiumCore"/>
+        <PackageReference Include="Serilog.Expressions"/>
+        <PackageReference Include="Serilog.Sinks.Console"/>
+        <PackageReference Include="Serilog.Sinks.Debug"/>
+        <PackageReference Include="Serilog.Sinks.File"/>
     </ItemGroup>
 
 
     <ItemGroup>
-      <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj" />
-      <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj" />
-      <ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
-      <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj" />
-      <ProjectReference Include="..\Libraries\LibMpv\Avalonia.Controls.LibMpv\Avalonia.Controls.LibMpv.csproj" />
-      <ProjectReference Include="..\Libraries\LibMpv\samples\LibMpv.Context.MVVM\LibMpv.Context.MVVM.csproj" />
+        <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj"/>
+        <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj"/>
+        <ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj"/>
+        <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj"/>
+        <ProjectReference Include="..\Libraries\LibMpv\Avalonia.Controls.LibMpv\Avalonia.Controls.LibMpv.csproj"/>
+        <ProjectReference Include="..\Libraries\LibMpv\samples\LibMpv.Context.MVVM\LibMpv.Context.MVVM.csproj"/>
     </ItemGroup>
 
 
     <ItemGroup>
-      <Compile Update="Controls\SongArrangementControl.axaml.cs">
-        <DependentUpon>%(Filename)</DependentUpon>
-      </Compile>
-      <Compile Update="Views\Editors\SongEditorWindow.axaml.cs">
-        <DependentUpon>%(Filename)</DependentUpon>
-      </Compile>
-      <Compile Update="Views\ItemInfo.axaml.cs">
-        <DependentUpon>%(Filename)</DependentUpon>
-      </Compile>
-      <Compile Update="Views\ItemSlidesView.axaml.cs">
-        <DependentUpon>%(Filename)</DependentUpon>
-      </Compile>
-      <Compile Update="Views\SlideThumbnail.axaml.cs">
-        <DependentUpon>%(Filename)</DependentUpon>
-      </Compile>
-      <Compile Update="Views\Editors\GroupItemsEditor.axaml.cs">
-        <DependentUpon>GroupItemsEditorWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Render\SongThemes\DesignerSlideTemplate.axaml.cs">
-        <DependentUpon>DesignerSlideTemplate.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Render\SongThemes\DesignerSlideTitle.axaml.cs">
-        <DependentUpon>DesignerSlideTitle.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\MessageWindow.axaml.cs">
-        <DependentUpon>MessageWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\PlaylistSlidesView.axaml.cs">
-        <DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Designer\DesignerView.axaml.cs">
-        <DependentUpon>DesignerView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Designer\SlideThemeDesigner.axaml.cs">
-        <DependentUpon>SlideThemeDesigner.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Designer\SlideDesignerWindow.axaml.cs">
-        <DependentUpon>SlideDesignerWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Designer\DesignerView.axaml.cs">
-        <DependentUpon>DesignerView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Designer\SlideDesigner.axaml.cs">
-        <DependentUpon>SlideDesigner.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Designer\SlideDesignerWindow.axaml.cs">
-        <DependentUpon>SlideDesignerWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\LiveOutputsFlyoutContent.axaml.cs">
-        <DependentUpon>LiveOutputsFlyoutContent.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Editors\GenericContentEditorView.axaml.cs">
-        <DependentUpon>ItemContentView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Render\MpvVideoSlideRenderer.axaml.cs">
-        <DependentUpon>MpvVideoSlideRenderer.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\AboutWindow.axaml.cs">
-        <DependentUpon>AboutWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Editors\SongLyricFreeTextEditor.axaml.cs">
-        <DependentUpon>SongLyricFreeTextEditor.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Library\LibraryView.axaml.cs">
-        <DependentUpon>LibraryView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\Library\LibraryView.axaml.cs">
-        <DependentUpon>LibraryView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ExitConfirmationWindow.axaml.cs">
-        <DependentUpon>ExitConfirmationWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ContentControl\VideoSlideControlView.axaml.cs">
-        <DependentUpon>VideoSlideControlView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ContentControl\VideoSlideControlViewWrapper.axaml.cs">
-        <DependentUpon>VideoSlideControlViewWrapper.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
-        <DependentUpon>DefaultLayout.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\StageDisplayLayout\SongLayout.axaml.cs">
-        <DependentUpon>SongLayout.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
-        <DependentUpon>DefaultLayout.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\StageDisplayLayout\SongLayout.axaml.cs">
-        <DependentUpon>SongLayout.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\SlideRendererWorkerWindow.axaml.cs">
-        <DependentUpon>SlideRendererWorkerWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Render\AltSlideRenderer.axaml.cs">
-        <DependentUpon>AltSlideRenderer.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Render\LowerThirds\LowerThirdSlideContent.axaml.cs">
-        <DependentUpon>LowerThirdSlideContent.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Render\LowerThirds\LowerThirdSlideTemplate.axaml.cs">
-        <DependentUpon>LowerThirdSlideTemplate.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+        <Compile Update="Controls\SongArrangementControl.axaml.cs">
+            <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <Compile Update="Views\Editors\SongEditorWindow.axaml.cs">
+            <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <Compile Update="Views\ItemInfo.axaml.cs">
+            <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <Compile Update="Views\ItemSlidesView.axaml.cs">
+            <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <Compile Update="Views\SlideThumbnail.axaml.cs">
+            <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <Compile Update="Views\Editors\GroupItemsEditor.axaml.cs">
+            <DependentUpon>GroupItemsEditorWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Render\SongThemes\DesignerSlideTemplate.axaml.cs">
+            <DependentUpon>DesignerSlideTemplate.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Render\SongThemes\DesignerSlideTitle.axaml.cs">
+            <DependentUpon>DesignerSlideTitle.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\MessageWindow.axaml.cs">
+            <DependentUpon>MessageWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\PlaylistSlidesView.axaml.cs">
+            <DependentUpon>PlaylistSlidesView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Designer\DesignerView.axaml.cs">
+            <DependentUpon>DesignerView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Designer\SlideThemeDesigner.axaml.cs">
+            <DependentUpon>SlideThemeDesigner.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Designer\SlideDesignerWindow.axaml.cs">
+            <DependentUpon>SlideDesignerWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Designer\DesignerView.axaml.cs">
+            <DependentUpon>DesignerView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Designer\SlideDesigner.axaml.cs">
+            <DependentUpon>SlideDesigner.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Designer\SlideDesignerWindow.axaml.cs">
+            <DependentUpon>SlideDesignerWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\LiveOutputsFlyoutContent.axaml.cs">
+            <DependentUpon>LiveOutputsFlyoutContent.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Editors\GenericContentEditorView.axaml.cs">
+            <DependentUpon>ItemContentView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Render\MpvVideoSlideRenderer.axaml.cs">
+            <DependentUpon>MpvVideoSlideRenderer.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\AboutWindow.axaml.cs">
+            <DependentUpon>AboutWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Editors\SongLyricFreeTextEditor.axaml.cs">
+            <DependentUpon>SongLyricFreeTextEditor.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Library\LibraryView.axaml.cs">
+            <DependentUpon>LibraryView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Library\LibraryView.axaml.cs">
+            <DependentUpon>LibraryView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\ExitConfirmationWindow.axaml.cs">
+            <DependentUpon>ExitConfirmationWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\ContentControl\VideoSlideControlView.axaml.cs">
+            <DependentUpon>VideoSlideControlView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\ContentControl\VideoSlideControlViewWrapper.axaml.cs">
+            <DependentUpon>VideoSlideControlViewWrapper.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
+            <DependentUpon>DefaultLayout.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\StageDisplayLayout\SongLayout.axaml.cs">
+            <DependentUpon>SongLayout.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\StageDisplayLayout\DefaultLayout.axaml.cs">
+            <DependentUpon>DefaultLayout.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\StageDisplayLayout\SongLayout.axaml.cs">
+            <DependentUpon>SongLayout.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\SlideRendererWorkerWindow.axaml.cs">
+            <DependentUpon>SlideRendererWorkerWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Render\AltSlideRenderer.axaml.cs">
+            <DependentUpon>AltSlideRenderer.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Render\LowerThirds\LowerThirdSlideContent.axaml.cs">
+            <DependentUpon>LowerThirdSlideContent.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Render\LowerThirds\LowerThirdSlideTemplate.axaml.cs">
+            <DependentUpon>LowerThirdSlideTemplate.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 
     <ItemGroup>
-      <AdditionalFiles Include="Views\Designer\DesignerView.axaml" />
-      <AdditionalFiles Include="Views\Designer\SlideDesignerWindow.axaml" />
-      <AdditionalFiles Include="Views\Library\LibraryView.axaml" />
-      <AdditionalFiles Include="Views\StageDisplayLayout\DefaultLayout.axaml" />
-      <AdditionalFiles Include="Views\StageDisplayLayout\SongLayout.axaml" />
+        <AdditionalFiles Include="Views\Designer\DesignerView.axaml"/>
+        <AdditionalFiles Include="Views\Designer\SlideDesignerWindow.axaml"/>
+        <AdditionalFiles Include="Views\Library\LibraryView.axaml"/>
+        <AdditionalFiles Include="Views\StageDisplayLayout\DefaultLayout.axaml"/>
+        <AdditionalFiles Include="Views\StageDisplayLayout\SongLayout.axaml"/>
     </ItemGroup>
 
 
     <ItemGroup>
-      <Reference Include="Avalonia.Themes.Simple">
-        <HintPath>..\global-packages\avalonia.themes.simple\11.0.9\lib\net6.0\Avalonia.Themes.Simple.dll</HintPath>
-      </Reference>
+        <Reference Include="Avalonia.Themes.Simple">
+            <HintPath>..\global-packages\avalonia.themes.simple\11.0.9\lib\net6.0\Avalonia.Themes.Simple.dll</HintPath>
+        </Reference>
     </ItemGroup>
+
+
+    <ItemGroup>
+      <None Remove="BuildInfo\Version.txt" />
+      <EmbeddedResource Include="BuildInfo\GitHash.txt" />
+      <None Remove="BuildInfo\BuildDateTime.txt" />
+      <EmbeddedResource Include="BuildInfo\BuildDateTime.txt" />
+    </ItemGroup>
+
+
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+        <Exec Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)/BuildInfo/GitHash.txt&quot;"/>
+        <Exec Command="echo $(BuildDateTime) &gt; &quot;$(ProjectDir)/BuildInfo/BuildDateTime.txt&quot;"/>
+    </Target>
 </Project>

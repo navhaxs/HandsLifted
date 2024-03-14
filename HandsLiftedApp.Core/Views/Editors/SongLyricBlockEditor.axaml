@@ -6,10 +6,17 @@
              xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
              xmlns:material="using:Material.Icons.Avalonia"
              xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+             xmlns:app="clr-namespace:HandsLiftedApp.Core"
+             xmlns:converters="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="650"
              x:DataType="editor:SongEditorViewModel"
              Background="White"
+             x:CompileBindings="False"
              x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricBlockEditor">
+    
+    <UserControl.Resources>
+        <converters:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
+    </UserControl.Resources>
     <StackPanel>
         <TextBox
             Margin="12,12,12,12"
@@ -67,6 +74,28 @@
                                         Foreground="#AAA"
                                         Kind="BinOutline" />
                                 </Button>
+                                <ComboBox ItemsSource="{Binding Source={x:Static app:Globals.MainViewModel}, Path=Playlist.Designs}" SelectedItem="{Binding Design}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom"
+                                                           HorizontalAlignment="Center" Margin="0 6 0 0" />
+                                                <Viewbox Height="30">
+                                                    <Grid
+                                                        Height="130"
+                                                        Width="130"
+                                                        Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}">
+                                                        <TextBlock Text="A"
+                                                                   FontSize="80"
+                                                                   Margin="20"
+                                                                   FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}"
+                                                                   FontWeight="SemiBold" />
+                                                    </Grid>
+                                                </Viewbox>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
                                 <TextBox
                                     Padding="6,8,80,8"
                                     AcceptsReturn="False"

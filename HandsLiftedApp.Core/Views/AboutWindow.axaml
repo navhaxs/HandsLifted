@@ -1,10 +1,11 @@
 <Window
-    x:Class="HandsLiftedApp.Views.App.AboutWindow"
+    x:Class="HandsLiftedApp.Core.Views.AboutWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
     Title="AboutWindow"
     Width="680"
     Height="380"
@@ -15,6 +16,7 @@
     ExtendClientAreaToDecorationsHint="True"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
+    x:DataType="views:AboutWindow"
     mc:Ignorable="d">
     <DockPanel>
         <!--  header  -->
@@ -45,13 +47,13 @@
                         Text="VisionScreens" />
                     <TextBlock Text="© Jeremy Wong 2015-2024" />
                 </WrapPanel>
-                <!-- <WrapPanel> -->
-                <!--     <TextBlock Text="Build #" /> -->
-                <!--     <TextBlock Text="{Binding GitHash, Mode=OneWay, FallbackValue='(unknown git hash)'}" /> -->
-                <!--     <TextBlock Text=" (" /> -->
-                <!--     <TextBlock Text="{Binding BuildDate, Mode=OneWay, FallbackValue='(unknown build date)'}" /> -->
-                <!--     <TextBlock Text=")" /> -->
-                <!-- </WrapPanel> -->
+                <WrapPanel>
+                    <TextBlock Text="Build #" />
+                    <TextBlock Text="{Binding GitHash, Mode=OneWay, FallbackValue='(unknown git hash)'}" />
+                    <TextBlock Text=" (" />
+                    <TextBlock Text="{Binding BuildDateTime, Mode=OneWay, FallbackValue='(unknown build date)'}" />
+                    <TextBlock Text=")" />
+                </WrapPanel>
                 <StackPanel Orientation="Horizontal">
                     <StackPanel.Styles>
                         <Style Selector="Button">

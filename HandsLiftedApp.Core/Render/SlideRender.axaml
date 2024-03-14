@@ -25,14 +25,14 @@
                     <!-- <views:DesignerSlideTitle Width="1920" Height="1080" /> -->
                     <Image
                         RenderOptions.BitmapInterpolationMode="HighQuality"
-                        Source="{Binding cached}"
+                        Source="{Binding Cached}"
                         Stretch="Uniform" />
                 </DataTemplate>
                 <DataTemplate x:Key="SongSlideInstance" x:DataType="slides2:SongSlideInstance">
                     <!-- <designer:SongSlideView Width="1920" Height="1080" /> -->
                     <Image
                         RenderOptions.BitmapInterpolationMode="HighQuality"
-                        Source="{Binding cached}"
+                        Source="{Binding Cached}"
                         Stretch="Uniform" />
                 </DataTemplate>
                 <DataTemplate x:Key="SongSlide">
@@ -41,10 +41,14 @@
                 <DataTemplate x:Key="LogoSlide">
                     <items:LogoSlideView />
                 </DataTemplate>
-                <DataTemplate x:Key="ImageSlide" x:DataType="slides1:ImageSlide">
+                <DataTemplate x:Key="ImageSlideInstance" x:DataType="slides:ImageSlideInstance">
+                    <!-- <Image -->
+                    <!--     RenderOptions.BitmapInterpolationMode="LowQuality" -->
+                    <!--     Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}" -->
+                    <!--     Stretch="Uniform" /> -->
                     <Image
-                        RenderOptions.BitmapInterpolationMode="LowQuality"
-                        Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
+                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                        Source="{Binding Cached}"
                         Stretch="Uniform" />
                 </DataTemplate>
                 <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides:VideoSlideInstance">

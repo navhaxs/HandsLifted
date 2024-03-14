@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using Avalonia.Skia;
+using Avalonia.Skia.Helpers;
 using DebounceThrottle;
+using HandsLiftedApp.Core;
+using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
+using SkiaSharp;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class SongTitleSlideInstance : SongTitleSlide
+    public class SongTitleSlideInstance : SongTitleSlide, ISlideInstance
     {
         private DebounceDispatcher debounceDispatcher = new(200);
 
@@ -39,23 +48,19 @@ namespace HandsLiftedApp.Data.Slides
 
             this.WhenAnyValue(s => s.Title, s => s.Copyright, s => s.Theme) // todo dirty bit?
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(text =>
-                {
-                    debounceDispatcher.Debounce(() => GenerateBitmaps());
-                });
+                .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
         }
 
         private void GenerateBitmaps()
         {
             MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
                 this,
-                (bitmap) =>
+                (obitmap) =>
                 {
-                    this.cached = bitmap;
-                    // https://github.com/AvaloniaUI/Avalonia/issues/8444
-                    // TODO
+                    Cached = obitmap;
+                    Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
                 }
-            )); 
+            ));
         }
 
         private BaseSlideTheme? _theme;
@@ -71,10 +76,18 @@ namespace HandsLiftedApp.Data.Slides
 
         Bitmap _cached;
 
-        public Bitmap? cached
+        public Bitmap? Cached
         {
             get => _cached;
             set => this.RaiseAndSetIfChanged(ref _cached, value);
+        }
+
+        Bitmap _thumbnail;
+
+        public Bitmap? Thumbnail
+        {
+            get => _thumbnail;
+            set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
         }
     }
 }

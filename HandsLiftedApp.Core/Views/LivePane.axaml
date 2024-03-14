@@ -7,6 +7,7 @@
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
              xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
+             Background="{DynamicResource SurfaceBrush}"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
              x:DataType="viewModels:MainViewModel"
              x:Class="HandsLiftedApp.Core.Views.LivePane">
@@ -73,7 +74,7 @@
             </DockPanel>
         </Border>
 
-        <Border Background="{DynamicResource BackgroundBrush}">
+        <Border>
             <DockPanel>
 
                 <Grid DockPanel.Dock="Top">
@@ -118,13 +119,13 @@
                 <Border
                     Height="35"
                     Margin="6,6"
-                    Background="#505050"
+                    Background="Transparent"
                     CornerRadius="6"
                     DockPanel.Dock="Top">
                     <UniformGrid Columns="2" Rows="1">
                         <UniformGrid.Styles>
                             <Style Selector="RadioButton">
-                                <Setter Property="Background" Value="#505050" />
+                                <Setter Property="Background" Value="Transparent" />
                                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                                 <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -132,6 +133,8 @@
                                     <Setter.Value>
                                         <ControlTemplate>
                                             <ToggleButton
+                                                Background="Transparent"
+                                                BorderBrush="{DynamicResource OutlineBrush}"
                                                 HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                                                 VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -143,10 +146,23 @@
                             </Style>
                             <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
                                 <Setter Property="Background"
-                                        Value="#3a3449" />
+                                        Value="{DynamicResource PrimaryActionBrush}" />
+                            </Style>
+                            <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                <Setter Property="Background"
+                                        Value="#b7a6e7" />
                             </Style>
                             <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
-                                <Setter Property="Background" Value="#b7a6e7" />
+                                <Setter Property="Background" Value="#9072EA" />
+                            </Style>
+                            <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
+                                <Setter Property="CornerRadius" Value="99 0 0 99" />
+                            </Style>
+                            <!-- <Style Selector="RadioButton:nth-last-child(1):not"> -->
+                            <!--     <Setter Property="BorderThickness" Value="0" /> -->
+                            <!-- </Style> -->
+                            <Style Selector="RadioButton:nth-last-child(1) /template/ ToggleButton">
+                                <Setter Property="CornerRadius" Value="0 99 99 0" />
                             </Style>
                         </UniformGrid.Styles>
                         <RadioButton CornerRadius="6" IsChecked="{Binding Playlist.IsLogo}">Logo</RadioButton>

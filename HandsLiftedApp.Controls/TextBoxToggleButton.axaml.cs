@@ -91,6 +91,7 @@ namespace HandsLiftedApp.Controls
 
         private void SubmitButton_OnClick(object? sender, RoutedEventArgs e)
         {
+            // TODO check mouse is over submit button... then ignore and return
             Carousel.SelectedIndex = 0;
             Text = EntryTextBox.Text ?? string.Empty;
             e.Handled = true;
@@ -102,5 +103,11 @@ namespace HandsLiftedApp.Controls
             Carousel.SelectedIndex = 0;
             e.Handled = true;
         }
+
+        private void SubmitButton_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            Carousel.SelectedIndex = 0;
+            Text = EntryTextBox.Text ?? string.Empty;
+            e.Handled = true;        }
     }
 }   

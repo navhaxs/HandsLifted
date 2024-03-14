@@ -60,16 +60,26 @@
                     TextTrimming="CharacterEllipsis" />
             </DockPanel>
         </Button>
-        <Border
-            CornerRadius="6"
-            Background="White">
-            <DockPanel VerticalAlignment="Stretch">
+        <TextBox x:Name="EntryTextBox" KeyDown="InputElement_OnKeyDown"
+                 LostFocus="EntryTextBox_OnLostFocus"
+                 Padding="12 4 4 4"
+                 CornerRadius="6"
+                 Background="White"
+                 Foreground="Black"
+                 CaretBrush="Black"
+                 VerticalContentAlignment="Center"
+                 BorderThickness="0"
+                 FontSize="20"
+                 MinWidth="100"
+                 Watermark="{Binding $parent[controls:TextBoxToggleButton].Watermark}">
+            <TextBox.InnerRightContent>
                 <Button x:Name="SubmitButton"
+                        Cursor="Hand"
                         Click="SubmitButton_OnClick"
+                        PointerPressed="SubmitButton_OnPointerPressed"
                         BorderThickness="0"
-                        Margin="3"
-                        Background="#3574f0"
-                        DockPanel.Dock="Right">
+                        Margin="16 0 0 0"
+                        Background="#3574f0">
                     <Button.Styles>
                         <Style Selector="Button:pointerover /template/ ContentPresenter">
                             <Setter Property="Background"
@@ -81,18 +91,7 @@
                         Margin="14,0,14,0"
                         Kind="KeyboardReturn" />
                 </Button>
-                <TextBox x:Name="EntryTextBox" KeyDown="InputElement_OnKeyDown"
-                         LostFocus="EntryTextBox_OnLostFocus"
-                         Padding="12,4"
-                         Foreground="Black"
-                         CaretBrush="Black"
-                         VerticalContentAlignment="Center"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         FontSize="20"
-                         MinWidth="100"
-                         Watermark="{Binding $parent[controls:TextBoxToggleButton].Watermark}"/>
-            </DockPanel>
-        </Border>
+            </TextBox.InnerRightContent>
+        </TextBox>
     </Carousel>
 </UserControl>

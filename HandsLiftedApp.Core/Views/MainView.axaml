@@ -16,7 +16,7 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
@@ -24,19 +24,19 @@
                     <SolidColorBrush x:Key="ControlBackgroundBrush">#ffffff</SolidColorBrush>
                     <SolidColorBrush x:Key="BottomBackgroundBrush">#257E78A8</SolidColorBrush>
                     <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
-                    <SolidColorBrush x:Key="BackgroundBrush">#ededf1</SolidColorBrush>
                     <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
                     <SolidColorBrush x:Key="AccentBackgroundBrush">#4D347F</SolidColorBrush>
                     <SolidColorBrush x:Key="GridSplitterBrush">#deddec</SolidColorBrush>
                     <SolidColorBrush x:Key="PlaylistTitleBrush">#2f2f30</SolidColorBrush>
                     <SolidColorBrush x:Key="HoverBrush">#C11F576F</SolidColorBrush>
                     <SolidColorBrush x:Key="ActiveToggleButtonBackgroundBrush">#D8CEEC</SolidColorBrush>
+                    <SolidColorBrush x:Key="CaptionButtonBackground" Color="Red" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="CaptionButtonBackground" Color="Red" />
                     <SolidColorBrush x:Key="ControlBackgroundBrush">#121212</SolidColorBrush>
                     <SolidColorBrush x:Key="BottomBackgroundBrush">#1e1e1e</SolidColorBrush>
                     <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#444</SolidColorBrush>
-                    <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
                     <SolidColorBrush x:Key="ForegroundBrush">White</SolidColorBrush>
                     <SolidColorBrush x:Key="AccentBackgroundBrush">#377D61C6</SolidColorBrush>
                     <SolidColorBrush x:Key="GridSplitterBrush">Black</SolidColorBrush>
@@ -79,7 +79,7 @@
             <DockPanel>
                 <DockPanel
                     DockPanel.Dock="Top">
-                    <ToggleButton
+                    <Button
                         Name="AppMenuButton"
                         Margin="8,8,8,0"
                         Padding="0"
@@ -94,7 +94,7 @@
                         DockPanel.Dock="Left"
                         HotKey="Alt+M">
 
-                        <ToggleButton.Flyout>
+                        <Button.Flyout>
                             <MenuFlyout
                                 Placement="BottomEdgeAlignedLeft">
                                 <MenuItem Click="NewFileButton_Clicked" Header="New">
@@ -136,9 +136,9 @@
                                 <MenuItem Click="CloseWindow" Header="Exit" />
 
                             </MenuFlyout>
-                        </ToggleButton.Flyout>
+                        </Button.Flyout>
 
-                        <ToggleButton.Styles>
+                        <Button.Styles>
                             <Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
                                 <Setter Property="Background" Value="#5c3ab6" />
                             </Style>
@@ -161,7 +161,7 @@
                             <Style Selector="ToggleButton:checked material|MaterialIcon">
                                 <Setter Property="Foreground" Value="White" />
                             </Style>
-                        </ToggleButton.Styles>
+                        </Button.Styles>
                         <Border Classes="AppButtonBorder" CornerRadius="6">
                             <material:MaterialIcon
                                 Width="20"
@@ -169,7 +169,7 @@
                                 Margin="12,0"
                                 Kind="DotsHorizontal" />
                         </Border>
-                    </ToggleButton>
+                    </Button>
                     <Grid IsHitTestVisible="False" />
                 </DockPanel>
 
@@ -200,28 +200,33 @@
                             Height="50"
                             Margin="6,0,6,6"
                             Padding="10,5,10,5"
-                            Background="#1e1e1e"
+                            BorderBrush="#49454d"
+                            BorderThickness="0 1 0 0"
+                            Background="{DynamicResource BottomBarBrush}"
                             CornerRadius="0,0,6,6"
                             DockPanel.Dock="Bottom">
                             <Grid>
                                 <Grid.Styles>
                                     <Style Selector="Button">
-                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="BorderThickness"
+                                                Value="0" />
                                         <Setter Property="Background"
-                                                Value="#565656" />
+                                                Value="{DynamicResource OutlineBrush}" />
+                                        <Setter Property="Foreground"
+                                                Value="{DynamicResource TextBrush}" />
                                         <Setter Property="CornerRadius"
-                                                Value="4" />
+                                                Value="99" />
                                         <Setter Property="HorizontalAlignment" Value="Stretch" />
                                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                                         <Setter Property="Margin" Value="6 2" />
                                         <Setter Property="FontSize" Value="14" />
                                     </Style>
                                     <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="#828282" />
+                                        <Setter Property="Background" Value="#b7a6e7" />
                                     </Style>
                                     <Style Selector="Button:pressed /template/ ContentPresenter">
                                         <Setter Property="BorderBrush" Value="#2c628b" />
-                                        <Setter Property="Background" Value="DimGray" />
+                                        <Setter Property="Background" Value="#9072EA" />
                                     </Style>
                                 </Grid.Styles>
                                 <Grid.ColumnDefinitions>
@@ -277,7 +282,7 @@
                         <Border
                             Margin="6,0,6,0"
                             HorizontalAlignment="Stretch"
-                            Background="#121212"
+                            Background="{DynamicResource BackgroundBrush}"
                             CornerRadius="6,0,0,0">
 
                             <views:PlaylistSlidesView DataContext="{Binding Playlist}" />
@@ -327,9 +332,11 @@
         </Border>
 
         <!--  Docked toggle buttons  -->
-        <Border Grid.Row="3" Background="{DynamicResource BottomBackgroundBrush}">
+        <Border Grid.Row="3" Background="{DynamicResource BackgroundBrush}">
 
             <DockPanel>
+                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Margin="6" Foreground="Red" FontWeight="Bold">Pre-release software</TextBlock>
+                <Grid />
 
                 <!-- <Grid Width="{Binding #RightPanel.Bounds.Width}" DockPanel.Dock="Right" /> -->
 

@@ -5,13 +5,15 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using DebounceThrottle;
+using HandsLiftedApp.Core;
+using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.SlideTheme;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class SongSlideInstance : SongSlide
+    public class SongSlideInstance : SongSlide, ISlideInstance
     {
         private DebounceDispatcher debounceDispatcher = new(200);
 
@@ -19,12 +21,27 @@ namespace HandsLiftedApp.Data.Slides
             parentSongItem, parentSongStanza, id)
         {
             this._theme =
-                parentSongItem.WhenAnyValue(parentSongItem => parentSongItem.Design,
-                        (target =>
+                this.WhenAnyValue(x => x.ParentSongItem, x => x.ParentSongStanza,
+                        (target2, target1) =>
                         {
-                            if (target != Guid.Empty)
+                            if (target2 != null && target2.Design != Guid.Empty)
                             {
-                                var baseSlideTheme = parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target);
+                                var baseSlideTheme =
+                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target2.Design);
+                                if (baseSlideTheme != null)
+                                {
+                                    baseSlideTheme.PropertyChanged += (sender, args) =>
+                                    {
+                                        debounceDispatcher.Debounce(() => GenerateBitmaps());
+                                    };
+                                    return baseSlideTheme;
+                                }
+                            }
+
+                            if (target1 != null && target1.Design != Guid.Empty)
+                            {
+                                var baseSlideTheme =
+                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target1.Design);
                                 if (baseSlideTheme != null)
                                 {
                                     baseSlideTheme.PropertyChanged += (sender, args) =>
@@ -37,36 +54,38 @@ namespace HandsLiftedApp.Data.Slides
 
                             return new BaseSlideTheme();
                         })
-                    )
                     .ToProperty(this, x => x.Theme);
-            
-            
+
             this.WhenAnyValue(s => s.Text, s => s.Theme) // todo dirty bit?
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(text =>
-                {
-                    debounceDispatcher.Debounce(() => GenerateBitmaps());
-                });
+                .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
         }
-        
+
         private void GenerateBitmaps()
         {
             MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
                 this,
-                (bitmap) =>
+                (obitmap) =>
                 {
-                    this.cached = bitmap;
-                    // https://github.com/AvaloniaUI/Avalonia/issues/8444
-                    // TODO
+                    this.Cached = obitmap;
+                    Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
                 }
-            )); 
+            ));
         }
-        
+
         private ObservableAsPropertyHelper<BaseSlideTheme?> _theme;
 
         public BaseSlideTheme Theme
         {
             get => _theme.Value;
+        }
+        
+        private BaseSlideTheme? _selectedSlideTheme;
+
+        public BaseSlideTheme? SelectedSlideTheme
+        {
+            get => _selectedSlideTheme;
+            set => this.RaiseAndSetIfChanged(ref _selectedSlideTheme, value);
         }
 
         // refs
@@ -74,10 +93,18 @@ namespace HandsLiftedApp.Data.Slides
 
         Bitmap _cached;
 
-        public Bitmap? cached
+        public Bitmap? Cached
         {
             get => _cached;
             set => this.RaiseAndSetIfChanged(ref _cached, value);
+        }
+        
+        Bitmap _thumbnail;
+
+        public Bitmap? Thumbnail
+        {
+            get => _thumbnail;
+            set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
         }
     }
 }

@@ -120,6 +120,9 @@ namespace HandsLiftedApp.Data.Models.Items
             get => lyrics;
             set => this.RaiseAndSetIfChanged(ref lyrics, value);
         }
+        
+        private Guid _design = Guid.Empty;
+        public Guid Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
 
         private string colour;
         public string Colour

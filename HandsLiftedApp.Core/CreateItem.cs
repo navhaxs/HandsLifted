@@ -104,7 +104,7 @@ namespace HandsLiftedApp.Core
                 return new VideoSlideInstance(filePath); // { Index = index };
             }
 
-            return new ImageSlide(filePath); // { Index = index };
+            return new ImageSlideInstance(filePath); // { Index = index };
         }
     }
 }

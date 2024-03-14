@@ -10,7 +10,7 @@
         ExtendClientAreaTitleBarHeightHint="90"
         ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterScreen"
-        Background="#282828"
+        Background="{DynamicResource SurfaceBrush}"
         Title="VisionScreens">
     <Border x:Name="RootBorder">
         <Grid>

@@ -9,12 +9,9 @@
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:utils="using:HandsLiftedApp.Utils"
     xmlns:items="clr-namespace:HandsLiftedApp.Controls.Items;assembly=HandsLiftedApp.Controls"
     xmlns:views1="clr-namespace:HandsLiftedApp.Core.Views"
     xmlns:items1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
-    xmlns:views="clr-namespace:HandsLiftedApp.Views"
-    xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
     xmlns:items2="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
@@ -300,32 +297,27 @@
                                                 <DataTemplate x:Key="SongTitleSlideInstance"
                                                               x:DataType="slides:SongTitleSlideInstance">
                                                     <Image
-                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                                                        Source="{Binding cached}"
+                                                        Source="{Binding Thumbnail}"
                                                         Stretch="Uniform" />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="SongSlideInstance"
                                                               x:DataType="slides:SongSlideInstance">
                                                     <Image
-                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                                                        Source="{Binding cached}"
+                                                        Source="{Binding Thumbnail}"
                                                         Stretch="Uniform" />
                                                 </DataTemplate>
-                                                <DataTemplate x:Key="ImageSlide">
+                                                <DataTemplate x:Key="ImageSlideInstance">
                                                     <views1:SlideThumbnail>
-                                                        <Grid>
-                                                            <Image
-                                                                RenderOptions.BitmapInterpolationMode="LowQuality"
-                                                                Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
-                                                                Stretch="Uniform" />
-                                                        </Grid>
+                                                        <Image
+                                                            Source="{Binding Thumbnail}"
+                                                            Stretch="Uniform" />
                                                     </views1:SlideThumbnail>
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="VideoSlide">
                                                     <views1:SlideThumbnail>
                                                         <Grid>
                                                             <Image
-                                                                RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                                RenderOptions.BitmapInterpolationMode="MediumQuality"
                                                                 Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
                                                                 Stretch="Uniform" />
                                                         </Grid>
@@ -361,7 +353,6 @@
                                         </controls:ListBoxWithoutKey.DataTemplates>
 
                                     </controls:ListBoxWithoutKey>
-
 
                                 </StackPanel>
 
