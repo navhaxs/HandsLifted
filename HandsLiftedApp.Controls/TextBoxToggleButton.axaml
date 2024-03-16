@@ -53,7 +53,7 @@
                 </Border>
                 <TextBlock
                     FontSize="20"
-                    Foreground="White"
+                    Foreground="{Binding $parent[controls:TextBoxToggleButton].Foreground}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Text="{Binding $parent[controls:TextBoxToggleButton].Text}"

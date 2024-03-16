@@ -9,6 +9,7 @@
              xmlns:converters="using:HandsLiftedApp.Converters"
              xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
 			 xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
+			 xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
 			 x:Name="root"
 			 x:DataType="items:SongItemInstance"
              x:Class="HandsLiftedApp.Controls.SongArrangementControl">
@@ -126,6 +127,7 @@
 									Margin="0 0 0 0"
 									HorizontalAlignment="Left"
 									BorderThickness="0"
+									DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
 									Flyout="{StaticResource MySharedFlyout}">
 								<material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4" VerticalAlignment="Center" />
 							</Button>

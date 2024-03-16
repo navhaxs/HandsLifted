@@ -11,12 +11,13 @@
 		<ResourceDictionary>
 			<ResourceDictionary.ThemeDictionaries>
 				<ResourceDictionary x:Key="Default">
-					<SolidColorBrush x:Key="BackgroundBrush">#ededf1</SolidColorBrush>
-					<SolidColorBrush x:Key="SurfaceBrush">#1c1921</SolidColorBrush>
+					<SolidColorBrush x:Key="BackgroundBrush">White</SolidColorBrush>
+					<SolidColorBrush x:Key="BottomBarBackgroundBrush">#c3c1d2</SolidColorBrush>
+					<SolidColorBrush x:Key="SurfaceBrush">#ededf1</SolidColorBrush>
 					<SolidColorBrush x:Key="OutlineBrush">#958e99</SolidColorBrush>
 					<SolidColorBrush x:Key="PrimaryActionBrush">#513c6f</SolidColorBrush>
 					<SolidColorBrush x:Key="TextBrush">#ecddfd</SolidColorBrush>
-					<SolidColorBrush x:Key="BottomBarBrush">#3F3B43</SolidColorBrush>
+					<SolidColorBrush x:Key="NavigationBarBrush">#d6d6d6</SolidColorBrush>
 					<!-- BaseResources for CaptionButtons.xaml -->
 					<SolidColorBrush x:Key="CaptionButtonForeground" Color="Black" />
 					<SolidColorBrush x:Key="CaptionButtonBackground" Color="#484b4d" />
@@ -24,11 +25,12 @@
 				</ResourceDictionary>
 				<ResourceDictionary x:Key="Dark">
 					<SolidColorBrush x:Key="BackgroundBrush">#151218</SolidColorBrush>
-					<SolidColorBrush x:Key="SurfaceBrush">#322f35</SolidColorBrush>
+					<SolidColorBrush x:Key="BottomBarBackgroundBrush">#151218</SolidColorBrush>
+					<SolidColorBrush x:Key="SurfaceBrush">#282828</SolidColorBrush>
 					<SolidColorBrush x:Key="OutlineBrush">#958e99</SolidColorBrush>
 					<SolidColorBrush x:Key="PrimaryActionBrush">#513c6f</SolidColorBrush>
 					<SolidColorBrush x:Key="TextBrush">#1c1921</SolidColorBrush>
-					<SolidColorBrush x:Key="BottomBarBrush">#3F3B43</SolidColorBrush>
+					<SolidColorBrush x:Key="NavigationBarBrush">#3F3B43</SolidColorBrush>
 					<!-- BaseResources for CaptionButtons.xaml -->
 					<SolidColorBrush x:Key="CaptionButtonForeground" Color="White" />
 					<SolidColorBrush x:Key="CaptionButtonBackground" Color="#484b4d" />

@@ -202,7 +202,7 @@
                             Padding="10,5,10,5"
                             BorderBrush="#49454d"
                             BorderThickness="0 1 0 0"
-                            Background="{DynamicResource BottomBarBrush}"
+                            Background="{DynamicResource NavigationBarBrush}"
                             CornerRadius="0,0,6,6"
                             DockPanel.Dock="Bottom">
                             <Grid>
@@ -332,7 +332,7 @@
         </Border>
 
         <!--  Docked toggle buttons  -->
-        <Border Grid.Row="3" Background="{DynamicResource BackgroundBrush}">
+        <Border Grid.Row="3" Background="{DynamicResource BottomBarBackgroundBrush}">
 
             <DockPanel>
                 <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Margin="6" Foreground="Red" FontWeight="Bold">Pre-release software</TextBlock>

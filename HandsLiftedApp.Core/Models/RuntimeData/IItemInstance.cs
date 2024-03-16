@@ -10,6 +10,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData
     {
         public PlaylistInstance? ParentPlaylist { get; set; }
         public int SelectedSlideIndex { get; set; }
+        public bool IsItemSelected
+        {
+            get => SelectedSlideIndex != -1;
+        }
         public Slide ActiveSlide { get; }
         public ObservableCollection<Slide> Slides { get; }
     }

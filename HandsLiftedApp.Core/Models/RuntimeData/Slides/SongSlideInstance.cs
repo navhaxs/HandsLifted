@@ -89,7 +89,6 @@ namespace HandsLiftedApp.Data.Slides
         }
 
         // refs
-        public SongItemInstance? ParentSongItem { get; } = null;
 
         Bitmap _cached;
 

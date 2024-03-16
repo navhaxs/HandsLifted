@@ -54,6 +54,7 @@
             <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
             <converters:IntMinusOneConverter x:Key="intMinusOneConverter" />
             <avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+            <converters:IsGreaterThanConverter x:Key="IsGreaterThanConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://HandsLiftedApp.Controls/Assets/AddItemFlyoutResourceDictionary.axaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -234,7 +235,7 @@
                                         Width="25"
                                         Height="25"
                                         Margin="-7,0,7,0"
-                                        IsVisible="{Binding State.IsSelected, FallbackValue=False}">
+                                        IsVisible="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}">
                                         <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
                                     </Viewbox>
                                 </Grid>

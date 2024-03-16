@@ -24,13 +24,15 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public void GenerateArrangementViews()
         {
             var result = new ObservableCollection<ArrangementRef>();
+            var i = 0;
             foreach (var stanzaId in Arrangement)
             {
                 var stanza = Stanzas.FirstOrDefault(stanza => stanza.Id == stanzaId);
                 if (stanza != null)
                 {
                     result.Add(new ArrangementRef()
-                        { Index = 1, SongStanza = stanza });
+                        { Index = i, SongStanza = stanza });
+                    i++;
                 }
             }
 
@@ -51,7 +53,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             return titleSlide;
                         })
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                    .Throttle(TimeSpan.FromMilliseconds(100), RxApp.TaskpoolScheduler)
                     .ToProperty(this, c => c.TitleSlide)
                 ;
 
@@ -78,7 +80,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
-            this.WhenAnyValue(x => x.EndOnBlankSlide, x => x.StartOnTitleSlide).Subscribe((d) =>
+            this.WhenAnyValue(x => x.EndOnBlankSlide).Subscribe((d) =>
+            {
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+            });
+
+            this.WhenAnyValue(x => x.StartOnTitleSlide).Subscribe((d) =>
             {
                 debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });

@@ -42,13 +42,13 @@
                     BorderThickness="0"
                     Margin="14,12,14,0"
                     CornerRadius="6"
-                    Background="#B9B199"
+                    Background="#FFFB98"
                     DockPanel.Dock="Top">
                     <DockPanel>
                         <avalonia:MaterialIcon DockPanel.Dock="Left"
                                                VerticalAlignment="Center"
                                                Height="32" Width="32"
-                                               Foreground="#B2A02F"
+                                               Foreground="#C3C700"
                                                Kind="InformationCircle" Margin="0 0 8 0" Padding="0" />
                         <TextBox Text="{Binding Notes, FallbackValue='hello '}"
                                  Foreground="Black"

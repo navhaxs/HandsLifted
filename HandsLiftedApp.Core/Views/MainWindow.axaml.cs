@@ -9,6 +9,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Styling;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
@@ -24,6 +25,16 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
         this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
+        
+        var themeVariants = this.Get<ComboBox>("ThemeVariants");
+        themeVariants.SelectedItem = Application.Current!.RequestedThemeVariant;
+        themeVariants.SelectionChanged += (sender, e) =>
+        {
+            if (themeVariants.SelectedItem is ThemeVariant themeVariant)
+            {
+                Application.Current!.RequestedThemeVariant = themeVariant;
+            }
+        };
 
         MessageBus.Current.Listen<MessageWindowViewModel>().Subscribe(mwvm =>
         {

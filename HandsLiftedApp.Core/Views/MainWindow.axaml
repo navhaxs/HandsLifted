@@ -21,4 +21,22 @@
                 IsVisible="False" />
         </Grid>
     </Border>
+
+    <Window.ContextMenu>
+        <ContextMenu>
+            <TextBlock Text="Debug" Foreground="Red" />
+            <ComboBox
+                x:Name="ThemeVariants"
+                HorizontalAlignment="Stretch"
+                DisplayMemberBinding="{Binding Key, x:DataType=ThemeVariant}"
+                SelectedIndex="0">
+                <ComboBox.Items>
+                    <ThemeVariant>Default</ThemeVariant>
+                    <ThemeVariant>Light</ThemeVariant>
+                    <ThemeVariant>Dark</ThemeVariant>
+                </ComboBox.Items>
+            </ComboBox>
+        </ContextMenu>
+    </Window.ContextMenu>
+
 </Window>
