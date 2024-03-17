@@ -17,6 +17,7 @@
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:item="clr-namespace:HandsLiftedApp.Views.Item"
     xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -24,6 +25,7 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+            <converters:IsGreaterThanConverter x:Key="IsGreaterThanConverter" />
             <avaloniaconverters:ColorToBrushConverter x:Key="ColorToBrush" />
             <converters:ColorToBrush
                 x:Key="ColorToDarkLuminanceBrush"
@@ -93,59 +95,45 @@
                                     <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Click="MoveUpItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Move Up">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="ArrowUp" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem
+                                        Click="MoveDownItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Move Down">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="ArrowDown" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem
+                                        Click="DeleteItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Remove Item">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="Times" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Replace" />
+                                    <MenuItem Header="Swap" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
 
                             <StackPanel Margin="0,8">
                                 <DockPanel>
-                                    <DockPanel.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="MoveUp" />
-                                            <MenuItem Header="MoveDown" />
-                                            <MenuItem Header="Replace" />
-                                            <MenuItem Header="Swap" />
-                                            <MenuItem Header="Remove" />
-                                        </ContextMenu>
-                                    </DockPanel.ContextMenu>
-                                    <!-- <Button -->
-                                    <!--     Margin="0" -->
-                                    <!--     Padding="22,6" -->
-                                    <!--     Background="#15FFFFFF" -->
-                                    <!--     BorderBrush="#b3aed9" -->
-                                    <!--     BorderThickness="0" -->
-                                    <!--     CornerRadius="0" -->
-                                    <!--     x:Name="EditButton" -->
-                                    <!--     Click="EditButton_OnClick" -->
-                                    <!--     DockPanel.Dock="Right"> -->
-                                    <!--     Edit -->
-                                    <!-- </Button> -->
-                                    <!--<Ellipse
-								IsVisible="{Binding State.IsSelected, FallbackValue=False}"
-								Width="8"
-								Height="8"
-								Margin="12 0 0 0"
-								Fill="#c43e1c"
-								/>-->
-                                    <!-- <Button -->
-                                    <!--     Background="Transparent" -->
-                                    <!--     CornerRadius="0" -->
-                                    <!--     BorderThickness="0" -->
-                                    <!--     HorizontalContentAlignment="Left"> -->
-                                    <!-- <TextBox -->
-                                    <!--     Margin="16,0,8,0" -->
-                                    <!--     Background="Transparent" -->
-                                    <!--     BorderThickness="0" -->
-                                    <!--     Padding="0" -->
-                                    <!--     HorizontalAlignment="Left" -->
-                                    <!--     VerticalAlignment="Center" -->
-                                    <!--     FontSize="20" -->
-                                    <!--     MinWidth="100" -->
-                                    <!--     FontWeight="SemiBold" -->
-                                    <!--     Foreground="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToConstrastingBrush}}" -->
-                                    <!--     Text="{Binding Title, FallbackValue='Rock Of Ages'}" /> -->
+
                                     <controls:TextBoxToggleButton
                                         Margin="16,0,8,0"
+                                        FontSize="20"
                                         Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
 
-                                    <!-- </Button> -->
                                 </DockPanel>
                                 <!--<item:ItemInfo VerticalAlignment="Top" />-->
                             </StackPanel>
@@ -170,33 +158,56 @@
                             <Border
                                 Margin="14"
                                 Background="{DynamicResource BackgroundBrush}"
+                                BorderBrush="Transparent"
+                                BorderThickness="2"
                                 CornerRadius="6">
                                 <i:Interaction.Behaviors>
                                     <ia:DataTriggerBehavior
-                                        Binding="{Binding State.IsSelected}"
+                                        Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                         ComparisonCondition="Equal"
                                         Value="True">
                                         <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" />
                                         <ia:ChangePropertyAction PropertyName="BorderThickness" Value="2" />
                                     </ia:DataTriggerBehavior>
                                     <ia:DataTriggerBehavior
-                                        Binding="{Binding State.IsSelected}"
+                                        Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                         ComparisonCondition="Equal"
                                         Value="False">
-                                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#9a93cd" />
+                                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="Transparent" />
                                         <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                     </ia:DataTriggerBehavior>
                                 </i:Interaction.Behaviors>
 
                                 <StackPanel>
-                                    <DockPanel Margin="0,0,0,0">
+                                    <DockPanel Margin="0,0,0,0" Background="Transparent">
                                         <DockPanel.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="MoveUp" />
-                                                <MenuItem Header="MoveDown" />
+                                                <MenuItem
+                                                    Click="MoveUpItem_OnClick"
+                                                    CommandParameter="{Binding}"
+                                                    Header="Move Up">
+                                                    <MenuItem.Icon>
+                                                        <avalonia:MaterialIcon Kind="ArrowUp" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem
+                                                    Click="MoveDownItem_OnClick"
+                                                    CommandParameter="{Binding}"
+                                                    Header="Move Down">
+                                                    <MenuItem.Icon>
+                                                        <avalonia:MaterialIcon Kind="ArrowDown" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem
+                                                    Click="DeleteItem_OnClick"
+                                                    CommandParameter="{Binding}"
+                                                    Header="Remove Item">
+                                                    <MenuItem.Icon>
+                                                        <avalonia:MaterialIcon Kind="Times" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
                                                 <MenuItem Header="Replace" />
                                                 <MenuItem Header="Swap" />
-                                                <MenuItem Header="Remove" />
                                             </ContextMenu>
                                         </DockPanel.ContextMenu>
                                         <items:ItemIcon Margin="14,8,10,8" DockPanel.Dock="Left" />
@@ -220,6 +231,7 @@
 								Fill="#c43e1c"
 								/>-->
                                         <controls:TextBoxToggleButton
+                                            FontSize="20"
                                             Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
                                         <!-- <TextBox -->
                                         <!--     Background="Transparent" -->

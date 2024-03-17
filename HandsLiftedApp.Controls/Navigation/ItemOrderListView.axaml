@@ -132,6 +132,14 @@
             <Setter Property="Foreground" Value="{DynamicResource ActiveItemForeground}" />
             <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
+        
+        <Style Selector="TextBlock.isSelectedItem">
+            <Setter Property="Foreground" Value="#FF3400" />
+        </Style>
+
+        <Style Selector="TextBlock.isSelectedItem">
+            <Setter Property="Foreground" Value="#FF3400" />
+        </Style>
 
         <Style Selector="ListBoxItem TextBlock.SectionHeadingTextBlock">
             <Setter Property="Foreground" Value="{DynamicResource GroupHeadingForeground}" />
@@ -191,6 +199,9 @@
                         <StackPanel />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
+                <!-- 
+                TODO how to register custom 'classes' on the list *item* object?
+                -->
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Add Item" />
@@ -225,6 +236,8 @@
                                 </i:Interaction.Behaviors>
                             </Border>
                         </DataTemplate>
+                        <DataTemplate x:Key="CommentItem">
+                        </DataTemplate>
                         <DataTemplate x:Key="Fallback">
                             <DockPanel
                                 Margin="0,0,0,0"
@@ -232,9 +245,9 @@
                                 VerticalAlignment="Stretch">
                                 <Grid Width="16">
                                     <Viewbox
-                                        Width="25"
-                                        Height="25"
-                                        Margin="-7,0,7,0"
+                                        Width="22"
+                                        Height="22"
+                                        Margin="-8,0,8,0"
                                         IsVisible="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}">
                                         <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
                                     </Viewbox>
@@ -243,6 +256,7 @@
                                 <TextBlock
                                     Padding="0,8,0,8"
                                     FontSize="13"
+                                    Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                     TextTrimming="CharacterEllipsis">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">

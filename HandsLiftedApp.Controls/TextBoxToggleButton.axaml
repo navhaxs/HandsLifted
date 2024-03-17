@@ -52,7 +52,7 @@
                         Kind="Pencil" />
                 </Border>
                 <TextBlock
-                    FontSize="20"
+                    FontSize="{Binding $parent[controls:TextBoxToggleButton].FontSize}"
                     Foreground="{Binding $parent[controls:TextBoxToggleButton].Foreground}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
@@ -68,8 +68,9 @@
                  Foreground="Black"
                  CaretBrush="Black"
                  VerticalContentAlignment="Center"
+                 VerticalAlignment="Center"
                  BorderThickness="0"
-                 FontSize="20"
+                 FontSize="{Binding $parent[controls:TextBoxToggleButton].FontSize}"
                  MinWidth="100"
                  Watermark="{Binding $parent[controls:TextBoxToggleButton].Watermark}">
             <TextBox.InnerRightContent>

@@ -14,7 +14,7 @@ namespace HandsLiftedApp.Controls
         {
             InitializeComponent();
         }
-
+        
         public static readonly DirectProperty<TextBoxToggleButton, Color> HoverBrushProperty =
             AvaloniaProperty.RegisterDirect<TextBoxToggleButton, Color>(
                 nameof(HoverBrush),

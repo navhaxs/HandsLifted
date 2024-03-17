@@ -1,16 +1,13 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
-using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
-
-//using HandsLiftedApp.Data.Models.Items;
-//using HandsLiftedApp.Models.ItemState;
-//using HandsLiftedApp.Utils;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Controls
 {
@@ -67,6 +64,30 @@ namespace HandsLiftedApp.Controls
                 GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow () { DataContext = mediaGroupItemInstance };
                 songEditorWindow.Show();
                 return;
+            }
+        }
+        
+        private void MoveUpItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control control)
+            {
+                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.UP });
+            }
+        }
+        private void MoveDownItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control control)
+            {
+                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.DOWN });
+            }
+        }
+        private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control control)
+            {
+                // TODO confirmation window
+                
+                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
             }
         }
     }

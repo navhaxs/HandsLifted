@@ -16,7 +16,7 @@
 	<Grid ColumnDefinitions="3*, *">
 		<Border Grid.Column="0" Background="White" BorderBrush="White" BorderThickness="1" VerticalAlignment="Top">
 			<StackPanel>
-				<TextBlock Text="Live" HorizontalAlignment="Center" Margin="0 2"  FontSize="30" FontWeight="Bold" />
+				<TextBlock Text="Live" HorizontalAlignment="Center" Margin="0 2"  FontSize="30" FontWeight="Bold" Foreground="Black" />
 
 				<Grid DockPanel.Dock="Top">
 					<Grid.Background>

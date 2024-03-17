@@ -2,8 +2,9 @@
 
 namespace HandsLiftedApp.Controls.Messages
 {
-    public class AddItemMessage
+    public record AddItemMessage
     {
+        public int? InsertIndex { get; init; }
         public Item? ItemToInsertAfter { get; init; }
         public AddItemType Type { get; init; }
 
@@ -19,7 +20,8 @@ namespace HandsLiftedApp.Controls.Messages
             SectionHeading,
             MediaGroup,
             BlankGroup,
-            BibleReadingSlideGroup
+            BibleReadingSlideGroup,
+            Comment
         }
     }
 }

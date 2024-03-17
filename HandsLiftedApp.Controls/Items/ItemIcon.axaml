@@ -6,14 +6,25 @@
  			 xmlns:utils="using:HandsLiftedApp.Utils"
 	 		 xmlns:material="using:Material.Icons.Avalonia"
 	 		 xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+	 		 xmlns:converters="clr-namespace:HandsLiftedApp.Converters"
 	 		 x:Class="HandsLiftedApp.Controls.Items.ItemIcon"
              x:CompileBindings="False">
-	<!--<UserControl.Styles>
+	
+	<UserControl.Resources>
+		<converters:IsGreaterThanConverter x:Key="IsGreaterThanConverter" />
+	</UserControl.Resources>
+	
+	<UserControl.Styles>
 		<Style Selector="material|MaterialIcon">
 			<Setter Property="Foreground" Value="White" />
 		</Style>
-	</UserControl.Styles>-->
-	<ContentControl Content="{Binding}" >
+		<Style Selector="ContentControl.isSelectedItem material|MaterialIcon">
+			<Setter Property="Foreground" Value="#FF3400" />
+		</Style>
+	</UserControl.Styles>
+	
+	<ContentControl Content="{Binding}" 
+	                Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}">
 		<ContentControl.ContentTemplate>
 			<common:MyTemplateSelector>
 				<DataTemplate x:Key="SongItemInstance">

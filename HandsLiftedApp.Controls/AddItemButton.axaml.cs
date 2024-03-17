@@ -12,9 +12,9 @@ namespace HandsLiftedApp.Controls
     public partial class AddItemButton : UserControl
     {
 
-        public static readonly StyledProperty<int> ItemInsertIndexProperty =
-            AvaloniaProperty.Register<AddItemButton, int>(nameof(ItemInsertIndex));
-        public int ItemInsertIndex
+        public static readonly StyledProperty<int?> ItemInsertIndexProperty =
+            AvaloniaProperty.Register<AddItemButton, int?>(nameof(ItemInsertIndex));
+        public int? ItemInsertIndex
         {
             get { return GetValue(ItemInsertIndexProperty); }
             set { SetValue(ItemInsertIndexProperty, value); }
@@ -149,8 +149,6 @@ namespace HandsLiftedApp.Controls
                 //}
 
                 this.Background = SolidColorBrush.Parse("Transparent");
-
-
             }
 
             //dragMe.PointerPressed += DoDrag;

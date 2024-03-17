@@ -177,6 +177,7 @@
                     DockPanel.Dock="Top"
                     Margin="10,0,0,8"
                     HorizontalAlignment="Left"
+                    FontSize="20"
                     Watermark="Untitled Playlist"
                     Text="{Binding Playlist.Title, Mode=TwoWay}" />
 

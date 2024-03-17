@@ -4,6 +4,7 @@ using HandsLiftedApp.Controls.Messages;
 using ReactiveUI;
 using System;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Extensions;
 
 namespace HandsLiftedApp.Controls.Assets
 {
@@ -14,17 +15,28 @@ namespace HandsLiftedApp.Controls.Assets
             if (sender is MenuItem menuItem)
             {
                 Item? nearestItem = null;
-                var nearestDataContext = FindNearestDataContextAncestor(menuItem);
-                if (nearestDataContext is Item item)
+                int? itemInsertIndex = null;
+                
+                var parentAddItemButton = ControlExtension.FindAncestor<AddItemButton>(menuItem);
+
+                if (parentAddItemButton != null && parentAddItemButton.ItemInsertIndex != null)
                 {
-                    nearestItem = item;
+                    itemInsertIndex = parentAddItemButton.ItemInsertIndex;
+                }
+                else
+                {
+                    var nearestDataContext = FindNearestDataContextAncestor(menuItem);
+                    if (nearestDataContext is Item item)
+                    {
+                        nearestItem = item;
+                    }
                 }
 
                 AddItemMessage.AddItemType type;
                 if (menuItem.CommandParameter != null)
                 {
                     Enum.TryParse(menuItem.CommandParameter.ToString(), out type);
-                    MessageBus.Current.SendMessage(new AddItemMessage { Type = type, ItemToInsertAfter = nearestItem });
+                    MessageBus.Current.SendMessage(new AddItemMessage { Type = type, ItemToInsertAfter = nearestItem, InsertIndex = itemInsertIndex });
                 }
                 else
                 {

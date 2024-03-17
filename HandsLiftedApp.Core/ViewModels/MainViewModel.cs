@@ -15,16 +15,13 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using ByteSizeLib;
 using Config.Net;
-using DynamicData;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Views;
-using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Models.LibraryModel;
-using HandsLiftedApp.Utils;
 using Serilog;
 using Item = HandsLiftedApp.Data.Models.Items.Item;
 
@@ -130,6 +127,9 @@ public class MainViewModel : ViewModelBase
                         itemToInsert = mediaGroupItem;
 
                         break;
+                    case AddItemMessage.AddItemType.Comment:
+                        itemToInsert = new CommentItem();
+                        break;
                     default:
                         Debug.Print($"Unknown AddItemType: [${addItemMessage.Type}]");
                         break;
@@ -137,6 +137,10 @@ public class MainViewModel : ViewModelBase
 
                 if (itemToInsert != null)
                 {
+                    if (addItemMessage.InsertIndex != null)
+                    {
+                        Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert);
+                    }
                     if (addItemMessage.ItemToInsertAfter != null)
                     {
                         var indexOf = Playlist.Items.IndexOf(addItemMessage.ItemToInsertAfter);
@@ -157,10 +161,16 @@ public class MainViewModel : ViewModelBase
                 switch (moveItemCommand.Direction)
                 {
                     case MoveItemCommand.DirectionValue.UP:
-                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex - 1);
+                        if (theSelectedIndex > 0)
+                        {
+                            Playlist.Items.Move(theSelectedIndex, theSelectedIndex - 1);
+                        }
                         break;
                     case MoveItemCommand.DirectionValue.DOWN:
-                        Playlist.Items.Move(theSelectedIndex, theSelectedIndex + 1);
+                        if (theSelectedIndex + 1 < Playlist.Items.Count)
+                        {
+                            Playlist.Items.Move(theSelectedIndex, theSelectedIndex + 1);
+                        }
                         break;
                     case MoveItemCommand.DirectionValue.REMOVE:
                         Playlist.Items.RemoveAt(theSelectedIndex);
@@ -171,41 +181,10 @@ public class MainViewModel : ViewModelBase
         MessageBus.Current.Listen<MoveItemMessage>()
             .Subscribe((moveItemMessage) =>
             {
-                // var theSelectedItem = CurrentPlaylist.State.SelectedItem;
-
                 Playlist.Items.Move(moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
-
-                // Is this working??
-                // var theSelectedIndex = CurrentPlaylist.Items.IndexOf(theSelectedItem);
 
                 Debug.Print(
                     $"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
-
-                // TODO we MUST update SelectedItemIndex
-                //
-                // if (x.SourceIndex == Playlist.State.SelectedItemIndex)
-                // {
-                //     Debug.Print($"Updating the SelectedItemIndex from {Playlist.State.SelectedItemIndex} to {x.DestinationIndex}");
-                //     Playlist.State.SelectedItemIndex = x.DestinationIndex;
-                // }
-                // else
-                // {
-                //     Debug.Print($"Updating the SelectedItemIndex to {theSelectedIndex}");
-                //
-                //     // the selected item index is now incorrect because the list has been shuffled.
-                //     Playlist.State.SelectedItemIndex = theSelectedIndex;
-                // }
-                //
-                // // HACK run me from different thread. gives time for UI to update first
-                // new Thread(() =>
-                // {
-                //     Thread.CurrentThread.IsBackground = true;
-                //     Thread.Sleep(100);
-                //     Dispatcher.UIThread.InvokeAsync(() =>
-                //     {
-                //         MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = x.DestinationIndex });
-                //     });
-                // }).Start();
             });
 
         // Open reading stream from the first file.
