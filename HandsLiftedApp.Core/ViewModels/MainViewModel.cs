@@ -141,7 +141,7 @@ public class MainViewModel : ViewModelBase
                     {
                         Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert);
                     }
-                    if (addItemMessage.ItemToInsertAfter != null)
+                    else if (addItemMessage.ItemToInsertAfter != null)
                     {
                         var indexOf = Playlist.Items.IndexOf(addItemMessage.ItemToInsertAfter);
                         Playlist.Items.Insert(indexOf + 1, itemToInsert);
