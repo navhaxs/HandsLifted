@@ -63,7 +63,6 @@
     <PackageVersion Include="SIL.Scripture" Version="11.0.1" />
     <PackageVersion Include="SkiaSharp" Version="2.88.1" />
     <PackageVersion Include="Syncfusion.Licensing" Version="25.1.37" />
-    <PackageVersion Include="Syncfusion.PdfToImageConverter.Net" Version="25.1.35" />
     <PackageVersion Include="Syncfusion.Presentation.NET" Version="25.1.35" />
     <PackageVersion Include="Syncfusion.PresentationRenderer.NET" Version="25.1.35" />
     <PackageVersion Include="System.Collections.Concurrent" Version="4.3.0" />
