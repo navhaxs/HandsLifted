@@ -9,6 +9,8 @@
         <ApplicationIcon>app.ico</ApplicationIcon>
         <Company>TwoHandsLifted</Company>
         <Product>VisionScreens Church Presentation Software</Product>
+        <PackageIcon>app.ico</PackageIcon>
+        <UserSecretsId>b7aca156-4577-4098-b109-b5a2160f5c03</UserSecretsId>
     </PropertyGroup>
 
     <PropertyGroup>

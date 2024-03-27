@@ -10,6 +10,7 @@
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Skia" />
     <PackageReference Include="PDFiumCore" />
+    <PackageReference Include="Syncfusion.PdfToImageConverter.Net" />
   </ItemGroup>
 
 </Project>

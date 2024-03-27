@@ -1,10 +1,15 @@
-﻿using NetOffice.OfficeApi.Enums;
+﻿using System;
+using NetOffice.OfficeApi.Enums;
 using NetOffice.PowerPointApi;
 using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using HandsLiftedApp.Importer.PowerPointInteropData;
 
 namespace HandsLiftedApp.Importer.PowerPoint
 {
-    public static class Main
+    public static class Converter
     {
 
         // NOTE: waiting for https://github.com/NetOfficeFw/NetOffice/issues/343
@@ -36,7 +41,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
             thread.Start();
             return tcs.Task;
         }
-        public static ImportStats RunPowerPointImportTask(IProgress<ImportStats> progress, ImportTask task)
+        public static ImportStats RunPowerPointImportTask(IProgress<ImportStats>? progress, ImportTask task)
         {
             ImportStats stats = new ImportStats() { Task = task };
             lock (syncSlidesLock)
@@ -50,15 +55,15 @@ namespace HandsLiftedApp.Importer.PowerPoint
                 Directory.CreateDirectory(task.OutputDirectory);
                 DirectoryInfo di = new DirectoryInfo(task.OutputDirectory);
 
-                foreach (FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-                foreach (DirectoryInfo dir in di.GetDirectories())
-                {
-                    dir.Delete(true);
-                }
-
+                // foreach (FileInfo file in di.GetFiles())
+                // {
+                //     file.Delete();
+                // }
+                // foreach (DirectoryInfo dir in di.GetDirectories())
+                // {
+                //     dir.Delete(true);
+                // }
+                //
                 Slides? slides = null;
                 try
                 {
@@ -165,12 +170,12 @@ namespace HandsLiftedApp.Importer.PowerPoint
             }
         }
 
-        public class ImportTask
-        {
-            public string PPTXFilePath { get; set; }
-
-            public string OutputDirectory { get; set; }
-        }
+        // public class ImportTask
+        // {
+        //     public string PPTXFilePath { get; set; }
+        //
+        //     public string OutputDirectory { get; set; }
+        // }
 
         public class ImportStats
         {

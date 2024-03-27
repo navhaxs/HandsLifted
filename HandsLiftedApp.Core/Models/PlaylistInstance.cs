@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;

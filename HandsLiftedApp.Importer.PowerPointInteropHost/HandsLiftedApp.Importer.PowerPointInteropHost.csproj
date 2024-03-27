@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <LangVersion>12</LangVersion>
+        <UseWindowsForms>true</UseWindowsForms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NetOfficeFw.PowerPoint" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HandsLiftedApp.Importer.PowerPointInteropData\HandsLiftedApp.Importer.PowerPointInteropData.csproj" />
+    </ItemGroup>
+</Project>

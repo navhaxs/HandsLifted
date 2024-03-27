@@ -88,7 +88,6 @@ public class MainViewModel : ViewModelBase
                         {
                             await CreateItem.OpenPresentationFileAsync(path, Playlist);
                         }
-
                         break;
                     case AddItemMessage.AddItemType.Logo:
                         itemToInsert = new LogoItemInstance(Playlist);

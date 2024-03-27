@@ -17,11 +17,11 @@ sealed class Program
     public static void Main(string[] args)
     {
         Logging.InitLogging();
-        if (OperatingSystem.IsWindows())
-        {
-            Caffeine.KeepAwake(true);
-            // TODO macOS: keep awake
-        }
+        // if (OperatingSystem.IsWindows())
+        // {
+        //     Caffeine.KeepAwake(true);
+        //     // TODO macOS: keep awake
+        // }
 
         try
         {

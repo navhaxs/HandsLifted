@@ -13,6 +13,7 @@ using HandsLiftedApp.Core.Importers;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Importer.PowerPointLib;
 
 namespace HandsLiftedApp.Core
 {
@@ -47,10 +48,25 @@ namespace HandsLiftedApp.Core
                 {
                     Log.Debug($"Importing PowerPoint file: {filePath}");
                     PowerPointSlidesGroupItem slidesGroup = new PowerPointSlidesGroupItem() { Title = fileName, SourcePresentationFile = filePath };
+                    
+                    Class1.Run(filePath);
 
-                    currentPlaylist.Items.Add(slidesGroup);
+                    Log.Debug($"Importing PDF file: {filePath}");
+                    // PDFSlidesGroupItem slidesGroup = new PDFSlidesGroupItem() { Title = fileName, SourcePresentationFile = filePath };
 
-                    //slidesGroup.SyncState.SyncCommand();
+                    ConvertPDF.Convert(filePath + ".pdf", targetDirectory); // todo move into State as a SyncCommand
+                    
+                    MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(currentPlaylist)
+                        { Title = "New media group" };
+ 
+                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory))
+                    {
+                        mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
+                            { SourceMediaFilePath = convertedFilePath }); 
+                    }
+
+                    currentPlaylist.Items.Add(mediaGroupItem);
+                    mediaGroupItem.GenerateSlides();
                 }
                 else if (filePath.EndsWith(".pdf"))
                 {
