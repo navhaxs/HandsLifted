@@ -7,6 +7,7 @@
         Title="PowerPointConverterSampleApp">
     <StackPanel>
         <TextBox x:Name="InputPPTX" Watermark="Input PPTX"></TextBox>
+        <CheckBox x:Name="UseNativeImport">Use native Microsoft PowerPoint</CheckBox>
         <Button Click="Button_OnClick">Run</Button>
     </StackPanel>
 </Window>

@@ -16,8 +16,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        
-        new Thread(() => 
+
+        new Thread(() =>
         {
             while (true)
             {
@@ -35,14 +35,21 @@ public partial class MainWindow : Window
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        //Class1.Run(InputPPTX.Text);
-        
-        using (var client = new NamedPipeClientStream(".", "MyPipe", PipeDirection.Out))
+        if (UseNativeImport.IsChecked == true)
         {
-            client.Connect();
+            // TODO ensure Host is started
+            using (var client = new NamedPipeClientStream(".", "MyPipe", PipeDirection.Out))
+            {
+                client.Connect();
 
-            ImportTask importTask = new ImportTask() { PPTXFilePath = InputPPTX.Text };
-            Serializer.Serialize(client, importTask);
+                ImportTask importTask = new ImportTask() { PPTXFilePath = InputPPTX.Text };
+                Serializer.Serialize(client, importTask);
+            }
+            // TODO shutdown Host
+        }
+        else
+        {
+            Class1.Run(InputPPTX.Text);
         }
     }
 }
