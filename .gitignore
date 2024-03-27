@@ -3,12 +3,14 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-Demos/PowerPointConverterSampleApp/appsettings.json
+/Demos/PowerPointConverterSampleApp/appsettings.json
 
 .sync/
 
 HandsLiftedApp/BuildInfo/BuildDate.txt
 HandsLiftedApp/BuildInfo/GitHash.txt
+HandsLiftedApp.Core/BuildInfo/BuildDateTime.txt
+HandsLiftedApp.Core/BuildInfo/GitHash.txt
 
 global-packages/*
 
@@ -18,9 +20,6 @@ global-packages/*
 *.user
 *.userosscache
 *.sln.docstates
-
-# User-specific files (MonoDevelop/Xamarin Studio)
-*.userprefs
 
 # Mono auto generated files
 mono_crash.*
