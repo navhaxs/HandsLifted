@@ -14,6 +14,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.PowerPointLib;
+using NaturalSort.Extension;
 
 namespace HandsLiftedApp.Core
 {
@@ -59,7 +60,7 @@ namespace HandsLiftedApp.Core
                     MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(currentPlaylist)
                         { Title = "New media group" };
  
-                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory))
+                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory).OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
                     {
                         mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
                             { SourceMediaFilePath = convertedFilePath }); 
@@ -78,7 +79,7 @@ namespace HandsLiftedApp.Core
                     MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(currentPlaylist)
                         { Title = "New media group" };
  
-                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory))
+                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory).OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
                     {
                         mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
                             { SourceMediaFilePath = convertedFilePath }); 

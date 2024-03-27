@@ -33,6 +33,7 @@
         <PackageReference Include="Config.Net"/>
         <PackageReference Include="DebounceThrottle"/>
         <PackageReference Include="Material.Icons.Avalonia"/>
+        <PackageReference Include="NaturalSort.Extension" />
         <PackageReference Include="PDFiumCore"/>
         <PackageReference Include="Serilog.Expressions"/>
         <PackageReference Include="Serilog.Sinks.Console"/>
