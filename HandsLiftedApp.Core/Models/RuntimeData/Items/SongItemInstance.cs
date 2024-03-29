@@ -1,4 +1,10 @@
-﻿using System;
+﻿using DebounceThrottle;
+using HandsLiftedApp.Data;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Slides;
+using ReactiveUI;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -6,12 +12,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using DebounceThrottle;
-using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
-using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -31,7 +31,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 if (stanza != null)
                 {
                     result.Add(new ArrangementRef()
-                        { Index = i, SongStanza = stanza });
+                    { Index = i, SongStanza = stanza });
                     i++;
                 }
             }
@@ -76,9 +76,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             GenerateArrangementViews();
 
             this.WhenAnyValue(x => x.TitleSlide).Subscribe((d) =>
-            {
-                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-            });
+        {
+            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+        });
 
             this.WhenAnyValue(x => x.EndOnBlankSlide).Subscribe((d) =>
             {
@@ -217,7 +217,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             else
                             {
                                 var slide = new SongSlideInstance(this, _datum, slideId)
-                                    { Text = Text, Label = Label, }; //, Index = i };
+                                { Text = Text, Label = Label, }; //, Index = i };
                                 this.StanzaSlides.Insert(i, slide);
                             }
 

@@ -336,7 +336,7 @@
         <Border Grid.Row="3" Background="{DynamicResource BottomBarBackgroundBrush}">
 
             <DockPanel>
-                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Margin="6" Foreground="Red" FontWeight="Bold">Pre-release software</TextBlock>
+                <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="6" Foreground="Red" Background="Transparent" BorderThickness="0" FontWeight="Bold" Click="Debug_OnClick">Pre-release software</Button>
                 <Grid />
 
                 <!-- <Grid Width="{Binding #RightPanel.Bounds.Width}" DockPanel.Dock="Right" /> -->

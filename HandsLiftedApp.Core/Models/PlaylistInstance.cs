@@ -125,6 +125,11 @@ namespace HandsLiftedApp.Core.Models
                 }
             });
 
+            if (Design.IsDesignMode)
+            {
+                return;
+            }
+            
             MessageBus.Current.Listen<ActionMessage>()
                 .Subscribe(x =>
                 {
@@ -310,7 +315,7 @@ namespace HandsLiftedApp.Core.Models
                     itemInstance.SelectedSlideIndex = -1;
             }
 
-            // Log.Debug($"NavigateToReference {slideReference}");
+            Log.Debug("NavigateToReference {SlideReference}", slideReference);
 
             // MessageBus.Current.SendMessage(new ActiveSlideChangedMessage());
         }

@@ -180,45 +180,45 @@
                         Command="{Binding $parent[Window].DataContext.EditSlideInfoCommand}"
                         CommandParameter="{Binding}"
                         Header="Edit / Slide / Info" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}"
-                        CommandParameter="{Binding}"
-                        Header="Move Up" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}"
-                        CommandParameter="{Binding}"
-                        Header="Move Down" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].DataContext.RemoveItemCommand}"
-                        CommandParameter="{Binding}"
-                        Header="Remove Item" />
-                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideSplitFromHere}"
-                              Header="Split group from here">
-                        <MenuItem.CommandParameter>
-                            <MultiBinding>
-                                <Binding />
-                                <Binding Path="$parent[ListBox].DataContext" />
-                            </MultiBinding>
-                        </MenuItem.CommandParameter>
-                    </MenuItem>
-                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinBackwardsFromHere}"
-                              Header="Join group with previous item group">
-                        <MenuItem.CommandParameter>
-                            <MultiBinding>
-                                <Binding />
-                                <Binding Path="$parent[ListBox].DataContext" />
-                            </MultiBinding>
-                        </MenuItem.CommandParameter>
-                    </MenuItem>
-                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinForwardsFromHere}"
-                              Header="Join group with next item">
-                        <MenuItem.CommandParameter>
-                            <MultiBinding>
-                                <Binding />
-                                <Binding Path="$parent[ListBox].DataContext" />
-                            </MultiBinding>
-                        </MenuItem.CommandParameter>
-                    </MenuItem>
+                    <!-- <MenuItem -->
+                    <!--     Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" -->
+                    <!--     CommandParameter="{Binding}" -->
+                    <!--     Header="Move Up" /> -->
+                    <!-- <MenuItem -->
+                    <!--     Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" -->
+                    <!--     CommandParameter="{Binding}" -->
+                    <!--     Header="Move Down" /> -->
+                    <!-- <MenuItem -->
+                    <!--     Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" -->
+                    <!--     CommandParameter="{Binding}" -->
+                    <!--     Header="Remove Item" /> -->
+                    <!-- <MenuItem Command="{Binding $parent[Window].DataContext.SlideSplitFromHere}" -->
+                    <!--           Header="Split group from here"> -->
+                    <!--     <MenuItem.CommandParameter> -->
+                    <!--         <MultiBinding> -->
+                    <!--             <Binding /> -->
+                    <!--             <Binding Path="$parent[ListBox].DataContext" /> -->
+                    <!--         </MultiBinding> -->
+                    <!--     </MenuItem.CommandParameter> -->
+                    <!-- </MenuItem> -->
+                    <!-- <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinBackwardsFromHere}" -->
+                    <!--           Header="Join group with previous item group"> -->
+                    <!--     <MenuItem.CommandParameter> -->
+                    <!--         <MultiBinding> -->
+                    <!--             <Binding /> -->
+                    <!--             <Binding Path="$parent[ListBox].DataContext" /> -->
+                    <!--         </MultiBinding> -->
+                    <!--     </MenuItem.CommandParameter> -->
+                    <!-- </MenuItem> -->
+                    <!-- <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinForwardsFromHere}" -->
+                    <!--           Header="Join group with next item"> -->
+                    <!--     <MenuItem.CommandParameter> -->
+                    <!--         <MultiBinding> -->
+                    <!--             <Binding /> -->
+                    <!--             <Binding Path="$parent[ListBox].DataContext" /> -->
+                    <!--         </MultiBinding> -->
+                    <!--     </MenuItem.CommandParameter> -->
+                    <!-- </MenuItem> -->
                 </ContextMenu>
             </Setter.Value>
         </Setter>

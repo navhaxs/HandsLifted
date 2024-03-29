@@ -11,8 +11,12 @@ namespace HandsLiftedApp.Core
 {
     public class BitmapUtils
     {
-        public static Bitmap CreateThumbnail(Bitmap source)
+        public static Bitmap CreateThumbnail(Bitmap? source)
         {
+            if (source == null)
+            {
+                return null;
+            }
             using (SKBitmap bitmap = new SKBitmap(1920, 1080))
             {
                 using (SKCanvas canvas = new SKCanvas(bitmap))

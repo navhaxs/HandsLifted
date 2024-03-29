@@ -1,32 +1,26 @@
 ﻿using Avalonia.Media;
-using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using DynamicData;
-using DynamicData.Binding;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
-    //[XmlType(TypeName = "SongX")]
     [XmlRoot("Song", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
     public class SongItem : Item
     {
         public SongItem()
         {
-            
 
 
-        
+
+
         }
 
         private Guid _design = Guid.Empty;
@@ -120,7 +114,7 @@ namespace HandsLiftedApp.Data.Models.Items
             get => lyrics;
             set => this.RaiseAndSetIfChanged(ref lyrics, value);
         }
-        
+
         private Guid _design = Guid.Empty;
         public Guid Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
 

@@ -208,4 +208,10 @@ public partial class MainView : UserControl
     {
         MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.AboutWindow));
     }
+
+    private void Debug_OnClick(object? sender, RoutedEventArgs e)
+    {
+        DebugWindow debugWindow = new DebugWindow() { DataContext = this.DataContext };
+        debugWindow.Show();
+    }
 }

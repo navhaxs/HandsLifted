@@ -4,9 +4,7 @@ using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Xml.Serialization;
 
 namespace HandsLiftedApp.Data.Models
@@ -33,16 +31,16 @@ namespace HandsLiftedApp.Data.Models
             if (Design.IsDesignMode)
                 return;
         }
-    
+
         private String _title = "Untitled Playlist";
         public String Title { get => _title; set => this.RaiseAndSetIfChanged(ref _title, value); }
-        
+
         private String _notes = "Some notes go here";
         public String Notes { get => _notes; set => this.RaiseAndSetIfChanged(ref _notes, value); }
 
         // TODO can this Dictionary have elements that can have bindings to?
         public SerializableDictionary<String, Object> Meta { get; set; } = new SerializableDictionary<String, Object>();
-        
+
         // TODO move into Dictionary
         private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png";
         public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }

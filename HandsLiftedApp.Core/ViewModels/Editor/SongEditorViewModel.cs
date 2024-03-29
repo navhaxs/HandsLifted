@@ -1,21 +1,18 @@
+using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Data.ViewModels;
-using HandsLiftedApp.ViewModels.Editor;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
-using Avalonia.Controls;
-using HandsLiftedApp.Core.Models;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using HandsLiftedApp.Data.SlideTheme;
 
 namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     public class SongEditorViewModel : ViewModelBase
     {
-
         // public event EventHandler SongDataUpdated;
 
         private SongItemInstance _song;
@@ -31,7 +28,10 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                 this.RaiseAndSetIfChanged(ref _song, value);
                 _song.PropertyChanged += _song_PropertyChanged;
 
-                this.RaiseAndSetIfChanged(ref _selectedSlideTheme, Globals.MainViewModel.Playlist.Designs.FirstOrDefault(d => d.Id == _song.Design, null), nameof(SelectedSlideTheme));
+                if (Globals.MainViewModel != null)
+                {
+                    this.RaiseAndSetIfChanged(ref _selectedSlideTheme, Globals.MainViewModel.Playlist.Designs.FirstOrDefault(d => d.Id == _song.Design, null), nameof(SelectedSlideTheme));
+                }
 
             }
         }
@@ -46,11 +46,11 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         {
             OnClickCommand = ReactiveCommand.Create(RunTheThing);
             // SongDataUpdateCommand = ReactiveCommand.Create(OnSongDataUpdateCommand);
-            
+
             // Playlist = (Design.IsDesignMode) ? new PlaylistInstance() : Globals.MainViewModel?.Playlist;
             Song = song;
             Playlist = playlistInstance; // song.ParentPlaylist;
-            
+
             this.WhenAnyValue(x => x.SelectedSlideTheme)
                 .Subscribe((BaseSlideTheme theme) =>
                 {

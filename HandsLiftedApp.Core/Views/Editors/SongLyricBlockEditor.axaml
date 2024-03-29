@@ -11,12 +11,16 @@
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="650"
              x:DataType="editor:SongEditorViewModel"
              Background="White"
-             x:CompileBindings="False"
              x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricBlockEditor">
-    
+
+    <Design.DataContext>
+        <editor:ExampleSongEditorViewModel />
+    </Design.DataContext>
+
     <UserControl.Resources>
         <converters:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
     </UserControl.Resources>
+    
     <StackPanel>
         <TextBox
             Margin="12,12,12,12"
@@ -33,16 +37,16 @@
             </i:Interaction.Behaviors>
         </TextBox>
         <ItemsControl Margin="0,0,5,0" ItemsSource="{Binding Song.Stanzas}">
-            <!--<ItemsControl.ItemsPanel>
+            <ItemsControl.ItemsPanel>
 									<ItemsPanelTemplate>
 										<WrapPanel Orientation="Vertical" ItemWidth="360" />
 									</ItemsPanelTemplate>
-								</ItemsControl.ItemsPanel>-->
+								</ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
 
-                        <Border BorderBrush="#ddd" BorderThickness="0,1,0,1">
+                        <Border BorderBrush="#6b6b6b" BorderThickness="0,1,0,1" Background="#e2e2e2">
                             <DockPanel>
                                 <Button
                                     Padding="0"
@@ -74,28 +78,30 @@
                                         Foreground="#AAA"
                                         Kind="BinOutline" />
                                 </Button>
-                                <ComboBox ItemsSource="{Binding Source={x:Static app:Globals.MainViewModel}, Path=Playlist.Designs}" SelectedItem="{Binding Design}">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <DockPanel>
-                                                <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom"
-                                                           HorizontalAlignment="Center" Margin="0 6 0 0" />
-                                                <Viewbox Height="30">
-                                                    <Grid
-                                                        Height="130"
-                                                        Width="130"
-                                                        Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}">
-                                                        <TextBlock Text="A"
-                                                                   FontSize="80"
-                                                                   Margin="20"
-                                                                   FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}"
-                                                                   FontWeight="SemiBold" />
-                                                    </Grid>
-                                                </Viewbox>
-                                            </DockPanel>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
+                                 <!--<ComboBox 
+                                     ItemsSource="{Binding Source={x:Static app:Globals.MainViewModel}, Path=Playlist.Designs}" 
+                                     SelectedItem="{Binding Design}"> 
+                                     <ComboBox.ItemTemplate> 
+                                         <DataTemplate> 
+                                             <DockPanel> 
+                                                 <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" 
+                                                            HorizontalAlignment="Center" Margin="0 6 0 0" /> 
+                                                 <Viewbox Height="30"> 
+                                                     <Grid 
+                                                         Height="130" 
+                                                         Width="130" 
+                                                         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}"> 
+                                                         <TextBlock Text="A" 
+                                                                    FontSize="80" 
+                                                                    Margin="20" 
+                                                                    FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}" 
+                                                                    FontWeight="SemiBold" /> 
+                                                     </Grid> 
+                                                 </Viewbox> 
+                                             </DockPanel> 
+                                         </DataTemplate> 
+                                     </ComboBox.ItemTemplate> 
+                                 </ComboBox>--> 
                                 <TextBox
                                     Padding="6,8,80,8"
                                     AcceptsReturn="False"

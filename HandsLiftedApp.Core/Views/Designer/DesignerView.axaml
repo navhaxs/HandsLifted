@@ -78,5 +78,11 @@
             <!--     ~1~     DataContext="{Binding ActiveSlide}" /> @1@ -->
             <!-- </Viewbox> -->
         </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <TextBlock VerticalAlignment="Center">Cross Fade</TextBlock>
+            </TabItem.Header>
+            <TextBox></TextBox>
+        </TabItem>
     </TabControl>
 </UserControl>

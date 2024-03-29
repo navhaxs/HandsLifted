@@ -26,7 +26,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public SongTitleSlideInstance(SongItemInstance? parentSongItem) : base()
         {
-            parentSongItem.WhenAnyValue(parentSongItem => parentSongItem.Design)
+            parentSongItem?.WhenAnyValue(parentSongItem => parentSongItem.Design)
                 .Subscribe(target =>
                 {
                     if (target != Guid.Empty)
