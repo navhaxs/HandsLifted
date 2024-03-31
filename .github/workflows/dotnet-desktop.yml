@@ -72,13 +72,13 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - uses: actions/cache@v4.0.2
-      with:
-        path: ~/.nuget/packages
-        # Look to see if there is a cache hit for the corresponding requirements file
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget
+#    - uses: actions/cache@v4.0.2
+#      with:
+#        path: ~/.nuget/packages
+#        # Look to see if there is a cache hit for the corresponding requirements file
+#        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+#        restore-keys: |
+#          ${{ runner.os }}-nuget
           
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
@@ -129,4 +129,4 @@ jobs:
       with:
         name: dist
         path: |
-          HandsLiftedApp/bin/release/net8.0-windows/win-x64/publish
+          HandsLiftedApp/bin/release/net8.0/win-x64/publish
