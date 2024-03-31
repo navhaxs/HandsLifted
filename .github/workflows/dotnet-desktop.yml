@@ -122,7 +122,7 @@ jobs:
     #     path: ${{ env.Wap_Project_Directory }}\AppPackages
     
     - name: Publish
-      run: dotnet publish ./HandsLiftedApp/HandsLiftedApp.csproj -c release -f net8.0-windows -r win-x64 --self-contained
+      run: dotnet publish ./HandsLiftedApp/HandsLiftedApp.csproj -c release -f net8.0 -r win-x64 --self-contained
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
