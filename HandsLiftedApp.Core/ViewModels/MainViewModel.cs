@@ -323,6 +323,7 @@ public class MainViewModel : ViewModelBase
             }
 
             ProjectorWindow.Show();
+            WindowUtils.RestoreWindowBounds(ProjectorWindow, Globals.AppPreferences.OutputDisplayBounds);
         }
         else
         {
@@ -351,6 +352,7 @@ public class MainViewModel : ViewModelBase
         {
             StageDisplayWindow = new StageDisplayWindow() { DataContext = this };
             StageDisplayWindow.Show();
+            WindowUtils.RestoreWindowBounds(StageDisplayWindow, Globals.AppPreferences.StageDisplayBounds);
         }
         else
         {

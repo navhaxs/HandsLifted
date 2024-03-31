@@ -153,7 +153,8 @@
 									VerticalAlignment="Center"
 									FontWeight="Bold"
 									Text="Powered by " />
-								<DockPanel ToolTip.ShowDelay="0" ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS.">
+								<DockPanel ToolTip.ShowDelay="0" ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS."
+                                           Background="Transparent">
 									<Image Height="32" Source="avares://HandsLiftedApp.Core/Assets/avalonia-logo.ico"
                                            RenderOptions.BitmapInterpolationMode="HighQuality"
                                            />

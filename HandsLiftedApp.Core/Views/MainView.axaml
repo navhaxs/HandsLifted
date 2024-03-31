@@ -125,7 +125,13 @@
 
                                 <Separator />
 
-                                <!-- <MenuItem Command="{Binding OnPreferencesWindowCommand}" Header="Setup" /> -->
+                                <MenuItem Click="Setup_OnClick" Header="Setup">
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Foreground="#888888" Kind="Cog" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <Separator />
 
                                 <MenuItem Click="About_OnClick" Header="About">
                                     <MenuItem.Icon>
@@ -139,26 +145,26 @@
                         </Button.Flyout>
 
                         <Button.Styles>
-                            <Style Selector="ToggleButton:pointerover Border.AppButtonBorder">
+                            <Style Selector="Button:pointerover Border.AppButtonBorder">
                                 <Setter Property="Background" Value="#5c3ab6" />
                             </Style>
-                            <Style Selector="ToggleButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                            <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
                                 <Setter Property="Background" Value="#9a93cd" />
                                 <!--<Setter Property="Background" Value="Transparent" />-->
                             </Style>
-                            <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                            <Style Selector="Button:checked /template/ ContentPresenter#PART_ContentPresenter">
                                 <Setter Property="Background" Value="Transparent" />
                             </Style>
-                            <Style Selector="ToggleButton:checked TextBlock">
+                            <Style Selector="Button:checked TextBlock">
                                 <Setter Property="Foreground" Value="White" />
                             </Style>
-                            <Style Selector="ToggleButton:pressed Border.AppButtonBorder">
+                            <Style Selector="Button:pressed Border.AppButtonBorder">
                                 <Setter Property="Background" Value="#9a93cd" />
                             </Style>
-                            <Style Selector="ToggleButton:checked Border.AppButtonBorder">
+                            <Style Selector="Button:checked Border.AppButtonBorder">
                                 <Setter Property="Background" Value="#5E3593" />
                             </Style>
-                            <Style Selector="ToggleButton:checked material|MaterialIcon">
+                            <Style Selector="Button:checked material|MaterialIcon">
                                 <Setter Property="Foreground" Value="White" />
                             </Style>
                         </Button.Styles>
@@ -336,7 +342,10 @@
         <Border Grid.Row="3" Background="{DynamicResource BottomBarBackgroundBrush}">
 
             <DockPanel>
-                <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="6" Foreground="Red" Background="Transparent" BorderThickness="0" FontWeight="Bold" Click="Debug_OnClick">Pre-release software</Button>
+                <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="6" Foreground="Red"
+                        Background="Transparent" BorderThickness="0" FontWeight="Bold" Click="Debug_OnClick">
+                    Pre-release software
+                </Button>
                 <Grid />
 
                 <!-- <Grid Width="{Binding #RightPanel.Bounds.Width}" DockPanel.Dock="Right" /> -->

@@ -1,25 +1,19 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using HandsLiftedApp.Core.Controller;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Extensions;
 
 namespace HandsLiftedApp.Core.Views
 {
     public partial class ProjectorWindow : Window
     {
-        private bool _isUserEvent = false;
         public ProjectorWindow()
         {
             InitializeComponent();
-            this.PositionChanged += (sender, args) =>
-            {
-                // TODO dont use flag... actually check for PixelPointEventArgs and see if monitor has changed
-                if (!_isUserEvent && this.WindowState == WindowState.Maximized)
-                {
-                    this.WindowState = WindowState.Normal;
-                    this.WindowState = WindowState.Maximized;
-                }
-            };
+            
+            WindowUtils.RegisterWindowWatcher(this);
         }
         
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
@@ -32,11 +26,9 @@ namespace HandsLiftedApp.Core.Views
         
         public void onToggleFullscreen(bool? fullscreen = null)
         {
-            _isUserEvent = true;
             bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
             this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
             //this.Topmost = isFullScreenNext;
-            _isUserEvent = false;
         }
 
 

@@ -1,8 +1,11 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.ReactiveUI;
+using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.ViewModels;
 using LibMpv.Client;
+using ReactiveUI;
 using Serilog;
 
 namespace HandsLiftedApp.Core
@@ -11,6 +14,7 @@ namespace HandsLiftedApp.Core
     {
         public static MainViewModel MainViewModel { get; set; }
         public static MpvContext MpvContextInstance { get; set; }
+        public static AppPreferencesViewModel AppPreferences { get; set; }
 
         public static void OnStartup(IApplicationLifetime applicationLifetime)
         {
@@ -19,6 +23,7 @@ namespace HandsLiftedApp.Core
                 return;
             }
 
+            // initialize LibMPV before MainViewModel
             try
             {
                 MpvContextInstance = new MpvContext();
@@ -29,7 +34,18 @@ namespace HandsLiftedApp.Core
                 Log.Fatal(ex, "LibMPV failed to initialize");
             }
             
-            // initialize LibMPV before MainViewModel
+            // Initialize app preferences state here
+            {
+                // Create the AutoSuspendHelper.
+                var suspension = new AutoSuspendHelper(applicationLifetime);
+                RxApp.SuspensionHost.CreateNewAppState = () => new AppPreferencesViewModel();
+                RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver<AppPreferencesViewModel>(Constants.APP_STATE_FILEPATH));
+                suspension.OnFrameworkInitializationCompleted();
+
+                // Load the saved view model state.
+                AppPreferences = RxApp.SuspensionHost.GetAppState<AppPreferencesViewModel>();
+            }
+            
             MainViewModel = new();
         }
     }

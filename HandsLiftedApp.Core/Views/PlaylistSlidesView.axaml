@@ -37,35 +37,6 @@
 
             <DockPanel>
 
-                <Border
-                    BorderThickness="6 0 0 0"
-                    Margin="14,12,14,0"
-                    CornerRadius="0"
-                    BorderBrush="#32B1BC"
-                    Background="#BADDDD"
-                    DockPanel.Dock="Top">
-                    <DockPanel>
-                        <avalonia:MaterialIcon DockPanel.Dock="Left"
-                                               Margin="15 10"
-                                               VerticalAlignment="Top"
-                                               Height="32" Width="32"
-                                               Foreground="#32B1BC"
-                                               Kind="AlertCircle" />
-                        <TextBox
-                            Watermark="Untitled Playlist"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Foreground="Black"
-                            FontSize="12"
-                            Text="{Binding Notes, Mode=TwoWay, FallbackValue='hello'}"
-                            Padding="0 8 8 8"
-                            AcceptsReturn="True"
-                            />
-                    </DockPanel>
-                </Border>
-
                 <!-- first add item button -->
                 <controls:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" />
                 

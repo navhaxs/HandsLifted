@@ -237,6 +237,25 @@
                             </Border>
                         </DataTemplate>
                         <DataTemplate x:Key="CommentItem">
+                            <DockPanel
+                                Margin="0,0,0,0"
+                                Background="Transparent"
+                                VerticalAlignment="Stretch">
+                                <items:ItemIcon Margin="0,0,12,0" DockPanel.Dock="Left" />
+                                <TextBlock
+                                    Padding="0,8,0,8"
+                                    FontSize="13"
+                                    TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}">
+                                            <Binding Path="Title" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <i:Interaction.Behaviors>
+                                    <behaviours:DragControlBehavior />
+                                </i:Interaction.Behaviors>
+                            </DockPanel>
                         </DataTemplate>
                         <DataTemplate x:Key="Fallback">
                             <DockPanel

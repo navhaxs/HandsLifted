@@ -185,6 +185,10 @@
             <DependentUpon>LowerThirdSlideTemplate.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Setup\DisplayIdentifyWindow.axaml.cs">
+          <DependentUpon>DisplayIdentifyWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 

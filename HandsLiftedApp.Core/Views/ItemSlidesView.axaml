@@ -75,6 +75,67 @@
                 <common:MyTemplateSelector>
                     <DataTemplate x:Key="BlankItem">
                     </DataTemplate>
+                    <DataTemplate x:Key="CommentItem" x:DataType="items2:CommentItem">
+                        <Border
+                            BorderThickness="6 0 0 0"
+                            Margin="14,12,14,0"
+                            CornerRadius="0"
+                            BorderBrush="#32B1BC"
+                            Background="#BADDDD"
+                            DockPanel.Dock="Top">
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Click="MoveUpItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Move Up">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="ArrowUp" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem
+                                        Click="MoveDownItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Move Down">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="ArrowDown" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem
+                                        Click="DeleteItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Remove Item">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="Times" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Replace" />
+                                    <MenuItem Header="Swap" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
+
+                            <DockPanel>
+                                <avalonia:MaterialIcon DockPanel.Dock="Left"
+                                                       Margin="15 10"
+                                                       VerticalAlignment="Top"
+                                                       Height="32" Width="32"
+                                                       Foreground="#32B1BC"
+                                                       Kind="AlertCircle" />
+                                <TextBox
+                                    Watermark="Untitled Playlist"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Foreground="Black"
+                                    FontSize="12"
+                                    Text="{Binding Title, Mode=TwoWay, FallbackValue='hello'}"
+                                    Padding="0 8 8 8"
+                                    AcceptsReturn="True"
+                                />
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
                     <DataTemplate x:Key="SectionHeadingItem" x:DataType="items2:SectionHeadingItem">
                         <!--    -->
                         <Border Margin="0 14"

@@ -12,6 +12,7 @@ using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Views.Setup;
 using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 
@@ -213,5 +214,11 @@ public partial class MainView : UserControl
     {
         DebugWindow debugWindow = new DebugWindow() { DataContext = this.DataContext };
         debugWindow.Show();
+    }
+
+    private void Setup_OnClick(object? sender, RoutedEventArgs e)
+    {
+        SetupWindow setupWindow = new SetupWindow();
+        setupWindow.Show();
     }
 }

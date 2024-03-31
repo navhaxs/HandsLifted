@@ -15,6 +15,8 @@ namespace HandsLiftedApp.Core.Views
         {
             InitializeComponent();
 
+            WindowUtils.RegisterWindowWatcher(this);
+
             this.DataContextChanged += (sender, args) =>
             {
                 if (DataContext is MainViewModel mainViewModel)

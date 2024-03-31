@@ -19,6 +19,7 @@ namespace HandsLiftedApp.Data.Models
     [XmlInclude(typeof(GoogleSlidesGroupItem))]
     [XmlInclude(typeof(PowerPointSlidesGroupItem))]
     [XmlInclude(typeof(PDFSlidesGroupItem))]
+    [XmlInclude(typeof(CommentItem))]
     //
     [XmlInclude(typeof(ImageSlide))]
     [XmlInclude(typeof(VideoSlide))]
@@ -35,8 +36,8 @@ namespace HandsLiftedApp.Data.Models
         private String _title = "Untitled Playlist";
         public String Title { get => _title; set => this.RaiseAndSetIfChanged(ref _title, value); }
 
-        private String _notes = "Some notes go here";
-        public String Notes { get => _notes; set => this.RaiseAndSetIfChanged(ref _notes, value); }
+        // private String _notes = "Some notes go here";
+        // public String Notes { get => _notes; set => this.RaiseAndSetIfChanged(ref _notes, value); }
 
         // TODO can this Dictionary have elements that can have bindings to?
         public SerializableDictionary<String, Object> Meta { get; set; } = new SerializableDictionary<String, Object>();

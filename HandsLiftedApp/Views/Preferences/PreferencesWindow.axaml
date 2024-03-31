@@ -23,7 +23,7 @@
 				<TextBlock Text="Set Up" Padding="16 20" VerticalAlignment="Center" FontSize="16" />
 			</DockPanel>
 		</Border>
-		<TabControl SelectedIndex="2">
+		<TabControl SelectedIndex="0">
 			<TabItem>
 				<TabItem.Header>
 					Display

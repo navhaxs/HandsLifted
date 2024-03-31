@@ -45,13 +45,13 @@
                 <material:MaterialIcon Kind="FormatSection" />
             </MenuItem.Icon>
         </MenuItem>
-        <!-- <MenuItem -->
-        <!--     Click="OnMenuItemClick" CommandParameter="Comment" -->
-        <!--     Header="_Comment"> -->
-        <!--     <MenuItem.Icon> -->
-        <!--         <material:MaterialIcon Kind="Information" /> -->
-        <!--     </MenuItem.Icon> -->
-        <!-- </MenuItem> -->
+        <MenuItem
+            Click="OnMenuItemClick" CommandParameter="Comment"
+            Header="_Comment">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="Information" />
+            </MenuItem.Icon>
+        </MenuItem>
         <Separator />
         <MenuItem Header="_Group">
             <MenuItem.Icon>

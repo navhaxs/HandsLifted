@@ -1,0 +1,29 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:app="clr-namespace:HandsLiftedApp.Core"
+        xmlns:setup="clr-namespace:HandsLiftedApp.Core.Views.Setup"
+        xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+        mc:Ignorable="d"
+        Width="380" Height="400"
+        WindowStartupLocation="CenterOwner"
+        x:Class="HandsLiftedApp.Core.Views.Setup.SetupWindow"
+        x:DataType="viewModels:SetupWindowViewModel"
+        Title="SetupWindow">
+    <DockPanel>
+        <StackPanel>
+            <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
+            <Label>Output Display (Projector)</Label>
+            <ComboBox SelectedItem="{Binding Source={x:Static app:Globals.AppPreferences}, Path=OutputDisplayBounds}"
+                      ItemsSource="{Binding AllAvailableScreens}" />
+            <Label>Stage Display</Label>
+            <ComboBox Name="StageDisplayComboBox" SelectedItem="{Binding Source={x:Static app:Globals.AppPreferences}, Path=StageDisplayBounds}"
+                      ItemsSource="{Binding AllAvailableScreens}" />
+            <Label>Startup</Label>
+            <CheckBox IsChecked="{Binding Source={x:Static app:Globals.AppPreferences}, Path=OnStartupShowOutput}">Show output display on startup</CheckBox>
+            <CheckBox IsChecked="{Binding Source={x:Static app:Globals.AppPreferences}, Path=OnStartupShowStage}">Show stage display on startup</CheckBox>
+            <CheckBox IsChecked="{Binding Source={x:Static app:Globals.AppPreferences}, Path=OnStartupShowLogo}">Show logo on startup</CheckBox>
+        </StackPanel>
+    </DockPanel>
+</Window>
