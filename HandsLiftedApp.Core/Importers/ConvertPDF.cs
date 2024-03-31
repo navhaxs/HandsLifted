@@ -89,11 +89,11 @@ namespace HandsLiftedApp.Core.Importers
 
                         skBitmap.InstallPixels(info, scan0, info.RowBytes, delegate { }, null);
 
-                        string slideOutFile = Path.Join(outputDir, "Slide." + (i + 1) + ".bmp");
+                        string slideOutFile = Path.Join(outputDir, "Slide." + (i + 1) + ".png");
 
                         using (Stream s = File.Create(slideOutFile))
                         {
-                            using (SKData d = SKImage.FromBitmap(skBitmap).Encode(SKEncodedImageFormat.Jpeg, 100))
+                            using (SKData d = SKImage.FromBitmap(skBitmap).Encode(SKEncodedImageFormat.Png, 100))
                             {
                                 d.SaveTo(s);
                             }
