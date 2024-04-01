@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HandsLiftedApp.Core\HandsLiftedApp.Core.csproj" />
     <ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
-    <ProjectReference Include="..\HandsLiftedApp\HandsLiftedApp.csproj" />
   </ItemGroup>
 
 </Project>

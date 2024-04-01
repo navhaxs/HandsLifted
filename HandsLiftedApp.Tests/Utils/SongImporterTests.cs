@@ -1,4 +1,7 @@
-﻿namespace HandsLiftedApp.Utils.Tests
+﻿using HandsLiftedApp.Core;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+
+namespace HandsLiftedApp.Utils.Tests
 {
     [TestClass()]
     public class SongImporterTests
@@ -117,7 +120,7 @@ CCLI Song #25376
 Words: Public Domain; Music: Public Domain
 For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccli.com
 CCLI License #999999";
-            Data.Models.Items.SongItem<Models.SlideState.SongTitleSlideStateImpl, Models.SlideState.SongSlideStateImpl, Models.ItemState.ItemStateImpl> songItem = SongImporter.createSongItemFromStringData(input);
+            SongItemInstance songItem = SongImporter.createSongItemFromStringData(input);
 
             Assert.AreEqual(songItem.Title, "It Is Well With My Soul");
         }
