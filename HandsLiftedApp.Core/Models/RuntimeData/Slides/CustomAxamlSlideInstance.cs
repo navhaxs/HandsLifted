@@ -1,23 +1,15 @@
-﻿using System;
-using System.Reactive.Linq;
-using Avalonia.Media.Imaging;
-using DebounceThrottle;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using HandsLiftedApp.Core.Views;
+﻿using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Models.Slides;
-using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Utils;
-using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
     public class CustomAxamlSlideInstance : CustomAxamlSlide //, ISlideInstance
     {
-        private DebounceDispatcher debounceDispatcher = new(200);
-
-        public CustomAxamlSlideInstance(string axamlFilePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png") : base()
+        public MediaGroupItem.MediaItem parentMediaItem { get; set; }
+        public CustomAxamlSlideInstance(MediaGroupItem.MediaItem parentMediaItem) : base()
         {
-            this.SourceMediaFilePath = axamlFilePath;
+            this.parentMediaItem = parentMediaItem;
+            this.SourceMediaFilePath = parentMediaItem.SourceMediaFilePath;
             // this.WhenAnyValue(s => s.SourceMediaFilePath) // todo dirty bit?
             //     .ObserveOn(RxApp.MainThreadScheduler)
             //     .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });

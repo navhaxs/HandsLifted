@@ -409,7 +409,9 @@
                                                                HorizontalAlignment="Center" />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="CustomAxamlSlideInstance" DataType="slides1:CustomAxamlSlideInstance">
-                                                    <render:CustomAxamlSlideRender />
+                                                    <Viewbox>
+                                                        <render:CustomAxamlSlideRender />
+                                                    </Viewbox>
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="CustomSlide">
                                                     <!--<customSlide:CustomAxamlSlide />-->

@@ -3,6 +3,7 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="Demos/PowerPointConverterSampleApp/App.axaml" value="Demos/PowerPointConverterSampleApp/PowerPointConverterSampleApp.csproj" />
         <entry key="Demos/PowerPointConverterSampleApp/MainWindow.axaml" value="Demos/PowerPointConverterSampleApp/PowerPointConverterSampleApp.csproj" />
         <entry key="HandsLiftedApp.App/App.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.App/MainWindow.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
@@ -10,6 +11,7 @@
         <entry key="HandsLiftedApp.App/Views/MainWindow.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.Controls/AddItemButton.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Controls/Assets/AddItemFlyoutResourceDictionary.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Controls/Assets/ItemContextMenuResources.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Controls/Items/ItemIcon.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Controls/ListBoxItem.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Controls/Navigation/ItemOrderListView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

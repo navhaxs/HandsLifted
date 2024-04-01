@@ -38,6 +38,7 @@ namespace HandsLiftedApp.Core.Render
                 }
 
                 var target = AvaloniaRuntimeXamlLoader.Parse<ContentControl>(xaml);
+                target.DataContext = dataContext.parentMediaItem.Meta;
                 this.Content = target;
             }
             catch (Exception ex)

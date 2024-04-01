@@ -111,13 +111,14 @@ namespace HandsLiftedApp.Core
             //}
         }
 
-        public static MediaSlide GenerateMediaContentSlide(string fullFilePath) //, int index)
+        public static MediaSlide GenerateMediaContentSlide(MediaGroupItem.MediaItem mediaItem)
         {
+            string fullFilePath = mediaItem.SourceMediaFilePath;
             string filename = fullFilePath.ToLower();
 
             if (filename.EndsWith(".axaml"))
             {
-                return new CustomAxamlSlideInstance(fullFilePath);
+                return new CustomAxamlSlideInstance(mediaItem);
             }
             else if (SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
             {

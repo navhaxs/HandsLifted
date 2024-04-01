@@ -17,6 +17,7 @@ using ByteSizeLib;
 using Config.Net;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Slides;
@@ -73,6 +74,15 @@ public class MainViewModel : ViewModelBase
             catch (Exception e)
             {
                 Debug.Print(e.Message);
+            }
+        });
+
+        EditSlideInfoCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
+        {
+            if (x is CustomAxamlSlideInstance c)
+            {
+                SlideInfoEditorWindow window = new SlideInfoEditorWindow() { DataContext = c.parentMediaItem.Meta };
+                window.Show();
             }
         });
 
@@ -227,6 +237,7 @@ public class MainViewModel : ViewModelBase
 
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
     public ReactiveCommand<Unit, Unit> OnChangeLogoCommand { get; }
+    public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
 
     private PlaylistInstance _playlist = new PlaylistInstance();
 

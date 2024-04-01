@@ -40,7 +40,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             var x = new List<Slide>();
             foreach (var item in Items)
             {
-                var generateMediaContentSlide = CreateItem.GenerateMediaContentSlide(item.SourceMediaFilePath);
+                var generateMediaContentSlide = CreateItem.GenerateMediaContentSlide(item);
                 x.Add(generateMediaContentSlide);
             }
 

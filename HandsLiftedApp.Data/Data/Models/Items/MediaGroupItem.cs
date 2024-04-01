@@ -1,9 +1,7 @@
-﻿using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System;
+using System.Collections.Specialized;
 using System.Xml.Serialization;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
@@ -30,7 +28,7 @@ namespace HandsLiftedApp.Data.Models.Items
             }
         }
 
-        private void _items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void _items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             this.RaisePropertyChanged(nameof(Items));
             this.RaisePropertyChanged(nameof(Slides));
@@ -83,6 +81,17 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             private string? _sourceMediaFilePath;
             public string? SourceMediaFilePath { get => _sourceMediaFilePath; set => this.RaiseAndSetIfChanged(ref _sourceMediaFilePath, value); }
+            
+            private MediaItemMeta? _meta = new();
+            public MediaItemMeta? Meta { get => _meta; set => this.RaiseAndSetIfChanged(ref _meta, value); }
+            
+            [XmlRoot(Namespace = Constants.Namespace)]
+            [Serializable]
+            public class MediaItemMeta : ReactiveObject
+            {
+                private string? _text;
+                public string? Text { get => _text; set => this.RaiseAndSetIfChanged(ref _text, value); }
+            }
         }
     }
 }
