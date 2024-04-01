@@ -302,7 +302,7 @@
             Background="#4d347f"
             BorderThickness="0"
             ClickMode="Press"
-            CornerRadius="12"
+            CornerRadius="6"
             Cursor="Hand"
             DataContext="{Binding Playlist.Items.Count, Converter={StaticResource intMinusOneConverter}}"
             DockPanel.Dock="Bottom"
