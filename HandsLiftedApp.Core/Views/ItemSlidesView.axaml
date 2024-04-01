@@ -18,6 +18,8 @@
     xmlns:item="clr-namespace:HandsLiftedApp.Views.Item"
     xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:slides1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
+    xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -405,6 +407,9 @@
                                                 <DataTemplate x:Key="VideoSlideInstance">
                                                     <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center"
                                                                HorizontalAlignment="Center" />
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="CustomAxamlSlideInstance" DataType="slides1:CustomAxamlSlideInstance">
+                                                    <render:CustomAxamlSlideRender />
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="CustomSlide">
                                                     <!--<customSlide:CustomAxamlSlide />-->

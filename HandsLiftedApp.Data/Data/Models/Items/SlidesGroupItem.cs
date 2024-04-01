@@ -1,18 +1,16 @@
 ﻿using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Xml.Serialization;
+using HandsLiftedApp.Data.Models.Slides;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
-    //[XmlType(TypeName = "SlidesGroupItemX")]
     [XmlRoot("SlidesGroupItem", Namespace = Constants.Namespace, IsNullable = false)]
-    //
-    // TODO: need to define list of media, rather than Slide ??? for serialization
+    // // TODO: need to define list of media, rather than Slide ??? for serialization
     [XmlInclude(typeof(ImageSlide))]
     [XmlInclude(typeof(VideoSlide))]
+    [XmlInclude(typeof(CustomAxamlSlide))]
     [Serializable]
     public class SlidesGroupItem : Item
     {

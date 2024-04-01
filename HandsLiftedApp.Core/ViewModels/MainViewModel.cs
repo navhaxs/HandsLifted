@@ -129,6 +129,26 @@ public class MainViewModel : ViewModelBase
                     case AddItemMessage.AddItemType.Comment:
                         itemToInsert = new CommentItem();
                         break;
+                    case AddItemMessage.AddItemType.BibleReadingSlideGroup:
+                        filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
+                        MediaGroupItemInstance mediaGroupItem2 = new MediaGroupItemInstance(Playlist)
+                            { Title = "New media group" };
+
+                        foreach (var filePath in filePaths)
+                        {
+                            if (filePath != null && filePath is string)
+                            {
+                                DateTime now = DateTime.Now;
+                                string fileName = Path.GetFileName(filePath);
+                                string folderName = Path.GetDirectoryName(filePath);
+                                mediaGroupItem2.Items.Add(new MediaGroupItem.MediaItem()
+                                    { SourceMediaFilePath = filePath } );
+                            }
+                        }
+                        mediaGroupItem2.GenerateSlides();
+
+                        itemToInsert = mediaGroupItem2;
+                        break;
                     default:
                         Debug.Print($"Unknown AddItemType: [${addItemMessage.Type}]");
                         break;

@@ -111,17 +111,22 @@ namespace HandsLiftedApp.Core
             //}
         }
 
-        public static MediaSlide GenerateMediaContentSlide(string filePath) //, int index)
+        public static MediaSlide GenerateMediaContentSlide(string fullFilePath) //, int index)
         {
-            string _filename = filePath.ToLower();
+            string filename = fullFilePath.ToLower();
 
-            // TODO: make VideoSlide and ImageSlide both share common MediaSlide parent class
-            if (SUPPORTED_VIDEO.Any(x => _filename.EndsWith(x)))
+            if (filename.EndsWith(".axaml"))
             {
-                return new VideoSlideInstance(filePath); // { Index = index };
+                return new CustomAxamlSlideInstance(fullFilePath);
             }
-
-            return new ImageSlideInstance(filePath); // { Index = index };
+            else if (SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
+            {
+                return new VideoSlideInstance(fullFilePath);
+            }
+            else
+            {
+                return new ImageSlideInstance(fullFilePath);
+            }
         }
     }
 }

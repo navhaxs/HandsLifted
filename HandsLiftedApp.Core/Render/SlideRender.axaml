@@ -54,6 +54,9 @@
                 <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides:VideoSlideInstance">
                     <render:MpvVideoSlideRenderer />
                 </DataTemplate>
+                <DataTemplate x:Key="CustomAxamlSlideInstance" x:DataType="slides:CustomAxamlSlideInstance">
+                    <render:CustomAxamlSlideRender />
+                </DataTemplate>
                 <DataTemplate x:Key="BlankSlide">
                 </DataTemplate>
                 <DataTemplate x:Key="Fallback" x:DataType="slides1:Slide">

@@ -24,6 +24,7 @@
     <ItemGroup>
         <PackageReference Include="Avalonia"/>
         <PackageReference Include="Avalonia.Controls.ColorPicker"/>
+        <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
         <PackageReference Include="Avalonia.ReactiveUI"/>
         <PackageReference Include="Avalonia.Themes.Fluent"/>
         <PackageReference Include="Avalonia.Fonts.Inter"/>
@@ -187,6 +188,10 @@
         </Compile>
         <Compile Update="Views\Setup\DisplayIdentifyWindow.axaml.cs">
           <DependentUpon>DisplayIdentifyWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Render\CustomAxamlSlideRender.axaml.cs">
+          <DependentUpon>CustomAxamlSlide.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
