@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.XTransitioningContentControl;
 using LibMpv.Client;
 using LibMpv.Context.MVVM;
 using ReactiveUI;
@@ -19,7 +20,7 @@ Read MPV documentation:
 - https://mpv.io/manual/master/#list-of-input-commands
 
  */
-    public class VideoSlideInstance : VideoSlide
+    public class VideoSlideInstance : VideoSlide, ISlideRender
     {
         public VideoSlideInstance(string videoPath = "C:\\VisionScreens\\TestImages\\WA22 Speaker Interview.mp4") :
             base(videoPath)
@@ -177,5 +178,16 @@ Read MPV documentation:
             new() { MvvmName = nameof(Paused), LibMpvName = "pause", LibMpvFormat = mpv_format.MPV_FORMAT_FLAG }
             // new() { MvvmName=nameof(PlaybackSpeed), LibMpvName="speed", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
         ];
+        
+        public override void OnEnterSlide()
+        {
+            base.OnEnterSlide();
+        }
+
+        public override void OnLeaveSlide()
+        {
+            Globals.MpvContextInstance?.Command("stop");
+            base.OnLeaveSlide();
+        }
     }
 }
