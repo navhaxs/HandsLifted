@@ -229,7 +229,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     {
                         var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
                             .FirstOrDefault(s => (s.data) is (SongSlide) && ((SongSlide)s.data).Id == "BLANK");
-                        if (prevIndex != null && prevIndex.index != i)
+                        if (prevIndex != null && prevIndex.index == i)
+                        {
+                            
+                        }
+                        else if (prevIndex != null && prevIndex.index != i)
                         {
                             //prevIndex.data.Index = i;
                             this.StanzaSlides.Move(prevIndex.index, i);
