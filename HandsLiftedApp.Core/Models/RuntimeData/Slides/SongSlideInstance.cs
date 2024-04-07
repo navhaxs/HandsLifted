@@ -21,13 +21,13 @@ namespace HandsLiftedApp.Data.Slides
             parentSongItem, parentSongStanza, id)
         {
             this._theme =
-                this.WhenAnyValue(x => x.ParentSongItem, x => x.ParentSongStanza,
+                this.WhenAnyValue(x => x.ParentSongItem.Design, x => x.ParentSongStanza.Design,
                         (target2, target1) =>
                         {
-                            if (target2 != null && target2.Design != Guid.Empty)
+                            if (target2 != null && target2 != Guid.Empty)
                             {
                                 var baseSlideTheme =
-                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target2.Design);
+                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target2);
                                 if (baseSlideTheme != null)
                                 {
                                     baseSlideTheme.PropertyChanged += (sender, args) =>
@@ -38,10 +38,10 @@ namespace HandsLiftedApp.Data.Slides
                                 }
                             }
 
-                            if (target1 != null && target1.Design != Guid.Empty)
+                            if (target1 != null && target1 != Guid.Empty)
                             {
                                 var baseSlideTheme =
-                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target1.Design);
+                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target1);
                                 if (baseSlideTheme != null)
                                 {
                                     baseSlideTheme.PropertyChanged += (sender, args) =>
@@ -59,6 +59,8 @@ namespace HandsLiftedApp.Data.Slides
             this.WhenAnyValue(s => s.Text, s => s.Theme) // todo dirty bit?
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
+
+            debounceDispatcher.Debounce(() => GenerateBitmaps());
         }
 
         private void GenerateBitmaps()

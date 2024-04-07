@@ -241,7 +241,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         else
                         {
                             this.StanzaSlides.Insert(i,
-                                new SongSlideInstance(this, null, "BLANK") { }); // { Index = i });
+                                new SongSlideInstance(this, new SongStanza(), "BLANK") { }); // { Index = i });
                         }
 
                         i++;
