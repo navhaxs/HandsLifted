@@ -94,7 +94,6 @@ namespace HandsLiftedApp.Controls.Behaviours
                     return;
                 }
 
-
                 if (!(target.RenderTransform is TranslateTransform))
                 {
                     target.RenderTransform = new TranslateTransform();
@@ -106,8 +105,8 @@ namespace HandsLiftedApp.Controls.Behaviours
                     _parent.PointerMoved += Parent_PointerMoved;
                     _parent.PointerReleased += Parent_PointerReleased;
 
-                    //_parent.Opacity = 0.6;
-
+                    target.Opacity = 0.6;
+                    
                     var m = _parent.GetVisualRoot();
                     if (m is Window)
                     {
@@ -123,7 +122,6 @@ namespace HandsLiftedApp.Controls.Behaviours
             if (e.GetCurrentPoint(sender as Visual).Properties.IsRightButtonPressed)
             {
                 ResetDraggingState();
-                return;
             }
         }
 
@@ -167,10 +165,8 @@ namespace HandsLiftedApp.Controls.Behaviours
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
         {
             var target = TargetControl ?? AssociatedObject;
-            //args.Properties;
             if (args.GetCurrentPoint(target).Properties.IsRightButtonPressed)
             {
-
                 ResetDraggingState();
 
                 if (target == null)
@@ -271,7 +267,6 @@ namespace HandsLiftedApp.Controls.Behaviours
 
         private void ResetDraggingState()
         {
-
             if (_parent is { })
             {
                 var target = TargetControl ?? AssociatedObject;
@@ -283,7 +278,6 @@ namespace HandsLiftedApp.Controls.Behaviours
                 UpdateCursor();
 
                 _parent = null;
-
             }
         }
 
@@ -308,7 +302,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                 {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
                     listBoxItemContainer.Classes.Remove("draggingover");
-                    listBoxItemContainer.Opacity = 1;
+                    listBoxItemContainer.FindDescendantOfType<DockPanel>().Opacity = 1;
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
 
                     if (adornerLayer != null)
@@ -343,8 +337,6 @@ namespace HandsLiftedApp.Controls.Behaviours
                     //    DestinationIndex = DestinationIndex
                     //});
                 }
-
-
             }
         }
     }
