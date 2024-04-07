@@ -1,9 +1,10 @@
-﻿using Avalonia;
+﻿using System;
 using Avalonia.Controls;
 using Avalonia.Input;
+using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
-using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Extensions;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views
 {
@@ -14,6 +15,15 @@ namespace HandsLiftedApp.Core.Views
             InitializeComponent();
             
             WindowUtils.RegisterWindowWatcher(this);
+
+            this.WhenAnyValue(value => value.IsVisible).Subscribe(isVisible =>
+            {
+                // TODO macOS: keep awake
+                if (OperatingSystem.IsWindows())
+                {
+                    Caffeine.KeepAwake(isVisible);
+                }
+            });
         }
         
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
@@ -31,8 +41,7 @@ namespace HandsLiftedApp.Core.Views
             //this.Topmost = isFullScreenNext;
         }
 
-
-        private void ProjectorWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+        private void ProjectorWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             // var window = TopLevel.GetTopLevel(this);
             //
