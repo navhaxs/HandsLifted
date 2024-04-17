@@ -45,6 +45,9 @@
 				<DataTemplate x:Key="PowerPointSlidesGroupItem">
 					<material:MaterialIcon Kind="Presentation" />
 				</DataTemplate>
+				<DataTemplate x:Key="CommentItem">
+					<material:MaterialIcon Kind="AlertCircle" />
+				</DataTemplate>
 				<DataTemplate x:Key="SectionHeadingItem">
 				</DataTemplate>
 				<DataTemplate x:Key="Fallback">

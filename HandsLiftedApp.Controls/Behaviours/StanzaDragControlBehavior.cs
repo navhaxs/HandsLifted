@@ -1,18 +1,20 @@
-﻿using Avalonia;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Behaviours;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace HandsLiftedApp.Controls.Behaviours
 {
@@ -29,6 +31,7 @@ namespace HandsLiftedApp.Controls.Behaviours
 
         private Control? _parent;
         private Point _previous;
+        private int _insertIndex;
 
         /// <summary>
         /// Gets or sets the target control to be moved around instead of <see cref="IBehavior.AssociatedObject"/>. This is a avalonia property.
@@ -53,6 +56,16 @@ namespace HandsLiftedApp.Controls.Behaviours
             if (source is { })
             {
                 source.PointerPressed += Source_PointerPressed;
+                
+                if (source.ContextMenu != null)
+                {
+                    source.ContextMenu.Opening += (sender, args) =>
+                    {
+                        ResetDraggingState();
+                        ItemsControl listBox = GetParent(source);
+                        ResetOpacities(listBox);
+                    };
+                }
             }
         }
 
@@ -89,7 +102,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                     ItemsControl listBox = GetParent(target);
                     int SourceIndex = listBox.IndexFromContainer(GetItem(target));
 
-                    Data.Models.Items.SongItem ctx = (Data.Models.Items.SongItem)listBox.DataContext;
+                    SongItem ctx = (SongItem)listBox.DataContext;
                     ctx.Arrangement.RemoveAt(SourceIndex);
                     return;
                 }
@@ -106,7 +119,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                     _parent.PointerReleased += Parent_PointerReleased;
 
                     target.Opacity = 0.6;
-                    
+
                     var m = _parent.GetVisualRoot();
                     if (m is Window)
                     {
@@ -114,6 +127,11 @@ namespace HandsLiftedApp.Controls.Behaviours
                         (m as Window).PointerPressed += StanzaDragControlBehavior_PointerPressed;
                     }
                 }
+                
+                var items = GetParent(target).GetLogicalChildren().Select(x => x as Control).ToList();
+                CalculateItemPositions(items);
+
+                _insertIndex = -1;
             }
         }
 
@@ -125,43 +143,101 @@ namespace HandsLiftedApp.Controls.Behaviours
             }
         }
 
-        private void StanzaDragControlBehavior_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void StanzaDragControlBehavior_LostFocus(object? sender, RoutedEventArgs e)
         {
             ResetDraggingState();
         }
 
-        private ContentPresenter GetHoveredItem(ItemsControl listBox, Point pos, Control? target)
+        private List<List<double>> itemWidthsByRow = new();
+        private double RowHeight { get; set; }
+
+        private void CalculateItemPositions(List<Control> logicals)
         {
-            var x = (ContentPresenter)listBox.GetLogicalChildren()
-               .Where(listBoxItem => listBoxItem != target)
-               .FirstOrDefault(x =>
-               {
-                   var listItemVisuals = ((Visual)x).GetVisualChildren(); // Grid
-                   IEnumerable<Visual> targetPosVisuals = listBox.GetVisualsAt(pos); // children
+            itemWidthsByRow = new();
+            var lastY = (logicals.First() as Control).Bounds.Y;
+            RowHeight = (logicals.First() as Control).Bounds.Height;
+            
+            var thisRow = 0;
+            foreach (var VARIABLE in logicals)
+            {
+                Control curr = (VARIABLE as Control);
 
-                   if (targetPosVisuals.Count() > 0)
-                   {
-                       return listItemVisuals.Any(source =>
-                       {
-                           var mm = source.GetVisualDescendants();
-                           return mm.Any(targetDecendant => targetPosVisuals.Contains(targetDecendant));
-                       });
+                if ((VARIABLE as ContentPresenter).Bounds.Y != lastY)
+                {
+                    lastY = (VARIABLE as ContentPresenter).Bounds.Y;
+                    thisRow++;
+                }
 
-                   }
-                   return false;
-               });
+                if (itemWidthsByRow.ElementAtOrDefault(thisRow) == null)
+                {
+                    itemWidthsByRow.Add(new List<double>());
+                }
 
-            return x;
+                itemWidthsByRow[thisRow].Add(curr.Bounds.Width);
+            }
         }
 
-        bool match(Visual target, Visual source)
+        private int CalculateInsertPosition(List<Control> logicals, Point pos)
         {
-            if (target == source)
-                return true;
+            if (logicals.Count == 0 || pos.X < 0)
+            {
+                return -1;
+            }
 
-            return target.GetVisualDescendants().Any(targetDescendant => match(targetDescendant, source));
+            if (pos.Y < 0 || pos.Y > (itemWidthsByRow.Count) * RowHeight)
+            {
+                return -1;
+            }
+
+            // use map
+            var idx = 0;
+            var row = 0;
+            foreach (var rowKV in itemWidthsByRow)
+            {
+                double rowX = 0;
+                double totalRowHeight = (row + 1)* RowHeight;
+                
+                foreach (var VARIABLE in rowKV)
+                {
+
+                    if (pos.X < (rowX + VARIABLE / 3 * 2) && pos.Y <= totalRowHeight)
+                    {
+                        return idx;
+                    }
+                    if (pos.X < (rowX + VARIABLE) && pos.Y <= totalRowHeight)
+                    {
+                        return idx + 1;
+                    }
+
+                    rowX += VARIABLE;
+                    idx++;
+                }
+
+                if (pos.Y <= totalRowHeight)
+                {
+                    return idx; // ?
+                }
+                
+                row++;
+            }
+
+            return idx;
         }
 
+        void ResetHover(ItemsControl listBox)
+        {
+            for (int i = 0; i < listBox.ItemCount; i++)
+            {
+                var listBoxItemContainer = listBox.ContainerFromIndex(i);
+                listBoxItemContainer.Classes.Remove("draggingover");
+                var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
+
+                if (adornerLayer != null)
+                {
+                    adornerLayer.Children.Clear();
+                }
+            }
+        }
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
         {
             var target = TargetControl ?? AssociatedObject;
@@ -173,20 +249,8 @@ namespace HandsLiftedApp.Controls.Behaviours
                 {
                     return;
                 }
-                
-                ItemsControl listBox = GetParent(target);
 
-                for (int i = 0; i < listBox.ItemCount; i++)
-                {
-                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
-                    listBoxItemContainer.Classes.Remove("draggingover");
-                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
-
-                    if (adornerLayer != null)
-                    {
-                        adornerLayer.Children.Clear();
-                    }
-                }
+                ResetHover(GetParent(target)); 
 
                 return;
             }
@@ -197,7 +261,6 @@ namespace HandsLiftedApp.Controls.Behaviours
             {
                 ItemsControl listBox = GetParent(target);
 
-                Point pos = args.GetPosition((Control)_parent.Parent);
                 Point pos1 = args.GetPosition(_parent);
                 if (target.RenderTransform is TranslateTransform tr)
                 {
@@ -206,15 +269,27 @@ namespace HandsLiftedApp.Controls.Behaviours
                     // TODO FIXME for multiple rows where negative Y may actually be appropriate
                     //tr.Y = Math.Clamp(tr.Y + pos1.Y - _previous.Y, 0, listBox.Bounds.Bottom - target.Bounds.Height);
                 }
+
                 _previous = pos1;
 
-                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, GetItem(target));
+                var items = listBox.GetLogicalChildren().Select(x => x as Control).ToList();
+                _insertIndex = CalculateInsertPosition(items, pos1);
+                    
+                if (_insertIndex == -1)
+                {
+                    ResetHover(GetParent(target)); 
+                    return;
+                }
+                
+                ContentPresenter hoveredItem = items[Math.Min(_insertIndex, items.Count - 1)] as ContentPresenter;
 
                 // check if dragging past the last item
-                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
+                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren()
+                    .MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
 
                 // TODO
-                bool isPastLastItem = false;// (lastItem != null) && (isPastLastItem = pos1.Y > lastItem.Bounds.Bottom);
+                bool isPastLastItem =
+                    false; // (lastItem != null) && (isPastLastItem = pos1.Y > lastItem.Bounds.Bottom);
 
                 for (int i = 0; i < listBox.ItemCount; i++)
                 {
@@ -240,7 +315,17 @@ namespace HandsLiftedApp.Controls.Behaviours
 
                     if (adornerLayer != null)
                     {
-                        var adornedElement = new Border()
+                        var adornedElement = 
+                            
+                            (_insertIndex >= listBox.ItemCount) ?
+                                new Border()
+                                {
+                                    //CornerRadius = new CornerRadius(3, 0, 0, 3),
+                                    BorderThickness = new Thickness(0, 0, 4, 0),
+                                    BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
+                                }
+                                :
+                            new Border()
                         {
                             //CornerRadius = new CornerRadius(3, 0, 0, 3),
                             BorderThickness = new Thickness(4, 0, 0, 0),
@@ -281,6 +366,22 @@ namespace HandsLiftedApp.Controls.Behaviours
             }
         }
 
+        private void ResetOpacities(ItemsControl listBox)
+        {
+            for (int i = 0; i < listBox.ItemCount; i++)
+            {
+                var listBoxItemContainer = listBox.ContainerFromIndex(i);
+                listBoxItemContainer.Classes.Remove("draggingover");
+                listBoxItemContainer.FindDescendantOfType<DockPanel>().Opacity = 1;
+                var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
+
+                if (adornerLayer != null)
+                {
+                    adornerLayer.Children.Clear();
+                }
+            }
+        }
+
         private void Parent_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             if (_parent is { })
@@ -288,54 +389,34 @@ namespace HandsLiftedApp.Controls.Behaviours
                 var target = TargetControl ?? AssociatedObject;
 
                 ItemsControl listBox = GetParent(target);
-                Point pos = e.GetPosition(listBox);
-                ContentPresenter hoveredItem = GetHoveredItem(listBox, pos, GetItem(target));
 
-                // check if dragging past the last item
-                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren().MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
-                bool isPastLastItem = false; // (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
+                int SourceIndex =
+                    listBox.ItemContainerGenerator.IndexFromContainer(((Control)target)
+                        .FindAncestorOfType<ContentPresenter>());
+                int DestinationIndex = _insertIndex;
 
-                int SourceIndex = listBox.ItemContainerGenerator.IndexFromContainer(((Control)target).FindAncestorOfType<ContentPresenter>());
-                int DestinationIndex = isPastLastItem ? listBox.ItemCount - 1 : listBox.ItemContainerGenerator.IndexFromContainer(hoveredItem);
-
-                for (int i = 0; i < listBox.ItemCount; i++)
-                {
-                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
-                    listBoxItemContainer.Classes.Remove("draggingover");
-                    listBoxItemContainer.FindDescendantOfType<DockPanel>().Opacity = 1;
-                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
-
-                    if (adornerLayer != null)
-                    {
-                        adornerLayer.Children.Clear();
-                    }
-                }
-
+                ResetOpacities(listBox);
                 ResetDraggingState();
                 if (SourceIndex != DestinationIndex
                     && SourceIndex > -1
                     && DestinationIndex > -1)
                 {
                     //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItem: {isPastLastItem}");
-                    Data.Models.Items.SongItem ctx = (Data.Models.Items.SongItem)listBox.DataContext;
+                    SongItem ctx = (SongItem)listBox.DataContext;
 
                     try
                     {
-                        ctx.Arrangement.Move(SourceIndex, DestinationIndex);
+                        if (DestinationIndex > SourceIndex)
+                        {
+                            // to account for this current item's slot being removed when shifting forwards this item
+                            DestinationIndex--;
+                        }
+                        ctx.Arrangement.Move(SourceIndex, Math.Min(DestinationIndex, ctx.Arrangement.Count - 1));
                     }
                     catch (Exception ex)
                     {
                         Log.Error("Failed to move item", ex);
                     }
-
-                    //ctx.Slides.ElementAt(0)
-                    //var ctx = (SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl>.Ref<SongStanza>)target.DataContext;
-                    //SongItem<SongTitleSlideStateImpl, SongSlideStateImpl, ItemStateImpl> a = ctx.Value;
-                    //MessageBus.Current.SendMessage(new MoveItemMessage()
-                    //{
-                    //    SourceIndex = SourceIndex,
-                    //    DestinationIndex = DestinationIndex
-                    //});
                 }
             }
         }
