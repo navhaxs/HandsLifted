@@ -265,9 +265,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                 if (target.RenderTransform is TranslateTransform tr)
                 {
                     tr.X += pos1.X - _previous.X;
-                    //tr.Y += pos1.Y - _previous.Y; % target.Height;
-                    // TODO FIXME for multiple rows where negative Y may actually be appropriate
-                    //tr.Y = Math.Clamp(tr.Y + pos1.Y - _previous.Y, 0, listBox.Bounds.Bottom - target.Bounds.Height);
+                    tr.Y = Math.Floor(pos1.Y / RowHeight) * RowHeight;
                 }
 
                 _previous = pos1;
