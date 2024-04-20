@@ -195,6 +195,10 @@
           <DependentUpon>CustomAxamlSlide.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\ContentControl\AutoAdvanceTimerControlViewWrapper.axaml.cs">
+          <DependentUpon>AutoAdvanceTimerControlViewWrapper.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 

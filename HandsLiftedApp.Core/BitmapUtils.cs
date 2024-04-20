@@ -17,15 +17,15 @@ namespace HandsLiftedApp.Core
             {
                 return null;
             }
-            using (SKBitmap bitmap = new SKBitmap(1920, 1080))
+            using (SKBitmap bitmap = new SKBitmap((int)source.Size.Width, (int)source.Size.Height))
             {
                 using (SKCanvas canvas = new SKCanvas(bitmap))
                 {
-                    canvas.DrawRect(0, 0, 1920, 1080,
+                    canvas.DrawRect(0, 0, (int)source.Size.Width, (int)source.Size.Height,
                         new SKPaint() { Style = SKPaintStyle.Fill, Color = SKColors.Black });
 
-                    int xres = 1920;
-                    int yres = 1080;
+                    int xres = (int)source.Size.Width;
+                    int yres = (int)source.Size.Height;
                     int stride = (xres * 32 /*BGRA bpp*/ + 7) / 8;
                     int bufferSize = yres * stride;
                     IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
@@ -46,7 +46,7 @@ namespace HandsLiftedApp.Core
                     new BmpSharp.Bitmap(bitmap.Width, bitmap.Height, bitmap.Bytes, bitsPerPixel);
                 Bitmap destBitmap = new Bitmap(bmp.GetBmpStream(fliped: true));
 
-                var dstSize = new PixelSize(500, (int)((double)1080 / 1920 * 500));
+                var dstSize = new PixelSize(500, (int)(source.Size.Height/ source.Size.Width * 500));
                 return destBitmap.CreateScaledBitmap(dstSize);
             }
         }

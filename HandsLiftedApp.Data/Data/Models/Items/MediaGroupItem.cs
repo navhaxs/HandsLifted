@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Xml.Serialization;
+using HandsLiftedApp.Data.Data.Models.Items;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Models.Items

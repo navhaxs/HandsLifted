@@ -43,10 +43,4 @@ namespace HandsLiftedApp.Data.Slides
         {
         }
     }
-
-    public interface ISlideState
-    {
-        public virtual void OnSlideEnterEvent() { }
-        public virtual void OnSlideLeaveEvent() { }
-    }
 }

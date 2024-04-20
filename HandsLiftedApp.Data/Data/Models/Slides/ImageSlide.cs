@@ -42,8 +42,4 @@ namespace HandsLiftedApp.Data.Slides
         //     // return State.GetBitmap();
         // }
     }
-    public interface IImageSlideState : ISlideState
-    {
-        public Bitmap GetBitmap();
-    }
 }

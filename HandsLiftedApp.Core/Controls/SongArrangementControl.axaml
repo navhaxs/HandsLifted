@@ -136,7 +136,7 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 
-			<!-- <Button Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" /> -->
+			<Button Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
 
 		</DockPanel>
 

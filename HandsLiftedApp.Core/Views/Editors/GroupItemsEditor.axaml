@@ -64,6 +64,11 @@
                 <Grid />
             </DockPanel>
         </Border>
+        
+        <DockPanel DockPanel.Dock="Bottom">
+            <TextBlock Text="Auto Advance Timer:" /> <CheckBox IsChecked="{Binding AutoAdvanceTimer.IsEnabled}">IsEnabled</CheckBox>
+            <TextBox Text="{Binding AutoAdvanceTimer.IntervalMs}" />
+        </DockPanel>
 
         <ScrollViewer>
 
@@ -155,6 +160,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <DockPanel>
+                        <!-- TODO make this load THUMBNAIL -->
                         <Image
                             Height="48"
                             Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill"

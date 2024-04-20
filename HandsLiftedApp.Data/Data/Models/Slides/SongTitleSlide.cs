@@ -39,5 +39,4 @@ namespace HandsLiftedApp.Data.Slides
         // TODO make this an interface
         public Bitmap? cached { get => _cached; set => this.RaiseAndSetIfChanged(ref _cached, value); }
     }
-    public interface ISongTitleSlideState : ISlideState { }
 }

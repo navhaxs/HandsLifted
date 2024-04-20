@@ -187,6 +187,8 @@ public class MainViewModel : ViewModelBase
             {
                 var theSelectedIndex = Playlist.Items.IndexOf(moveItemCommand.SourceItem);
 
+                var currentSelectedItem = Playlist.SelectedItem;
+
                 switch (moveItemCommand.Direction)
                 {
                     case MoveItemCommand.DirectionValue.UP:
@@ -205,24 +207,38 @@ public class MainViewModel : ViewModelBase
                         Playlist.Items.RemoveAt(theSelectedIndex);
                         break;
                 }
+
+                if (currentSelectedItem != null)
+                {
+                    Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
+                }
             });
 
         MessageBus.Current.Listen<MoveItemMessage>()
             .Subscribe((moveItemMessage) =>
             {
-                Playlist.Items.Move(moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
+                var currentSelectedItem = Playlist.SelectedItem;
 
+                Playlist.Items.Move(moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
+                
+                if (currentSelectedItem != null)
+                {
+                    Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
+                }
                 Debug.Print(
                     $"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
             });
+
+        Playlist = new PlaylistInstance();
 
         // Open reading stream from the first file.
         if (settings.LastOpenedPlaylistFullPath != null)
         {
             try
             {
-                var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
-                Playlist = x;
+                var parsedPlaylist = HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
+                Playlist.Dispose();
+                Playlist = parsedPlaylist;
             }
             catch (Exception e)
             {
@@ -231,7 +247,7 @@ public class MainViewModel : ViewModelBase
                 // ignored
             }
         }
-
+        
         _ = Update(); // calling an async function we do not want to await
     }
 
@@ -239,7 +255,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> OnChangeLogoCommand { get; }
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
 
-    private PlaylistInstance _playlist = new PlaylistInstance();
+    private PlaylistInstance _playlist;
 
     public PlaylistInstance Playlist
     {

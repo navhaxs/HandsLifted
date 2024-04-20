@@ -12,7 +12,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
     {
         public PlaylistInstance ParentPlaylist { get; set; }
 
-        private BlankSlide _blankSlide = new BlankSlide();
+        private BlankSlide _blankSlide = new();
 
         public MediaGroupItemInstance(PlaylistInstance parentPlaylist)
         {
@@ -40,7 +40,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             var x = new List<Slide>();
             foreach (var item in Items)
             {
-                var generateMediaContentSlide = CreateItem.GenerateMediaContentSlide(item);
+                var generateMediaContentSlide = CreateItem.GenerateMediaContentSlide(item, this);
                 x.Add(generateMediaContentSlide);
             }
 
@@ -49,7 +49,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.RaisePropertyChanged(nameof(Slides));
         }
 
-        public List<Slide> _Slides = new List<Slide>();
+        public List<Slide> _Slides = new();
         public ObservableCollection<Slide> Slides => new(_Slides);
 
         public int _selectedSlideIndex = -1;

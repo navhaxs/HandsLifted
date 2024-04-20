@@ -2,8 +2,10 @@
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -11,14 +13,16 @@ using Avalonia.Platform;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Models
 {
-    public class PlaylistInstance : Playlist
+    public class PlaylistInstance : Playlist, IDisposable
     {
+        private List<IDisposable> _disposables = new();
         public PlaylistInstance()
         {
             _selectedItem = this.WhenAnyValue(
@@ -158,7 +162,13 @@ namespace HandsLiftedApp.Core.Models
                         this.RaisePropertyChanged(nameof(LogoBitmap));
                     }
                 });
+
+            _disposables.Add(MessageBus.Current.Listen<NavigateToSlideReferenceAction>()
+                    .Subscribe(action => NavigateToReference(action.SlideReference)))
+                ;
         }
+
+        public AutoAdvanceTimerController AutoAdvanceTimer { get; init; } = new();
 
         private DateTime? _lastSaved;
 
@@ -293,20 +303,30 @@ namespace HandsLiftedApp.Core.Models
 
         public void NavigateToReference(SlideReference slideReference)
         {
+            var nextItemIndex = slideReference.ItemIndex ?? SelectedItemIndex;
+
+            if (nextItemIndex >= Items.Count)
+            {
+                Log.Error("NavigateToReference {SlideReference} out of bounds", slideReference);
+                return;
+            }
+            
             var lastSelectedItemIndex = SelectedItemIndex;
 
+            IItemInstance? currentItemInstance = null;
             if (slideReference.SlideIndex != null)
             {
-                var item = Items[slideReference.ItemIndex];
+                var item = Items[nextItemIndex];
                 if (item is IItemInstance itemInstance)
                 {
+                    currentItemInstance = itemInstance;
                     itemInstance.SelectedSlideIndex = (int)slideReference.SlideIndex;
                 }
             }
 
-            SelectedItemIndex = slideReference.ItemIndex;
+            SelectedItemIndex = nextItemIndex;
 
-            if (lastSelectedItemIndex != slideReference.ItemIndex && lastSelectedItemIndex > -1 &&
+            if (lastSelectedItemIndex != nextItemIndex && lastSelectedItemIndex > -1 &&
                 Items.ElementAtOrDefault(lastSelectedItemIndex) != null)
             {
                 // deselect the slide within the previous item
@@ -318,6 +338,8 @@ namespace HandsLiftedApp.Core.Models
             Log.Debug("NavigateToReference {SlideReference}", slideReference);
 
             // MessageBus.Current.SendMessage(new ActiveSlideChangedMessage());
+
+            AutoAdvanceTimer.OnSlideNavigation(currentItemInstance);
         }
 
         public SlideReference GetNextSlide(bool allowItemLookAhead = true)
@@ -409,7 +431,7 @@ namespace HandsLiftedApp.Core.Models
 
         public SlideReference GetPreviousSlide()
         {
-            // if no selected item, cannot go futher back, so do nothing 
+            // if no selected item, cannot go further back, so do nothing 
             if (SelectedItem == null || SelectedItem is BlankItem)
             {
                 return new SlideReference()
@@ -513,5 +535,18 @@ namespace HandsLiftedApp.Core.Models
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            AutoAdvanceTimer.Dispose();
+            _selectedItem.Dispose();
+            _selectedItemAsIItemInstance.Dispose();
+            _activeSlide.Dispose();
+            _nextSlide.Dispose();
+            foreach (var disposable in _disposables)
+            {
+                disposable.Dispose();
+            }
+        }
     }
 }

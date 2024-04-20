@@ -4,6 +4,8 @@ using Avalonia.Media.Imaging;
 using DebounceThrottle;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Data.Data.Models.Items;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
@@ -14,11 +16,22 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
     {
         private DebounceDispatcher debounceDispatcher = new(200);
 
-        public ImageSlideInstance(string imagePath = @"C:\VisionScreens\TestImages\SWEC App Announcement.png") : base(imagePath)
+        public ImageSlideInstance(string imagePath, MediaGroupItem parentMediaGroupItem) : base(imagePath)
         {
             this.WhenAnyValue(s => s.SourceMediaFilePath) // todo dirty bit?
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
+
+            SlideTimerConfig = parentMediaGroupItem.AutoAdvanceTimer;
+            
+            // TODO
+            // TODO
+            // TODO
+            // TODO
+            // TODO
+            // TODO
+            parentMediaGroupItem.WhenAnyValue(x => x.AutoAdvanceTimer)
+                .Subscribe(a => SlideTimerConfig = a);
         }
 
         private void GenerateBitmaps()
@@ -49,5 +62,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
             get => _thumbnail;
             set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
         }
+
+        private ItemAutoAdvanceTimer? _SlideTimerConfig = null;
+        public ItemAutoAdvanceTimer? SlideTimerConfig { get => _SlideTimerConfig;
+            set => this.RaiseAndSetIfChanged(ref _SlideTimerConfig, value);
+        }
+
     }
 }

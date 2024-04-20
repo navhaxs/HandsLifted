@@ -116,6 +116,13 @@
                 <!-- <controlmodules:SlidesGroupItemViewWrapper DataContext="{Binding Playlist.State.SelectedItem}" -->
                 <!--                                            DockPanel.Dock="Top" /> -->
 
+                <Grid DockPanel.Dock="Top" Height="2">
+                    <ProgressBar MinHeight="2"
+                                 IsVisible="{Binding Playlist.AutoAdvanceTimer.IsTimerConfigured}"
+                                 Value="{Binding Playlist.AutoAdvanceTimer.Timer.ElapsedTime, FallbackValue=0}"
+                                 Maximum="{Binding Playlist.AutoAdvanceTimer.Timer.TotalTime, FallbackValue=0}" />
+                </Grid>
+
                 <Border
                     Height="35"
                     Margin="6,6"
@@ -148,7 +155,8 @@
                                 <Setter Property="Background"
                                         Value="{DynamicResource PrimaryActionBrush}" />
                             </Style>
-                            <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                            <Style
+                                Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
                                 <Setter Property="Background"
                                         Value="#b7a6e7" />
                             </Style>
@@ -180,12 +188,14 @@
                     DockPanel.Dock="Bottom"
                     FontSize="25"
                     Text="{Binding CurrentTime, StringFormat='{}{0:h:mm tt}'}" />
-                <Grid />
 
                 <!--  controlmodules  -->
                 <!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
-                <controlModules:VideoSlideControlViewWrapper DataContext="{Binding Playlist.ActiveSlide}"
-                                                             DockPanel.Dock="Bottom" />
+                <StackPanel DockPanel.Dock="Top">
+                    <controlModules:VideoSlideControlViewWrapper DataContext="{Binding Playlist.ActiveSlide}" />
+                    <controlModules:AutoAdvanceTimerControlViewWrapper
+                        DataContext="{Binding Playlist.AutoAdvanceTimer}" />
+                </StackPanel>
                 <!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
                 <!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
 						<DockPanel Margin="10 8">
@@ -196,6 +206,10 @@
 							</StackPanel>
 						</DockPanel>
 					</Border>-->
+
+                <!-- Fill rest of space -->
+                <Grid />
+
             </DockPanel>
 
         </Border>

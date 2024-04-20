@@ -111,7 +111,7 @@ namespace HandsLiftedApp.Core
             //}
         }
 
-        public static MediaSlide GenerateMediaContentSlide(MediaGroupItem.MediaItem mediaItem)
+        public static MediaSlide GenerateMediaContentSlide(MediaGroupItem.MediaItem mediaItem, MediaGroupItem parentMediaGroupItem)
         {
             string fullFilePath = mediaItem.SourceMediaFilePath;
             string filename = fullFilePath.ToLower();
@@ -126,7 +126,7 @@ namespace HandsLiftedApp.Core
             }
             else
             {
-                return new ImageSlideInstance(fullFilePath);
+                return new ImageSlideInstance(fullFilePath, parentMediaGroupItem);
             }
         }
     }

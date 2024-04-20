@@ -65,7 +65,8 @@ namespace HandsLiftedApp.Core
                     {
                         UUID = mediaGroupItemInstance.UUID,
                         Title = mediaGroupItemInstance.Title,
-                        Items = mediaGroupItemInstance.Items
+                        Items = mediaGroupItemInstance.Items,
+                        AutoAdvanceTimer = mediaGroupItemInstance.AutoAdvanceTimer
                     };
                 }
 
@@ -142,7 +143,8 @@ namespace HandsLiftedApp.Core
                             {
                                 UUID = mediaGroupItem.UUID,
                                 Title = mediaGroupItem.Title,
-                                Items = mediaGroupItem.Items
+                                Items = mediaGroupItem.Items,
+                                AutoAdvanceTimer = mediaGroupItem.AutoAdvanceTimer
                             };
                             g.GenerateSlides();
                             convereted = g;

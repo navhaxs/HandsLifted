@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controlmodules="using:HandsLiftedApp.Views.ControlModules"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:utils1="clr-namespace:HandsLiftedApp.Core.Utils"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="utils1:AutoAdvanceTimerController"
+             x:Class="HandsLiftedApp.Views.ControlModules.AutoAdvanceTimerControlViewWrapper">
+    <ContentControl Content="{Binding}">
+        <ContentControl.ContentTemplate>
+            <common:MyTemplateSelector>
+                <DataTemplate x:Key="AutoAdvanceTimerController" DataType="utils1:AutoAdvanceTimerController">
+                    
+                    <Border Background="#3a344a" CornerRadius="6" VerticalAlignment="Top" Margin="6" IsVisible="{Binding IsTimerConfigured}">
+                        <StackPanel Margin="6">
+                            <DockPanel VerticalAlignment="Center" Margin="6">
+                                <avalonia:MaterialIcon Kind="TimerOutline" />
+                                <TextBlock Margin="6 0"
+                                           Text="{Binding PrettyTimerInterval}" VerticalAlignment="Center" />
+                                <StackPanel DockPanel.Dock="Right" Margin="6 0 0 0">
+                                    <Button Click="ResumeButton_OnClick" IsVisible="{Binding !Timer.Enabled}">Resume</Button>
+                                    <Button Click="PauseButton_OnClick" IsVisible="{Binding Timer.Enabled}">Pause</Button>
+                                </StackPanel>
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </common:MyTemplateSelector>
+        </ContentControl.ContentTemplate>
+    </ContentControl>
+</UserControl>

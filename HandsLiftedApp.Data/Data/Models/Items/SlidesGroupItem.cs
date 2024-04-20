@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System;
 using System.Xml.Serialization;
+using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.Models.Slides;
 
 namespace HandsLiftedApp.Data.Models.Items
