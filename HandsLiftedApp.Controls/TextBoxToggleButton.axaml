@@ -62,8 +62,8 @@
         </Button>
         <TextBox x:Name="EntryTextBox" KeyDown="InputElement_OnKeyDown"
                  LostFocus="EntryTextBox_OnLostFocus"
-                 Padding="12 4 4 4"
                  CornerRadius="6"
+                 Margin="8 0 0 0"
                  Background="White"
                  Foreground="Black"
                  CaretBrush="Black"
@@ -76,10 +76,11 @@
             <TextBox.InnerRightContent>
                 <Button x:Name="SubmitButton"
                         Cursor="Hand"
+                        Padding="0"
+                        Margin="14 0 0 0"
                         Click="SubmitButton_OnClick"
                         PointerPressed="SubmitButton_OnPointerPressed"
                         BorderThickness="0"
-                        Margin="16 0 0 0"
                         Background="#3574f0">
                     <Button.Styles>
                         <Style Selector="Button:pointerover /template/ ContentPresenter">

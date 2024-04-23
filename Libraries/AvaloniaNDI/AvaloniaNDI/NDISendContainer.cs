@@ -551,7 +551,7 @@ Description("Function to determine whether the content requires high resolution 
                 yres = NdiHeight,
                 // Use BGRA video
                 FourCC = (OperatingSystem.IsMacOS() && videoControl == null) ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA,
-                // The frame-eate
+                // The frame-rate
                 frame_rate_N = frNum,
                 frame_rate_D = frDen,
                 // The aspect ratio

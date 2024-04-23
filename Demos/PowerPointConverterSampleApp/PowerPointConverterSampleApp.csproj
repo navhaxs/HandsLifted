@@ -30,6 +30,6 @@
     </ItemGroup>
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-      <Exec Command="echo {&quot;SyncfusionLicenseKey&quot;:&quot;$(SyncfusionLicenseKey)&quot;} &gt; appsettings.json" />
+      <Exec Command="echo '{&quot;SyncfusionLicenseKey&quot;:&quot;$(SyncfusionLicenseKey)&quot;}' &gt; appsettings.json" />
     </Target>
 </Project>

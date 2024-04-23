@@ -9,7 +9,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Styling;
+using Avalonia.Platform;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
@@ -22,6 +22,13 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     public MainWindow()
     {
         InitializeComponent();
+
+        if (OperatingSystem.IsMacOS())
+        {
+            ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
+            ExtendClientAreaTitleBarHeightHint = 0;
+            ExtendClientAreaToDecorationsHint = false;
+        }
 
         // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
         this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
@@ -153,10 +160,14 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     
     private async void SubscribeToWindowState()
     {
+        if (!OperatingSystem.IsWindows())
+            return;
+        
         Window hostWindow = (Window)this.VisualRoot;
 
         while (hostWindow == null)
         {
+            // TODO stupid hack
             hostWindow = (Window)this.VisualRoot;
             await Task.Delay(50);
         }
@@ -167,11 +178,11 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             {
                 hostWindow.Padding = new Thickness(0, 0, 0, 0);
             }
-
+        
             if (s == WindowState.Maximized)
             {
                 hostWindow.Padding = new Thickness(7, 7, 7, 7);
-
+        
                 // This should be a more universal approach in both cases, but I found it to be less reliable, when for example double-clicking the title bar.
                 /*hostWindow.Padding = new Thickness(
                         hostWindow.OffScreenMargin.Left,
