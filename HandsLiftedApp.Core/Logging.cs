@@ -40,6 +40,7 @@ namespace HandsLiftedApp.Core
             Log.Information("VisionScreens App {Version} Build {GitHash} {BuildDateTime}", Assembly.GetExecutingAssembly().GetName().Version, BuildInfo.Version.GetGitHash(), BuildInfo.Version.GetBuildDateTime());
             Log.Information("Startup at {Now}", DateTime.Now);
 
+            Log.Information("Runtime Identifier {RID}", RuntimeInformation.RuntimeIdentifier);
             Log.Information("Avalonia {Version}", Assembly.GetAssembly(typeof(Avalonia.Application))?.GetName().Version);
             Log.Information("{DotNetVersion}", RuntimeInformation.FrameworkDescription);
 

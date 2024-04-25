@@ -19,6 +19,7 @@ public unsafe partial class MpvContext : IDisposable
 
     public MpvContext(MpvEventLoop mpvEventLoop)
     {
+        DynamicallyLoadedBindings.ThrowErrorIfFunctionNotFound = true;
         ctx = mpv_create();
 
         if (ctx == null)
@@ -29,6 +30,8 @@ public unsafe partial class MpvContext : IDisposable
         CheckCode(code);
 
         InitEventHandlers();
+        
+        DynamicallyLoadedBindings.ThrowErrorIfFunctionNotFound = false;
 
         if (mpvEventLoop == MpvEventLoop.Default)
             eventLoop = new MpvSimpleEventLoop(ctx, this.HandleEvent);

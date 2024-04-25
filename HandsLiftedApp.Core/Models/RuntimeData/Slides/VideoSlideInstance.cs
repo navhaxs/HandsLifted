@@ -27,12 +27,15 @@ Read MPV documentation:
         {
             var Context = Globals.MpvContextInstance;
 
-            // Register properties for observation
-            foreach (var observableProperty in observableProperties)
-                Context.ObserveProperty(observableProperty.LibMpvName, observableProperty.LibMpvFormat, 0);
+            if (Context != null)
+            {
+                // Register properties for observation
+                foreach (var observableProperty in observableProperties)
+                    Context.ObserveProperty(observableProperty.LibMpvName, observableProperty.LibMpvFormat, 0);
 
-            // Register router LibMpv => MVVM
-            Context.PropertyChanged += MpvContextPropertyChanged;
+                // Register router LibMpv => MVVM
+                Context.PropertyChanged += MpvContextPropertyChanged;
+            }
         }
 
         // Route property changed events to MVVM context
