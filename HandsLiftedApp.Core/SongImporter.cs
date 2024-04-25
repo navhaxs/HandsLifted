@@ -79,42 +79,49 @@ namespace HandsLiftedApp.Core
             {
                 // get part name from first line
                 var partNameEOL = paragraph.IndexOf("\n");
-                var partName = paragraph.Substring(0, partNameEOL);
 
-                if (index == paragraphs.Count - 1 && (paragraph.Contains("CCLI") || paragraph.Contains("©")))
+                if (partNameEOL == -1)
                 {
-                    // this is the final paragraph AND includes CCLI/©
-                    song.Copyright = paragraph.Trim();
-                    var regex = new Regex(@" \(Admin. by(.*)\)\r\n");
-                    song.Copyright = regex.Replace(song.Copyright, "\r\n");
-                }
-                else if (isPartName(partName))
-                {
-                    // this is the start of a new song stanza
-
-                    // flush existing builder
-                    if (lastStanzaPartName != null && lastStanzaBody != null)
-                    {
-                        song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
-                    }
-
-                    lastStanzaPartName = partName;
-                    lastStanzaBody = paragraph.Substring(partNameEOL).Trim();
+                    lastStanzaBody += "\n\n" + paragraph;
                 }
                 else
                 {
-                    if (lastStanzaPartName != null && lastStanzaBody != null)
+                    var partName = paragraph.Substring(0, partNameEOL);
+
+                    if (index == paragraphs.Count - 1 && (paragraph.Contains("CCLI") || paragraph.Contains("©")))
                     {
-                        lastStanzaBody = lastStanzaBody + "\n\n" + paragraph.Substring(partNameEOL).Trim();
+                        // this is the final paragraph AND includes CCLI/©
+                        song.Copyright = paragraph.Trim();
+                        var regex = new Regex(@" \(Admin. by(.*)\)\r\n");
+                        song.Copyright = regex.Replace(song.Copyright, "\r\n");
+                    }
+                    else if (isPartName(partName))
+                    {
+                        // this is the start of a new song stanza
+
+                        // flush existing builder
+                        if (lastStanzaPartName != null && lastStanzaBody != null)
+                        {
+                            song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                        }
+
+                        lastStanzaPartName = partName;
+                        lastStanzaBody = paragraph.Substring(partNameEOL).Trim();
                     }
                     else
                     {
-                        lastStanzaBody = "Lyrics"; // ungrouped
-                        lastStanzaBody = paragraph.Substring(partNameEOL).Trim();
+                        if (lastStanzaPartName != null && lastStanzaBody != null)
+                        {
+                            lastStanzaBody = lastStanzaBody + "\n\n" + paragraph.Substring(partNameEOL).Trim();
+                        }
+                        else
+                        {
+                            lastStanzaBody = "Lyrics"; // ungrouped
+                            lastStanzaBody = paragraph.Substring(partNameEOL).Trim();
+                        }
                     }
                 }
             }
-
 
             // flush final
             if (lastStanzaPartName != null && lastStanzaBody != null)
