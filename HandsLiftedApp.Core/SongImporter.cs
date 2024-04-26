@@ -59,11 +59,12 @@ namespace HandsLiftedApp.Core
             return createSongItemFromStringData(text);
         }
 
-        public static SongItemInstance createSongItemFromStringData(string text)
+        public static SongItemInstance createSongItemFromStringData(string raw)
         {
             // note:
             // LRLF == \r\n
             // LF   == \n
+            string text = raw.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
             List<string> parsed = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
 
             SongItemInstance song = new SongItemInstance(Globals.MainViewModel?.Playlist)
