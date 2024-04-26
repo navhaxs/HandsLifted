@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
@@ -34,6 +36,18 @@ namespace HandsLiftedApp.Core
                 Log.Fatal(ex, "LibMPV failed to initialize");
             }
             
+            try
+            {
+                var x = LoadConfigFromResource("HandsLiftedApp.Core.SyncfusionLicenseKey");
+                string syncfusionLicenseKey = new StreamReader(x).ReadToEnd().Trim();
+                Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenseKey);
+                Log.Information("SyncfusionLicenseProvider initialized");
+            }
+            catch
+            {
+                Log.Fatal("SyncfusionLicenseProvider failed to initialize");
+            }
+
             // Initialize app preferences state here
             {
                 // Create the AutoSuspendHelper.
@@ -47,6 +61,23 @@ namespace HandsLiftedApp.Core
             }
             
             MainViewModel = new();
+        }
+        
+        private static Stream LoadConfigFromResource(string configFileName)
+        {
+            Assembly assembly;
+            Stream configStream = null;
+            try
+            {
+                assembly = Assembly.GetExecutingAssembly();
+                configStream = (Stream)assembly.GetManifestResourceStream(configFileName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return configStream;
         }
     }
 }

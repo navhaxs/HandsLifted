@@ -223,11 +223,13 @@
       <EmbeddedResource Include="BuildInfo\GitHash.txt" />
       <None Remove="BuildInfo\BuildDateTime.txt" />
       <EmbeddedResource Include="BuildInfo\BuildDateTime.txt" />
+      <EmbeddedResource Include="SyncfusionLicenseKey" />
     </ItemGroup>
 
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
         <Exec Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)/BuildInfo/GitHash.txt&quot;"/>
         <Exec Command="echo $(BuildDateTime) &gt; &quot;$(ProjectDir)/BuildInfo/BuildDateTime.txt&quot;"/>
+        <Exec Command="echo $(SyncfusionLicenseKey) &gt; SyncfusionLicenseKey" />
     </Target>
 </Project>
