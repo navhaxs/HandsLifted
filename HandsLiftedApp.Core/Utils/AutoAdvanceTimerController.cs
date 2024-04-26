@@ -43,7 +43,7 @@ namespace HandsLiftedApp.Core.Utils
             itemInstanceSlide = itemInstance?.Slides[itemInstance.SelectedSlideIndex];
             slideInstance = itemInstanceSlide?.GetAsISlideInstance();
 
-            IsTimerConfigured = slideInstance?.SlideTimerConfig != null;
+            IsTimerConfigured = slideInstance?.SlideTimerConfig is { IsEnabled: true };
             
             if (slideInstance == null || !IsTimerConfigured)
             {
