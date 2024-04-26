@@ -166,6 +166,8 @@ public class MainViewModel : ViewModelBase
 
                 if (itemToInsert != null)
                 {
+                    var currentSelectedItem = Playlist.SelectedItem;
+
                     if (addItemMessage.InsertIndex != null)
                     {
                         Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert);
@@ -178,6 +180,11 @@ public class MainViewModel : ViewModelBase
                     else
                     {
                         Playlist.Items.Add(itemToInsert);
+                    }
+                    
+                    if (currentSelectedItem != null)
+                    {
+                        Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
                     }
                 }
             });
