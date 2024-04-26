@@ -179,10 +179,13 @@ Words: Public Domain; Music: Public Domain
 For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccli.com
 CCLI License #999999";
 
-            var test = SongImporter.createSongItemFromStringData(input);
+            var song = SongImporter.createSongItemFromStringData(input);
             
-            Assert.AreEqual("It Is Well With My Soul", test.Title);
-            Assert.AreEqual("It is well with my soul\n\nIt is well\n\nIt is well with my soul", test.Stanzas.First(x => x.Name == "Chorus").Lyrics);
+            Assert.AreEqual("It Is Well With My Soul", song.Title);
+            Assert.AreEqual("It is well with my soul\r\n\r\nIt is well\r\n\r\nIt is well with my soul", song.Stanzas.First(x => x.Name == "Chorus").Lyrics);
+
+            var inverse = SongImporter.songItemToFreeText(song);
+            Assert.AreEqual(input, inverse);
         }
     }
 }

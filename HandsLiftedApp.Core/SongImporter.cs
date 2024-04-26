@@ -61,8 +61,10 @@ namespace HandsLiftedApp.Core
 
         public static SongItemInstance createSongItemFromStringData(string text)
         {
-            // strip off LRLF --> LF (i.e. \r\n --> \n)
-            List<string> parsed = new List<string>(text.Replace("\r\n", "\n").Split("\n\n").Select(str => str.Trim()));
+            // note:
+            // LRLF == \r\n
+            // LF   == \n
+            List<string> parsed = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
 
             SongItemInstance song = new SongItemInstance(Globals.MainViewModel?.Playlist)
             {
@@ -78,11 +80,11 @@ namespace HandsLiftedApp.Core
             foreach (var (paragraph, index) in paragraphs.WithIndex())
             {
                 // get part name from first line
-                var partNameEOL = paragraph.IndexOf("\n");
+                var partNameEOL = paragraph.IndexOf("\r\n");
 
                 if (partNameEOL == -1)
                 {
-                    lastStanzaBody += "\n\n" + paragraph;
+                    lastStanzaBody += "\r\n\r\n" + paragraph;
                 }
                 else
                 {
@@ -112,7 +114,7 @@ namespace HandsLiftedApp.Core
                     {
                         if (lastStanzaPartName != null && lastStanzaBody != null)
                         {
-                            lastStanzaBody = lastStanzaBody + "\n\n" + paragraph.Substring(partNameEOL).Trim();
+                            lastStanzaBody = lastStanzaBody + "\r\n\r\n" + paragraph.Substring(partNameEOL).Trim();
                         }
                         else
                         {
@@ -149,7 +151,7 @@ namespace HandsLiftedApp.Core
 
             stringBuilder.AppendLine(songItem.Copyright);
 
-            return stringBuilder.ToString();
+            return stringBuilder.ToString().Trim();
         }
 
         private static SongStanza createStanza(string partName, string stanzaBody)
