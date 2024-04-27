@@ -24,7 +24,7 @@ namespace HandsLiftedApp.Utils
                       typeof(LogoItem),
                       typeof(SectionHeadingItem),
                       typeof(GoogleSlidesGroupItem),
-                      typeof(PowerPointSlidesGroupItem),
+                      typeof(PowerPointPresentationItem),
                       typeof(PDFSlidesGroupItem),
                       //
                       typeof(ImageSlide),

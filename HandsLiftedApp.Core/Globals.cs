@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Common;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.ViewModels;
 using LibMpv.Client;
 using ReactiveUI;
@@ -17,6 +18,8 @@ namespace HandsLiftedApp.Core
         public static MainViewModel MainViewModel { get; set; }
         public static MpvContext MpvContextInstance { get; set; }
         public static AppPreferencesViewModel AppPreferences { get; set; }
+
+        public static ImportWorkerThread ImportWorkerThread { get; } = new();
 
         public static void OnStartup(IApplicationLifetime applicationLifetime)
         {
@@ -43,9 +46,9 @@ namespace HandsLiftedApp.Core
                 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenseKey);
                 Log.Information("SyncfusionLicenseProvider initialized");
             }
-            catch
+            catch (Exception ex)
             {
-                Log.Fatal("SyncfusionLicenseProvider failed to initialize");
+                Log.Fatal(ex, "SyncfusionLicenseProvider failed to initialize");
             }
 
             // Initialize app preferences state here

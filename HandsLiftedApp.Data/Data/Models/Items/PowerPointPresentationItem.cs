@@ -7,9 +7,9 @@ namespace HandsLiftedApp.Data.Models.Items
 {
     [XmlRoot("PowerPoint", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
-    public class PowerPointSlidesGroupItem : SlidesGroupItem
+    public class PowerPointPresentationItem : MediaGroupItem
     {
-        public PowerPointSlidesGroupItem()
+        public PowerPointPresentationItem()
         {
         }
 

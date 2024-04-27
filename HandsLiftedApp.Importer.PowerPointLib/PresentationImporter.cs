@@ -4,13 +4,13 @@ using Syncfusion.PresentationRenderer;
 
 namespace HandsLiftedApp.Importer.PowerPointLib;
 
-public class Class1
+public static class PresentationImporter
 {
-    public static void Run(string txtFile)
+    public static void Run(string pptxFile)
     {
-        string outputFileName = Path.GetFileNameWithoutExtension(txtFile);
+        string outputFileName = Path.GetFileNameWithoutExtension(pptxFile);
         //Opens the specified presentation
-        using (IPresentation presentation = Presentation.Open(txtFile)) // TODO handle file permission error
+        using (IPresentation presentation = Presentation.Open(pptxFile)) // TODO handle file permission error
         {
             //To set each slide in a pdf page.
             PresentationToPdfConverterSettings settings = new PresentationToPdfConverterSettings();
@@ -21,10 +21,10 @@ public class Class1
             {
                 //Saves the pdf document
                 MemoryStream stream = new MemoryStream();
-                doc.Save(stream);// );
+                doc.Save(stream);
                 
                 // serialization was successful - only now do we write to disk
-                using (FileStream file = new FileStream(txtFile + ".pdf", FileMode.Create, FileAccess.Write))
+                using (FileStream file = new FileStream(pptxFile + ".pdf", FileMode.Create, FileAccess.Write))
                     stream.WriteTo(file);
             }
         }

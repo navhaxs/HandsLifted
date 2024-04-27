@@ -29,6 +29,7 @@ namespace HandsLiftedApp.Utils
 
                     using (Stream imageStream = File.OpenRead(pathOrUri))
                     {
+                        Log.Information($"Loading image {pathOrUri}");
                         return Bitmap.DecodeToWidth(imageStream, 1920);
                     }
                     //return new Bitmap(rawUri);

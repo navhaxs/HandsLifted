@@ -1,0 +1,19 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="150"
+             x:DataType="items:PowerPointPresentationItemInstance"
+             x:Class="HandsLiftedApp.Core.Views.Items.PowerPointPresentationItemStatusView">
+    <StackPanel>
+        <Border MinHeight="2">
+            <StackPanel IsVisible="{Binding IsBusy}">
+                <ProgressBar  IsIndeterminate="True" MinHeight="2" />
+                <TextBlock>Importing $FILE ...</TextBlock>
+            </StackPanel>
+        </Border>
+        <Button Click="Button_OnClick" IsEnabled="{Binding !IsBusy}">Sync</Button>
+    </StackPanel>
+</UserControl>

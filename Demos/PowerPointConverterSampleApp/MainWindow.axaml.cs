@@ -49,7 +49,7 @@ public partial class MainWindow : Window
         }
         else
         {
-            Class1.Run(InputPPTX.Text);
+            PresentationImporter.Run(InputPPTX.Text);
         }
     }
 }

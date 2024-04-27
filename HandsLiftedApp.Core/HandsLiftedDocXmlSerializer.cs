@@ -69,6 +69,18 @@ namespace HandsLiftedApp.Core
                         AutoAdvanceTimer = mediaGroupItemInstance.AutoAdvanceTimer
                     };
                 }
+                else if (item is PowerPointPresentationItemInstance powerPointPresentationItemInstance)
+                {
+                    return new PowerPointPresentationItem()
+                    {
+                        UUID = powerPointPresentationItemInstance.UUID,
+                        Title = powerPointPresentationItemInstance.Title,
+                        Items = powerPointPresentationItemInstance.Items,
+                        AutoAdvanceTimer = powerPointPresentationItemInstance.AutoAdvanceTimer,
+                        SourcePresentationFile = powerPointPresentationItemInstance.SourcePresentationFile,
+                        SourceSlidesExportDirectory = powerPointPresentationItemInstance.SourceSlidesExportDirectory
+                    };
+                }
 
                 return item;
                 // return new Item
@@ -136,6 +148,20 @@ namespace HandsLiftedApp.Core
                             };
                             // song.GenerateSlides();
                             convereted = song;
+                        }
+                        else if (deserializedItem is PowerPointPresentationItem powerPointPresentationItem)
+                        {
+                            var g = new PowerPointPresentationItemInstance(playlist)
+                            {
+                                UUID = powerPointPresentationItem.UUID,
+                                Title = powerPointPresentationItem.Title,
+                                Items = powerPointPresentationItem.Items,
+                                AutoAdvanceTimer = powerPointPresentationItem.AutoAdvanceTimer,
+                                SourcePresentationFile = powerPointPresentationItem.SourcePresentationFile,
+                                SourceSlidesExportDirectory = powerPointPresentationItem.SourceSlidesExportDirectory
+                            };
+                            g.GenerateSlides();
+                            convereted = g;
                         }
                         else if (deserializedItem is MediaGroupItem mediaGroupItem)
                         {

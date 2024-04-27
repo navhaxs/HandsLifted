@@ -2,11 +2,10 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:utils="using:HandsLiftedApp.Utils"
- 			 xmlns:item="using:HandsLiftedApp.Views.Item"
- 			 xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+			 xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
  			 xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
  			 xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+ 			 xmlns:items1="clr-namespace:HandsLiftedApp.Core.Views.Items"
  			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:DataType="items:Item"
 			 x:Class="HandsLiftedApp.Views.Item.ItemInfo">
@@ -15,6 +14,9 @@
 			<common:MyTemplateSelector>
 				<DataTemplate x:Key="SongItemInstance">
 					<controls:SongArrangementControl />
+                </DataTemplate>
+				<DataTemplate x:Key="PowerPointPresentationItemInstance">
+					<items1:PowerPointPresentationItemStatusView />
                 </DataTemplate>
 				<DataTemplate x:Key="Fallback">
 				</DataTemplate>

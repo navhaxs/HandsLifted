@@ -94,9 +94,9 @@ public class MainViewModel : ViewModelBase
                 {
                     case AddItemMessage.AddItemType.Presentation:
                         var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
-                        foreach (var path in filePaths)
+                        if (filePaths.Length > 0)
                         {
-                            await CreateItem.OpenPresentationFileAsync(path, Playlist);
+                            itemToInsert = CreateItem.OpenPresentationFile(filePaths[0], Playlist);
                         }
                         break;
                     case AddItemMessage.AddItemType.Logo:

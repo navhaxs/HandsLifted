@@ -26,14 +26,9 @@ namespace HandsLiftedApp.Core
         public static readonly string[] SUPPORTED_IMAGE = { "bmp", "png", "jpg", "jpeg" };
         public static readonly string[] SUPPORTED_PDF= { "pdf" };
         
-        public static async Task OpenPresentationFileAsync(string filePath, PlaylistInstance currentPlaylist)
+        public static Item? OpenPresentationFile(string filePath, PlaylistInstance currentPlaylist)
         {
-            //try
-            //{
-            //var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
-
-            //foreach (var path in filePaths)
-            //{
+            Item? returnValue = null;
 
             if (filePath != null && filePath is string)
             {
@@ -45,29 +40,11 @@ namespace HandsLiftedApp.Core
                     .PlaylistWorkingDirectory, FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
                 Directory.CreateDirectory(targetDirectory);
 
-                if (fileName.EndsWith(".pptx"))
+                if (fileName.EndsWith(".pptx") || fileName.EndsWith(".ppt"))
                 {
-                    Log.Debug($"Importing PowerPoint file: {filePath}");
-                    PowerPointSlidesGroupItem slidesGroup = new PowerPointSlidesGroupItem() { Title = fileName, SourcePresentationFile = filePath };
-                    
-                    Class1.Run(filePath);
-
-                    Log.Debug($"Importing PDF file: {filePath}");
-                    // PDFSlidesGroupItem slidesGroup = new PDFSlidesGroupItem() { Title = fileName, SourcePresentationFile = filePath };
-
-                    ConvertPDF.Convert(filePath + ".pdf", targetDirectory); // todo move into State as a SyncCommand
-                    
-                    MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(currentPlaylist)
-                        { Title = "New media group" };
- 
-                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory).OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
-                    {
-                        mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
-                            { SourceMediaFilePath = convertedFilePath }); 
-                    }
-
-                    currentPlaylist.Items.Add(mediaGroupItem);
-                    mediaGroupItem.GenerateSlides();
+                    PowerPointPresentationItemInstance slidesGroup = new PowerPointPresentationItemInstance(currentPlaylist) { Title = fileName, SourcePresentationFile = filePath };
+                    slidesGroup._Sync();
+                    returnValue = slidesGroup;
                 }
                 else if (filePath.EndsWith(".pdf"))
                 {
@@ -85,13 +62,13 @@ namespace HandsLiftedApp.Core
                             { SourceMediaFilePath = convertedFilePath }); 
                     }
 
-                    currentPlaylist.Items.Add(mediaGroupItem);
                     mediaGroupItem.GenerateSlides();
+                    returnValue = mediaGroupItem;
                 }
                 else
                 {
                     Log.Error($"Unsupported file type: {filePath}");
-                    return;
+                    return null;
                 }
 
                 Dispatcher.UIThread.InvokeAsync(() =>
@@ -103,12 +80,8 @@ namespace HandsLiftedApp.Core
                     MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = count - 1 });
                 });
             }
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    Debug.Print(e.Message);
-            //}
+         
+            return returnValue;
         }
 
         public static MediaSlide GenerateMediaContentSlide(MediaGroupItem.MediaItem mediaItem, MediaGroupItem parentMediaGroupItem)
