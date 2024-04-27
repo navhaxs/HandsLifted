@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Threading;
-using HandsLiftedApp.Core.Importers;
+﻿using HandsLiftedApp.Core.Importers;
 using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.PowerPointLib;
@@ -14,6 +8,12 @@ using HandsLiftedApp.Utils;
 using NaturalSort.Extension;
 using ReactiveUI;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -23,9 +23,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private bool _IsBusy = false;
         public bool IsBusy { get => _IsBusy; set => this.RaiseAndSetIfChanged(ref _IsBusy, value); }
-        
+
         private BlankSlide _blankSlide = new();
-        
+
         private static readonly object syncSlidesLock = new object();
 
         public PowerPointPresentationItemInstance(PlaylistInstance parentPlaylist)
@@ -40,7 +40,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             return slides.ElementAt(selectedSlideIndex);
                         }
                     }
-                    catch (System.Exception _ignored) { }
+                    catch (Exception _ignored) { }
 
                     return _blankSlide;
                 })
@@ -56,9 +56,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 var generateMediaContentSlide = CreateItem.GenerateMediaContentSlide(item, this);
                 x.Add(generateMediaContentSlide);
             }
-        
+
             _Slides = x;
-        
+
             this.RaisePropertyChanged(nameof(Slides));
         }
 
@@ -86,11 +86,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 return;
             }
-            
+
             IsBusy = true;
-            ImportWorkerThread.priorityQueue.Add(new ImportWorkerThread.BackgroundWorkRequest() { Callback = () =>
+            ImportWorkerThread.priorityQueue.Add(new ImportWorkerThread.BackgroundWorkRequest()
             {
-                
+                Callback = () =>
+            {
+
                 lock (syncSlidesLock)
                 {
                     DateTime now = DateTime.Now;
@@ -106,23 +108,27 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     Log.Debug($"Importing PDF file: {SourcePresentationFile}");
                     ConvertPDF.Convert(SourcePresentationFile + ".pdf",
-                        targetDirectory); // todo move into State as a SyncCommand
+                        targetDirectory);
 
+                    var newItems = new TrulyObservableCollection<MediaItem>();
                     foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
                                  .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
                     {
-                        Items.Add(new MediaItem()
-                            { SourceMediaFilePath = convertedFilePath });
+                        newItems.Add(new MediaItem()
+                        { SourceMediaFilePath = convertedFilePath });
                     }
+
+                    Items = newItems;
 
                     Log.Debug($"Generating slides");
                     GenerateSlides();
-                
+
                     Log.Debug($"Import OK");
 
                     IsBusy = false;
                 }
-            }});
+            }
+            });
         }
     }
 }

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Reactive.Linq;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using DebounceThrottle;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
+using System;
+using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
@@ -23,7 +21,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
                 .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
 
             SlideTimerConfig = parentMediaGroupItem.AutoAdvanceTimer;
-            
+
             // TODO
             // TODO
             // TODO
@@ -40,9 +38,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
             //     this,
             //     (obitmap) =>
             //     {
-            var obitmap = BitmapLoader.LoadBitmap(SourceMediaFilePath); 
-                    Cached = obitmap;
-                    Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
+            var obitmap = BitmapLoader.LoadBitmap(SourceMediaFilePath);
+            Cached = obitmap;
+            Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
             //     }
             // ));
         }
@@ -64,9 +62,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
         }
 
         private ItemAutoAdvanceTimer? _SlideTimerConfig = null;
-        public ItemAutoAdvanceTimer? SlideTimerConfig { get => _SlideTimerConfig;
+
+        public ItemAutoAdvanceTimer? SlideTimerConfig
+        {
+            get => _SlideTimerConfig;
             set => this.RaiseAndSetIfChanged(ref _SlideTimerConfig, value);
         }
-
     }
 }
