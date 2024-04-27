@@ -5,6 +5,7 @@ using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views
 {
@@ -14,10 +15,14 @@ namespace HandsLiftedApp.Core.Views
         {
             InitializeComponent();
             
+            Log.Information("Created ProjectorWindow");
+            
             WindowUtils.RegisterWindowWatcher(this);
 
             this.WhenAnyValue(value => value.IsVisible).Subscribe(isVisible =>
             {
+                Log.Information("ProjectorWindow IsVisible {State}", isVisible);
+
                 // TODO macOS: keep awake
                 if (OperatingSystem.IsWindows())
                 {

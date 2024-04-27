@@ -32,7 +32,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
         this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
-        
+
         // var themeVariants = this.Get<ComboBox>("ThemeVariants");
         // themeVariants.SelectedItem = Application.Current!.RequestedThemeVariant;
         // themeVariants.SelectionChanged += (sender, e) =>
@@ -76,7 +76,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     Close();
                     break;
             }
-
         });
 
         MessageBus.Current.Listen<MainWindowModalMessage>()
@@ -90,10 +89,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     x.Window.DataContext = x.DataContext ?? this.DataContext;
 
                 x.Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                x.Window.Closed += (object? sender, EventArgs e) =>
-                {
-                    Shade.IsVisible = false;
-                };
+                x.Window.Closed += (object? sender, EventArgs e) => { Shade.IsVisible = false; };
 
                 if (x.ShowAsDialog)
                 {
@@ -115,7 +111,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 }
             }
         };
-        
+
         this.Closing += MainWindow_Closing;
 
         this.GetObservable(Window.WindowStateProperty)
@@ -128,24 +124,18 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             });
         //
         SubscribeToWindowState();
-        
+
         // HACK for Windows 10 drop shadows 
-        this.Loaded += (e, s) =>
-        {
-            updateWin32Border(this.WindowState);
-        };
+        this.Loaded += (e, s) => { updateWin32Border(this.WindowState); };
 
         this.GetObservable(Window.WindowStateProperty)
-            .Subscribe(v =>
-            {
-                updateWin32Border(v);
-            });
+            .Subscribe(v => { updateWin32Border(v); });
     }
+
     private void updateWin32Border(WindowState v)
     {
         if (v != WindowState.Maximized && OperatingSystem.IsWindows())
         {
-
             var margins = new Win32.MARGINS
             {
                 cyBottomHeight = 1,
@@ -157,12 +147,12 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             Win32.DwmExtendFrameIntoClientArea(this.TryGetPlatformHandle().Handle, ref margins);
         }
     }
-    
+
     private async void SubscribeToWindowState()
     {
         if (!OperatingSystem.IsWindows())
             return;
-        
+
         Window hostWindow = (Window)this.VisualRoot;
 
         while (hostWindow == null)
@@ -178,11 +168,11 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             {
                 hostWindow.Padding = new Thickness(0, 0, 0, 0);
             }
-        
+
             if (s == WindowState.Maximized)
             {
                 hostWindow.Padding = new Thickness(7, 7, 7, 7);
-        
+
                 // This should be a more universal approach in both cases, but I found it to be less reliable, when for example double-clicking the title bar.
                 /*hostWindow.Padding = new Thickness(
                         hostWindow.OffScreenMargin.Left,
@@ -198,7 +188,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     public void ExitApp()
     {
         _isConfirmedExiting = true;
-        
+
         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {
             desktopLifetime.Shutdown();
@@ -233,6 +223,14 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         {
             Debug.Print(e.Message);
             interaction.SetOutput(null);
+        }
+    }
+
+    private void TopLevel_OnOpened(object? sender, EventArgs e)
+    {
+        if (DataContext is MainViewModel vm)
+        {
+            vm.OnMainWindowOpened();
         }
     }
 }

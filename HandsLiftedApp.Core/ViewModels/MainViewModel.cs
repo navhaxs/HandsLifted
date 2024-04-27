@@ -347,12 +347,32 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private ProjectorWindow _projectorWindow;
+    private ProjectorWindow? _projectorWindow;
 
-    public ProjectorWindow ProjectorWindow
+    public ProjectorWindow? ProjectorWindow
     {
         get => _projectorWindow;
         set => this.RaiseAndSetIfChanged(ref _projectorWindow, value);
+    }
+
+    public void OnMainWindowOpened()
+    {
+        // Apply OnStartup* AppPreferences:
+        Playlist.IsLogo = Globals.AppPreferences.OnStartupShowLogo;
+
+        if (ProjectorWindow == null)
+        {
+            ProjectorWindow = new ProjectorWindow();
+            ProjectorWindow.DataContext = this;
+        }
+        ToggleProjectorWindow(Globals.AppPreferences.OnStartupShowOutput);
+        
+        if (StageDisplayWindow == null)
+        {
+            StageDisplayWindow = new StageDisplayWindow();
+            StageDisplayWindow.DataContext = this;
+        }
+        ToggleStageDisplayWindow(Globals.AppPreferences.OnStartupShowStage);
     }
 
     public void OnProjectorClickCommand()
@@ -381,9 +401,9 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private StageDisplayWindow _stageDisplayWindow;
+    private StageDisplayWindow? _stageDisplayWindow;
 
-    public StageDisplayWindow StageDisplayWindow
+    public StageDisplayWindow? StageDisplayWindow
     {
         get => _stageDisplayWindow;
         set => this.RaiseAndSetIfChanged(ref _stageDisplayWindow, value);
