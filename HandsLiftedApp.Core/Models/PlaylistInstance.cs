@@ -334,6 +334,12 @@ namespace HandsLiftedApp.Core.Models
                 if (lastItem is IItemInstance itemInstance)
                     itemInstance.SelectedSlideIndex = -1;
             }
+            
+            // lastly clear LOGO
+            if (PresentationState != PresentationStateEnum.Slides)
+            {
+                PresentationState = PresentationStateEnum.Slides;
+            }
 
             Log.Debug("NavigateToReference {SlideReference}", slideReference);
 

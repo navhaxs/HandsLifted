@@ -306,11 +306,6 @@ public class MainViewModel : ViewModelBase
 
         int itemIndex = Playlist.Items.IndexOf(item);
 
-        if (Playlist.PresentationState != PlaylistInstance.PresentationStateEnum.Slides)
-        {
-            Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
-        }
-
         int SlideIndex = item.GetAsIItemInstance().Slides.IndexOf(slide);
         Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
 
