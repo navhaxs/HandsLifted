@@ -180,12 +180,12 @@ For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccl
 CCLI License #999999";
 
             var song = SongImporter.createSongItemFromStringData(input);
-            
+
             Assert.AreEqual("It Is Well With My Soul", song.Title);
             Assert.AreEqual("It is well with my soul\r\n\r\nIt is well\r\n\r\nIt is well with my soul", song.Stanzas.First(x => x.Name == "Chorus").Lyrics);
 
             var inverse = SongImporter.songItemToFreeText(song);
-            Assert.AreEqual(input, inverse);
+            Assert.AreEqual(SongImporter.NormalizeLineEndingsToCRLF(input), inverse);
         }
     }
 }

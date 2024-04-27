@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
 
 namespace HandsLiftedApp.Core
 {
@@ -59,12 +59,14 @@ namespace HandsLiftedApp.Core
             return createSongItemFromStringData(text);
         }
 
+        // note:
+        // CRLF == \r\n
+        // LF   == \n
+        public static string NormalizeLineEndingsToCRLF(string text) => text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+
         public static SongItemInstance createSongItemFromStringData(string raw)
         {
-            // note:
-            // LRLF == \r\n
-            // LF   == \n
-            string text = raw.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+            string text = NormalizeLineEndingsToCRLF(raw);
             List<string> parsed = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
 
             SongItemInstance song = new SongItemInstance(Globals.MainViewModel?.Playlist)
@@ -140,7 +142,7 @@ namespace HandsLiftedApp.Core
         public static string songItemToFreeText(SongItemInstance songItem)
         {
             var stringBuilder = new StringBuilder();
-            
+
             stringBuilder.AppendLine(songItem.Title);
             stringBuilder.AppendLine("");
             foreach (var stanza in songItem.Stanzas)
