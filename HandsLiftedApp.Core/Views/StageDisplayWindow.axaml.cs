@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
@@ -48,6 +49,21 @@ namespace HandsLiftedApp.Core.Views
             bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
             this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
             //this.Topmost = isFullScreenNext;
+        }
+        
+        private void ToggleFullscreen_OnClick(object? sender, RoutedEventArgs e)
+        {
+            onToggleFullscreen();
+        }
+
+        private void ToggleTopmost_OnClick(object? sender, RoutedEventArgs e)
+        {
+            this.Topmost = !this.Topmost;
+        }
+
+        private void Close_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

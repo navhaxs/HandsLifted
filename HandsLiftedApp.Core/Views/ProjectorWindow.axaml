@@ -15,6 +15,21 @@
         KeyDown="ProjectorWindow_KeyDown"
         Closing="Window_OnClosing"
         Title="ProjectorWindow">
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="{Binding $parent[Window].Title}" IsEnabled="False" />
+            <MenuItem x:Name="ToggleFullscreen" Header="Toggle Fullscreen" Click="ToggleFullscreen_OnClick" />
+            <MenuItem x:Name="ToggleTopmost" Header="Topmost" Click="ToggleTopmost_OnClick">
+                <MenuItem.Icon>
+                    <CheckBox BorderThickness="0"
+                              IsHitTestVisible="False"
+                              IsChecked="{Binding $parent[Window].Topmost}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem x:Name="Close" Header="Close" Click="Close_OnClick" />
+        </ContextMenu>
+    </Window.ContextMenu>
     <Grid>
         <avaloniaNdi:NDISendContainer NdiName="VisionScreens Lower Thirds" NdiWidth="1920" NdiHeight="1080"
                                       Width="1920"

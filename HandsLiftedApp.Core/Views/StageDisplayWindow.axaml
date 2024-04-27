@@ -8,6 +8,21 @@
         DoubleTapped="ProjectorWindow_DoubleTapped"
         Background="Black"
         Title="StageDisplayWindow">
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="{Binding $parent[Window].Title}" IsEnabled="False" />
+            <MenuItem x:Name="ToggleFullscreen" Header="Toggle Fullscreen" Click="ToggleFullscreen_OnClick" />
+            <MenuItem x:Name="ToggleTopmost" Header="Topmost" Click="ToggleTopmost_OnClick">
+                <MenuItem.Icon>
+                    <CheckBox BorderThickness="0"
+                              IsHitTestVisible="False"
+                              IsChecked="{Binding $parent[Window].Topmost}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem x:Name="Close" Header="Close" Click="Close_OnClick" />
+        </ContextMenu>
+    </Window.ContextMenu>
     <!-- <TabControl SelectedIndex="{Binding Source={x:Static app:Globals.StageDisplay}, Path=SelectedIndex, FallbackValue=0}"> -->
     <TabControl x:Name="TabControl">
         <TabControl.Styles>

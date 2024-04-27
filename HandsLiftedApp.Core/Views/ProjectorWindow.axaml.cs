@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Extensions;
@@ -69,6 +70,21 @@ namespace HandsLiftedApp.Core.Views
         {
             this.IsVisible = false;
             e.Cancel = true;
+        }
+
+        private void ToggleFullscreen_OnClick(object? sender, RoutedEventArgs e)
+        {
+            onToggleFullscreen();
+        }
+
+        private void ToggleTopmost_OnClick(object? sender, RoutedEventArgs e)
+        {
+            this.Topmost = !this.Topmost;
+        }
+
+        private void Close_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }
