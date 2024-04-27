@@ -42,8 +42,8 @@
 				<DataTemplate x:Key="GoogleSlidesGroupItem">
 					<material:MaterialIcon Kind="Slideshow" />
 				</DataTemplate>
-				<DataTemplate x:Key="PowerPointSlidesGroupItem">
-					<material:MaterialIcon Kind="Presentation" />
+				<DataTemplate x:Key="PowerPointPresentationItemInstance">
+					<material:MaterialIcon Kind="MicrosoftPowerpoint" />
 				</DataTemplate>
 				<DataTemplate x:Key="CommentItem">
 					<material:MaterialIcon Kind="AlertCircle" />

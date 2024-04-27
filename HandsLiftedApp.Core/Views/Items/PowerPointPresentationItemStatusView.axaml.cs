@@ -10,13 +10,5 @@ namespace HandsLiftedApp.Core.Views.Items
         {
             InitializeComponent();
         }
-
-        private void Button_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (DataContext is PowerPointPresentationItemInstance instance)
-            {
-                instance._Sync();
-            }
-        }
     }
 }

@@ -273,7 +273,7 @@
                                                 <MenuItem Header="Swap" />
                                             </ContextMenu>
                                         </DockPanel.ContextMenu>
-                                        <items:ItemIcon Margin="14,8,10,8" DockPanel.Dock="Left" />
+                                        <items:ItemIcon Margin="18,0,4,0" DockPanel.Dock="Left" VerticalAlignment="Stretch" />
                                         <Button
                                             Padding="22,6"
                                             Margin="6"
@@ -286,6 +286,7 @@
                                             DockPanel.Dock="Right">
                                             Edit
                                         </Button>
+                                        <views1:ItemEditDock DockPanel.Dock="Right" />
                                         <!--<Ellipse
 								IsVisible="{Binding State.IsSelected, FallbackValue=False}"
 								Width="8"

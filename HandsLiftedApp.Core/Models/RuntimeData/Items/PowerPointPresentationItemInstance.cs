@@ -23,6 +23,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private bool _IsBusy = false;
         public bool IsBusy { get => _IsBusy; set => this.RaiseAndSetIfChanged(ref _IsBusy, value); }
+        
+        private DateTime? _lastSyncDateTime = null;
+        public DateTime? LastSyncDateTime { get => _lastSyncDateTime; set => this.RaiseAndSetIfChanged(ref _lastSyncDateTime, value); }
 
         private BlankSlide _blankSlide = new();
 
@@ -125,6 +128,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     Log.Debug($"Import OK");
 
+                    LastSyncDateTime = DateTime.Now;
+                    
                     IsBusy = false;
                 }
             }

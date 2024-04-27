@@ -1,0 +1,49 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+             xmlns:items1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="items:Item"
+             x:Class="HandsLiftedApp.Core.Views.ItemEditDock">
+    <ContentControl Content="{Binding}">
+        <ContentControl.ContentTemplate>
+            <common:MyTemplateSelector>
+                <DataTemplate x:Key="PowerPointPresentationItemInstance" x:DataType="items1:PowerPointPresentationItemInstance">
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Padding="22,6"
+                            Margin="6 6 0 6"
+                            Background="#242131"
+                            BorderBrush="#b3aed9"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            x:Name="EditButton"
+                            DockPanel.Dock="Right">
+                            <DockPanel>
+                                <TextBlock>Sync</TextBlock>
+                            </DockPanel>
+                            <Button.Flyout>
+                                <Flyout
+                                    Placement="Bottom">
+                                    <StackPanel Margin="6" MinWidth="200">
+                                        <TextBlock TextAlignment="Center">Last Sync: <Run Text="{Binding LastSyncDateTime}"/></TextBlock>
+                                        <Button Click="Button_OnClick" Margin="0 6 0 0">
+                                            <DockPanel>
+                                                <avalonia:MaterialIcon Kind="Sync" Margin="0 0 5 0" />
+                                                <TextBlock>Sync</TextBlock>
+                                            </DockPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </common:MyTemplateSelector>
+        </ContentControl.ContentTemplate>
+    </ContentControl>
+</UserControl>
