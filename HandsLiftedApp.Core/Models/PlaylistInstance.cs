@@ -163,6 +163,11 @@ namespace HandsLiftedApp.Core.Models
                     }
                 });
 
+            _stageDisplaySlideCountText = this.WhenAnyValue(s => s.SelectedItemAsIItemInstance.SelectedSlideIndex,
+                    s => s.SelectedItemAsIItemInstance.Slides.Count, ((i, i1) => $"Slide {i+1}/{i1}"))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.StageDisplaySlideCountText);
+
             _disposables.Add(MessageBus.Current.Listen<NavigateToSlideReferenceAction>()
                     .Subscribe(action => NavigateToReference(action.SlideReference)))
                 ;
@@ -541,6 +546,13 @@ namespace HandsLiftedApp.Core.Models
         }
 
         #endregion
+
+        private readonly ObservableAsPropertyHelper<string?> _stageDisplaySlideCountText;
+
+        public string? StageDisplaySlideCountText
+        {
+            get => _stageDisplaySlideCountText.Value;
+        }
 
         public void Dispose()
         {

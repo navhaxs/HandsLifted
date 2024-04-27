@@ -3,73 +3,79 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-			 xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
              x:DataType="viewModels:MainViewModel"
-			 Background="Black"
+             Background="Black"
              x:Class="HandsLiftedApp.Views.StageDisplayLayout.DefaultLayout">
 
-	<Design.DataContext>
-		<viewModels:MainViewModel/>
-	</Design.DataContext>
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
 
-	<Grid ColumnDefinitions="3*, *">
-		<Border Grid.Column="0" Background="White" BorderBrush="White" BorderThickness="1" VerticalAlignment="Top">
-			<StackPanel>
-				<TextBlock Text="Live" HorizontalAlignment="Center" Margin="0 2"  FontSize="30" FontWeight="Bold" Foreground="Black" />
+    <Grid ColumnDefinitions="3*, *">
+        <DockPanel Grid.Column="0" >
+            <Border DockPanel.Dock="Top" Background="White" BorderBrush="White" BorderThickness="1" VerticalAlignment="Top">
+                <StackPanel>
+                    <TextBlock Text="Live" HorizontalAlignment="Center" Margin="0 2" FontSize="30" FontWeight="Bold"
+                               Foreground="Black" />
 
-				<Grid DockPanel.Dock="Top">
-					<Grid.Background>
-						<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
-							<VisualBrush.Visual>
-								<Canvas Width="16" Height="16" Background="#1a1a1a">
-									<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
-									<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
-								</Canvas>
-							</VisualBrush.Visual>
-						</VisualBrush>
-					</Grid.Background>
-					<Border>
-						<Viewbox>
-							<render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" Height="1080" Width="1920" />
-						</Viewbox>
-					</Border>
-				</Grid>
-			</StackPanel>
-		</Border>
-		<DockPanel Grid.Column="1">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.Background>
+                            <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+                                <VisualBrush.Visual>
+                                    <Canvas Width="16" Height="16" Background="#1a1a1a">
+                                        <Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+                                        <Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+                                    </Canvas>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Grid.Background>
+                        <Border>
+                            <Viewbox>
+                                <render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" Height="1080"
+                                                    Width="1920" />
+                            </Viewbox>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <Viewbox HorizontalAlignment="Left" Margin="10 6">
+                <TextBlock Text="{Binding Playlist.StageDisplaySlideCountText}" />
+            </Viewbox>
+        </DockPanel>
+        <DockPanel Grid.Column="1">
 
-			<Viewbox DockPanel.Dock="Bottom">
-				<TextBlock Foreground="White"
-						   VerticalAlignment="Bottom"
-						   HorizontalAlignment="Right"
-						   Grid.ColumnSpan="2"
-						   Padding="15"
-						   FontSize="44"
-						   Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}"
-						/>
-			</Viewbox>
-			<Border Background="#af7b05" BorderBrush="#af7b05" BorderThickness="1" VerticalAlignment="Top">
-				<StackPanel>
-					<TextBlock Text="Next" HorizontalAlignment="Center" Margin="0 2" FontSize="30" FontWeight="Bold" />
-					<Grid>
-						<Grid.Background>
-							<VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
-								<VisualBrush.Visual>
-									<Canvas Width="16" Height="16" Background="#1a1a1a">
-										<Rectangle Height="8" Width="8" Fill="#1c1c1c" />
-										<Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
-									</Canvas>
-								</VisualBrush.Visual>
-							</VisualBrush>
-						</Grid.Background>
-						<Viewbox>
-							<render:SlideRender DataContext="{Binding  Playlist.NextSlide}" Height="1080" Width="1920" />
-						</Viewbox>
-					</Grid>
-				</StackPanel>
-			</Border>
+            <Viewbox DockPanel.Dock="Bottom">
+                <TextBlock Foreground="White"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Right"
+                           Grid.ColumnSpan="2"
+                           Padding="15"
+                           FontSize="44"
+                           Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}'}" />
+            </Viewbox>
+            <Border Background="#af7b05" BorderBrush="#af7b05" BorderThickness="1" VerticalAlignment="Top">
+                <StackPanel>
+                    <TextBlock Text="Next" HorizontalAlignment="Center" Margin="0 2" FontSize="30" FontWeight="Bold" />
+                    <Grid>
+                        <Grid.Background>
+                            <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+                                <VisualBrush.Visual>
+                                    <Canvas Width="16" Height="16" Background="#1a1a1a">
+                                        <Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+                                        <Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+                                    </Canvas>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Grid.Background>
+                        <Viewbox>
+                            <render:SlideRender DataContext="{Binding  Playlist.NextSlide}" Height="1080" Width="1920" />
+                        </Viewbox>
+                    </Grid>
+                </StackPanel>
+            </Border>
 
-		</DockPanel>
-	</Grid>
+        </DockPanel>
+    </Grid>
 </UserControl>
