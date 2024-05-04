@@ -63,7 +63,7 @@
 			<!--  Centre box  -->
             <Grid Grid.Column="2">
 
-                <DockPanel>
+                <StackPanel>
                     <ListBox
                         Background="Transparent"
                         ItemsSource="{Binding Library.SearchResults}"
@@ -88,9 +88,8 @@
 					</i:Interaction.Behaviors>
 					<TextBlock Name="NoItemsLabel" Text="No items" IsVisible="False" />
 					<!--<TextBlock Name="NoResultsLabel" Text="No results" />-->
-                </DockPanel>
+                </StackPanel>
 
-                <DockPanel Grid.Column="1" />
             </Grid>
 
 			<GridSplitter

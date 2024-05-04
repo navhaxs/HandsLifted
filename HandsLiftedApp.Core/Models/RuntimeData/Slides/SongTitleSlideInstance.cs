@@ -10,6 +10,7 @@ using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Data.Slides
 {
@@ -19,6 +20,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public SongTitleSlideInstance(SongItemInstance? parentSongItem) : base()
         {
+            Log.Verbose("Creating slide instance");
             parentSongItem?.WhenAnyValue(parentSongItem => parentSongItem.Design)
                 .Subscribe(target =>
                 {

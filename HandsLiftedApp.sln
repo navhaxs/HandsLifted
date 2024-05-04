@@ -96,6 +96,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPointConverterSampleAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Importer.PowerPointInteropData", "HandsLiftedApp.Importer.PowerPointInteropData\HandsLiftedApp.Importer.PowerPointInteropData.csproj", "{76B9E7DF-0A51-49E3-8D7F-2F534088438B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongEditorStandalone", "Demos\SongEditorStandalone\SongEditorStandalone.csproj", "{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -478,6 +480,18 @@ Global
 		{76B9E7DF-0A51-49E3-8D7F-2F534088438B}.Release|x64.Build.0 = Release|Any CPU
 		{76B9E7DF-0A51-49E3-8D7F-2F534088438B}.Release|x86.ActiveCfg = Release|Any CPU
 		{76B9E7DF-0A51-49E3-8D7F-2F534088438B}.Release|x86.Build.0 = Release|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Debug|x64.Build.0 = Debug|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Debug|x86.Build.0 = Debug|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Release|x64.ActiveCfg = Release|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Release|x64.Build.0 = Release|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Release|x86.ActiveCfg = Release|Any CPU
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -505,6 +519,7 @@ Global
 		{21CE3976-E587-426A-9F52-8720F4939B09} = {DF9D61D4-EE1B-4212-914D-C74223DDC1EF}
 		{23E20C47-6239-4EF5-800D-1006DB0FB81D} = {21CE3976-E587-426A-9F52-8720F4939B09}
 		{18D14517-2181-4D05-8379-8CC74FA0383C} = {CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}
+		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4} = {CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F842927-3492-494F-A1CE-4A9ECF57C018}

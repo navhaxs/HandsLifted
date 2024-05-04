@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -15,8 +16,10 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Utils;
 using Serilog;
+using Syncfusion.OfficeChart.Implementation;
 
 namespace HandsLiftedApp.Core.Models
 {
@@ -161,6 +164,29 @@ namespace HandsLiftedApp.Core.Models
                     {
                         this.RaisePropertyChanged(nameof(LogoBitmap));
                     }
+                });
+
+            MessageBus.Current.Listen<AddItemToPlaylistMessage>()
+                .Subscribe(addItemToPlaylistMessage =>
+                {
+                    foreach (var filePath in addItemToPlaylistMessage.filePaths)
+                    {
+                        if (filePath.ToLower().EndsWith(".xml"))
+                        {
+                            XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
+                            using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                            {
+                                var x = (SongItemInstance)serializer.Deserialize(stream);
+                                Items.Add(x);
+                            }
+                        }
+                        else if (filePath.ToLower().EndsWith(".txt"))
+                        {
+                            var newSong = SongImporter.createSongItemFromTxtFile(filePath);
+                            Items.Add(newSong);
+                        }
+                    }
+
                 });
 
             _stageDisplaySlideCountText = this.WhenAnyValue(s => s.SelectedItemAsIItemInstance.SelectedSlideIndex,

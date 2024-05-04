@@ -2,13 +2,13 @@
 
 namespace HandsLiftedApp.Models.PlaylistActions
 {
-    internal class AddItemToPlaylistMessage
+    public class AddItemToPlaylistMessage
     {
-        public List<string> filenames { get; }
+        public List<string> filePaths { get; }
 
-        public AddItemToPlaylistMessage(List<string> filenames)
+        public AddItemToPlaylistMessage(List<string> filePaths)
         {
-            this.filenames = filenames;
+            this.filePaths = filePaths;
         }
     }
 }

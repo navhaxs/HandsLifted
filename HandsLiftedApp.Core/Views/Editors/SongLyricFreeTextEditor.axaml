@@ -7,21 +7,26 @@
              x:DataType="editor:SongEditorViewModel"
              Background="White"
              x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricFreeTextEditor">
+    <UserControl.Styles>
+        <Style Selector="MenuItem">
+            <Setter Property="Foreground" Value="Red" />
+        </Style>
+    </UserControl.Styles>
+
     <ScrollViewer>
-        <DockPanel>
-            <Button DockPanel.Dock="Top" Click="SyncButton_OnClick">Sync</Button>
-            <TextBox
-                CornerRadius="0"
-                AcceptsReturn="True"
-                VerticalAlignment="Stretch"
-                Background="White"
-                FontFamily="Consolas"
-                Foreground="Black"
-                BorderThickness="0"
-                Padding="12"
-                TextWrapping="Wrap"
-                Watermark="Enter or paste lyrics text here..."
-                Text="{Binding FreeTextEntryField}" />
-        </DockPanel>
+        <TextBox
+            Name="FreeTextBox"
+            CornerRadius="0"
+            AcceptsReturn="True"
+            VerticalAlignment="Stretch"
+            Background="White"
+            FontFamily="Consolas"
+            Foreground="Black"
+            BorderThickness="0"
+            Padding="12"
+            TextWrapping="Wrap"
+            TextChanged="TextBox_OnTextChanged"
+            Watermark="Enter or paste lyrics text here..."
+            Text="{Binding FreeTextEntryField}" />
     </ScrollViewer>
 </UserControl>

@@ -31,10 +31,15 @@ sealed class Program
             if (Debugger.IsAttached)
             {
                 Debugger.Break();
+                throw e;
             }
 
             // TODO UI here
-            Console.ReadKey();
+            if (Console.LargestWindowWidth != 0 && !Console.IsOutputRedirected)
+            {
+                /* we have a console */
+                Console.ReadKey();
+            }
         }
         finally
         {

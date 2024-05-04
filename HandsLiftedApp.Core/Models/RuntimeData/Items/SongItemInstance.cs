@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
+using DynamicData;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -31,7 +32,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 if (stanza != null)
                 {
                     result.Add(new ArrangementRef()
-                    { Index = i, SongStanza = stanza });
+                        { Index = i, SongStanza = stanza });
                     i++;
                 }
             }
@@ -76,9 +77,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             GenerateArrangementViews();
 
             this.WhenAnyValue(x => x.TitleSlide).Subscribe((d) =>
-        {
-            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-        });
+            {
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+            });
 
             this.WhenAnyValue(x => x.EndOnBlankSlide).Subscribe((d) =>
             {
@@ -145,6 +146,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 try
                 {
+                    var newSlides = new TrulyObservableCollection<Slide>();
+                    foreach (var existingSlide in Slides)
+                    {
+                        newSlides.Add(existingSlide);
+                    }
+                    
                     int i = 0;
 
                     // add title slide
@@ -152,14 +159,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     {
                         //TitleSlide.Index = i;
 
-                        if (this.StanzaSlides.ElementAtOrDefault(0) is SongTitleSlide)
+                        if (newSlides.ElementAtOrDefault(0) is SongTitleSlide)
                         {
-                            ((SongTitleSlide)this.StanzaSlides.ElementAt(0)).Title = Title;
-                            ((SongTitleSlide)this.StanzaSlides.ElementAt(0)).Copyright = Copyright;
+                            ((SongTitleSlide)newSlides.ElementAt(0)).Title = Title;
+                            ((SongTitleSlide)newSlides.ElementAt(0)).Copyright = Copyright;
                         }
                         else
                         {
-                            this.StanzaSlides.Insert(i, TitleSlide);
+                            newSlides.Insert(i, TitleSlide);
                         }
 
                         i++;
@@ -190,7 +197,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                             var slideId = $"{_datum.Id}:{stanzaSeenCount[_datum.Id]}:{x.index}";
 
-                            var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
+                            var prevIndex = newSlides.Select((data, index) => new { data, index })
                                 .FirstOrDefault(s => (s.data) is SongSlide && ((SongSlide)s.data).Id == slideId);
 
                             if (prevIndex != null)
@@ -211,14 +218,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                                 if (prevIndex.index != i)
                                 {
                                     //re-order to index i
-                                    this.StanzaSlides.Move(prevIndex.index, i);
+                                    newSlides.Move(prevIndex.index, i);
                                 }
                             }
                             else
                             {
                                 var slide = new SongSlideInstance(this, _datum, slideId)
-                                { Text = Text, Label = Label, }; //, Index = i };
-                                this.StanzaSlides.Insert(i, slide);
+                                    { Text = Text, Label = Label, }; //, Index = i };
+                                newSlides.Insert(i, slide);
                             }
 
                             i++;
@@ -227,20 +234,19 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     if (EndOnBlankSlide == true)
                     {
-                        var prevIndex = this.StanzaSlides.Select((data, index) => new { data, index })
+                        var prevIndex = newSlides.Select((data, index) => new { data, index })
                             .FirstOrDefault(s => (s.data) is (SongSlide) && ((SongSlide)s.data).Id == "BLANK");
                         if (prevIndex != null && prevIndex.index == i)
                         {
-                            
                         }
                         else if (prevIndex != null && prevIndex.index != i)
                         {
                             //prevIndex.data.Index = i;
-                            this.StanzaSlides.Move(prevIndex.index, i);
+                            newSlides.Move(prevIndex.index, i);
                         }
                         else
                         {
-                            this.StanzaSlides.Insert(i,
+                            newSlides.Insert(i,
                                 new SongSlideInstance(this, new SongStanza(), "BLANK") { }); // { Index = i });
                         }
 
@@ -248,20 +254,27 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }
 
                     // need to delete old items
-                    while (i < this.StanzaSlides.Count)
+                    while (i < newSlides.Count)
                     {
                         //this.StanzaSlides.RemoveAt(i); -- BUG: wont remove unless index remove from last backwards. think about it!
-                        this.StanzaSlides.RemoveAt(this.StanzaSlides.Count - 1); // remove last
+                        newSlides.RemoveAt(newSlides.Count - 1); // remove last
                         i++;
                     }
+                    
+                    // StanzaSlides.RemoveAt(0);
+                    Log.Verbose("Generated Stanza Slides. Count={Count}", newSlides.Count);
+                    StanzaSlides = newSlides;
+                    // this.RaisePropertyChanged("StanzaSlides");
+                    this.RaisePropertyChanged("Slides");
                 }
                 catch (Exception ex)
                 {
                     Log.Error("SongItemInstance.GenerateSlides", ex);
                 }
+ 
+
             }
 
-            this.RaisePropertyChanged("Slides");
         }
 
         private void _stanzas_CollectionItemChanged(object? sender, PropertyChangedEventArgs e)

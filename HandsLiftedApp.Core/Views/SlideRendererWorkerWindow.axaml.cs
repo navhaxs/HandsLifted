@@ -18,7 +18,7 @@ using Serilog;
 
 namespace HandsLiftedApp.Core.Views
 {
-    public partial class SlideRendererWorkerWindow : Window, INotifyPropertyChanged
+    public partial class SlideRendererWorkerWindow : Window
     {
         public SlideRendererWorkerWindow()
         {

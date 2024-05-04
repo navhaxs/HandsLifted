@@ -13,7 +13,9 @@ namespace HandsLiftedApp.Core
     public static class SongImporter
     {
         // TODO make this config item
-        public static readonly string[] PART_NAME_TOKENS = {  "Intro",
+        public static readonly string[] PART_NAME_TOKENS =
+        {
+            "Intro",
             "Chorus",
             "Verse",
             "Tag",
@@ -42,6 +44,7 @@ namespace HandsLiftedApp.Core
             if (processedInput.StartsWith("[") && processedInput.EndsWith("]"))
             {
                 processedInput = processedInput[1..^1];
+                return true;
             }
 
             return PART_NAME_TOKENS.Any(token =>
@@ -53,18 +56,32 @@ namespace HandsLiftedApp.Core
             });
         }
 
+        public static string stripPartName(string input)
+        {
+            var regex = new Regex(@"\[(.*)\]");
+            var match = regex.Match(input);
+
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+
+            return input;
+        }
+
         public static SongItemInstance createSongItemFromTxtFile(string txtFilePath)
         {
             string text = File.ReadAllText(txtFilePath);
-            return createSongItemFromStringData(text);
+            return CreateSongItemFromStringData(text);
         }
 
         // note:
         // CRLF == \r\n
         // LF   == \n
-        public static string NormalizeLineEndingsToCRLF(string text) => text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+        public static string NormalizeLineEndingsToCRLF(string text) =>
+            text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
 
-        public static SongItemInstance createSongItemFromStringData(string raw)
+        public static SongItemInstance CreateSongItemFromStringData(string raw)
         {
             string text = NormalizeLineEndingsToCRLF(raw);
             List<string> parsed = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
@@ -87,7 +104,22 @@ namespace HandsLiftedApp.Core
 
                 if (partNameEOL == -1)
                 {
-                    lastStanzaBody += "\r\n\r\n" + paragraph;
+                    if (isPartName(paragraph))
+                    {
+                        // flush existing builder
+                        if (lastStanzaPartName != null && lastStanzaBody != null)
+                        {
+                            song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                        }
+
+                        lastStanzaPartName = stripPartName(paragraph);
+                        lastStanzaBody = "";
+                    }
+                    else
+                    {
+                        lastStanzaBody += "\r\n\r\n" + paragraph;
+                    }
+                    
                 }
                 else
                 {
@@ -103,6 +135,7 @@ namespace HandsLiftedApp.Core
                     else if (isPartName(partName))
                     {
                         // this is the start of a new song stanza
+                        partName = stripPartName(partName);
 
                         // flush existing builder
                         if (lastStanzaPartName != null && lastStanzaBody != null)
@@ -117,12 +150,12 @@ namespace HandsLiftedApp.Core
                     {
                         if (lastStanzaPartName != null && lastStanzaBody != null)
                         {
-                            lastStanzaBody = lastStanzaBody + "\r\n\r\n" + paragraph.Substring(partNameEOL).Trim();
+                            lastStanzaBody = lastStanzaBody + "\r\n\r\n" + paragraph.Trim();
                         }
                         else
                         {
-                            lastStanzaBody = "Lyrics"; // ungrouped
-                            lastStanzaBody = paragraph.Substring(partNameEOL).Trim();
+                            lastStanzaPartName = "Verse"; // ungrouped
+                            lastStanzaBody = paragraph.Trim();
                         }
                     }
                 }
@@ -147,7 +180,7 @@ namespace HandsLiftedApp.Core
             stringBuilder.AppendLine("");
             foreach (var stanza in songItem.Stanzas)
             {
-                stringBuilder.AppendLine(stanza.Name);
+                stringBuilder.AppendLine($"[{stanza.Name}]");
                 stringBuilder.AppendLine(stanza.Lyrics);
                 stringBuilder.AppendLine("");
             }
@@ -195,7 +228,8 @@ namespace HandsLiftedApp.Core
 
         private static int numLines(string input)
         {
-            return ((input.Length - input.Replace(Environment.NewLine, string.Empty).Length) / Environment.NewLine.Length) + 1;
+            return ((input.Length - input.Replace(Environment.NewLine, string.Empty).Length) /
+                    Environment.NewLine.Length) + 1;
         }
     }
 }

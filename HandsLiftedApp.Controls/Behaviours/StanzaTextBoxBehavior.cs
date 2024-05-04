@@ -9,6 +9,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HandsLiftedApp.Extensions;
 
 namespace HandsLiftedApp.Controls.Behaviours
 {
@@ -63,7 +64,7 @@ namespace HandsLiftedApp.Controls.Behaviours
 
         private List<TextBox> GetTextBoxTree(TextBox activeTextBox)
         {
-            Window? window = activeTextBox.GetVisualRoot() as Window;
+            UserControl? window = activeTextBox.FindAncestorOfType<UserControl>();
             StackPanel? stackPanel = window.FindControl<StackPanel>("Wrapper");
             return stackPanel.FindAllVisuals<TextBox>().Distinct().ToList();
         }

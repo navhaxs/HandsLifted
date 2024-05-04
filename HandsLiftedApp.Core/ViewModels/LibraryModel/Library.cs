@@ -38,12 +38,12 @@ namespace HandsLiftedApp.Models.LibraryModel
                 return;
             }
 
-            // Globals.Preferences.WhenAnyValue(prefs => prefs.LibraryPath).Subscribe(libraryPath =>
-            // {
-            //     rootDirectory = libraryPath;
-            //     Refresh();
-            //     watch();
-            // });
+            Globals.AppPreferences.WhenAnyValue(prefs => prefs.LibraryPath).Subscribe(libraryPath =>
+            {
+                rootDirectory = libraryPath;
+                Refresh();
+                watch();
+            });
             _selectedItemPreview = this.WhenAnyValue(x => x.SelectedItem, (_SelectedItem) =>
                   {
                       if (_SelectedItem != null)
@@ -62,15 +62,14 @@ namespace HandsLiftedApp.Models.LibraryModel
                   .ToProperty(this, c => c.SelectedItemPreview)
                   ;
             Items = new ObservableCollection<Item>();
-            //rootDirectory = Globals.Env.SongLibraryDirectory;
-            //rootDirectory = Globals.Env.SongLibraryDirectory;
+            rootDirectory = Globals.AppPreferences.LibraryPath;
 
             OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
             {
                 if (SelectedItem != null)
                 {
                     List<string> items = new List<string>() { SelectedItem.FullFilePath };
-                    // MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(items));
+                    MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(items));
                 }
             });
 

@@ -40,7 +40,7 @@ namespace HandsLiftedApp.Core
             Log.Information("VisionScreens App {Version} Build {GitHash} {BuildDateTime}", Assembly.GetExecutingAssembly().GetName().Version, BuildInfo.Version.GetGitHash(), BuildInfo.Version.GetBuildDateTime());
             Log.Information("Startup at {Now}", DateTime.Now);
 
-            Log.Information("Runtime Identifier {RID}", RuntimeInformation.RuntimeIdentifier);
+            Log.Information("Runtime Identifier: {RID}", RuntimeInformation.RuntimeIdentifier);
             Log.Information("Avalonia {Version}", Assembly.GetAssembly(typeof(Avalonia.Application))?.GetName().Version);
             Log.Information("{DotNetVersion}", RuntimeInformation.FrameworkDescription);
 
@@ -62,7 +62,7 @@ namespace HandsLiftedApp.Core
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.Fatal("CurrentDomain_UnhandledExceptionEventArgs. Please report this error. {}", e.ExceptionObject);
+            Log.Fatal("CurrentDomain_UnhandledExceptionEventArgs. Please report this error. {ex}", e.ExceptionObject);
         }
 
         private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)

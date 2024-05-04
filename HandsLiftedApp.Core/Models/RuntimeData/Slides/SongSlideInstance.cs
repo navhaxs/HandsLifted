@@ -29,7 +29,7 @@ namespace HandsLiftedApp.Data.Slides
                             if (target2 != null && target2 != Guid.Empty)
                             {
                                 var baseSlideTheme =
-                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target2);
+                                    parentSongItem?.ParentPlaylist?.Designs.FirstOrDefault(d => d.Id == target2);
                                 if (baseSlideTheme != null)
                                 {
                                     baseSlideTheme.PropertyChanged += (sender, args) =>

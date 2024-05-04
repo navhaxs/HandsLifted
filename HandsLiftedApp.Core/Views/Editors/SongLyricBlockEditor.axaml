@@ -2,11 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
              xmlns:material="using:Material.Icons.Avalonia"
              xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
-             xmlns:app="clr-namespace:HandsLiftedApp.Core"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
              xmlns:converters="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="650"
              x:DataType="editor:SongEditorViewModel"
@@ -20,72 +19,94 @@
     <UserControl.Resources>
         <converters:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
     </UserControl.Resources>
-    
+
     <UserControl.Styles>
         <Style Selector="TextBox">
             <Setter Property="BorderThickness" Value="0" />
         </Style>
     </UserControl.Styles>
 
+    <DockPanel>
+        <Border BorderBrush="#eee" BorderThickness="0 1 0 0"
+                DockPanel.Dock="Bottom"
+                Margin="0 6 0 0">
+            <TextBox
+                Margin="16,0,12,0"
+                Padding="0,6,0,5"
+                HorizontalAlignment="Stretch"
+                AcceptsReturn="True"
+                Background="Transparent"
+                FontSize="13"
+                Foreground="Black"
+                Text="{Binding Song.Copyright}"
+                TextWrapping="Wrap"
+                Watermark="Copyright">
+                <i:Interaction.Behaviors>
+                    <behaviours:StanzaTextBoxBehavior />
+                </i:Interaction.Behaviors>
+            </TextBox>
+        </Border>
 
-    <StackPanel>
-        <TextBox
-            Margin="12,12,12,12"
-            Padding="0,6,0,5"
-            Background="White"
-            FontSize="30"
-            FontWeight="Bold"
-            Foreground="Black"
-            Text="{Binding Song.Title}"
-            TextWrapping="Wrap"
-            Watermark="Song Title">
-            <i:Interaction.Behaviors>
-                <behaviours:StanzaTextBoxBehavior />
-            </i:Interaction.Behaviors>
-        </TextBox>
-        <ItemsControl Margin="0" ItemsSource="{Binding Song.Stanzas}" >
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Vertical" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <StackPanel>
+        <Grid>
+            <ScrollViewer>
+                <StackPanel x:Name="Wrapper" Margin="0 0 0 60">
+                    <TextBox
+                        Margin="12,12,12,12"
+                        Padding="0,6,0,5"
+                        Background="White"
+                        FontSize="30"
+                        FontWeight="Bold"
+                        Foreground="Black"
+                        Text="{Binding Song.Title}"
+                        TextWrapping="Wrap"
+                        Watermark="Song Title">
+                        <i:Interaction.Behaviors>
+                            <behaviours:StanzaTextBoxBehavior />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
 
-                    <Border BorderBrush="#6b6b6b" BorderThickness="0,1,0,1" Background="#e2e2e2">
-                        <DockPanel>
-                            <Button
-                                Padding="0"
-                                Background="Transparent"
-                                DockPanel.Dock="Right">
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="BorderThickness" Value="0" />
-                                    </Style>
-                                </Button.Styles>
-                                <Button.Flyout>
-                                    <Flyout>
-                                        <StackPanel>
-                                            <TextBlock>Are you sure you want to delete this part?</TextBlock>
-                                            <TextBlock>This cannot be undone</TextBlock>
+                    <ItemsControl Margin="0" ItemsSource="{Binding Song.Stanzas}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Border Background="{Binding Colour}">
+                                        <DockPanel>
                                             <Button
-                                                HorizontalAlignment="Center"
-                                                Click="DeleteThisPartClick"
-                                                Content="Confirm" />
-                                        </StackPanel>
-                                    </Flyout>
-                                </Button.Flyout>
-                                <material:MaterialIcon
-                                    Width="24"
-                                    Height="24"
-                                    Margin="8,0"
-                                    VerticalAlignment="Stretch"
-                                    DockPanel.Dock="Right"
-                                    Foreground="#AAA"
-                                    Kind="BinOutline" />
-                            </Button>
-                            <!--<ComboBox 
+                                                Padding="0"
+                                                Background="Transparent"
+                                                DockPanel.Dock="Right">
+                                                <Button.Styles>
+                                                    <Style Selector="Button">
+                                                        <Setter Property="BorderThickness" Value="0" />
+                                                    </Style>
+                                                </Button.Styles>
+                                                <Button.Flyout>
+                                                    <Flyout>
+                                                        <StackPanel>
+                                                            <TextBlock>Are you sure you want to delete this part?</TextBlock>
+                                                            <TextBlock>This cannot be undone</TextBlock>
+                                                            <Button
+                                                                HorizontalAlignment="Center"
+                                                                Click="DeleteThisPartClick"
+                                                                Content="Confirm" />
+                                                        </StackPanel>
+                                                    </Flyout>
+                                                </Button.Flyout>
+                                                <material:MaterialIcon
+                                                    Width="24"
+                                                    Height="24"
+                                                    Margin="8,0"
+                                                    VerticalAlignment="Stretch"
+                                                    DockPanel.Dock="Right"
+                                                    Foreground="#AAA"
+                                                    Kind="BinOutline" />
+                                            </Button>
+                                            <!--<ComboBox 
                                      ItemsSource="{Binding Source={x:Static app:Globals.MainViewModel}, Path=Playlist.Designs}" 
                                      SelectedItem="{Binding Design}"> 
                                      <ComboBox.ItemTemplate> 
@@ -109,84 +130,101 @@
                                          </DataTemplate> 
                                      </ComboBox.ItemTemplate> 
                                  </ComboBox>-->
-                            <TextBox
-                                Padding="6,8,80,8"
-                                AcceptsReturn="False"
-                                Background="Transparent"
-                                BorderBrush="#f6f6f6"
-                                BorderThickness="10,0,0,0"
-                                FontSize="16"
-                                FontWeight="SemiBold"
-                                Foreground="Black"
-                                Text="{Binding Path=Name}"
-                                TextWrapping="Wrap"
-                                Watermark="Stanza Name">
-                                <i:Interaction.Behaviors>
-                                    <behaviours:StanzaTextBoxBehavior />
-                                </i:Interaction.Behaviors>
-                            </TextBox>
-                        </DockPanel>
-                    </Border>
+                                            <TextBox
+                                                Padding="16,6,80,6"
+                                                AcceptsReturn="False"
+                                                Background="Transparent"
+                                                FontSize="14"
+                                                FontWeight="SemiBold"
+                                                Foreground="Black"
+                                                Text="{Binding Path=Name}"
+                                                TextWrapping="Wrap"
+                                                Watermark="Stanza Name">
+                                                <i:Interaction.Behaviors>
+                                                    <behaviours:StanzaTextBoxBehavior />
+                                                </i:Interaction.Behaviors>
+                                            </TextBox>
+                                        </DockPanel>
+                                    </Border>
 
-                    <TextBox
-                        Padding="16,10,16,12"
-                        AcceptsReturn="True"
-                        Background="Transparent"
-                        FontSize="16"
-                        Foreground="Black"
-                        Text="{Binding Path=Lyrics}"
-                        TextWrapping="Wrap"
-                        Watermark="Stanza Lyrics">
-                        <i:Interaction.Behaviors>
-                            <behaviours:StanzaTextBoxBehavior />
-                        </i:Interaction.Behaviors>
-                    </TextBox>
+                                    <!-- Lyrics Text -->
+                                    <TextBox
+                                        Padding="16,6,16,6"
+                                        AcceptsReturn="True"
+                                        Background="Transparent"
+                                        FontSize="14"
+                                        LineHeight="20"
+                                        Foreground="Black"
+                                        Text="{Binding Path=Lyrics}"
+                                        TextWrapping="Wrap"
+                                        Watermark="Stanza Lyrics">
+                                        <i:Interaction.Behaviors>
+                                            <behaviours:StanzaTextBoxBehavior />
+                                        </i:Interaction.Behaviors>
+                                    </TextBox>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
                 </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ScrollViewer>
 
-        <Button
-            MinWidth="160"
-            Padding="20,12,20,12"
-            HorizontalAlignment="Center"
-            HorizontalContentAlignment="Stretch"
-            Background="#F4ECFF"
-            BorderBrush="#dddddd"
-            BorderThickness="1,1,1,1"
-            Click="Button_OnClick"
-            CornerRadius="20 20 20 20">
-            <DockPanel>
-                <material:MaterialIcon
-                    Width="20"
-                    Height="20"
-                    Margin="-4"
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Left"
-                    Foreground="Black"
-                    Kind="PlusCircleOutline" />
-                <TextBlock
-                    Margin="12,0,0,0"
-                    FontSize="14"
-                    Foreground="Black"
-                    Text="Add New Stanza" />
-            </DockPanel>
-        </Button>
+            <Button
+                Name="AddItemButton"
+                Margin="6,0,6,8"
+                Padding="12"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Left"
+                Background="#4d347f"
+                BorderThickness="0"
+                ClickMode="Press"
+                CornerRadius="6"
+                Cursor="Hand"
+                Click="Button_OnClick"
+                DockPanel.Dock="Bottom"
+                FontSize="14"
+                Foreground="White">
+                <Button.Styles>
+                    <Style Selector="ScrollViewer">
+                        <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                    </Style>
+                    <Style Selector="MenuItem">
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="Padding" Value="8 6" />
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                        <Setter Property="Background" Value="#5C3AB6" />
+                    </Style>
+                    <Style Selector="Button:pressed /template/ ContentPresenter">
+                        <Setter Property="BorderBrush" Value="#2c628b" />
+                        <Setter Property="Background" Value="#5F5C2ED6" />
+                    </Style>
+                </Button.Styles>
+                <Button.Effect>
+                    <DropShadowEffect
+                        BlurRadius="6"
+                        OffsetX="0"
+                        OffsetY="1"
+                        Color="#55000000" />
+                </Button.Effect>
 
-        <TextBox
-            Margin="16,8,12,12"
-            Padding="0,6,0,5"
-            HorizontalAlignment="Stretch"
-            AcceptsReturn="True"
-            Background="Transparent"
-            FontSize="13"
-            Foreground="Black"
-            Text="{Binding Song.Copyright}"
-            TextWrapping="Wrap"
-            Watermark="Copyright">
-            <i:Interaction.Behaviors>
-                <behaviours:StanzaTextBoxBehavior />
-            </i:Interaction.Behaviors>
-        </TextBox>
-    </StackPanel>
+                <DockPanel>
+                    <material:MaterialIcon
+                        Width="20"
+                        Height="20"
+                        DockPanel.Dock="Left"
+                        Kind="Plus" />
+                    <TextBlock
+                        Margin="8,0,8,0"
+                        IsVisible="True"
+                        Text="Add Stanza" />
+                </DockPanel>
+            </Button>
+
+        </Grid>
+
+    </DockPanel>
 </UserControl>

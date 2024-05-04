@@ -13,6 +13,15 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     public class SongEditorViewModel : ViewModelBase
     {
+        public enum LyricEntryModeType
+        {
+            Stanza,
+            FreeText
+        }
+        
+        private LyricEntryModeType _lyricEntryMode = LyricEntryModeType.Stanza;
+        public LyricEntryModeType LyricEntryMode { get => _lyricEntryMode; set => this.RaiseAndSetIfChanged(ref _lyricEntryMode, value); }
+        
         // public event EventHandler SongDataUpdated;
 
         private SongItemInstance _song;
@@ -88,7 +97,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             MessageBus.Current.SendMessage(new PlaylistInstance.UpdateEditedItemMessage { Item = Song });
         }
 
-        private string _freeTextEntryField;
+        private string _freeTextEntryField = "";
 
         public string FreeTextEntryField
         {

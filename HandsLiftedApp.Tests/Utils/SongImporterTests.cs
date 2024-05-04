@@ -120,7 +120,7 @@ CCLI Song #25376
 Words: Public Domain; Music: Public Domain
 For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccli.com
 CCLI License #999999";
-            SongItemInstance songItem = SongImporter.createSongItemFromStringData(input);
+            SongItemInstance songItem = SongImporter.CreateSongItemFromStringData(input);
 
             Assert.AreEqual(songItem.Title, "It Is Well With My Soul");
         }
@@ -179,7 +179,7 @@ Words: Public Domain; Music: Public Domain
 For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccli.com
 CCLI License #999999";
 
-            var song = SongImporter.createSongItemFromStringData(input);
+            var song = SongImporter.CreateSongItemFromStringData(input);
 
             Assert.AreEqual("It Is Well With My Soul", song.Title);
             Assert.AreEqual("It is well with my soul\r\n\r\nIt is well\r\n\r\nIt is well with my soul", song.Stanzas.First(x => x.Name == "Chorus").Lyrics);
