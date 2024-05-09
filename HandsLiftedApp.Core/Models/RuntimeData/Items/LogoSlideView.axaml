@@ -2,12 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:app="clr-namespace:HandsLiftedApp.Core"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:CompileBindings="False"
              Background="Black"
              x:Class="HandsLiftedApp.Core.Models.RuntimeData.Items.LogoSlideView">
     <Image
         RenderOptions.BitmapInterpolationMode="HighQuality"
-        Source="{Binding $parent[Window].DataContext.Playlist.LogoBitmap}"
+        Source="{Binding  Source={x:Static app:Globals.AppPreferences}, Path=LogoBitmap}"
         Stretch="Uniform" />
 </UserControl>

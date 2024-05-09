@@ -9,6 +9,7 @@
     xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
     xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
     xmlns:render="clr-namespace:HandsLiftedApp.Views.Render"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
     x:DataType="viewModels:MainViewModel"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -44,21 +45,7 @@
                 <TextBlock VerticalAlignment="Center">Logo</TextBlock>
             </TabItem.Header>
             <DockPanel>
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <TextBox Text="{Binding Playlist.LogoGraphicFile}" />
-					<Button Command="{Binding OnChangeLogoCommand}">
-						Change
-					</Button>
-                </StackPanel>
-                <Grid>
-                    <Viewbox VerticalAlignment="Top">
-                        <Grid
-                            Width="1920"
-                            Height="1080">
-                            <items:LogoSlideView />
-                        </Grid>
-                    </Viewbox>
-                </Grid>
+                <designer:LogoEditorView />
             </DockPanel>
         </TabItem>
         <TabItem>
@@ -66,7 +53,7 @@
                 <TextBlock VerticalAlignment="Center">Captions</TextBlock>
             </TabItem.Header>
             <DockPanel>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">Livestream video feed lyrics coming soon</TextBlock>
+                <TextBlock DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Center">Livestream video feed lyrics coming soon</TextBlock>
                 <Viewbox>
                     <render:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                 </Viewbox>
@@ -78,11 +65,11 @@
             <!--     ~1~     DataContext="{Binding ActiveSlide}" /> @1@ -->
             <!-- </Viewbox> -->
         </TabItem>
-        <TabItem>
-            <TabItem.Header>
-                <TextBlock VerticalAlignment="Center">Cross Fade</TextBlock>
-            </TabItem.Header>
-            <TextBox></TextBox>
-        </TabItem>
+        <!-- <TabItem> -->
+        <!--     <TabItem.Header> -->
+        <!--         <TextBlock VerticalAlignment="Center">Cross Fade</TextBlock> -->
+        <!--     </TabItem.Header> -->
+        <!--     <TextBox></TextBox> -->
+        <!-- </TabItem> -->
     </TabControl>
 </UserControl>

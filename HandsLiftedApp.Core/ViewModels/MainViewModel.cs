@@ -69,7 +69,8 @@ public class MainViewModel : ViewModelBase
             {
                 var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
                 if (filePaths == null || filePaths.Length == 0) return;
-                Playlist.LogoGraphicFile = filePaths[0];
+                Globals.AppPreferences.LogoGraphicFile = filePaths[0];
+                // Playlist.LogoGraphicFile = filePaths[0];
             }
             catch (Exception e)
             {

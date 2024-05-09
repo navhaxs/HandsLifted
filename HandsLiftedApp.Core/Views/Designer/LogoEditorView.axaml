@@ -1,0 +1,78 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             xmlns:app="clr-namespace:HandsLiftedApp.Core"
+             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="350"
+             x:DataType="viewModels:MainViewModel"
+             x:Class="HandsLiftedApp.Core.Views.Designer.LogoEditorView">
+    <DockPanel>
+
+        <Border BorderBrush="#808080" BorderThickness="1" Background="#282828" IsVisible="False">
+        <ScrollViewer DockPanel.Dock="Left" Width="100" >
+            <ScrollViewer.Styles>
+                <Style Selector="ListBox">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Height" Value="50" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+                <Style Selector="Button">
+                    <Setter Property="Height" Value="50" />
+                    <Setter Property="CornerRadius" Value="0" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+            </ScrollViewer.Styles>
+
+                <StackPanel>
+                    <ListBox>
+                        <ListBoxItem>Default</ListBoxItem>
+                    </ListBox>
+                    <ListBox>
+                        <ListBoxItem>Default</ListBoxItem>
+                        <ListBoxItem>Default</ListBoxItem>
+                    </ListBox>
+                    <Button>
+                        <avalonia:MaterialIcon Kind="PlusCircleOutline"
+                                               Width="20"
+                                               Height="20" />
+                    </Button>
+                </StackPanel>
+        </ScrollViewer>
+            </Border>
+
+        <DockPanel Margin="8">
+            <StackPanel DockPanel.Dock="Bottom">
+                <TextBlock>Global:</TextBlock>
+                <DockPanel>
+
+                </DockPanel>
+                <DockPanel>
+                    <Button CornerRadius="0 2 2 0" Command="{Binding OnChangeLogoCommand}" DockPanel.Dock="Right">
+                        Change
+                    </Button>
+                    <TextBox CornerRadius="2 0 0 2" BorderThickness="1 1 0 1" Text="{Binding Source={x:Static app:Globals.AppPreferences}, Path=LogoGraphicFile}" />
+                </DockPanel>
+                <!-- <TextBlock>Playlist:</TextBlock> -->
+                <!-- <TextBox Text="{Binding Playlist.LogoGraphicFile}" /> -->
+            </StackPanel>
+            <Grid DockPanel.Dock="Left">
+                <Viewbox VerticalAlignment="Center">
+                    <Grid
+                        Width="1920"
+                        Height="1080">
+                        <items:LogoSlideView />
+                    </Grid>
+                </Viewbox>
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+
+</UserControl>

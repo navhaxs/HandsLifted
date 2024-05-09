@@ -1,6 +1,16 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reactive.Linq;
+using System.Runtime.Serialization;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using HandsLiftedApp.Data.SlideTheme;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.ViewModels
 {
@@ -8,6 +18,24 @@ namespace HandsLiftedApp.Core.ViewModels
     [DataContract]
     public class AppPreferencesViewModel : ReactiveObject
     {
+        public AppPreferencesViewModel()
+        {
+            this.WhenAnyValue(p => p.LogoGraphicFile)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                .Subscribe(_ =>
+                {
+                    if (LogoGraphicFile == "")
+                    {
+                        return;
+                    }
+
+                    if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+                    {
+                        this.RaisePropertyChanged(nameof(LogoBitmap));
+                    }
+                });
+        }
+
         private bool _enableOutputNDI;
         [DataMember]
         public bool EnableOutputNDI
@@ -79,6 +107,37 @@ namespace HandsLiftedApp.Core.ViewModels
             get => _libraryPath;
             set => this.RaiseAndSetIfChanged(ref _libraryPath, value);
         }
+        
+        private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png";
+        [DataMember]
+        public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
+        
+        // TODO this could be a ObservableAsPropertyHelper
+        [IgnoreDataMember]
+        public Bitmap? LogoBitmap
+        {
+            get
+            {
+                if (Design.IsDesignMode)
+                {
+                    return null;
+                }
+
+                try
+                {
+                    return BitmapLoader.LoadBitmap(LogoGraphicFile);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Unable to load Bitmap for LogoBitmap {LogoGraphicFile}", (LogoGraphicFile));
+                    return null;
+                }
+            }
+        }
+ 
+
+        private List<BaseSlideTheme> _designs = new() { new BaseSlideTheme() };
+        public List<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
 
         [DataContract]
         public class DisplayModel : ReactiveObject
