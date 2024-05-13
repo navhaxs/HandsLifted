@@ -70,9 +70,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.WhenAnyValue(x => x.Stanzas)
                 .Subscribe(a =>
                 {
+                    a.CollectionItemChanged -= _stanzas_CollectionItemChanged;
                     a.CollectionChanged -= AOnCollectionChanged;
                     GenerateArrangementViews();
                     a.CollectionChanged += AOnCollectionChanged;
+                    a.CollectionItemChanged += _stanzas_CollectionItemChanged;
                 });
             GenerateArrangementViews();
 
@@ -96,8 +98,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
-            Stanzas.CollectionChanged += _stanzas_CollectionChanged;
-            Stanzas.CollectionItemChanged += _stanzas_CollectionItemChanged;
             Arrangement.CollectionChanged += Arrangement_CollectionChanged;
         }
 
