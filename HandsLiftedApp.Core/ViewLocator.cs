@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using HandsLiftedApp.Data.ViewModels;
 using System;
+using HandsLiftedApp.Core.ViewModels;
 
 namespace HandsLiftedApp.Core;
 

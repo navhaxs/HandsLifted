@@ -3,7 +3,6 @@ using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.ViewModels;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;

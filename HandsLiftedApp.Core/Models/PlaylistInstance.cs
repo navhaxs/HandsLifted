@@ -1,11 +1,7 @@
-﻿using HandsLiftedApp.Data.Models;
-using HandsLiftedApp.Data.Models.Items;
-using ReactiveUI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using Avalonia.Controls;
@@ -15,11 +11,13 @@ using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Utils;
+using ReactiveUI;
 using Serilog;
-using Syncfusion.OfficeChart.Implementation;
 
 namespace HandsLiftedApp.Core.Models
 {
@@ -91,46 +89,6 @@ namespace HandsLiftedApp.Core.Models
                     })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.NextSlide);
-            
-            MessageBus.Current.Listen<UpdateEditedItemMessage>().Subscribe(updateEditedItemMessage =>
-            {
-                bool found = false;
-                int i = -1;
-                foreach (var item in Items)
-                {
-                    i++;
-                    if (item.UUID == updateEditedItemMessage.Item.UUID)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found)
-                {
-                    // Items[i] = updateEditedItemMessage.Item;
-                    if (Items[i] is SongItemInstance dest)
-                    {
-                        if (updateEditedItemMessage.Item is SongItemInstance source)
-                        {
-                            if (dest == source)
-                            {
-                                return;
-                            }
-
-                            dest.Title = source.Title;
-                            dest.Arrangement = source.Arrangement;
-                            dest.Arrangements = source.Arrangements;
-                            dest.SelectedArrangementId = source.SelectedArrangementId;
-                            dest.Stanzas = source.Stanzas;
-                            dest.Copyright = source.Copyright;
-                            dest.Design = source.Design;
-                            dest.StartOnTitleSlide = source.StartOnTitleSlide;
-                            dest.EndOnBlankSlide = source.EndOnBlankSlide;
-                        }
-                    }
-                }
-            });
 
             if (Design.IsDesignMode)
             {
@@ -258,11 +216,6 @@ namespace HandsLiftedApp.Core.Models
         public Slide NextSlide
         {
             get => _nextSlide.Value;
-        }
-
-        public class UpdateEditedItemMessage
-        {
-            public Item Item { get; set; }
         }
 
         private PresentationStateEnum _presentationState = PresentationStateEnum.Slides;

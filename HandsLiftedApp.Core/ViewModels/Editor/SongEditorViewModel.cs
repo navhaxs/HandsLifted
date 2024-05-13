@@ -2,7 +2,6 @@ using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
-using HandsLiftedApp.Data.ViewModels;
 using ReactiveUI;
 using System;
 using System.ComponentModel;
@@ -77,25 +76,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             Song.Stanzas.Add(new SongStanza(Guid.NewGuid(), "", ""));
         }
 
-        // public ReactiveCommand<Unit, Unit> SongDataUpdateCommand { get; }
-
-        void OnSongDataUpdateCommand()
-        {
-            // TODO run only on 'save'
-            // TODO run only on 'save'
-            // TODO run only on 'save'
-            // TODO run only on 'save'
-            // TODO run only on 'save'
-            // TODO run only on 'save'
-            // TODO debounce this
-            // TODO debounce this
-            // TODO debounce this
-            // TODO debounce this
-            // TODO debounce this
-            // TODO debounce this
-            // TODO debounce this
-            MessageBus.Current.SendMessage(new PlaylistInstance.UpdateEditedItemMessage { Item = Song });
-        }
+            // MessageBus.Current.SendMessage(new PlaylistInstance.UpdateEditedItemMessage { Item = Song });
 
         private string _freeTextEntryField = "";
 
