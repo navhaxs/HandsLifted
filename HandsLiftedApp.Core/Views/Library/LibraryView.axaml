@@ -4,10 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:HandsLiftedApp.ViewModels"
-	xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-	xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-	d:DesignHeight="350"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    d:DesignHeight="350"
     d:DesignWidth="1100"
     x:DataType="viewModels:MainViewModel"
     mc:Ignorable="d">
@@ -36,82 +35,90 @@
             BorderThickness="1"
             DockPanel.Dock="Top"
             FontSize="16"
-            Text="{Binding Library.SearchTerm}"
+            Text="{Binding LibraryViewModel.SearchTerm}"
             Watermark="Search songs and content..." />
 
         <!--  3 Pane Splitter  -->
         <Grid ColumnDefinitions="*,1,2*,1,2*">
 
             <!--  Left box  -->
-            <ListBox Grid.Column="0" Margin="0,0,0,0" BorderThickness="0">
-                <ListBoxItem IsSelected="True">Songs</ListBoxItem>
-                <ListBoxItem>Media</ListBoxItem>
-                <ListBoxItem>Presentations</ListBoxItem>
-                <ListBoxItem>Countdowns</ListBoxItem>
-                <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem>
+            <ListBox Grid.Column="0" Margin="0,0,0,0" BorderThickness="0"
+                     ItemsSource="{Binding LibraryViewModel.Libraries}"
+                     SelectedItem="{Binding LibraryViewModel.SelectedLibrary, Mode=OneWayToSource}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Label}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <!-- <ListBoxItem IsSelected="True">Songs</ListBoxItem> -->
+                <!-- <ListBoxItem>Media</ListBoxItem> -->
+                <!-- <ListBoxItem>Presentations</ListBoxItem> -->
+                <!-- <ListBoxItem>Countdowns</ListBoxItem> -->
+                <!-- <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem> -->
             </ListBox>
 
-			<GridSplitter
-				Grid.Column="1"
-				Margin="-3,0"
-				HorizontalAlignment="Stretch"
-				Background="#808080"
-				BorderBrush="Transparent"
-				BorderThickness="3,0"
-				ZIndex="9999" />
+            <GridSplitter
+                Grid.Column="1"
+                Margin="-3,0"
+                HorizontalAlignment="Stretch"
+                Background="#808080"
+                BorderBrush="Transparent"
+                BorderThickness="3,0"
+                ZIndex="9999" />
 
-			<!--  Centre box  -->
+            <!--  Centre box  -->
             <Grid Grid.Column="2">
 
                 <StackPanel>
                     <ListBox
                         Background="Transparent"
-                        ItemsSource="{Binding Library.SearchResults}"
-                        SelectedItem="{Binding Library.SelectedItem}"
-						HorizontalAlignment="Stretch"
-						BorderThickness="0" >
+                        ItemsSource="{Binding LibraryViewModel.SelectedLibrary.Items}"
+                        SelectedItem="{Binding LibraryViewModel.SelectedItem, Mode=OneWayToSource}"
+                        HorizontalAlignment="Stretch"
+                        BorderThickness="0">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Title}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-					<i:Interaction.Behaviors>
-						<!--TODO create separate 'selectors' for status messages -->
-						<!--<ia:DataTriggerBehavior Binding="{Binding Library.SearchResults.Size}"
+                    <i:Interaction.Behaviors>
+                        <!--TODO create separate 'selectors' for status messages -->
+                        <!--<ia:DataTriggerBehavior Binding="{Binding Library.SearchResults.Size}"
 												ComparisonCondition="Equal"
 												Value="0">
 							<ia:ChangePropertyAction TargetObject="NoItemsLabel"
 													 PropertyName="IsVisible"
 													 Value="True" />
 						</ia:DataTriggerBehavior>-->
-					</i:Interaction.Behaviors>
-					<TextBlock Name="NoItemsLabel" Text="No items" IsVisible="False" />
-					<!--<TextBlock Name="NoResultsLabel" Text="No results" />-->
+                    </i:Interaction.Behaviors>
+                    <TextBlock Name="NoItemsLabel" Text="No items" IsVisible="False" />
+                    <!--<TextBlock Name="NoResultsLabel" Text="No results" />-->
                 </StackPanel>
 
             </Grid>
 
-			<GridSplitter
-				Grid.Column="3"
-				Margin="-3,0"
-				HorizontalAlignment="Stretch"
-				Background="#808080"
-				BorderBrush="Transparent"
-				BorderThickness="3,0"
-				ZIndex="9999" />
+            <GridSplitter
+                Grid.Column="3"
+                Margin="-3,0"
+                HorizontalAlignment="Stretch"
+                Background="#808080"
+                BorderBrush="Transparent"
+                BorderThickness="3,0"
+                ZIndex="9999" />
 
-			<!--  Right box  -->
+            <!--  Right box  -->
             <Grid Grid.Column="4" Margin="8 0">
-				<ScrollViewer>
-                    <TextBlock Text="{Binding Path=Library.SelectedItemPreview, FallbackValue='preview content goes here'}" />
-				</ScrollViewer>
+                <ScrollViewer>
+                    <TextBlock
+                        Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" />
+                </ScrollViewer>
                 <Button
                     Margin="20"
                     Padding="16"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Command="{Binding Library.OnAddSelectedToPlaylistCommand}"
+                    Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}"
                     Content="Add to playlist" />
             </Grid>
 

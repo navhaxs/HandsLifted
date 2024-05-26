@@ -81,6 +81,7 @@
         <entry key="HandsLiftedApp.Core/Views/StageDisplayLayout/DefaultLayout.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/StageDisplayLayout/SongLayout.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/StageDisplayWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/WelcomeWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Importer.PowerPoint.Bridge/App.axaml" value="HandsLiftedApp.Importer.PowerPoint.Bridge/HandsLiftedApp.Importer.PowerPoint.Bridge.csproj" />
         <entry key="HandsLiftedApp.Importer.PowerPoint.Bridge/MainWindow.axaml" value="HandsLiftedApp.Importer.PowerPoint.Bridge/HandsLiftedApp.Importer.PowerPoint.Bridge.csproj" />
         <entry key="HandsLiftedApp.PropertyGridControl/CollectionInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />

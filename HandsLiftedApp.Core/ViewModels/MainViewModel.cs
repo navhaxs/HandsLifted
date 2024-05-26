@@ -14,14 +14,15 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using ByteSizeLib;
 using Config.Net;
+using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.ViewModels.LibraryModel;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
-using HandsLiftedApp.Models.LibraryModel;
 using Serilog;
 using Item = HandsLiftedApp.Data.Models.Items.Item;
 
@@ -31,7 +32,7 @@ public class MainViewModel : ViewModelBase
 {
     public IMySettings settings;
     
-    public Library Library { get; } = new Library();
+    public LibraryViewModel LibraryViewModel { get; } = new LibraryViewModel();
 
     public ReactiveCommand<object, Unit> SlideClickCommand { get; }
 
@@ -52,6 +53,8 @@ public class MainViewModel : ViewModelBase
 
             return;
         }
+
+        LibraryLoader.init();
 
         settings = new ConfigurationBuilder<IMySettings>()
             .UseJsonFile("HandsLiftedApp.UserConfig.json")
