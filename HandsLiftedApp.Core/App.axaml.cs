@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -16,28 +17,37 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         // must create renderer BEFORE slides start loading during Globals.OnStartup (auto-loading previous playlist)
         SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow();
         slideRendererWorkerWindow.Show();
         
-        Globals.OnStartup(ApplicationLifetime);
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            WindowState windowState = WindowState.Normal;
+            SplashWindow splashScreen = new();
+            desktop.MainWindow = splashScreen;
+            try {
+                await Task.Delay(2000);
+                Globals.OnStartup(ApplicationLifetime);
 
-            if (Globals.MainViewModel.settings.LastWindowState != null)
-            {
-                windowState = (WindowState)Globals.MainViewModel.settings.LastWindowState;
+                WindowState windowState = WindowState.Normal;
+
+                if (Globals.MainViewModel.settings.LastWindowState != null)
+                {
+                    windowState = (WindowState)Globals.MainViewModel.settings.LastWindowState;
+                }
+                desktop.MainWindow = new MainWindow
+                {
+                    DataContext = Globals.MainViewModel,
+                    WindowState = windowState
+                };
+                desktop.MainWindow.Show();
+
             }
-
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = Globals.MainViewModel,
-                WindowState = windowState
-            };
+            catch (TaskCanceledException) {
+            }
+            splashScreen.Close();
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {

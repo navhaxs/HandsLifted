@@ -22,6 +22,7 @@
     x:CompileBindings="False">
 
     <Design.DataContext>
+        <!-- <viewModels:MainViewModel /> -->
         <mockData:MockMainWindowViewModel />
     </Design.DataContext>
 
@@ -66,7 +67,7 @@
                     <SolidColorBrush x:Key="ActiveItemForeground">#4d347f</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="GroupHeadingBackground">#1e1e1e</SolidColorBrush>
+                    <SolidColorBrush x:Key="GroupHeadingBackground">#383838</SolidColorBrush>
                     <SolidColorBrush x:Key="GroupHeadingForeground">#DBDBDB</SolidColorBrush>
                     <SolidColorBrush x:Key="ActiveItemForeground">White</SolidColorBrush>
                 </ResourceDictionary>
@@ -113,7 +114,7 @@
                 </Setter.Value>
             </Setter>
             <Setter Property="Padding" Value="0" />
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="Margin" Value="0" />
             <Setter Property="BorderThickness" Value="0 0 0 1" />
             <Setter Property="CornerRadius" Value="0 0 0 0" />
@@ -133,12 +134,17 @@
             <!--<Setter Property="BorderBrush" Value="#6259A5" />-->
         </Style>
         
-        <Style Selector="TextBlock.isSelectedItem">
-            <Setter Property="Foreground" Value="#FF3400" />
+        <Style Selector="TextBlock.ItemTextBlock">
+            <Setter Property="Foreground" Value="#a2a2a2" />
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected TextBlock.ItemTextBlock">
+            <Setter Property="Foreground" Value="White" />
         </Style>
 
         <Style Selector="TextBlock.isSelectedItem">
             <Setter Property="Foreground" Value="#FF3400" />
+            <Setter Property="FontWeight" Value="Bold" />
         </Style>
 
         <Style Selector="ListBoxItem TextBlock.SectionHeadingTextBlock">
@@ -163,7 +169,6 @@
         </Style>
 
         <Style Selector="ListBoxItem Border.SectionHeadingBorder">
-            <Setter Property="Background" Value="{DynamicResource GroupHeadingBackground}" />
             <Setter Property="BorderBrush"
                     Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
         </Style>
@@ -186,10 +191,11 @@
             <!-- SelectedIndex="{Binding SelectedItemIndex}" -->
             <ListBox
                 x:Name="itemsListBox"
-                Margin="0,0,0,100"
-                Background="Transparent"
+                Margin="0,0,0,60"
+                Background="#2b2b2b"
                 Classes="ItemsDragAndDrop"
-                CornerRadius="0,0,0,6"
+                CornerRadius="0,6,0,6"
+                ClipToBounds="True"
                 DragDrop.AllowDrop="True"
                 ItemsSource="{Binding Items, Mode=OneWay}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -216,13 +222,15 @@
 										<Setter Property="Background" Value="#214c5e" />
 									</Style>
 								</Grid.Styles>-->
-                            <Border BorderThickness="0 0 0 0"
+                            <Border BorderThickness="0 1 0 1"
+                                    Background="#78494949"
+                                    BorderBrush="#5c5c5c"
                                     Classes="SectionHeadingBorder">
-                                <DockPanel Margin="8,0,0,0" VerticalAlignment="Stretch">
+                                <DockPanel Margin="9,0,0,0" VerticalAlignment="Stretch">
                                     <TextBlock
-                                        Padding="0,8"
+                                        Padding="8 4 0 4"
                                         Classes="SectionHeadingTextBlock"
-                                        FontSize="13"
+                                        FontSize="12"
                                         TextTrimming="CharacterEllipsis">
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="{}{0}">
@@ -244,7 +252,7 @@
                                 <items:ItemIcon Margin="16,0,12,0" DockPanel.Dock="Left" />
                                 <TextBlock
                                     Padding="0,8,0,8"
-                                    FontSize="13"
+                                    FontSize="14"
                                     TextTrimming="CharacterEllipsis">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">
@@ -262,7 +270,7 @@
                                 Margin="0,0,0,0"
                                 Background="Transparent"
                                 VerticalAlignment="Stretch">
-                                <Grid Width="16">
+                                <Grid Width="12">
                                     <Viewbox
                                         Width="22"
                                         Height="22"
@@ -271,10 +279,11 @@
                                         <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
                                     </Viewbox>
                                 </Grid>
-                                <items:ItemIcon Margin="0,0,12,0" DockPanel.Dock="Left" />
+                                <items:ItemIcon Margin="0,0,8,0" DockPanel.Dock="Left" Foreground="#a2a2a2" />
                                 <TextBlock
                                     Padding="0,8,0,8"
-                                    FontSize="13"
+                                    FontSize="12"
+                                    Classes="ItemTextBlock"
                                     Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                     TextTrimming="CharacterEllipsis">
                                     <TextBlock.Text>
@@ -294,7 +303,7 @@
         </ScrollViewer>
         <Button
             Name="AddItemButton"
-            Margin="6,0,6,8"
+            Margin="6,0,8,8"
             Padding="12"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"

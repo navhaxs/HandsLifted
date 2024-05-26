@@ -1,19 +1,19 @@
-using Avalonia.Controls;
-using Avalonia.ReactiveUI;
-using HandsLiftedApp.Core.ViewModels;
-using ReactiveUI;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
+using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views.App;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views;
 
@@ -114,7 +114,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         this.Closing += MainWindow_Closing;
 
-        this.GetObservable(Window.WindowStateProperty)
+        this.GetObservable(WindowStateProperty)
             .Subscribe(v =>
             {
                 if (DataContext is MainViewModel vm)
@@ -128,7 +128,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         // HACK for Windows 10 drop shadows 
         this.Loaded += (e, s) => { updateWin32Border(this.WindowState); };
 
-        this.GetObservable(Window.WindowStateProperty)
+        this.GetObservable(WindowStateProperty)
             .Subscribe(v => { updateWin32Border(v); });
     }
 
@@ -162,7 +162,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             await Task.Delay(50);
         }
 
-        hostWindow.GetObservable(Window.WindowStateProperty).Subscribe(s =>
+        hostWindow.GetObservable(WindowStateProperty).Subscribe(s =>
         {
             if (s != WindowState.Maximized)
             {

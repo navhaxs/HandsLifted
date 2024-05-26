@@ -24,9 +24,9 @@
                     <SolidColorBrush x:Key="CaptionButtonBorderBrush" Color="#ffcacaca" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="BackgroundBrush">#121212</SolidColorBrush>
-                    <SolidColorBrush x:Key="BottomBarBackgroundBrush">#1e1e1e</SolidColorBrush>
-                    <SolidColorBrush x:Key="SurfaceBrush">#282828</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#1c1c1c</SolidColorBrush>
+                    <SolidColorBrush x:Key="BottomBarBackgroundBrush">#141414</SolidColorBrush>
+                    <SolidColorBrush x:Key="SurfaceBrush">#2b2b2b</SolidColorBrush>
                     <SolidColorBrush x:Key="OutlineBrush">#958e99</SolidColorBrush>
                     <SolidColorBrush x:Key="PrimaryActionBrush">#513c6f</SolidColorBrush>
                     <SolidColorBrush x:Key="TextBrush">#1c1921</SolidColorBrush>

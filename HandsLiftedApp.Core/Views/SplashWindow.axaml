@@ -1,0 +1,100 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="660" Height="360"
+        x:Class="HandsLiftedApp.Core.Views.SplashWindow"
+        WindowStartupLocation="CenterScreen"
+        SystemDecorations="None"
+        Topmost="True"
+        Background="Transparent"
+        Title="SplashWindow">
+    <Window.Styles>
+        <Style Selector="DockPanel.red">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Style.Animations>
+                <Animation Duration="0:0:2" Easing="ExponentialEaseOut">
+                    <KeyFrame Cue="1%">
+                        <Setter Property="Opacity" Value="0.0" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </Window.Styles>
+    <Border CornerRadius="6">
+        <Border.Background>
+            <RadialGradientBrush Center="0,-300" GradientOrigin="0,0" Radius="1.2">
+                <GradientStop Offset="0" Color="#744da9" />
+                <GradientStop Offset="1" Color="#41285c" />
+            </RadialGradientBrush>
+        </Border.Background>
+
+        <DockPanel>
+            <!-- <ProgressBar -->
+            <!--     Background="White" -->
+            <!--     Foreground="#ffc000" -->
+            <!--     DockPanel.Dock="Bottom" -->
+            <!--     IsIndeterminate="True" -->
+            <!--     MinHeight="4" -->
+            <!--     Height="4" -->
+            <!--     Margin="0 0 0 0" /> -->
+
+            <DockPanel Classes="red" HorizontalAlignment="Left" DockPanel.Dock="Bottom" Margin="0 0 0 36">
+                <Border
+                    DockPanel.Dock="Left"
+                    Margin="30 0 22 0"
+                    >
+                <Image Source="/Assets/app.png" Width="86"
+                       VerticalAlignment="Center"
+                       RenderOptions.BitmapInterpolationMode="HighQuality" />
+                </Border>
+
+                <StackPanel VerticalAlignment="Bottom">
+                    <TextBlock
+                        Foreground="White"
+                        FontSize="42"
+                        FontWeight="SemiBold"
+                        Margin="0 -4"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Left">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+                                BlurRadius="32"
+                                OffsetX="3"
+                                OffsetY="3"
+                                Color="#66000000" />
+                        </TextBlock.Effect>
+                        VisionScreens
+                    </TextBlock>
+                    <TextBlock
+                        FontSize="22"
+                        Padding="2 0 0 0"
+                        FontWeight="Light"
+                        HorizontalAlignment="Left">
+                        Church Presentation Software
+                    </TextBlock>
+                </StackPanel>
+            </DockPanel>
+            
+            <TextBlock
+                FontSize="22"
+                Padding="0 16 20 0"
+                LineHeight="24"
+                FontWeight="SemiBold"
+                DockPanel.Dock="Top"
+                TextAlignment="Right"
+                HorizontalAlignment="Right">
+                two<LineBreak />
+                hands<LineBreak />
+                lifted
+            </TextBlock>
+
+            <Grid />
+
+        </DockPanel>
+    </Border>
+</Window>

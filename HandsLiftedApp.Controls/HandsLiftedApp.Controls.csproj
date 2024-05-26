@@ -37,10 +37,6 @@
       <Compile Update="Items\ItemIcon.axaml.cs">
         <DependentUpon>%(Filename)</DependentUpon>
       </Compile>
-      <Compile Update="Navigation\ItemOrderListView.axaml.cs">
-        <SubType>Code</SubType>
-        <DependentUpon>%(Filename)</DependentUpon>
-      </Compile>
       <Compile Update="AddItemButton.axaml.cs">
         <DependentUpon>AddItemButton.axaml</DependentUpon>
         <SubType>Code</SubType>
@@ -56,6 +52,7 @@
 
 
     <ItemGroup>
+      <AdditionalFiles Include="Navigation\ItemOrderListView.axaml" />
       <AdditionalFiles Include="Styles\AppStyles.axaml" />
     </ItemGroup>
 </Project>

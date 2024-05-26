@@ -172,7 +172,7 @@
                             <material:MaterialIcon
                                 Width="20"
                                 Height="20"
-                                Margin="12,0"
+                                Margin="6,0"
                                 Kind="DotsHorizontal" />
                         </Border>
                     </Button>
@@ -183,13 +183,13 @@
                     DockPanel.Dock="Top"
                     Margin="10,0,0,8"
                     HorizontalAlignment="Left"
-                    FontSize="20"
+                    FontSize="22"
                     Watermark="Untitled Playlist"
                     Text="{Binding Playlist.Title, Mode=TwoWay}" />
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="260" />
+                        <ColumnDefinition Width="260" MinWidth="6" />
                         <ColumnDefinition Width="0" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
@@ -199,13 +199,19 @@
                                                     DockPanel.Dock="Left" />
                     </DockPanel>
 
-                    <GridSplitter Grid.Column="1" Background="#282828" />
+                    <GridSplitter Grid.Column="1"
+                                  Margin="-3,0"
+                                  HorizontalAlignment="Stretch"
+                                  BorderBrush="Transparent"
+                                  BorderThickness="3,0"
+                                  ZIndex="999"
+                                  />
 
                     <!-- centre panel -->
                     <DockPanel Grid.Column="2">
                         <Border
                             Height="50"
-                            Margin="6,0,6,6"
+                            Margin="0,0,6,6"
                             Padding="10,5,10,5"
                             BorderBrush="#49454d"
                             BorderThickness="0 1 0 0"
@@ -287,7 +293,7 @@
                         </Border>
 
                         <Border
-                            Margin="6,0,6,0"
+                            Margin="0,0,6,0"
                             HorizontalAlignment="Stretch"
                             Background="{DynamicResource BackgroundBrush}"
                             CornerRadius="6,0,0,0">
@@ -303,7 +309,7 @@
             </DockPanel>
 
             <GridSplitter Grid.Column="1"
-                          Background="#121212"
+                          Background="{DynamicResource GridSplitterBrush}"
                           Margin="-3,0"
                           HorizontalAlignment="Stretch"
                           BorderBrush="Transparent"

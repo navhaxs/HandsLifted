@@ -15,7 +15,7 @@
             Name="EditButton"
             Click="EditButton_OnClick"
             DockPanel.Dock="Top"
-            Padding="12,4"
+            Padding="6,4"
             Background="Transparent"
             BorderThickness="0"
             CornerRadius="6"

@@ -1,11 +1,14 @@
 ﻿using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using HandsLiftedApp.Common;
 using Serilog;
 
 namespace HandsLiftedApp.Utils
 {
     public static class BitmapLoader
     {
+        public static BitmapCache Cache = new(20);
+
         public static Bitmap LoadBitmap(string pathOrUri)
         {
             try
@@ -29,8 +32,17 @@ namespace HandsLiftedApp.Utils
 
                     using (Stream imageStream = File.OpenRead(pathOrUri))
                     {
-                        Log.Verbose($"Loading image {pathOrUri}");
-                        return Bitmap.DecodeToWidth(imageStream, 1920);
+                        var cached = Cache.GetBitmap(pathOrUri);
+                        if (cached != null)
+                        {
+                            Log.Verbose($"Loading image {pathOrUri} - cache hit");
+                            return cached;
+                        }
+
+                        Log.Verbose($"Loading image {pathOrUri} - fresh load");
+                        var loaded = Bitmap.DecodeToWidth(imageStream, 1920);
+                        Cache.AddBitmap(pathOrUri, loaded);
+                        return loaded;
                     }
                     //return new Bitmap(rawUri);
                 }
