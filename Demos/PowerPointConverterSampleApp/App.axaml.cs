@@ -13,16 +13,14 @@ public partial class App : Application
 {
     public override void Initialize()
     {
-        // Build a config object, using env vars and JSON providers.
-        IConfigurationRoot config = new ConfigurationBuilder()
-            .AddJsonStream(LoadConfigFromResource("PowerPointConverterSampleApp.appsettings.json"))
-            .Build();
-        // Get values from the config given their key and their target type.
-        Settings? settings = config.Get<Settings>();
-
-        if (settings != null)
+        try
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(settings.SyncfusionLicenseKey);
+            var x = LoadConfigFromResource("PowerPointConverterSampleApp.SyncfusionLicenseKey");
+            string syncfusionLicenseKey = new StreamReader(x).ReadToEnd().Trim();
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenseKey);
+        }
+        catch (Exception ex)
+        {
         }
 
         AvaloniaXamlLoader.Load(this);
