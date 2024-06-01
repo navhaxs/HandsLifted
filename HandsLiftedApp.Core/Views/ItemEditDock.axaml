@@ -17,7 +17,7 @@
                         <Button
                             Padding="22,6"
                             Margin="6 6 0 6"
-                            Background="#242131"
+                            Background="{DynamicResource EditButtonBackgroundBrush}"
                             BorderBrush="#b3aed9"
                             BorderThickness="1"
                             CornerRadius="4"

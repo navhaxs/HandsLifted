@@ -10,6 +10,9 @@
         Background="Transparent"
         Title="SplashWindow">
     <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
         <Style Selector="DockPanel.red">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -25,7 +28,7 @@
             </Style.Animations>
         </Style>
     </Window.Styles>
-    <Border CornerRadius="6">
+    <Border CornerRadius="2" BoxShadow="0 0 25 #1E132B" Margin="15">
         <Border.Background>
             <RadialGradientBrush Center="0,-300" GradientOrigin="0,0" Radius="1.2">
                 <GradientStop Offset="0" Color="#744da9" />
@@ -46,11 +49,10 @@
             <DockPanel Classes="red" HorizontalAlignment="Left" DockPanel.Dock="Bottom" Margin="0 0 0 36">
                 <Border
                     DockPanel.Dock="Left"
-                    Margin="30 0 22 0"
-                    >
-                <Image Source="/Assets/app.png" Width="86"
-                       VerticalAlignment="Center"
-                       RenderOptions.BitmapInterpolationMode="HighQuality" />
+                    Margin="30 0 22 0">
+                    <Image Source="/Assets/app.png" Width="86"
+                           VerticalAlignment="Center"
+                           RenderOptions.BitmapInterpolationMode="HighQuality" />
                 </Border>
 
                 <StackPanel VerticalAlignment="Bottom">
@@ -79,7 +81,7 @@
                     </TextBlock>
                 </StackPanel>
             </DockPanel>
-            
+
             <TextBlock
                 FontSize="22"
                 Padding="0 16 20 0"

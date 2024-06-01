@@ -5,9 +5,22 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PowerPointConverterSampleApp.MainWindow"
         Title="PowerPointConverterSampleApp">
-    <StackPanel>
+    <Border         
+        BorderBrush="Black"
+        BorderThickness="2"
+                    BoxShadow="0 0 10 0 DarkGray" Margin="50" CornerRadius="8">
+        
+    <StackPanel DragDrop.AllowDrop="True">
+        <TextBlock Name="DropState" />
+        <Border Name="DragMeFiles"
+                Padding="16"
+                BorderBrush="{DynamicResource SystemAccentColor}"
+                BorderThickness="2">
+            <TextBlock Name="DragStateFiles" TextWrapping="Wrap">Drag Me (files)</TextBlock>
+        </Border>
         <TextBox x:Name="InputPPTX" Watermark="Input PPTX"></TextBox>
         <CheckBox x:Name="UseNativeImport">Use native Microsoft PowerPoint</CheckBox>
         <Button Click="Button_OnClick">Run</Button>
     </StackPanel>
+    </Border>
 </Window>

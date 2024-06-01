@@ -8,9 +8,7 @@
     xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
     Title="AboutWindow"
     Width="680"
-    Height="380"
-    d:DesignWidth="680"
-    d:DesignHeight="380"
+    Height="410"
     CanResize="False"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaToDecorationsHint="True"
@@ -120,23 +118,25 @@
                         </Style>
                     </Border.Styles>
                     <DockPanel>
-                        <StackPanel Margin="15,10,35,0">
+                        <StackPanel Margin="15,18,35,0">
                             <TextBlock
                                 Margin="0,0,0,0"
-                                FontSize="28"
+                                FontSize="36"
+                                LineHeight="40"
                                 FontWeight="Bold"
                                 TextWrapping="Wrap">
                                 VisionScreens
                             </TextBlock>
                             <TextBlock
-								Margin="0,6,0,0"
+								Margin="0,4,0,0"
 								FontSize="22"
 								FontWeight="SemiBold"
 								TextWrapping="Wrap">
 								Church Presentation Software
 							</TextBlock>
                             <TextBlock
-                                Margin="0,8,0,8"
+								FontSize="16"
+                                Margin="0,22,0,8"
                                 TextWrapping="Wrap">
                                 VisionScreens brings your lyrics and content together for easy slides preparation and operation.
                             </TextBlock>
@@ -151,12 +151,13 @@
 										Orientation="Horizontal">
 								<TextBlock
 									VerticalAlignment="Center"
-									FontWeight="Bold"
+									FontWeight="SemiBold"
 									Text="Powered by " />
 								<DockPanel ToolTip.ShowDelay="0" ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS."
                                            Background="Transparent">
 									<Image Height="32" Source="avares://HandsLiftedApp.Core/Assets/avalonia-logo.ico"
                                            RenderOptions.BitmapInterpolationMode="HighQuality"
+                                           Margin="0 0 4 0"
                                            />
 									<TextBlock
 										VerticalAlignment="Center"

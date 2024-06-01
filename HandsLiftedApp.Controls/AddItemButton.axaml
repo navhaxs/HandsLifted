@@ -20,10 +20,16 @@
 
 			<ResourceDictionary.ThemeDictionaries>
 				<ResourceDictionary x:Key="Light">
+					<SolidColorBrush x:Key="ForegroundBrush">#9a93cd</SolidColorBrush>
+					<SolidColorBrush x:Key="ActiveForegroundBrush">#9a93cd</SolidColorBrush>
 					<SolidColorBrush x:Key="BackgroundBrush">#5AE5E2F1</SolidColorBrush>
+					<SolidColorBrush x:Key="PressedBackgroundBrush">#5c3ab6</SolidColorBrush>
 				</ResourceDictionary>
 				<ResourceDictionary x:Key="Dark">
-					<SolidColorBrush x:Key="BackgroundBrush">#171423</SolidColorBrush>
+					<SolidColorBrush x:Key="ForegroundBrush">#958e99</SolidColorBrush>
+					<SolidColorBrush x:Key="BackgroundBrush">#1c1c1c</SolidColorBrush>
+					<SolidColorBrush x:Key="ActiveForegroundBrush">#9a93cd</SolidColorBrush>
+					<SolidColorBrush x:Key="PressedBackgroundBrush">#5c3ab6</SolidColorBrush>
 				</ResourceDictionary>
 			</ResourceDictionary.ThemeDictionaries>
 		</ResourceDictionary>
@@ -51,9 +57,21 @@
 						<Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
 						<Setter Property="BorderBrush" Value="#9a93cd" />
 					</Style>
+					<Style Selector="material|MaterialIcon">
+						<Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+					</Style>
 					<Style Selector="Button:pointerover">
 						<Setter Property="Background" Value="#5c3ab6" />
 						<Setter Property="BorderBrush" Value="#f6f4ff" />
+					</Style>
+					<Style Selector="Button:pointerover material|MaterialIcon">
+						<Setter Property="Foreground" Value="{DynamicResource ActiveForegroundBrush}" />
+					</Style>
+					<Style Selector="Button:pressed /template/ ContentPresenter">
+						<Setter Property="Background" Value="{DynamicResource PressedBackgroundBrush}" />
+					</Style>
+					<Style Selector="Button:flyout-open /template/ ContentPresenter">
+						<Setter Property="Background" Value="{DynamicResource PressedBackgroundBrush}" />
 					</Style>
 					<Style Selector="MenuItem">
 						<Setter Property="Padding" Value="6 10" />
@@ -67,7 +85,6 @@
 					Margin="-4"
 					VerticalAlignment="Center"
 					DockPanel.Dock="Top"
-					Foreground="#9a93cd"
 					Kind="Plus" />
 			</Button>
 			

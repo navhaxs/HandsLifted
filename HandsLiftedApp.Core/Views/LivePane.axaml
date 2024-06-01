@@ -56,7 +56,7 @@
                                 Padding="0"
                                 VerticalAlignment="Bottom"
                                 DockPanel.Dock="Right"
-                                Foreground="White"
+                                Foreground="{DynamicResource CaptionButtonForeground}"
                                 Kind="ChevronRight" />
                             <TextBlock VerticalAlignment="Bottom" Text="Live" />
                         </DockPanel>

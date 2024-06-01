@@ -66,7 +66,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 var files = Directory.GetFiles(Config.Directory, "*.*", SearchOption.AllDirectories)
                          .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
 
-                Log.Information($"Refreshed library [{Config.Label}] {Config.Directory}");
+                Log.Information($"Refreshed library [{Config.Label}] [{Config.Directory}]");
                 Items.Clear();
 
                 // TODO: sync the Items list properly

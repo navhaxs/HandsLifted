@@ -251,6 +251,7 @@
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 Background="#5A6047A3"
+                                                BoxShadow="0 0 20 #5A6047A3"
                                                 CornerRadius="6">
                                                 <ScrollViewer>
                                                     <ListBox

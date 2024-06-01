@@ -12,25 +12,29 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <SolidColorBrush x:Key="BackgroundBrush">White</SolidColorBrush>
-                    <SolidColorBrush x:Key="BottomBarBackgroundBrush">#c3c1d2</SolidColorBrush>
                     <SolidColorBrush x:Key="SurfaceBrush">#ededf1</SolidColorBrush>
                     <SolidColorBrush x:Key="OutlineBrush">#958e99</SolidColorBrush>
                     <SolidColorBrush x:Key="PrimaryActionBrush">#513c6f</SolidColorBrush>
-                    <SolidColorBrush x:Key="TextBrush">#ecddfd</SolidColorBrush>
-                    <SolidColorBrush x:Key="NavigationBarBrush">#d6d6d6</SolidColorBrush>
+                    <SolidColorBrush x:Key="NavigationBarBrush">#e0deea</SolidColorBrush>
+                    <SolidColorBrush x:Key="NavigationBarBorderBrush">#e0deea</SolidColorBrush>
+                    <SolidColorBrush x:Key="ButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextBrush">Black</SolidColorBrush>
+                    <SolidColorBrush x:Key="EditButtonBackgroundBrush">#958e99</SolidColorBrush>
                     <!-- BaseResources for CaptionButtons.xaml -->
                     <SolidColorBrush x:Key="CaptionButtonForeground" Color="Black" />
                     <SolidColorBrush x:Key="CaptionButtonBackground" Color="#484b4d" />
                     <SolidColorBrush x:Key="CaptionButtonBorderBrush" Color="#ffcacaca" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="BackgroundBrush">#1c1c1c</SolidColorBrush>
-                    <SolidColorBrush x:Key="BottomBarBackgroundBrush">#141414</SolidColorBrush>
-                    <SolidColorBrush x:Key="SurfaceBrush">#2b2b2b</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#2b2b2b</SolidColorBrush>
+                    <SolidColorBrush x:Key="SurfaceBrush">#1c1c1c</SolidColorBrush>
                     <SolidColorBrush x:Key="OutlineBrush">#958e99</SolidColorBrush>
                     <SolidColorBrush x:Key="PrimaryActionBrush">#513c6f</SolidColorBrush>
-                    <SolidColorBrush x:Key="TextBrush">#1c1921</SolidColorBrush>
                     <SolidColorBrush x:Key="NavigationBarBrush">#3F3B43</SolidColorBrush>
+                    <SolidColorBrush x:Key="NavigationBarBorderBrush">#49454d</SolidColorBrush>
+                    <SolidColorBrush x:Key="ButtonBackgroundBrush">#958e99</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextBrush">#1c1921</SolidColorBrush>
+                    <SolidColorBrush x:Key="EditButtonBackgroundBrush">#242131</SolidColorBrush>
                     <!-- BaseResources for CaptionButtons.xaml -->
                     <SolidColorBrush x:Key="CaptionButtonForeground" Color="White" />
                     <SolidColorBrush x:Key="CaptionButtonBackground" Color="#484b4d" />
@@ -57,10 +61,14 @@
         </Setter>
         <Setter Property="Margin" Value="0 0 12 12" />
         <Setter Property="CornerRadius" Value="4" />
-        <Setter Property="BorderBrush" Value="#444444" />
-        <Setter Property="Background" Value="#1e1e1e" />
+        <Setter Property="BorderBrush" Value="{DynamicResource OutlineBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
     </Style>
 
+    <Style Selector="Separator">
+        <Setter Property="Background" Value="{DynamicResource OutlineBrush}" />
+    </Style>
+    
     <Style Selector="MenuItem">
         <Setter Property="Padding" Value="12 6" />
         <Setter Property="FontSize" Value="14" />

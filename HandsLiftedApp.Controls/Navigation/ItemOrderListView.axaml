@@ -192,7 +192,7 @@
             <ListBox
                 x:Name="itemsListBox"
                 Margin="0,0,0,60"
-                Background="#2b2b2b"
+                Background="{DynamicResource SurfaceBrush}"
                 Classes="ItemsDragAndDrop"
                 CornerRadius="0,6,0,6"
                 ClipToBounds="True"
