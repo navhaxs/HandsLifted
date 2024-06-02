@@ -21,12 +21,12 @@ namespace HandsLiftedApp.Core.Views.Designer
         {
             InitializeComponent();
 
-            var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            var fontFamilies = FontManager.Current.SystemFonts.ToList().OrderBy(x => x.Name);
-            fontComboBox.ItemsSource = fontFamilies;
-            fontComboBox.SelectedIndex = 0;
+            // var fontComboBox = this.Find<ComboBox>("fontComboBox");
+            // var fontFamilies = FontManager.Current.SystemFonts.ToList().OrderBy(x => x.Name);
+            // fontComboBox.ItemsSource = fontFamilies;
+            // fontComboBox.SelectedIndex = 0;
 
-            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight)).Select(x => Enum.Parse<FontWeight>(x)).ToArray();
+            // FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight)).Select(x => Enum.Parse<FontWeight>(x)).ToArray();
 
             TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
 
@@ -67,10 +67,11 @@ namespace HandsLiftedApp.Core.Views.Designer
 
         private void AddItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is MainViewModel mainViewModel)
-            {
-                mainViewModel.Playlist.Designs.Add(new BaseSlideTheme());
-            }
+            Globals.AppPreferences.Designs.Add(new BaseSlideTheme());
+            // if (this.DataContext is MainViewModel mainViewModel)
+            // {
+            //     mainViewModel.Playlist.Designs.Add(new BaseSlideTheme());
+            // }
         }
 
         private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)

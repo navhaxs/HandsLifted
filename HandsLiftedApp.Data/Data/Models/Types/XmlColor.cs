@@ -18,6 +18,19 @@ namespace HandsLiftedApp.Data.Data.Models.Types
             return o == null ? default(Color?) : o.m_value;
         }
 
+        public static implicit operator XmlColor?(string colorAsString)
+        {
+            try
+            {
+                return new XmlColor(Color.Parse(colorAsString)); // convert "colorAsString" to Color
+            }
+            catch (Exception e)
+            {
+                // Log
+                return new XmlColor(Colors.Transparent); // set default color if parsing fails (e.g. if colorAsString is empty)
+            }
+        }
+
         public static implicit operator XmlColor(Color? o)
         {
             return o == null ? null : new XmlColor(o.Value);

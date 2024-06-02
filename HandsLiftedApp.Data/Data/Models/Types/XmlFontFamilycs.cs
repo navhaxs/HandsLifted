@@ -18,6 +18,19 @@ namespace HandsLiftedApp.Data.Data.Models.Types
             return o == null ? new XmlFontFamily() : new XmlFontFamily(o);
         }
 
+        public static implicit operator XmlFontFamily(string fontFamilyAsString)
+        {
+            try
+            {
+                return new XmlFontFamily(FontFamily.Parse(fontFamilyAsString));
+            }
+            catch (Exception e)
+            {
+                // Log
+                return new XmlFontFamily(FontFamily.DefaultFontFamilyName);
+            }
+        }
+
         public static implicit operator FontFamily(XmlFontFamily o)
         {
             return o == null ? default(FontFamily) : o.m_value;

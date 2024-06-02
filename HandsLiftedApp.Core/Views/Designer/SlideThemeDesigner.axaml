@@ -7,6 +7,8 @@
              xmlns:ext="using:HandsLiftedApp.Extensions"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
+             xmlns:core="clr-namespace:HandsLiftedApp.Core"
+             xmlns:converters2="clr-namespace:HandsLiftedApp.Converters;assembly=HandsLiftedApp.Controls"
              x:DataType="viewModels:MainViewModel"
              x:CompileBindings="False"
              x:Class="HandsLiftedApp.Core.Views.Designer.SlideThemeDesigner">
@@ -14,6 +16,7 @@
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters1:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
         <ext:BitmapAssetValueConverter x:Key="variableImage" />
+        <converters1:SafeFontWeightConverter x:Key="SafeFontWeightConverter" />
     </UserControl.Resources>
 
     <Design.DataContext>
@@ -21,13 +24,14 @@
     </Design.DataContext>
 
     <DockPanel>
+        <!-- List -->
         <DockPanel DockPanel.Dock="Left">
             <Button DockPanel.Dock="Bottom" Click="AddItem_OnClick">Add new theme</Button>
             <ListBox
                 SelectedIndex="0"
                 MinWidth="80"
                 Name="designsListBox"
-                ItemsSource="{Binding Playlist.Designs}">
+                ItemsSource="{Binding Path=Designs, Source={x:Static core:Globals.AppPreferences}}">
                 <ListBox.Styles>
                     <Style Selector="ListBoxItem">
                         <Setter Property="ContextMenu">
@@ -42,23 +46,24 @@
 				<DataTemplate>
                     <DockPanel>
                         <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="0 6 0 0" />
-                        <Viewbox Height="60">
-                            <Grid
-                                Height="130"
-                                Width="130"
-                                Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}">
-                                <TextBlock Text="A"
-                                           FontSize="80"
-                                           Margin="20"
-                                           FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}"
-                                           FontWeight="{Binding FontWeight, FallbackValue='SemiBold'}" />
-                            </Grid>
-                        </Viewbox>
+                        <!-- <Viewbox Height="60"> -->
+                        <!--     <Grid -->
+                        <!--         Height="130" -->
+                        <!--         Width="130" -->
+                        <!--         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}"> -->
+                        <!--         <TextBlock Text="A" -->
+                        <!--                    FontSize="80" -->
+                        <!--                    Margin="20" -->
+                        <!--                    FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}" -->
+                        <!--                    FontWeight="{Binding FontWeight, FallbackValue='SemiBold'}" /> -->
+                        <!--     </Grid> -->
+                        <!-- </Viewbox> -->
                     </DockPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
+        <!-- Preview -->
         <Grid ColumnDefinitions="3*, *">
             <Viewbox Grid.Column="0" VerticalAlignment="Top">
                 <Grid Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
@@ -70,15 +75,16 @@
                                      HorizontalAlignment="Stretch">
                                 <TextBlock
                                     Text="Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I'll never be the same&#x0a;Forever I am changed"
+                                    FontSize="{Binding #FontSizeTextBox.Text}"
+                                    FontWeight="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue='SemiBold', Converter={StaticResource SafeFontWeightConverter}}"
                                     TextAlignment="{Binding #TextAlignmentComboBox.SelectedItem}"
                                     LineHeight="{Binding #LineHeightTextBox.Text}"
-                                    FontWeight="{Binding #FontWeightComboBox.SelectedValue, FallbackValue='SemiBold'}"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    FontFamily="{Binding #fontComboBox.SelectedItem, FallbackValue='Garamond, Playfair Display'}"
-                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                    FontFamily="{Binding #designsListBox.SelectedItem.FontFamilyAsAvalonia, FallbackValue='Garamond, Playfair Display'}"
                                     Foreground="{Binding #TextColour.Color, Converter={StaticResource ColorToBrush}}"
-                                    FontSize="{Binding #FontSizeTextBox.Text}" />
+                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                    />
                             </Viewbox>
                         </Grid>
                         <Border.Background>
@@ -107,23 +113,29 @@
             
                     <!-- "Garamond, Playfair Display" -->
                     <TextBlock Text="Font" />
-                    <ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamilyAsAvalonia}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <!-- <ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamilyAsAvalonia}"> -->
+                    <!--     <ComboBox.ItemTemplate> -->
+                    <!--         <DataTemplate> -->
+                    <!--             <TextBlock Text="{Binding Name}" FontFamily="{Binding}" /> -->
+                    <!--         </DataTemplate> -->
+                    <!--     </ComboBox.ItemTemplate> -->
+                    <!-- </ComboBox> -->
                     
                     <Grid Height="10" />
             
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            
                     <TextBlock Text="Colour" />
                     <ColorPicker Name="TextColour"
                                  Color="{Binding #designsListBox.SelectedItem.TextAvaloniaColour, FallbackValue='White'}" />
-            
+                        </StackPanel>
+                        <StackPanel>
                     <TextBlock Text="Background" />
                     <ColorPicker Name="BackgroundColour"
                                  Color="{Binding #designsListBox.SelectedItem.BackgroundAvaloniaColour, FallbackValue='Black'}" />
+                        </StackPanel>
+                    </StackPanel>
             
                     <TextBlock Text="Font Size" />
                     <DockPanel>
@@ -135,12 +147,12 @@
                                 Value="{Binding #FontSizeTextBox.Text}" />
                     </DockPanel>
                     
-                    <TextBlock Text="Font Weight" />
-                    <DockPanel>
-                        <ComboBox Name="FontWeightComboBox"
-                                  SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold}"
-                                />
-                    </DockPanel>
+                    <!-- <TextBlock Text="Font Weight" /> -->
+                    <!-- <DockPanel> -->
+                    <!--     <ComboBox Name="FontWeightComboBox" -->
+                    <!--               SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold}" -->
+                    <!--             /> -->
+                    <!-- </DockPanel> -->
             
                     <TextBlock Text="Line Height" />
                     <DockPanel>

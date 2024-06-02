@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using DebounceThrottle;
+using DynamicData.Binding;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
@@ -22,45 +23,13 @@ namespace HandsLiftedApp.Data.Slides
         public SongSlideInstance(SongItemInstance? parentSongItem, SongStanza? parentSongStanza, string id) : base(
             parentSongItem, parentSongStanza, id)
         {
-            this._theme =
-                this.WhenAnyValue(x => x.ParentSongItem.Design, x => x.ParentSongStanza.Design,
-                        (target2, target1) =>
-                        {
-                            if (target2 != null && target2 != Guid.Empty)
-                            {
-                                var baseSlideTheme =
-                                    parentSongItem?.ParentPlaylist?.Designs.FirstOrDefault(d => d.Id == target2);
-                                if (baseSlideTheme != null)
-                                {
-                                    baseSlideTheme.PropertyChanged += (sender, args) =>
-                                    {
-                                        debounceDispatcher.Debounce(() => GenerateBitmaps());
-                                    };
-                                    return baseSlideTheme;
-                                }
-                            }
+            Theme = Globals.AppPreferences.DefaultTheme;
 
-                            if (target1 != null && target1 != Guid.Empty)
-                            {
-                                var baseSlideTheme =
-                                    parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target1);
-                                if (baseSlideTheme != null)
-                                {
-                                    baseSlideTheme.PropertyChanged += (sender, args) =>
-                                    {
-                                        debounceDispatcher.Debounce(() => GenerateBitmaps());
-                                    };
-                                    return baseSlideTheme;
-                                }
-                            }
-
-                            return new BaseSlideTheme();
-                        })
-                    .ToProperty(this, x => x.Theme);
-
-            this.WhenAnyValue(s => s.Text, s => s.Theme) // todo dirty bit?
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
+            Globals.AppPreferences.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
+            {
+                Theme = x;
+                debounceDispatcher.Debounce(() => GenerateBitmaps());
+            });
 
             debounceDispatcher.Debounce(() => GenerateBitmaps());
         }
@@ -77,19 +46,11 @@ namespace HandsLiftedApp.Data.Slides
             ));
         }
 
-        private ObservableAsPropertyHelper<BaseSlideTheme?> _theme;
-
+        private BaseSlideTheme _theme;
         public BaseSlideTheme Theme
         {
-            get => _theme.Value;
-        }
-        
-        private BaseSlideTheme? _selectedSlideTheme;
-
-        public BaseSlideTheme? SelectedSlideTheme
-        {
-            get => _selectedSlideTheme;
-            set => this.RaiseAndSetIfChanged(ref _selectedSlideTheme, value);
+            get => _theme;
+            set => this.RaiseAndSetIfChanged(ref _theme, value);
         }
 
         // refs

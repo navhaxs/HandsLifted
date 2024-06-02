@@ -1,17 +1,22 @@
-﻿using System.Reactive;
+﻿using System;
+using System.IO;
+using System.Reactive;
 using System.Reactive.Linq;
+using HandsLiftedApp.Common.JsonConverter;
+using HandsLiftedApp.Data.Data.Models.Types;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
 
-namespace HandsLiftedApp.Common
+namespace HandsLiftedApp.Core
 {
     public class NewtonsoftJsonSuspensionDriver<T> : ISuspensionDriver where T : new()
     {
         private readonly string _file;
         private readonly JsonSerializerSettings _settings = new()
         {
-            TypeNameHandling = TypeNameHandling.All
+            TypeNameHandling = TypeNameHandling.All,
+            Converters = {new KeysJsonConverter(typeof(XmlColor), typeof(XmlFontFamily))}
         };
 
         public NewtonsoftJsonSuspensionDriver(string file) => _file = file;

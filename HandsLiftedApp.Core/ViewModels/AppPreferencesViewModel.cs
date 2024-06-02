@@ -134,10 +134,16 @@ namespace HandsLiftedApp.Core.ViewModels
                 }
             }
         }
- 
 
-        private List<BaseSlideTheme> _designs = new() { new BaseSlideTheme() };
-        public List<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
+        private BaseSlideTheme _defaultTheme = new BaseSlideTheme();
+        [DataMember]
+        public BaseSlideTheme DefaultTheme
+        {
+            get => _defaultTheme; set => this.RaiseAndSetIfChanged(ref _defaultTheme, value);
+        }
+        
+        // private List<BaseSlideTheme> _designs = new() { new BaseSlideTheme() };
+        public List<BaseSlideTheme> Designs { get => new(){DefaultTheme}; }
 
         [DataContract]
         public class DisplayModel : ReactiveObject

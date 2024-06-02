@@ -28,7 +28,7 @@ public partial class App : Application
             SplashWindow splashScreen = new();
             desktop.MainWindow = splashScreen;
             try {
-                await Task.Delay(2000);
+                await Task.Delay(2_000);
                 Globals.OnStartup(ApplicationLifetime);
 
                 WindowState windowState = WindowState.Normal;

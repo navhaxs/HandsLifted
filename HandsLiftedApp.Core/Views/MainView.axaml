@@ -351,7 +351,7 @@
         </Border>
 
         <!--  Docked toggle buttons  -->
-        <Border Grid.Row="3" Background="{DynamicResource SurfaceBrush}">
+        <Border Grid.Row="3" Background="{DynamicResource DarkSurfaceBrush}">
 
             <DockPanel>
                 <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="6" Foreground="Red"

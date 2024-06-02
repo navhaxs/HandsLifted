@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using Avalonia.Media.Imaging;
 using DebounceThrottle;
+using DynamicData.Binding;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -21,29 +22,19 @@ namespace HandsLiftedApp.Data.Slides
         public SongTitleSlideInstance(SongItemInstance? parentSongItem) : base()
         {
             Log.Verbose("Creating slide instance");
-            parentSongItem?.WhenAnyValue(parentSongItem => parentSongItem.Design)
-                .Subscribe(target =>
-                {
-                    if (target != Guid.Empty)
-                    {
-                        var baseSlideTheme = parentSongItem?.ParentPlaylist?.Designs.First(d => d.Id == target);
-                        if (baseSlideTheme != null)
-                        {
-                            baseSlideTheme.PropertyChanged += (sender, args) =>
-                            {
-                                debounceDispatcher.Debounce(() => GenerateBitmaps());
-                            };
-                            Theme = baseSlideTheme;
-                            return;
-                        }
-                    }
+            Theme = Globals.AppPreferences.DefaultTheme;
 
-                    Theme = new BaseSlideTheme();
-                });
+            Globals.AppPreferences.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
+            {
+                Theme = x;
+                debounceDispatcher.Debounce(() => GenerateBitmaps());
+            });
 
-            this.WhenAnyValue(s => s.Title, s => s.Copyright, s => s.Theme) // todo dirty bit?
+            this.WhenAnyValue(s => s.Title, s => s.Copyright) // todo dirty bit?
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
+
+            debounceDispatcher.Debounce(() => GenerateBitmaps());
         }
 
         private void GenerateBitmaps()
@@ -58,9 +49,9 @@ namespace HandsLiftedApp.Data.Slides
             ));
         }
 
-        private BaseSlideTheme? _theme;
+        private BaseSlideTheme _theme;
 
-        public BaseSlideTheme? Theme
+        public BaseSlideTheme Theme
         {
             get => _theme;
             set => this.RaiseAndSetIfChanged(ref _theme, value);
