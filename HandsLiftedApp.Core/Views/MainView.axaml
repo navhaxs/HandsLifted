@@ -77,115 +77,120 @@
 
             <!-- inner grid: left panel and content -->
             <DockPanel>
-                <DockPanel
+                
+                <DockPanel                      
+                    Height="70"
                     DockPanel.Dock="Top">
-                    <Button
-                        Name="AppMenuButton"
-                        Margin="8,8,8,0"
-                        Padding="0"
-                        CornerRadius="0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Stretch"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        ClickMode="Press"
-                        DockPanel.Dock="Left"
-                        HotKey="Alt+M">
+                    
+                    <DockPanel>
+                        <Button
+                            Name="AppMenuButton"
+                            Margin="8,8,8,0"
+                            Padding="0"
+                            CornerRadius="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Left"
+                            VerticalContentAlignment="Stretch"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ClickMode="Press"
+                            DockPanel.Dock="Left"
+                            HotKey="Alt+M">
 
-                        <Button.Flyout>
-                            <MenuFlyout
-                                Placement="BottomEdgeAlignedLeft">
-                                <MenuItem Click="NewFileButton_Clicked" Header="New">
-                                    <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Shimmer" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                            <Button.Flyout>
+                                <MenuFlyout
+                                    Placement="BottomEdgeAlignedLeft">
+                                    <MenuItem Click="NewFileButton_Clicked" Header="New">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Foreground="#888888" Kind="Shimmer" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
 
-                                <MenuItem Click="OpenFileButton_Clicked" Header="Load">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                                    <MenuItem Click="OpenFileButton_Clicked" Header="Load">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
 
-                                <MenuItem Click="SaveFileButton_Clicked" Header="Save">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="ContentSave" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                                    <MenuItem Click="SaveFileButton_Clicked" Header="Save">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="ContentSave" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
 
-                                <Separator />
+                                    <Separator />
 
-                                <MenuItem Click="Slide_OnClick" Header="Slide Designer">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="Paintbrush" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                                    <MenuItem Click="Slide_OnClick" Header="Slide Designer">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="Paintbrush" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
 
-                                <Separator />
+                                    <Separator />
 
-                                <MenuItem Click="Setup_OnClick" Header="Setup">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="Cog" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                                    <MenuItem Click="Setup_OnClick" Header="Setup">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="Cog" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
 
-                                <Separator />
+                                    <Separator />
 
-                                <MenuItem Click="About_OnClick" Header="About">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="HelpCircle" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                                    <MenuItem Click="About_OnClick" Header="About">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="HelpCircle" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
 
-                                <MenuItem Click="CloseWindow" Header="Exit" />
+                                    <MenuItem Click="CloseWindow" Header="Exit" />
 
-                            </MenuFlyout>
-                        </Button.Flyout>
+                                </MenuFlyout>
+                            </Button.Flyout>
 
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover Border.AppButtonBorder">
-                                <Setter Property="Background" Value="#5c3ab6" />
-                            </Style>
-                            <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
-                                <Setter Property="Background" Value="#9a93cd" />
-                                <!--<Setter Property="Background" Value="Transparent" />-->
-                            </Style>
-                            <Style Selector="Button:checked /template/ ContentPresenter#PART_ContentPresenter">
-                                <Setter Property="Background" Value="Transparent" />
-                            </Style>
-                            <Style Selector="Button:checked TextBlock">
-                                <Setter Property="Foreground" Value="White" />
-                            </Style>
-                            <Style Selector="Button:pressed Border.AppButtonBorder">
-                                <Setter Property="Background" Value="#9a93cd" />
-                            </Style>
-                            <Style Selector="Button:checked Border.AppButtonBorder">
-                                <Setter Property="Background" Value="#5E3593" />
-                            </Style>
-                            <Style Selector="Button:checked material|MaterialIcon">
-                                <Setter Property="Foreground" Value="White" />
-                            </Style>
-                        </Button.Styles>
-                        <Border Classes="AppButtonBorder" CornerRadius="6">
-                            <material:MaterialIcon
-                                Width="20"
-                                Height="20"
-                                Margin="6,0"
-                                Kind="DotsHorizontal" />
-                        </Border>
-                    </Button>
-                    <Grid IsHitTestVisible="False" />
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover Border.AppButtonBorder">
+                                    <Setter Property="Background" Value="#5c3ab6" />
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                                    <Setter Property="Background" Value="#9a93cd" />
+                                    <!--<Setter Property="Background" Value="Transparent" />-->
+                                </Style>
+                                <Style Selector="Button:checked /template/ ContentPresenter#PART_ContentPresenter">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                                <Style Selector="Button:checked TextBlock">
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                                <Style Selector="Button:pressed Border.AppButtonBorder">
+                                    <Setter Property="Background" Value="#9a93cd" />
+                                </Style>
+                                <Style Selector="Button:checked Border.AppButtonBorder">
+                                    <Setter Property="Background" Value="#5E3593" />
+                                </Style>
+                                <Style Selector="Button:checked material|MaterialIcon">
+                                    <Setter Property="Foreground" Value="White" />
+                                </Style>
+                            </Button.Styles>
+                            <Border Classes="AppButtonBorder" CornerRadius="6">
+                                <material:MaterialIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="6,0"
+                                    Kind="DotsHorizontal" />
+                            </Border>
+                        </Button>
+                        <Grid IsHitTestVisible="False" />
+                    </DockPanel>
+
+                    <controls:TextBoxToggleButton
+                        DockPanel.Dock="Top"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        FontSize="22"
+                        Watermark="Untitled Playlist"
+                        Text="{Binding Playlist.Title, Mode=TwoWay}" />
                 </DockPanel>
-
-                <controls:TextBoxToggleButton
-                    DockPanel.Dock="Top"
-                    Margin="10,0,0,8"
-                    HorizontalAlignment="Left"
-                    FontSize="22"
-                    Watermark="Untitled Playlist"
-                    Text="{Binding Playlist.Title, Mode=TwoWay}" />
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -311,12 +316,11 @@
                         </DockPanel>
                     </Border>
                 </Grid>
-
             </DockPanel>
 
             <GridSplitter Grid.Column="1"
                           Background="{DynamicResource GridSplitterBrush}"
-                          Margin="-3,0"
+                          Margin="-3,0, -3, 6"
                           HorizontalAlignment="Stretch"
                           BorderBrush="Transparent"
                           BorderThickness="3,0"
