@@ -64,7 +64,7 @@
             </ListBox>
         </DockPanel>
         <!-- Preview -->
-        <Grid ColumnDefinitions="3*, *">
+        <Grid ColumnDefinitions="3*, *, *">
             <Viewbox Grid.Column="0" VerticalAlignment="Top">
                 <Grid Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
                       Height="1080" Width="1920">
@@ -95,8 +95,12 @@
                     </Border>
                 </Grid>
             </Viewbox>
-
+            
             <ScrollViewer Grid.Column="1">
+                <TextBox Text="{Binding #designsListBox.SelectedItem}" />
+            </ScrollViewer>
+
+            <ScrollViewer Grid.Column="2">
                 <StackPanel Margin="8">
             
             
@@ -113,13 +117,13 @@
             
                     <!-- "Garamond, Playfair Display" -->
                     <TextBlock Text="Font" />
-                    <!-- <ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamilyAsAvalonia}"> -->
-                    <!--     <ComboBox.ItemTemplate> -->
-                    <!--         <DataTemplate> -->
-                    <!--             <TextBlock Text="{Binding Name}" FontFamily="{Binding}" /> -->
-                    <!--         </DataTemplate> -->
-                    <!--     </ComboBox.ItemTemplate> -->
-                    <!-- </ComboBox> -->
+                    <ComboBox x:Name="fontComboBox" SelectedItem="{Binding #designsListBox.SelectedItem.FontFamilyAsAvalonia}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     
                     <Grid Height="10" />
             
@@ -147,12 +151,12 @@
                                 Value="{Binding #FontSizeTextBox.Text}" />
                     </DockPanel>
                     
-                    <!-- <TextBlock Text="Font Weight" /> -->
-                    <!-- <DockPanel> -->
-                    <!--     <ComboBox Name="FontWeightComboBox" -->
-                    <!--               SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold}" -->
-                    <!--             /> -->
-                    <!-- </DockPanel> -->
+                    <TextBlock Text="Font Weight" />
+                    <DockPanel>
+                        <ComboBox Name="FontWeightComboBox"
+                                  SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold, Converter={StaticResource SafeFontWeightConverter}}"
+                                />
+                    </DockPanel>
             
                     <TextBlock Text="Line Height" />
                     <DockPanel>

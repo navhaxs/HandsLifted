@@ -53,7 +53,7 @@
                 <TextBlock VerticalAlignment="Center">Captions</TextBlock>
             </TabItem.Header>
             <DockPanel>
-                <TextBlock DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Center">Livestream video feed lyrics coming soon</TextBlock>
+                <TextBlock DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Center">Captions editor is coming soon</TextBlock>
                 <Viewbox>
                     <render:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                 </Viewbox>

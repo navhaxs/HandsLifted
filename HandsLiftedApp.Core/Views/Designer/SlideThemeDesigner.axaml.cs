@@ -21,15 +21,15 @@ namespace HandsLiftedApp.Core.Views.Designer
         {
             InitializeComponent();
 
-            // var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            // var fontFamilies = FontManager.Current.SystemFonts.ToList().OrderBy(x => x.Name);
-            // fontComboBox.ItemsSource = fontFamilies;
+            var fontComboBox = this.Find<ComboBox>("fontComboBox");
+            var fontFamilies = FontManager.Current.SystemFonts.ToList().OrderBy(x => x.Name);
+            fontComboBox.ItemsSource = fontFamilies;
             // fontComboBox.SelectedIndex = 0;
 
-            // FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight)).Select(x => Enum.Parse<FontWeight>(x)).ToArray();
+            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight)).Select(x => Enum.Parse<FontWeight>(x)).Distinct().ToArray();
 
             TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
-
+          
             this.WhenAnyValue(v => v.designsListBox.ItemsSource)
                 .Subscribe((x) =>
                 {

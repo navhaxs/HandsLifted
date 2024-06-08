@@ -27,7 +27,22 @@ namespace HandsLiftedApp.Controls.Converters
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            if (targetType == typeof(FontWeight) && value is FontWeight)
+            {
+                return value;
+            }
+            if (targetType == typeof(FontWeight) && value == null)
+            {
+                return FontWeight.Normal;
+            }
+            // try
+            // {
+            //     return FontWeight.TryParse(value);
+            // }
+            // catch (Exception)
+            // {
+            // }
+            return FontWeight.Normal;
         }
     }
 }

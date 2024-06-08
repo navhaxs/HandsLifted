@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using HandsLiftedApp.Data.Data.Models.Types;
+using Newtonsoft.Json;
 
 namespace HandsLiftedApp.Data.SlideTheme
 {
@@ -63,5 +64,9 @@ namespace HandsLiftedApp.Data.SlideTheme
         // [XmlAttribute]
 
         // TODO - KV map for additional properties
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }
