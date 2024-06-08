@@ -43,7 +43,7 @@ namespace HandsLiftedApp.Data.Models
         public SerializableDictionary<String, Object> Meta { get; set; } = new SerializableDictionary<String, Object>();
 
         // TODO move into Dictionary
-        private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png";
+        private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png";
         public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
 
         private ObservableCollection<BaseSlideTheme> _designs = new() {};

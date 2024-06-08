@@ -108,7 +108,7 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _libraryPath, value);
         }
         
-        private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png";
+        private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png";
         [DataMember]
         public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
         

@@ -18,6 +18,8 @@
         <AvaloniaResource Include="Assets\app.png"/>
         <None Remove="Assets\DefaultTheme\default-bg.png"/>
         <AvaloniaResource Include="Assets\DefaultTheme\default-bg.png"/>
+        <None Remove="Assets\DefaultTheme\logo-default.png" />
+        <AvaloniaResource Include="Assets\DefaultTheme\logo-default.png" />
     </ItemGroup>
 
 
