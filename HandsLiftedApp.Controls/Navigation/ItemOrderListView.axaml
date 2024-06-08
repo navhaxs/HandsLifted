@@ -171,6 +171,11 @@
         <Style Selector="ListBoxItem Border.SectionHeadingBorder">
             <Setter Property="BorderBrush"
                     Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
+            <Setter Property="Background" Value="#78494949" />
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected Border.SectionHeadingBorder">
+            <!-- <Setter Property="Background" Value="#494949" /> -->
         </Style>
         <!--<Style Selector="ListBoxItem:pointerover Border.SectionHeadingBorder">
             <Setter Property="Background" Value="#C11F576F" />
@@ -223,7 +228,6 @@
 									</Style>
 								</Grid.Styles>-->
                             <Border BorderThickness="0 1 0 1"
-                                    Background="#78494949"
                                     BorderBrush="#5c5c5c"
                                     Classes="SectionHeadingBorder">
                                 <DockPanel Margin="9,0,0,0" VerticalAlignment="Stretch">
