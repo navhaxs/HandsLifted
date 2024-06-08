@@ -1,11 +1,18 @@
 ﻿using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels;
 
 namespace HandsLiftedApp.Tests.Utils
 {
     [TestClass()]
     public class SongImporterTests
     {
+        [TestInitialize]
+        public void Init()
+        {
+            Globals.AppPreferences = new AppPreferencesViewModel();
+        }
+        
         [TestMethod()]
         [DataRow("Intro")]
         [DataRow("Chorus")]
