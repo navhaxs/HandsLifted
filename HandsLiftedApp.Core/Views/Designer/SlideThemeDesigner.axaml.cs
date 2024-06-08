@@ -108,7 +108,7 @@ namespace HandsLiftedApp.Core.Views.Designer
 
                 if (AssetLoader.Exists(new Uri(filePaths[0])) || File.Exists(filePaths[0]))
                 {
-                    // bgGraphicFilePath.Text = filePaths[0];
+                    bgGraphicFilePath.Text = filePaths[0];
                 }
             }
             catch (Exception ex)
