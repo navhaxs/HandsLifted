@@ -155,6 +155,12 @@ namespace HandsLiftedApp.Core.Models
             _disposables.Add(MessageBus.Current.Listen<NavigateToSlideReferenceAction>()
                     .Subscribe(action => NavigateToReference(action.SlideReference)))
                 ;
+            
+            this.WhenAnyValue(
+                    p => p.Title,
+                    p => p.LogoGraphicFile,
+                    p => p.Items)
+                .Subscribe(_ => IsDirty = true);
         }
 
         public AutoAdvanceTimerController AutoAdvanceTimer { get; init; } = new();
@@ -173,6 +179,17 @@ namespace HandsLiftedApp.Core.Models
         {
             get => _playlistFilePath;
             set => this.RaiseAndSetIfChanged(ref _playlistFilePath, value);
+        }
+        
+        private bool _isDirty = true;
+        
+        /// <summary>
+        /// File dirty bit = document has pending updates that are unsaved to disk
+        /// </summary>
+        public bool IsDirty
+        {
+            get => _isDirty;
+            set => this.RaiseAndSetIfChanged(ref _isDirty, value);
         }
         
         private string _playlistWorkingDirectory = @"VisionScreensUserData\";

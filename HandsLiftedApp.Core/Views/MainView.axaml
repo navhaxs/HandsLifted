@@ -74,6 +74,13 @@
                                   MinWidth="200"
                                   MaxWidth="800" />
             </Grid.ColumnDefinitions>
+            
+            <Ellipse Fill="White" Height="6" Width="6"
+                     IsVisible="{Binding Playlist.IsDirty}"
+                     IsHitTestVisible="False"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top"
+            />
 
             <!-- inner grid: left panel and content -->
             <DockPanel>
@@ -198,6 +205,7 @@
                         FontSize="22"
                         Watermark="Untitled Playlist"
                         Text="{Binding Playlist.Title, Mode=TwoWay}" />
+                    
                 </DockPanel>
 
                 <Grid>

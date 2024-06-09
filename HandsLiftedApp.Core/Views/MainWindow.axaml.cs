@@ -9,6 +9,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
@@ -175,8 +176,34 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
     bool _isConfirmedExiting = false;
 
-    public void ExitApp()
+    public async void ExitApp()
     {
+
+        if (this.DataContext is MainViewModel vm)
+        {
+            // feature: unsaved changes dirty bit
+            if (vm.Playlist.IsDirty)
+            {
+                Shade.IsVisible = true;
+                UnsavedChangesConfirmationWindow unsavedChangesConfirmationWindow = new UnsavedChangesConfirmationWindow();
+                await unsavedChangesConfirmationWindow.ShowDialog(this);
+                Shade.IsVisible = false;
+
+                switch (unsavedChangesConfirmationWindow.Result)
+                {
+                    case UnsavedChangesConfirmationWindow.DialogResult.Save:
+                        PlaylistDocumentService.SaveDocument(vm.Playlist);
+                        break;
+                    case UnsavedChangesConfirmationWindow.DialogResult.Discard:
+                        break;
+                    case UnsavedChangesConfirmationWindow.DialogResult.Cancel:
+                        // abort application exit
+                        return;
+                }
+            }
+        }
+        
+        
         _isConfirmedExiting = true;
 
         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)

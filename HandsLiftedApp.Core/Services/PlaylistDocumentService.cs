@@ -13,6 +13,7 @@ namespace HandsLiftedApp.Core.Services
             }
 
             HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, playlist.PlaylistFilePath);
+            playlist.IsDirty = false;
         }
 
         public static string GetAutoSavePlaylistFilePath(string fullPath)
@@ -30,6 +31,7 @@ namespace HandsLiftedApp.Core.Services
             }
             
             HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, GetAutoSavePlaylistFilePath(playlist.PlaylistFilePath));
+            playlist.IsDirty = false;
         }
     }
 }

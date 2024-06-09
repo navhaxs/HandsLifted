@@ -202,6 +202,10 @@
           <DependentUpon>AutoAdvanceTimerControlViewWrapper.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\UnsavedChangesConfirmationWindow.axaml.cs">
+          <DependentUpon>UnsavedChangesConfirmationWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 
