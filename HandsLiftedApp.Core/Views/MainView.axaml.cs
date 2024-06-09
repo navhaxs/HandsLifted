@@ -10,8 +10,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models;
-using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.Views.Setup;
 using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
@@ -29,7 +29,7 @@ public partial class MainView : UserControl
             var window = TopLevel.GetTopLevel(this);
             window.KeyDown += MainWindow_KeyDown;
         };
-        
+
         LibraryToggleButton.Click += (object? sender, RoutedEventArgs e) =>
         {
             if (this.DataContext is MainViewModel vm)
@@ -38,6 +38,7 @@ public partial class MainView : UserControl
                 vm.BottomLeftPanelSelectedTabIndex = 0;
                 ToggleBottomPanel(forceVisible);
             }
+
             DesignerToggleButton.IsChecked = false;
         };
         DesignerToggleButton.Click += (object? sender, RoutedEventArgs e) =>
@@ -48,14 +49,16 @@ public partial class MainView : UserControl
                 vm.BottomLeftPanelSelectedTabIndex = 1;
                 ToggleBottomPanel(forceVisible);
             }
+
             LibraryToggleButton.IsChecked = false;
         };
     }
+
     bool isLibraryVisible = false;
     GridLength lastLibraryContentGridLength = new GridLength(260);
     GridLength lastLibrarySplitterGridLength = new GridLength(0);
 
- 
+
     private void ToggleBottomPanel(bool forceVisible = false)
     {
         if (forceVisible && isLibraryVisible)
@@ -76,6 +79,7 @@ public partial class MainView : UserControl
             DockedLibraryWrapper.RowDefinitions[2].Height = lastLibraryContentGridLength;
             DockedLibraryWrapper.RowDefinitions[1].Height = lastLibrarySplitterGridLength;
         }
+
         isLibraryVisible = !isLibraryVisible;
     }
 
@@ -154,42 +158,54 @@ public partial class MainView : UserControl
 
     private async void SaveFileButton_Clicked(object sender, RoutedEventArgs args)
     {
-        // Get top level from the current control. Alternatively, you can use Window reference instead.
-        var topLevel = TopLevel.GetTopLevel(this);
+        SaveFile();
+    }
 
-        // Start async operation to open the dialog.
-        var xmlFileType = new FilePickerFileType("XML Document")
+    private void SaveFile()
+    {
+        if (this.DataContext is MainViewModel vm)
         {
-            Patterns = new[] { "*.xml" },
-            MimeTypes = new[] { "text/xml" }
-        };
-
-        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Save File",
-            FileTypeChoices = new[] { xmlFileType }
-        });
-
-        if (file != null)
-        {
-            if (this.DataContext is MainViewModel vm)
+            try
             {
-                try
-                {
-                    var filePath = file.Path.LocalPath;
-                    HandsLiftedDocXmlSerializer.SerializePlaylist(vm.Playlist, filePath);
-                    // XmlSerialization.WriteToXmlFile<Playlist>(file.Path.AbsolutePath, vm.CurrentPlaylist.Playlist);
-                    //MessageBus.Current.SendMessage(new MainWindowModalMessage(new MessageWindow() { Title = "Playlist Saved" }, true, new MessageWindowAction() { Title = "Playlist Saved", Content = $"Written to {TEST_SERVICE_FILE_PATH}" }));
-                    vm.settings.LastOpenedPlaylistFullPath = filePath;
-                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                        { Title = "Playlist Saved" });
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e, "Failed to write XML");
-                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                        { Title = "Playlist Failed to Save :(", Content = $"{e.Message}" });
-                }
+                PlaylistDocumentService.SaveDocument(vm.Playlist);
+                MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                    { Title = "Playlist Saved" });
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to save document");
+                MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                    { Title = "Playlist Failed to Save :(", Content = $"{e.Message}" });
+            }
+        }
+    }
+
+    private async void SaveFileAsButton_Clicked(object sender, RoutedEventArgs args)
+    {
+        if (this.DataContext is MainViewModel vm)
+        {
+            // Get top level from the current control. Alternatively, you can use Window reference instead.
+            var topLevel = TopLevel.GetTopLevel(this);
+
+            // Start async operation to open the dialog.
+            var xmlFileType = new FilePickerFileType("XML Document")
+            {
+                Patterns = new[] { "*.xml" },
+                MimeTypes = new[] { "text/xml" }
+            };
+
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Save File",
+                FileTypeChoices = new[] { xmlFileType }
+            });
+
+            if (file != null)
+            {
+                var filePath = file.Path.LocalPath;
+                vm.Playlist.PlaylistFilePath = filePath;
+
+                SaveFile();
             }
         }
     }
@@ -205,7 +221,7 @@ public partial class MainView : UserControl
         SlideDesignerWindow slideDesignerWindow = new SlideDesignerWindow() { DataContext = this.DataContext };
         slideDesignerWindow.Show();
     }
-    
+
     private void About_OnClick(object? sender, RoutedEventArgs e)
     {
         MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.AboutWindow));

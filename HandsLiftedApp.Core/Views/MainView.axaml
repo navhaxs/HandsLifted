@@ -113,9 +113,17 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
 
-                                    <MenuItem Click="SaveFileButton_Clicked" Header="Save">
+                                    <MenuItem Click="SaveFileButton_Clicked" Header="Save"
+                                              IsEnabled="{Binding Playlist.PlaylistFilePath, 
+                            Converter={x:Static ObjectConverters.IsNotNull}}">
                                         <MenuItem.Icon>
                                             <material:MaterialIcon Foreground="#888888" Kind="ContentSave" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+
+                                    <MenuItem Click="SaveFileAsButton_Clicked" Header="Save As">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="ContentSaveAll" />
                                         </MenuItem.Icon>
                                     </MenuItem>
 

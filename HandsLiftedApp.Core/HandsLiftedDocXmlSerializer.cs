@@ -119,6 +119,7 @@ namespace HandsLiftedApp.Core
                         Meta = deserialized.Meta,
                         LogoGraphicFile = deserialized.LogoGraphicFile,
                         Designs = deserialized.Designs,
+                        PlaylistFilePath = filePath
                         // Date = deserialized.Date,
                         // Items = Items
                     };
