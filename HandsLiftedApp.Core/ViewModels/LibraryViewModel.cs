@@ -9,7 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.Library.Config;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.ViewModels.Editor;
+using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Models.PlaylistActions;
+using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using Serilog;
 
@@ -18,6 +23,7 @@ namespace HandsLiftedApp.Core.ViewModels
     public class LibraryViewModel : ViewModelBase
     {
         public ReactiveCommand<Unit, Unit> OnAddSelectedToPlaylistCommand { get; }
+        public ReactiveCommand<Unit, Unit> CreateNewSongCommand { get; }
         private ObservableAsPropertyHelper<string> _selectedItemPreview;
         public string SelectedItemPreview { get => _selectedItemPreview.Value; }
 
@@ -90,6 +96,12 @@ namespace HandsLiftedApp.Core.ViewModels
                     List<string> items = new List<string>() { SelectedItem.FullFilePath };
                     MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(items));
                 }
+            });
+            
+            CreateNewSongCommand = ReactiveCommand.Create(() =>
+            {
+                // TODO remove dependency on Globals.MainViewModel.Playlist 
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false, new SongEditorViewModel(new SongItemInstance(null), Globals.MainViewModel.Playlist)));
             });
         }
         

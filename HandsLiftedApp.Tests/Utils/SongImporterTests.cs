@@ -238,6 +238,7 @@ And the Lord shall descend
 Even so it is well
 With my soul
 
+[Copyright]
 Horatio Gates Spafford, Philip Paul Bliss
 CCLI Song #25376
 Words: Public Domain; Music: Public Domain

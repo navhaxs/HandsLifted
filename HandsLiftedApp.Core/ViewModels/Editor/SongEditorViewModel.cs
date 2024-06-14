@@ -12,14 +12,8 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     public class SongEditorViewModel : ViewModelBase
     {
-        public enum LyricEntryModeType
-        {
-            Stanza,
-            FreeText
-        }
-        
-        private LyricEntryModeType _lyricEntryMode = LyricEntryModeType.Stanza;
-        public LyricEntryModeType LyricEntryMode { get => _lyricEntryMode; set => this.RaiseAndSetIfChanged(ref _lyricEntryMode, value); }
+        private bool _lyricEntryMode = false;
+        public bool LyricEntryMode { get => _lyricEntryMode; set => this.RaiseAndSetIfChanged(ref _lyricEntryMode, value); }
         
         // public event EventHandler SongDataUpdated;
 

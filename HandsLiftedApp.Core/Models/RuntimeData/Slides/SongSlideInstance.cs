@@ -23,15 +23,22 @@ namespace HandsLiftedApp.Data.Slides
         public SongSlideInstance(SongItemInstance? parentSongItem, SongStanza? parentSongStanza, string id) : base(
             parentSongItem, parentSongStanza, id)
         {
-            Theme = Globals.AppPreferences.DefaultTheme;
+            Theme = Globals.AppPreferences?.DefaultTheme;
 
-            Globals.AppPreferences.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
+            Globals.AppPreferences?.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
             {
                 Theme = x;
                 debounceDispatcher.Debounce(() => GenerateBitmaps());
             });
 
             debounceDispatcher.Debounce(() => GenerateBitmaps());
+
+            this.WhenAnyValue(x => x.Text)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe((x) =>
+                {
+                    debounceDispatcher.Debounce(() => GenerateBitmaps());
+                });
         }
 
         private void GenerateBitmaps()
@@ -46,8 +53,8 @@ namespace HandsLiftedApp.Data.Slides
             ));
         }
 
-        private BaseSlideTheme _theme;
-        public BaseSlideTheme Theme
+        private BaseSlideTheme? _theme;
+        public BaseSlideTheme? Theme
         {
             get => _theme;
             set => this.RaiseAndSetIfChanged(ref _theme, value);

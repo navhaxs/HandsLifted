@@ -8,6 +8,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -86,6 +87,43 @@ public class MainViewModel : ViewModelBase
             {
                 SlideInfoEditorWindow window = new SlideInfoEditorWindow() { DataContext = c.parentMediaItem.Meta };
                 window.Show();
+            }
+        });
+        
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        // TODO
+        SlideSplitFromHere = ReactiveCommand.CreateFromTask<object>(async (object x) =>
+        {
+            if (x is ReadOnlyCollection<object> parameters)
+            {
+                try
+                {
+                    // todo edge cases: active selected index?
+                    
+                    Slide slide = (Slide)parameters.ElementAt(0);
+                    MediaGroupItemInstance currentItem = (MediaGroupItemInstance)parameters.ElementAt(1);
+                    
+                    MediaGroupItemInstance newSlidesGroupItem = currentItem.slice(currentItem._Slides.IndexOf(slide));
+
+                    if (newSlidesGroupItem != null)
+                        Playlist.Items.Insert(Playlist.Items.IndexOf(currentItem) + 1, newSlidesGroupItem);                    
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                }
             }
         });
 
@@ -264,6 +302,8 @@ public class MainViewModel : ViewModelBase
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
     public ReactiveCommand<Unit, Unit> OnChangeLogoCommand { get; }
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
+    
+    public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
 
     private PlaylistInstance _playlist;
 

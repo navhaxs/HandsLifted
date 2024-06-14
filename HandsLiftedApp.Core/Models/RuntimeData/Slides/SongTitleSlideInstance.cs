@@ -22,9 +22,9 @@ namespace HandsLiftedApp.Data.Slides
         public SongTitleSlideInstance(SongItemInstance? parentSongItem) : base()
         {
             Log.Verbose("Creating slide instance");
-            Theme = Globals.AppPreferences.DefaultTheme;
+            Theme = Globals.AppPreferences?.DefaultTheme;
 
-            Globals.AppPreferences.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
+            Globals.AppPreferences?.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
             {
                 Theme = x;
                 debounceDispatcher.Debounce(() => GenerateBitmaps());
@@ -49,9 +49,9 @@ namespace HandsLiftedApp.Data.Slides
             ));
         }
 
-        private BaseSlideTheme _theme;
+        private BaseSlideTheme? _theme;
 
-        public BaseSlideTheme Theme
+        public BaseSlideTheme? Theme
         {
             get => _theme;
             set => this.RaiseAndSetIfChanged(ref _theme, value);

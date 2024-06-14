@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Xml;
@@ -13,6 +15,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {
@@ -28,19 +31,6 @@ namespace HandsLiftedApp.Core.Views.Editors
             {
                 if (DataContext is SongEditorViewModel songEditorViewModel)
                 {
-                    EditorTab.WhenAnyValue(et => et.SelectedIndex).Subscribe(index =>
-                    {
-                        switch (index)
-                        {
-                            case 0:
-                                songEditorViewModel.LyricEntryMode = SongEditorViewModel.LyricEntryModeType.Stanza;
-                                break;
-                            case 1:
-                                songEditorViewModel.LyricEntryMode = SongEditorViewModel.LyricEntryModeType.FreeText;
-                                break;
-                        }
-                    });
-
                     songEditorViewModel.FreeTextEntryField = SongImporter.songItemToFreeText(songEditorViewModel.Song);
 
                     songEditorViewModel.WhenAnyValue(x => x.Song.Slides).Subscribe((slides) =>
@@ -49,7 +39,6 @@ namespace HandsLiftedApp.Core.Views.Editors
                             SongImporter.songItemToFreeText(songEditorViewModel.Song);
                     });
                 }
-
             };
         }
 
@@ -75,6 +64,14 @@ namespace HandsLiftedApp.Core.Views.Editors
             ((SongEditorViewModel)this.DataContext).Song.Arrangement.RemoveAt(lastIndex);
         }
 
+        private void ResetArrangement_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SongEditorViewModel songEditorViewModel)
+            {
+                songEditorViewModel.Song.ResetArrangement();
+            }
+        }
+
         private void GenerateSlides_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is SongEditorViewModel songEditorViewModel)
@@ -97,7 +94,74 @@ namespace HandsLiftedApp.Core.Views.Editors
             {
                 // songEditorViewModel.Song = new SongItemInstance(songEditorViewModel.Playlist);
                 songEditorViewModel.Song.Stanzas.Clear();
+                songEditorViewModel.Song.Title = "";
+                songEditorViewModel.Song.Copyright = "";
                 songEditorViewModel.Song.ResetArrangement();
+            }
+        }
+
+        private void LoadFromText_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SongEditorViewModel songEditorViewModel)
+            {
+                songEditorViewModel.LyricEntryMode = true;
+            }
+        }
+
+        private void ParseAndLoadFromText_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SongEditorViewModel songEditorViewModel)
+            {
+                var text = songEditorViewModel.FreeTextEntryField;
+                // TODO refactor to just return Stanzas
+                var songItemFromStringData = SongImporter.CreateSongItemFromStringData(text);
+                List<string> matchingStanzas = new();
+                foreach (var newStanza in songItemFromStringData.Stanzas)
+                {
+                    matchingStanzas.Add(newStanza.Name);
+                    var firstOrDefault =
+                        songEditorViewModel.Song.Stanzas.FirstOrDefault(existingStanza =>
+                            existingStanza.Name == newStanza.Name);
+
+                    if (firstOrDefault != null)
+                    {
+                        firstOrDefault.Lyrics = newStanza.Lyrics;
+                    }
+                    else
+                    {
+                        songEditorViewModel.Song.Stanzas.Add(newStanza);
+                    }
+                }
+
+                var removedSongStanzas =
+                    songEditorViewModel.Song.Stanzas.Where(existingStanza =>
+                        !matchingStanzas.Contains(existingStanza.Name)).ToList();
+                foreach (var removedSongStanza in removedSongStanzas)
+                {
+                    songEditorViewModel.Song.Stanzas.Remove(removedSongStanza);
+                    while (songEditorViewModel.Song.Arrangement.Contains(removedSongStanza.Id))
+                    {
+                        songEditorViewModel.Song.Arrangement.Remove(removedSongStanza.Id);
+                    }
+                }
+
+                songEditorViewModel.Song.Title = songItemFromStringData.Title;
+                songEditorViewModel.Song.Copyright = songItemFromStringData.Copyright;
+
+                if (songEditorViewModel.Song.Arrangement.Count == 0)
+                {
+                    songEditorViewModel.Song.ResetArrangement();
+                }
+
+                songEditorViewModel.LyricEntryMode = false;
+            }
+        }
+
+        private void DismissLoadFromText_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SongEditorViewModel songEditorViewModel)
+            {
+                songEditorViewModel.LyricEntryMode = false;
             }
         }
 
@@ -125,22 +189,30 @@ namespace HandsLiftedApp.Core.Views.Editors
                 // Open reading stream from the first file.
                 if (this.DataContext is SongEditorViewModel songEditorViewModel)
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
-                    var loaded = (SongItem)serializer.Deserialize(stream);
-                    // TODO: update source Item in Playlist
-                    // var loadedSong = new SongItemInstance(Globals.MainViewModel.Playlist)
-                    // {
-                    //     UUID = loaded.UUID,
-                    //     Title = loaded.Title,
-                    //     Arrangement = loaded.Arrangement,
-                    //     Arrangements = loaded.Arrangements,
-                    //     SelectedArrangementId = loaded.SelectedArrangementId,
-                    //     Stanzas = loaded.Stanzas,
-                    //     Copyright = loaded.Copyright,
-                    //     Design = loaded.Design,
-                    //     StartOnTitleSlide = loaded.StartOnTitleSlide,
-                    //     EndOnBlankSlide = loaded.EndOnBlankSlide
-                    // };
+                    SongItem? loaded = null;
+                    try
+                    {
+                        if (files[0].Name.ToLower().EndsWith(".xml"))
+                        {
+                            XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
+                            loaded = (SongItem)serializer.Deserialize(stream);
+                        }
+                        else if (files[0].Name.ToLower().EndsWith(".txt"))
+                        {
+                            StreamReader reader = new StreamReader(stream);
+                            string txt = reader.ReadToEnd();
+                            loaded = SongImporter.CreateSongItemFromStringData(txt);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Failed to parse file: [{Name}]", files[0].Name);
+                    }
+
+                    if (loaded == null)
+                    {
+                        return;
+                    }
 
                     songEditorViewModel.Song.UUID = loaded.UUID;
                     songEditorViewModel.Song.Title = loaded.Title;
@@ -152,6 +224,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                     songEditorViewModel.Song.Design = loaded.Design;
                     songEditorViewModel.Song.StartOnTitleSlide = loaded.StartOnTitleSlide;
                     songEditorViewModel.Song.EndOnBlankSlide = loaded.EndOnBlankSlide;
+
+                    songEditorViewModel.Song.ResetArrangement();
+                    songEditorViewModel.Song.GenerateSlides();
                 }
             }
         }
@@ -167,9 +242,17 @@ namespace HandsLiftedApp.Core.Views.Editors
             var topLevel = TopLevel.GetTopLevel(this);
 
             // Start async operation to open the dialog.
+            var xmlFileType = new FilePickerFileType("XML Document")
+            {
+                Patterns = new[] { "*.xml" },
+                MimeTypes = new[] { "text/xml" }
+            };
+            
             var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "Save Text File",
+                Title = "Save Song XML File",
+                FileTypeChoices = new[] { xmlFileType }
+
             });
 
             if (file != null)
@@ -229,38 +312,6 @@ namespace HandsLiftedApp.Core.Views.Editors
                 Debug.Print(e.Message);
                 interaction.SetOutput(null);
             }
-        }
-
-
-        private void MoveUp_OnClick(object? sender, RoutedEventArgs e)
-        {
-            // 6 [0, 1, 2, 3, 4, 5]
-            if (StanzaArrangementListBox.SelectedIndex > -1 && StanzaArrangementListBox.SelectedIndex > 0)
-            {
-                if (this.DataContext is SongEditorViewModel viewModel)
-                {
-                    viewModel.Song.Stanzas.Move(StanzaArrangementListBox.SelectedIndex,
-                        StanzaArrangementListBox.SelectedIndex - 1);
-                }
-            }
-        }
-
-        private void MoveDown_OnClick(object? sender, RoutedEventArgs e)
-        {
-            // 6 [0, 1, 2, 3, 4, 5]
-            if (StanzaArrangementListBox.SelectedIndex > -1 &&
-                StanzaArrangementListBox.SelectedIndex < StanzaArrangementListBox.Items.Count - 1)
-            {
-                if (this.DataContext is SongEditorViewModel viewModel)
-                {
-                    viewModel.Song.Stanzas.Move(StanzaArrangementListBox.SelectedIndex,
-                        StanzaArrangementListBox.SelectedIndex + 1);
-                }
-            }
-        }
-
-        private void SelectingItemsControl_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
         }
     }
 }

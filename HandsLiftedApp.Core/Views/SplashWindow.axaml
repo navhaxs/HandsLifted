@@ -28,7 +28,7 @@
             </Style.Animations>
         </Style>
     </Window.Styles>
-    <Border CornerRadius="2" BoxShadow="0 0 25 #1E132B" Margin="15">
+    <Border CornerRadius="2" BoxShadow="0 0 25 #991E132B" Margin="15">
         <Border.Background>
             <RadialGradientBrush Center="0,-300" GradientOrigin="0,0" Radius="1.2">
                 <GradientStop Offset="0" Color="#744da9" />

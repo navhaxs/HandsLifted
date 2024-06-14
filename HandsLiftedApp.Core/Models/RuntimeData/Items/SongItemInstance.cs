@@ -131,6 +131,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
 
             Arrangement = a;
+            
+            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
         }
 
         private readonly object stantaSlidesLock = new object();
@@ -254,11 +256,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }
 
                     // need to delete old items
-                    while (i < newSlides.Count)
+                    if (i < newSlides.Count)
                     {
-                        //this.StanzaSlides.RemoveAt(i); -- BUG: wont remove unless index remove from last backwards. think about it!
-                        newSlides.RemoveAt(newSlides.Count - 1); // remove last
-                        i++;
+                        var howManyToDelete = newSlides.Count - i;
+                        while (howManyToDelete > 0)
+                        {
+                            newSlides.RemoveAt(newSlides.Count - 1); // remove last
+                            howManyToDelete--;
+                        }
                     }
                     
                     // StanzaSlides.RemoveAt(0);

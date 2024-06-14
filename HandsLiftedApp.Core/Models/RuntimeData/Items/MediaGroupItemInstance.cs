@@ -66,5 +66,37 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             get => _activeSlide?.Value;
         }
+        
+        /// <summary>
+        /// mutates *this* SlidesGroupItem and then returns a *new* SlidesGroupItem
+        /// </summary>
+        /// <param name="start"></param>
+        /// <returns></returns>
+        public MediaGroupItemInstance? slice(int start)
+        {
+            if (start == 0)
+            {
+                return null;
+            }
+
+            MediaGroupItemInstance slidesGroup = new(ParentPlaylist) { Title = $"{Title} (Split copy)" };
+
+            // TODO optimise below to a single loop
+            // tricky bit: ensure index logic works whilst removing at the same time
+
+            for (int i = start; i < _Slides.Count; i++)
+            {
+                slidesGroup._Slides.Add(_Slides[i]);
+            }
+
+            var count = _Slides.Count;
+            for (int i = start; i < count; i++)
+            {
+                _Slides.RemoveAt(_Slides.Count - 1);
+            }
+
+
+            return slidesGroup;
+        }
     }
 }

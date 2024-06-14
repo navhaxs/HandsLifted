@@ -3,7 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="650"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="400"
              x:DataType="editor:SongEditorViewModel"
              Background="White"
              x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricFreeTextEditor">
@@ -13,20 +14,68 @@
         </Style>
     </UserControl.Styles>
 
-    <ScrollViewer>
-        <TextBox
-            Name="FreeTextBox"
-            CornerRadius="0"
-            AcceptsReturn="True"
-            VerticalAlignment="Stretch"
-            Background="White"
-            FontFamily="Consolas"
-            Foreground="Black"
-            BorderThickness="0"
-            Padding="12"
-            TextWrapping="Wrap"
-            TextChanged="TextBox_OnTextChanged"
-            Watermark="Enter or paste lyrics text here..."
-            Text="{Binding FreeTextEntryField}" />
-    </ScrollViewer>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MinWidth="300" />
+        </Grid.ColumnDefinitions>
+
+        <Border Background="#DC000000" Padding="20">
+            <StackPanel Margin="0,20,40,20" VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <StackPanel.Styles>
+                    <Style Selector="TextBlock">
+                        <Setter Property="FontSize" Value="24" />
+                        <Setter Property="Foreground" Value="#dedede" />
+                        <Setter Property="TextWrapping" Value="Wrap" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                </StackPanel.Styles>
+                <TextBlock>
+                    1. Search for the song in
+                    <Span Foreground="#2ECAFF" TextDecorations="Underline">
+                        songselect.ccli.com
+                    </Span>
+                    <avalonia:MaterialIcon
+                        Width="12"
+                        Height="12"
+                        Margin="-4"
+                        HorizontalAlignment="Left"
+                        Foreground="#2ECAFF"
+                        Kind="OpenInNew" />
+                    <LineBreak />
+                    <LineBreak />
+                    2. Copy the lyrics<LineBreak />
+                </TextBlock>
+                <DockPanel>
+                    <avalonia:MaterialIcon
+                        DockPanel.Dock="Right"
+                        Width="40"
+                        Height="40"
+                        HorizontalAlignment="Left"
+                        Foreground="#dedede"
+                        Kind="ArrowRight" />
+                    <TextBlock Text="3. Paste here" />
+                </DockPanel>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Column="1">
+            <TextBox
+                Name="FreeTextBox"
+                CornerRadius="0"
+                AcceptsReturn="True"
+                VerticalAlignment="Stretch"
+                Background="White"
+                FontFamily="Consolas"
+                Foreground="Black"
+                BorderThickness="0"
+                Padding="12"
+                TextWrapping="Wrap"
+                Watermark="Enter or paste lyrics text here..."
+                Text="{Binding FreeTextEntryField}" />
+        </ScrollViewer>
+
+    </Grid>
 </UserControl>

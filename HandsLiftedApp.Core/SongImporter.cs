@@ -29,7 +29,8 @@ namespace HandsLiftedApp.Core
             "Refrain",
             "Outro",
             "Hook",
-            "Vamp"
+            "Vamp",
+            "Copyright"
         };
 
         public static bool isPartName(string input)
@@ -102,7 +103,7 @@ namespace HandsLiftedApp.Core
                 // get part name from first line
                 var partNameEOL = paragraph.IndexOf("\r\n");
 
-                if (partNameEOL == -1)
+                if (partNameEOL == -1) //???
                 {
                     if (isPartName(paragraph))
                     {
@@ -119,20 +120,12 @@ namespace HandsLiftedApp.Core
                     {
                         lastStanzaBody += "\r\n\r\n" + paragraph;
                     }
-                    
                 }
                 else
                 {
                     var partName = paragraph.Substring(0, partNameEOL);
 
-                    if (index == paragraphs.Count - 1 && (paragraph.Contains("CCLI") || paragraph.Contains("©")))
-                    {
-                        // this is the final paragraph AND includes CCLI/©
-                        song.Copyright = paragraph.Trim();
-                        var regex = new Regex(@" \(Admin. by(.*)\)\r\n");
-                        song.Copyright = regex.Replace(song.Copyright, "\r\n");
-                    }
-                    else if (isPartName(partName))
+                    if (isPartName(partName))
                     {
                         // this is the start of a new song stanza
                         partName = stripPartName(partName);
@@ -140,11 +133,25 @@ namespace HandsLiftedApp.Core
                         // flush existing builder
                         if (lastStanzaPartName != null && lastStanzaBody != null)
                         {
-                            song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                            if (lastStanzaPartName == "Copyright")
+                            {
+                                song.Copyright = lastStanzaBody;
+                            }
+                            else
+                            {
+                                song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                            }
                         }
 
                         lastStanzaPartName = partName;
                         lastStanzaBody = paragraph.Substring(partNameEOL).Trim();
+                    }
+                    else if (index == paragraphs.Count - 1 && (paragraph.Contains("CCLI") || paragraph.Contains("©")))
+                    {
+                        // this is the final paragraph AND includes CCLI/©
+                        song.Copyright = paragraph.Trim();
+                        var regex = new Regex(@" \(Admin. by(.*)\)\r\n");
+                        song.Copyright = regex.Replace(song.Copyright, "\r\n");
                     }
                     else
                     {
@@ -164,7 +171,14 @@ namespace HandsLiftedApp.Core
             // flush final
             if (lastStanzaPartName != null && lastStanzaBody != null)
             {
-                song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                if (lastStanzaPartName == "Copyright")
+                {
+                    song.Copyright = lastStanzaBody;
+                }
+                else
+                {
+                    song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                }
             }
 
             song.ResetArrangement();
@@ -185,7 +199,11 @@ namespace HandsLiftedApp.Core
                 stringBuilder.AppendLine("");
             }
 
-            stringBuilder.AppendLine(songItem.Copyright);
+            if (songItem.Copyright.Length > 0)
+            {
+                stringBuilder.AppendLine("[Copyright]");
+                stringBuilder.AppendLine(songItem.Copyright);
+            }
 
             return stringBuilder.ToString().Trim();
         }

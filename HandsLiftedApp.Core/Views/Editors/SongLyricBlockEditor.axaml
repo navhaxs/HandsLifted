@@ -51,8 +51,8 @@
             <ScrollViewer>
                 <StackPanel x:Name="Wrapper" Margin="0 0 0 60">
                     <TextBox
-                        Margin="12,12,12,12"
-                        Padding="0,6,0,5"
+                        Margin="12,20, 12,0"
+                        Padding="0,0,0,0"
                         Background="White"
                         FontSize="30"
                         FontWeight="Bold"
@@ -64,6 +64,32 @@
                             <behaviours:StanzaTextBoxBehavior />
                         </i:Interaction.Behaviors>
                     </TextBox>
+                    
+                    <Button VerticalAlignment="Stretch" HorizontalAlignment="Right"
+                            BorderThickness="0" CornerRadius="0" Background="Transparent"
+                            Foreground="Black" Margin="0">
+                        <Button.Content><material:MaterialIcon Kind="MenuDown"/></Button.Content>
+                        <Button.Flyout>
+                            <Flyout>
+                                <DockPanel Height="120" MinWidth="200">
+                                    <TextBlock DockPanel.Dock="Top">Rearrange Stanzas</TextBlock>
+                                    <StackPanel DockPanel.Dock="Right">
+                                        <Button Content="Move up" Click="MoveUp_OnClick" />
+                                        <Button Content="Move down" Click="MoveDown_OnClick" />
+                                    </StackPanel>
+                                    <ListBox ItemsSource="{Binding Song.Stanzas}"
+                                             x:Name="StanzaArrangementListBox">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </DockPanel>
+                            </Flyout>
+
+                        </Button.Flyout>
+                    </Button>
 
                     <ItemsControl Margin="0" ItemsSource="{Binding Song.Stanzas}">
                         <ItemsControl.ItemsPanel>

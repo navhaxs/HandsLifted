@@ -29,9 +29,16 @@ namespace HandsLiftedApp.Core.ViewModels
                         return;
                     }
 
-                    if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+                    try
                     {
-                        this.RaisePropertyChanged(nameof(LogoBitmap));
+                        if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+                        {
+                            this.RaisePropertyChanged(nameof(LogoBitmap));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "Error loading logo");
                     }
                 });
         }

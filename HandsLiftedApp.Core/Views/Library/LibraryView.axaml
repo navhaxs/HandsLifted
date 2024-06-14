@@ -42,20 +42,25 @@
         <Grid ColumnDefinitions="*,1,2*,1,2*">
 
             <!--  Left box  -->
-            <ListBox Grid.Column="0" Margin="0,0,0,0" BorderThickness="0"
-                     ItemsSource="{Binding LibraryViewModel.Libraries}"
-                     SelectedItem="{Binding LibraryViewModel.SelectedLibrary, Mode=OneWayToSource}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Label}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <!-- <ListBoxItem IsSelected="True">Songs</ListBoxItem> -->
-                <!-- <ListBoxItem>Media</ListBoxItem> -->
-                <!-- <ListBoxItem>Presentations</ListBoxItem> -->
-                <!-- <ListBoxItem>Countdowns</ListBoxItem> -->
-                <!-- <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem> -->
-            </ListBox>
+            <DockPanel Grid.Column="0">
+                
+                <Button DockPanel.Dock="Bottom" Command="{Binding LibraryViewModel.CreateNewSongCommand}">Add new song</Button>
+
+                <ListBox Margin="0,0,0,0" BorderThickness="0"
+                         ItemsSource="{Binding LibraryViewModel.Libraries}"
+                         SelectedItem="{Binding LibraryViewModel.SelectedLibrary, Mode=OneWayToSource}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Label}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <!-- <ListBoxItem IsSelected="True">Songs</ListBoxItem> -->
+                    <!-- <ListBoxItem>Media</ListBoxItem> -->
+                    <!-- <ListBoxItem>Presentations</ListBoxItem> -->
+                    <!-- <ListBoxItem>Countdowns</ListBoxItem> -->
+                    <!-- <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem> -->
+                </ListBox>
+            </DockPanel>
 
             <GridSplitter
                 Grid.Column="1"

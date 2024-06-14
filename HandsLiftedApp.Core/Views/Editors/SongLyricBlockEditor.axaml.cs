@@ -28,4 +28,33 @@ public partial class SongLyricBlockEditor : UserControl
             viewModel.Song.Stanzas.Add(new SongStanza(Guid.NewGuid(), "", ""));
         }
     }
+    
+    
+    private void MoveUp_OnClick(object? sender, RoutedEventArgs e)
+    {
+        // 6 [0, 1, 2, 3, 4, 5]
+        if (StanzaArrangementListBox.SelectedIndex > -1 && StanzaArrangementListBox.SelectedIndex > 0)
+        {
+            if (this.DataContext is SongEditorViewModel viewModel)
+            {
+                viewModel.Song.Stanzas.Move(StanzaArrangementListBox.SelectedIndex,
+                    StanzaArrangementListBox.SelectedIndex - 1);
+            }
+        }
+    }
+
+    private void MoveDown_OnClick(object? sender, RoutedEventArgs e)
+    {
+        // 6 [0, 1, 2, 3, 4, 5]
+        if (StanzaArrangementListBox.SelectedIndex > -1 &&
+            StanzaArrangementListBox.SelectedIndex < StanzaArrangementListBox.Items.Count - 1)
+        {
+            if (this.DataContext is SongEditorViewModel viewModel)
+            {
+                viewModel.Song.Stanzas.Move(StanzaArrangementListBox.SelectedIndex,
+                    StanzaArrangementListBox.SelectedIndex + 1);
+            }
+        }
+    }
+
 }
