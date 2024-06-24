@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using HandsLiftedApp.Core.Models;
 
 namespace HandsLiftedApp.Core.Views
 {
@@ -33,6 +34,11 @@ namespace HandsLiftedApp.Core.Views
                 var x = Globals.Instance.AppPreferences;
                 Debugger.Break();
             }
+        }  
+        
+        private void ClearActiveSlideClick(object? sender, RoutedEventArgs e)
+        {
+            Globals.Instance.MainViewModel.Playlist.NavigateToReference(new SlideReference() { ItemIndex = -1});
         }
     }
 }

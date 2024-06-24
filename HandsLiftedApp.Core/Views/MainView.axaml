@@ -92,8 +92,7 @@
                     <DockPanel>
                         <Button
                             Name="AppMenuButton"
-                            Margin="8,8,8,0"
-                            Padding="0"
+                            Margin="8,8,0,0"
                             CornerRadius="0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -195,7 +194,8 @@
                                     <Setter Property="Foreground" Value="White" />
                                 </Style>
                             </Button.Styles>
-                            <Border Classes="AppButtonBorder" CornerRadius="6">
+                            
+                            <Border Classes="AppButtonBorder" CornerRadius="6" Padding="12">
                                 <material:MaterialIcon
                                     Width="20"
                                     Height="20"
@@ -208,7 +208,6 @@
 
                     <controls:TextBoxToggleButton
                         DockPanel.Dock="Top"
-                        Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         FontSize="22"
                         Watermark="Untitled Playlist"
