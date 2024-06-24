@@ -10,7 +10,7 @@ namespace HandsLiftedApp.Tests.Utils
         [TestInitialize]
         public void Init()
         {
-            Globals.AppPreferences = new AppPreferencesViewModel();
+            Globals.Instance.AppPreferences = new AppPreferencesViewModel();
         }
         
         [TestMethod()]
