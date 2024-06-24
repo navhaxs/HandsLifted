@@ -113,16 +113,26 @@ namespace HandsLiftedApp.Core.Models
                 .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
                 .Subscribe(_ =>
                 {
-                    if (LogoGraphicFile == "")
+                    if (LogoGraphicFile == "" || LogoGraphicFile == null)
                     {
+                        this.RaisePropertyChanged(nameof(LogoBitmap));
                         return;
                     }
 
-                    if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+                    try
                     {
-                        this.RaisePropertyChanged(nameof(LogoBitmap));
+                        if (File.Exists(LogoGraphicFile) || AssetLoader.Exists(new Uri(LogoGraphicFile)))
+                        {
+                            this.RaisePropertyChanged(nameof(LogoBitmap));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug("LogoGraphicFile read failed", ex);
                     }
                 });
+            
+            // try load Playlist Logo > Global Logo
 
             MessageBus.Current.Listen<AddItemToPlaylistMessage>()
                 .Subscribe(addItemToPlaylistMessage =>
@@ -146,6 +156,32 @@ namespace HandsLiftedApp.Core.Models
                     }
 
                 });
+            
+            _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                .Select(x =>
+                {
+                    if (string.IsNullOrEmpty(x))
+                    {
+                        return null;
+                    }
+
+                    try
+                    {
+                        if (File.Exists(x) || AssetLoader.Exists(new Uri(x)))
+                        {
+                            return BitmapLoader.LoadBitmap(x);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug("LogoGraphicFile read failed", ex);
+                    }
+
+                    return null;
+                })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.LogoBitmap);
 
             _stageDisplaySlideCountText = this.WhenAnyValue(s => s.SelectedItemAsIItemInstance.SelectedSlideIndex,
                     s => s.SelectedItemAsIItemInstance.Slides.Count, ((i, i1) => $"Slide {i+1}/{i1}"))
@@ -519,28 +555,9 @@ namespace HandsLiftedApp.Core.Models
 
         #region CachedBitmaps
 
-        // TODO this could be a ObservableAsPropertyHelper
-        public Bitmap? LogoBitmap
-        {
-            get
-            {
-                if (Design.IsDesignMode)
-                {
-                    return null;
-                }
-
-                try
-                {
-                    return BitmapLoader.LoadBitmap(LogoGraphicFile);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Unable to load Bitmap for LogoBitmap {LogoGraphicFile}", (LogoGraphicFile));
-                    return null;
-                }
-            }
-        }
-
+        private ObservableAsPropertyHelper<Bitmap?> _logoBitmap;
+        public Bitmap? LogoBitmap => _logoBitmap.Value;
+        
         #endregion
 
         private readonly ObservableAsPropertyHelper<string?> _stageDisplaySlideCountText;

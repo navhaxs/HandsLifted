@@ -20,27 +20,54 @@ namespace HandsLiftedApp.Core.ViewModels
     {
         public AppPreferencesViewModel()
         {
-            this.WhenAnyValue(p => p.LogoGraphicFile)
+            // this.WhenAnyValue(p => p.LogoGraphicFile)
+            //     .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+            //     .Subscribe(_ =>
+            //     {
+            //         if (LogoGraphicFile == "")
+            //         {
+            //             return;
+            //         }
+            //
+            //         try
+            //         {
+            //             if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+            //             {
+            //                 this.RaisePropertyChanged(nameof(LogoBitmap));
+            //             }
+            //         }
+            //         catch (Exception e)
+            //         {
+            //             Log.Error(e, "Error loading logo");
+            //         }
+            //     });
+            
+            _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
                 .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
-                .Subscribe(_ =>
+                .Select(x =>
                 {
-                    if (LogoGraphicFile == "")
+                    if (string.IsNullOrEmpty(x))
                     {
-                        return;
+                        return null;
                     }
 
                     try
                     {
-                        if (AssetLoader.Exists(new Uri(LogoGraphicFile)) || File.Exists(LogoGraphicFile))
+                        if (File.Exists(x) || AssetLoader.Exists(new Uri(x)))
                         {
-                            this.RaisePropertyChanged(nameof(LogoBitmap));
+                            return BitmapLoader.LoadBitmap(x);
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        Log.Error(e, "Error loading logo");
+                        Log.Debug("LogoGraphicFile read failed", ex);
                     }
-                });
+
+                    return null;
+                })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.LogoBitmap);
+
         }
 
         private bool _enableOutputNDI;
@@ -119,28 +146,9 @@ namespace HandsLiftedApp.Core.ViewModels
         [DataMember]
         public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }
         
-        // TODO this could be a ObservableAsPropertyHelper
+        private ObservableAsPropertyHelper<Bitmap?> _logoBitmap;
         [IgnoreDataMember]
-        public Bitmap? LogoBitmap
-        {
-            get
-            {
-                if (Design.IsDesignMode)
-                {
-                    return null;
-                }
-
-                try
-                {
-                    return BitmapLoader.LoadBitmap(LogoGraphicFile);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Unable to load Bitmap for LogoBitmap {LogoGraphicFile}", (LogoGraphicFile));
-                    return null;
-                }
-            }
-        }
+        public Bitmap? LogoBitmap => _logoBitmap.Value;
 
         private BaseSlideTheme _defaultTheme = new BaseSlideTheme();
         [DataMember]

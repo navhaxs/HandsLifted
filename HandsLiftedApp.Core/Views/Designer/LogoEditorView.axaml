@@ -6,6 +6,7 @@
              xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
              xmlns:app="clr-namespace:HandsLiftedApp.Core"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="350"
              x:DataType="viewModels:MainViewModel"
              x:Class="HandsLiftedApp.Core.Views.Designer.LogoEditorView">
@@ -51,17 +52,10 @@
         <DockPanel Margin="8">
             <StackPanel DockPanel.Dock="Bottom">
                 <TextBlock>Global:</TextBlock>
-                <DockPanel>
-
-                </DockPanel>
-                <DockPanel>
-                    <Button CornerRadius="0 2 2 0" Command="{Binding OnChangeLogoCommand}" DockPanel.Dock="Right">
-                        Change
-                    </Button>
-                    <TextBox CornerRadius="2 0 0 2" BorderThickness="1 1 0 1" Text="{Binding Source={x:Static app:Globals.AppPreferences}, Path=LogoGraphicFile}" />
-                </DockPanel>
-                <!-- <TextBlock>Playlist:</TextBlock> -->
-                <!-- <TextBox Text="{Binding Playlist.LogoGraphicFile}" /> -->
+                <controls:TextBoxFilePathPicker FilePath="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.LogoGraphicFile}" />
+                
+                <TextBlock>Playlist:</TextBlock>
+                <controls:TextBoxFilePathPicker FilePath="{Binding Playlist.LogoGraphicFile}" />
             </StackPanel>
             <Grid DockPanel.Dock="Left">
                 <Viewbox VerticalAlignment="Center">

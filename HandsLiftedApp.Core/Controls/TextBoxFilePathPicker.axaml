@@ -1,0 +1,13 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:CompileBindings="False"
+             x:Class="HandsLiftedApp.Core.Controls.TextBoxFilePathPicker">
+    <DockPanel>
+        <Button CornerRadius="0 2 2 0" Click="Button_OnClick" DockPanel.Dock="Right" Content="Browse" />
+        <TextBox CornerRadius="2 0 0 2" BorderThickness="1 1 0 1" x:Name="FilePathTextBox" />
+    </DockPanel>
+</UserControl>

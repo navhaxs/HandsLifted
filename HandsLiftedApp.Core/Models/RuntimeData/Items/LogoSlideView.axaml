@@ -9,6 +9,6 @@
              x:Class="HandsLiftedApp.Core.Models.RuntimeData.Items.LogoSlideView">
     <Image
         RenderOptions.BitmapInterpolationMode="HighQuality"
-        Source="{Binding  Source={x:Static app:Globals.AppPreferences}, Path=LogoBitmap}"
+        Source="{Binding Source={x:Static app:Globals.Instance}, Path=LogoBitmap}"
         Stretch="Uniform" />
 </UserControl>

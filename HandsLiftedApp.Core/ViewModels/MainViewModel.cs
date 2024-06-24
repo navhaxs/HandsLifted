@@ -66,21 +66,6 @@ public class MainViewModel : ViewModelBase
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<Unit, string[]?>();
         
-        OnChangeLogoCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            try
-            {
-                var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
-                if (filePaths == null || filePaths.Length == 0) return;
-                Globals.AppPreferences.LogoGraphicFile = filePaths[0];
-                // Playlist.LogoGraphicFile = filePaths[0];
-            }
-            catch (Exception e)
-            {
-                Debug.Print(e.Message);
-            }
-        });
-
         EditSlideInfoCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
         {
             if (x is CustomAxamlSlideInstance c)
@@ -300,13 +285,10 @@ public class MainViewModel : ViewModelBase
     }
 
     public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
-    public ReactiveCommand<Unit, Unit> OnChangeLogoCommand { get; }
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
-    
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
 
     private PlaylistInstance _playlist;
-
     public PlaylistInstance Playlist
     {
         get => _playlist;
@@ -401,21 +383,21 @@ public class MainViewModel : ViewModelBase
     public void OnMainWindowOpened()
     {
         // Apply OnStartup* AppPreferences:
-        Playlist.IsLogo = Globals.AppPreferences.OnStartupShowLogo;
+        Playlist.IsLogo = Globals.Instance.AppPreferences.OnStartupShowLogo;
 
         if (ProjectorWindow == null)
         {
             ProjectorWindow = new ProjectorWindow();
             ProjectorWindow.DataContext = this;
         }
-        ToggleProjectorWindow(Globals.AppPreferences.OnStartupShowOutput);
+        ToggleProjectorWindow(Globals.Instance.AppPreferences.OnStartupShowOutput);
         
         if (StageDisplayWindow == null)
         {
             StageDisplayWindow = new StageDisplayWindow();
             StageDisplayWindow.DataContext = this;
         }
-        ToggleStageDisplayWindow(Globals.AppPreferences.OnStartupShowStage);
+        ToggleStageDisplayWindow(Globals.Instance.AppPreferences.OnStartupShowStage);
     }
 
     public void OnProjectorClickCommand()
@@ -435,7 +417,7 @@ public class MainViewModel : ViewModelBase
             }
 
             ProjectorWindow.Show();
-            WindowUtils.RestoreWindowBounds(ProjectorWindow, Globals.AppPreferences.OutputDisplayBounds);
+            WindowUtils.RestoreWindowBounds(ProjectorWindow, Globals.Instance.AppPreferences.OutputDisplayBounds);
         }
         else
         {
@@ -464,7 +446,7 @@ public class MainViewModel : ViewModelBase
         {
             StageDisplayWindow = new StageDisplayWindow() { DataContext = this };
             StageDisplayWindow.Show();
-            WindowUtils.RestoreWindowBounds(StageDisplayWindow, Globals.AppPreferences.StageDisplayBounds);
+            WindowUtils.RestoreWindowBounds(StageDisplayWindow, Globals.Instance.AppPreferences.StageDisplayBounds);
         }
         else
         {

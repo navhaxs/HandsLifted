@@ -32,17 +32,17 @@ namespace HandsLiftedApp.Views.ControlModules
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.MpvContextInstance.Command("stop");
+            Globals.Instance.MpvContextInstance.Command("stop");
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.MpvContextInstance.SetPropertyFlag("pause", false);
+            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", false);
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.MpvContextInstance.SetPropertyFlag("pause", true);
+            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", true);
         }
     }
 }

@@ -30,9 +30,9 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                 this.RaiseAndSetIfChanged(ref _song, value);
                 _song.PropertyChanged += _song_PropertyChanged;
 
-                if (Globals.MainViewModel != null)
+                if (Globals.Instance.MainViewModel != null)
                 {
-                    this.RaiseAndSetIfChanged(ref _selectedSlideTheme, Globals.MainViewModel.Playlist.Designs.FirstOrDefault(d => d.Id == _song.Design, null), nameof(SelectedSlideTheme));
+                    this.RaiseAndSetIfChanged(ref _selectedSlideTheme, Globals.Instance.MainViewModel.Playlist.Designs.FirstOrDefault(d => d.Id == _song.Design, null), nameof(SelectedSlideTheme));
                 }
 
             }
@@ -49,7 +49,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             OnClickCommand = ReactiveCommand.Create(RunTheThing);
             // SongDataUpdateCommand = ReactiveCommand.Create(OnSongDataUpdateCommand);
 
-            // Playlist = (Design.IsDesignMode) ? new PlaylistInstance() : Globals.MainViewModel?.Playlist;
+            // Playlist = (Design.IsDesignMode) ? new PlaylistInstance() : Globals.Instance.MainViewModel?.Playlist;
             Song = song;
             Playlist = playlistInstance; // song.ParentPlaylist;
 

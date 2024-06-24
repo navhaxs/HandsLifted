@@ -23,9 +23,9 @@ namespace HandsLiftedApp.Data.Slides
         public SongSlideInstance(SongItemInstance? parentSongItem, SongStanza? parentSongStanza, string id) : base(
             parentSongItem, parentSongStanza, id)
         {
-            Theme = Globals.AppPreferences?.DefaultTheme;
+            Theme = Globals.Instance.AppPreferences?.DefaultTheme;
 
-            Globals.AppPreferences?.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
+            Globals.Instance.AppPreferences?.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
             {
                 Theme = x;
                 debounceDispatcher.Debounce(() => GenerateBitmaps());

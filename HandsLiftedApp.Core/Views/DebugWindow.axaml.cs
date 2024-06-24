@@ -30,7 +30,7 @@ namespace HandsLiftedApp.Core.Views
             Debugger.Launch();
             if (Debugger.IsAttached)
             {
-                var x = Globals.AppPreferences;
+                var x = Globals.Instance.AppPreferences;
                 Debugger.Break();
             }
         }

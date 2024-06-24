@@ -67,7 +67,7 @@ namespace HandsLiftedApp.Core.Views.Designer
 
         private void AddItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            Globals.AppPreferences.Designs.Add(new BaseSlideTheme());
+            Globals.Instance.AppPreferences.Designs.Add(new BaseSlideTheme());
             // if (this.DataContext is MainViewModel mainViewModel)
             // {
             //     mainViewModel.Playlist.Designs.Add(new BaseSlideTheme());
@@ -103,7 +103,7 @@ namespace HandsLiftedApp.Core.Views.Designer
         {
             try
             {
-                var filePaths = await Globals.MainViewModel.ShowOpenFileDialog.Handle(Unit.Default);
+                var filePaths = await Globals.Instance.MainViewModel.ShowOpenFileDialog.Handle(Unit.Default);
                 if (filePaths == null || filePaths.Length == 0) return;
 
                 if (AssetLoader.Exists(new Uri(filePaths[0])) || File.Exists(filePaths[0]))

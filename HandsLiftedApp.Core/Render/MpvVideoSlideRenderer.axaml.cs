@@ -58,7 +58,7 @@ namespace HandsLiftedApp.Core.Render
                 {
                     Log.Debug("MpvVideoSlideRenderer Attached in ProjectorWindow");
                     _isMounted = true;
-                    VideoView.MpvContext = Globals.MpvContextInstance;
+                    VideoView.MpvContext = Globals.Instance.MpvContextInstance;
 
                     Task.Run(() =>
                     {
@@ -67,8 +67,8 @@ namespace HandsLiftedApp.Core.Render
                         if (_isMounted)
                         {
                             // only run if slide still active
-                            Globals.MpvContextInstance.Command("loadfile", videoSlide.SourceMediaFilePath, "replace");
-                            Globals.MpvContextInstance.SetPropertyFlag("pause", false);
+                            Globals.Instance.MpvContextInstance.Command("loadfile", videoSlide.SourceMediaFilePath, "replace");
+                            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", false);
                             Log.Debug("MpvVideoSlideRenderer loadfile and play");
                         }
                     });

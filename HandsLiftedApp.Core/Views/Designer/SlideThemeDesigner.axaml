@@ -31,7 +31,7 @@
                 SelectedIndex="0"
                 MinWidth="80"
                 Name="designsListBox"
-                ItemsSource="{Binding Path=Designs, Source={x:Static core:Globals.AppPreferences}}">
+                ItemsSource="{Binding Path=AppPreferences.Designs, Source={x:Static core:Globals.Instance}}">
                 <ListBox.Styles>
                     <Style Selector="ListBoxItem">
                         <Setter Property="ContextMenu">

@@ -25,7 +25,7 @@ Read MPV documentation:
         public VideoSlideInstance(string videoPath = "C:\\VisionScreens\\TestImages\\WA22 Speaker Interview.mp4") :
             base(videoPath)
         {
-            var Context = Globals.MpvContextInstance;
+            var Context = Globals.Instance.MpvContextInstance;
 
             if (Context != null)
             {
@@ -64,7 +64,7 @@ Read MPV documentation:
             {
                 try
                 {
-                    return Globals.MpvContextInstance?.GetPropertyLong("duration");
+                    return Globals.Instance.MpvContextInstance?.GetPropertyLong("duration");
                 }
                 catch (MpvException ex)
                 {
@@ -76,7 +76,7 @@ Read MPV documentation:
                 if (value == null) return;
                 try
                 {
-                    Globals.MpvContextInstance?.SetPropertyLong("duration", value.Value);
+                    Globals.Instance.MpvContextInstance?.SetPropertyLong("duration", value.Value);
                 }
                 catch (MpvException ex)
                 {
@@ -124,7 +124,7 @@ Read MPV documentation:
             {
                 try
                 {
-                    return Globals.MpvContextInstance?.GetPropertyLong("time-pos");
+                    return Globals.Instance.MpvContextInstance?.GetPropertyLong("time-pos");
                 }
                 catch (MpvException ex)
                 {
@@ -136,7 +136,7 @@ Read MPV documentation:
                 if (value == null) return;
                 try
                 {
-                    Globals.MpvContextInstance?.SetPropertyLong("time-pos", value.Value);
+                    Globals.Instance.MpvContextInstance?.SetPropertyLong("time-pos", value.Value);
                 }
                 catch (MpvException ex)
                 {
@@ -165,11 +165,11 @@ Read MPV documentation:
 
         public bool? Paused
         {
-            get => Globals.MpvContextInstance?.GetPropertyFlag("pause");
+            get => Globals.Instance.MpvContextInstance?.GetPropertyFlag("pause");
             set
             {
                 if (value == null) return;
-                Globals.MpvContextInstance?.SetPropertyFlag("pause", value.Value);
+                Globals.Instance.MpvContextInstance?.SetPropertyFlag("pause", value.Value);
             }
         }
 
@@ -189,7 +189,7 @@ Read MPV documentation:
 
         public override void OnLeaveSlide()
         {
-            Globals.MpvContextInstance?.Command("stop");
+            Globals.Instance.MpvContextInstance?.Command("stop");
             base.OnLeaveSlide();
         }
     }

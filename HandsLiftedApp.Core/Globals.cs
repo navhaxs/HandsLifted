@@ -1,8 +1,10 @@
 using System;
 using System.IO;
+using System.Reactive.Linq;
 using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media.Imaging;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Services;
@@ -13,15 +15,27 @@ using Serilog;
 
 namespace HandsLiftedApp.Core
 {
-    public static class Globals
+    public class Globals : ReactiveObject
     {
-        public static MainViewModel MainViewModel { get; set; }
-        public static MpvContext MpvContextInstance { get; set; }
-        public static AppPreferencesViewModel AppPreferences { get; set; }
+        private static readonly Lazy<Globals> _instance = new Lazy<Globals>(() => new Globals());
+        public static Globals Instance => _instance.Value;
 
-        public static ImportWorkerThread ImportWorkerThread { get; } = new();
+        private ObservableAsPropertyHelper<Bitmap?> _logoBitmap;
+        public Bitmap? LogoBitmap => _logoBitmap.Value;
 
-        public static void OnStartup(IApplicationLifetime applicationLifetime)
+        // Private constructor to enforce singleton pattern
+        private Globals()
+        {
+            // refactor with OnStartup?
+        }
+
+        public MainViewModel MainViewModel { get; set; }
+        public MpvContext MpvContextInstance { get; set; }
+        public AppPreferencesViewModel AppPreferences { get; set; }
+
+        public ImportWorkerThread ImportWorkerThread { get; } = new();
+
+        public void OnStartup(IApplicationLifetime applicationLifetime)
         {
             if (Design.IsDesignMode)
             {
@@ -38,7 +52,7 @@ namespace HandsLiftedApp.Core
             {
                 Log.Fatal(ex, "LibMPV failed to initialize");
             }
-            
+
             try
             {
                 var x = LoadConfigFromResource("HandsLiftedApp.Core.SyncfusionLicenseKey");
@@ -56,16 +70,23 @@ namespace HandsLiftedApp.Core
                 // Create the AutoSuspendHelper.
                 var suspension = new AutoSuspendHelper(applicationLifetime);
                 RxApp.SuspensionHost.CreateNewAppState = () => new AppPreferencesViewModel();
-                RxApp.SuspensionHost.SetupDefaultSuspendResume(new NewtonsoftJsonSuspensionDriver<AppPreferencesViewModel>(Constants.APP_STATE_FILEPATH));
+                RxApp.SuspensionHost.SetupDefaultSuspendResume(
+                    new NewtonsoftJsonSuspensionDriver<AppPreferencesViewModel>(Constants.APP_STATE_FILEPATH));
                 suspension.OnFrameworkInitializationCompleted();
 
                 // Load the saved view model state.
                 AppPreferences = RxApp.SuspensionHost.GetAppState<AppPreferencesViewModel>();
             }
-            
+
             MainViewModel = new();
+
+            // Create an observable that combines the changes to both LogoBitmap properties
+            _logoBitmap = MainViewModel.WhenAnyValue(x => x.Playlist.LogoBitmap)
+                .Merge(AppPreferences.WhenAnyValue(x => x.LogoBitmap))
+                .Select(_ => MainViewModel.Playlist.LogoBitmap ?? AppPreferences.LogoBitmap)
+                .ToProperty(this, x => x.LogoBitmap);
         }
-        
+
         private static Stream LoadConfigFromResource(string configFileName)
         {
             Assembly assembly;

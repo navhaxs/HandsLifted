@@ -29,17 +29,17 @@ public partial class App : Application
             desktop.MainWindow = splashScreen;
             try {
                 await Task.Delay(2_000);
-                Globals.OnStartup(ApplicationLifetime);
+                Globals.Instance.OnStartup(ApplicationLifetime);
 
                 WindowState windowState = WindowState.Normal;
 
-                if (Globals.MainViewModel.settings.LastWindowState != null)
+                if (Globals.Instance.MainViewModel.settings.LastWindowState != null)
                 {
-                    windowState = (WindowState)Globals.MainViewModel.settings.LastWindowState;
+                    windowState = (WindowState)Globals.Instance.MainViewModel.settings.LastWindowState;
                 }
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = Globals.MainViewModel,
+                    DataContext = Globals.Instance.MainViewModel,
                     WindowState = windowState
                 };
                 desktop.MainWindow.Show();
@@ -53,7 +53,7 @@ public partial class App : Application
         {
             singleViewPlatform.MainView = new MainView
             {
-                DataContext = Globals.MainViewModel
+                DataContext = Globals.Instance.MainViewModel
             };
         }
 

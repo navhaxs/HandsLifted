@@ -87,7 +87,7 @@ namespace HandsLiftedApp.Core
             string text = NormalizeLineEndingsToCRLF(raw);
             List<string> parsed = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
 
-            SongItemInstance song = new SongItemInstance(Globals.MainViewModel?.Playlist)
+            SongItemInstance song = new SongItemInstance(Globals.Instance.MainViewModel?.Playlist)
             {
                 Title = parsed.First().Trim(),
             };
