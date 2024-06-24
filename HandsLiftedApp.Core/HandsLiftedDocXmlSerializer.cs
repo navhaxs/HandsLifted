@@ -86,9 +86,11 @@ namespace HandsLiftedApp.Core
                         Title = mediaGroupItemInstance.Title,
                         Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(mediaGroupItemInstance.Items.Select(item =>
                         {
-                            if (item.SourceMediaFilePath != null)
+                            // TODO deep copy
+                            var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
+                            if (newMediaItem.SourceMediaFilePath != null)
                             {
-                                item.SourceMediaFilePath = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, item.SourceMediaFilePath); 
+                                newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, item.SourceMediaFilePath); 
                             }
                             return item;
                         }).ToList()),
@@ -103,9 +105,11 @@ namespace HandsLiftedApp.Core
                         Title = powerPointPresentationItemInstance.Title,
                         Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(powerPointPresentationItemInstance.Items.Select(item =>
                         {
-                            if (item.SourceMediaFilePath != null)
+                            // TODO deep copy
+                            var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
+                            if (newMediaItem.SourceMediaFilePath != null)
                             {
-                                item.SourceMediaFilePath = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, item.SourceMediaFilePath); 
+                                newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, item.SourceMediaFilePath); 
                             }
                             return item;
                         }).ToList()),
@@ -207,9 +211,11 @@ namespace HandsLiftedApp.Core
                                 Title = powerPointPresentationItem.Title,
                                 Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(powerPointPresentationItem.Items.Select(item =>
                                 {
-                                    if (item.SourceMediaFilePath != null)
+                                    // TODO deep copy
+                                    var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
+                                    if (newMediaItem.SourceMediaFilePath != null)
                                     {
-                                        item.SourceMediaFilePath = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, item.SourceMediaFilePath); 
+                                        newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, item.SourceMediaFilePath); 
                                     }
                                     return item;
                                 }).ToList()),
@@ -228,9 +234,11 @@ namespace HandsLiftedApp.Core
                                 Title = mediaGroupItem.Title,
                                 Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(mediaGroupItem.Items.Select(item =>
                                 {
-                                    if (item.SourceMediaFilePath != null)
+                                    // TODO deep copy
+                                    var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
+                                    if (newMediaItem.SourceMediaFilePath != null)
                                     {
-                                        item.SourceMediaFilePath = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, item.SourceMediaFilePath); 
+                                        newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, item.SourceMediaFilePath); 
                                     }
                                     return item;
                                 }).ToList()),
