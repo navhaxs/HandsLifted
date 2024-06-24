@@ -1,0 +1,19 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+        mc:Ignorable="d" Width="450" Height="250"
+        x:Class="HandsLiftedApp.Core.Views.PlaylistInfoWindow"
+        x:DataType="viewModels:MainViewModel"
+        Title="PlaylistInfoWindow">
+    <StackPanel>
+        <TextBlock Text="PlaylistFilePath" />
+        <TextBlock Text="{Binding Playlist.PlaylistFilePath, FallbackValue='PlaylistFilePath'}" />
+        
+        <Grid Height="8" />
+        
+        <TextBlock Text="IsDirty (unsaved data flag)" />
+        <TextBlock Text="{Binding Playlist.IsDirty, FallbackValue='IsDirty'}" />
+    </StackPanel>
+</Window>

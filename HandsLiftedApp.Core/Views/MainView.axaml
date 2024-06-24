@@ -136,6 +136,14 @@
 
                                     <Separator />
 
+                                    <MenuItem Click="PlaylistInfoButton_Clicked" Header="Playlist Info">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="InfoCircle" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    
+                                    <Separator />
+
                                     <MenuItem Click="Slide_OnClick" Header="Slide Designer">
                                         <MenuItem.Icon>
                                             <material:MaterialIcon Foreground="#888888" Kind="Paintbrush" />

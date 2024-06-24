@@ -209,6 +209,12 @@ public partial class MainView : UserControl
             }
         }
     }
+    
+    private void PlaylistInfoButton_Clicked(object sender, RoutedEventArgs e)
+    {
+        PlaylistInfoWindow playlistInfoWindow = new PlaylistInfoWindow() { DataContext = this.DataContext };
+        playlistInfoWindow.Show();
+    }
 
     private void CloseWindow(object sender, RoutedEventArgs e)
     {

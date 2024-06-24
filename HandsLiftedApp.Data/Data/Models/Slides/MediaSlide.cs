@@ -16,6 +16,4 @@ namespace HandsLiftedApp.Data.Slides
 
         }
     }
-
-
 }
