@@ -1,16 +1,33 @@
-﻿using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using HandsLiftedApp.Core.Models.AppState;
+using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Data.Models;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Models.PlaylistActions;
+using HandsLiftedApp.Utils;
+using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
-    public class MediaGroupItemInstance : MediaGroupItem, IItemInstance
-    {
+    public class MediaGroupItemInstance : MediaGroupItem, IItemInstance, IItemDirtyBit {
         public PlaylistInstance ParentPlaylist { get; set; }
+        
+        public event EventHandler ItemDataModified;
 
         private BlankSlide _blankSlide = new();
 
@@ -33,6 +50,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
+            this.WhenAnyValue(
+                i => i.Items, 
+                i => i.Title,
+                i => i.AutoAdvanceTimer
+            ).Subscribe(_ =>
+            {
+                ItemDataModified?.Invoke(this, EventArgs.Empty);
+            });
         }
 
         public void GenerateSlides()
@@ -98,5 +123,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             return slidesGroup;
         }
+
+        private bool _isDirty = false;
+        public bool IsDirty { get => _isDirty; set => this.RaiseAndSetIfChanged(ref _isDirty, value); }
     }
 }

@@ -62,6 +62,10 @@
         <Compile Update="Controls\SongArrangementControl.axaml.cs">
             <DependentUpon>%(Filename)</DependentUpon>
         </Compile>
+        <Compile Update="Controls\Navigation\ItemOrderListView.axaml.cs">
+            <DependentUpon>ItemOrderListView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
         <Compile Update="Views\Editors\SongEditorWindow.axaml.cs">
             <DependentUpon>%(Filename)</DependentUpon>
         </Compile>
@@ -204,6 +208,14 @@
         </Compile>
         <Compile Update="Views\UnsavedChangesConfirmationWindow.axaml.cs">
           <DependentUpon>UnsavedChangesConfirmationWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Assets\AddItemFlyoutResourceDictionary.axaml.cs">
+          <DependentUpon>AddItemFlyoutResourceDictionary.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Controls\AddItemButton.axaml.cs">
+          <DependentUpon>AddItemButton.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>

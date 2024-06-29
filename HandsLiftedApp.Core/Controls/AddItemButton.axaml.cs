@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace HandsLiftedApp.Controls
+namespace HandsLiftedApp.Core.Controls
 {
     public partial class AddItemButton : UserControl
     {

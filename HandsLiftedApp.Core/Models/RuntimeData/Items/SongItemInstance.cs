@@ -1,10 +1,4 @@
-﻿using DebounceThrottle;
-using HandsLiftedApp.Data;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
-using Serilog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -12,15 +6,22 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using DynamicData;
+using DebounceThrottle;
+using HandsLiftedApp.Data;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.Slides;
+using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
-    public class SongItemInstance : SongItem, IItemInstance
+    public class SongItemInstance : SongItem, IItemInstance, IItemDirtyBit
     {
         public PlaylistInstance? ParentPlaylist { get; set; }
         private SongTitleSlide titleSlide;
         private DebounceDispatcher debounceDispatcher = new(200);
+        
+        public event EventHandler ItemDataModified;
 
         public void GenerateArrangementViews()
         {
@@ -62,18 +63,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.WhenAnyValue(x => x.Arrangement)
                 .Subscribe(a =>
                 {
-                    a.CollectionChanged -= AOnCollectionChanged;
+                    a.CollectionChanged -= OnArrangementCollectionChanged;
                     GenerateArrangementViews();
-                    a.CollectionChanged += AOnCollectionChanged;
+                    a.CollectionChanged += OnArrangementCollectionChanged;
                 });
             // TODO: reorder...
             this.WhenAnyValue(x => x.Stanzas)
                 .Subscribe(a =>
                 {
                     a.CollectionItemChanged -= _stanzas_CollectionItemChanged;
-                    a.CollectionChanged -= AOnCollectionChanged;
+                    a.CollectionChanged -= OnArrangementCollectionChanged;
                     GenerateArrangementViews();
-                    a.CollectionChanged += AOnCollectionChanged;
+                    a.CollectionChanged += OnArrangementCollectionChanged;
                     a.CollectionItemChanged += _stanzas_CollectionItemChanged;
                 });
             GenerateArrangementViews();
@@ -98,28 +99,27 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
-            Arrangement.CollectionChanged += Arrangement_CollectionChanged;
+            this.WhenAnyValue(
+                i => i.Title,
+                i => i.Arrangement,
+                i => i.Arrangements,
+                // i => i.SelectedArrangementId,
+                i => i.Stanzas,
+                i => i.Copyright,
+                // i => i.Design,
+                i => i.EndOnBlankSlide,
+                i => i.StartOnTitleSlide
+            ).Subscribe(_ =>
+            {
+                ItemDataModified?.Invoke(this, EventArgs.Empty);
+            });
         }
 
-        private void AOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        private void OnArrangementCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+            ItemDataModified?.Invoke(this, EventArgs.Empty);
             GenerateArrangementViews();
             debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-        }
-
-        private void Arrangement_CollectionChanged(object? sender,
-            NotifyCollectionChangedEventArgs e)
-        {
-            debounceDispatcher.Debounce(() => UpdateStanzaSlides());
-
-            if (e.Action == NotifyCollectionChangedAction.Move)
-            {
-                // deselect last slide
-                //StanzaSlides.ElementAt(e.OldStartingIndex).State
-                //Slides.Ele
-            }
-
-            //this.RaisePropertyChanged("Slides");
         }
 
         public void ResetArrangement()
@@ -285,12 +285,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         private void _stanzas_CollectionItemChanged(object? sender, PropertyChangedEventArgs e)
         {
             s();
+            ItemDataModified?.Invoke(this, EventArgs.Empty);
         }
 
         private void _stanzas_CollectionChanged(object? sender,
             NotifyCollectionChangedEventArgs e)
         {
             s();
+            ItemDataModified?.Invoke(this, EventArgs.Empty);
         }
 
         void s()

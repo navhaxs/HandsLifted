@@ -8,9 +8,6 @@
     <ItemGroup>
       <AvaloniaXaml Remove="Assets\AddItemFlyoutResourceDictionary.axaml" />
     </ItemGroup>
-    <ItemGroup>
-      <AvaloniaResource Include="Assets\AddItemFlyoutResourceDictionary.axaml" />
-    </ItemGroup>
 
 
     <ItemGroup>
@@ -37,10 +34,6 @@
       <Compile Update="Items\ItemIcon.axaml.cs">
         <DependentUpon>%(Filename)</DependentUpon>
       </Compile>
-      <Compile Update="AddItemButton.axaml.cs">
-        <DependentUpon>AddItemButton.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
     </ItemGroup>
 
 
@@ -52,7 +45,6 @@
 
 
     <ItemGroup>
-      <AdditionalFiles Include="Navigation\ItemOrderListView.axaml" />
       <AdditionalFiles Include="Styles\AppStyles.axaml" />
     </ItemGroup>
 </Project>

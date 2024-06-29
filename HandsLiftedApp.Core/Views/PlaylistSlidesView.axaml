@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:HandsLiftedApp.Core.Models"
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:controls1="clr-namespace:HandsLiftedApp.Core.Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="models:PlaylistInstance"
@@ -38,7 +39,7 @@
             <DockPanel>
 
                 <!-- first add item button -->
-                <controls:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" />
+                <controls1:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" />
                 
                 <!--  "fill" the height with the last item  -->
                 <Grid DockPanel.Dock="Bottom">
@@ -72,8 +73,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <controls:ItemSlidesView />
-                                <controls:AddItemButton Margin="14,0,0,0" DockPanel.Dock="Top" DataContext="{Binding}" />
+                                <controls:ItemSlidesView DataContext="{Binding Item}" />
+                                <controls1:AddItemButton Margin="14,0,0,0" DockPanel.Dock="Top" DataContext="{Binding}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -9,6 +9,7 @@
              xmlns:material="using:Material.Icons.Avalonia"
              xmlns:designer="clr-namespace:HandsLiftedApp.Views.Designer"
              xmlns:library="clr-namespace:HandsLiftedApp.Views.Library"
+             xmlns:navigation="clr-namespace:HandsLiftedApp.Core.Controls.Navigation"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Core.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -74,21 +75,20 @@
                                   MinWidth="200"
                                   MaxWidth="800" />
             </Grid.ColumnDefinitions>
-            
+
             <Ellipse Fill="White" Height="6" Width="6"
                      IsVisible="{Binding Playlist.IsDirty}"
                      IsHitTestVisible="False"
                      HorizontalAlignment="Left"
-                     VerticalAlignment="Top"
-            />
+                     VerticalAlignment="Top" />
 
             <!-- inner grid: left panel and content -->
             <DockPanel>
-                
-                <DockPanel                      
+
+                <DockPanel
                     Height="70"
                     DockPanel.Dock="Top">
-                    
+
                     <DockPanel>
                         <Button
                             Name="AppMenuButton"
@@ -113,13 +113,14 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
 
-                                    <MenuItem Click="OpenFileButton_Clicked" Header="Load">
+                                    <MenuItem Click="OpenFileButton_Clicked" Header="Load" HotKey="Ctrl+O">
                                         <MenuItem.Icon>
                                             <material:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
                                         </MenuItem.Icon>
                                     </MenuItem>
 
                                     <MenuItem Click="SaveFileButton_Clicked" Header="Save"
+                                              HotKey="Ctrl+S"
                                               IsEnabled="{Binding Playlist.PlaylistFilePath, 
                             Converter={x:Static ObjectConverters.IsNotNull}}">
                                         <MenuItem.Icon>
@@ -127,7 +128,8 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
 
-                                    <MenuItem Click="SaveFileAsButton_Clicked" Header="Save As">
+                                    <MenuItem Click="SaveFileAsButton_Clicked" Header="Save As"
+                                              HotKey="Ctrl+Shift+S">
                                         <MenuItem.Icon>
                                             <material:MaterialIcon Foreground="#888888" Kind="ContentSaveAll" />
                                         </MenuItem.Icon>
@@ -140,7 +142,7 @@
                                             <material:MaterialIcon Foreground="#888888" Kind="InfoCircle" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    
+
                                     <Separator />
 
                                     <MenuItem Click="Slide_OnClick" Header="Slide Designer">
@@ -194,7 +196,7 @@
                                     <Setter Property="Foreground" Value="White" />
                                 </Style>
                             </Button.Styles>
-                            
+
                             <Border Classes="AppButtonBorder" CornerRadius="6" Padding="12">
                                 <material:MaterialIcon
                                     Width="20"
@@ -212,7 +214,7 @@
                         FontSize="22"
                         Watermark="Untitled Playlist"
                         Text="{Binding Playlist.Title, Mode=TwoWay}" />
-                    
+
                 </DockPanel>
 
                 <Grid>
@@ -223,7 +225,7 @@
                     </Grid.ColumnDefinitions>
 
                     <DockPanel>
-                        <controls:ItemOrderListView DataContext="{Binding Playlist}"
+                        <navigation:ItemOrderListView DataContext="{Binding Playlist}"
                                                     Margin="0 6 0 0"
                                                     DockPanel.Dock="Left" />
                     </DockPanel>

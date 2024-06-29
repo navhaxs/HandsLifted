@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.RuntimeData;
 
 namespace HandsLiftedApp.Core.Services
 {
@@ -23,15 +24,19 @@ namespace HandsLiftedApp.Core.Services
             return filename + ".autosave" + "." + extension;
         }
 
-        public static void AutoSaveDocument(PlaylistInstance playlist)
-        {
-            if (playlist.PlaylistFilePath == null)
-            {
-                return;
-            }
-            
-            HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, GetAutoSavePlaylistFilePath(playlist.PlaylistFilePath));
-            playlist.IsDirty = false;
-        }
+        // public static void AutoSaveDocument(PlaylistInstance playlist)
+        // {
+        //     if (playlist.PlaylistFilePath == null)
+        //     {
+        //         return;
+        //     }
+        //     
+        //     HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, GetAutoSavePlaylistFilePath(playlist.PlaylistFilePath));
+        //     playlist.IsDirty = false;
+        //     ...
+        //     ...
+        //     ...
+        //     ...
+        // }
     }
 }

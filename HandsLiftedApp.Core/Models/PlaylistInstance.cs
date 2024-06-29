@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -7,10 +9,12 @@ using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using HandsLiftedApp.Core.Extensions;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -24,6 +28,7 @@ namespace HandsLiftedApp.Core.Models
     public class PlaylistInstance : Playlist, IDisposable
     {
         private List<IDisposable> _disposables = new();
+
         public PlaylistInstance()
         {
             _selectedItem = this.WhenAnyValue(
@@ -32,7 +37,11 @@ namespace HandsLiftedApp.Core.Models
                     {
                         if (selectedIndex != -1)
                         {
-                            return Items.ElementAtOrDefault(selectedIndex);
+                            var result = Items.ElementAtOrDefault(selectedIndex);
+                            if (result != null)
+                            {
+                                return result.Item;
+                            }
                         }
 
                         return new BlankItem();
@@ -51,7 +60,8 @@ namespace HandsLiftedApp.Core.Models
                     {
                         if (selectedIndex != -1)
                         {
-                            if (Items.ElementAtOrDefault(selectedIndex) is IItemInstance iItemInstance)
+                            var result = Items.ElementAtOrDefault(selectedIndex);
+                            if (result is { Item: IItemInstance iItemInstance })
                             {
                                 return iItemInstance;
                             }
@@ -94,7 +104,7 @@ namespace HandsLiftedApp.Core.Models
             {
                 return;
             }
-            
+
             MessageBus.Current.Listen<ActionMessage>()
                 .Subscribe(x =>
                 {
@@ -131,7 +141,7 @@ namespace HandsLiftedApp.Core.Models
                         Log.Debug("LogoGraphicFile read failed", ex);
                     }
                 });
-            
+
             // try load Playlist Logo > Global Logo
 
             MessageBus.Current.Listen<AddItemToPlaylistMessage>()
@@ -145,18 +155,17 @@ namespace HandsLiftedApp.Core.Models
                             using (FileStream stream = new FileStream(filePath, FileMode.Open))
                             {
                                 var x = (SongItemInstance)serializer.Deserialize(stream);
-                                Items.Add(x);
+                                Items.Add(new ItemInstanceProxy(x));
                             }
                         }
                         else if (filePath.ToLower().EndsWith(".txt"))
                         {
                             var newSong = SongImporter.createSongItemFromTxtFile(filePath);
-                            Items.Add(newSong);
+                            Items.Add(new ItemInstanceProxy(newSong));
                         }
                     }
-
                 });
-            
+
             _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
                 .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
                 .Select(x =>
@@ -184,19 +193,60 @@ namespace HandsLiftedApp.Core.Models
                 .ToProperty(this, x => x.LogoBitmap);
 
             _stageDisplaySlideCountText = this.WhenAnyValue(s => s.SelectedItemAsIItemInstance.SelectedSlideIndex,
-                    s => s.SelectedItemAsIItemInstance.Slides.Count, ((i, i1) => $"Slide {i+1}/{i1}"))
+                    s => s.SelectedItemAsIItemInstance.Slides.Count, ((i, i1) => $"Slide {i + 1}/{i1}"))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.StageDisplaySlideCountText);
 
             _disposables.Add(MessageBus.Current.Listen<NavigateToSlideReferenceAction>()
                     .Subscribe(action => NavigateToReference(action.SlideReference)))
                 ;
-            
+
+            this.WhenAnyValue(p => p.Items)
+                .Subscribe(items =>
+                {
+                    items.CollectionChanged -= OnItemsCollectionChanged;
+                    items.CollectionItemChanged -= OnItemChanged;
+                    items.CollectionItemChanged += OnItemChanged;
+                    items.CollectionChanged += OnItemsCollectionChanged;
+                });
+
             this.WhenAnyValue(
                     p => p.Title,
                     p => p.LogoGraphicFile,
+                    p => p.Designs,
                     p => p.Items)
                 .Subscribe(_ => IsDirty = true);
+        }
+
+        public void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+        }
+
+       public void OnItemChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // if (e is ReactivePropertyChangedEventArgs<IReactiveObject> { Sender: ItemInstanceProxy { Item: IItemModified { IsDirty: true } } })
+            // {
+            //     IsDirty = true;
+            // }
+        }
+       
+        private PlaylistItemInstanceCollection<ItemInstanceProxy> _items = new();
+
+        public new PlaylistItemInstanceCollection<ItemInstanceProxy> Items
+        {
+            get => _items;
+            set
+            {
+                value.ItemDataModified -= OnValueOnItemDataModified;
+                this.RaiseAndSetIfChanged(ref _items, value);
+                value.ItemDataModified += OnValueOnItemDataModified;
+            }
+        }
+
+        private void OnValueOnItemDataModified(object? sender, EventArgs args)
+        {
+            IsDirty = true;
         }
 
         public AutoAdvanceTimerController AutoAdvanceTimer { get; init; } = new();
@@ -210,15 +260,15 @@ namespace HandsLiftedApp.Core.Models
         }
 
         private string? _playlistFilePath = null;
-        
+
         public string? PlaylistFilePath
         {
             get => _playlistFilePath;
             set => this.RaiseAndSetIfChanged(ref _playlistFilePath, value);
         }
-        
+
         private bool _isDirty = true;
-        
+
         /// <summary>
         /// File dirty bit = document has pending updates that are unsaved to disk
         /// </summary>
@@ -227,7 +277,7 @@ namespace HandsLiftedApp.Core.Models
             get => _isDirty;
             set => this.RaiseAndSetIfChanged(ref _isDirty, value);
         }
-        
+
         private string _playlistWorkingDirectory = @"VisionScreensUserData\";
 
         public string PlaylistWorkingDirectory
@@ -347,14 +397,14 @@ namespace HandsLiftedApp.Core.Models
                 Log.Error("NavigateToReference {SlideReference} out of bounds", slideReference);
                 return;
             }
-            
+
             var lastSelectedItemIndex = SelectedItemIndex;
 
             IItemInstance? currentItemInstance = null;
             if (slideReference.SlideIndex != null)
             {
-                var item = Items[nextItemIndex];
-                if (item is IItemInstance itemInstance)
+                var baseItemInstance = Items[nextItemIndex];
+                if (baseItemInstance.Item is IItemInstance itemInstance)
                 {
                     currentItemInstance = itemInstance;
                     itemInstance.SelectedSlideIndex = (int)slideReference.SlideIndex;
@@ -367,11 +417,11 @@ namespace HandsLiftedApp.Core.Models
                 Items.ElementAtOrDefault(lastSelectedItemIndex) != null)
             {
                 // deselect the slide within the previous item
-                var lastItem = Items[lastSelectedItemIndex];
-                if (lastItem is IItemInstance itemInstance)
+                var lastBaseItemInstance = Items[lastSelectedItemIndex];
+                if (lastBaseItemInstance.Item is IItemInstance itemInstance)
                     itemInstance.SelectedSlideIndex = -1;
             }
-            
+
             // lastly clear LOGO
             if (PresentationState != PresentationStateEnum.Slides)
             {
@@ -396,7 +446,7 @@ namespace HandsLiftedApp.Core.Models
                     // select first slide of this next item
                     return new SlideReference()
                     {
-                        Slide = Items[nextNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(0),
+                        Slide = Items[nextNavigatableItemIndex].Item.GetAsIItemInstance().Slides.ElementAtOrDefault(0),
                         SlideIndex = 0,
                         ItemIndex = nextNavigatableItemIndex
                     };
@@ -440,7 +490,7 @@ namespace HandsLiftedApp.Core.Models
                     // select first slide of this next item
                     return new SlideReference()
                     {
-                        Slide = Items[nextNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(0),
+                        Slide = Items[nextNavigatableItemIndex].Item.GetAsIItemInstance().Slides.ElementAtOrDefault(0),
                         SlideIndex = 0,
                         ItemIndex = nextNavigatableItemIndex
                     };
@@ -461,8 +511,8 @@ namespace HandsLiftedApp.Core.Models
         {
             for (int idx = startIdx + 1; idx < Items.Count; idx++)
             {
-                Item item = Items[idx];
-                IItemInstance? itemInstance = item.GetAsIItemInstance();
+                ItemInstanceProxy item = Items[idx];
+                IItemInstance? itemInstance = item.Item.GetAsIItemInstance();
                 if (itemInstance?.Slides.Count > 0)
                 {
                     return idx;
@@ -517,11 +567,11 @@ namespace HandsLiftedApp.Core.Models
             int previousNavigatableItemIndex = getPreviousNavigatableItem(SelectedItemIndex);
             if (previousNavigatableItemIndex != -1)
             {
-                var nextSlideIndex = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides.Count - 1;
+                var nextSlideIndex = Items[previousNavigatableItemIndex].Item.GetAsIItemInstance().Slides.Count - 1;
 
                 return new SlideReference()
                 {
-                    Slide = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides
+                    Slide = Items[previousNavigatableItemIndex].Item.GetAsIItemInstance().Slides
                         .ElementAtOrDefault(nextSlideIndex),
                     SlideIndex = nextSlideIndex,
                     ItemIndex = previousNavigatableItemIndex
@@ -542,8 +592,8 @@ namespace HandsLiftedApp.Core.Models
         {
             for (int idx = startIdx - 1; idx >= 0; idx--)
             {
-                Item item = Items[idx];
-                IItemInstance? itemInstance = item.GetAsIItemInstance();
+                ItemInstanceProxy item = Items[idx];
+                IItemInstance? itemInstance = item.Item.GetAsIItemInstance();
                 if (itemInstance?.Slides.Count > 0)
                 {
                     return idx;
@@ -557,7 +607,7 @@ namespace HandsLiftedApp.Core.Models
 
         private ObservableAsPropertyHelper<Bitmap?> _logoBitmap;
         public Bitmap? LogoBitmap => _logoBitmap.Value;
-        
+
         #endregion
 
         private readonly ObservableAsPropertyHelper<string?> _stageDisplaySlideCountText;

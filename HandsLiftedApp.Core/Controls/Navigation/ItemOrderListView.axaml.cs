@@ -14,7 +14,7 @@ using System.Reactive.Linq;
 using System.Reflection;
 using HandsLiftedApp.Data.Models.Items;
 
-namespace HandsLiftedApp.Controls
+namespace HandsLiftedApp.Core.Controls.Navigation
 {
     // TODO disable spyscroll feature as its rather buggy
     // good effort tho.

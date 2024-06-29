@@ -1,12 +1,13 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using HandsLiftedApp.Controls.Messages;
-using ReactiveUI;
-using System;
+using HandsLiftedApp.Core.Controls;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
+using ReactiveUI;
 
-namespace HandsLiftedApp.Controls.Assets
+namespace HandsLiftedApp.Core.Assets
 {
     class AddItemFlyoutResourceDictionary : ResourceDictionary
     {

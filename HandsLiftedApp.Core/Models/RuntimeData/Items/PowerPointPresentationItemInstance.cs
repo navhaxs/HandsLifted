@@ -17,15 +17,27 @@ using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
-    public class PowerPointPresentationItemInstance : PowerPointPresentationItem, IItemInstance
+    public class PowerPointPresentationItemInstance : PowerPointPresentationItem, IItemInstance, IItemDirtyBit
     {
         public PlaylistInstance ParentPlaylist { get; set; }
 
+        public event EventHandler ItemDataModified;
+
         private bool _IsBusy = false;
-        public bool IsBusy { get => _IsBusy; set => this.RaiseAndSetIfChanged(ref _IsBusy, value); }
-        
+
+        public bool IsBusy
+        {
+            get => _IsBusy;
+            set => this.RaiseAndSetIfChanged(ref _IsBusy, value);
+        }
+
         private DateTime? _lastSyncDateTime = null;
-        public DateTime? LastSyncDateTime { get => _lastSyncDateTime; set => this.RaiseAndSetIfChanged(ref _lastSyncDateTime, value); }
+
+        public DateTime? LastSyncDateTime
+        {
+            get => _lastSyncDateTime;
+            set => this.RaiseAndSetIfChanged(ref _lastSyncDateTime, value);
+        }
 
         private BlankSlide _blankSlide = new();
 
@@ -43,12 +55,22 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             return slides.ElementAt(selectedSlideIndex);
                         }
                     }
-                    catch (Exception _ignored) { }
+                    catch (Exception _ignored)
+                    {
+                    }
 
                     return _blankSlide;
                 })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
+
+            this.WhenAnyValue(
+                i => i.Items,
+                i => i.Title,
+                i => i.AutoAdvanceTimer,
+                i => i.SourcePresentationFile,
+                i => i.SourceSlidesExportDirectory
+            ).Subscribe(_ => { ItemDataModified?.Invoke(this, EventArgs.Empty); });
         }
 
         public void GenerateSlides()
@@ -94,45 +116,44 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             ImportWorkerThread.priorityQueue.Add(new ImportWorkerThread.BackgroundWorkRequest()
             {
                 Callback = () =>
-            {
-
-                lock (syncSlidesLock)
                 {
-                    DateTime now = DateTime.Now;
-                    string fileName = Path.GetFileName(SourcePresentationFile);
-
-                    string targetDirectory = Path.Join(ParentPlaylist
-                            .PlaylistWorkingDirectory,
-                        FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                    Directory.CreateDirectory(targetDirectory);
-
-                    Log.Debug($"Importing PowerPoint file: {SourcePresentationFile}");
-                    PresentationImporter.Run(SourcePresentationFile);
-
-                    Log.Debug($"Importing PDF file: {SourcePresentationFile}");
-                    ConvertPDF.Convert(SourcePresentationFile + ".pdf",
-                        targetDirectory);
-
-                    var newItems = new TrulyObservableCollection<MediaItem>();
-                    foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
-                                 .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
+                    lock (syncSlidesLock)
                     {
-                        newItems.Add(new MediaItem()
-                        { SourceMediaFilePath = convertedFilePath });
+                        DateTime now = DateTime.Now;
+                        string fileName = Path.GetFileName(SourcePresentationFile);
+
+                        string targetDirectory = Path.Join(ParentPlaylist
+                                .PlaylistWorkingDirectory,
+                            FilenameUtils.ReplaceInvalidChars(fileName) + "_" + now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                        Directory.CreateDirectory(targetDirectory);
+
+                        Log.Debug($"Importing PowerPoint file: {SourcePresentationFile}");
+                        PresentationImporter.Run(SourcePresentationFile);
+
+                        Log.Debug($"Importing PDF file: {SourcePresentationFile}");
+                        ConvertPDF.Convert(SourcePresentationFile + ".pdf",
+                            targetDirectory);
+
+                        var newItems = new TrulyObservableCollection<MediaItem>();
+                        foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
+                                     .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
+                        {
+                            newItems.Add(new MediaItem()
+                                { SourceMediaFilePath = convertedFilePath });
+                        }
+
+                        Items = newItems;
+
+                        Log.Debug($"Generating slides");
+                        GenerateSlides();
+
+                        Log.Debug($"Import OK");
+
+                        LastSyncDateTime = DateTime.Now;
+
+                        IsBusy = false;
                     }
-
-                    Items = newItems;
-
-                    Log.Debug($"Generating slides");
-                    GenerateSlides();
-
-                    Log.Debug($"Import OK");
-
-                    LastSyncDateTime = DateTime.Now;
-                    
-                    IsBusy = false;
                 }
-            }
             });
         }
     }

@@ -142,6 +142,7 @@ public partial class MainView : UserControl
                     var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(
                         files[0].Path.LocalPath);
                     vm.Playlist.Dispose();
+                    x.IsDirty = false;
                     vm.Playlist = x;
                     // vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
                 }

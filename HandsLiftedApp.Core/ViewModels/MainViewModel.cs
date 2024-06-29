@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using ByteSizeLib;
 using Config.Net;
+using HandsLiftedApp.Core.Extensions;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -42,14 +43,14 @@ public class MainViewModel : ViewModelBase
         if (Design.IsDesignMode)
         {
             Playlist = new PlaylistInstance();
-            Playlist.Items.Add(new SectionHeadingItem());
-            Playlist.Items.Add(new LogoItemInstance(Playlist));
-            Playlist.Items.Add(new SongItemInstance(Playlist));
-            Playlist.Items.Add(new LogoItemInstance(Playlist));
-            Playlist.Items.Add(new SectionHeadingItem());
-            Playlist.Items.Add(new SongItemInstance(Playlist));
-            Playlist.Items.Add(new SectionHeadingItem());
-            Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
+            Playlist.Items.Add(new SectionHeadingItem().GenerateBaseItemInstance());
+            Playlist.Items.Add(new LogoItemInstance(Playlist).GenerateBaseItemInstance());
+            Playlist.Items.Add(new SongItemInstance(Playlist).GenerateBaseItemInstance());
+            Playlist.Items.Add(new LogoItemInstance(Playlist).GenerateBaseItemInstance());
+            Playlist.Items.Add(new SectionHeadingItem().GenerateBaseItemInstance());
+            Playlist.Items.Add(new SongItemInstance(Playlist).GenerateBaseItemInstance());
+            Playlist.Items.Add(new SectionHeadingItem().GenerateBaseItemInstance());
+            Playlist.Items.Add(new MediaGroupItemInstance(Playlist).GenerateBaseItemInstance());
             Playlist.Designs.Add(new BaseSlideTheme() { Name = "Default" });
 
             return;
@@ -103,7 +104,7 @@ public class MainViewModel : ViewModelBase
                     MediaGroupItemInstance newSlidesGroupItem = currentItem.slice(currentItem._Slides.IndexOf(slide));
 
                     if (newSlidesGroupItem != null)
-                        Playlist.Items.Insert(Playlist.Items.IndexOf(currentItem) + 1, newSlidesGroupItem);                    
+                        Playlist.Items.Insert(Playlist.Items.IndexOf(currentItem) + 1, newSlidesGroupItem.GenerateBaseItemInstance());                    
                 }
                 catch (Exception e)
                 {
@@ -196,16 +197,16 @@ public class MainViewModel : ViewModelBase
 
                     if (addItemMessage.InsertIndex != null)
                     {
-                        Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert);
+                        Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert.GenerateBaseItemInstance());
                     }
                     else if (addItemMessage.ItemToInsertAfter != null)
                     {
                         var indexOf = Playlist.Items.IndexOf(addItemMessage.ItemToInsertAfter);
-                        Playlist.Items.Insert(indexOf + 1, itemToInsert);
+                        Playlist.Items.Insert(indexOf + 1, itemToInsert.GenerateBaseItemInstance());
                     }
                     else
                     {
-                        Playlist.Items.Add(itemToInsert);
+                        Playlist.Items.Add(itemToInsert.GenerateBaseItemInstance());
                     }
                     
                     if (currentSelectedItem != null)
@@ -272,6 +273,7 @@ public class MainViewModel : ViewModelBase
                 var parsedPlaylist = HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
                 Playlist.Dispose();
                 Playlist = parsedPlaylist;
+                Playlist.IsDirty = false;
             }
             catch (Exception e)
             {

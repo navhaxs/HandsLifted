@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using Avalonia.Media.Imaging;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;

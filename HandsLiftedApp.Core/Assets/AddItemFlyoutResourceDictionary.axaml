@@ -1,8 +1,8 @@
 <ResourceDictionary
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:Class="HandsLiftedApp.Controls.Assets.AddItemFlyoutResourceDictionary"
     xmlns:material="using:Material.Icons.Avalonia"
+    x:Class="HandsLiftedApp.Core.Assets.AddItemFlyoutResourceDictionary"
     x:CompileBindings="False">
 
     <Design.PreviewWith>

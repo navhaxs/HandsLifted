@@ -1,9 +1,6 @@
-﻿using Avalonia.Animation;
-using HandsLiftedApp.Data.Slides;
-using ReactiveUI;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Xml.Serialization;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
@@ -20,6 +17,7 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         private string _title = "New Item";
+        [DataField]
         public string Title
         {
             get => _title; set

@@ -28,7 +28,7 @@ namespace HandsLiftedApp.Data.Models
     {
         public Playlist()
         {
-            Items = new ObservableCollection<Item>();
+            Items = new TrulyObservableCollection<Item>();
             if (Design.IsDesignMode)
                 return;
         }
@@ -56,9 +56,9 @@ namespace HandsLiftedApp.Data.Models
         // [XmlIgnore]
         // public String PrettyDate => Date.ToString("d MMM yyyy", CultureInfo.InvariantCulture);
         //
-        private ObservableCollection<Item> _items;
+        private TrulyObservableCollection<Item> _items;
 
-        public ObservableCollection<Item> Items
+        public TrulyObservableCollection<Item> Items
         {
             get => _items;
             set => this.RaiseAndSetIfChanged(ref _items, value);
