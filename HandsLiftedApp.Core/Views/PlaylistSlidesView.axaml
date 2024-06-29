@@ -73,7 +73,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <controls:ItemSlidesView DataContext="{Binding Item}" />
+                                <controls:ItemSlidesView />
                                 <controls1:AddItemButton Margin="14,0,0,0" DockPanel.Dock="Top" DataContext="{Binding}" />
                             </StackPanel>
                         </DataTemplate>

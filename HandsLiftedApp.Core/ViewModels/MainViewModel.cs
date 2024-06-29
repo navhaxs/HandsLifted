@@ -1,10 +1,4 @@
-﻿using HandsLiftedApp.Controls.Messages;
-using HandsLiftedApp.Core.Models;
-using HandsLiftedApp.Core.ViewModels.Editor;
-using HandsLiftedApp.Core.Views.Editors;
-using HandsLiftedApp.Data.Models.Items;
-using ReactiveUI;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -15,16 +9,20 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using ByteSizeLib;
 using Config.Net;
-using HandsLiftedApp.Core.Extensions;
-using HandsLiftedApp.Core.Models.Library;
+using HandsLiftedApp.Controls.Messages;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.ViewModels.LibraryModel;
 using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
+using ReactiveUI;
 using Serilog;
 using Item = HandsLiftedApp.Data.Models.Items.Item;
 
@@ -43,14 +41,14 @@ public class MainViewModel : ViewModelBase
         if (Design.IsDesignMode)
         {
             Playlist = new PlaylistInstance();
-            Playlist.Items.Add(new SectionHeadingItem().GenerateBaseItemInstance());
-            Playlist.Items.Add(new LogoItemInstance(Playlist).GenerateBaseItemInstance());
-            Playlist.Items.Add(new SongItemInstance(Playlist).GenerateBaseItemInstance());
-            Playlist.Items.Add(new LogoItemInstance(Playlist).GenerateBaseItemInstance());
-            Playlist.Items.Add(new SectionHeadingItem().GenerateBaseItemInstance());
-            Playlist.Items.Add(new SongItemInstance(Playlist).GenerateBaseItemInstance());
-            Playlist.Items.Add(new SectionHeadingItem().GenerateBaseItemInstance());
-            Playlist.Items.Add(new MediaGroupItemInstance(Playlist).GenerateBaseItemInstance());
+            Playlist.Items.Add(new SectionHeadingItem());
+            Playlist.Items.Add(new LogoItemInstance(Playlist));
+            Playlist.Items.Add(new SongItemInstance(Playlist));
+            Playlist.Items.Add(new LogoItemInstance(Playlist));
+            Playlist.Items.Add(new SectionHeadingItem());
+            Playlist.Items.Add(new SongItemInstance(Playlist));
+            Playlist.Items.Add(new SectionHeadingItem());
+            Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
             Playlist.Designs.Add(new BaseSlideTheme() { Name = "Default" });
 
             return;
@@ -104,7 +102,7 @@ public class MainViewModel : ViewModelBase
                     MediaGroupItemInstance newSlidesGroupItem = currentItem.slice(currentItem._Slides.IndexOf(slide));
 
                     if (newSlidesGroupItem != null)
-                        Playlist.Items.Insert(Playlist.Items.IndexOf(currentItem) + 1, newSlidesGroupItem.GenerateBaseItemInstance());                    
+                        Playlist.Items.Insert(Playlist.Items.IndexOf(currentItem) + 1, newSlidesGroupItem);                    
                 }
                 catch (Exception e)
                 {
@@ -197,16 +195,16 @@ public class MainViewModel : ViewModelBase
 
                     if (addItemMessage.InsertIndex != null)
                     {
-                        Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert.GenerateBaseItemInstance());
+                        Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert);
                     }
                     else if (addItemMessage.ItemToInsertAfter != null)
                     {
                         var indexOf = Playlist.Items.IndexOf(addItemMessage.ItemToInsertAfter);
-                        Playlist.Items.Insert(indexOf + 1, itemToInsert.GenerateBaseItemInstance());
+                        Playlist.Items.Insert(indexOf + 1, itemToInsert);
                     }
                     else
                     {
-                        Playlist.Items.Add(itemToInsert.GenerateBaseItemInstance());
+                        Playlist.Items.Add(itemToInsert);
                     }
                     
                     if (currentSelectedItem != null)

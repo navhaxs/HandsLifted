@@ -219,96 +219,90 @@
                     </ContextMenu>
                 </ListBox.ContextMenu>
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <ContentControl Content="{Binding Item}">
-                            <ContentControl.ContentTemplate>
-                                <common:MyTemplateSelector>
-                                    <DataTemplate x:Key="SectionHeadingItem" x:DataType="items:SectionHeadingItem">
-                                        <!--  TODO not working  -->
-                                        <!--<Grid.Styles>
+                    <common:MyTemplateSelector>
+                        <DataTemplate x:Key="SectionHeadingItem" x:DataType="items:SectionHeadingItem">
+                            <!--  TODO not working  -->
+                            <!--<Grid.Styles>
 									<Style Selector="Border:pointerover">
 										<Setter Property="Background" Value="#214c5e" />
 									</Style>
 								</Grid.Styles>-->
-                                        <Border BorderThickness="0 1 0 1"
-                                                BorderBrush="#5c5c5c"
-                                                Classes="SectionHeadingBorder">
-                                            <DockPanel Margin="9,0,0,0" VerticalAlignment="Stretch">
-                                                <TextBlock
-                                                    Padding="8 4 0 4"
-                                                    Classes="SectionHeadingTextBlock"
-                                                    FontSize="12"
-                                                    TextTrimming="CharacterEllipsis">
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0}">
-                                                            <Binding Path="Title" />
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                            </DockPanel>
-                                            <i:Interaction.Behaviors>
-                                                <behaviours:DragControlBehavior />
-                                            </i:Interaction.Behaviors>
-                                        </Border>
-                                    </DataTemplate>
-                                    <DataTemplate x:Key="CommentItem" x:DataType="items:CommentItem">
-                                        <DockPanel
-                                            Margin="0,0,0,0"
-                                            Background="Transparent"
-                                            VerticalAlignment="Stretch">
-                                            <items1:ItemIcon Margin="16,0,12,0" DockPanel.Dock="Left" />
-                                            <TextBlock
-                                                Padding="0,8,0,8"
-                                                FontSize="14"
-                                                TextTrimming="CharacterEllipsis">
-                                                <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0}">
-                                                        <Binding Path="Title" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                            <i:Interaction.Behaviors>
-                                                <behaviours:DragControlBehavior />
-                                            </i:Interaction.Behaviors>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                    <DataTemplate x:Key="Fallback" x:CompileBindings="False">
-                                        <DockPanel
-                                            Margin="0,0,0,0"
-                                            Background="Transparent"
-                                            VerticalAlignment="Stretch">
-                                            <Grid Width="12">
-                                                <Viewbox
-                                                    Width="22"
-                                                    Height="22"
-                                                    Margin="-8,0,8,0"
-                                                    IsVisible="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}">
-                                                    <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
-                                                </Viewbox>
-                                            </Grid>
-                                            <items1:ItemIcon Margin="0,0,8,0" DockPanel.Dock="Left"
-                                                             Foreground="#a2a2a2" />
-                                            <TextBlock
-                                                Padding="0,8,0,8"
-                                                FontSize="12"
-                                                Classes="ItemTextBlock"
-                                                Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
-                                                TextTrimming="CharacterEllipsis">
-                                                <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0}">
-                                                        <Binding Path="Title" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                            <i:Interaction.Behaviors>
-                                                <behaviours:DragControlBehavior />
-                                            </i:Interaction.Behaviors>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </common:MyTemplateSelector>
-                            </ContentControl.ContentTemplate>
-                        </ContentControl>
-                    </DataTemplate>
+                            <Border BorderThickness="0 1 0 1"
+                                    BorderBrush="#5c5c5c"
+                                    Classes="SectionHeadingBorder">
+                                <DockPanel Margin="9,0,0,0" VerticalAlignment="Stretch">
+                                    <TextBlock
+                                        Padding="8 4 0 4"
+                                        Classes="SectionHeadingTextBlock"
+                                        FontSize="12"
+                                        TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}">
+                                                <Binding Path="Title" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DockPanel>
+                                <i:Interaction.Behaviors>
+                                    <behaviours:DragControlBehavior />
+                                </i:Interaction.Behaviors>
+                            </Border>
+                        </DataTemplate>
+                        <DataTemplate x:Key="CommentItem" x:DataType="items:CommentItem">
+                            <DockPanel
+                                Margin="0,0,0,0"
+                                Background="Transparent"
+                                VerticalAlignment="Stretch">
+                                <items1:ItemIcon Margin="16,0,12,0" DockPanel.Dock="Left" />
+                                <TextBlock
+                                    Padding="0,8,0,8"
+                                    FontSize="14"
+                                    TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}">
+                                            <Binding Path="Title" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <i:Interaction.Behaviors>
+                                    <behaviours:DragControlBehavior />
+                                </i:Interaction.Behaviors>
+                            </DockPanel>
+                        </DataTemplate>
+                        <DataTemplate x:Key="Fallback" x:CompileBindings="False">
+                            <DockPanel
+                                Margin="0,0,0,0"
+                                Background="Transparent"
+                                VerticalAlignment="Stretch">
+                                <Grid Width="12">
+                                    <Viewbox
+                                        Width="22"
+                                        Height="22"
+                                        Margin="-8,0,8,0"
+                                        IsVisible="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}">
+                                        <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
+                                    </Viewbox>
+                                </Grid>
+                                <items1:ItemIcon Margin="0,0,8,0" DockPanel.Dock="Left"
+                                                 Foreground="#a2a2a2" />
+                                <TextBlock
+                                    Padding="0,8,0,8"
+                                    FontSize="12"
+                                    Classes="ItemTextBlock"
+                                    Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
+                                    TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}">
+                                            <Binding Path="Title" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <i:Interaction.Behaviors>
+                                    <behaviours:DragControlBehavior />
+                                </i:Interaction.Behaviors>
+                            </DockPanel>
+                        </DataTemplate>
+                    </common:MyTemplateSelector>
                 </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -9,12 +8,10 @@ using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using HandsLiftedApp.Core.Extensions;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Utils;
-using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -40,7 +37,7 @@ namespace HandsLiftedApp.Core.Models
                             var result = Items.ElementAtOrDefault(selectedIndex);
                             if (result != null)
                             {
-                                return result.Item;
+                                return result;
                             }
                         }
 
@@ -61,7 +58,7 @@ namespace HandsLiftedApp.Core.Models
                         if (selectedIndex != -1)
                         {
                             var result = Items.ElementAtOrDefault(selectedIndex);
-                            if (result is { Item: IItemInstance iItemInstance })
+                            if (result is IItemInstance iItemInstance)
                             {
                                 return iItemInstance;
                             }
@@ -155,13 +152,13 @@ namespace HandsLiftedApp.Core.Models
                             using (FileStream stream = new FileStream(filePath, FileMode.Open))
                             {
                                 var x = (SongItemInstance)serializer.Deserialize(stream);
-                                Items.Add(new ItemInstanceProxy(x));
+                                Items.Add(x);
                             }
                         }
                         else if (filePath.ToLower().EndsWith(".txt"))
                         {
                             var newSong = SongImporter.createSongItemFromTxtFile(filePath);
-                            Items.Add(new ItemInstanceProxy(newSong));
+                            Items.Add(newSong);
                         }
                     }
                 });
@@ -205,8 +202,6 @@ namespace HandsLiftedApp.Core.Models
                 .Subscribe(items =>
                 {
                     items.CollectionChanged -= OnItemsCollectionChanged;
-                    items.CollectionItemChanged -= OnItemChanged;
-                    items.CollectionItemChanged += OnItemChanged;
                     items.CollectionChanged += OnItemsCollectionChanged;
                 });
 
@@ -223,17 +218,9 @@ namespace HandsLiftedApp.Core.Models
             IsDirty = true;
         }
 
-       public void OnItemChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            // if (e is ReactivePropertyChangedEventArgs<IReactiveObject> { Sender: ItemInstanceProxy { Item: IItemModified { IsDirty: true } } })
-            // {
-            //     IsDirty = true;
-            // }
-        }
-       
-        private PlaylistItemInstanceCollection<ItemInstanceProxy> _items = new();
+        private PlaylistItemInstanceCollection<Item> _items = new();
 
-        public new PlaylistItemInstanceCollection<ItemInstanceProxy> Items
+        public new PlaylistItemInstanceCollection<Item> Items
         {
             get => _items;
             set
@@ -404,7 +391,7 @@ namespace HandsLiftedApp.Core.Models
             if (slideReference.SlideIndex != null)
             {
                 var baseItemInstance = Items[nextItemIndex];
-                if (baseItemInstance.Item is IItemInstance itemInstance)
+                if (baseItemInstance is IItemInstance itemInstance)
                 {
                     currentItemInstance = itemInstance;
                     itemInstance.SelectedSlideIndex = (int)slideReference.SlideIndex;
@@ -418,7 +405,7 @@ namespace HandsLiftedApp.Core.Models
             {
                 // deselect the slide within the previous item
                 var lastBaseItemInstance = Items[lastSelectedItemIndex];
-                if (lastBaseItemInstance.Item is IItemInstance itemInstance)
+                if (lastBaseItemInstance is IItemInstance itemInstance)
                     itemInstance.SelectedSlideIndex = -1;
             }
 
@@ -446,7 +433,7 @@ namespace HandsLiftedApp.Core.Models
                     // select first slide of this next item
                     return new SlideReference()
                     {
-                        Slide = Items[nextNavigatableItemIndex].Item.GetAsIItemInstance().Slides.ElementAtOrDefault(0),
+                        Slide = Items[nextNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(0),
                         SlideIndex = 0,
                         ItemIndex = nextNavigatableItemIndex
                     };
@@ -490,7 +477,7 @@ namespace HandsLiftedApp.Core.Models
                     // select first slide of this next item
                     return new SlideReference()
                     {
-                        Slide = Items[nextNavigatableItemIndex].Item.GetAsIItemInstance().Slides.ElementAtOrDefault(0),
+                        Slide = Items[nextNavigatableItemIndex].GetAsIItemInstance().Slides.ElementAtOrDefault(0),
                         SlideIndex = 0,
                         ItemIndex = nextNavigatableItemIndex
                     };
@@ -511,8 +498,8 @@ namespace HandsLiftedApp.Core.Models
         {
             for (int idx = startIdx + 1; idx < Items.Count; idx++)
             {
-                ItemInstanceProxy item = Items[idx];
-                IItemInstance? itemInstance = item.Item.GetAsIItemInstance();
+                Item? item = Items[idx];
+                IItemInstance? itemInstance = item.GetAsIItemInstance();
                 if (itemInstance?.Slides.Count > 0)
                 {
                     return idx;
@@ -567,11 +554,11 @@ namespace HandsLiftedApp.Core.Models
             int previousNavigatableItemIndex = getPreviousNavigatableItem(SelectedItemIndex);
             if (previousNavigatableItemIndex != -1)
             {
-                var nextSlideIndex = Items[previousNavigatableItemIndex].Item.GetAsIItemInstance().Slides.Count - 1;
+                var nextSlideIndex = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides.Count - 1;
 
                 return new SlideReference()
                 {
-                    Slide = Items[previousNavigatableItemIndex].Item.GetAsIItemInstance().Slides
+                    Slide = Items[previousNavigatableItemIndex].GetAsIItemInstance().Slides
                         .ElementAtOrDefault(nextSlideIndex),
                     SlideIndex = nextSlideIndex,
                     ItemIndex = previousNavigatableItemIndex
@@ -592,8 +579,8 @@ namespace HandsLiftedApp.Core.Models
         {
             for (int idx = startIdx - 1; idx >= 0; idx--)
             {
-                ItemInstanceProxy item = Items[idx];
-                IItemInstance? itemInstance = item.Item.GetAsIItemInstance();
+                Item item = Items[idx];
+                IItemInstance? itemInstance = item.GetAsIItemInstance();
                 if (itemInstance?.Slides.Count > 0)
                 {
                     return idx;

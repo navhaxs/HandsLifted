@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using DynamicData;
-using HandsLiftedApp.Core.Extensions;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -49,10 +48,8 @@ namespace HandsLiftedApp.Core
             };
 
             // TODO: convert all 'instance/runtime' classes to 'serialized document' classes
-            playlistSerialized.Items.AddRange(playlist.Items.ToList().ConvertAll(baseItemInstance =>
+            playlistSerialized.Items.AddRange(playlist.Items.ToList().ConvertAll(item =>
             {
-                var item = baseItemInstance.Item;
-                
                 if (item is LogoItemInstance i)
                 {
                     return new LogoItem() { Title = i.Title };
@@ -258,7 +255,7 @@ namespace HandsLiftedApp.Core
                         Items.Add(convereted);
                     }
 
-                    playlist.Items = new PlaylistItemInstanceCollection<ItemInstanceProxy>(Items.Select(item => item.GenerateBaseItemInstance()).ToList());
+                    playlist.Items = new PlaylistItemInstanceCollection<Item>(Items);
                     
                     return playlist;
                 }

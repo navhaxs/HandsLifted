@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Data;
 
 namespace HandsLiftedApp.Core.Models
 {
@@ -19,16 +21,46 @@ namespace HandsLiftedApp.Core.Models
         {
             foreach (var item in x)
             {
-                item.PropertyChanged += ItemPropertyChanged;
-                if (item is ItemInstanceProxy itemInstanceProxy)
-                {
-                    itemInstanceProxy.ItemDataModified += (itemInstanceProxyOnItemDataModified);
-                }
+                RegisterItem(item);
             }
         }
 
-        public event EventHandler<PropertyChangedEventArgs> CollectionItemChanged;
-        
+        private void RegisterItem(T item)
+        {
+            item.PropertyChanged += HandleDataFieldPropertyChanges;
+            
+            if (item is IItemDirtyBit i)
+            {
+                i.ItemDataModified += OnIOnItemDataModified;
+            }
+        }
+
+        private void UnregisterItem(T item)
+        {
+            item.PropertyChanged -= HandleDataFieldPropertyChanges;
+            if (item is IItemDirtyBit i)
+            {
+                i.ItemDataModified -= OnIOnItemDataModified;
+            }
+        }
+
+        private void OnIOnItemDataModified(object? sender, EventArgs args)
+        {
+            ItemDataModified?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void HandleDataFieldPropertyChanges(object? sender, PropertyChangedEventArgs args)
+        {
+            var properties = sender?.GetType()
+                .GetProperties()
+                .Where(prop => prop.IsDefined(typeof(DataField), false));
+
+            if (properties != null && properties.Any(property => property.Name == args.PropertyName))
+            {
+                ItemDataModified?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         public event EventHandler ItemDataModified;
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
@@ -36,44 +68,18 @@ namespace HandsLiftedApp.Core.Models
             base.OnCollectionChanged(e);
             if (e.NewItems != null)
             {
-                foreach (INotifyPropertyChanged inpc in e.NewItems)
+                foreach (T inpc in e.NewItems)
                 {
-                    inpc.PropertyChanged += ItemPropertyChanged;
-                    if (inpc is ItemInstanceProxy itemInstanceProxy)
-                    {
-                        itemInstanceProxy.ItemDataModified += (itemInstanceProxyOnItemDataModified);
-                    }
+                    RegisterItem(inpc);
                 }
             }
             if (e.OldItems != null)
             {
-                foreach (INotifyPropertyChanged inpc in e.OldItems)
+                foreach (T item in e.OldItems)
                 {
-                    inpc.PropertyChanged -= ItemPropertyChanged;
-                    if (inpc is ItemInstanceProxy itemInstanceProxy)
-                    {
-                        itemInstanceProxy.ItemDataModified -= (itemInstanceProxyOnItemDataModified);
-                    }
+                    UnregisterItem(item);
                 }
             }
-        }
-
-        private void itemInstanceProxyOnItemDataModified(object? sender, EventArgs args)
-        {
-            ItemDataModified?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            CollectionItemChanged?.Invoke(this, e);
-            //rather than marking entire collection as 'changed' which AvaloniaUI ListBox default behaviour does undesired things...
-            //var index = IndexOf((T)sender);
-            //var args = new NotifyCollectionChangedEventArgs(
-            //    action: NotifyCollectionChangedAction.Replace,
-            //    newItem: sender,
-            //    oldItem: sender,
-            //    index: index);
-            //base.OnCollectionChanged(args);
         }
     }
 }
