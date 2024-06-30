@@ -39,6 +39,7 @@
                         <DataTemplate>
                             <Button Content="{Binding Name}"
                                     Background="{Binding Colour}"
+                                    Foreground="Black"
                                     Click="OnAddPartClick"
                                     ToolTip.Placement="Right"
                                     ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}">
@@ -84,6 +85,7 @@
 
             <Button x:Name="AddPartFlyoutToggleButton" BorderThickness="0" Background="Transparent"
                     VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10"
+                    Cursor="Hand"
                     Flyout="{StaticResource MySharedFlyout}">
                 <material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4"
                                        VerticalAlignment="Center" />
@@ -129,7 +131,7 @@
                                     <Setter Property="IsVisible" Value="True" />
                                 </Style>
                             </Grid.Styles>
-                            <DockPanel Name="PART_Container" Cursor="Hand">
+                            <DockPanel Name="PART_Container" Cursor="Hand" Background="Transparent">
                                 <DockPanel.ContextMenu>
                                     <ContextMenu PlacementAnchor="Bottom" PlacementMode="Bottom"
                                                  PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
@@ -146,21 +148,29 @@
                                     <TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="12"
                                                Text="{Binding SongStanza.Name}" />
                                 </Border>
-                                <Path Name="PART_After" Data="M0,0 8,10 0,20" Fill="{Binding SongStanza.Colour}" />
+                                <Path Name="PART_After" IsHitTestVisible="False" Data="M0,0 8,10 0,20" Fill="{Binding SongStanza.Colour}" />
                                 <i:Interaction.Behaviors>
                                     <behaviours:StanzaDragControlBehavior />
                                 </i:Interaction.Behaviors>
                             </DockPanel>
                             <Button DockPanel.Dock="Right"
                                     Classes="HoverInsertButton"
-                                    Background="Transparent"
                                     Margin="0 0 0 0"
                                     HorizontalAlignment="Left"
                                     BorderThickness="0"
+                                    Cursor="Hand"
                                     DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
                                     Flyout="{StaticResource MySharedFlyout}">
                                 <material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4"
                                                        VerticalAlignment="Center" />
+                                <Button.Styles>
+                                    <Style Selector="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Style>
+                                    <Style Selector="Button:pointerover">
+                                        <Setter Property="Background" Value="Pink" />
+                                    </Style>
+                                </Button.Styles>
                             </Button>
                         </Grid>
                     </DataTemplate>

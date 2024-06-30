@@ -1,10 +1,12 @@
-﻿using Avalonia;
+﻿using System.Diagnostics;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 
 namespace HandsLiftedApp.Controls
 {
@@ -65,6 +67,7 @@ namespace HandsLiftedApp.Controls
         private void EditButton_OnClick(object? sender, RoutedEventArgs e)
         {
             EntryTextBox.Text = Text;
+            EntryTextBox.CaretIndex = 0;
             Carousel.SelectedIndex = 1;
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -91,23 +94,54 @@ namespace HandsLiftedApp.Controls
 
         private void SubmitButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            // TODO check mouse is over submit button... then ignore and return
-            Carousel.SelectedIndex = 0;
             Text = EntryTextBox.Text ?? string.Empty;
-            e.Handled = true;
+            Carousel.SelectedIndex = 0;
         }
 
         private void EntryTextBox_OnLostFocus(object? sender, RoutedEventArgs e)
         {
+            var topLevel = TopLevel.GetTopLevel(this);
+            var focusedElement = topLevel?.FocusManager?.GetFocusedElement();
+            if (focusedElement != null)
+            {
+                var parentTextBox = ((Control)focusedElement).FindAncestorOfType<TextBoxToggleButton>();
+                if (parentTextBox == this)
+                {
+                    return;
+                }
+            }
             // TODO
             Carousel.SelectedIndex = 0;
             e.Handled = true;
+            UnregisterEvents();
         }
 
-        private void SubmitButton_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        private void EntryTextBox_OnGotFocus(object? sender, GotFocusEventArgs e)
+        {
+            RegisterEvents();
+        }
+
+        private void RegisterEvents()
+        {
+            var t = TopLevel.GetTopLevel(this);
+            if (t is Window parentWindow)
+            {
+                parentWindow.PointerPressed += OnParentWindowOnPointerPressed;
+            }
+        }
+        
+        private void UnregisterEvents()
+        {
+            var t = TopLevel.GetTopLevel(this);
+            if (t is Window parentWindow)
+            {
+                parentWindow.PointerPressed -= OnParentWindowOnPointerPressed;
+            }
+        }
+
+        private void OnParentWindowOnPointerPressed(object? o, PointerPressedEventArgs eventArgs)
         {
             Carousel.SelectedIndex = 0;
-            Text = EntryTextBox.Text ?? string.Empty;
-            e.Handled = true;        }
+        }
     }
 }   

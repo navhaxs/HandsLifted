@@ -19,7 +19,7 @@
             Background="Transparent"
             BorderThickness="0"
             CornerRadius="6"
-            VerticalAlignment="Stretch"
+            VerticalAlignment="Center"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Left"
             Cursor="Hand">
@@ -61,9 +61,10 @@
             </DockPanel>
         </Button>
         <TextBox x:Name="EntryTextBox" KeyDown="InputElement_OnKeyDown"
+                 GotFocus="EntryTextBox_OnGotFocus"
                  LostFocus="EntryTextBox_OnLostFocus"
                  CornerRadius="6"
-                 Margin="8 0 0 0"
+                 Margin="3 0 0 0"
                  Background="White"
                  Foreground="Black"
                  CaretBrush="Black"
@@ -79,13 +80,16 @@
                         Padding="0"
                         Margin="14 0 0 0"
                         Click="SubmitButton_OnClick"
-                        PointerPressed="SubmitButton_OnPointerPressed"
                         BorderThickness="0"
                         Background="#3574f0">
                     <Button.Styles>
                         <Style Selector="Button:pointerover /template/ ContentPresenter">
                             <Setter Property="Background"
                                     Value="#4b9bff" />
+                        </Style>
+                        <Style Selector="Button:pressed /template/ ContentPresenter">
+                            <Setter Property="Background"
+                                    Value="#0072FF" />
                         </Style>
                     </Button.Styles>
                     <avalonia:MaterialIcon
