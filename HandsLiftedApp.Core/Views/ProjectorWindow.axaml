@@ -6,6 +6,7 @@
         xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
         xmlns:avaloniaNdi="clr-namespace:AvaloniaNDI;assembly=AvaloniaNDI"
         xmlns:render1="clr-namespace:HandsLiftedApp.Views.Render"
+        xmlns:app="clr-namespace:HandsLiftedApp.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
         x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
@@ -31,7 +32,7 @@
         </ContextMenu>
     </Window.ContextMenu>
     <Grid>
-        <avaloniaNdi:NDISendContainer NdiName="VisionScreens Lower Thirds" NdiWidth="1920" NdiHeight="1080"
+        <avaloniaNdi:NDISendContainer NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" NdiWidth="1920" NdiHeight="1080"
                                       Width="1920"
                                       Height="1080">
             <render1:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
@@ -40,7 +41,7 @@
         <Grid Background="Black" />
         
         <Viewbox>
-            <avaloniaNdi:NDISendContainer NdiName="VisionScreens Main Output" NdiWidth="1920" NdiHeight="1080"
+            <avaloniaNdi:NDISendContainer NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}" NdiWidth="1920" NdiHeight="1080"
                                           Width="1920"
                                           Height="1080">
                 <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />

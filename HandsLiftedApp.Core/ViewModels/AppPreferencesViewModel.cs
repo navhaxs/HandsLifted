@@ -142,6 +142,23 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _libraryPath, value);
         }
         
+        private string _ndiMainOutputName = "VisionScreens Main Output";
+        [DataMember]
+        public string NdiMainOutputName
+        {
+            get => _ndiMainOutputName;
+            set => this.RaiseAndSetIfChanged(ref _ndiMainOutputName, value);
+        }
+        
+        private string _ndiLyricsOutputName = "VisionScreens Lower Thirds";
+
+        [DataMember]
+        public string NdiLyricsOutputName
+        {
+            get => _ndiLyricsOutputName;
+            set => this.RaiseAndSetIfChanged(ref _ndiLyricsOutputName, value);
+        }
+        
         private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png";
         [DataMember]
         public String LogoGraphicFile { get => _logoGraphicFile; set => this.RaiseAndSetIfChanged(ref _logoGraphicFile, value); }

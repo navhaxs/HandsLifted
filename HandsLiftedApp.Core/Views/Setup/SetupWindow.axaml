@@ -24,6 +24,11 @@
             <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowOutput}">Show output display on startup</CheckBox>
             <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowStage}">Show stage display on startup</CheckBox>
             <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowLogo}">Show logo on startup</CheckBox>
+            <Label>NDI</Label>
+            <Label>Output Display (Projector)</Label>
+            <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}" />
+            <Label>Lyrics (Lower Thirds)</Label>
+            <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" />
         </StackPanel>
     </DockPanel>
 </Window>
