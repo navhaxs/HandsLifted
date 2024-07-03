@@ -24,10 +24,11 @@ namespace HandsLiftedApp.Data.SlideTheme
         // Slide Design Properties
         [DataMember]
         public XmlFontFamily FontFamily = new();
+        
         [XmlIgnore]
         public FontFamily FontFamilyAsAvalonia { get => FontFamily; set => this.RaiseAndSetIfChanged(ref FontFamily, value); }
+        
         private FontWeight _fontWeight = FontWeight.Normal;
-        // [XmlIgnore]
         [DataMember]
         public FontWeight FontWeight { get => _fontWeight; set => this.RaiseAndSetIfChanged(ref _fontWeight, value); }
         
@@ -60,6 +61,12 @@ namespace HandsLiftedApp.Data.SlideTheme
         private string? _backgroundGraphicFilePath;
         [DataMember]
         public string? BackgroundGraphicFilePath { get => _backgroundGraphicFilePath; set => this.RaiseAndSetIfChanged(ref _backgroundGraphicFilePath, value); }
+        
+        // StrokeColour
+        // StrokeThickness
+        
+        // DropShadowColour
+        // DropShadowRadius
         
         // [XmlAttribute]
 

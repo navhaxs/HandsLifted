@@ -1,0 +1,43 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:complexSlide="clr-namespace:HandsLiftedApp.Core.Render.ComplexSlide"
+             mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="60"
+             x:Class="HandsLiftedApp.Core.Render.ComplexSlide.ComplexUserControl1">
+    <StackPanel Background="Aqua">
+
+        <TextBlock Text="Test 123"
+                   Foreground="White"
+                   FontSize="20">
+            <TextBlock.Effect>
+                <DropShadowEffect
+                    Color="Black"
+                    OffsetX="0"
+                    OffsetY="0"
+                    Opacity="1"
+                    BlurRadius="1" />
+            </TextBlock.Effect>
+        </TextBlock>
+        
+        <complexSlide:OutlinedTextBlock 
+            Text="Test 123"
+            Fill="White"
+            Stroke="Black"
+            StrokeThickness="0.6"
+            FontSize="20"
+            FontStyle="Normal"
+            FontWeight="SemiBold"
+            >
+            <complexSlide:OutlinedTextBlock.Effect>
+                <DropShadowEffect
+                    Color="Black"
+                    OffsetX="0"
+                    OffsetY="0"
+                    Opacity="1"
+                    BlurRadius="0.1" />
+            </complexSlide:OutlinedTextBlock.Effect>
+        </complexSlide:OutlinedTextBlock>
+        
+    </StackPanel>
+</UserControl>
