@@ -6,8 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-    d:DesignHeight="350"
-    d:DesignWidth="1100"
+    d:DesignHeight="200"
+    d:DesignWidth="600"
     x:DataType="viewModels:MainViewModel"
     mc:Ignorable="d">
 
@@ -27,9 +27,10 @@
 
         <!--  Search box  -->
         <TextBox
+            CornerRadius="99"
             MinWidth="400"
             MaxWidth="400"
-            Padding="8,4,8,4"
+            Padding="12,4"
             HorizontalAlignment="Left"
             Background="#35000000"
             BorderThickness="1"
@@ -43,7 +44,7 @@
 
             <!--  Left box  -->
             <DockPanel Grid.Column="0">
-                
+
                 <Button DockPanel.Dock="Bottom" Command="{Binding LibraryViewModel.CreateNewSongCommand}">Add new song</Button>
 
                 <ListBox Margin="0,0,0,0" BorderThickness="0"
@@ -74,32 +75,33 @@
             <!--  Centre box  -->
             <Grid Grid.Column="2">
 
-                <StackPanel>
-                    <ListBox
-                        Background="Transparent"
-                        ItemsSource="{Binding LibraryViewModel.SelectedLibrary.Items}"
-                        SelectedItem="{Binding LibraryViewModel.SelectedItem, Mode=OneWayToSource}"
-                        HorizontalAlignment="Stretch"
-                        BorderThickness="0">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Title}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <i:Interaction.Behaviors>
-                        <!--TODO create separate 'selectors' for status messages -->
-                        <!--<ia:DataTriggerBehavior Binding="{Binding Library.SearchResults.Size}"
+                <!-- <StackPanel> -->
+
+                <ListBox
+                    Background="Transparent"
+                    ItemsSource="{Binding LibraryViewModel.SelectedLibrary.Items}"
+                    SelectedItem="{Binding LibraryViewModel.SelectedItem, Mode=OneWayToSource}"
+                    HorizontalAlignment="Stretch"
+                    BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <i:Interaction.Behaviors>
+                    <!--TODO create separate 'selectors' for status messages -->
+                    <!--<ia:DataTriggerBehavior Binding="{Binding Library.SearchResults.Size}"
 												ComparisonCondition="Equal"
 												Value="0">
 							<ia:ChangePropertyAction TargetObject="NoItemsLabel"
 													 PropertyName="IsVisible"
 													 Value="True" />
 						</ia:DataTriggerBehavior>-->
-                    </i:Interaction.Behaviors>
-                    <TextBlock Name="NoItemsLabel" Text="No items" IsVisible="False" />
-                    <!--<TextBlock Name="NoResultsLabel" Text="No results" />-->
-                </StackPanel>
+                </i:Interaction.Behaviors>
+                <!-- <TextBlock Name="NoItemsLabel" Text="No items" IsVisible="False" /> -->
+                <!-- </StackPanel> -->
 
             </Grid>
 
@@ -114,6 +116,9 @@
 
             <!--  Right box  -->
             <Grid Grid.Column="4" Margin="8 0">
+                <Image
+                    Stretch="Uniform"
+                    Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" />
                 <ScrollViewer>
                     <TextBlock
                         Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" />

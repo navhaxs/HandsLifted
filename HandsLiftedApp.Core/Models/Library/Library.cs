@@ -48,22 +48,19 @@ namespace HandsLiftedApp.Core.Models.Library
             Items = new ObservableCollection<Item>();
             // rootDirectory = Globals.AppPreferences.LibraryPath;
 
-          
-
             Refresh();
 
             // watch();
-
-
         }
-
-   
 
         void Refresh()
         {
             if (Directory.Exists(Config.Directory) && Items != null)
             {
-                var files = Directory.GetFiles(Config.Directory, "*.*", SearchOption.AllDirectories)
+                var files = new DirectoryInfo(Config.Directory).GetFiles("*.*", SearchOption.AllDirectories)
+                         .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
+                         .Select(f => f.FullName)
+                         // .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.OrdinalIgnoreCase))
                          .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
 
                 Log.Information($"Refreshed library [{Config.Label}] [{Config.Directory}]");

@@ -20,12 +20,6 @@ namespace HandsLiftedApp.Core
 {
     internal class CreateItem
     {
-        public static readonly string[] SUPPORTED_SONG = { "txt", "xml" };
-        public static readonly string[] SUPPORTED_POWERPOINT = { "ppt", "pptx", "odp" };
-        public static readonly string[] SUPPORTED_VIDEO = { "mp4", "flv", "mov", "mkv", "avi", "wmv", "webm" };
-        public static readonly string[] SUPPORTED_IMAGE = { "bmp", "png", "jpg", "jpeg" };
-        public static readonly string[] SUPPORTED_PDF= { "pdf" };
-        
         public static Item? OpenPresentationFile(string filePath, PlaylistInstance currentPlaylist)
         {
             Item? returnValue = null;
@@ -93,7 +87,7 @@ namespace HandsLiftedApp.Core
             {
                 return new CustomAxamlSlideInstance(mediaItem);
             }
-            else if (SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
+            else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
             {
                 return new VideoSlideInstance(fullFilePath);
             }

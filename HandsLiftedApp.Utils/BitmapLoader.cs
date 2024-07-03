@@ -9,7 +9,7 @@ namespace HandsLiftedApp.Utils
     {
         public static BitmapCache Cache = new(20);
 
-        public static Bitmap LoadBitmap(string pathOrUri)
+        public static Bitmap LoadBitmap(string pathOrUri, int? decodeToWidth = null)
         {
             try
             {
@@ -45,6 +45,11 @@ namespace HandsLiftedApp.Utils
                         return loaded;
                     }
                     //return new Bitmap(rawUri);
+                }
+
+                if (decodeToWidth != null)
+                {
+                    return Bitmap.DecodeToWidth(AssetLoader.Open(uri), decodeToWidth.Value);
                 }
 
                 return new Bitmap(AssetLoader.Open(uri));

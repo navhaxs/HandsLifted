@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -15,6 +18,7 @@ using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.UI;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
 using Serilog;
 
@@ -30,6 +34,16 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             get => _selectedItemPreview.Value;
         }
+
+        private Bitmap? _selectedItemImagePreview;
+
+        public Bitmap? SelectedItemImagePreview
+        {
+            get => _selectedItemImagePreview;
+            set => this.RaiseAndSetIfChanged(ref _selectedItemImagePreview, value);
+        }
+
+        private CancellationTokenSource _cancellationTokenSource;
 
         public LibraryViewModel()
         {
@@ -89,16 +103,22 @@ namespace HandsLiftedApp.Core.ViewModels
                 .Select(searchResults => searchResults != null)
                 .ToProperty(this, x => x.IsAvailable);
 
+            _cancellationTokenSource = new CancellationTokenSource();
+
             _selectedItemPreview = this.WhenAnyValue(x => x.SelectedItem, (_SelectedItem) =>
                     {
                         if (_SelectedItem != null)
                         {
                             try
                             {
-                                long length = new FileInfo(_SelectedItem.FullFilePath).Length;
-                                if (length < 1000000) // 1MB
+                                string extension = new FileInfo(_SelectedItem.FullFilePath).Extension.ToLower();
+                                if (!Constants.SUPPORTED_IMAGE.Contains(extension.TrimStart('.')))
                                 {
-                                    return File.ReadAllText(_SelectedItem.FullFilePath);
+                                    long length = new FileInfo(_SelectedItem.FullFilePath).Length;
+                                    if (length < 200_000) // 0.2MB
+                                    {
+                                        return File.ReadAllText(_SelectedItem.FullFilePath);
+                                    }
                                 }
                             }
                             catch (Exception ex)
@@ -111,6 +131,37 @@ namespace HandsLiftedApp.Core.ViewModels
                     })
                     .ToProperty(this, c => c.SelectedItemPreview)
                 ;
+            this.WhenAnyValue(x => x.SelectedItem)
+                // .ObserveOn(RxApp.TaskpoolScheduler)
+                .Subscribe((_SelectedItem) =>
+                {
+                    _cancellationTokenSource.Cancel();
+
+                    // Task.Run(() =>
+                    // {
+                        if (_SelectedItem != null)
+                        {
+                            try
+                            {
+                                string extension = new FileInfo(_SelectedItem.FullFilePath).Extension.ToLower();
+                                if (Constants.SUPPORTED_IMAGE.Contains(extension.TrimStart('.')))
+                                {
+                                    // if (File.Exists(x) || AssetLoader.Exists(new Uri(x)))
+                                    // {
+                                    SelectedItemImagePreview = BitmapLoader.LoadBitmap(_SelectedItem.FullFilePath, 800);
+                                    // } 
+                                    return;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("Attempt to read file for library preview failed", ex);
+                            }
+                        }
+
+                        SelectedItemImagePreview = null;
+                    // }, _cancellationTokenSource.Token);
+                });
 
             OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
             {
