@@ -44,6 +44,7 @@
         <PackageReference Include="Serilog.Sinks.Console"/>
         <PackageReference Include="Serilog.Sinks.Debug"/>
         <PackageReference Include="Serilog.Sinks.File"/>
+        <PackageReference Include="YamlDotNet" />
     </ItemGroup>
 
 

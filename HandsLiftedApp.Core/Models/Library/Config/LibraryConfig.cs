@@ -4,7 +4,7 @@ namespace HandsLiftedApp.Core.Models.Library.Config
 {
     public class LibraryConfig
     {
-        public List<LibraryDefinition> LibraryItems { get; } = new();
+        public List<LibraryDefinition> LibraryItems { get; set; } = new();
 
         public class LibraryDefinition
         {

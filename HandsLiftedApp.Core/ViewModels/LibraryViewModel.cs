@@ -21,6 +21,8 @@ using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using Serilog;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace HandsLiftedApp.Core.ViewModels
 {
@@ -43,39 +45,56 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedItemImagePreview, value);
         }
 
+        private LibraryConfig _libraryConfig = new LibraryConfig();
+
+        public LibraryConfig LibraryConfig
+        {
+            get => _libraryConfig;
+            set => this.RaiseAndSetIfChanged(ref _libraryConfig, value);
+        }
+
         private CancellationTokenSource _cancellationTokenSource;
 
         public LibraryViewModel()
         {
-            // config is for loading...
-            LibraryConfig libraryConfig = new LibraryConfig();
-            libraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
-                { Label = "Songs", Directory = @"D:\data\VisionScreens\Song Library" });
-            libraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
+            var lastSavedConfig = LoadConfig();
+            if (lastSavedConfig == null || lastSavedConfig.LibraryItems.Count == 0)
             {
-                Label = "Church News",
-                Directory = @"H:\.shortcut-targets-by-id\1VCRKC34SblCDK3hzr9hkb7b5wMjUQF5R\Service Docs\Church News"
-            });
-            libraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
+                // config is for loading...
+                LibraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
+                    { Label = "Songs", Directory = @"D:\data\VisionScreens\Song Library" });
+                LibraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
+                {
+                    Label = "Church News",
+                    Directory = @"H:\.shortcut-targets-by-id\1VCRKC34SblCDK3hzr9hkb7b5wMjUQF5R\Service Docs\Church News"
+                });
+                LibraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
+                {
+                    Label = "Sermon Media",
+                    Directory =
+                        @"H:\.shortcut-targets-by-id\1VCRKC34SblCDK3hzr9hkb7b5wMjUQF5R\Service Docs\Sermon Media"
+                });
+                LibraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
+                {
+                    Label = "Kids Talks",
+                    Directory = @"H:\.shortcut-targets-by-id\1VCRKC34SblCDK3hzr9hkb7b5wMjUQF5R\Service Docs\Kids Talks"
+                });
+                WriteConfig();
+            }
+            else
             {
-                Label = "Sermon Media",
-                Directory = @"H:\.shortcut-targets-by-id\1VCRKC34SblCDK3hzr9hkb7b5wMjUQF5R\Service Docs\Sermon Media"
-            });
-            libraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
-            {
-                Label = "Kids Talks",
-                Directory = @"H:\.shortcut-targets-by-id\1VCRKC34SblCDK3hzr9hkb7b5wMjUQF5R\Service Docs\Kids Talks"
-            });
+                LibraryConfig = lastSavedConfig;
+            }
 
             // runtime...
             Libraries = new ObservableCollection<Library>();
 
-            foreach (var library in libraryConfig.LibraryItems)
+            foreach (var library in LibraryConfig.LibraryItems)
             {
                 Libraries.Add(new Library(library));
             }
 
-            Debug.Print(libraryConfig.ToString());
+            Debug.Print(LibraryConfig.ToString());
 
             // constructor
             _searchResults = this
@@ -139,27 +158,27 @@ namespace HandsLiftedApp.Core.ViewModels
 
                     // Task.Run(() =>
                     // {
-                        if (_SelectedItem != null)
+                    if (_SelectedItem != null)
+                    {
+                        try
                         {
-                            try
+                            string extension = new FileInfo(_SelectedItem.FullFilePath).Extension.ToLower();
+                            if (Constants.SUPPORTED_IMAGE.Contains(extension.TrimStart('.')))
                             {
-                                string extension = new FileInfo(_SelectedItem.FullFilePath).Extension.ToLower();
-                                if (Constants.SUPPORTED_IMAGE.Contains(extension.TrimStart('.')))
-                                {
-                                    // if (File.Exists(x) || AssetLoader.Exists(new Uri(x)))
-                                    // {
-                                    SelectedItemImagePreview = BitmapLoader.LoadBitmap(_SelectedItem.FullFilePath, 800);
-                                    // } 
-                                    return;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error("Attempt to read file for library preview failed", ex);
+                                // if (File.Exists(x) || AssetLoader.Exists(new Uri(x)))
+                                // {
+                                SelectedItemImagePreview = BitmapLoader.LoadBitmap(_SelectedItem.FullFilePath, 800);
+                                // } 
+                                return;
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Attempt to read file for library preview failed", ex);
+                        }
+                    }
 
-                        SelectedItemImagePreview = null;
+                    SelectedItemImagePreview = null;
                     // }, _cancellationTokenSource.Token);
                 });
 
@@ -178,6 +197,44 @@ namespace HandsLiftedApp.Core.ViewModels
                 MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
                     new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
             });
+        }
+
+        private void WriteConfig()
+        {
+            try
+            {
+                using (var streamWriter = new StreamWriter(Constants.LIBRARY_CONFIG_FILEPATH))
+                {
+                    var serializer = new SerializerBuilder()
+                        // .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    serializer.Serialize(streamWriter, LibraryConfig);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Failed to write library config", e);
+                throw;
+            }
+        }
+
+        private LibraryConfig? LoadConfig()
+        {
+            try
+            {
+                using (var streamReader = new StreamReader(Constants.LIBRARY_CONFIG_FILEPATH))
+                {
+                    var deserializer = new DeserializerBuilder()
+                        // .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    return deserializer.Deserialize<LibraryConfig>(streamReader);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Failed to load library config", ex);
+                return null;
+            }
         }
 
         // In ReactiveUI, this is the syntax to declare a read-write property

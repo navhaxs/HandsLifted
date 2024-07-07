@@ -3,7 +3,7 @@
     internal static class Constants
     {
         public const string APP_STATE_FILEPATH = "appstate.json";
-        public const string LIBRARY_CONFIG_FILEPATH = "library.json";
+        public const string LIBRARY_CONFIG_FILEPATH = "library.yml";
         
         public static readonly string[] SUPPORTED_SONG = { "txt", "xml" };
         public static readonly string[] SUPPORTED_POWERPOINT = { "ppt", "pptx", "odp" };
