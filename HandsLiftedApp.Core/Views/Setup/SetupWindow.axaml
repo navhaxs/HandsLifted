@@ -6,29 +6,152 @@
         xmlns:setup="clr-namespace:HandsLiftedApp.Core.Views.Setup"
         xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
         mc:Ignorable="d"
-        Width="380" Height="400"
+        Width="600" Height="400"
+        ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
+        ExtendClientAreaTitleBarHeightHint="90"
+        ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterOwner"
         x:Class="HandsLiftedApp.Core.Views.Setup.SetupWindow"
         x:DataType="viewModels:SetupWindowViewModel"
+        Background="{DynamicResource SurfaceBrush}"
         Title="SetupWindow">
+
     <DockPanel>
-        <StackPanel>
-            <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
-            <Label>Output Display (Projector)</Label>
-            <ComboBox SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OutputDisplayBounds}"
-                      ItemsSource="{Binding AllAvailableScreens}" />
-            <Label>Stage Display</Label>
-            <ComboBox Name="StageDisplayComboBox" SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.StageDisplayBounds}"
-                      ItemsSource="{Binding AllAvailableScreens}" />
-            <Label>Startup</Label>
-            <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowOutput}">Show output display on startup</CheckBox>
-            <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowStage}">Show stage display on startup</CheckBox>
-            <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowLogo}">Show logo on startup</CheckBox>
-            <Label>NDI</Label>
-            <Label>Output Display (Projector)</Label>
-            <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}" />
-            <Label>Lyrics (Lower Thirds)</Label>
-            <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" />
-        </StackPanel>
+        <Border DockPanel.Dock="Top">
+            <TextBlock FontSize="16" Margin="16 6 12 6">Setup</TextBlock>
+        </Border>
+
+        <DockPanel Background="{DynamicResource DarkSurfaceBrush}">
+            <DockPanel DockPanel.Dock="Bottom">
+                <Button DockPanel.Dock="Right" Margin="8 6" Padding="20 6">OK</Button>
+                <Grid />
+            </DockPanel>
+            <TabControl TabStripPlacement="Left">
+                <TabControl.Styles>
+                    <Style Selector="TabItem">
+                        <Setter Property="Template">
+                            <ControlTemplate>
+                                <Border
+                                    CornerRadius="6 0 0 6"
+                                    Padding="16 8 24 8"
+                                    Margin="8 0 0 0"
+                                    Background="Transparent"
+                                    Name="PART_LayoutRoot">
+                                    <Panel>
+                                        <ContentPresenter
+                                            Name="PART_ContentPresenter_Override"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Content="{TemplateBinding Header}"
+                                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                            RecognizesAccessKey="True" />
+                                        <Border Name="PART_SelectedPipe"
+                                                Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
+                                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                                IsVisible="False" />
+                                    </Panel>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter>
+                    </Style>
+                    <Style Selector="TabItem:selected > Border#PART_LayoutRoot">
+                        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+                    </Style>
+                    <Style Selector="TabItem:selected">
+                        <Setter Property="Foreground" Value="White" />
+                    </Style>
+                    <!-- <Style Selector="Tab" -->
+                    <Style Selector="TabControl">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="{DynamicResource TabItemMargin}" />
+                        <Setter Property="Background" Value="{DynamicResource TabControlBackground}" />
+                        <Setter Property="Template">
+                            <ControlTemplate>
+                                <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                        Background="{TemplateBinding Background}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                                    <DockPanel>
+                                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                                        Margin="0 8 0 0"
+                                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                                        DockPanel.Dock="{TemplateBinding TabStripPlacement}" />
+                                        <Border
+                                            CornerRadius="0 0 0 6"
+                                            Background="{DynamicResource BackgroundBrush}">
+
+                                            <ContentPresenter Name="PART_SelectedContentHost"
+                                                              Padding="{TemplateBinding Padding}"
+                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                              Content="{TemplateBinding SelectedContent}"
+                                                              ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+
+                                        </Border>
+
+                                    </DockPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter>
+                    </Style>
+
+                </TabControl.Styles>
+
+                <TabItem Header="Displays">
+                    <StackPanel>
+                        <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
+                        <Label>Output Display (Projector)</Label>
+                        <ComboBox
+                            SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OutputDisplayBounds}"
+                            ItemsSource="{Binding AllAvailableScreens}" />
+                        <Label>Stage Display</Label>
+                        <ComboBox Name="StageDisplayComboBox"
+                                  SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.StageDisplayBounds}"
+                                  ItemsSource="{Binding AllAvailableScreens}" />
+                    </StackPanel>
+
+                </TabItem>
+
+                <TabItem Header="Startup">
+                    <StackPanel>
+                        <Label>Startup</Label>
+                        <CheckBox
+                            IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowOutput}">
+                            Show output display on startup
+                        </CheckBox>
+                        <CheckBox
+                            IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowStage}">
+                            Show stage display on startup
+                        </CheckBox>
+                        <CheckBox
+                            IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowLogo}">
+                            Show logo on startup
+                        </CheckBox>
+                    </StackPanel>
+
+                </TabItem>
+
+                <TabItem Header="NDI">
+                    <StackPanel>
+                        <Label>NDI</Label>
+                        <Label>Output Display (Projector)</Label>
+                        <TextBox
+                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}" />
+                        <Label>Lyrics (Lower Thirds)</Label>
+                        <TextBox
+                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" />
+                    </StackPanel>
+
+                </TabItem>
+
+                <TabItem Header="Library">
+                    <TextBlock Text="TODO edit library.yml" />
+                </TabItem>
+
+            </TabControl>
+        </DockPanel>
+
     </DockPanel>
 </Window>
