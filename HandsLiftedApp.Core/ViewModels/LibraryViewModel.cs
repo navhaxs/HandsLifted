@@ -55,7 +55,7 @@ namespace HandsLiftedApp.Core.ViewModels
 
         private CancellationTokenSource _cancellationTokenSource;
 
-        public LibraryViewModel()
+        public void ReloadLibraries()
         {
             var lastSavedConfig = LoadConfig();
             if (lastSavedConfig == null || lastSavedConfig.LibraryItems.Count == 0)
@@ -93,6 +93,11 @@ namespace HandsLiftedApp.Core.ViewModels
             {
                 Libraries.Add(new Library(library));
             }
+        }
+
+        public LibraryViewModel()
+        {
+            ReloadLibraries();
 
             Debug.Print(LibraryConfig.ToString());
 
@@ -287,8 +292,8 @@ namespace HandsLiftedApp.Core.ViewModels
             // return Items.Where(item => item.Title.ToLower().Contains(term));
         }
 
-
-        public ObservableCollection<Library> Libraries { get; set; }
+        private ObservableCollection<Library> _libraries;
+        public ObservableCollection<Library> Libraries { get => _libraries ; set => this.RaiseAndSetIfChanged(ref _libraries, value); }
 
         private Library _selectedLibrary;
 

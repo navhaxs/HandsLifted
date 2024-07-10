@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -39,6 +40,21 @@ namespace HandsLiftedApp.Core.Views.Setup
             {
                 _setupWindowViewModel.HideDisplayItentification();
             }
+        }
+
+        private void EditLibraryButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Process.Start("notepad.exe", Constants.LIBRARY_CONFIG_FILEPATH);
+        }
+
+        private void ReloadLibraryButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Globals.Instance.MainViewModel.LibraryViewModel.ReloadLibraries();
+        }
+
+        private void DoneButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -23,7 +23,7 @@
 
         <DockPanel Background="{DynamicResource DarkSurfaceBrush}">
             <DockPanel DockPanel.Dock="Bottom">
-                <Button DockPanel.Dock="Right" Margin="8 6" Padding="20 6">OK</Button>
+                <Button DockPanel.Dock="Right" Margin="8 6" Padding="24 12" Click="DoneButton_OnClick">Done</Button>
                 <Grid />
             </DockPanel>
             <TabControl TabStripPlacement="Left">
@@ -142,12 +142,22 @@
                         <Label>Lyrics (Lower Thirds)</Label>
                         <TextBox
                             Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" />
+                        <Label>Stage Display</Label>
+                        <Label>(TODO not yet implemented)</Label>
                     </StackPanel>
 
                 </TabItem>
 
                 <TabItem Header="Library">
-                    <TextBlock Text="TODO edit library.yml" />
+                    <StackPanel>
+                        <TextBlock Text="TODO edit library.yml to configure libraries" />
+                        <Button Click="EditLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20" Margin="0 16 0 0" MinWidth="200">
+                            Edit library.yml
+                        </Button>
+                        <Button Click="ReloadLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20" Margin="0 16 0 0" MinWidth="200">
+                            Reload library.yml
+                        </Button>
+                    </StackPanel>
                 </TabItem>
 
             </TabControl>
