@@ -1,0 +1,85 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="850"
+             Focusable="True"
+             x:Class="HandsLiftedApp.Core.Views.AddItem">
+
+    <UserControl.Styles>
+        <Style Selector="controls|IconButton">
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="BorderBrush" Value="DarkGray" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="#111" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Padding" Value="16 2" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <!-- Define the control's visual structure -->
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <DockPanel Margin="6">
+                            <avalonia:MaterialIcon
+                                Kind="{TemplateBinding Kind}" Margin="-4" VerticalAlignment="Center"
+                                Height="18" Width="18" />
+                            <TextBlock Margin="12 0 0 0" VerticalAlignment="Center" Text="{TemplateBinding Text}" />
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="controls|IconButton:nth-child(1)">
+            <Setter Property="CornerRadius" Value="6 6 0 0" />
+        </Style>
+        <Style Selector="controls|IconButton:nth-last-child(1)">
+            <Setter Property="CornerRadius" Value="0 0 6 6" />
+        </Style>
+        <Style Selector="controls|IconButton:nth-child(1):nth-last-child(1)">
+            <Setter Property="CornerRadius" Value="6 6 6 6" />
+        </Style>
+        <Style Selector="controls|IconButton:pointerover">
+            <Setter Property="Background" Value="DarkGray" />
+        </Style>
+        <Style Selector="controls|IconButton:pressed">
+            <Setter Property="Background" Value="#5c3ab6" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel Margin="12">
+        <TextBlock DockPanel.Dock="Top" FontSize="22" Margin="0 0 0 12">Add Item</TextBlock>
+        <TextBox DockPanel.Dock="Top" FontSize="18" Watermark="Search song title, content, ..." x:Name="SearchBox" CornerRadius="3" />
+
+        <ScrollViewer>
+            <StackPanel>
+                <StackPanel Margin="0 12 0 0">
+                    <controls:IconButton Kind="Music" Text="Song" />
+                    <controls:IconButton Kind="Filmstrip" Text="Kids Talk" />
+                    <controls:IconButton Kind="Filmstrip" Text="Church News" />
+                    <controls:IconButton Kind="FilePowerpoint" Text="Confession" />
+                    <controls:IconButton Kind="FilePowerpoint" Text="Sermon" />
+                    <controls:IconButton Kind="ContentCopy" Text="Bible Reading" />
+                </StackPanel>
+                <StackPanel Margin="0 12 0 0">
+                    <controls:IconButton Kind="Star" Text="Logo" />
+                    <controls:IconButton Kind="FormatSection" Text="Section" />
+                    <controls:IconButton Kind="Information" Text="Comment" />
+                </StackPanel>
+                <StackPanel Margin="0 12 0 0">
+                    <controls:IconButton Click="ImportFileButton_OnClick" Kind="ExternalLink" Text="Import from file" />
+                </StackPanel>
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </DockPanel>
+</UserControl>

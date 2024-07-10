@@ -144,21 +144,19 @@ namespace HandsLiftedApp.Core.Models
             MessageBus.Current.Listen<AddItemToPlaylistMessage>()
                 .Subscribe(addItemToPlaylistMessage =>
                 {
-                    foreach (var filePath in addItemToPlaylistMessage.filePaths)
+                    int insertAt = addItemToPlaylistMessage.insertIndex ?? Items.Count;
+                    var itemsToInsert = addItemToPlaylistMessage.filePaths;
+                    itemsToInsert.Reverse();
+                    // todo: smart logic
+                    // for multiple files, if all are media type, combine into single new group
+                    // else process each file separately
+                    // and insert at INDEX
+                    foreach (var filePath in itemsToInsert)
                     {
-                        if (filePath.ToLower().EndsWith(".xml"))
+                        var newItem = CreateItem.GenerateItem(filePath);
+                        if (newItem != null)
                         {
-                            XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
-                            using (FileStream stream = new FileStream(filePath, FileMode.Open))
-                            {
-                                var x = (SongItemInstance)serializer.Deserialize(stream);
-                                Items.Add(x);
-                            }
-                        }
-                        else if (filePath.ToLower().EndsWith(".txt"))
-                        {
-                            var newSong = SongImporter.createSongItemFromTxtFile(filePath);
-                            Items.Add(newSong);
+                            Items.Insert(insertAt, newItem);
                         }
                     }
                 });
@@ -252,6 +250,17 @@ namespace HandsLiftedApp.Core.Models
         {
             get => _playlistFilePath;
             set => this.RaiseAndSetIfChanged(ref _playlistFilePath, value);
+        }
+
+        private int _activeItemInsertIndex = -1;
+
+        /// <summary>
+        /// Index of where to insert the item of the active Add Button window
+        /// </summary>
+        public int ActiveItemInsertIndex
+        {
+            get => _activeItemInsertIndex;
+            set => this.RaiseAndSetIfChanged(ref _activeItemInsertIndex, value);
         }
 
         private bool _isDirty = true;

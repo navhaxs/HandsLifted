@@ -306,7 +306,7 @@ public class MainViewModel : ViewModelBase
         Playlist.NavigatePreviousSlide();
         MessageBus.Current.SendMessage(new FocusSelectedItem());
     }
-
+    
     private bool _IsDisplayDebugInfo = false;
 
     public bool IsDisplayDebugInfo

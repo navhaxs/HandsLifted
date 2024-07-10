@@ -213,11 +213,11 @@
                 <!-- 
                 TODO how to register custom 'classes' on the list *item* object?
                 -->
-                <ListBox.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Add Item" />
-                    </ContextMenu>
-                </ListBox.ContextMenu>
+                <!-- <ListBox.ContextMenu> -->
+                <!--     <ContextMenu> -->
+                <!--         <MenuItem Header="Add Item" /> -->
+                <!--     </ContextMenu> -->
+                <!-- </ListBox.ContextMenu> -->
                 <ListBox.ItemTemplate>
                     <common:MyTemplateSelector>
                         <DataTemplate x:Key="SectionHeadingItem" x:DataType="items:SectionHeadingItem">
@@ -320,9 +320,11 @@
             Cursor="Hand"
             DataContext="{Binding Items.Count, Converter={StaticResource intMinusOneConverter}}"
             DockPanel.Dock="Bottom"
-            Flyout="{StaticResource addItemFlyout}"
+            Click="AddContentButton_OnClick"
+            ContextMenu="{StaticResource addItemFlyout}"
             FontSize="14"
-            Foreground="White">
+            Foreground="White"
+            ZIndex="999">
             <Button.Styles>
                 <Style Selector="ScrollViewer">
                     <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />

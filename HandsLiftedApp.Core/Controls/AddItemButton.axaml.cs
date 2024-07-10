@@ -4,16 +4,24 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Avalonia.Interactivity;
+using Avalonia.VisualTree;
+using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Models.PlaylistActions;
+using ReactiveUI;
+
 
 namespace HandsLiftedApp.Core.Controls
 {
     public partial class AddItemButton : UserControl
     {
-
         public static readonly StyledProperty<int?> ItemInsertIndexProperty =
             AvaloniaProperty.Register<AddItemButton, int?>(nameof(ItemInsertIndex));
+
         public int? ItemInsertIndex
         {
             get { return GetValue(ItemInsertIndexProperty); }
@@ -21,23 +29,48 @@ namespace HandsLiftedApp.Core.Controls
         }
 
         private readonly TextBlock _dropState;
+
         public AddItemButton()
         {
             InitializeComponent();
             _dropState = this.Get<TextBlock>("DropState");
 
-            AddButton.PointerEntered += (object? sender, PointerEventArgs e) =>
-            {
-                AddButtonTooltip.IsVisible = true;
-            };
-            AddButton.PointerExited += (object? sender, PointerEventArgs e) =>
-            {
-                AddButtonTooltip.IsVisible = false;
-            };
+            AddButton.PointerEntered += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = true; };
+            AddButton.PointerExited += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = false; };
 
-            SetupDnd("Files", async d => d.Set(DataFormats.Files, new[] { await (VisualRoot as TopLevel)!.StorageProvider.TryGetFileFromPathAsync(Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName) }), DragDropEffects.Copy);
+            SetupDnd("Files",
+                async d => d.Set(DataFormats.Files,
+                    new[]
+                    {
+                        await (VisualRoot as TopLevel)!.StorageProvider.TryGetFileFromPathAsync(
+                            Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName)
+                    }), DragDropEffects.Copy);
         }
 
+        private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (DataContext is PlaylistInstance vm && ItemInsertIndex != null)
+            {
+                vm.ActiveItemInsertIndex = ItemInsertIndex.Value;
+            }
+            
+            Window? window = null;
+            if (sender is Control control)
+            {
+                window = control.GetVisualRoot() as Window;
+            }
+
+            AddItemView aiw = new AddItemView();
+            if (window == null)
+            {
+                aiw.Show();
+            }
+            else
+            {
+                aiw.ShowDialog(window);
+            }
+        }
+        
         void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)
         {
             //var dragMe = this.Get<Border>("DragMe" + suffix);
@@ -86,7 +119,7 @@ namespace HandsLiftedApp.Core.Controls
                 if (!e.Data.Contains(DataFormats.Text)
                     && !e.Data.Contains(DataFormats.Files)
                     //&& !e.Data.Contains(CustomFormat))
-                    )
+                   )
                     e.DragEffects = DragDropEffects.None;
             }
 
@@ -115,24 +148,34 @@ namespace HandsLiftedApp.Core.Controls
                     var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
                     var contentStr = "";
 
+                    var listOfFilePaths = new List<string>();
                     foreach (var item in files)
                     {
                         if (item is IStorageFile file)
                         {
+
+                            listOfFilePaths.Add(file.Path.LocalPath);
+                            
                             //var content = await DialogsPage.ReadTextFromFile(file, 500);
                             var content = "content";
-                            contentStr += $"File {item.Name}:{Environment.NewLine}{content}{Environment.NewLine}{Environment.NewLine} inserted at {ItemInsertIndex}";
+                            contentStr +=
+                                $"File {item.Name}:{Environment.NewLine}{content}{Environment.NewLine}{Environment.NewLine} inserted at {ItemInsertIndex}";
                         }
                         else if (item is IStorageFolder folder)
                         {
+                            // TODO ....
                             var childrenCount = 0;
                             await foreach (var _ in folder.GetItemsAsync())
                             {
                                 childrenCount++;
                             }
-                            contentStr += $"Folder {item.Name}: items {childrenCount}{Environment.NewLine}{Environment.NewLine}";
+
+                            contentStr +=
+                                $"Folder {item.Name}: items {childrenCount}{Environment.NewLine}{Environment.NewLine}";
                         }
                     }
+                    
+                    MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(listOfFilePaths, ItemInsertIndex));
 
                     _dropState.Text = contentStr;
                 }

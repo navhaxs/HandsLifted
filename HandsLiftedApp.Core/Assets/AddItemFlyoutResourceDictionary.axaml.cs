@@ -3,9 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Core.Controls;
+using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
+using Avalonia.Interactivity;
+using Avalonia.VisualTree;
+using HandsLiftedApp.Core.Views;
 
 namespace HandsLiftedApp.Core.Assets
 {

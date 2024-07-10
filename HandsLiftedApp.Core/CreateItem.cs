@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using HandsLiftedApp.Core.Importers;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
@@ -95,6 +96,41 @@ namespace HandsLiftedApp.Core
             {
                 return new ImageSlideInstance(fullFilePath, parentMediaGroupItem);
             }
+        }
+        
+        public static Item? GenerateItem(string filePath)
+        {
+            string filename = filePath.ToLower();
+
+            if (filePath.ToLower().EndsWith(".xml"))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
+                using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                {
+                    return (SongItemInstance)serializer.Deserialize(stream);
+                }
+            }
+            else if (filePath.ToLower().EndsWith(".txt"))
+            {
+                return SongImporter.createSongItemFromTxtFile(filePath);
+            }
+            else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
+            {
+                // return SongImporter.createSongItemFromTxtFile(filePath);
+            }
+            else if (Constants.SUPPORTED_IMAGE.Any(x => filename.EndsWith(x)))
+            {
+                // return SongImporter.createSongItemFromTxtFile(filePath);
+            }
+            else if (Constants.SUPPORTED_PDF.Any(x => filename.EndsWith(x)))
+            {
+                // return SongImporter.createSongItemFromTxtFile(filePath);
+            }
+            else if (Constants.SUPPORTED_POWERPOINT.Any(x => filename.EndsWith(x)))
+            {
+                // return SongImporter.createSongItemFromTxtFile(filePath);
+            }
+            return null;
         }
     }
 }

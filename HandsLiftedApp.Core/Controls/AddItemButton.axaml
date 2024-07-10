@@ -43,10 +43,11 @@
 				Name="AddButton"
 				Width="100"
 				Margin="0,0,18,0"
-				Flyout="{StaticResource addItemFlyout}"
 				DataContext="{Binding State.ItemIndex}"
 				HorizontalAlignment="Left"
 				VerticalAlignment="Top"
+				ContextMenu="{StaticResource addItemFlyout}"
+				Click="AddContentButton_OnClick"
 				DockPanel.Dock="Left">
 				<Button.Styles>
 					<Style Selector="Button">

@@ -12,6 +12,8 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
+using Avalonia.VisualTree;
+using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Core.Controls.Navigation
@@ -224,6 +226,25 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 // TODO confirmation window
                 
                 MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
+            }
+        }
+        
+        private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Window? window = null;
+            if (sender is Control control)
+            {
+                window = control.GetVisualRoot() as Window;
+            } 
+
+            AddItemView aiw = new AddItemView();
+            if (window == null)
+            {
+                aiw.Show();
+            }
+            else
+            {
+                aiw.ShowDialog(window);
             }
         }
     }

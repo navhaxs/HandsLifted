@@ -1,0 +1,37 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        mc:Ignorable="d" Width="400" Height="510"
+        x:Class="HandsLiftedApp.Core.Views.AddItemView"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="90"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowStartupLocation="CenterOwner"
+        Title="AddItemWindow">
+    <Window.Styles>
+        <Style Selector="Button#CloseButton">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="Button#CloseButton:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#e81123" />
+        </Style>
+        <Style Selector="Button#CloseButton:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#f1707a" />
+        </Style>
+    </Window.Styles>
+    <Grid>
+        <views:AddItem x:Name="AddItemContent" />
+        <Button x:Name="CloseButton"
+                IsCancel="True"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                BorderThickness="0"
+                Click="CloseButton_OnClick">
+     
+            <avalonia:MaterialIcon Kind="Times" Width="24" Height="24" />
+        </Button>
+    </Grid>
+</Window>

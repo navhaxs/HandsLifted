@@ -11,7 +11,7 @@
                 Flyout="{StaticResource addItemFlayout}" />
     </Design.PreviewWith>
 
-    <MenuFlyout x:Key="addItemFlyout" Placement="BottomEdgeAlignedLeft">
+    <ContextMenu x:Key="addItemFlyout" Placement="BottomEdgeAlignedLeft">
         <MenuItem Click="OnMenuItemClick" CommandParameter="Presentation" Header="_Presentation">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Presentation" />
@@ -69,5 +69,5 @@
                 Click="OnMenuItemClick" CommandParameter="BibleReadingSlideGroup"
                 Header="Custom Group (Bible Reading Slide Test)" />
         </MenuItem>
-    </MenuFlyout>
+    </ContextMenu>
 </ResourceDictionary>
