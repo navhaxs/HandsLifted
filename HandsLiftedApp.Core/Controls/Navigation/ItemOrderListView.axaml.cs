@@ -172,7 +172,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 //DropState.Text = e.Data.GetText();
                 if (e.Data.Contains(DataFormats.FileNames))
                 {
-                    MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(e.Data.GetFileNames().ToList()));
+                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList()));
 
                     //DropState.Text = string.Join(Environment.NewLine, e.Data.GetFileNames() ?? Array.Empty<string>());
                 }

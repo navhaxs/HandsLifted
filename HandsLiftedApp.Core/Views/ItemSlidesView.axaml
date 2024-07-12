@@ -49,6 +49,41 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <extensions:BitmapAssetValueConverter x:Key="variableImage" />
+            <ContextMenu x:Key="ItemContextMenu">
+                <MenuItem
+                    Click="MoveUpItem_OnClick"
+                    CommandParameter="{Binding}"
+                    Header="Move Up">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Kind="ArrowUp" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Click="MoveDownItem_OnClick"
+                    CommandParameter="{Binding}"
+                    Header="Move Down">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Kind="ArrowDown" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem
+                    CommandParameter="{Binding}"
+                    Header="Replace Item">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Kind="SwapHorizontal" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Click="DeleteItem_OnClick"
+                    CommandParameter="{Binding}"
+                    Header="Remove Item">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Kind="Times" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </ContextMenu>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -84,38 +119,9 @@
                             CornerRadius="0"
                             BorderBrush="#32B1BC"
                             Background="#BADDDD"
-                            DockPanel.Dock="Top">
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem
-                                        Click="MoveUpItem_OnClick"
-                                        CommandParameter="{Binding}"
-                                        Header="Move Up">
-                                        <MenuItem.Icon>
-                                            <avalonia:MaterialIcon Kind="ArrowUp" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem
-                                        Click="MoveDownItem_OnClick"
-                                        CommandParameter="{Binding}"
-                                        Header="Move Down">
-                                        <MenuItem.Icon>
-                                            <avalonia:MaterialIcon Kind="ArrowDown" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem
-                                        Click="DeleteItem_OnClick"
-                                        CommandParameter="{Binding}"
-                                        Header="Remove Item">
-                                        <MenuItem.Icon>
-                                            <avalonia:MaterialIcon Kind="Times" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="Replace" />
-                                    <MenuItem Header="Swap" />
-                                </ContextMenu>
-                            </Border.ContextMenu>
-
+                            DockPanel.Dock="Top"
+                            ContextMenu="{StaticResource ItemContextMenu}"
+                            >
                             <DockPanel>
                                 <avalonia:MaterialIcon DockPanel.Dock="Left"
                                                        Margin="15 10"
@@ -141,6 +147,7 @@
                     <DataTemplate x:Key="SectionHeadingItem" x:DataType="items2:SectionHeadingItem">
                         <!--    -->
                         <Border Margin="0 14"
+                                ContextMenu="{StaticResource ItemContextMenu}"
                                 Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#124449'}">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
@@ -158,37 +165,6 @@
                                     <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem
-                                        Click="MoveUpItem_OnClick"
-                                        CommandParameter="{Binding}"
-                                        Header="Move Up">
-                                        <MenuItem.Icon>
-                                            <avalonia:MaterialIcon Kind="ArrowUp" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem
-                                        Click="MoveDownItem_OnClick"
-                                        CommandParameter="{Binding}"
-                                        Header="Move Down">
-                                        <MenuItem.Icon>
-                                            <avalonia:MaterialIcon Kind="ArrowDown" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem
-                                        Click="DeleteItem_OnClick"
-                                        CommandParameter="{Binding}"
-                                        Header="Remove Item">
-                                        <MenuItem.Icon>
-                                            <avalonia:MaterialIcon Kind="Times" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="Replace" />
-                                    <MenuItem Header="Swap" />
-                                </ContextMenu>
-                            </Border.ContextMenu>
-
                             <StackPanel Margin="0,8">
                                 <DockPanel>
 
@@ -242,37 +218,8 @@
                                 </i:Interaction.Behaviors>
 
                                 <StackPanel>
-                                    <DockPanel Margin="0,0,0,0" Background="Transparent">
-                                        <DockPanel.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem
-                                                    Click="MoveUpItem_OnClick"
-                                                    CommandParameter="{Binding}"
-                                                    Header="Move Up">
-                                                    <MenuItem.Icon>
-                                                        <avalonia:MaterialIcon Kind="ArrowUp" />
-                                                    </MenuItem.Icon>
-                                                </MenuItem>
-                                                <MenuItem
-                                                    Click="MoveDownItem_OnClick"
-                                                    CommandParameter="{Binding}"
-                                                    Header="Move Down">
-                                                    <MenuItem.Icon>
-                                                        <avalonia:MaterialIcon Kind="ArrowDown" />
-                                                    </MenuItem.Icon>
-                                                </MenuItem>
-                                                <MenuItem
-                                                    Click="DeleteItem_OnClick"
-                                                    CommandParameter="{Binding}"
-                                                    Header="Remove Item">
-                                                    <MenuItem.Icon>
-                                                        <avalonia:MaterialIcon Kind="Times" />
-                                                    </MenuItem.Icon>
-                                                </MenuItem>
-                                                <MenuItem Header="Replace" />
-                                                <MenuItem Header="Swap" />
-                                            </ContextMenu>
-                                        </DockPanel.ContextMenu>
+                                    <DockPanel Margin="0,0,0,0" Background="Transparent"
+                                               ContextMenu="{StaticResource ItemContextMenu}">
                                         <items:ItemIcon Margin="18,0,4,0" DockPanel.Dock="Left" VerticalAlignment="Stretch" />
                                         <Button
                                             Padding="22,6"

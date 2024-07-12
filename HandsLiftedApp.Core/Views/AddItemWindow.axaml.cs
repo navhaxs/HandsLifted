@@ -15,7 +15,6 @@ namespace HandsLiftedApp.Core.Views
         public AddItemView()
         {
             ViewModel = new AddItemViewModel();
-            
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
             this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
             

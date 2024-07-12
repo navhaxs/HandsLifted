@@ -10,7 +10,10 @@ using System.Reflection;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
 
@@ -49,11 +52,26 @@ namespace HandsLiftedApp.Core.Controls
 
         private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (DataContext is PlaylistInstance vm && ItemInsertIndex != null)
+            int itemInsertIndex;
+
+            if (ItemInsertIndex != null)
             {
-                vm.ActiveItemInsertIndex = ItemInsertIndex.Value;
+                itemInsertIndex = ItemInsertIndex.Value;
             }
-            
+            else if (DataContext is Item item)
+            {
+                itemInsertIndex = Globals.Instance.MainViewModel.Playlist.Items.IndexOf(item) + 1;
+            }
+            else
+            {
+                itemInsertIndex = Globals.Instance.MainViewModel.Playlist.Items.Count;
+            }
+
+            if (itemInsertIndex != null)
+            {
+                Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex = itemInsertIndex;
+            }
+
             Window? window = null;
             if (sender is Control control)
             {
@@ -61,6 +79,7 @@ namespace HandsLiftedApp.Core.Controls
             }
 
             AddItemView aiw = new AddItemView();
+            aiw.ViewModel.ItemInsertIndex = itemInsertIndex;
             if (window == null)
             {
                 aiw.Show();
@@ -70,7 +89,7 @@ namespace HandsLiftedApp.Core.Controls
                 aiw.ShowDialog(window);
             }
         }
-        
+
         void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)
         {
             //var dragMe = this.Get<Border>("DragMe" + suffix);
@@ -153,9 +172,8 @@ namespace HandsLiftedApp.Core.Controls
                     {
                         if (item is IStorageFile file)
                         {
-
                             listOfFilePaths.Add(file.Path.LocalPath);
-                            
+
                             //var content = await DialogsPage.ReadTextFromFile(file, 500);
                             var content = "content";
                             contentStr +=
@@ -174,8 +192,8 @@ namespace HandsLiftedApp.Core.Controls
                                 $"Folder {item.Name}: items {childrenCount}{Environment.NewLine}{Environment.NewLine}";
                         }
                     }
-                    
-                    MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(listOfFilePaths, ItemInsertIndex));
+
+                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(listOfFilePaths, ItemInsertIndex));
 
                     _dropState.Text = contentStr;
                 }

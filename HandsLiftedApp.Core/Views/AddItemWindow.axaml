@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        mc:Ignorable="d" Width="400" Height="510"
+        mc:Ignorable="d" Width="400" Height="520"
         x:Class="HandsLiftedApp.Core.Views.AddItemView"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="90"
@@ -29,6 +29,7 @@
                 VerticalAlignment="Top"
                 HorizontalAlignment="Right"
                 BorderThickness="0"
+                CornerRadius="0"
                 Click="CloseButton_OnClick">
      
             <avalonia:MaterialIcon Kind="Times" Width="24" Height="24" />

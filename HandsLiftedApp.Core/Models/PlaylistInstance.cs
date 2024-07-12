@@ -141,7 +141,7 @@ namespace HandsLiftedApp.Core.Models
 
             // try load Playlist Logo > Global Logo
 
-            MessageBus.Current.Listen<AddItemToPlaylistMessage>()
+            MessageBus.Current.Listen<AddItemByFilePathMessage>()
                 .Subscribe(addItemToPlaylistMessage =>
                 {
                     int insertAt = addItemToPlaylistMessage.insertIndex ?? Items.Count;
@@ -252,12 +252,12 @@ namespace HandsLiftedApp.Core.Models
             set => this.RaiseAndSetIfChanged(ref _playlistFilePath, value);
         }
 
-        private int _activeItemInsertIndex = -1;
+        private int? _activeItemInsertIndex = null;
 
         /// <summary>
         /// Index of where to insert the item of the active Add Button window
         /// </summary>
-        public int ActiveItemInsertIndex
+        public int? ActiveItemInsertIndex
         {
             get => _activeItemInsertIndex;
             set => this.RaiseAndSetIfChanged(ref _activeItemInsertIndex, value);

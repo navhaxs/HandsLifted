@@ -8,7 +8,7 @@
     xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
     Title="AboutWindow"
     Width="680"
-    Height="410"
+    Height="370"
     CanResize="False"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaToDecorationsHint="True"
@@ -18,14 +18,14 @@
     mc:Ignorable="d">
     <DockPanel>
         <!--  header  -->
-        <Grid Background="#6033ab" DockPanel.Dock="Top">
-            <TextBlock
-                Margin="14,14"
-                FontSize="18"
-                Foreground="White">
-                About
-            </TextBlock>
-        </Grid>
+        <!-- <Grid Background="#6033ab" DockPanel.Dock="Top"> -->
+        <!--     <TextBlock -->
+        <!--         Margin="14,14" -->
+        <!--         FontSize="18" -->
+        <!--         Foreground="White"> -->
+        <!--         About -->
+        <!--     </TextBlock> -->
+        <!-- </Grid> -->
         <!--  footer  -->
         <Grid DockPanel.Dock="Bottom">
             <StackPanel Margin="16,12,16,12" VerticalAlignment="Bottom">

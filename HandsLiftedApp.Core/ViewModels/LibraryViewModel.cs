@@ -192,7 +192,7 @@ namespace HandsLiftedApp.Core.ViewModels
                 if (SelectedItem != null)
                 {
                     List<string> items = new List<string>() { SelectedItem.FullFilePath };
-                    MessageBus.Current.SendMessage(new AddItemToPlaylistMessage(items));
+                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(items));
                 }
             });
 
