@@ -9,7 +9,6 @@
     d:DesignWidth="400"
     Background="Transparent"
     DragDrop.AllowDrop="True"
-    x:CompileBindings="False"
     mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -43,7 +42,6 @@
 				Name="AddButton"
 				Width="100"
 				Margin="0,0,18,0"
-				DataContext="{Binding State.ItemIndex}"
 				HorizontalAlignment="Left"
 				VerticalAlignment="Top"
 				ContextMenu="{StaticResource addItemFlyout}"
@@ -80,6 +78,23 @@
 					</Style>
 				</Button.Styles>
 
+				<!-- <Interaction.Behaviors> -->
+				<!-- 	<DataTriggerBehavior -->
+				<!-- 		Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}" -->
+				<!-- 		ComparisonCondition="Equal" -->
+				<!-- 		Value="True"> -->
+				<!-- 		<ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" /> -->
+				<!-- 		<ChangePropertyAction PropertyName="BorderThickness" Value="2" /> -->
+				<!-- 	</DataTriggerBehavior> -->
+				<!-- 	<DataTriggerBehavior -->
+				<!-- 		Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}" -->
+				<!-- 		ComparisonCondition="Equal" -->
+				<!-- 		Value="False"> -->
+				<!-- 		<ChangePropertyAction PropertyName="BorderBrush" Value="Transparent" /> -->
+				<!-- 		<ChangePropertyAction PropertyName="BorderThickness" Value="1" /> -->
+				<!-- 	</DataTriggerBehavior> -->
+				<!-- </Interaction.Behaviors> -->
+				
 				<material:MaterialIcon
 					Width="24"
 					Height="24"

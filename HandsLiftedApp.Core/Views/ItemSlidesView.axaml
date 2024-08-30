@@ -20,6 +20,7 @@
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:slides1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
     xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+    xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -36,7 +37,7 @@
                 S="0.7" />
             <converters:ColorToConstrastingBrush x:Key="ColorToConstrastingBrush" />
             <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
-            <converters:IndexToDisplayPositionConverter x:Key="IndexToDisplayPositionConverter" />
+            <converters:IntPlusOneConverter x:Key="IndexToDisplayPositionConverter" />
             <converters:MultiplicationConverter x:Key="MultiplicationConverter" />
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
@@ -120,8 +121,7 @@
                             BorderBrush="#32B1BC"
                             Background="#BADDDD"
                             DockPanel.Dock="Top"
-                            ContextMenu="{StaticResource ItemContextMenu}"
-                            >
+                            ContextMenu="{StaticResource ItemContextMenu}">
                             <DockPanel>
                                 <avalonia:MaterialIcon DockPanel.Dock="Left"
                                                        Margin="15 10"
@@ -139,35 +139,49 @@
                                     FontSize="12"
                                     Text="{Binding Title, Mode=TwoWay, FallbackValue='hello'}"
                                     Padding="0 8 8 8"
-                                    AcceptsReturn="True"
-                                />
+                                    AcceptsReturn="True" />
                             </DockPanel>
                         </Border>
                     </DataTemplate>
                     <DataTemplate x:Key="SectionHeadingItem" x:DataType="items2:SectionHeadingItem">
                         <!--    -->
-                        <Border Margin="0 14"
-                                ContextMenu="{StaticResource ItemContextMenu}"
-                                Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#124449'}">
+                        <Border
+                            x:Name="SectionHeadingItemHeader"
+                            Margin="0 14"
+                            ContextMenu="{StaticResource ItemContextMenu}"
+                            Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#124449'}">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
-                                    Binding="{Binding State.IsSelected}"
+                                    Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                    ComparisonCondition="Equal"
+                                    Value="True">
+                                    <ia:ChangePropertyAction TargetObject="InnerStackPanel" PropertyName="Background"
+                                                             Value="#11ffffff" />
+                                </ia:DataTriggerBehavior>
+                                <ia:DataTriggerBehavior
+                                    Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                    ComparisonCondition="Equal"
+                                    Value="False">
+                                    <ia:ChangePropertyAction TargetObject="InnerStackPanel" PropertyName="Background"
+                                                             Value="Transparent" />
+                                </ia:DataTriggerBehavior>
+                                <ia:DataTriggerBehavior
+                                    Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                     ComparisonCondition="Equal"
                                     Value="True">
                                     <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" />
                                     <ia:ChangePropertyAction PropertyName="BorderThickness" Value="2" />
                                 </ia:DataTriggerBehavior>
                                 <ia:DataTriggerBehavior
-                                    Binding="{Binding State.IsSelected}"
+                                    Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                     ComparisonCondition="Equal"
                                     Value="False">
                                     <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#9a93cd" />
                                     <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
-                            <StackPanel Margin="0,8">
-                                <DockPanel>
-
+                            <StackPanel x:Name="InnerStackPanel">
+                                <DockPanel Margin="0,8">
                                     <controls:TextBoxToggleButton
                                         Margin="16,0,8,0"
                                         FontSize="20"
@@ -194,6 +208,13 @@
                     Content="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}, FallbackValue='99'}"
                     FontSize="16" />
             </Viewbox>-->
+                            <DockPanel.Styles>
+                                <Style Selector="DockPanel.ItemHeader:flyout-open">
+                                    <Setter Property="Background" />
+                                </Style>
+                            </DockPanel.Styles>
+
+
                             <Border
                                 Margin="14"
                                 Background="{DynamicResource BackgroundBrush}"
@@ -218,9 +239,26 @@
                                 </i:Interaction.Behaviors>
 
                                 <StackPanel>
-                                    <DockPanel Margin="0,0,0,0" Background="Transparent"
+
+                                    <DockPanel x:Name="ItemHeader"
+                                               Margin="0,0,0,0" Background="Transparent"
                                                ContextMenu="{StaticResource ItemContextMenu}">
-                                        <items:ItemIcon Margin="18,0,4,0" DockPanel.Dock="Left" VerticalAlignment="Stretch" />
+                                        <i:Interaction.Behaviors>
+                                            <ia:DataTriggerBehavior
+                                                Binding="{Binding #ItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                                ComparisonCondition="Equal"
+                                                Value="True">
+                                                <ia:ChangePropertyAction PropertyName="Background" Value="#11ffffff" />
+                                            </ia:DataTriggerBehavior>
+                                            <ia:DataTriggerBehavior
+                                                Binding="{Binding #ItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                                ComparisonCondition="Equal"
+                                                Value="False">
+                                                <ia:ChangePropertyAction PropertyName="Background" Value="Transparent" />
+                                            </ia:DataTriggerBehavior>
+                                        </i:Interaction.Behaviors>
+                                        <items:ItemIcon Margin="18,0,4,0" DockPanel.Dock="Left"
+                                                        VerticalAlignment="Stretch" />
                                         <Button
                                             Padding="22,6"
                                             Margin="6"
@@ -356,7 +394,8 @@
                                                     <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center"
                                                                HorizontalAlignment="Center" />
                                                 </DataTemplate>
-                                                <DataTemplate x:Key="CustomAxamlSlideInstance" DataType="slides1:CustomAxamlSlideInstance">
+                                                <DataTemplate x:Key="CustomAxamlSlideInstance"
+                                                              DataType="slides1:CustomAxamlSlideInstance">
                                                     <Viewbox>
                                                         <render:CustomAxamlSlideRender />
                                                     </Viewbox>

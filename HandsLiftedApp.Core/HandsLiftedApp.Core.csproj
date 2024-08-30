@@ -219,6 +219,18 @@
           <DependentUpon>AddItemButton.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\AddItem\AddItemRoot.axaml.cs">
+          <DependentUpon>AddItem.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\AddItem\AddItemWindow.axaml.cs">
+          <DependentUpon>AddItemWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\AddItem\Pages\ResultsView.axaml.cs">
+          <DependentUpon>AddItemResultsView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 

@@ -5,7 +5,7 @@
         xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" Width="400" Height="520"
-        x:Class="HandsLiftedApp.Core.Views.AddItemView"
+        x:Class="HandsLiftedApp.Core.Views.AddItemWindow"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="90"
         ExtendClientAreaToDecorationsHint="True"
@@ -23,7 +23,7 @@
         </Style>
     </Window.Styles>
     <Grid>
-        <views:AddItem x:Name="AddItemContent" />
+        <views:AddItemRoot x:Name="AddItemContent" />
         <Button x:Name="CloseButton"
                 IsCancel="True"
                 VerticalAlignment="Top"

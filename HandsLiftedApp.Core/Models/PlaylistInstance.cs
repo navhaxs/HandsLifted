@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -15,6 +17,7 @@ using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
@@ -96,7 +99,7 @@ namespace HandsLiftedApp.Core.Models
                     })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.NextSlide);
-
+            
             if (Design.IsDesignMode)
             {
                 return;
@@ -211,8 +214,17 @@ namespace HandsLiftedApp.Core.Models
                 .Subscribe(_ => IsDirty = true);
         }
 
+        public void UpdateIndexes()
+        {
+            foreach (var (item, index) in Items.WithIndex())
+            {
+                item.Index = index;
+            }
+        }
+
         public void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+            UpdateIndexes();
             IsDirty = true;
         }
 
@@ -225,6 +237,7 @@ namespace HandsLiftedApp.Core.Models
             {
                 value.ItemDataModified -= OnValueOnItemDataModified;
                 this.RaiseAndSetIfChanged(ref _items, value);
+                UpdateIndexes();
                 value.ItemDataModified += OnValueOnItemDataModified;
             }
         }

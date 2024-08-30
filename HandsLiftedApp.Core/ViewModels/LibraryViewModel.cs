@@ -129,7 +129,7 @@ namespace HandsLiftedApp.Core.ViewModels
 
             _cancellationTokenSource = new CancellationTokenSource();
 
-            _selectedItemPreview = this.WhenAnyValue(x => x.SelectedItem, (_SelectedItem) =>
+            _selectedItemPreview = this.WhenAnyValue(x => x.SelectedLibraryItem, (_SelectedItem) =>
                     {
                         if (_SelectedItem != null)
                         {
@@ -155,7 +155,7 @@ namespace HandsLiftedApp.Core.ViewModels
                     })
                     .ToProperty(this, c => c.SelectedItemPreview)
                 ;
-            this.WhenAnyValue(x => x.SelectedItem)
+            this.WhenAnyValue(x => x.SelectedLibraryItem)
                 // .ObserveOn(RxApp.TaskpoolScheduler)
                 .Subscribe((_SelectedItem) =>
                 {
@@ -189,9 +189,9 @@ namespace HandsLiftedApp.Core.ViewModels
 
             OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
             {
-                if (SelectedItem != null)
+                if (SelectedLibraryItem != null)
                 {
-                    List<string> items = new List<string>() { SelectedItem.FullFilePath };
+                    List<string> items = new List<string>() { SelectedLibraryItem.FullFilePath };
                     MessageBus.Current.SendMessage(new AddItemByFilePathMessage(items));
                 }
             });
@@ -262,8 +262,8 @@ namespace HandsLiftedApp.Core.ViewModels
         // class subscribes to an Observable and stores a copy of the latest value.
         // It also runs an action whenever the property changes, usually calling
         // ReactiveObject's RaisePropertyChanged.
-        private readonly ObservableAsPropertyHelper<IEnumerable<Item>> _searchResults;
-        public IEnumerable<Item> SearchResults => _searchResults.Value;
+        private readonly ObservableAsPropertyHelper<IEnumerable<LibraryItem>> _searchResults;
+        public IEnumerable<LibraryItem> SearchResults => _searchResults.Value;
 
         // Here, we want to create a property to represent when the application 
         // is performing a search (i.e. when to show the "spinner" control that 
@@ -273,18 +273,18 @@ namespace HandsLiftedApp.Core.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isAvailable;
         public bool IsAvailable => _isAvailable.Value;
 
-        private Item _selectedItem;
+        private LibraryItem _selectedLibraryItem;
 
-        public Item SelectedItem
+        public LibraryItem SelectedLibraryItem
         {
-            get => _selectedItem;
-            set => this.RaiseAndSetIfChanged(ref _selectedItem, value);
+            get => _selectedLibraryItem;
+            set => this.RaiseAndSetIfChanged(ref _selectedLibraryItem, value);
         }
 
-        private async Task<IEnumerable<Item>> SearchLibrary(
+        private async Task<IEnumerable<LibraryItem>> SearchLibrary(
             string term, CancellationToken token)
         {
-            return new List<Item>();
+            return new List<LibraryItem>();
             // if (term == null || term.Length == 0)
             //     return Items;
             //
@@ -302,7 +302,6 @@ namespace HandsLiftedApp.Core.ViewModels
             get => _selectedLibrary;
             set => this.RaiseAndSetIfChanged(ref _selectedLibrary, value);
         }
-
 
         // selected collection
 

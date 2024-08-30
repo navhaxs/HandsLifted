@@ -6,7 +6,7 @@ using System.Globalization;
 namespace HandsLiftedApp.Converters
 {
 
-    public class IndexToDisplayPositionConverter : IValueConverter
+    public class IntPlusOneConverter : IValueConverter
     {
         // add 1 for human friendly item position
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

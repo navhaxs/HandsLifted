@@ -11,6 +11,10 @@ namespace HandsLiftedApp.Data.Models.Items
         [XmlIgnore]
         public Guid UUID { get; set; }
 
+        private int _index;
+        [XmlIgnore]
+        public int Index { get => _index; set => this.RaiseAndSetIfChanged(ref _index, value); }
+        
         protected Item()
         {
             UUID = Guid.NewGuid();

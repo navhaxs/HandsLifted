@@ -1,0 +1,20 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             xmlns:pages="clr-namespace:HandsLiftedApp.Core.Views.AddItem.Pages"
+             xmlns:addItem="clr-namespace:HandsLiftedApp.Core.Views.AddItem"
+             xmlns:addItem1="clr-namespace:HandsLiftedApp.Core.ViewModels.AddItem"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="850"
+             Focusable="True"
+             x:DataType="addItem1:AddItemViewModel"
+             x:Class="HandsLiftedApp.Core.Views.AddItemRoot">
+    <ContentControl Content="{Binding Page}">
+        <ContentControl.ContentTemplate>
+            <addItem:ViewLocator />
+        </ContentControl.ContentTemplate>
+    </ContentControl>
+</UserControl>

@@ -11,7 +11,9 @@ using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
 using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Core.Views.AddItem.Pages;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.PlaylistActions;
@@ -67,27 +69,7 @@ namespace HandsLiftedApp.Core.Controls
                 itemInsertIndex = Globals.Instance.MainViewModel.Playlist.Items.Count;
             }
 
-            if (itemInsertIndex != null)
-            {
-                Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex = itemInsertIndex;
-            }
-
-            Window? window = null;
-            if (sender is Control control)
-            {
-                window = control.GetVisualRoot() as Window;
-            }
-
-            AddItemView aiw = new AddItemView();
-            aiw.ViewModel.ItemInsertIndex = itemInsertIndex;
-            if (window == null)
-            {
-                aiw.Show();
-            }
-            else
-            {
-                aiw.ShowDialog(window);
-            }
+            HandleAddItemButtonClick.ShowAddWindow(itemInsertIndex, sender);
         }
 
         void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)

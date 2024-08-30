@@ -2,35 +2,39 @@
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Controls.Messages;
+using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Core.ViewModels.AddItem;
+using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
 
-namespace HandsLiftedApp.Core.Views
+namespace HandsLiftedApp.Core.Views.AddItem.Pages
 {
-    public partial class AddItem : UserControl
+    public partial class StartView : UserControl
     {
-        public AddItem()
+        public StartView()
         {
             InitializeComponent();
 
-            GotFocus += delegate { SearchBox.Focus(); };
+            // GotFocus += delegate { SearchBox.Focus(); };
         }
 
         private void ImportFileButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (DataContext is AddItemViewModel vm)
+            if (DataContext is StartViewModel vm)
             {
-                RunImport(vm);
+                RunImport(vm.AddItemViewModel);
             }
         }
 
         private void CreateSlideButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            
         }
 
         private async void RunImport(AddItemViewModel vm)
@@ -44,7 +48,14 @@ namespace HandsLiftedApp.Core.Views
 
         private void MusicButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            
+            if (sender is Control control)
+            {
+                if (DataContext is AddItemPageViewModel vm)
+                {
+                    vm.AddItemViewModel.Page =
+                        new ResultsViewModel(vm.AddItemViewModel, control.DataContext as Library);
+                }
+            }
         }
 
         private void CreateItemButton_OnClick(object? sender, RoutedEventArgs e)
@@ -70,6 +81,7 @@ namespace HandsLiftedApp.Core.Views
                     default:
                         break;
                 }
+
                 var t = TopLevel.GetTopLevel(this);
                 if (t is Window parentWindow)
                 {

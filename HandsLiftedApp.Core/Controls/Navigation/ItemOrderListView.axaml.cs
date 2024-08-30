@@ -231,21 +231,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
         
         private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            Window? window = null;
-            if (sender is Control control)
-            {
-                window = control.GetVisualRoot() as Window;
-            } 
-
-            AddItemView aiw = new AddItemView();
-            if (window == null)
-            {
-                aiw.Show();
-            }
-            else
-            {
-                aiw.ShowDialog(window);
-            }
+            HandleAddItemButtonClick.ShowAddWindow(null, sender);
         }
     }
 }

@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaWebDemo.MainWindow"
+        Background="#efefef"
+        Title="AvaloniaWebDemo">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <ProgressBar x:Name="PART_ProgressBar" IsIndeterminate="True" VerticalAlignment="Bottom" IsVisible="False" IsHitTestVisible="False" />
+            <DockPanel>
+                <DockPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                    <Style Selector="Button > avalonia|MaterialIcon">
+                        <Setter Property="Foreground" Value="#444" />
+                        <Setter Property="MinWidth" Value="26" />
+                        <Setter Property="MinHeight" Value="26" />
+                        <Setter Property="CornerRadius" Value="0" />
+                    </Style>
+                </DockPanel.Styles>
+                <Button Click="BackButton_OnClick"><avalonia:MaterialIcon Kind="ChevronLeft" /></Button>
+                <Button Click="ForwardButton_OnClick"><avalonia:MaterialIcon Kind="ChevronRight" /></Button>
+                <Button Click="ReloadButton_OnClick"><avalonia:MaterialIcon Kind="Refresh" /></Button>
+            </DockPanel>
+        </Grid>
+        <Border DockPanel.Dock="Bottom" MinHeight="40" MaxHeight="40" Background="Red">
+            <TextBlock
+                x:Name="PART_SelectionText"
+                VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="Selected: {song}" Foreground="White" />
+        </Border>
+        <WebView x:Name="PART_WebView" Url="https://songselect.com"
+                 WebMessageReceived="PART_WebView_OnWebMessageReceived" />
+    </DockPanel>
+</Window>

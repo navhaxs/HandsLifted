@@ -3,6 +3,8 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="Demos/AvaloniaWebDemo/App.axaml" value="Demos/AvaloniaWebDemo/AvaloniaWebDemo.csproj" />
+        <entry key="Demos/AvaloniaWebDemo/MainWindow.axaml" value="Demos/AvaloniaWebDemo/AvaloniaWebDemo.csproj" />
         <entry key="Demos/PowerPointConverterSampleApp/App.axaml" value="Demos/PowerPointConverterSampleApp/PowerPointConverterSampleApp.csproj" />
         <entry key="Demos/PowerPointConverterSampleApp/MainWindow.axaml" value="Demos/PowerPointConverterSampleApp/PowerPointConverterSampleApp.csproj" />
         <entry key="Demos/SongEditorStandalone/App.axaml" value="Demos/SongEditorStandalone/SongEditorStandalone.csproj" />
@@ -43,6 +45,13 @@
         <entry key="HandsLiftedApp.Core/Render/SongThemes/DesignerSlideTitle.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/AboutWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/AddItem.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/AddItem/AddItemResultsView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/AddItem/AddItemRoot.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/AddItem/AddItemWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/AddItem/Pages/ResultsView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/AddItem/Pages/StartView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/AddItem/Resources.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/AddItem/Styles.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/AddItemWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ContentControl/AutoAdvanceTimerControlViewWrapper.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ContentControl/VideoSlideControlView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
@@ -96,6 +105,7 @@
         <entry key="HandsLiftedApp.Importer.PowerPoint.Bridge/MainWindow.axaml" value="HandsLiftedApp.Importer.PowerPoint.Bridge/HandsLiftedApp.Importer.PowerPoint.Bridge.csproj" />
         <entry key="HandsLiftedApp.PropertyGridControl/CollectionInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp.PropertyGridControl/ObjectInspectorWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
+        <entry key="HandsLiftedApp.SongSelectImporter/MainWindow.axaml" value="HandsLiftedApp.SongSelectImporter/HandsLiftedApp.SongSelectImporter.csproj" />
         <entry key="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor/App.axaml" value="HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor/HandsLiftedApp.WebEditor.csproj" />
         <entry key="HandsLiftedApp.XTransitioningContentControl/Styles.xaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/App.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />

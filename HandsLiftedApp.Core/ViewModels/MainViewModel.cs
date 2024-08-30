@@ -15,8 +15,8 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.ViewModels.Editor;
-using HandsLiftedApp.Core.ViewModels.LibraryModel;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Data.Models.Items;
@@ -32,12 +32,17 @@ public class MainViewModel : ViewModelBase
 {
     public IMySettings settings;
     
-    public LibraryViewModel LibraryViewModel { get; } = new LibraryViewModel();
+    public LibraryViewModel LibraryViewModel { get; init; }
 
+    public AddItemViewModel AddItemViewModel { get; init; }
+    
     public ReactiveCommand<object, Unit> SlideClickCommand { get; }
 
     public MainViewModel()
     {
+        LibraryViewModel = new LibraryViewModel();
+        AddItemViewModel = new AddItemViewModel(LibraryViewModel);
+        
         if (Design.IsDesignMode)
         {
             Playlist = new PlaylistInstance();
@@ -53,8 +58,6 @@ public class MainViewModel : ViewModelBase
 
             return;
         }
-
-        LibraryLoader.init();
 
         settings = new ConfigurationBuilder<IMySettings>()
             .UseJsonFile("HandsLiftedApp.UserConfig.json")

@@ -9,6 +9,7 @@ namespace HandsLiftedApp.Core.Models.Library.Config
         public class LibraryDefinition
         {
             public string Label { get; set; }
+            public string Icon { get; set; }
             public string Directory { get; set; }
         }
     }

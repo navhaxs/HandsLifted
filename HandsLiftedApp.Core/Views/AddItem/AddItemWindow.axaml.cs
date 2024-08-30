@@ -6,17 +6,17 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Core.ViewModels.AddItem;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views
 {
-    public partial class AddItemView : ReactiveWindow<AddItemViewModel>
+    public partial class AddItemWindow : ReactiveWindow<AddItemViewModel>
     {
-        public AddItemView()
+        public AddItemWindow()
         {
-            ViewModel = new AddItemViewModel();
             // When the window is activated, registers a handler for the ShowOpenFileDialog interaction.
-            this.WhenActivated(d => d(ViewModel.ShowOpenFileDialog.RegisterHandler(ShowOpenFileDialog)));
+            this.WhenActivated(d => d(ViewModel?.ShowOpenFileDialog?.RegisterHandler(ShowOpenFileDialog)));
             
             Activated += delegate { AddItemContent.Focus(); };
 

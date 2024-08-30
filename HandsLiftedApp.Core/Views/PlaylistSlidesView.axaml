@@ -15,6 +15,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <converters:IntPlusOneConverter x:Key="IntPlusOneConverter" />
         <converters:LastItemHeightConverter x:Key="lastItemHeightConverter" />
     </UserControl.Resources>
 
@@ -74,7 +75,7 @@
                         <DataTemplate>
                             <StackPanel>
                                 <controls:ItemSlidesView />
-                                <controls1:AddItemButton Margin="14,0,0,0" DockPanel.Dock="Top" DataContext="{Binding}" />
+                                <controls1:AddItemButton Margin="14,0,0,0" DockPanel.Dock="Top" ItemInsertIndex="{Binding Index, Converter={StaticResource IntPlusOneConverter}}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

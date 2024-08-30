@@ -23,9 +23,9 @@ namespace HandsLiftedApp.Core.Models.Library
             get => Config.Label;
         }
 
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<LibraryItem> Items { get; }
 
-        private LibraryConfig.LibraryDefinition Config;
+        public LibraryConfig.LibraryDefinition Config { get; init; }
 
         private FileSystemWatcher watcher = new FileSystemWatcher();
 
@@ -35,7 +35,7 @@ namespace HandsLiftedApp.Core.Models.Library
             
             if (Design.IsDesignMode)
             {
-                Items = new ObservableCollection<Item>();
+                Items = new ObservableCollection<LibraryItem>();
                 return;
             }
 
@@ -45,7 +45,7 @@ namespace HandsLiftedApp.Core.Models.Library
             //     Refresh();
             //     watch();
             // });
-            Items = new ObservableCollection<Item>();
+            Items = new ObservableCollection<LibraryItem>();
             // rootDirectory = Globals.AppPreferences.LibraryPath;
 
             Refresh();
@@ -69,7 +69,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 // TODO: sync the Items list properly
                 foreach (var f in files)
                 {
-                    Items.Add(new Item() { FullFilePath = f, Title = Path.GetFileNameWithoutExtension(f) });
+                    Items.Add(new LibraryItem() { FullFilePath = f, Title = Path.GetFileNameWithoutExtension(f) });
                 }
             }
         }
@@ -107,7 +107,7 @@ namespace HandsLiftedApp.Core.Models.Library
         // }
     }
 
-    public class Item
+    public class LibraryItem
     {
         public string FullFilePath { get; set; }
         public string Title { get; set; } // display title in list view

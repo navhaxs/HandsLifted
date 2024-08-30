@@ -76,11 +76,10 @@
             <Grid Grid.Column="2">
 
                 <!-- <StackPanel> -->
-
                 <ListBox
                     Background="Transparent"
                     ItemsSource="{Binding LibraryViewModel.SelectedLibrary.Items}"
-                    SelectedItem="{Binding LibraryViewModel.SelectedItem, Mode=OneWayToSource}"
+                    SelectedItem="{Binding LibraryViewModel.SelectedLibraryItem, Mode=OneWayToSource}"
                     HorizontalAlignment="Stretch"
                     BorderThickness="0">
                     <ListBox.ItemTemplate>
