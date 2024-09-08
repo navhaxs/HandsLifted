@@ -159,6 +159,9 @@
         <Style Selector="ListBoxItem material|MaterialIcon">
             <Setter Property="Foreground" Value="#888888" />
         </Style>
+        <Style Selector="ListBoxItem items1|ItemIcon">
+            <Setter Property="Foreground" Value="#888888" />
+        </Style>
         <Style Selector="ListBoxItem:selected material|MaterialIcon">
             <Setter Property="Foreground" Value="{DynamicResource ActiveItemForeground}" />
         </Style>

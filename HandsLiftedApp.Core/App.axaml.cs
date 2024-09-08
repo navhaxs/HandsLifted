@@ -30,17 +30,11 @@ public partial class App : Application
             try {
                 await Task.Delay(2_000);
                 Globals.Instance.OnStartup(ApplicationLifetime);
-
-                WindowState windowState = WindowState.Normal;
-
-                if (Globals.Instance.MainViewModel.settings.LastWindowState != null)
-                {
-                    windowState = (WindowState)Globals.Instance.MainViewModel.settings.LastWindowState;
-                }
+                
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = Globals.Instance.MainViewModel,
-                    WindowState = windowState
+                    WindowState = WindowState.Normal // Avalonia bug in (at least) 11.1.3 prevents title bar system controls from rendering if MainWindow created as Maximised
                 };
                 desktop.MainWindow.Show();
 

@@ -229,8 +229,8 @@
 
                     <DockPanel>
                         <navigation:ItemOrderListView DataContext="{Binding Playlist}"
-                                                    Margin="0 6 0 0"
-                                                    DockPanel.Dock="Left" />
+                                                      Margin="0 6 0 0"
+                                                      DockPanel.Dock="Left" />
                     </DockPanel>
 
                     <GridSplitter Grid.Column="1"
@@ -348,15 +348,17 @@
 
             <GridSplitter Grid.Column="1"
                           Background="{DynamicResource GridSplitterBrush}"
-                          Margin="-3,0, -3, 6"
+                          Margin="-3,0, -3, 0"
                           HorizontalAlignment="Stretch"
                           BorderBrush="Transparent"
-                          BorderThickness="3,0"
+                          BorderThickness="4,0"
                           ZIndex="9999" />
 
             <!-- <views:ItemContentView Grid.Column="4" DataContext="{Binding Playlist.SelectedItem}" /> -->
 
-            <views:LivePane Grid.Column="2" VerticalAlignment="Stretch" />
+            <Border Grid.Column="2" BorderThickness="1 0 0 0" BorderBrush="Black">
+                <views:LivePane VerticalAlignment="Stretch" />
+            </Border>
 
         </Grid>
         <!-- end root grid -->

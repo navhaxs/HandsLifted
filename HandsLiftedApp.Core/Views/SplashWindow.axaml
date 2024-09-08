@@ -7,6 +7,7 @@
         WindowStartupLocation="CenterScreen"
         SystemDecorations="None"
         Background="Transparent"
+        ShowInTaskbar="False"
         Title="SplashWindow">
     <Window.Styles>
         <Style Selector="TextBlock">
@@ -27,13 +28,7 @@
             </Style.Animations>
         </Style>
     </Window.Styles>
-    <Border CornerRadius="2" BoxShadow="0 0 25 #991E132B" Margin="15">
-        <Border.Background>
-            <RadialGradientBrush Center="0,-300" GradientOrigin="0,0" Radius="1.2">
-                <GradientStop Offset="0" Color="#744da9" />
-                <GradientStop Offset="1" Color="#41285c" />
-            </RadialGradientBrush>
-        </Border.Background>
+    <Border CornerRadius="2" BoxShadow="0 0 25 #991E132B" Margin="15" Background="#41285c">
 
         <DockPanel>
             <!-- <ProgressBar -->
@@ -84,7 +79,7 @@
             <TextBlock
                 FontSize="22"
                 Padding="0 16 20 0"
-                LineHeight="24"
+                LineHeight="20"
                 FontWeight="SemiBold"
                 DockPanel.Dock="Top"
                 TextAlignment="Right"

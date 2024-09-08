@@ -120,7 +120,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.Loaded += (e, s) => { updateWin32Border(this.WindowState); };
 
         this.GetObservable(WindowStateProperty)
-            .Subscribe(v => { updateWin32Border(v); });
+             .Subscribe(v => { updateWin32Border(v); });
     }
 
     private void updateWin32Border(WindowState v)

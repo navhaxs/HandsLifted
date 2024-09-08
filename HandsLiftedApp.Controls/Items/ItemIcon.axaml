@@ -15,8 +15,8 @@
 	</UserControl.Resources>
 	
 	<UserControl.Styles>
-		<Style Selector="material|MaterialIcon">
-			<Setter Property="Foreground" Value="{TemplateBinding Foreground}" />
+		<Style Selector="ContentControl material|MaterialIcon">
+			<Setter Property="Foreground" Value="{Binding Foreground, FallbackValue='#888888'}" />
 		</Style>
 		<Style Selector="ContentControl.isSelectedItem material|MaterialIcon">
 			<Setter Property="Foreground" Value="#FF3400" />
