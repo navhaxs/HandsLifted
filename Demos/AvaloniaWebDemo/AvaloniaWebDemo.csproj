@@ -10,14 +10,24 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.6"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.6"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.6"/>
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.Desktop" />
+        <PackageReference Include="Avalonia.Themes.Fluent" />
+        <PackageReference Include="Avalonia.Fonts.Inter" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
         <PackageReference Include="Material.Icons.Avalonia" />
-        <PackageReference Include="WebView.Avalonia" />
-        <PackageReference Include="WebView.Avalonia.Windows" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\HandsLiftedApp.Importer.OnlineSongLyrics\HandsLiftedApp.Importer.OnlineSongLyrics.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Reference Include="Material.Icons.Avalonia">
+        <HintPath>..\..\..\..\..\packages\nuget\material.icons.avalonia\2.1.0\lib\netstandard2.0\Material.Icons.Avalonia.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using HandsLiftedApp.Common;
 using HandsLiftedApp.Core;
 using Serilog;
 

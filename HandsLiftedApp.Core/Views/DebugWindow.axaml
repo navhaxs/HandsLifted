@@ -15,6 +15,7 @@
             <TextBlock Text="{Binding Playlist.ActiveSlide}"></TextBlock>
             <Button Click="DebugClick">Break</Button>
             <Button Click="ClearActiveSlideClick">Clear active slide</Button>
+            <Button Click="WebBrowserClick">WebBrowserClick</Button>
             <ComboBox
                 x:Name="ThemeVariants"
                 HorizontalAlignment="Stretch"

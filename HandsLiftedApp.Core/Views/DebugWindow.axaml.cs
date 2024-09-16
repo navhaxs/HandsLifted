@@ -3,8 +3,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Styling;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Importer.OnlineSongLyrics;
 
 namespace HandsLiftedApp.Core.Views
 {
@@ -39,6 +41,12 @@ namespace HandsLiftedApp.Core.Views
         private void ClearActiveSlideClick(object? sender, RoutedEventArgs e)
         {
             Globals.Instance.MainViewModel.Playlist.NavigateToReference(new SlideReference() { ItemIndex = -1});
+        }
+
+        private void WebBrowserClick(object? sender, RoutedEventArgs e)
+        {
+            BrowserWindow window = new();
+            window.Show();
         }
     }
 }

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Avalonia" />
+      <PackageReference Include="Avalonia.Desktop" />
+      <PackageReference Include="Avalonia.ReactiveUI" />
+      <PackageReference Include="Material.Icons.Avalonia" />
+      <PackageReference Include="WebView.Avalonia.Desktop" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Avalonia.WebView">
+        <HintPath>..\..\..\..\packages\nuget\webview.avalonia\11.0.0.1\lib\netstandard2.0\Avalonia.WebView.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

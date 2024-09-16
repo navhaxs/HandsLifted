@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using AvaloniaWebView;
+using HandsLiftedApp.Importer.OnlineSongLyrics;
 
 namespace AvaloniaWebDemo;
 
@@ -16,15 +16,9 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
+            desktop.MainWindow = new BrowserWindow();
         }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    public override void RegisterServices()
-    {
-        base.RegisterServices();
-        AvaloniaWebViewBuilder.Initialize(default);
     }
 }

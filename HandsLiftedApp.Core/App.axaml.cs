@@ -3,9 +3,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Config.Net;
-using HandsLiftedApp.Core.Models;
-using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.Views;
 
 namespace HandsLiftedApp.Core;

@@ -18,6 +18,6 @@ class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .LogToTrace()
-            .UseWindowWebView();
+            .UseDesktopWebView()
+            .LogToTrace();
 }
