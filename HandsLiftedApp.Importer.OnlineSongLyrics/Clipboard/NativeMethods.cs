@@ -1,7 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace AvaloniaWebDemo
+namespace HandsLiftedApp.Importer.OnlineSongLyrics.Clipboard
 {
     internal static class NativeMethods
     {

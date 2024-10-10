@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -38,6 +39,8 @@ namespace HandsLiftedApp.Core
             // Trace.Listeners.Add(new ConsoleTraceListener());
 
             Log.Information("VisionScreens App {Version} Build {GitHash} {BuildDateTime}", Assembly.GetExecutingAssembly().GetName().Version, BuildInfo.Version.GetGitHash(), BuildInfo.Version.GetBuildDateTime());
+            var isAssemblyDebugBuild = Assembly.GetExecutingAssembly().GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled);
+            Log.Information("Debug: {IsAssemblyDebugBuild}", isAssemblyDebugBuild);
             Log.Information("Startup at {Now}", DateTime.Now);
 
             Log.Information("Runtime Identifier: {RID}", RuntimeInformation.RuntimeIdentifier);

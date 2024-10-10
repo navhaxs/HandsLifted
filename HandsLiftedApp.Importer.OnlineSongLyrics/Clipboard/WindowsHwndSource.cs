@@ -1,9 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
-namespace AvaloniaWebDemo
+namespace HandsLiftedApp.Importer.OnlineSongLyrics.Clipboard
 {
     internal delegate IntPtr WindowsWindowProcDelegate(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam,
         ref bool handled);

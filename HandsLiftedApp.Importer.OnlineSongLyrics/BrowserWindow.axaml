@@ -56,7 +56,7 @@
                     </Grid>
                     <Border
                         BorderThickness="1" CornerRadius="6" BorderBrush="Red" Padding="2" Margin="6">
-                        <WebView x:Name="PART_WebView" Grid.Row="1" />
+                        <WebView x:Name="PART_WebView" />
                     </Border>
                 </DockPanel>
              

@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
-using AvaloniaWebDemo;
+using HandsLiftedApp.Importer.OnlineSongLyrics.Clipboard;
 
 namespace HandsLiftedApp.Importer.OnlineSongLyrics
 {
