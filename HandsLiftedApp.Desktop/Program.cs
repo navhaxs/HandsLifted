@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.ReactiveUI;
+using Avalonia.WebView.Desktop;
 using HandsLiftedApp.Core;
 using Serilog;
 
@@ -52,6 +53,7 @@ sealed class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             // .WithInterFont() this font is gross
+            .UseDesktopWebView()
             .LogToTrace()
             .UseReactiveUI();
 }

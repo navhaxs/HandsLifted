@@ -37,13 +37,13 @@
                             <Setter Property="Background" Value="Transparent" />
                         </Style>
                         <!--  custom styles  -->
-                        <Style Selector="ToggleButton:pointerover Border">
-                            <Setter Property="Background" Value="#505050" />
+                        <Style Selector="ToggleButton:pointerover > Border">
+                            <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
                         </Style>
-                        <Style Selector="ToggleButton:pressed Border">
+                        <Style Selector="ToggleButton:pressed > Border">
                             <Setter Property="Background" Value="#9a93cd" />
                         </Style>
-                        <Style Selector="ToggleButton:checked Border">
+                        <Style Selector="ToggleButton:checked > Border">
                             <Setter Property="Background" Value="#5C3AB6" />
                         </Style>
                     </ToggleButton.Styles>

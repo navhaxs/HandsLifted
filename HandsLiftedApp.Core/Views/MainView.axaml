@@ -27,7 +27,7 @@
                     <SolidColorBrush x:Key="SlideNavigationButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
                     <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
                     <SolidColorBrush x:Key="AccentBackgroundBrush">#4D347F</SolidColorBrush>
-                    <SolidColorBrush x:Key="GridSplitterBrush">#deddec</SolidColorBrush>
+                    <SolidColorBrush x:Key="GridSplitterBrush">#9b97ad</SolidColorBrush>
                     <SolidColorBrush x:Key="PlaylistTitleBrush">#2f2f30</SolidColorBrush>
                     <SolidColorBrush x:Key="HoverBrush">#C11F576F</SolidColorBrush>
                     <SolidColorBrush x:Key="ActiveToggleButtonBackgroundBrush">#D8CEEC</SolidColorBrush>
@@ -177,7 +177,7 @@
                                     <Setter Property="Background" Value="#5c3ab6" />
                                 </Style>
                                 <Style Selector="Button:pointerover Border.AppButtonBorder">
-                                    <Setter Property="Background" Value="#5c3ab6" />
+                                    <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
                                 </Style>
                                 <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
                                     <Setter Property="Background" Value="#9a93cd" />
@@ -213,6 +213,9 @@
 
                     <controls:TextBoxToggleButton
                         DockPanel.Dock="Top"
+                        Margin="0,8,0,0"
+                        VerticalAlignment="Center"
+                        Padding="7"
                         HorizontalAlignment="Left"
                         FontSize="22"
                         Watermark="Untitled Playlist"
@@ -243,9 +246,10 @@
                     <!-- centre panel -->
                     <!-- TODO write a custom Converter to BoxShadow from {DynamicResource SurfaceBrush}-->
                     <Border
-                        BoxShadow="0 0 20 0 #1c1c1c"
+                        BorderBrush="{DynamicResource GridSplitterBrush}"
+                        BorderThickness="1 1 0 1"
                         CornerRadius="6,0,0,6"
-                        Margin="0 0 0 6"
+                        Margin="0 0 -1 6"
                         Grid.Column="2">
                         <DockPanel>
 
@@ -356,7 +360,7 @@
 
             <!-- <views:ItemContentView Grid.Column="4" DataContext="{Binding Playlist.SelectedItem}" /> -->
 
-            <Border Grid.Column="2" BorderThickness="1 0 0 0" BorderBrush="Black">
+            <Border Grid.Column="2" BorderThickness="1 0 0 0" BorderBrush="{DynamicResource GridSplitterBrush}">
                 <views:LivePane VerticalAlignment="Stretch" />
             </Border>
 

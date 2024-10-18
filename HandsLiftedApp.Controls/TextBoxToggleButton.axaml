@@ -10,16 +10,30 @@
              MinWidth="100"
              HorizontalAlignment="Left"
              x:Class="HandsLiftedApp.Controls.TextBoxToggleButton">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="HoverBackgroundBrush">#445c3ab6</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="HoverBackgroundBrush">#33ffffff</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Carousel x:Name="Carousel">
         <Button
             Name="EditButton"
             Click="EditButton_OnClick"
             DockPanel.Dock="Top"
-            Padding="6,4"
+            Padding="{Binding $parent[controls:TextBoxToggleButton].Padding}"
             Background="Transparent"
             BorderThickness="0"
             CornerRadius="6"
-            VerticalAlignment="Center"
+            VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Left"
             Cursor="Hand">
@@ -38,7 +52,7 @@
                     <Setter Property="IsVisible" Value="False" />
                 </Style>
                 <Style Selector="Button:pointerover /template/ ContentPresenter">
-                    <Setter Property="Background" Value="#33ffffff" />
+                    <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
                 </Style>
                 <Style Selector="Button:pointerover > DockPanel > Border">
                     <Setter Property="IsVisible" Value="True" />
@@ -66,7 +80,8 @@
                  GotFocus="EntryTextBox_OnGotFocus"
                  LostFocus="EntryTextBox_OnLostFocus"
                  CornerRadius="6"
-                 Margin="3 0 0 0"
+                 Padding="{Binding $parent[controls:TextBoxToggleButton].Padding}"
+                 Margin="0"
                  Background="White"
                  Foreground="Black"
                  CaretBrush="Black"

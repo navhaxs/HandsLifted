@@ -62,14 +62,18 @@
 
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="GroupHeadingBackground">#d5cfe8</SolidColorBrush>
+                    <SolidColorBrush x:Key="GroupHeadingBackground">#eeecf5</SolidColorBrush>
                     <SolidColorBrush x:Key="GroupHeadingForeground">#383838</SolidColorBrush>
+                    <SolidColorBrush x:Key="GroupHeadingBorderBrush">#b0aebf</SolidColorBrush>
                     <SolidColorBrush x:Key="ActiveItemForeground">#4d347f</SolidColorBrush>
+                    <SolidColorBrush x:Key="InactiveItemForeground">Black</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="GroupHeadingBackground">#383838</SolidColorBrush>
+                    <SolidColorBrush x:Key="GroupHeadingBackground">#78494949</SolidColorBrush>
                     <SolidColorBrush x:Key="GroupHeadingForeground">#DBDBDB</SolidColorBrush>
+                    <SolidColorBrush x:Key="GroupHeadingBorderBrush">#5c5c5c</SolidColorBrush>
                     <SolidColorBrush x:Key="ActiveItemForeground">White</SolidColorBrush>
+                    <SolidColorBrush x:Key="InactiveItemForeground">#a2a2a2</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -135,11 +139,11 @@
         </Style>
 
         <Style Selector="TextBlock.ItemTextBlock">
-            <Setter Property="Foreground" Value="#a2a2a2" />
+            <Setter Property="Foreground" Value="{DynamicResource InactiveItemForeground}" />
         </Style>
 
         <Style Selector="ListBoxItem:selected TextBlock.ItemTextBlock">
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Foreground" Value="{DynamicResource ActiveItemForeground}" />
         </Style>
 
         <Style Selector="TextBlock.isSelectedItem">
@@ -153,7 +157,8 @@
         </Style>
 
         <Style Selector="ListBoxItem:selected TextBlock.SectionHeadingTextBlock">
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Foreground" Value="{DynamicResource ActiveItemForeground}" />
+            <Setter Property="FontWeight" Value="Bold" />
         </Style>
 
         <Style Selector="ListBoxItem material|MaterialIcon">
@@ -174,9 +179,13 @@
         <Style Selector="ListBoxItem Border.SectionHeadingBorder" x:DataType="items:SectionHeadingItem">
             <Setter Property="BorderBrush"
                     Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
-            <Setter Property="Background" Value="#78494949" />
+            <Setter Property="Background" Value="{DynamicResource GroupHeadingBackground}" />
         </Style>
 
+        <Style Selector="ListBoxItem Border.SectionHeadingBorder">
+            <Setter Property="BorderBrush" Value="{DynamicResource GroupHeadingBorderBrush}" />
+        </Style>
+        
         <Style Selector="ListBoxItem:selected Border.SectionHeadingBorder">
             <!-- <Setter Property="Background" Value="#494949" /> -->
         </Style>
@@ -231,7 +240,6 @@
 									</Style>
 								</Grid.Styles>-->
                             <Border BorderThickness="0 1 0 1"
-                                    BorderBrush="#5c5c5c"
                                     Classes="SectionHeadingBorder">
                                 <DockPanel Margin="9,0,0,0" VerticalAlignment="Stretch">
                                     <TextBlock

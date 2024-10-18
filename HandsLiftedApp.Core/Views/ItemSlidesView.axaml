@@ -41,7 +41,7 @@
             <converters:MultiplicationConverter x:Key="MultiplicationConverter" />
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="BackgroundBrush">#f6f5fa</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#f6f4fe</SolidColorBrush>
                     <SolidColorBrush x:Key="TitleBrush">Black</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
@@ -147,9 +147,11 @@
                         <!--    -->
                         <Border
                             x:Name="SectionHeadingItemHeader"
-                            Margin="0 14"
+                            Margin="0 14 -90 14"
                             ContextMenu="{StaticResource ItemContextMenu}"
-                            Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#124449'}">
+                            BorderBrush="#5C868C"
+                            BorderThickness="0,0,0,4"
+                            Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ABCDD0'}">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
@@ -219,7 +221,7 @@
                                 Margin="14"
                                 Background="{DynamicResource BackgroundBrush}"
                                 BorderBrush="Transparent"
-                                BorderThickness="2"
+                                BorderThickness="1"
                                 CornerRadius="6">
                                 <i:Interaction.Behaviors>
                                     <ia:DataTriggerBehavior
@@ -227,13 +229,13 @@
                                         ComparisonCondition="Equal"
                                         Value="True">
                                         <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" />
-                                        <ia:ChangePropertyAction PropertyName="BorderThickness" Value="2" />
+                                        <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                     </ia:DataTriggerBehavior>
                                     <ia:DataTriggerBehavior
                                         Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                         ComparisonCondition="Equal"
                                         Value="False">
-                                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="Transparent" />
+                                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="{DynamicResource ItemOutlineBrush}" />
                                         <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                     </ia:DataTriggerBehavior>
                                 </i:Interaction.Behaviors>
