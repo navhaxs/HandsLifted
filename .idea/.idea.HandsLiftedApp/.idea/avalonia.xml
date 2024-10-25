@@ -5,6 +5,7 @@
       <map>
         <entry key="Demos/AvaloniaWebDemo/App.axaml" value="Demos/AvaloniaWebDemo/AvaloniaWebDemo.csproj" />
         <entry key="Demos/AvaloniaWebDemo/MainWindow.axaml" value="Demos/AvaloniaWebDemo/AvaloniaWebDemo.csproj" />
+        <entry key="Demos/AvaloniaWebNDIDemo/MainWindow.axaml" value="Demos/AvaloniaWebNDIDemo/AvaloniaWebNDIDemo.csproj" />
         <entry key="Demos/PowerPointConverterSampleApp/App.axaml" value="Demos/PowerPointConverterSampleApp/PowerPointConverterSampleApp.csproj" />
         <entry key="Demos/PowerPointConverterSampleApp/MainWindow.axaml" value="Demos/PowerPointConverterSampleApp/PowerPointConverterSampleApp.csproj" />
         <entry key="Demos/SongEditorStandalone/App.axaml" value="Demos/SongEditorStandalone/SongEditorStandalone.csproj" />
@@ -43,6 +44,7 @@
         <entry key="HandsLiftedApp.Core/Render/SlideRender.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Render/SongThemes/DesignerSlideTemplate.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Render/SongThemes/DesignerSlideTitle.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Render/WebViewSlideRenderer.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/AboutWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/AddItem.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/AddItem/AddItemResultsView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

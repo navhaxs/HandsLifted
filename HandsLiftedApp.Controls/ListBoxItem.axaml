@@ -224,50 +224,6 @@
         </Setter>
     </Style>
 
-    <!--<Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-		<Setter Property="Background" Value="{DynamicResource ThemeControlHighlightMidBrush}"/>
-	</Style>
-
-	<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush4}"/>
-	</Style>
-
-	<Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
-		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}"/>
-	</Style>
-
-	<Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
-		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush3}"/>
-	</Style>
-
-	<Style Selector="ListBoxItem:selected:focus:pointerover /template/ ContentPresenter">
-		<Setter Property="Background" Value="{DynamicResource ThemeAccentBrush2}"/>
-	</Style>
-	
-	<Style Selector="ListBoxItem:pointerover /template/ DockPanel > Border">
-		<Setter Property="BorderBrush" Value="Yellow"/>
-	</Style>
-
-	<Style Selector="ListBoxItem:pointerover /template/ Border">
-		<Setter Property="BorderBrush" Value="Yellow"/>
-		<Setter Property="BorderThickness" Value="24"/>
-	</Style>-->
-
-    <!--<Style Selector="ListBoxItem:pointerover /template/ Border">
-	</Style>-->
-
-    <!--<Style Selector="Border:selected">
-		<Setter Property="BorderBrush" Value="Green"/>
-	</Style>-->
-
-    <!--<Style Selector="ListBoxItem:pointerover /template/ DockPanel TextBlock">
-		<Setter Property="Foreground" Value="#a92b1a"/>
-	</Style>-->
-
-    <!--<Style Selector="ListBoxItem /template/ DockPanel">
-		<Setter Property="Background" Value="Red"/>
-	</Style>-->
-
     <Style Selector="ListBoxItem /template/ Border#PART_Border">
         <Setter Property="BorderBrush" Value="#4E4E4E" />
         <Setter Property="BorderThickness" Value="1" />

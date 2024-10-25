@@ -143,7 +143,7 @@ namespace HandsLiftedApp.Core.Models
                 });
 
             // try load Playlist Logo > Global Logo
-
+            _disposables.Add(
             MessageBus.Current.Listen<AddItemByFilePathMessage>()
                 .Subscribe(addItemToPlaylistMessage =>
                 {
@@ -159,10 +159,10 @@ namespace HandsLiftedApp.Core.Models
                         var newItem = CreateItem.GenerateItem(filePath);
                         if (newItem != null)
                         {
-                            Items.Insert(insertAt, newItem);
+                            Items.Insert(insertAt, ItemInstanceFactory.ToItemInstance(newItem, this));
                         }
                     }
-                });
+                }));
 
             _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
                 .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)

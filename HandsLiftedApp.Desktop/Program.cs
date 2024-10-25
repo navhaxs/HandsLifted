@@ -54,6 +54,11 @@ sealed class Program
             .UsePlatformDetect()
             // .WithInterFont() this font is gross
             .UseDesktopWebView()
+            .With<Win32PlatformOptions>(new Win32PlatformOptions()
+                {
+                    WinUICompositionBackdropCornerRadius = 0
+                     // UseWindowsUIComposition = false
+                })
             .LogToTrace()
             .UseReactiveUI();
 }

@@ -43,10 +43,14 @@
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="BackgroundBrush">#f6f4fe</SolidColorBrush>
                     <SolidColorBrush x:Key="TitleBrush">Black</SolidColorBrush>
+                    <SolidColorBrush x:Key="SectionHeadingBackgroundBrush">#ABCDD0</SolidColorBrush>
+                    <SolidColorBrush x:Key="SectionHeadingBorderBrush">#5C868C</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="BackgroundBrush">#3b3349</SolidColorBrush>
                     <SolidColorBrush x:Key="TitleBrush">White</SolidColorBrush>
+                    <SolidColorBrush x:Key="SectionHeadingBackgroundBrush">#124449</SolidColorBrush>
+                    <SolidColorBrush x:Key="SectionHeadingBorderBrush">#124449</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <extensions:BitmapAssetValueConverter x:Key="variableImage" />
@@ -107,7 +111,6 @@
 
     </UserControl.Styles>
 
-    <StackPanel>
         <ContentControl Content="{Binding}">
             <ContentControl.ContentTemplate>
                 <common:MyTemplateSelector>
@@ -149,9 +152,10 @@
                             x:Name="SectionHeadingItemHeader"
                             Margin="0 14 -90 14"
                             ContextMenu="{StaticResource ItemContextMenu}"
-                            BorderBrush="#5C868C"
+                            BorderBrush="{DynamicResource SectionHeadingBorderBrush}"
                             BorderThickness="0,0,0,4"
-                            Background="{Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#ABCDD0'}">
+                            Background="{DynamicResource SectionHeadingBackgroundBrush}">
+                            <!-- Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue= -->
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
@@ -435,7 +439,5 @@
                 </common:MyTemplateSelector>
             </ContentControl.ContentTemplate>
         </ContentControl>
-
-    </StackPanel>
 
 </UserControl>

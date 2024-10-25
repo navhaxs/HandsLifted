@@ -100,6 +100,9 @@ namespace HandsLiftedApp.Core
         
         public static Item? GenerateItem(string filePath)
         {
+            // TODO important - refactor to:
+            // 1. Create plain Item object
+            // 2. (Callee) Convert plain Item object to "ItemInstance" - refactor this code from HandsLiftedDocXmlSerializer
             string filename = filePath.ToLower();
 
             if (filePath.ToLower().EndsWith(".xml"))
@@ -120,6 +123,23 @@ namespace HandsLiftedApp.Core
             }
             else if (Constants.SUPPORTED_IMAGE.Any(x => filename.EndsWith(x)))
             {
+                var mediaGroupItem = new MediaGroupItem()
+                    { Title = "New media group" };
+
+                // foreach (var filePath in filePaths)
+                // {
+                //     if (filePath != null && filePath is string)
+                //     {
+                        // DateTime now = DateTime.Now;
+                        // string fileName = Path.GetFileName(filePath);
+                        // string folderName = Path.GetDirectoryName(filePath);
+                        mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
+                            { SourceMediaFilePath = filePath });
+                //     }
+                // }
+                // mediaGroupItem.GenerateSlides();
+
+                return mediaGroupItem;
                 // return SongImporter.createSongItemFromTxtFile(filePath);
             }
             else if (Constants.SUPPORTED_PDF.Any(x => filename.EndsWith(x)))

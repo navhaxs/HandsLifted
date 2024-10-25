@@ -260,6 +260,11 @@
     </ItemGroup>
 
 
+    <ItemGroup>
+      <AvaloniaXaml Remove="Render\WebViewSlideRenderer.axaml" />
+    </ItemGroup>
+
+
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
         <Exec Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)/BuildInfo/GitHash.txt&quot;"/>
         <Exec Command="echo $(BuildDateTime) &gt; &quot;$(ProjectDir)/BuildInfo/BuildDateTime.txt&quot;"/>
