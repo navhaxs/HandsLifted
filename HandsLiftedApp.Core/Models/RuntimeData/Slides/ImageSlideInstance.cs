@@ -14,13 +14,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
     {
         private DebounceDispatcher debounceDispatcher = new(200);
 
-        public ImageSlideInstance(string imagePath, MediaGroupItem parentMediaGroupItem) : base(imagePath)
+        public ImageSlideInstance(string imagePath, MediaGroupItem? parentMediaGroupItem) : base(imagePath)
         {
             this.WhenAnyValue(s => s.SourceMediaFilePath) // todo dirty bit?
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
 
-            SlideTimerConfig = parentMediaGroupItem.AutoAdvanceTimer;
+            SlideTimerConfig = parentMediaGroupItem?.AutoAdvanceTimer;
 
             // TODO
             // TODO

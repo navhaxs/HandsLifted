@@ -77,7 +77,7 @@
         <Border>
             <DockPanel>
 
-                <Grid DockPanel.Dock="Top">
+                <Grid DockPanel.Dock="Top" DragDrop.AllowDrop="True" x:Name="DragTarget">
                     <Grid.Background>
                         <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
                             <VisualBrush.Visual>
@@ -116,6 +116,8 @@
                 <!-- <controlmodules:SlidesGroupItemViewWrapper DataContext="{Binding Playlist.State.SelectedItem}" -->
                 <!--                                            DockPanel.Dock="Top" /> -->
 
+                <TextBlock x:Name="_dropState" DockPanel.Dock="Top" />
+                
                 <Grid DockPanel.Dock="Top" Height="2">
                     <ProgressBar MinHeight="2"
                                  IsVisible="{Binding Playlist.AutoAdvanceTimer.IsTimerConfigured}"

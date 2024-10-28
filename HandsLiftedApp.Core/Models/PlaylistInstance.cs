@@ -72,8 +72,8 @@ namespace HandsLiftedApp.Core.Models
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItemAsIItemInstance);
 
-            _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide, x => x.PresentationState,
-                    (Slide activeSlide, PresentationStateEnum presentationState) =>
+            _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide, x => x.PresentationState, x => x.QuickShowItem,
+                    (Slide activeSlide, PresentationStateEnum presentationState, Slide? quickShowSlide) =>
                     {
                         switch (presentationState)
                         {
@@ -83,6 +83,8 @@ namespace HandsLiftedApp.Core.Models
                                 return new LogoSlide();
                             case PresentationStateEnum.Blank:
                                 return new BlankSlide();
+                            case PresentationStateEnum.QuickShow:
+                                return quickShowSlide ?? new BlankSlide();
                         }
 
                         return activeSlide;
@@ -316,6 +318,14 @@ namespace HandsLiftedApp.Core.Models
             get => _selectedItemAsIItemInstance.Value;
         }
 
+        private Slide? _quickShowItem;
+        public Slide? QuickShowItem
+        {
+            
+            get => _quickShowItem;
+            set => this.RaiseAndSetIfChanged(ref _quickShowItem, value);
+        }
+
         private ObservableAsPropertyHelper<Slide> _activeSlide;
 
         public Slide ActiveSlide
@@ -347,7 +357,8 @@ namespace HandsLiftedApp.Core.Models
         {
             Slides,
             Logo,
-            Blank
+            Blank,
+            QuickShow
         }
 
         public bool IsLogo
