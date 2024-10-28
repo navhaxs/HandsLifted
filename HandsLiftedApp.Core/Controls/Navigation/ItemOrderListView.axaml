@@ -84,12 +84,26 @@
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="Margin" Value="0" />
+            <Setter Property="ContextMenu">
+                <Setter.Value>
+                    <ContextMenu>
+                        <MenuItem
+                            Click="AddItem_OnClick"
+                            CommandParameter="{Binding}"
+                            Header="Add Item">
+                            <MenuItem.Icon>
+                                <material:MaterialIcon Kind="Plus" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style Selector="ListBoxItem">
             <Setter Property="ContextMenu">
                 <Setter.Value>
-                    <ContextMenu>
+                    <ContextMenu AttachedToLogicalTree="StyledElement_OnAttachedToLogicalTree" Closed="MenuBase_OnClosed">
                         <MenuItem
                             Click="MoveUpItem_OnClick"
                             CommandParameter="{Binding}"
@@ -106,12 +120,22 @@
                                 <material:MaterialIcon Kind="ArrowDown" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <Separator />
                         <MenuItem
                             Click="DeleteItem_OnClick"
                             CommandParameter="{Binding}"
                             Header="Remove Item">
                             <MenuItem.Icon>
                                 <material:MaterialIcon Kind="Times" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem
+                            Click="AddItem_OnClick"
+                            CommandParameter="{Binding}"
+                            Header="Add Item">
+                            <MenuItem.Icon>
+                                <material:MaterialIcon Kind="Plus" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>
@@ -185,7 +209,7 @@
         <Style Selector="ListBoxItem Border.SectionHeadingBorder">
             <Setter Property="BorderBrush" Value="{DynamicResource GroupHeadingBorderBrush}" />
         </Style>
-        
+
         <Style Selector="ListBoxItem:selected Border.SectionHeadingBorder">
             <!-- <Setter Property="Background" Value="#494949" /> -->
         </Style>
@@ -199,6 +223,11 @@
 
         <Style Selector="ListBoxItem:pressed /template/ ContentPresenter">
             <!--<Setter Property="Background" Value="#6259A5"/>-->
+        </Style>
+
+        <Style Selector="ListBoxItem.menu-open /template/ ContentPresenter">
+            <Setter Property="Background" Value="#C11F576F" />
+            <!--<Setter Property="BorderBrush" Value="#1f576f" />-->
         </Style>
 
     </UserControl.Styles>

@@ -8,6 +8,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using HandsLiftedApp.Core.Models.Library;
@@ -208,6 +209,8 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             try
             {
+                if (Design.IsDesignMode) return;
+                
                 using (var streamWriter = new StreamWriter(Constants.LIBRARY_CONFIG_FILEPATH))
                 {
                     var serializer = new SerializerBuilder()
@@ -227,6 +230,8 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             try
             {
+                if (Design.IsDesignMode) return null;
+                
                 using (var streamReader = new StreamReader(Constants.LIBRARY_CONFIG_FILEPATH))
                 {
                     var deserializer = new DeserializerBuilder()

@@ -56,6 +56,8 @@ public class MainViewModel : ViewModelBase
             Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
             Playlist.Designs.Add(new BaseSlideTheme() { Name = "Default" });
 
+            LibraryViewModel.ReloadLibraries();
+                
             return;
         }
 

@@ -4,12 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
 
@@ -26,10 +29,11 @@ namespace HandsLiftedApp.Core.Views.Designer
             fontComboBox.ItemsSource = fontFamilies;
             // fontComboBox.SelectedIndex = 0;
 
-            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight)).Select(x => Enum.Parse<FontWeight>(x)).Distinct().ToArray();
+            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight))
+                .Select(x => Enum.Parse<FontWeight>(x)).Distinct().ToArray();
 
             TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
-          
+
             this.WhenAnyValue(v => v.designsListBox.ItemsSource)
                 .Subscribe((x) =>
                 {
@@ -99,6 +103,83 @@ namespace HandsLiftedApp.Core.Views.Designer
             }
         }
 
+        private async void ExportItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MainViewModel mainViewModel)
+            {
+                if (sender is Control control)
+                {
+                    if (control.DataContext is BaseSlideTheme item)
+                    {
+                        var topLevel = TopLevel.GetTopLevel(this);
+                        var xmlFileType = new FilePickerFileType("XML Document")
+                        {
+                            Patterns = new[] { "*.xml" },
+                            MimeTypes = new[] { "text/xml" }
+                        };
+
+                        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                        {
+                            Title = "Save File",
+                            FileTypeChoices = new[] { xmlFileType }
+                        });
+
+                        if (file != null)
+                        {
+                            // User selected a file
+                            // Save the file content
+                            using (var stream = await file.OpenWriteAsync())
+                            {
+                                // Write content to the file
+                                // Assuming you have a method to serialize the object to XML
+                                XmlSerializer serializer = new XmlSerializer(typeof(BaseSlideTheme));
+
+                                serializer.Serialize(stream, item);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private async void ImportItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MainViewModel mainViewModel)
+            {
+                var topLevel = TopLevel.GetTopLevel(this);
+                var xmlFileType = new FilePickerFileType("XML Document")
+                {
+                    Patterns = new[] { "*.xml" },
+                    MimeTypes = new[] { "text/xml" }
+                };
+
+                var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    Title = "Save File",
+                    FileTypeFilter = new[] { xmlFileType }
+                });
+
+                if (files.Count >= 1)
+                {
+                    await using var stream = await files[0].OpenReadAsync();
+
+                    XmlSerializer serializer = new XmlSerializer(typeof(BaseSlideTheme));
+
+                    var item = serializer.Deserialize(stream);
+                    if (item is BaseSlideTheme theme)
+                    {
+                        var existingMatch = mainViewModel.Playlist.Designs.FirstOrDefault(x => x.Id == theme.Id);
+                        if (existingMatch != null)
+                        {
+                            theme.Id = new Guid();
+                        }
+                        
+                        mainViewModel.Playlist.Designs.Add(theme);
+                    }
+                }
+            }
+        }
+
         private async void ChangeThemeBgGraphic_OnClick(object? sender, RoutedEventArgs e)
         {
             try
@@ -114,7 +195,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             catch (Exception ex)
             {
                 Debug.Print(ex.Message);
-            }        
+            }
         }
     }
 }

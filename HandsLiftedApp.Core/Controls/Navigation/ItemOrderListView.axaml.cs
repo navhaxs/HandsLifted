@@ -9,10 +9,14 @@ using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
+using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
+using DynamicData;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Models.Items;
 
@@ -39,34 +43,33 @@ namespace HandsLiftedApp.Core.Controls.Navigation
             listBox.SelectionChanged += ListBox_SelectionChanged;
 
             MessageBus.Current.Listen<SpyScrollUpdateMessage>()
-               .Subscribe(x =>
-               {
-                   lock (syncSlidesLock)
-                   {
-                       listBox.SelectionChanged -= ListBox_SelectionChanged;
-                       listBox.SelectedIndex = x.Index;
-                       listBox.SelectionChanged += ListBox_SelectionChanged;
-                   }
-               });
+                .Subscribe(x =>
+                {
+                    lock (syncSlidesLock)
+                    {
+                        listBox.SelectionChanged -= ListBox_SelectionChanged;
+                        listBox.SelectedIndex = x.Index;
+                        listBox.SelectionChanged += ListBox_SelectionChanged;
+                    }
+                });
 
 
             //SetupDnd("Text", d => d.Set(DataFormats.Text, $"Text was dragged"), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 
             //SetupDnd("Custom", d => d.Set(CustomFormat, "Test123"), DragDropEffects.Move);
-            SetupDnd("Files", d => d.Set(DataFormats.FileNames, new[] { Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName }), DragDropEffects.Copy);
+            SetupDnd("Files",
+                d => d.Set(DataFormats.FileNames,
+                    new[] { Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName }),
+                DragDropEffects.Copy);
 
             MessageBus.Current.Listen<AddItemMessage>()
-                .Subscribe(async addItemMessage =>
-                {
-                    
-                });
+                .Subscribe(async addItemMessage => { });
         }
 
         private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (listBox.SelectedIndex > -1)
                 MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = listBox.SelectedIndex });
-
         }
 
         Control lastAdornerElement;
@@ -116,7 +119,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 // Only allow if the dragged data contains text or filenames.
                 if (!e.Data.Contains(DataFormats.Text)
                     && !e.Data.Contains(DataFormats.FileNames)
-                    )
+                   )
                     //&& !e.Data.Contains(CustomFormat))
                     e.DragEffects = DragDropEffects.None;
 
@@ -129,10 +132,11 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 //    return point.Y >= x.Bounds.Top && point.Y <= x.Bounds.Bottom;
                 //}, listBox.ItemContainerGenerator.Containers.Last());
 
-                var found = listBox.GetRealizedContainers().LastOrDefault((Func<Control, bool>)(container =>
-                {
-                    return point.Y >= container.Bounds.Top && point.Y <= container.Bounds.Bottom;
-                }), listBox.GetRealizedContainers().Last());
+                var found = listBox.GetRealizedContainers().LastOrDefault(
+                    (Func<Control, bool>)(container =>
+                    {
+                        return point.Y >= container.Bounds.Top && point.Y <= container.Bounds.Bottom;
+                    }), listBox.GetRealizedContainers().Last());
 
 
                 if (found == null)
@@ -140,7 +144,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                     return;
                 }
 
-                lastAdornerElement = found;// as Control; //(Visual)sender;
+                lastAdornerElement = found; // as Control; //(Visual)sender;
                 var adornerLayer = AdornerLayer.GetAdornerLayer(lastAdornerElement);
 
                 if (adornerLayer != null)
@@ -209,29 +213,90 @@ namespace HandsLiftedApp.Core.Controls.Navigation
         {
             if (sender is Control control)
             {
-                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.UP });
+                MessageBus.Current.SendMessage(new MoveItemCommand()
+                    { SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.UP });
             }
         }
+
         private void MoveDownItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)
             {
-                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.DOWN });
+                MessageBus.Current.SendMessage(new MoveItemCommand()
+                    { SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.DOWN });
             }
         }
+
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)
             {
                 // TODO confirmation window
-                
-                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
+
+                MessageBus.Current.SendMessage(new MoveItemCommand()
+                    { SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
             }
         }
-        
+
+        private void AddItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control control)
+            {
+                int? insertIndex;
+                if (control.DataContext is Item SourceItem)
+                {
+                    insertIndex = Globals.Instance.MainViewModel.Playlist.Items.IndexOf(SourceItem) + 1;
+                }
+                else
+                {
+                    insertIndex = Globals.Instance.MainViewModel.Playlist.Items.Count;
+                }
+
+                HandleAddItemButtonClick.ShowAddWindow(insertIndex, sender);
+            }
+        }
+
         private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
         {
             HandleAddItemButtonClick.ShowAddWindow(null, sender);
+        }
+
+        object __lockObj = new();
+        private List<StyledElement> _attachedListBoxItems = new();
+
+        private void StyledElement_OnAttachedToLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)
+        {
+            clearMenuOpenClasses();
+
+            if (sender is Control control)
+            {
+                var listBoxItem = control?.Parent?.Parent;
+                if (listBoxItem is not null)
+                {
+                    lock (__lockObj)
+                    {
+                        _attachedListBoxItems.Add(listBoxItem);
+                        listBoxItem.Classes.Add("menu-open");
+                    }
+                }
+            }
+        }
+
+        private void MenuBase_OnClosed(object? sender, RoutedEventArgs e)
+        {
+            clearMenuOpenClasses();
+        }
+
+        private void clearMenuOpenClasses()
+        {
+            lock (__lockObj)
+            {
+                foreach (var listBoxItem in _attachedListBoxItems)
+                {
+                    listBoxItem.Classes.Remove("menu-open");
+                }
+                _attachedListBoxItems.Clear();
+            }
         }
     }
 }

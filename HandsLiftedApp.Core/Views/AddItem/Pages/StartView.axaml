@@ -4,10 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
              xmlns:pages="clr-namespace:HandsLiftedApp.Core.ViewModels.AddItem.Pages"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="550"
+             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="660" d:DesignHeight="450"
              x:DataType="pages:StartViewModel"
              x:Class="HandsLiftedApp.Core.Views.AddItem.Pages.StartView">
 
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    
     <UserControl.Styles>
         <StyleInclude Source="../Styles.axaml" />
     </UserControl.Styles>

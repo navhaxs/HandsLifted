@@ -8,17 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Avalonia.Interactivity;
-using Avalonia.VisualTree;
-using HandsLiftedApp.Core.Models;
-using HandsLiftedApp.Core.ViewModels;
-using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
-using HandsLiftedApp.Core.Views;
-using HandsLiftedApp.Core.Views.AddItem.Pages;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
-
 
 namespace HandsLiftedApp.Core.Controls
 {
@@ -42,6 +34,19 @@ namespace HandsLiftedApp.Core.Controls
 
             AddButton.PointerEntered += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = true; };
             AddButton.PointerExited += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = false; };
+            
+            Globals.Instance.MainViewModel.Playlist.WhenAnyValue(x => x.ActiveItemInsertIndex)
+                .Subscribe(x =>
+                {
+                    if (ItemInsertIndex == x && x != null)
+                    {
+                        AddButton.Classes.Add("active");
+                    }
+                    else
+                    {
+                        AddButton.Classes.Remove("active");
+                    }
+                });
 
             SetupDnd("Files",
                 async d => d.Set(DataFormats.Files,

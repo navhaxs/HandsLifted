@@ -108,336 +108,353 @@
                 </i:BehaviorCollectionTemplate>
             </Setter>-->
         </Style>
-
+        
     </UserControl.Styles>
 
-        <ContentControl Content="{Binding}">
-            <ContentControl.ContentTemplate>
-                <common:MyTemplateSelector>
-                    <DataTemplate x:Key="BlankItem">
-                    </DataTemplate>
-                    <DataTemplate x:Key="CommentItem" x:DataType="items2:CommentItem">
-                        <Border
-                            BorderThickness="6 0 0 0"
-                            Margin="14,12,14,0"
-                            CornerRadius="0"
-                            BorderBrush="#32B1BC"
-                            Background="#BADDDD"
-                            DockPanel.Dock="Top"
-                            ContextMenu="{StaticResource ItemContextMenu}">
-                            <DockPanel>
-                                <avalonia:MaterialIcon DockPanel.Dock="Left"
-                                                       Margin="15 10"
-                                                       VerticalAlignment="Top"
-                                                       Height="32" Width="32"
-                                                       Foreground="#32B1BC"
-                                                       Kind="AlertCircle" />
-                                <TextBox
-                                    Watermark="Untitled Playlist"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Foreground="Black"
-                                    FontSize="12"
-                                    Text="{Binding Title, Mode=TwoWay, FallbackValue='hello'}"
-                                    Padding="0 8 8 8"
-                                    AcceptsReturn="True" />
+    
+    <ContentControl Content="{Binding}">
+        <ContentControl.ContentTemplate>
+            <common:MyTemplateSelector>
+                <DataTemplate x:Key="BlankItem">
+                </DataTemplate>
+                <DataTemplate x:Key="CommentItem" x:DataType="items2:CommentItem">
+                    <Border
+                        BorderThickness="6 0 0 0"
+                        Margin="14,12,14,0"
+                        CornerRadius="0"
+                        BorderBrush="#32B1BC"
+                        Background="#BADDDD"
+                        DockPanel.Dock="Top"
+                        ContextMenu="{StaticResource ItemContextMenu}">
+                        <DockPanel>
+                            <avalonia:MaterialIcon DockPanel.Dock="Left"
+                                                   Margin="15 10"
+                                                   VerticalAlignment="Top"
+                                                   Height="32" Width="32"
+                                                   Foreground="#32B1BC"
+                                                   Kind="AlertCircle" />
+                            <TextBox
+                                Watermark="Untitled Playlist"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="Black"
+                                FontSize="12"
+                                Text="{Binding Title, Mode=TwoWay, FallbackValue='hello'}"
+                                Padding="0 8 8 8"
+                                AcceptsReturn="True" />
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+                <DataTemplate x:Key="SectionHeadingItem" x:DataType="items2:SectionHeadingItem">
+                    <!--    -->
+                    <Border
+                        x:Name="SectionHeadingItemHeader"
+                        Margin="0 14 -90 14"
+                        ContextMenu="{StaticResource ItemContextMenu}"
+                        BorderBrush="{DynamicResource SectionHeadingBorderBrush}"
+                        BorderThickness="0,0,0,4"
+                        Background="{DynamicResource SectionHeadingBackgroundBrush}">
+                        <!-- Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue= -->
+                        <i:Interaction.Behaviors>
+                            <ia:DataTriggerBehavior
+                                Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                ComparisonCondition="Equal"
+                                Value="True">
+                                <ia:ChangePropertyAction TargetObject="InnerStackPanel" PropertyName="Background"
+                                                         Value="#11ffffff" />
+                            </ia:DataTriggerBehavior>
+                            <ia:DataTriggerBehavior
+                                Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                ComparisonCondition="Equal"
+                                Value="False">
+                                <ia:ChangePropertyAction TargetObject="InnerStackPanel" PropertyName="Background"
+                                                         Value="Transparent" />
+                            </ia:DataTriggerBehavior>
+                            <ia:DataTriggerBehavior
+                                Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
+                                ComparisonCondition="Equal"
+                                Value="True">
+                                <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" />
+                                <ia:ChangePropertyAction PropertyName="BorderThickness" Value="2" />
+                            </ia:DataTriggerBehavior>
+                            <ia:DataTriggerBehavior
+                                Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
+                                ComparisonCondition="Equal"
+                                Value="False">
+                                <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#9a93cd" />
+                                <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
+                            </ia:DataTriggerBehavior>
+                        </i:Interaction.Behaviors>
+                        <StackPanel x:Name="InnerStackPanel">
+                            <DockPanel Margin="0,8">
+                                <controls:TextBoxToggleButton
+                                    Margin="16,0,8,0"
+                                    FontSize="20"
+                                    Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+
                             </DockPanel>
-                        </Border>
-                    </DataTemplate>
-                    <DataTemplate x:Key="SectionHeadingItem" x:DataType="items2:SectionHeadingItem">
-                        <!--    -->
+                            <!--<item:ItemInfo VerticalAlignment="Top" />-->
+                        </StackPanel>
+
+                    </Border>
+                </DataTemplate>
+                <!-- default template for all other item types -->
+                <DataTemplate x:Key="Fallback">
+
+                    <DockPanel>
+                        <!--<Viewbox
+            Width="50"
+            Margin="0,10,0,0"
+            VerticalAlignment="Top"
+            Stretch="Uniform"
+            StretchDirection="DownOnly">
+            <Label
+                Padding="12"
+                Content="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}, FallbackValue='99'}"
+                FontSize="16" />
+        </Viewbox>-->
+                        <DockPanel.Styles>
+                            <Style Selector="DockPanel.ItemHeader:flyout-open">
+                                <Setter Property="Background" />
+                            </Style>
+                        </DockPanel.Styles>
+
                         <Border
-                            x:Name="SectionHeadingItemHeader"
-                            Margin="0 14 -90 14"
-                            ContextMenu="{StaticResource ItemContextMenu}"
-                            BorderBrush="{DynamicResource SectionHeadingBorderBrush}"
-                            BorderThickness="0,0,0,4"
-                            Background="{DynamicResource SectionHeadingBackgroundBrush}">
-                            <!-- Binding ItemGroupColour, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue= -->
+                            Classes="item-border"
+                            AttachedToVisualTree="ItemBorder_OnAttachedToVisualTree"
+                            Margin="14"
+                            Background="{DynamicResource BackgroundBrush}"
+                            BorderBrush="Transparent"
+                            BorderThickness="1"
+                            CornerRadius="6">
+                            <Border.Styles>
+                                <Style Selector="Border.item-border">
+                                    <Setter Property="Opacity" Value="0" />
+                                </Style>
+                                
+                                <Style Selector="Border.item-border.fade-in">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                                
+                            </Border.Styles>
+                            <Border.Transitions>
+                                <Transitions>
+                                    <DoubleTransition Property="Opacity" Duration="0:0:0.5" />
+                                </Transitions>
+                            </Border.Transitions>
                             <i:Interaction.Behaviors>
-                                <ia:DataTriggerBehavior
-                                    Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
-                                    ComparisonCondition="Equal"
-                                    Value="True">
-                                    <ia:ChangePropertyAction TargetObject="InnerStackPanel" PropertyName="Background"
-                                                             Value="#11ffffff" />
-                                </ia:DataTriggerBehavior>
-                                <ia:DataTriggerBehavior
-                                    Binding="{Binding #SectionHeadingItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
-                                    ComparisonCondition="Equal"
-                                    Value="False">
-                                    <ia:ChangePropertyAction TargetObject="InnerStackPanel" PropertyName="Background"
-                                                             Value="Transparent" />
-                                </ia:DataTriggerBehavior>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                     ComparisonCondition="Equal"
                                     Value="True">
                                     <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" />
-                                    <ia:ChangePropertyAction PropertyName="BorderThickness" Value="2" />
+                                    <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                 </ia:DataTriggerBehavior>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                     ComparisonCondition="Equal"
                                     Value="False">
-                                    <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#9a93cd" />
+                                    <ia:ChangePropertyAction PropertyName="BorderBrush" Value="{DynamicResource ItemOutlineBrush}" />
                                     <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
-                            <StackPanel x:Name="InnerStackPanel">
-                                <DockPanel Margin="0,8">
+
+                            <StackPanel>
+
+                                <DockPanel x:Name="ItemHeader"
+                                           Margin="0,0,0,0" Background="Transparent"
+                                           ContextMenu="{StaticResource ItemContextMenu}">
+                                    <i:Interaction.Behaviors>
+                                        <ia:DataTriggerBehavior
+                                            Binding="{Binding #ItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                            ComparisonCondition="Equal"
+                                            Value="True">
+                                            <ia:ChangePropertyAction PropertyName="Background" Value="#11ffffff" />
+                                        </ia:DataTriggerBehavior>
+                                        <ia:DataTriggerBehavior
+                                            Binding="{Binding #ItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
+                                            ComparisonCondition="Equal"
+                                            Value="False">
+                                            <ia:ChangePropertyAction PropertyName="Background" Value="Transparent" />
+                                        </ia:DataTriggerBehavior>
+                                    </i:Interaction.Behaviors>
+                                    <items:ItemIcon Margin="18,0,4,0" DockPanel.Dock="Left"
+                                                    VerticalAlignment="Stretch" />
+                                    <Button
+                                        Padding="22,6"
+                                        Margin="6"
+                                        Background="{DynamicResource EditButtonBackgroundBrush}"
+                                        BorderBrush="#b3aed9"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        x:Name="EditButton"
+                                        Click="EditButton_OnClick"
+                                        DockPanel.Dock="Right">
+                                        Edit
+                                    </Button>
+                                    <views1:ItemEditDock DockPanel.Dock="Right" />
+                                    <!--<Ellipse
+							IsVisible="{Binding State.IsSelected, FallbackValue=False}"
+							Width="8"
+							Height="8"
+							Margin="12 0 0 0"
+							Fill="#c43e1c"
+							/>-->
                                     <controls:TextBoxToggleButton
-                                        Margin="16,0,8,0"
                                         FontSize="20"
                                         Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
+                                    <!-- <TextBox -->
+                                    <!--     Background="Transparent" -->
+                                    <!--     BorderThickness="0" -->
+                                    <!--     MinWidth="100" -->
+                                    <!--     HorizontalAlignment="Left" -->
+                                    <!--     Padding="0,8,0,8" -->
+                                    <!--     VerticalAlignment="Center" -->
+                                    <!--     FontSize="18" -->
+                                    <!--     Foreground="{DynamicResource TitleBrush}" -->
+                                    <!--      /> -->
 
                                 </DockPanel>
-                                <!--<item:ItemInfo VerticalAlignment="Top" />-->
+
+                                <item:ItemInfo VerticalAlignment="Top" />
+
+                                <controls:ListBoxWithoutKey
+                                    Name="List"
+                                    AutoScrollToSelectedItem="False"
+                                    Background="Transparent"
+                                    ItemsSource="{Binding Slides}"
+                                    SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}"
+                                    SelectionChanged="OnSelectionChanged"
+                                    SelectionMode="Single">
+                                    <controls:ListBoxWithoutKey.Styles>
+                                        <Style Selector="controls|ListBoxWithoutKey">
+                                            <Setter Property="BorderThickness" Value="0" />
+                                        </Style>
+                                        <Style Selector="ListBoxItem">
+                                            <Setter Property="Padding" Value="0" />
+                                            <!--<Setter Property="IsHitTestVisible" Value="False" />-->
+                                            <!--<Setter Property="Focusable" Value="False"/>-->
+                                        </Style>
+                                    </controls:ListBoxWithoutKey.Styles>
+                                    <controls:ListBoxWithoutKey.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
+                                            <WrapPanel>
+                                                <WrapPanel.ItemHeight>
+                                                    200
+                                                    <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                                        <Binding
+                                                            FallbackValue="200"
+                                                            Path="ItemHeight"
+                                                            Source="{x:Static app:Globals.Preferences}" />
+                                                        <Binding
+                                                            FallbackValue="1"
+                                                            Path="SlideThumbnailSizeMultiplier"
+                                                            Source="{x:Static app:Globals.Preferences}" />
+                                                    </MultiBinding>-->
+                                                </WrapPanel.ItemHeight>
+                                                <WrapPanel.ItemWidth>
+                                                    290
+                                                    <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                                        <Binding
+                                                            FallbackValue="290"
+                                                            Path="ItemWidth"
+                                                            Source="{x:Static app:Globals.Preferences}" />
+                                                        <Binding
+                                                            FallbackValue="1"
+                                                            Path="SlideThumbnailSizeMultiplier"
+                                                            Source="{x:Static app:Globals.Preferences}" />
+                                                    </MultiBinding>-->
+                                                </WrapPanel.ItemWidth>
+                                            </WrapPanel>
+                                        </ItemsPanelTemplate>
+                                    </controls:ListBoxWithoutKey.ItemsPanel>
+
+                                    <!--<controls:ListBoxWithoutKey.Control>
+					
+				</controls:ListBoxWithoutKey.Control>-->
+
+                                    <controls:ListBoxWithoutKey.DataTemplates>
+                                        <common:MyTemplateSelector>
+                                            <DataTemplate x:Key="SongTitleSlideInstance"
+                                                          x:DataType="slides:SongTitleSlideInstance">
+                                                <Image
+                                                    Source="{Binding Thumbnail}"
+                                                    Stretch="Uniform" />
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="SongSlideInstance"
+                                                          x:DataType="slides:SongSlideInstance">
+                                                <Image
+                                                    Source="{Binding Thumbnail}"
+                                                    Stretch="Uniform" />
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="ImageSlideInstance">
+                                                <views1:SlideThumbnail>
+                                                    <Image
+                                                        Source="{Binding Thumbnail}"
+                                                        Stretch="Uniform" />
+                                                </views1:SlideThumbnail>
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="VideoSlide">
+                                                <views1:SlideThumbnail>
+                                                    <Grid>
+                                                        <Image
+                                                            RenderOptions.BitmapInterpolationMode="MediumQuality"
+                                                            Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
+                                                            Stretch="Uniform" />
+                                                    </Grid>
+                                                </views1:SlideThumbnail>
+                                                <!--<Border Padding="20">
+								<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
+							</Border>-->
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="LogoSlide">
+                                                <items1:LogoSlideView />
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="VideoSlideInstance">
+                                                <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="CustomAxamlSlideInstance"
+                                                          DataType="slides1:CustomAxamlSlideInstance">
+                                                <Viewbox>
+                                                    <render:CustomAxamlSlideRender />
+                                                </Viewbox>
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="CustomSlide">
+                                                <!--<customSlide:CustomAxamlSlide />-->
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="MyKey">
+                                                <TextBlock Background="Red" Text="{Binding Text}" />
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="MyKey2">
+                                                <TextBlock Background="Green" Text="{Binding Text}" />
+                                            </DataTemplate>
+                                            <DataTemplate x:Key="Fallback">
+                                                <TextBlock
+                                                    Background="Green"
+                                                    FontSize="80"
+                                                    Text="{Binding FallbackValue='ItemSlidesView.DataTemplateBindingError'}"
+                                                    TextWrapping="Wrap" />
+                                            </DataTemplate>
+                                        </common:MyTemplateSelector>
+                                    </controls:ListBoxWithoutKey.DataTemplates>
+
+                                </controls:ListBoxWithoutKey>
+
                             </StackPanel>
 
                         </Border>
-                    </DataTemplate>
-                    <!-- default template for all other item types -->
-                    <DataTemplate x:Key="Fallback">
 
-                        <DockPanel>
-                            <!--<Viewbox
-                Width="50"
-                Margin="0,10,0,0"
-                VerticalAlignment="Top"
-                Stretch="Uniform"
-                StretchDirection="DownOnly">
-                <Label
-                    Padding="12"
-                    Content="{Binding State.ItemIndex, Converter={StaticResource IndexToDisplayPositionConverter}, FallbackValue='99'}"
-                    FontSize="16" />
-            </Viewbox>-->
-                            <DockPanel.Styles>
-                                <Style Selector="DockPanel.ItemHeader:flyout-open">
-                                    <Setter Property="Background" />
-                                </Style>
-                            </DockPanel.Styles>
+                        <!--<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">-->
 
+                    </DockPanel>
 
-                            <Border
-                                Margin="14"
-                                Background="{DynamicResource BackgroundBrush}"
-                                BorderBrush="Transparent"
-                                BorderThickness="1"
-                                CornerRadius="6">
-                                <i:Interaction.Behaviors>
-                                    <ia:DataTriggerBehavior
-                                        Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
-                                        ComparisonCondition="Equal"
-                                        Value="True">
-                                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" />
-                                        <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
-                                    </ia:DataTriggerBehavior>
-                                    <ia:DataTriggerBehavior
-                                        Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
-                                        ComparisonCondition="Equal"
-                                        Value="False">
-                                        <ia:ChangePropertyAction PropertyName="BorderBrush" Value="{DynamicResource ItemOutlineBrush}" />
-                                        <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
-                                    </ia:DataTriggerBehavior>
-                                </i:Interaction.Behaviors>
-
-                                <StackPanel>
-
-                                    <DockPanel x:Name="ItemHeader"
-                                               Margin="0,0,0,0" Background="Transparent"
-                                               ContextMenu="{StaticResource ItemContextMenu}">
-                                        <i:Interaction.Behaviors>
-                                            <ia:DataTriggerBehavior
-                                                Binding="{Binding #ItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
-                                                ComparisonCondition="Equal"
-                                                Value="True">
-                                                <ia:ChangePropertyAction PropertyName="Background" Value="#11ffffff" />
-                                            </ia:DataTriggerBehavior>
-                                            <ia:DataTriggerBehavior
-                                                Binding="{Binding #ItemHeader.ContextMenu.IsOpen, FallbackValue=False}"
-                                                ComparisonCondition="Equal"
-                                                Value="False">
-                                                <ia:ChangePropertyAction PropertyName="Background" Value="Transparent" />
-                                            </ia:DataTriggerBehavior>
-                                        </i:Interaction.Behaviors>
-                                        <items:ItemIcon Margin="18,0,4,0" DockPanel.Dock="Left"
-                                                        VerticalAlignment="Stretch" />
-                                        <Button
-                                            Padding="22,6"
-                                            Margin="6"
-                                            Background="{DynamicResource EditButtonBackgroundBrush}"
-                                            BorderBrush="#b3aed9"
-                                            BorderThickness="1"
-                                            CornerRadius="4"
-                                            x:Name="EditButton"
-                                            Click="EditButton_OnClick"
-                                            DockPanel.Dock="Right">
-                                            Edit
-                                        </Button>
-                                        <views1:ItemEditDock DockPanel.Dock="Right" />
-                                        <!--<Ellipse
-								IsVisible="{Binding State.IsSelected, FallbackValue=False}"
-								Width="8"
-								Height="8"
-								Margin="12 0 0 0"
-								Fill="#c43e1c"
-								/>-->
-                                        <controls:TextBoxToggleButton
-                                            FontSize="20"
-                                            Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
-                                        <!-- <TextBox -->
-                                        <!--     Background="Transparent" -->
-                                        <!--     BorderThickness="0" -->
-                                        <!--     MinWidth="100" -->
-                                        <!--     HorizontalAlignment="Left" -->
-                                        <!--     Padding="0,8,0,8" -->
-                                        <!--     VerticalAlignment="Center" -->
-                                        <!--     FontSize="18" -->
-                                        <!--     Foreground="{DynamicResource TitleBrush}" -->
-                                        <!--      /> -->
-
-                                    </DockPanel>
-
-                                    <item:ItemInfo VerticalAlignment="Top" />
-
-                                    <controls:ListBoxWithoutKey
-                                        Name="List"
-                                        AutoScrollToSelectedItem="False"
-                                        Background="Transparent"
-                                        ItemsSource="{Binding Slides}"
-                                        SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}"
-                                        SelectionChanged="OnSelectionChanged"
-                                        SelectionMode="Single">
-                                        <controls:ListBoxWithoutKey.Styles>
-                                            <Style Selector="controls|ListBoxWithoutKey">
-                                                <Setter Property="BorderThickness" Value="0" />
-                                            </Style>
-                                            <Style Selector="ListBoxItem">
-                                                <Setter Property="Padding" Value="0" />
-                                                <!--<Setter Property="IsHitTestVisible" Value="False" />-->
-                                                <!--<Setter Property="Focusable" Value="False"/>-->
-                                            </Style>
-                                        </controls:ListBoxWithoutKey.Styles>
-                                        <controls:ListBoxWithoutKey.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
-                                                <WrapPanel>
-                                                    <WrapPanel.ItemHeight>
-                                                        200
-                                                        <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
-                                                            <Binding
-                                                                FallbackValue="200"
-                                                                Path="ItemHeight"
-                                                                Source="{x:Static app:Globals.Preferences}" />
-                                                            <Binding
-                                                                FallbackValue="1"
-                                                                Path="SlideThumbnailSizeMultiplier"
-                                                                Source="{x:Static app:Globals.Preferences}" />
-                                                        </MultiBinding>-->
-                                                    </WrapPanel.ItemHeight>
-                                                    <WrapPanel.ItemWidth>
-                                                        290
-                                                        <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
-                                                            <Binding
-                                                                FallbackValue="290"
-                                                                Path="ItemWidth"
-                                                                Source="{x:Static app:Globals.Preferences}" />
-                                                            <Binding
-                                                                FallbackValue="1"
-                                                                Path="SlideThumbnailSizeMultiplier"
-                                                                Source="{x:Static app:Globals.Preferences}" />
-                                                        </MultiBinding>-->
-                                                    </WrapPanel.ItemWidth>
-                                                </WrapPanel>
-                                            </ItemsPanelTemplate>
-                                        </controls:ListBoxWithoutKey.ItemsPanel>
-
-                                        <!--<controls:ListBoxWithoutKey.Control>
-						
-					</controls:ListBoxWithoutKey.Control>-->
-
-                                        <controls:ListBoxWithoutKey.DataTemplates>
-                                            <common:MyTemplateSelector>
-                                                <DataTemplate x:Key="SongTitleSlideInstance"
-                                                              x:DataType="slides:SongTitleSlideInstance">
-                                                    <Image
-                                                        Source="{Binding Thumbnail}"
-                                                        Stretch="Uniform" />
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="SongSlideInstance"
-                                                              x:DataType="slides:SongSlideInstance">
-                                                    <Image
-                                                        Source="{Binding Thumbnail}"
-                                                        Stretch="Uniform" />
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="ImageSlideInstance">
-                                                    <views1:SlideThumbnail>
-                                                        <Image
-                                                            Source="{Binding Thumbnail}"
-                                                            Stretch="Uniform" />
-                                                    </views1:SlideThumbnail>
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="VideoSlide">
-                                                    <views1:SlideThumbnail>
-                                                        <Grid>
-                                                            <Image
-                                                                RenderOptions.BitmapInterpolationMode="MediumQuality"
-                                                                Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
-                                                                Stretch="Uniform" />
-                                                        </Grid>
-                                                    </views1:SlideThumbnail>
-                                                    <!--<Border Padding="20">
-									<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
-								</Border>-->
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="LogoSlide">
-                                                    <items1:LogoSlideView />
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="VideoSlideInstance">
-                                                    <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center"
-                                                               HorizontalAlignment="Center" />
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="CustomAxamlSlideInstance"
-                                                              DataType="slides1:CustomAxamlSlideInstance">
-                                                    <Viewbox>
-                                                        <render:CustomAxamlSlideRender />
-                                                    </Viewbox>
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="CustomSlide">
-                                                    <!--<customSlide:CustomAxamlSlide />-->
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="MyKey">
-                                                    <TextBlock Background="Red" Text="{Binding Text}" />
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="MyKey2">
-                                                    <TextBlock Background="Green" Text="{Binding Text}" />
-                                                </DataTemplate>
-                                                <DataTemplate x:Key="Fallback">
-                                                    <TextBlock
-                                                        Background="Green"
-                                                        FontSize="80"
-                                                        Text="{Binding FallbackValue='ItemSlidesView.DataTemplateBindingError'}"
-                                                        TextWrapping="Wrap" />
-                                                </DataTemplate>
-                                            </common:MyTemplateSelector>
-                                        </controls:ListBoxWithoutKey.DataTemplates>
-
-                                    </controls:ListBoxWithoutKey>
-
-                                </StackPanel>
-
-                            </Border>
-
-                            <!--<Border Background="#edeafc" BorderBrush="#9a93cd" BorderThickness="0 0 0 1">-->
-
-                        </DockPanel>
-
-                    </DataTemplate>
-                </common:MyTemplateSelector>
-            </ContentControl.ContentTemplate>
-        </ContentControl>
+                </DataTemplate>
+            </common:MyTemplateSelector>
+        </ContentControl.ContentTemplate>
+    </ContentControl>
 
 </UserControl>

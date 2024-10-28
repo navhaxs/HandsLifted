@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -89,6 +90,11 @@ namespace HandsLiftedApp.Controls
                 
                 MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
             }
+        }
+
+        private void ItemBorder_OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+        {
+            ((Border)sender).Classes.Add("fade-in");
         }
     }
 }
