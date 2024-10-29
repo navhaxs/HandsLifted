@@ -21,7 +21,7 @@
                     <SolidColorBrush x:Key="NavigationBarBorderBrush">#e0deea</SolidColorBrush>
                     <SolidColorBrush x:Key="ButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
                     <SolidColorBrush x:Key="TextBrush">Black</SolidColorBrush>
-                    <SolidColorBrush x:Key="EditButtonBackgroundBrush">#958e99</SolidColorBrush>
+                    <SolidColorBrush x:Key="EditButtonBackgroundBrush">#f5f5f5</SolidColorBrush>
                     <SolidColorBrush x:Key="HoverBackgroundBrush">#445c3ab6</SolidColorBrush>
                     <SolidColorBrush x:Key="ItemOutlineBrush">#afacbe</SolidColorBrush>
                     <!-- BaseResources for CaptionButtons.xaml -->
