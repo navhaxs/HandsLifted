@@ -42,8 +42,9 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             var filePaths = await vm.ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
             if (filePaths != null)
             {
-                MessageBus.Current.SendMessage(new AddItemByFilePathMessage(new List<string>(filePaths)));
+                MessageBus.Current.SendMessage(new AddItemByFilePathMessage(new List<string>(filePaths), vm.ItemInsertIndex));
             }
+            CloseWindow();
         }
 
         private void MusicButton_OnClick(object? sender, RoutedEventArgs e)
@@ -82,11 +83,16 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
                         break;
                 }
 
-                var t = TopLevel.GetTopLevel(this);
-                if (t is Window parentWindow)
-                {
-                    parentWindow.Close();
-                }
+                CloseWindow();
+            }
+        }
+
+        private void CloseWindow()
+        {
+            var t = TopLevel.GetTopLevel(this);
+            if (t is Window parentWindow)
+            {
+                parentWindow.Close();
             }
         }
     }

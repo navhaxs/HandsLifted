@@ -116,7 +116,7 @@
                 <!-- <controlmodules:SlidesGroupItemViewWrapper DataContext="{Binding Playlist.State.SelectedItem}" -->
                 <!--                                            DockPanel.Dock="Top" /> -->
 
-                <TextBlock x:Name="_dropState" DockPanel.Dock="Top" />
+                <TextBlock x:Name="_dropState" DockPanel.Dock="Top" IsVisible="{Binding Playlist.IsQuickShow}" />
                 
                 <Grid DockPanel.Dock="Top" Height="2">
                     <ProgressBar MinHeight="2"

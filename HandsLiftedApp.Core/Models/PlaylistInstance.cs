@@ -19,6 +19,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.PlaylistActions;
+using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
 using Serilog;
@@ -164,6 +165,9 @@ namespace HandsLiftedApp.Core.Models
                             Items.Insert(insertAt, ItemInstanceFactory.ToItemInstance(newItem, this));
                         }
                     }
+                    
+                    MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = insertAt });
+
                 }));
 
             _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
@@ -350,6 +354,7 @@ namespace HandsLiftedApp.Core.Models
                 this.RaiseAndSetIfChanged(ref _presentationState, value);
                 this.RaisePropertyChanged(nameof(IsLogo));
                 this.RaisePropertyChanged(nameof(IsBlank));
+                this.RaisePropertyChanged(nameof(IsQuickShow));
             }
         }
 
@@ -378,6 +383,13 @@ namespace HandsLiftedApp.Core.Models
                 value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides, nameof(PresentationState));
         }
 
+        public bool IsQuickShow
+        {
+            get => PresentationState == PresentationStateEnum.QuickShow;
+            set => this.RaiseAndSetIfChanged(ref _presentationState,
+                value ? PresentationStateEnum.QuickShow : PresentationStateEnum.Slides, nameof(PresentationState));
+        }
+        
         public void NavigateNextSlide()
         {
             if (PresentationState != PresentationStateEnum.Slides)
