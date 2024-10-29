@@ -26,17 +26,17 @@
                 <!--          VerticalAlignment="Stretch" -->
                 <!--          HorizontalAlignment="Stretch"> -->
                     <TextBlock
-                        Text="{Binding Text}"
-                        TextAlignment="{Binding Theme.TextAlignment}"
-                        LineHeight="{Binding Theme.LineHeight}"
-                        FontWeight="{Binding Theme.FontWeight}"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        FontFamily="{Binding Theme.FontFamilyAsAvalonia}"
-                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                        TextWrapping="Wrap"
-                        Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}}"
-                        FontSize="{Binding Theme.FontSize}" />
+                                 Text="{Binding Text}"
+                                 TextAlignment="{Binding Theme.TextAlignment}"
+                                 LineHeight="{Binding Theme.LineHeight}"
+                                 FontWeight="{Binding Theme.FontWeight}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center"
+                                 FontFamily="{Binding Theme.FontFamilyAsAvalonia}"
+                                 RenderOptions.BitmapInterpolationMode="HighQuality"
+                                 TextWrapping="Wrap"
+                                 Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}}"
+                                 FontSize="{Binding Theme.FontSize}" />
                 <!-- </Viewbox> -->
             </Grid>
             <Border.Background>

@@ -3,6 +3,7 @@ using System.Globalization;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using HandsLiftedApp.Data.Data.Models.Types;
 
 namespace HandsLiftedApp.Controls.Converters
 {
@@ -10,23 +11,27 @@ namespace HandsLiftedApp.Controls.Converters
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is FontWeight fw)
+            if (value is XmlFontWeight fw)
             {
-                if ((int)fw == 0)
+                if ((int)(FontWeight)fw == 0)
                 {
-                    return FontWeight.Normal;
+                    return new XmlFontWeight();
                 }
                 return value;
             }
             if (value is int)
             {
-                return Math.Max(1, (int)value);
+                return Math.Max(100, (int)value);
             }
             return FontWeight.Normal;
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            if (targetType == typeof(XmlFontWeight) && value is FontWeight fontWeight)
+            {
+                return new XmlFontWeight(fontWeight);
+            }
             if (targetType == typeof(FontWeight) && value is FontWeight)
             {
                 return value;

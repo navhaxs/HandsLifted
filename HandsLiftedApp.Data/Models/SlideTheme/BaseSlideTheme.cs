@@ -28,9 +28,9 @@ namespace HandsLiftedApp.Data.SlideTheme
         [XmlIgnore]
         public FontFamily FontFamilyAsAvalonia { get => FontFamily; set => this.RaiseAndSetIfChanged(ref FontFamily, value); }
         
-        private FontWeight _fontWeight = FontWeight.Normal;
+        private XmlFontWeight _fontWeight = (XmlFontWeight)Avalonia.Media.FontWeight.Normal;
         [DataMember]
-        public FontWeight FontWeight { get => _fontWeight; set => this.RaiseAndSetIfChanged(ref _fontWeight, value); }
+        public XmlFontWeight FontWeight { get => _fontWeight; set => this.RaiseAndSetIfChanged(ref _fontWeight, value); }
         
         [DataMember]
         public XmlColor TextColour = Colors.White;
