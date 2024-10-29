@@ -117,11 +117,7 @@ namespace HandsLiftedApp.Core
             {
                 return SongImporter.createSongItemFromTxtFile(filePath);
             }
-            else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
-            {
-                // return SongImporter.createSongItemFromTxtFile(filePath);
-            }
-            else if (Constants.SUPPORTED_IMAGE.Any(x => filename.EndsWith(x)))
+            else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)) || Constants.SUPPORTED_IMAGE.Any(x => filename.EndsWith(x)))
             {
                 var mediaGroupItem = new MediaGroupItem()
                     { Title = "New media group" };
