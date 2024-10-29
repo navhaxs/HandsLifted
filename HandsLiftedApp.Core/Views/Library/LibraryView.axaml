@@ -115,6 +115,7 @@
 
             <!--  Right box  -->
             <Grid Grid.Column="4" Margin="8 0">
+                <ProgressBar IsVisible="{Binding LibraryViewModel.IsPreviewLoading}" Height="2" IsIndeterminate="True" VerticalAlignment="Top" />
                 <Image
                     Stretch="Uniform"
                     Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" />

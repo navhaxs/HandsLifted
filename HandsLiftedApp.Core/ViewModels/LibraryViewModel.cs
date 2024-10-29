@@ -37,6 +37,14 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             get => _selectedItemPreview.Value;
         }
+        
+        private bool _isPreviewLoading = false;
+
+        public bool IsPreviewLoading
+        {
+            get => _isPreviewLoading;
+            set => this.RaiseAndSetIfChanged(ref _isPreviewLoading, value);
+        }
 
         private Bitmap? _selectedItemImagePreview;
 
@@ -157,13 +165,12 @@ namespace HandsLiftedApp.Core.ViewModels
                     .ToProperty(this, c => c.SelectedItemPreview)
                 ;
             this.WhenAnyValue(x => x.SelectedLibraryItem)
-                // .ObserveOn(RxApp.TaskpoolScheduler)
+                .ObserveOn(RxApp.TaskpoolScheduler)
                 .Subscribe((_SelectedItem) =>
                 {
+                    // TODO implement this - early cancellation of BitmapLoader.LoadBitmap()
                     _cancellationTokenSource.Cancel();
 
-                    // Task.Run(() =>
-                    // {
                     if (_SelectedItem != null)
                     {
                         try
@@ -171,10 +178,8 @@ namespace HandsLiftedApp.Core.ViewModels
                             string extension = new FileInfo(_SelectedItem.FullFilePath).Extension.ToLower();
                             if (Constants.SUPPORTED_IMAGE.Contains(extension.TrimStart('.')))
                             {
-                                // if (File.Exists(x) || AssetLoader.Exists(new Uri(x)))
-                                // {
+                                IsPreviewLoading = true;
                                 SelectedItemImagePreview = BitmapLoader.LoadBitmap(_SelectedItem.FullFilePath, 800);
-                                // } 
                                 return;
                             }
                         }
@@ -182,10 +187,13 @@ namespace HandsLiftedApp.Core.ViewModels
                         {
                             Log.Error("Attempt to read file for library preview failed", ex);
                         }
+                        finally
+                        {
+                            IsPreviewLoading = false;
+                        }
                     }
 
                     SelectedItemImagePreview = null;
-                    // }, _cancellationTokenSource.Token);
                 });
 
             OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
