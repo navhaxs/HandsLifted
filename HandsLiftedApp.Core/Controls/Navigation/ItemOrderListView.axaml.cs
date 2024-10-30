@@ -118,7 +118,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
 
                 // Only allow if the dragged data contains text or filenames.
                 if (!e.Data.Contains(DataFormats.Text)
-                    && !e.Data.Contains(DataFormats.FileNames)
+                    && !e.Data.Contains(DataFormats.Files)
                    )
                     //&& !e.Data.Contains(CustomFormat))
                     e.DragEffects = DragDropEffects.None;
@@ -172,12 +172,18 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                     e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
                 }
 
+                int? SourceIndex = null;
+                if (e.Source is Control target)
+                {
+                    ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
+                    SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(target.FindAncestorOfType<ListBoxItem>());
+                }
+                
                 //if (e.Data.Contains(DataFormats.Text))
                 //DropState.Text = e.Data.GetText();
-                if (e.Data.Contains(DataFormats.FileNames))
+                if (e.Data.Contains(DataFormats.Files))
                 {
-                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList()));
-
+                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList(), SourceIndex + 1));
                     //DropState.Text = string.Join(Environment.NewLine, e.Data.GetFileNames() ?? Array.Empty<string>());
                 }
                 //else if (e.Data.Contains(CustomFormat))
@@ -190,7 +196,6 @@ namespace HandsLiftedApp.Core.Controls.Navigation
             {
                 clearLastAdornerLayer();
             }
-
 
             void clearLastAdornerLayer()
             {

@@ -148,7 +148,6 @@ namespace HandsLiftedApp.Behaviours
 
             if (target != null)
             {
-
                 ListBoxItem listBoxItem = target.FindAncestorOfType<ListBoxItem>();
                 listBoxItem.RenderTransform = new TranslateTransform();
                 ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
