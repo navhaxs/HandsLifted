@@ -18,6 +18,9 @@
 				<DataTemplate x:Key="PowerPointPresentationItemInstance">
 					<items1:PowerPointPresentationItemStatusView />
                 </DataTemplate>
+				<DataTemplate x:Key="PDFSlidesGroupItemInstance">
+					<items1:PDFSlidesGroupItemStatusView />
+				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
 				</DataTemplate>
 			</common:MyTemplateSelector>

@@ -43,6 +43,37 @@
                         </Button>
                     </StackPanel>
                 </DataTemplate>
+                <DataTemplate x:Key="PDFSlidesGroupItemInstance" x:DataType="items1:PDFSlidesGroupItemInstance">
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Padding="22,6"
+                            Margin="6 6 0 6"
+                            Background="{DynamicResource EditButtonBackgroundBrush}"
+                            BorderBrush="#b3aed9"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            x:Name="EditButton"
+                            DockPanel.Dock="Right">
+                            <DockPanel>
+                                <TextBlock>Sync</TextBlock>
+                            </DockPanel>
+                            <Button.Flyout>
+                                <Flyout
+                                    Placement="Bottom">
+                                    <StackPanel Margin="6" MinWidth="200">
+                                        <TextBlock TextAlignment="Center">Last Sync: <Run Text="{Binding LastSyncDateTime}"/></TextBlock>
+                                        <Button Click="Button_OnClick" Margin="0 6 0 0">
+                                            <DockPanel>
+                                                <avalonia:MaterialIcon Kind="Sync" Margin="0 0 5 0" />
+                                                <TextBlock>Sync</TextBlock>
+                                            </DockPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
             </common:MyTemplateSelector>
         </ContentControl.ContentTemplate>
     </ContentControl>

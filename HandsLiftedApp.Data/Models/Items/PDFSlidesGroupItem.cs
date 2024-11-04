@@ -7,7 +7,7 @@ namespace HandsLiftedApp.Data.Models.Items
 {
     [XmlRoot("PDF", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
-    public class PDFSlidesGroupItem : SlidesGroupItem
+    public class PDFSlidesGroupItem : MediaGroupItem
     {
         public PDFSlidesGroupItem()
         {

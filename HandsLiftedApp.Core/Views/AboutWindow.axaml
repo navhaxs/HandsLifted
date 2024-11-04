@@ -7,15 +7,34 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
     Title="AboutWindow"
-    Width="680"
+    Width="740"
     Height="370"
     CanResize="False"
     ExtendClientAreaChromeHints="NoChrome"
     ExtendClientAreaToDecorationsHint="True"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
+    Background="{DynamicResource BackgroundFrameBrush}"
     x:DataType="views:AboutWindow"
     mc:Ignorable="d">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ContentBackgroundBrush">White</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundFrameBrush">#66D8CEEC</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ContentBackgroundBrush">#252525</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundBrush">#eee</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundFrameBrush">#1c1c1c</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
     <DockPanel>
         <!--  header  -->
         <!-- <Grid Background="#6033ab" DockPanel.Dock="Top"> -->
@@ -31,8 +50,9 @@
             <StackPanel Margin="16,12,16,12" VerticalAlignment="Bottom">
                 <StackPanel.Styles>
                     <Style Selector="TextBlock">
-                        <Setter Property="FontSize" Value="12" />
-                        <Setter Property="Foreground" Value="#eee" />
+                        <Setter Property="FontSize" Value="13" />
+                        <Setter Property="LineHeight" Value="18" />
+                        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
                     </Style>
                     <Style Selector="Button.link TextBlock">
                         <Setter Property="Foreground" Value="#0a61a3" />
@@ -93,7 +113,7 @@
         <Border
             Margin="10,10,10,0"
             Padding="10"
-            Background="#1e1e1e"
+            Background="{DynamicResource ContentBackgroundBrush}"
             BorderThickness="1"
             CornerRadius="6">
 
@@ -113,7 +133,7 @@
                 <Border Grid.Column="1" Margin="0,5">
                     <Border.Styles>
                         <Style Selector="TextBlock">
-                            <Setter Property="Foreground" Value="#eee" />
+                            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
                             <Setter Property="FontSize" Value="14" />
                         </Style>
                     </Border.Styles>
@@ -128,14 +148,14 @@
                                 VisionScreens
                             </TextBlock>
                             <TextBlock
-								Margin="0,4,0,0"
-								FontSize="22"
-								FontWeight="SemiBold"
-								TextWrapping="Wrap">
-								Church Presentation Software
-							</TextBlock>
+                                Margin="0,4,0,0"
+                                FontSize="22"
+                                FontWeight="SemiBold"
+                                TextWrapping="Wrap">
+                                Church Presentation Software
+                            </TextBlock>
                             <TextBlock
-								FontSize="16"
+                                FontSize="16"
                                 Margin="0,22,0,8"
                                 TextWrapping="Wrap">
                                 VisionScreens brings your lyrics and content together for easy slides preparation and operation.
@@ -146,25 +166,25 @@
                                 Foreground="Red"
                                 Text="Internal development build. Expect bugs."
                                 TextWrapping="Wrap" />
-							<StackPanel
-										DockPanel.Dock="Bottom"
-										Orientation="Horizontal">
-								<TextBlock
-									VerticalAlignment="Center"
-									FontWeight="SemiBold"
-									Text="Powered by " />
-								<DockPanel ToolTip.ShowDelay="0" ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS."
+                            <StackPanel
+                                DockPanel.Dock="Bottom"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="Powered by " />
+                                <DockPanel ToolTip.ShowDelay="0"
+                                           ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS."
                                            Background="Transparent">
-									<Image Height="32" Source="avares://HandsLiftedApp.Core/Assets/avalonia-logo.ico"
+                                    <Image Height="32" Source="avares://HandsLiftedApp.Core/Assets/avalonia-logo.ico"
                                            RenderOptions.BitmapInterpolationMode="HighQuality"
-                                           Margin="0 0 4 0"
-                                           />
-									<TextBlock
-										VerticalAlignment="Center"
-										FontWeight="Bold"
-										Text="Avalonia" />
-								</DockPanel>
-							</StackPanel>
+                                           Margin="0 0 4 0" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="Avalonia" />
+                                </DockPanel>
+                            </StackPanel>
                         </StackPanel>
                     </DockPanel>
                 </Border>

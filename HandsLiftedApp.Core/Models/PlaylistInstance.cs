@@ -162,13 +162,19 @@ namespace HandsLiftedApp.Core.Models
                         var newItem = CreateItem.GenerateItem(filePath);
                         if (newItem != null)
                         {
+                            var newItemInstance = ItemInstanceFactory.ToItemInstance(newItem, this);
                             if (insertAt >= 0)
                             {
-                                Items.Insert(insertAt, ItemInstanceFactory.ToItemInstance(newItem, this));
+                                Items.Insert(insertAt, newItemInstance);
                             }
                             else
                             {
-                                Items.Add(ItemInstanceFactory.ToItemInstance(newItem, this));
+                                Items.Add(newItemInstance);
+                            }
+                            
+                            if (newItemInstance is IItemSyncable instance)
+                            {
+                                instance.Sync();
                             }
                         }
                     }

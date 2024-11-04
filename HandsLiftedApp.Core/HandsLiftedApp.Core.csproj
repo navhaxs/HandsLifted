@@ -52,6 +52,7 @@
         <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj"/>
         <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj"/>
         <ProjectReference Include="..\HandsLiftedApp.Importer.OnlineSongLyrics\HandsLiftedApp.Importer.OnlineSongLyrics.csproj" />
+        <ProjectReference Include="..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
         <ProjectReference Include="..\HandsLiftedApp.Importer.PowerPointLib\HandsLiftedApp.Importer.PowerPointLib.csproj" />
         <ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj"/>
         <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj"/>
@@ -230,6 +231,10 @@
         </Compile>
         <Compile Update="Views\AddItem\Pages\ResultsView.axaml.cs">
           <DependentUpon>AddItemResultsView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Items\PDFSlidesGroupItemStatusView.axaml.cs">
+          <DependentUpon>PDFSlidesGroupItemStatusView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>

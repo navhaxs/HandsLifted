@@ -45,6 +45,9 @@
 				<DataTemplate x:Key="PowerPointPresentationItemInstance">
 					<material:MaterialIcon Kind="MicrosoftPowerpoint" />
 				</DataTemplate>
+				<DataTemplate x:Key="PDFSlidesGroupItemInstance">
+					<material:MaterialIcon Kind="FilePdfBox" />
+				</DataTemplate>
 				<DataTemplate x:Key="CommentItem">
 					<material:MaterialIcon Kind="AlertCircle" />
 				</DataTemplate>

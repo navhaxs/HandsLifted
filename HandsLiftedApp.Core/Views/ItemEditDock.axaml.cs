@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 
 namespace HandsLiftedApp.Core.Views
@@ -15,9 +16,9 @@ namespace HandsLiftedApp.Core.Views
         
         private void Button_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (DataContext is PowerPointPresentationItemInstance instance)
+            if (DataContext is IItemSyncable instance)
             {
-                instance._Sync();
+                instance.Sync();
             }
         }
     }

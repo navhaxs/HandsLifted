@@ -88,11 +88,13 @@ namespace HandsLiftedApp.Importer.PDF
                         skBitmap.InstallPixels(info, scan0, info.RowBytes, delegate { }, null);
             
                         // TODO pad leading 0's
-                        string slideOutFile = Path.Join(outputDir, $"Slide.{i + 1}.bmp");
+                        int maxPageNumberDigits = (int)Math.Floor(Math.Log10(pageCount) + 1);
+                        string thisPageNumberPadded = (i + 1).ToString(new string('0', maxPageNumberDigits));
+                        string slideOutFile = Path.Join(outputDir, $"Slide.{thisPageNumberPadded}.png");
             
                         using (Stream s = File.Create(slideOutFile))
                         {
-                            using (SKData d = SKImage.FromBitmap(skBitmap).Encode(SKEncodedImageFormat.Jpeg, 100))
+                            using (SKData d = SKImage.FromBitmap(skBitmap).Encode(SKEncodedImageFormat.Png, 100))
                             {
                                 d.SaveTo(s);
                             }

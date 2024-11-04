@@ -2,7 +2,6 @@
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Importer.PowerPointLib;
 using HandsLiftedApp.Utils;
 using NaturalSort.Extension;
 using ReactiveUI;
@@ -17,7 +16,7 @@ using HandsLiftedApp.Importer.PDF;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
-    public class PowerPointPresentationItemInstance : PowerPointPresentationItem, IItemInstance, IItemDirtyBit, IItemSyncable
+    public class PDFSlidesGroupItemInstance : PDFSlidesGroupItem, IItemInstance, IItemDirtyBit, IItemSyncable
     {
         public PlaylistInstance ParentPlaylist { get; set; }
 
@@ -29,6 +28,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             get => _IsBusy;
             set => this.RaiseAndSetIfChanged(ref _IsBusy, value);
+        }
+        
+       private double _ImportProgress = -1;
+
+        public double ImportProgress
+        {
+            get => _ImportProgress;
+            set => this.RaiseAndSetIfChanged(ref _ImportProgress, value);
         }
 
         private DateTime? _lastSyncDateTime = null;
@@ -43,7 +50,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private static readonly object syncSlidesLock = new object();
 
-        public PowerPointPresentationItemInstance(PlaylistInstance parentPlaylist)
+        public PDFSlidesGroupItemInstance(PlaylistInstance parentPlaylist)
         {
             ParentPlaylist = parentPlaylist;
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides, (selectedSlideIndex, slides) =>
@@ -129,13 +136,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                                 FilenameUtils.ReplaceInvalidChars(fileName) + "_" +
                                 now.ToString("yyyy-MM-dd-HH-mm-ss"));
                             Directory.CreateDirectory(targetDirectory);
-
-                            Log.Debug($"Importing PowerPoint file: {SourcePresentationFile}");
-                            PresentationImporter.Run(SourcePresentationFile);
-
+                            
                             Log.Debug($"Importing PDF file: {SourcePresentationFile}");
-                            ConvertPDF.Convert(SourcePresentationFile + ".pdf",
-                                targetDirectory);
+                            ConvertPDF.Convert(SourcePresentationFile,
+                                targetDirectory, OnProgressUpdate);
 
                             var newItems = new TrulyObservableCollection<MediaItem>();
                             foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
@@ -157,12 +161,49 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         }
                         catch (Exception e)
                         {
-                            Log.Error(e, "Error importing PowerPoint file");
+                            Log.Error(e, "Error importing PDF file");
                         }
                         IsBusy = false;
                     }
                 }
             });
         }
+
+        private void OnProgressUpdate(double obj)
+        {
+            ImportProgress = (double)obj;
+        }
+
+        /// <summary>
+        /// mutates *this* SlidesGroupItem and then returns a *new* SlidesGroupItem
+        /// </summary>
+        /// <param name="start"></param>
+        /// <returns></returns>
+        // public PDFSlidesGroupItemInstance? slice(int start)
+        // {
+        //     if (start == 0)
+        //     {
+        //         return null;
+        //     }
+        //
+        //     PDFSlidesGroupItemInstance slidesGroup = new(ParentPlaylist) { Title = $"{Title} (Split copy)" };
+        //
+        //     // TODO optimise below to a single loop
+        //     // tricky bit: ensure index logic works whilst removing at the same time
+        //
+        //     for (int i = start; i < _Slides.Count; i++)
+        //     {
+        //         slidesGroup._Slides.Add(_Slides[i]);
+        //     }
+        //
+        //     var count = _Slides.Count;
+        //     for (int i = start; i < count; i++)
+        //     {
+        //         _Slides.RemoveAt(_Slides.Count - 1);
+        //     }
+        //
+        //
+        //     return slidesGroup;
+        // }
     }
 }

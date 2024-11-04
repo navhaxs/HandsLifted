@@ -86,10 +86,10 @@ namespace HandsLiftedApp.Core.Views
                         {
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
+                                var GUTTER = 300;
                                 
-                                
-                                if (control.Bounds.Top < scrollViewer.Offset.Y || control.Bounds.Top >
-                                    (scrollViewer.Offset.Y + scrollViewer.Bounds.Height))
+                                if (control.Bounds.Top < scrollViewer.Offset.Y + GUTTER || control.Bounds.Top >
+                                    (scrollViewer.Offset.Y + scrollViewer.Bounds.Height - GUTTER))
                                 {
                                     scrollViewer.Offset = new Vector(0, control.Bounds.Top + 4);
                                 }

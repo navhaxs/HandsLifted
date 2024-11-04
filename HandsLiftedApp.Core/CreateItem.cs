@@ -1,21 +1,12 @@
-﻿using Avalonia.Threading;
-using HandsLiftedApp.Core.Models;
+﻿using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models.UI;
-using HandsLiftedApp.Utils;
-using ReactiveUI;
 using Serilog;
-using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using HandsLiftedApp.Core.Importers;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Importer.PowerPointLib;
-using NaturalSort.Extension;
 
 namespace HandsLiftedApp.Core
 {

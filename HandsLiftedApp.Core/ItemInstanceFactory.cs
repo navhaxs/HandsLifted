@@ -66,6 +66,36 @@ namespace HandsLiftedApp.Core
                 g.GenerateSlides();
                 return g;
             }
+            else if (deserializedItem is PDFSlidesGroupItem pdfSlidesGroupItem)
+            {
+                var g = new PDFSlidesGroupItemInstance(playlist)
+                {
+                    UUID = pdfSlidesGroupItem.UUID,
+                    Title = pdfSlidesGroupItem.Title,
+                    Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(pdfSlidesGroupItem.Items
+                        .Select(item =>
+                        {
+                            // TODO deep copy
+                            var newMediaItem = new MediaGroupItem.MediaItem()
+                                { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta };
+                            if (newMediaItem.SourceMediaFilePath != null)
+                            {
+                                newMediaItem.SourceMediaFilePath =
+                                    RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                        item.SourceMediaFilePath);
+                            }
+
+                            return item;
+                        }).ToList()),
+                    AutoAdvanceTimer = pdfSlidesGroupItem.AutoAdvanceTimer,
+                    SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                        pdfSlidesGroupItem.SourcePresentationFile),
+                    SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                        pdfSlidesGroupItem.SourceSlidesExportDirectory)
+                };
+                g.GenerateSlides();
+                return g;
+            }
             else if (deserializedItem is MediaGroupItem mediaGroupItem)
             {
                 var g = new MediaGroupItemInstance(playlist)
