@@ -27,18 +27,6 @@ namespace HandsLiftedApp.Core.Views
             if (Design.IsDesignMode)
                 return;
 
-            //Performing some magic to hide the form from Alt+Tab
-            if (OperatingSystem.IsWindows())
-            {
-                IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
-                if (handle != null)
-                {
-                    Win32.SetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE,
-                        (Win32.GetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE) | Win32.WS_EX_TOOLWINDOW) &
-                        ~Win32.WS_EX_APPWINDOW);
-                }
-            }
-
             this.Opened += SlideRendererWorkerWindow_Opened;
 
             MessageBus.Current.Listen<SlideRenderRequestMessage>()
@@ -84,6 +72,18 @@ namespace HandsLiftedApp.Core.Views
             this.SystemDecorations = SystemDecorations.None;
             this.Height = 0;
             this.Width = 0;
+            
+            //Performing some magic to hide the form from Alt+Tab
+            if (OperatingSystem.IsWindows())
+            {
+                IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
+                if (handle != null)
+                {
+                    Win32.SetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE,
+                        (Win32.GetWindowLong((IntPtr)handle, Win32.GWL_EX_STYLE) | Win32.WS_EX_TOOLWINDOW) &
+                        ~Win32.WS_EX_APPWINDOW);
+                }
+            }
         }
     }
 
