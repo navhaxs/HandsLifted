@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -25,7 +26,7 @@ namespace HandsLiftedApp.Core.Views
                 Log.Information("ProjectorWindow IsVisible {State}", isVisible);
 
                 // TODO macOS: keep awake
-                if (OperatingSystem.IsWindows())
+                if (OperatingSystem.IsWindows() && !Debugger.IsAttached)
                 {
                     Caffeine.KeepAwake(isVisible);
                 }
