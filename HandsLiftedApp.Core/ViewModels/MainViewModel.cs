@@ -79,20 +79,6 @@ public class MainViewModel : ViewModelBase
             }
         });
         
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
-        // TODO
         SlideSplitFromHere = ReactiveCommand.CreateFromTask<object>(async (object x) =>
         {
             if (x is ReadOnlyCollection<object> parameters)
@@ -256,7 +242,7 @@ public class MainViewModel : ViewModelBase
             {
                 var currentSelectedItem = Playlist.SelectedItem;
 
-                Playlist.Items.Move(moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
+                Playlist.Items.Move(moveItemMessage.SourceIndex, Math.Min(Playlist.Items.Count - 1, moveItemMessage.DestinationIndex));
                 
                 if (currentSelectedItem != null)
                 {
@@ -407,12 +393,12 @@ public class MainViewModel : ViewModelBase
 
     public void OnProjectorClickCommand()
     {
-        ToggleProjectorWindow(true, true);
+        ToggleProjectorWindow(null, true);
     }
 
     public void ToggleProjectorWindow(bool? shouldShow = null, bool? forceShow = null) // TODO both forceShow and designShow
     {
-        shouldShow = forceShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
+        shouldShow = shouldShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
         if (shouldShow == true)
         {
             if (ProjectorWindow == null)
@@ -440,12 +426,12 @@ public class MainViewModel : ViewModelBase
 
     public void OnStageDisplayClickCommand()
     {
-        ToggleStageDisplayWindow(true, true);
+        ToggleStageDisplayWindow(null, true);
     }
 
     public void ToggleStageDisplayWindow(bool? shouldShow = null, bool? forceShow = null)
     {
-        shouldShow = forceShow ?? (StageDisplayWindow == null || !StageDisplayWindow.IsVisible);
+        shouldShow = shouldShow ?? (StageDisplayWindow == null || !StageDisplayWindow.IsVisible);
         if (shouldShow == true)
         {
             StageDisplayWindow = new StageDisplayWindow() { DataContext = this };
