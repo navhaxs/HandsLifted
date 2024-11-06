@@ -407,12 +407,12 @@ public class MainViewModel : ViewModelBase
 
     public void OnProjectorClickCommand()
     {
-        ToggleProjectorWindow();
+        ToggleProjectorWindow(true, true);
     }
 
-    public void ToggleProjectorWindow(bool? shouldShow = null)
+    public void ToggleProjectorWindow(bool? shouldShow = null, bool? forceShow = null) // TODO both forceShow and designShow
     {
-        shouldShow = shouldShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
+        shouldShow = forceShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
         if (shouldShow == true)
         {
             if (ProjectorWindow == null)
@@ -421,8 +421,7 @@ public class MainViewModel : ViewModelBase
                 ProjectorWindow.DataContext = this;
             }
 
-            ProjectorWindow.Show();
-            WindowUtils.RestoreWindowBounds(ProjectorWindow, Globals.Instance.AppPreferences.OutputDisplayBounds);
+            WindowUtils.ShowAndRestoreWindowBounds(ProjectorWindow, Globals.Instance.AppPreferences.OutputDisplayBounds, forceShow);
         }
         else
         {
@@ -441,17 +440,16 @@ public class MainViewModel : ViewModelBase
 
     public void OnStageDisplayClickCommand()
     {
-        ToggleStageDisplayWindow();
+        ToggleStageDisplayWindow(true, true);
     }
 
-    public void ToggleStageDisplayWindow(bool? shouldShow = null)
+    public void ToggleStageDisplayWindow(bool? shouldShow = null, bool? forceShow = null)
     {
-        shouldShow = shouldShow ?? (StageDisplayWindow == null || !StageDisplayWindow.IsVisible);
+        shouldShow = forceShow ?? (StageDisplayWindow == null || !StageDisplayWindow.IsVisible);
         if (shouldShow == true)
         {
             StageDisplayWindow = new StageDisplayWindow() { DataContext = this };
-            StageDisplayWindow.Show();
-            WindowUtils.RestoreWindowBounds(StageDisplayWindow, Globals.Instance.AppPreferences.StageDisplayBounds);
+            WindowUtils.ShowAndRestoreWindowBounds(StageDisplayWindow, Globals.Instance.AppPreferences.StageDisplayBounds, forceShow);
         }
         else
         {

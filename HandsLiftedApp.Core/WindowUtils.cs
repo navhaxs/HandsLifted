@@ -1,21 +1,31 @@
-﻿using System;
+﻿using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using HandsLiftedApp.Core.ViewModels;
-using ReactiveUI;
 
 namespace HandsLiftedApp.Core
 {
     public class WindowUtils
     {
-        public static void RestoreWindowBounds(Window targetWindow,
-            AppPreferencesViewModel.DisplayModel? targetSavedDisplay)
+        public static void ShowAndRestoreWindowBounds(Window targetWindow,
+            AppPreferencesViewModel.DisplayModel? targetSavedDisplay,
+            bool? forceShow = null)
         {
+            targetWindow.Show();
+
             if (targetSavedDisplay != null &&
-                Globals.Instance.AppPreferences.OutputDisplayBounds is not AppPreferencesViewModel.UnsetDisplay)
-            {
-                targetWindow.Position = new PixelPoint(targetSavedDisplay.X, Globals.Instance.AppPreferences
+                Globals.Instance.AppPreferences.OutputDisplayBounds is not AppPreferencesViewModel.UnsetDisplay) {
+                
+                var targetPosition = new PixelPoint(targetSavedDisplay.X, Globals.Instance.AppPreferences
                     .OutputDisplayBounds.Y);
+
+                if (targetWindow.Screens.All.FirstOrDefault(target => target.Bounds.Contains(targetPosition)) == null)
+                {
+                    if (forceShow != true)
+                        return;
+                }
+
+                targetWindow.Position = targetPosition;
                 targetWindow.WindowState = WindowState.FullScreen;
                 targetWindow.Height = Globals.Instance.AppPreferences.OutputDisplayBounds.Height;
                 targetWindow.Width = Globals.Instance.AppPreferences.OutputDisplayBounds.Width;
