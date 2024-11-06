@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 Background="Black"
+             Margin="20"
              x:DataType="viewModels:MainViewModel"
 			 x:Class="HandsLiftedApp.Views.StageDisplayLayout.SongLayout">
 	<Grid RowDefinitions="6*, 6*, *" ColumnDefinitions="9*, *">
@@ -43,7 +44,7 @@
 			<TextBlock Foreground="White"
 					   VerticalAlignment="Bottom"
 					   Padding="15"
-					   FontSize="100"
+					   FontSize="160"
 					   Text="{Binding CurrentTime, StringFormat='{}{0:hh:mm tt}', FallbackValue='time'}"
 				/>
 		</Viewbox>
