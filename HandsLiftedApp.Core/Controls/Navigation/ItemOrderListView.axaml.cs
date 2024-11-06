@@ -118,26 +118,20 @@ namespace HandsLiftedApp.Core.Controls.Navigation
 
                 // Only allow if the dragged data contains text or filenames.
                 if (!e.Data.Contains(DataFormats.Text)
-                    && !e.Data.Contains(DataFormats.Files)
-                   )
+                    && !e.Data.Contains(DataFormats.Files)) {
                     //&& !e.Data.Contains(CustomFormat))
                     e.DragEffects = DragDropEffects.None;
-
+                }
 
                 var point = e.GetPosition(sender as Control);
-                clearLastAdornerLayer();
-                //var found = listBox.ItemContainerGenerator.Containers.LastOrDefault(info =>
-                //{
-                //    var x = info.ContainerControl;
-                //    return point.Y >= x.Bounds.Top && point.Y <= x.Bounds.Bottom;
-                //}, listBox.ItemContainerGenerator.Containers.Last());
+
+                clearLastAdornerLayer(); // TODO clear if changed
 
                 var found = listBox.GetRealizedContainers().LastOrDefault(
                     (Func<Control, bool>)(container =>
                     {
                         return point.Y >= container.Bounds.Top && point.Y <= container.Bounds.Bottom;
                     }), listBox.GetRealizedContainers().Last());
-
 
                 if (found == null)
                 {
@@ -151,8 +145,8 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 {
                     var adornedElement = new Border()
                     {
-                        CornerRadius = new CornerRadius(3, 0, 0, 3),
-                        BorderThickness = new Thickness(2, 2, 0, 2),
+                        CornerRadius = new CornerRadius(0, 0, 0, 0),
+                        BorderThickness = new Thickness(0, 2, 0, 0), // L T R B
                         BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd")),
                         IsHitTestVisible = false
                     };
@@ -183,7 +177,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 //DropState.Text = e.Data.GetText();
                 if (e.Data.Contains(DataFormats.Files))
                 {
-                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList(), SourceIndex + 1));
+                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList(), SourceIndex != -1 ? SourceIndex : null));
                     //DropState.Text = string.Join(Environment.NewLine, e.Data.GetFileNames() ?? Array.Empty<string>());
                 }
                 //else if (e.Data.Contains(CustomFormat))
