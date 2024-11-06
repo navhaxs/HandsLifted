@@ -81,5 +81,6 @@
     <PackageVersion Include="CppSharp" Version="1.0.45.22293" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.6.0-1.final" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+    <PackageVersion Include="WebView.Avalonia.Desktop" Version="11.0.0.1" />
   </ItemGroup>
 </Project>
