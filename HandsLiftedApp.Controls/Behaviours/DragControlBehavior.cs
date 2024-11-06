@@ -10,6 +10,7 @@ using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace HandsLiftedApp.Behaviours
@@ -123,13 +124,10 @@ namespace HandsLiftedApp.Behaviours
         private ListBoxItem GetHoveredItem(ItemsControl listBox, Point pos, Control? target)
         {
             var children = listBox.GetLogicalChildren(); // ListBoxItem
-
             var visualsAtPos = listBox.GetVisualsAt(pos); // Border
             var itemsAtPos = visualsAtPos.Select(visual => ControlExtension.FindAncestor<ListBoxItem>((Control)visual)).ToArray(); // ContentPresenter
-
             return (ListBoxItem)children.Where(listBoxItem => listBoxItem != target).FirstOrDefault(childItem => itemsAtPos.Contains(childItem));
         }
-
 
         private void CancelDrag()
         {
@@ -171,7 +169,6 @@ namespace HandsLiftedApp.Behaviours
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
         {
             var target = TargetControl ?? AssociatedObject;
-            //args.Properties;
             if (target is { })
             {
                 if (args.GetCurrentPoint(target).Properties.IsRightButtonPressed)
@@ -187,7 +184,6 @@ namespace HandsLiftedApp.Behaviours
             if (target is { })
             {
                 Point pos = args.GetPosition(_parent);
-
 
                 if (!isDragging && Math.Abs(pos.Y - _previous.Y) > 6) // deadzone
                 {
@@ -208,9 +204,6 @@ namespace HandsLiftedApp.Behaviours
                 _previous = pos;
 
                 ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
-
-                //listBoxItem.ZIndex = 999;
-
                 ListBoxItem hoveredItem = GetHoveredItem(parentItemsControls, pos, listBoxItem);
 
                 // check if dragging past the last item
@@ -223,7 +216,6 @@ namespace HandsLiftedApp.Behaviours
                     var listBoxItemContainer = parentItemsControls.ContainerFromIndex(i);
                     var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
                     adornerLayer.Children.Clear();
-                    //listBoxItemContainer.ZIndex = 1;
                 }
 
                 if (isPastLastItem)
@@ -233,6 +225,11 @@ namespace HandsLiftedApp.Behaviours
 
                 if (hoveredItem is null)
                     return;
+                
+                int foundIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                var relativePoint = args.GetPosition(hoveredItem);
+                var isUpper = relativePoint.Y < hoveredItem.Bounds.Height / 2;
+                int calculatedTargetIndex = isUpper ? foundIndex : foundIndex + 1;
 
                 if (hoveredItem != target)
                 {
@@ -245,24 +242,12 @@ namespace HandsLiftedApp.Behaviours
                         var adornedElement = new Border()
                         {
                             CornerRadius = new CornerRadius(3, 0, 0, 3),
-                            BorderThickness = isPastLastItem ? new Thickness(0, 0, 0, 2) : new Thickness(0, 2, 0, 0),
+                            BorderThickness = isPastLastItem || !isUpper ? new Thickness(0, 0, 0, 2) : new Thickness(0, 2, 0, 0),
                             BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd"))
                         };
                         adornerLayer.Children.Add(adornedElement);
                         AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
                     }
-                }
-            }
-        }
-
-        private void UpdateCursor(bool show)
-        {
-            if (_parent is { })
-            {
-                Window? window = _parent.GetVisualRoot() as Window;
-                if (window != null)
-                {
-                    window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;
                 }
             }
         }
@@ -307,7 +292,20 @@ namespace HandsLiftedApp.Behaviours
                 bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
 
                 int SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(listBoxItem);
-                int DestinationIndex = isPastLastItem ? parentItemsControls.ItemCount - 1 : parentItemsControls.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                int DestinationIndex = -1;
+                int foundIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                if (hoveredItem != null)
+                {
+                    
+                    var relativePoint = e.GetPosition(hoveredItem);
+                    var isUpper = relativePoint.Y < hoveredItem.Bounds.Height / 2;
+                    DestinationIndex = isUpper ? foundIndex : foundIndex + 1;
+                }
+
+                if (isPastLastItem)
+                {
+                    DestinationIndex = parentItemsControls.ItemCount - 1;
+                }
 
                 for (int i = 0; i < parentItemsControls.ItemCount; i++)
                 {
@@ -336,11 +334,28 @@ namespace HandsLiftedApp.Behaviours
                 {
                     //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItemBounds: {isPastLastItemBounds}");
 
+                    if (DestinationIndex > SourceIndex)
+                    {
+                        --DestinationIndex;
+                    }
+
                     MessageBus.Current.SendMessage(new MoveItemMessage()
                     {
                         SourceIndex = SourceIndex,
                         DestinationIndex = DestinationIndex
                     });
+                }
+            }
+        }
+        
+        private void UpdateCursor(bool show)
+        {
+            if (_parent is { })
+            {
+                Window? window = _parent.GetVisualRoot() as Window;
+                if (window != null)
+                {
+                    window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;
                 }
             }
         }

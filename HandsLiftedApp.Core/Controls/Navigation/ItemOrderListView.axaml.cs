@@ -10,14 +10,9 @@ using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Reflection;
 using Avalonia.LogicalTree;
-using Avalonia.VisualTree;
-using DynamicData;
-using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Core.Controls.Navigation
@@ -72,37 +67,35 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = listBox.SelectedIndex });
         }
 
+        // private Control lastHoveredListItem;
+        int lastHoveredIndex = -1;
+        private bool isUpper;
         Control lastAdornerElement;
 
         void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)
         {
-            //var dragMe = this.Get<Border>("DragMe" + suffix);
-            //var dragState = this.Get<TextBlock>("DragState" + suffix);
-
-            async void DoDrag(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+            void Calculate(object? sender, DragEventArgs e)
             {
-                var dragData = new DataObject();
-                factory(dragData);
+                var point = e.GetPosition(sender as Control);
 
-                //var result = await DragDrop.DoDragDrop(e, dragData, effects);
-                //switch (result)
-                //{
-                //    case DragDropEffects.Move:
-                //        dragState.Text = "Data was moved";
-                //        break;
-                //    case DragDropEffects.Copy:
-                //        dragState.Text = "Data was copied";
-                //        break;
-                //    case DragDropEffects.Link:
-                //        dragState.Text = "Data was linked";
-                //        break;
-                //    case DragDropEffects.None:
-                //        dragState.Text = "The drag operation was canceled";
-                //        break;
-                //    default:
-                //        dragState.Text = "Unknown result";
-                //        break;
-                //}
+                var found = listBox.GetRealizedContainers().LastOrDefault(
+                    (Func<Control, bool>)(container =>
+                    {
+                        return point.Y >= container.Bounds.Top && point.Y <= container.Bounds.Bottom;
+                    }), listBox.GetRealizedContainers().Last());
+                int foundIndex = listBox.ItemContainerGenerator.IndexFromContainer(found);
+
+                var relativePoint = e.GetPosition(found);
+                isUpper = relativePoint.Y < found.Bounds.Height / 2;
+
+                int calculatedTargetIndex = isUpper ? foundIndex : foundIndex + 1;
+                if (lastHoveredIndex != calculatedTargetIndex)
+                {
+                    clearLastAdornerLayer();
+                }
+
+                lastHoveredIndex = calculatedTargetIndex;
+                lastAdornerElement = found;
             }
 
             void DragOver(object? sender, DragEventArgs e)
@@ -123,30 +116,15 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                     e.DragEffects = DragDropEffects.None;
                 }
 
-                var point = e.GetPosition(sender as Control);
-
-                clearLastAdornerLayer(); // TODO clear if changed
-
-                var found = listBox.GetRealizedContainers().LastOrDefault(
-                    (Func<Control, bool>)(container =>
-                    {
-                        return point.Y >= container.Bounds.Top && point.Y <= container.Bounds.Bottom;
-                    }), listBox.GetRealizedContainers().Last());
-
-                if (found == null)
-                {
-                    return;
-                }
-
-                lastAdornerElement = found; // as Control; //(Visual)sender;
+                Calculate(sender, e);
+      
                 var adornerLayer = AdornerLayer.GetAdornerLayer(lastAdornerElement);
-
                 if (adornerLayer != null)
                 {
                     var adornedElement = new Border()
                     {
                         CornerRadius = new CornerRadius(0, 0, 0, 0),
-                        BorderThickness = new Thickness(0, 2, 0, 0), // L T R B
+                        BorderThickness = isUpper ? new Thickness(0, 2, 0, 0) : new Thickness(0, 0, 0, 2), // L T R B
                         BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd")),
                         IsHitTestVisible = false
                     };
@@ -166,22 +144,12 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                     e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
                 }
 
-                int? SourceIndex = null;
-                if (e.Source is Control target)
-                {
-                    ItemsControl parentItemsControls = target.FindAncestorOfType<ItemsControl>();
-                    SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(target.FindAncestorOfType<ListBoxItem>());
-                }
+                Calculate(sender, e);
                 
-                //if (e.Data.Contains(DataFormats.Text))
-                //DropState.Text = e.Data.GetText();
                 if (e.Data.Contains(DataFormats.Files))
                 {
-                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList(), SourceIndex != -1 ? SourceIndex : null));
-                    //DropState.Text = string.Join(Environment.NewLine, e.Data.GetFileNames() ?? Array.Empty<string>());
+                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList(), lastHoveredIndex != -1 ? lastHoveredIndex : null));
                 }
-                //else if (e.Data.Contains(CustomFormat))
-                //    DropState.Text = "Custom: " + e.Data.Get(DropState);
 
                 clearLastAdornerLayer();
             }
@@ -200,9 +168,6 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                     lastAdornerElement = null;
                 }
             }
-
-            //dragMe.PointerPressed += DoDrag;
-
             AddHandler(DragDrop.DropEvent, Drop);
             AddHandler(DragDrop.DragOverEvent, DragOver);
             AddHandler(DragDrop.DragLeaveEvent, DragLeave);
