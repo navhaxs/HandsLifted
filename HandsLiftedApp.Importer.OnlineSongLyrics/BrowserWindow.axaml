@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:avaloniaWebView="clr-namespace:AvaloniaWebView;assembly=Avalonia.WebView"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         WindowStartupLocation="CenterScreen"
         RequestedThemeVariant="Light"
@@ -56,7 +57,7 @@
                     </Grid>
                     <Border
                         BorderThickness="1" CornerRadius="6" BorderBrush="Red" Padding="2" Margin="6">
-                        <WebView x:Name="PART_WebView" />
+                        <avaloniaWebView:WebView x:Name="PART_WebView" />
                     </Border>
                 </DockPanel>
              
