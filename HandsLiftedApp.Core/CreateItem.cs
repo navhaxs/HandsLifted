@@ -117,15 +117,15 @@ namespace HandsLiftedApp.Core
             else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)) ||
                      Constants.SUPPORTED_IMAGE.Any(x => filename.EndsWith(x)))
             {
+                    string fileName = Path.GetFileName(filePath);
                 var mediaGroupItem = new MediaGroupItem()
-                    { Title = "New media group" };
+                    { Title = fileName };
 
                 // foreach (var filePath in filePaths)
                 // {
                 //     if (filePath != null && filePath is string)
                 //     {
                 // DateTime now = DateTime.Now;
-                // string fileName = Path.GetFileName(filePath);
                 // string folderName = Path.GetDirectoryName(filePath);
                 mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
                     { SourceMediaFilePath = filePath });
