@@ -29,15 +29,8 @@ namespace HandsLiftedApp.Core.Views
 
             listBox = this.FindControl<ItemsControl>("List");
 
-            this.DataContextChanged += PlaylistSlidesView_DataContextChanged;
-
-            this.AddHandler(RequestBringIntoViewEvent, (s, e) =>
-            {
-                //TODO write custom scroll handler
-                //which takes into account the whole item container (not just slide within the item's listbox)
-                //scrollViewer.Offset = new Vector(0, 0);
-                //e.Handled = true;
-            });
+            if (Design.IsDesignMode)
+                return;
 
             MessageBus.Current.Listen<FocusSelectedItem>()
                 .Subscribe(x =>
@@ -129,51 +122,6 @@ namespace HandsLiftedApp.Core.Views
 
                     MessageBus.Current.SendMessage(new SpyScrollUpdateMessage() { Index = lastIndex });
                 });
-
-            this.KeyDown += PlaylistSlidesView_KeyDown;
-        }
-
-        private void PlaylistSlidesView_DataContextChanged(object? sender, EventArgs e)
-        {
-            // var ctx = (Playlist<PlaylistStateImpl, ItemStateImpl>)this.DataContext;
-            //
-            // // todo dispose old one
-            // ctx.WhenAnyValue(x => x.State.SelectedItemIndex)
-            //     .ObserveOn(RxApp.MainThreadScheduler)
-            //     .Select(x => { return x == -1; })
-            //     .Subscribe(x =>
-            //     {
-            //         if (x)
-            //         {
-            //             scrollViewer.Offset = new Vector(0, 0);
-            //         }
-            //     });
-        }
-
-        private void PlaylistSlidesView_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
-        {
-            
-            //
-            // switch (e.Key)
-            // {
-            //     case Key.PageDown:
-            //     case Key.Right:
-            //     case Key.Space:
-            //         MessageBus.Current.SendMessage(new ActionMessage()
-            //             { Action = ActionMessage.NavigateSlideAction.NextSlide });
-            //         MessageBus.Current.SendMessage(new FocusSelectedItem());
-            //
-            //         e.Handled = true;
-            //         break;
-            //     case Key.PageUp:
-            //     case Key.Left:
-            //         MessageBus.Current.SendMessage(new ActionMessage()
-            //             { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
-            //         MessageBus.Current.SendMessage(new FocusSelectedItem());
-            //
-            //         e.Handled = true;
-            //         break;
-            // }
         }
 
         // <summary>
@@ -205,8 +153,6 @@ namespace HandsLiftedApp.Core.Views
             {
                 return false;
             }
-
-            ContentPresenter controlParent = ControlExtension.FindAncestor<ContentPresenter>(control);
 
             var rect = targetRect.TransformToAABB(transform.Value);
             var offset = presenter.Offset;

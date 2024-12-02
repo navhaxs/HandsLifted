@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:HandsLiftedApp.Core.Models"
-    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:controls1="clr-namespace:HandsLiftedApp.Core.Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"

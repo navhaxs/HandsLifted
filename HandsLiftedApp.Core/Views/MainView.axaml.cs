@@ -58,7 +58,6 @@ public partial class MainView : UserControl
     GridLength lastLibraryContentGridLength = new GridLength(260);
     GridLength lastLibrarySplitterGridLength = new GridLength(0);
 
-
     private void ToggleBottomPanel(bool forceVisible = false)
     {
         if (forceVisible && isLibraryVisible)

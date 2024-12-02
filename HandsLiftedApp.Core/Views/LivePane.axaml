@@ -117,7 +117,7 @@
                 <!--                                            DockPanel.Dock="Top" /> -->
 
                 <TextBlock x:Name="_dropState" DockPanel.Dock="Top" IsVisible="{Binding Playlist.IsQuickShow}" />
-                
+
                 <Grid DockPanel.Dock="Top" Height="2">
                     <ProgressBar MinHeight="2"
                                  IsVisible="{Binding Playlist.AutoAdvanceTimer.IsTimerConfigured}"
@@ -180,6 +180,79 @@
                         <!--<RadioButton IsChecked="{Binding Playlist.State.IsFreeze}">Freeze</RadioButton>-->
                     </UniformGrid>
                 </Border>
+
+                <Grid DockPanel.Dock="Top">
+                    <Grid.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="BorderThickness"
+                                    Value="0" />
+                            <Setter Property="Background"
+                                    Value="{DynamicResource ButtonBackgroundBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource TextBrush}" />
+                            <Setter Property="CornerRadius"
+                                    Value="99" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="Margin" Value="6 2" />
+                            <Setter Property="FontSize" Value="14" />
+                        </Style>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#b7a6e7" />
+                        </Style>
+                        <Style Selector="Button:pressed /template/ ContentPresenter">
+                            <Setter Property="BorderBrush" Value="#2c628b" />
+                            <Setter Property="Background" Value="#9072EA" />
+                        </Style>
+                    </Grid.Styles>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Padding="6,0"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Command="{Binding OnPrevSlideClickCommand}"
+                        IsTabStop="False">
+                        <Grid Margin="6,0">
+                            <avalonia:MaterialIcon HorizontalAlignment="Left" Kind="ArrowLeft" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="Previous"
+                                TextAlignment="Center" />
+                        </Grid>
+                    </Button>
+                    <!--<Button
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Click="OnScrollToItemClick"
+                                                    FontSize="16" />-->
+                    <!-- <TextBlock -->
+                    <!--     Grid.Column="1" -->
+                    <!--     HorizontalAlignment="Center" -->
+                    <!--     VerticalAlignment="Center" -->
+                    <!--     FontSize="15" -->
+                    <!--     Text="{Binding Playlist.State.SelectedSlideItemDisplayText}" /> -->
+                    <Button
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        Command="{Binding OnNextSlideClickCommand}"
+                        IsTabStop="False">
+                        <Grid Margin="6,0">
+                            <avalonia:MaterialIcon HorizontalAlignment="Right" Kind="ArrowRight" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="Next"
+                                TextAlignment="Center" />
+                        </Grid>
+                    </Button>
+                </Grid>
+
 
                 <!-- <views:DebugInfoView HorizontalAlignment="Stretch" /> -->
                 <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->

@@ -34,6 +34,9 @@ namespace HandsLiftedApp.Core.Controls
 
             AddButton.PointerEntered += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = true; };
             AddButton.PointerExited += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = false; };
+
+            if (Design.IsDesignMode)
+                return;
             
             Globals.Instance.MainViewModel.Playlist.WhenAnyValue(x => x.ActiveItemInsertIndex)
                 .Subscribe(x =>
