@@ -174,7 +174,9 @@ namespace HandsLiftedApp.Core.Views.Designer
                             theme.Id = new Guid();
                         }
                         
-                        mainViewModel.Playlist.Designs.Add(theme);
+                        // mainViewModel.Playlist.Designs.Add(theme);
+                        // Globals.Instance.AppPreferences.Designs.Add(theme);
+                        Globals.Instance.AppPreferences.DefaultTheme.CopyFrom(theme);
                     }
                 }
             }

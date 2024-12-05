@@ -88,7 +88,7 @@
             </ListBox>
         </DockPanel>
         <!-- Preview -->
-        <Grid ColumnDefinitions="3*, *, *">
+        <Grid ColumnDefinitions="3*, *">
             <Viewbox Grid.Column="0" VerticalAlignment="Top">
                 <Grid
                     Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
@@ -120,11 +120,11 @@
                 </Grid>
             </Viewbox>
 
+            <!-- <ScrollViewer Grid.Column="1"> -->
+            <!--     <TextBox Text="{Binding #designsListBox.SelectedItem}" /> -->
+            <!-- </ScrollViewer> -->
+            
             <ScrollViewer Grid.Column="1">
-                <TextBox Text="{Binding #designsListBox.SelectedItem}" />
-            </ScrollViewer>
-
-            <ScrollViewer Grid.Column="2">
                 <StackPanel Margin="8">
 
 
