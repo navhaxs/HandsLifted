@@ -4,6 +4,6 @@ namespace AvaloniaNDI
 {
     public interface IGetVideoBufferBitmap
     {
-        public WriteableBitmap GetVideoBufferBitmap();
+        public WriteableBitmap? GetVideoBufferBitmap();
     }
 }

@@ -9,7 +9,6 @@
     <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="LibVLCSharp" />
     <PackageReference Include="Serilog" />
-    <PackageReference Include="System.Reactive" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">

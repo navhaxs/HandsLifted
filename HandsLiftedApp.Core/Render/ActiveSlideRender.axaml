@@ -24,7 +24,7 @@
             RenderOptions.BitmapInterpolationMode="HighQuality">
 
             <xTransitioningContentControl:XTransitioningContentControl.PageTransition>
-                <xTransitioningContentControl:XFade Duration="0.100" />
+                <xTransitioningContentControl:XFade Duration="0.120" />
                 <!--<CompositePageTransition>
 				<CrossFade Duration="0:00:00.500" />
 				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />

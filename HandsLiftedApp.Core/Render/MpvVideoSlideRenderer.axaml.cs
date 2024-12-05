@@ -67,6 +67,11 @@ namespace HandsLiftedApp.Core.Render
                         if (_isMounted)
                         {
                             // only run if slide still active
+                            if (Globals.Instance.MpvContextInstance == null)
+                            {
+                                Log.Debug("MpvVideoSlideRenderer failed: MpvContextInstance not initialized");
+                                return;
+                            }
                             Globals.Instance.MpvContextInstance.Command("loadfile", videoSlide.SourceMediaFilePath, "replace");
                             Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", false);
                             Log.Debug("MpvVideoSlideRenderer loadfile and play");

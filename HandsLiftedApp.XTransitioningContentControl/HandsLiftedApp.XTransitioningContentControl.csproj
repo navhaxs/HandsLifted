@@ -9,9 +9,9 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Controls.Skia" />
+    <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="Avalonia.Skia" />
     <PackageReference Include="BmpSharp" />
-    <PackageReference Include="System.Reactive" />
   </ItemGroup>
 
   <ItemGroup>

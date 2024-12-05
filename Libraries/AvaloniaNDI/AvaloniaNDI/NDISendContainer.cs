@@ -526,14 +526,33 @@ Description("Function to determine whether the content requires high resolution 
             if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
                 return;
 
-            // directly copy buffer for video playback content
-            var videoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
-
             if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
             {
                 // Create a properly sized RenderTargetBitmap
                 var scale = 1; // VisualRoot!.RenderScaling;
                 rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale));
+            }
+            
+            // directly copy buffer for video playback content
+            var videoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
+            
+            // render the Avalonia visual
+            bool isValidVideoSource = false;
+            Bitmap? sourceBitmap = null;
+            if (videoControl != null)
+            {
+                var buffer = videoControl.GetVideoBufferBitmap();
+                if (buffer != null)
+                {
+                    isValidVideoSource = true;
+                    sourceBitmap = buffer;
+                }
+            }
+
+            if (sourceBitmap == null)
+            {
+                rtb.Render(this.Child);
+                sourceBitmap = rtb;
             }
 
             stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
@@ -550,7 +569,7 @@ Description("Function to determine whether the content requires high resolution 
                 xres = NdiWidth,
                 yres = NdiHeight,
                 // Use BGRA video
-                FourCC = (OperatingSystem.IsMacOS() && videoControl == null) ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA,
+                FourCC = (OperatingSystem.IsMacOS() && !isValidVideoSource) ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA,
                 // The frame-rate
                 frame_rate_N = frNum,
                 frame_rate_D = frDen,
@@ -580,16 +599,7 @@ Description("Function to determine whether the content requires high resolution 
             var destinationCanvas = destinationSurface.Canvas;
             using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
-            // render the Avalonia visual
-            if (videoControl != null)
-            {
-                videoControl.GetVideoBufferBitmap().CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
-            }
-            else
-            {
-                rtb.Render(this.Child);
-                rtb.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
-            }
+            sourceBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
 
             // add it to the output queue
             AddFrame(videoFrame);
@@ -608,7 +618,6 @@ Description("Function to determine whether the content requires high resolution 
                 return;
 
             Monitor.Enter(sendInstanceLock);
-
             {
                 // we need a name
                 if (String.IsNullOrEmpty(NdiName))

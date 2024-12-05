@@ -18,8 +18,11 @@ namespace HandsLiftedApp.Core.Views
             InitializeComponent();
             
             Log.Information("Created ProjectorWindow");
-            
-            WindowUtils.RegisterWindowWatcher(this);
+
+            if (OperatingSystem.IsWindows())
+            {
+                WindowUtils.RegisterWindowWatcher(this);
+            }
 
             this.WhenAnyValue(value => value.IsVisible).Subscribe(isVisible =>
             {

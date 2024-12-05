@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using ByteSizeLib;
 using Config.Net;
 using HandsLiftedApp.Controls.Messages;
@@ -31,18 +33,18 @@ namespace HandsLiftedApp.Core.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     public IMySettings settings;
-    
+
     public LibraryViewModel LibraryViewModel { get; init; }
 
     public AddItemViewModel AddItemViewModel { get; init; }
-    
+
     public ReactiveCommand<object, Unit> SlideClickCommand { get; }
 
     public MainViewModel()
     {
         LibraryViewModel = new LibraryViewModel();
         AddItemViewModel = new AddItemViewModel(LibraryViewModel);
-        
+
         if (Design.IsDesignMode)
         {
             Playlist = new PlaylistInstance();
@@ -57,7 +59,7 @@ public class MainViewModel : ViewModelBase
             Playlist.Designs.Add(new BaseSlideTheme() { Name = "Default" });
 
             LibraryViewModel.ReloadLibraries();
-                
+
             return;
         }
 
@@ -69,7 +71,7 @@ public class MainViewModel : ViewModelBase
 
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<Unit, string[]?>();
-        
+
         EditSlideInfoCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
         {
             if (x is CustomAxamlSlideInstance c)
@@ -78,7 +80,7 @@ public class MainViewModel : ViewModelBase
                 window.Show();
             }
         });
-        
+
         SlideSplitFromHere = ReactiveCommand.CreateFromTask<object>(async (object x) =>
         {
             if (x is ReadOnlyCollection<object> parameters)
@@ -86,14 +88,14 @@ public class MainViewModel : ViewModelBase
                 try
                 {
                     // todo edge cases: active selected index?
-                    
+
                     Slide slide = (Slide)parameters.ElementAt(0);
                     MediaGroupItemInstance currentItem = (MediaGroupItemInstance)parameters.ElementAt(1);
-                    
+
                     MediaGroupItemInstance newSlidesGroupItem = currentItem.slice(currentItem._Slides.IndexOf(slide));
 
                     if (newSlidesGroupItem != null)
-                        Playlist.Items.Insert(Playlist.Items.IndexOf(currentItem) + 1, newSlidesGroupItem);                    
+                        Playlist.Items.Insert(Playlist.Items.IndexOf(currentItem) + 1, newSlidesGroupItem);
                 }
                 catch (Exception e)
                 {
@@ -114,6 +116,7 @@ public class MainViewModel : ViewModelBase
                         {
                             itemToInsert = CreateItem.OpenPresentationFile(filePaths[0], Playlist);
                         }
+
                         break;
                     case AddItemMessage.AddItemType.Logo:
                         itemToInsert = new LogoItemInstance(Playlist);
@@ -147,6 +150,7 @@ public class MainViewModel : ViewModelBase
                                     { SourceMediaFilePath = filePath });
                             }
                         }
+
                         mediaGroupItem.GenerateSlides();
 
                         itemToInsert = mediaGroupItem;
@@ -168,9 +172,10 @@ public class MainViewModel : ViewModelBase
                                 string fileName = Path.GetFileName(filePath);
                                 string folderName = Path.GetDirectoryName(filePath);
                                 mediaGroupItem2.Items.Add(new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = filePath } );
+                                    { SourceMediaFilePath = filePath });
                             }
                         }
+
                         mediaGroupItem2.GenerateSlides();
 
                         itemToInsert = mediaGroupItem2;
@@ -197,7 +202,7 @@ public class MainViewModel : ViewModelBase
                     {
                         Playlist.Items.Add(itemToInsert);
                     }
-                    
+
                     if (currentSelectedItem != null)
                     {
                         Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
@@ -219,12 +224,14 @@ public class MainViewModel : ViewModelBase
                         {
                             Playlist.Items.Move(theSelectedIndex, theSelectedIndex - 1);
                         }
+
                         break;
                     case MoveItemCommand.DirectionValue.DOWN:
                         if (theSelectedIndex + 1 < Playlist.Items.Count)
                         {
                             Playlist.Items.Move(theSelectedIndex, theSelectedIndex + 1);
                         }
+
                         break;
                     case MoveItemCommand.DirectionValue.REMOVE:
                         Playlist.Items.RemoveAt(theSelectedIndex);
@@ -242,12 +249,14 @@ public class MainViewModel : ViewModelBase
             {
                 var currentSelectedItem = Playlist.SelectedItem;
 
-                Playlist.Items.Move(moveItemMessage.SourceIndex, Math.Min(Playlist.Items.Count - 1, moveItemMessage.DestinationIndex));
-                
+                Playlist.Items.Move(moveItemMessage.SourceIndex,
+                    Math.Min(Playlist.Items.Count - 1, moveItemMessage.DestinationIndex));
+
                 if (currentSelectedItem != null)
                 {
                     Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
                 }
+
                 Debug.Print(
                     $"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
             });
@@ -259,7 +268,8 @@ public class MainViewModel : ViewModelBase
         {
             try
             {
-                var parsedPlaylist = HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
+                var parsedPlaylist =
+                    HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
                 Playlist.Dispose();
                 Playlist = parsedPlaylist;
                 Playlist.IsDirty = false;
@@ -271,7 +281,7 @@ public class MainViewModel : ViewModelBase
                 // ignored
             }
         }
-        
+
         _ = Update(); // calling an async function we do not want to await
     }
 
@@ -280,6 +290,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
 
     private PlaylistInstance _playlist;
+
     public PlaylistInstance Playlist
     {
         get => _playlist;
@@ -297,7 +308,7 @@ public class MainViewModel : ViewModelBase
         Playlist.NavigatePreviousSlide();
         MessageBus.Current.SendMessage(new FocusSelectedItem());
     }
-    
+
     private bool _IsDisplayDebugInfo = false;
 
     public bool IsDisplayDebugInfo
@@ -376,19 +387,25 @@ public class MainViewModel : ViewModelBase
         // Apply OnStartup* AppPreferences:
         Playlist.IsLogo = Globals.Instance.AppPreferences.OnStartupShowLogo;
 
-        if (ProjectorWindow == null)
+        // TODO broken 
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
-            ProjectorWindow = new ProjectorWindow();
-            ProjectorWindow.DataContext = this;
-        }
-        ToggleProjectorWindow(Globals.Instance.AppPreferences.OnStartupShowOutput);
-        
-        if (StageDisplayWindow == null)
-        {
-            StageDisplayWindow = new StageDisplayWindow();
-            StageDisplayWindow.DataContext = this;
-        }
-        ToggleStageDisplayWindow(Globals.Instance.AppPreferences.OnStartupShowStage);
+            Thread.Sleep(2000);
+            if (ProjectorWindow == null)
+            {
+                // ProjectorWindow = new ProjectorWindow() { DataContext = this };
+            }
+
+            // ToggleProjectorWindow(Globals.Instance.AppPreferences.OnStartupShowOutput);
+
+            // if (StageDisplayWindow == null)
+            // {
+                // StageDisplayWindow = new StageDisplayWindow();
+                // StageDisplayWindow.DataContext = this;
+            // }
+
+            // ToggleStageDisplayWindow(Globals.Instance.AppPreferences.OnStartupShowStage);
+        });
     }
 
     public void OnProjectorClickCommand()
@@ -396,7 +413,8 @@ public class MainViewModel : ViewModelBase
         ToggleProjectorWindow(null, true);
     }
 
-    public void ToggleProjectorWindow(bool? shouldShow = null, bool? forceShow = null) // TODO both forceShow and designShow
+    public void
+        ToggleProjectorWindow(bool? shouldShow = null, bool? forceShow = null) // TODO both forceShow and designShow
     {
         shouldShow = shouldShow ?? (ProjectorWindow == null || !ProjectorWindow.IsVisible);
         if (shouldShow == true)
@@ -407,7 +425,8 @@ public class MainViewModel : ViewModelBase
                 ProjectorWindow.DataContext = this;
             }
 
-            WindowUtils.ShowAndRestoreWindowBounds(ProjectorWindow, Globals.Instance.AppPreferences.OutputDisplayBounds, forceShow);
+            WindowUtils.ShowAndRestoreWindowBounds(ProjectorWindow, Globals.Instance.AppPreferences.OutputDisplayBounds,
+                forceShow);
         }
         else
         {
@@ -435,7 +454,8 @@ public class MainViewModel : ViewModelBase
         if (shouldShow == true)
         {
             StageDisplayWindow = new StageDisplayWindow() { DataContext = this };
-            WindowUtils.ShowAndRestoreWindowBounds(StageDisplayWindow, Globals.Instance.AppPreferences.StageDisplayBounds, forceShow);
+            WindowUtils.ShowAndRestoreWindowBounds(StageDisplayWindow,
+                Globals.Instance.AppPreferences.StageDisplayBounds, forceShow);
         }
         else
         {
@@ -447,7 +467,12 @@ public class MainViewModel : ViewModelBase
     #region UI
 
     private int _BottomLeftPanelSelectedTabIndex = 0;
-    public int BottomLeftPanelSelectedTabIndex { get => _BottomLeftPanelSelectedTabIndex; set => this.RaiseAndSetIfChanged(ref _BottomLeftPanelSelectedTabIndex, value); }
+
+    public int BottomLeftPanelSelectedTabIndex
+    {
+        get => _BottomLeftPanelSelectedTabIndex;
+        set => this.RaiseAndSetIfChanged(ref _BottomLeftPanelSelectedTabIndex, value);
+    }
 
     #endregion
 }

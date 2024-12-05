@@ -26,8 +26,8 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Skia" />
+    <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="NDILibDotNetCoreBase" />
-    <PackageReference Include="System.Reactive" />
   </ItemGroup>
 
   <ItemGroup>

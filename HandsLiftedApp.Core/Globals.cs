@@ -30,7 +30,7 @@ namespace HandsLiftedApp.Core
         }
 
         public MainViewModel MainViewModel { get; set; }
-        public MpvContext MpvContextInstance { get; set; }
+        public MpvContext? MpvContextInstance { get; set; }
         public AppPreferencesViewModel AppPreferences { get; set; }
 
         public ImportWorkerThread ImportWorkerThread { get; } = new();

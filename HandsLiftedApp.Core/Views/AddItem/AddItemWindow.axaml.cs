@@ -30,7 +30,7 @@ namespace HandsLiftedApp.Core.Views
             };
         }
 
-        private async Task ShowOpenFileDialog(InteractionContext<Unit, string[]?> interaction)
+        private async Task ShowOpenFileDialog(IInteractionContext<Unit, string[]?> interaction)
         {
             try
             {
