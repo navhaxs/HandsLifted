@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
@@ -198,6 +199,11 @@ namespace HandsLiftedApp.Core.Views.Designer
             {
                 Debug.Print(ex.Message);
             }
+        }
+
+        private void FontWeightComboBox_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

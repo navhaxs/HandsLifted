@@ -180,6 +180,7 @@
                     <TextBlock Text="{Binding #designsListBox.SelectedItem.FontWeight}" />
                     <DockPanel>
                         <ComboBox Name="FontWeightComboBox"
+                                   PointerWheelChanged="FontWeightComboBox_OnPointerWheelChanged"
                                   SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold, Converter={StaticResource SafeFontWeightConverter}}" />
                     </DockPanel>
 
