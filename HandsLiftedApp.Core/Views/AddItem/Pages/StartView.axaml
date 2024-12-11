@@ -5,6 +5,7 @@
              xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
              xmlns:pages="clr-namespace:HandsLiftedApp.Core.ViewModels.AddItem.Pages"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="660" d:DesignHeight="450"
              x:DataType="pages:StartViewModel"
              x:Class="HandsLiftedApp.Core.Views.AddItem.Pages.StartView">
@@ -12,18 +13,96 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    
+
     <UserControl.Styles>
         <StyleInclude Source="../Styles.axaml" />
     </UserControl.Styles>
 
-    <DockPanel Margin="12">
-        <TextBlock DockPanel.Dock="Top" FontSize="22" Margin="0 0 0 12">Add Item</TextBlock>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" FontSize="22" Margin="22 20 0 12">Add Item</TextBlock>
         <!-- <TextBox DockPanel.Dock="Top" FontSize="18" Watermark="Search song title, content, ..." x:Name="SearchBox" -->
         <!--          CornerRadius="3" /> -->
 
-        <ScrollViewer Margin="0 0 0 0">
-            <StackPanel>
+        <DockPanel DockPanel.Dock="Bottom" Background="#141414">
+            <DockPanel.Styles>
+                <Style Selector="controls|IconButton">
+                    <Setter Property="Padding" Value="18 8" />
+                    <Setter Property="CornerRadius" Value="0" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="White" />
+                </Style>
+            </DockPanel.Styles>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <controls:IconButton Click="CreateSlideButton_OnClick" Kind="Paintbrush" Text="Create slide" />
+                <Border Width="1" Background="#444" Margin="0 4" />
+                <controls:IconButton Click="ImportFileButton_OnClick" Kind="ExternalLink" Text="Import from file" />
+            </StackPanel>
+            <controls:IconButton Click="CreateSlideButton_OnClick" Kind="Clock" Text="Recent" DockPanel.Dock="Left"
+                                 HorizontalAlignment="Left" />
+        </DockPanel>
+
+        <!--  Search box  -->
+        <DockPanel DockPanel.Dock="Top" MinWidth="400" HorizontalAlignment="Center">
+
+            <Button DockPanel.Dock="Right" Padding="20 0" CornerRadius="0" Background="Transparent" BorderThickness="0 0 0 1" BorderBrush="#808080">
+                <avalonia:MaterialIcon Kind="Search" Width="22" Height="22" />
+            </Button>
+
+            <TextBox
+                Padding="12,4"
+                Background="Transparent"
+                BorderThickness=" 0 0 0 1"
+                FontSize="20"
+                Text="{Binding LibraryViewModel.SearchTerm}"
+                Watermark="Search songs and content..." />
+
+        </DockPanel>
+
+        <ScrollViewer>
+            <StackPanel Margin="16">
+
+                <StackPanel.Styles>
+                    <Style Selector="controls|IconButton">
+                        <Setter Property="Background" Value="LightGray" />
+                        <Setter Property="BorderBrush" Value="DarkGray" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Foreground" Value="#111" />
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="CornerRadius" Value="0" />
+                        <Setter Property="Padding" Value="16 1" />
+                        <Setter Property="Width" Value="160" />
+                        <Setter Property="Height" Value="120" />
+                        <Setter Property="Template">
+                            <ControlTemplate>
+                                <!-- Define the control's visual structure -->
+                                <DockPanel Margin="6">
+                                    <TextBlock VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Center"
+                                               DockPanel.Dock="Bottom"
+                                               Margin="0 6 0 0"
+                                               Foreground="LightGray"
+                                               Text="{TemplateBinding Text}"
+                                               TextWrapping="Wrap" />
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Padding="{TemplateBinding Padding}"
+                                            CornerRadius="{TemplateBinding CornerRadius}">
+                                        <avalonia:MaterialIcon
+                                            Kind="{TemplateBinding Kind}"
+                                            Margin="-4"
+                                            VerticalAlignment="Center"
+                                            Height="48" Width="48" />
+                                        <!-- <ContentPresenter Content="{TemplateBinding Content}" -->
+                                        <!--                   ContentTemplate="{TemplateBinding ContentTemplate}" /> -->
+                                    </Border>
+                                </DockPanel>
+                            </ControlTemplate>
+                        </Setter>
+                    </Style>
+                </StackPanel.Styles>
+
                 <!-- <StackPanel Margin="0 10 0 0"> -->
                 <!--     <controls:IconButton Kind="Music" Text="Song" Click="MusicButton_OnClick" /> -->
                 <!--     <controls:IconButton Kind="Filmstrip" Text="Kids Talk" /> -->
@@ -33,41 +112,33 @@
                 <!--     <controls:IconButton Kind="ContentCopy" Text="Bible Reading" /> -->
                 <!-- </StackPanel> -->
                 <ItemsControl Margin="0,0,0,0"
-                         ItemsSource="{Binding LibraryViewModel.Libraries}">
-                    <ItemsControl.Styles>
-                        <Style Selector="ContentPresenter:nth-child(1) controls|IconButton">
-                            <Setter Property="CornerRadius" Value="6 6 0 0" />
-                        </Style>
-                        <Style Selector="ContentPresenter:nth-last-child(1) controls|IconButton">
-                            <Setter Property="CornerRadius" Value="0 0 6 6" />
-                        </Style>
-                        <Style Selector="ContentPresenter:nth-child(1):nth-last-child(1) controls|IconButton">
-                            <Setter Property="CornerRadius" Value="6 6 6 6" />
-                        </Style>
-                    </ItemsControl.Styles>
+                              ItemsSource="{Binding LibraryViewModel.Libraries}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:IconButton Kind="{Binding Config.Icon, FallbackValue='Music'}" Text="{Binding Label}" Click="MusicButton_OnClick" CommandParameter="{Binding}" />
+                            <controls:IconButton Kind="{Binding Config.Icon, FallbackValue='Music'}"
+                                                 Text="{Binding Label}" Click="MusicButton_OnClick"
+                                                 CommandParameter="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <!-- <ListBoxItem IsSelected="True">Songs</ListBoxItem> -->
                     <!-- <ListBoxItem>Media</ListBoxItem> -->
                     <!-- <ListBoxItem>Presentations</ListBoxItem> -->
                     <!-- <ListBoxItem>Countdowns</ListBoxItem> -->
                     <!-- <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem> -->
                 </ItemsControl>
-                <StackPanel Margin="0 10 0 0">
+                <WrapPanel Margin="0 10 0 0">
                     <controls:IconButton Kind="Star" Text="Logo" Click="CreateItemButton_OnClick"
                                          CommandParameter="Logo" />
                     <controls:IconButton Kind="FormatSection" Text="Section" Click="CreateItemButton_OnClick"
                                          CommandParameter="SectionHeading" />
                     <controls:IconButton Kind="Information" Text="Comment" Click="CreateItemButton_OnClick"
                                          CommandParameter="Comment" />
-                </StackPanel>
-                <StackPanel Margin="0 10 0 0">
-                    <controls:IconButton Click="CreateSlideButton_OnClick" Kind="Paintbrush" Text="Create slide" />
-                    <controls:IconButton Click="ImportFileButton_OnClick" Kind="ExternalLink" Text="Import from file" />
-                </StackPanel>
+                </WrapPanel>
             </StackPanel>
 
         </ScrollViewer>

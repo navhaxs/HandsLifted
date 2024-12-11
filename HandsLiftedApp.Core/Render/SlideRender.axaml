@@ -58,6 +58,7 @@
                     <render:CustomAxamlSlideRender />
                 </DataTemplate>
                 <DataTemplate x:Key="BlankSlide">
+                    <Grid Background="Black" />
                 </DataTemplate>
                 <DataTemplate x:Key="Fallback" x:DataType="slides1:Slide">
                     <TextBlock Text="{Binding }" />

@@ -1,16 +1,16 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models.PlaylistActions;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Avalonia.Interactivity;
-using HandsLiftedApp.Data.Models.Items;
-using HandsLiftedApp.Models.PlaylistActions;
-using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Controls
 {
@@ -34,8 +34,8 @@ namespace HandsLiftedApp.Core.Controls
 
             AddButton.PointerEntered += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = true; };
             AddButton.PointerExited += (object? sender, PointerEventArgs e) => { AddButtonTooltip.IsVisible = false; };
-            
-            Globals.Instance.MainViewModel.Playlist.WhenAnyValue(x => x.ActiveItemInsertIndex)
+
+            Globals.Instance?.MainViewModel?.Playlist?.WhenAnyValue(x => x.ActiveItemInsertIndex)
                 .Subscribe(x =>
                 {
                     if (ItemInsertIndex == x && x != null)
@@ -124,7 +124,7 @@ namespace HandsLiftedApp.Core.Controls
                 // Only allow if the dragged data contains text or filenames.
                 if (!e.Data.Contains(DataFormats.Text)
                     && !e.Data.Contains(DataFormats.Files)
-                    //&& !e.Data.Contains(CustomFormat))
+                   //&& !e.Data.Contains(CustomFormat))
                    )
                     e.DragEffects = DragDropEffects.None;
             }

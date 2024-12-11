@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="200"
+             xmlns:utils="using:HandsLiftedApp.Utils"
+             xmlns:material="using:Material.Icons.Avalonia"
+             xmlns:core="clr-namespace:HandsLiftedApp.Core"
+             xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             x:Class="HandsLiftedApp.Core.Views.Editors.SlideEditor"
+             x:CompileBindings="False">
+    <Grid>
+        <TextBox x:Name="target" />
+    </Grid>
+</UserControl>

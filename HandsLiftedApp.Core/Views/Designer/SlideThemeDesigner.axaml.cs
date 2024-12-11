@@ -1,3 +1,12 @@
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Platform;
+using Avalonia.Platform.Storage;
+using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Data.SlideTheme;
+using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -5,17 +14,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Platform;
-using Avalonia.Platform.Storage;
-using HandsLiftedApp.Core.Models.UI;
-using HandsLiftedApp.Core.ViewModels;
-using HandsLiftedApp.Data.Models;
-using HandsLiftedApp.Data.SlideTheme;
-using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Designer
 {
@@ -28,12 +26,11 @@ namespace HandsLiftedApp.Core.Views.Designer
             var fontComboBox = this.Find<ComboBox>("fontComboBox");
             var fontFamilies = FontManager.Current.SystemFonts.ToList().OrderBy(x => x.Name);
             fontComboBox.ItemsSource = fontFamilies;
-            // fontComboBox.SelectedIndex = 0;
 
             FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight))
                 .Select(x => Enum.Parse<FontWeight>(x)).Distinct().ToArray();
 
-            TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
+            // TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
 
             this.WhenAnyValue(v => v.designsListBox.ItemsSource)
                 .Subscribe((x) =>
@@ -63,7 +60,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                         else
                         {
                             MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                                { Title = "Must have at least one slide theme" });
+                            { Title = "Must have at least one slide theme" });
                         }
                     }
                 }
@@ -96,7 +93,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                             TextAlignment = item.TextAlignment,
                             BackgroundColour = item.BackgroundColour,
                             FontSize = item.FontSize,
-                            LineHeight = item.LineHeight,
+                            LineHeightEm = item.LineHeightEm,
                             BackgroundGraphicFilePath = item.BackgroundGraphicFilePath,
                         });
                     }
@@ -174,7 +171,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                         {
                             theme.Id = new Guid();
                         }
-                        
+
                         // mainViewModel.Playlist.Designs.Add(theme);
                         // Globals.Instance.AppPreferences.Designs.Add(theme);
                         Globals.Instance.AppPreferences.DefaultTheme.CopyFrom(theme);
@@ -199,11 +196,6 @@ namespace HandsLiftedApp.Core.Views.Designer
             {
                 Debug.Print(ex.Message);
             }
-        }
-
-        private void FontWeightComboBox_OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
-        {
-            e.Handled = true;
         }
     }
 }

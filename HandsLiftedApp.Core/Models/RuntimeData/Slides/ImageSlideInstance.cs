@@ -7,6 +7,7 @@ using HandsLiftedApp.Utils;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
+using HandsLiftedApp.Core.Models.Thumbnail;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
@@ -68,5 +69,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
             get => _SlideTimerConfig;
             set => this.RaiseAndSetIfChanged(ref _SlideTimerConfig, value);
         }
+
+        public SlideThumbnailBadge? SlideThumbnailBadge { get; }
     }
 }

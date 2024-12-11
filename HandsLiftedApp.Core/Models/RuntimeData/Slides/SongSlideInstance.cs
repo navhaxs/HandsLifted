@@ -10,6 +10,7 @@ using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.Thumbnail;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
@@ -39,6 +40,19 @@ namespace HandsLiftedApp.Data.Slides
                 {
                     debounceDispatcher.Debounce(() => GenerateBitmaps());
                 });
+            
+            _calculatedSlideThumbnailBadge = this.WhenAnyValue(x => x.Label, x => x.ParentSongStanza,
+                    (label, parentSongStanza) =>
+                    {
+                        if (label != null && label.Length > 0)
+                        {
+                            return new SlideThumbnailBadge() { Label = label, Colour = parentSongStanza.Colour };
+                        }
+
+                        return null;
+                    })
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .ToProperty(this, x => x.SlideThumbnailBadge);
         }
 
         private void GenerateBitmaps()
@@ -79,5 +93,8 @@ namespace HandsLiftedApp.Data.Slides
         }
         
         public ItemAutoAdvanceTimer? SlideTimerConfig => null;
+
+        private readonly ObservableAsPropertyHelper<SlideThumbnailBadge> _calculatedSlideThumbnailBadge;
+        public SlideThumbnailBadge? SlideThumbnailBadge => _calculatedSlideThumbnailBadge.Value;
     }
 }

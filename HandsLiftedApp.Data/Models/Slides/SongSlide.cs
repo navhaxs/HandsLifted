@@ -1,5 +1,4 @@
-﻿using Avalonia.Media.Imaging;
-using HandsLiftedApp.Data.Models.Items;
+﻿using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
 using System;
 

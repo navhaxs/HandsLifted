@@ -6,6 +6,8 @@
         x:Class="HandsLiftedApp.Views.Editor.SlideDesignerWindow"
 		xmlns:editor="using:HandsLiftedApp.Views.Editor"
 		xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
+		xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
 		Title="SlideDesignerWindow">
 	<designer:SlideThemeDesigner />
+	<!-- <editors:SlideEditor /> -->
 </Window>

@@ -7,6 +7,7 @@ using DynamicData.Binding;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.Thumbnail;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
@@ -77,5 +78,7 @@ namespace HandsLiftedApp.Data.Slides
         }
 
         public ItemAutoAdvanceTimer? SlideTimerConfig => null;
+        
+        public SlideThumbnailBadge? SlideThumbnailBadge { get; }
     }
 }

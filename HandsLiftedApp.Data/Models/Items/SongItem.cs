@@ -127,19 +127,19 @@ namespace HandsLiftedApp.Data.Models.Items
                 {
                     return colour;
                 }
-                else if (Name.ToLower().StartsWith("intro"))
+                else if (Name != null && Name.ToLower().StartsWith("intro"))
                 {
                     return "#d5c317";
                 }
-                else if (Name.ToLower().StartsWith("chorus"))
+                else if (Name != null && Name.ToLower().StartsWith("chorus"))
                 {
                     return maybeStepDown(Color.Parse("#ded9fa")).ToString();
                 }
-                else if (Name.ToLower().StartsWith("verse"))
+                else if (Name != null && Name.ToLower().StartsWith("verse"))
                 {
                     return maybeStepDown(Color.Parse("#d9ecff")).ToString();
                 }
-                else if (Name.ToLower().StartsWith("bridge"))
+                else if (Name != null && Name.ToLower().StartsWith("bridge"))
                 {
                     return maybeStepDown(Color.Parse("#F7D7E3")).ToString();
                 }

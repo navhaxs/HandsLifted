@@ -39,15 +39,15 @@
             </ControlTemplate>
         </Setter>
     </Style>
-    <Style Selector="controls|IconButton:nth-child(1)">
-        <Setter Property="CornerRadius" Value="6 6 0 0" />
-    </Style>
-    <Style Selector="controls|IconButton:nth-last-child(1)">
-        <Setter Property="CornerRadius" Value="0 0 6 6" />
-    </Style>
-    <Style Selector="controls|IconButton:nth-child(1):nth-last-child(1)">
-        <Setter Property="CornerRadius" Value="6 6 6 6" />
-    </Style>
+    <!-- <Style Selector="controls|IconButton:nth-child(1)"> -->
+    <!--     <Setter Property="CornerRadius" Value="6 6 0 0" /> -->
+    <!-- </Style> -->
+    <!-- <Style Selector="controls|IconButton:nth-last-child(1)"> -->
+    <!--     <Setter Property="CornerRadius" Value="0 0 6 6" /> -->
+    <!-- </Style> -->
+    <!-- <Style Selector="controls|IconButton:nth-child(1):nth-last-child(1)"> -->
+    <!--     <Setter Property="CornerRadius" Value="6 6 6 6" /> -->
+    <!-- </Style> -->
     <Style Selector="controls|IconButton:pointerover">
         <Setter Property="Background" Value="DarkGray" />
     </Style>

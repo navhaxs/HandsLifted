@@ -1,20 +1,16 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using HandsLiftedApp.Core.ViewModels;
-using HandsLiftedApp.Data.Models;
-using HandsLiftedApp.Utils;
-using Serilog;
-using System;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.Views.Setup;
 using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
+using Serilog;
+using System;
 
 namespace HandsLiftedApp.Core.Views;
 
@@ -149,7 +145,7 @@ public partial class MainView : UserControl
                 catch (Exception e)
                 {
                     MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                        { Title = "Playlist failed to load :(", Content = $"{e.Message}" });
+                    { Title = "Playlist failed to load :(", Content = $"{e.Message}" });
                     Log.Error("[DOC] Failed to parse playlist XML");
                     Console.WriteLine(e);
                 }
@@ -170,13 +166,13 @@ public partial class MainView : UserControl
             {
                 PlaylistDocumentService.SaveDocument(vm.Playlist);
                 MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                    { Title = "Playlist Saved" });
+                { Title = "Playlist Saved" });
             }
             catch (Exception e)
             {
                 Log.Error(e, "Failed to save document");
                 MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                    { Title = "Playlist Failed to Save :(", Content = $"{e.Message}" });
+                { Title = "Playlist Failed to Save :(", Content = $"{e.Message}" });
             }
         }
     }
@@ -210,7 +206,7 @@ public partial class MainView : UserControl
             }
         }
     }
-    
+
     private void PlaylistInfoButton_Clicked(object sender, RoutedEventArgs e)
     {
         PlaylistInfoWindow playlistInfoWindow = new PlaylistInfoWindow() { DataContext = this.DataContext };

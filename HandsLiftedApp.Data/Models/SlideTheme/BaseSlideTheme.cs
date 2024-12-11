@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using HandsLiftedApp.Data.Data.Models.Types;
@@ -13,6 +14,34 @@ namespace HandsLiftedApp.Data.SlideTheme
     public class BaseSlideTheme : ReactiveObject
     {
         private Guid _id = Guid.NewGuid();
+
+        public BaseSlideTheme()
+        {
+            _calculatedLineHeight = this.WhenAnyValue(x => x.FontSize, x => x.LineHeightEm,
+                    (fontSize, lineHeightEm) => { return (int)(fontSize * lineHeightEm); })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.LineHeight);
+            
+            _calculatedTextAlignmentLeft = this.WhenAnyValue(x => x.TextAlignment,
+                    (textAlignment) => { return textAlignment == TextAlignment.Left; })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
+            
+            _calculatedTextAlignmentCentre = this.WhenAnyValue(x => x.TextAlignment,
+                    (textAlignment) => { return textAlignment == TextAlignment.Center; })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentCentre);
+            
+            _calculatedTextAlignmentRight = this.WhenAnyValue(x => x.TextAlignment,
+                    (textAlignment) => { return textAlignment == TextAlignment.Right; })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentRight);
+            
+            _calculatedTextAlignmentJustify = this.WhenAnyValue(x => x.TextAlignment,
+                    (textAlignment) => { return textAlignment == TextAlignment.Justify; })
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
+        }
 
         [DataMember]
         public Guid Id
@@ -68,6 +97,33 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _textAlignment, value);
         }
 
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentLeft;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentCentre;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentRight;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentJustify;
+        
+        public bool CalculatedTextAlignmentLeft
+        {
+            get => _calculatedTextAlignmentLeft.Value;
+            set { if (value) TextAlignment = TextAlignment.Left; }
+        }
+
+        public bool CalculatedTextAlignmentCentre
+        {
+            get => _calculatedTextAlignmentCentre.Value;
+            set { if (value) TextAlignment = TextAlignment.Center; }
+        }
+        public bool CalculatedTextAlignmentRight
+        {
+            get => _calculatedTextAlignmentRight.Value;
+            set { if (value) TextAlignment = TextAlignment.Right; }
+        }
+        public bool CalculatedTextAlignmentJustify
+        {
+            get => _calculatedTextAlignmentJustify.Value;
+            set { if (value) TextAlignment = TextAlignment.Justify; }
+        }
+
         [DataMember] public XmlColor BackgroundColour = Color.Parse("#4d347f");
 
         [XmlIgnore]
@@ -86,13 +142,20 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _fontSize, value);
         }
 
-        private int _lineHeight = 150;
+        private readonly ObservableAsPropertyHelper<int> _calculatedLineHeight;
 
-        [DataMember]
         public int LineHeight
         {
-            get => _lineHeight;
-            set => this.RaiseAndSetIfChanged(ref _lineHeight, value);
+            get => _calculatedLineHeight.Value;
+        }
+
+        private decimal _lineHeightEm = 1.0M;
+
+        [DataMember]
+        public decimal LineHeightEm
+        {
+            get => Math.Round(_lineHeightEm, 2, MidpointRounding.ToEven);
+            set => this.RaiseAndSetIfChanged(ref _lineHeightEm, Math.Round(value, 2, MidpointRounding.ToEven));
         }
 
         private string? _backgroundGraphicFilePath;
