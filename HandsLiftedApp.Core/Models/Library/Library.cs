@@ -29,6 +29,8 @@ namespace HandsLiftedApp.Core.Models.Library
 
         private FileSystemWatcher watcher = new FileSystemWatcher();
 
+        public bool TEST_IS_MEDIA_BIN_TYPE { get; set; }
+
         public Library(LibraryConfig.LibraryDefinition config)
         {
             Config = config;

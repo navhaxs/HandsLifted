@@ -24,6 +24,7 @@
 
 
     <ItemGroup>
+        <PackageReference Include="AsyncImageLoader.Avalonia" />
         <PackageReference Include="Avalonia"/>
         <PackageReference Include="Avalonia.Controls.ColorPicker"/>
         <PackageReference Include="Avalonia.Controls.PanAndZoom" />

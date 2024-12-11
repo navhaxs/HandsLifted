@@ -211,6 +211,11 @@ namespace HandsLiftedApp.Core.ViewModels
                 MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
                     new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
             });
+
+            if (Design.IsDesignMode)
+            {
+                SelectedLibrary = Libraries.First();
+            }
         }
 
         private void WriteConfig()
