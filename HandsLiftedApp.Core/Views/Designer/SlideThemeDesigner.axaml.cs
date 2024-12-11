@@ -8,27 +8,52 @@ using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
+using DryIoc.ImTools;
+using HandsLiftedApp.Data.Data.Models.Types;
 
 namespace HandsLiftedApp.Core.Views.Designer
 {
     public partial class SlideThemeDesigner : UserControl
     {
+
+        public class FontWeightOption
+        {
+            public FontWeight FontWeight;
+            public String Label;
+        }
+
+        public List<XmlFontWeight> FontWeightOptions = new()
+        {
+            (XmlFontWeight)FontWeight.Thin,
+            (XmlFontWeight)FontWeight.ExtraLight,
+            (XmlFontWeight)FontWeight.Light,
+            (XmlFontWeight)FontWeight.SemiLight,
+            (XmlFontWeight)FontWeight.Regular,
+            (XmlFontWeight)FontWeight.Medium,
+            (XmlFontWeight)FontWeight.SemiBold,
+            (XmlFontWeight)FontWeight.Bold,
+            (XmlFontWeight)FontWeight.ExtraBold,
+            (XmlFontWeight)FontWeight.Black,
+            (XmlFontWeight)FontWeight.ExtraBlack,
+            (XmlFontWeight)FontWeight.Black,
+        };
+        
         public SlideThemeDesigner()
         {
             InitializeComponent();
 
             var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            var fontFamilies = FontManager.Current.SystemFonts.ToList().OrderBy(x => x.Name);
+            var fontFamilies = FontManager.Current.SystemFonts.ToList().Map(x => x.Name);
             fontComboBox.ItemsSource = fontFamilies;
 
-            FontWeightComboBox.ItemsSource = (FontWeight[])Enum.GetNames(typeof(FontWeight))
-                .Select(x => Enum.Parse<FontWeight>(x)).Distinct().ToArray();
+            FontWeightComboBox.ItemsSource = FontWeightOptions;
 
             // TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
 
@@ -40,6 +65,24 @@ namespace HandsLiftedApp.Core.Views.Designer
                         designsListBox.SelectedIndex = 0;
                     }
                 });
+
+            designsListBox.SelectionChanged += (sender, args) =>
+            {
+                if (designsListBox.SelectedValue is BaseSlideTheme item)
+                {
+                    fontComboBox.SelectedValue = item.FontFamilyAsText;
+                }
+            };
+            
+            designsListBox.DataContextChanged += (sender, args) =>
+            {
+                if (designsListBox.SelectedValue is BaseSlideTheme item)
+                {
+                    fontComboBox.SelectedValue = item.FontFamilyAsText;
+                    FontWeightComboBox.SelectedValue = item.FontWeight;
+                }
+            };
+        
         }
 
         private void RemoveItem_OnClick(object? sender, RoutedEventArgs e)
@@ -60,7 +103,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                         else
                         {
                             MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                            { Title = "Must have at least one slide theme" });
+                                { Title = "Must have at least one slide theme" });
                         }
                     }
                 }

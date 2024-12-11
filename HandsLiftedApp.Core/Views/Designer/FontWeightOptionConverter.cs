@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Globalization;
-using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using HandsLiftedApp.Data.Data.Models.Types;
 
-namespace HandsLiftedApp.Controls.Converters
+namespace HandsLiftedApp.Core.Views.Designer
 {
-    public class SafeFontWeightConverter : IValueConverter
+
+    public class FontWeightOptionConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
@@ -32,18 +32,17 @@ namespace HandsLiftedApp.Controls.Converters
             {
                 return new XmlFontWeight(fontWeight);
             }
-            if (targetType == typeof(XmlFontWeight) && value is XmlFontWeight)
-            {
-                return value;
-            }
+
             if (targetType == typeof(FontWeight) && value is FontWeight)
             {
                 return value;
             }
+
             if (targetType == typeof(FontWeight) && value == null)
             {
                 return FontWeight.Normal;
             }
+
             // try
             // {
             //     return FontWeight.TryParse(value);

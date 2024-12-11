@@ -12,6 +12,16 @@ namespace HandsLiftedApp.Data.Data.Models.Types
     {
         private FontWeight m_value = FontWeight.Regular;
 
+        public override bool Equals(object? obj)
+        {
+            if (obj is XmlFontWeight fw)
+            {
+                return ((FontWeight)fw).Equals(m_value);
+            }
+            
+            return base.Equals(obj);
+        }
+
         public XmlFontWeight()
         {
         }

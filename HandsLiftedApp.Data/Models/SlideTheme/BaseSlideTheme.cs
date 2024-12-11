@@ -61,13 +61,32 @@ namespace HandsLiftedApp.Data.SlideTheme
         }
 
         // Slide Design Properties
-        [DataMember] public XmlFontFamily FontFamily = new();
+        private XmlFontFamily _fontFamily = new();
+
+        [DataMember]
+        public XmlFontFamily FontFamily
+        {
+            get => _fontFamily;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _fontFamily, value);
+                this.RaisePropertyChanged(nameof(FontFamilyAsAvalonia));
+                this.RaisePropertyChanged(nameof(FontFamilyAsText));
+            }
+        }
 
         [XmlIgnore]
         public FontFamily FontFamilyAsAvalonia
         {
             get => FontFamily;
-            set => this.RaiseAndSetIfChanged(ref FontFamily, value);
+            set { FontFamily = value; }
+        }
+
+        [XmlIgnore]
+        public string FontFamilyAsText
+        {
+            get => (string)FontFamily;
+            set { FontFamily = value; }
         }
 
         private XmlFontWeight _fontWeight = (XmlFontWeight)Avalonia.Media.FontWeight.Normal;

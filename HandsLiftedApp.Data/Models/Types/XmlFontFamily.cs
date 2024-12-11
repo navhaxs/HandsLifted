@@ -31,6 +31,12 @@ namespace HandsLiftedApp.Data.Data.Models.Types
             }
         }
 
+        // to string
+        public static implicit operator string(XmlFontFamily o)
+        {
+            return o == null ? string.Empty : o.m_value.ToString();
+        }
+
         public static implicit operator FontFamily(XmlFontFamily o)
         {
             return o == null ? default(FontFamily) : o.m_value;
