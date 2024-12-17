@@ -7,7 +7,6 @@
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
              xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
-             Background="{DynamicResource SurfaceBrush}"
              mc:Ignorable="d" d:DesignWidth="440" d:DesignHeight="750"
              x:DataType="viewModels:MainViewModel"
              x:Class="HandsLiftedApp.Core.Views.LivePane">
@@ -122,7 +121,7 @@
                              Value="{Binding Playlist.AutoAdvanceTimer.Timer.ElapsedTime, FallbackValue=0}"
                              Maximum="{Binding Playlist.AutoAdvanceTimer.Timer.TotalTime, FallbackValue=0}" />
             </Grid>
-            
+
             <Border
                 BorderBrush="{DynamicResource NavigationBarBorderBrush}"
                 CornerRadius="60"
@@ -168,12 +167,14 @@
                         <avalonia:MaterialIcon Kind="ArrowRightCircle" />
                     </Button>
 
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="15"
-                        Margin="0"
-                        Text="{Binding Playlist.StageDisplaySlideCountText, FallbackValue='Slide A/B'}" />
+                    <Viewbox StretchDirection="DownOnly">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            Margin="0"
+                            Text="{Binding Playlist.StageDisplaySlideCountText, FallbackValue='Slide A/B'}" />
+                    </Viewbox>
 
                 </DockPanel>
             </Border>

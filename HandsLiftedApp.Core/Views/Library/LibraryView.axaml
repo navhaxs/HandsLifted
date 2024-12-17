@@ -89,7 +89,7 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel>
+                                <DockPanel PointerPressed="DockPanel_PointerPressed">
                                     <DockPanel.ContextMenu>
                                         <ContextMenu>
                                            <MenuItem Header="Add to playlist" />

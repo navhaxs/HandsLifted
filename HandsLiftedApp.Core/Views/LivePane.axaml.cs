@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Core.Views
 {
@@ -33,35 +31,6 @@ namespace HandsLiftedApp.Core.Views
 
         private void SetupDnd(string suffix, Func<DataObject, Task> factory, DragDropEffects effects)
         {
-            // var dragMe = this.Get<Border>("DragMe" + suffix);
-            // var dragState = this.Get<TextBlock>("DragState" + suffix);
-
-            async void DoDrag(object? sender, PointerPressedEventArgs e)
-            {
-                // var dragData = new DataObject();
-                // await factory(dragData);
-                //
-                // var result = await DragDrop.DoDragDrop(e, dragData, effects);
-                // switch (result)
-                // {
-                //     case DragDropEffects.Move:
-                //         dragState.Text = "Data was moved";
-                //         break;
-                //     case DragDropEffects.Copy:
-                //         dragState.Text = "Data was copied";
-                //         break;
-                //     case DragDropEffects.Link:
-                //         dragState.Text = "Data was linked";
-                //         break;
-                //     case DragDropEffects.None:
-                //         dragState.Text = "The drag operation was canceled";
-                //         break;
-                //     default:
-                //         dragState.Text = "Unknown result";
-                //         break;
-                // }
-            }
-
             void DragOver(object? sender, DragEventArgs e)
             {
                 if (e.Source is Control c && c.Name == "MoveTarget")
@@ -107,8 +76,10 @@ namespace HandsLiftedApp.Core.Views
                             // var content = await DialogsPage.ReadTextFromFile(file, 500);
                             contentStr +=
                                 $"File {item.Name}:{Environment.NewLine}{file.Name}{Environment.NewLine}{Environment.NewLine}";
-                            
-                            Globals.Instance.MainViewModel.Playlist.QuickShowItem = new ImageSlideInstance(file.Path.LocalPath, null);
+
+                            var quickSlide = new ImageSlideInstance(file.Path.LocalPath, null);
+                            quickSlide.OnPreloadSlide();
+                            Globals.Instance.MainViewModel.Playlist.QuickShowItem = quickSlide; // TODO this doesnt let the slides XFADE between consecutive QuickShowItems. implement a slot A and slot B mechanism
                         }
                         else if (item is IStorageFolder folder)
                         {
@@ -134,13 +105,9 @@ namespace HandsLiftedApp.Core.Views
 #pragma warning restore CS0618 // Type or member is obsolete
 
 
-                
-                
                 Globals.Instance.MainViewModel.Playlist.PresentationState =
                     PlaylistInstance.PresentationStateEnum.QuickShow;
             }
-
-            // dragMe.PointerPressed += DoDrag;
 
             AddHandler(DragDrop.DropEvent, Drop);
             AddHandler(DragDrop.DragOverEvent, DragOver);

@@ -162,7 +162,7 @@
                             Padding="6 2"
                             Opacity="0.8"
                             IsVisible="{Binding SlideThumbnailBadge, Converter={StaticResource ObjectNonNullVisibilityConverter}, FallbackValue=False}">
-                            <TextBlock Foreground="Black" FontSize="18">
+                            <TextBlock Foreground="Black" FontSize="14">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0}">
                                         <Binding FallbackValue="Group Label" Path="SlideThumbnailBadge.Label" />

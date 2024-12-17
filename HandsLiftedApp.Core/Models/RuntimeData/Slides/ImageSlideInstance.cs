@@ -14,6 +14,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
     public class ImageSlideInstance : ImageSlide, ISlideInstance
     {
         private DebounceDispatcher debounceDispatcher = new(200);
+        private static readonly object loadDataLock = new object();
 
         public ImageSlideInstance(string imagePath, MediaGroupItem? parentMediaGroupItem) : base(imagePath)
         {
@@ -35,15 +36,23 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 
         private void GenerateBitmaps()
         {
-            // MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
-            //     this,
-            //     (obitmap) =>
-            //     {
-            var obitmap = BitmapLoader.LoadBitmap(SourceMediaFilePath);
-            Cached = obitmap;
-            Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
-            //     }
-            // ));
+            lock (loadDataLock)
+            {
+                // MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
+                //     this,
+                //     (obitmap) =>
+                //     {
+                if (Cached is not null && Thumbnail is not null)
+                {
+                    return;
+                }
+                
+                var obitmap = BitmapLoader.LoadBitmap(SourceMediaFilePath);
+                Cached = obitmap;
+                Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
+                //     }
+                // ));
+            }
         }
 
         Bitmap _cached;
@@ -71,5 +80,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
         }
 
         public SlideThumbnailBadge? SlideThumbnailBadge { get; }
+        public override void OnPreloadSlide()
+        {
+            base.OnPreloadSlide();
+
+            GenerateBitmaps();
+        }
     }
 }

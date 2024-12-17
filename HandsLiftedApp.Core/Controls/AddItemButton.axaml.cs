@@ -16,6 +16,8 @@ namespace HandsLiftedApp.Core.Controls
 {
     public partial class AddItemButton : UserControl
     {
+        private const string CustomFormat = "application/xxx-avalonia-controlcatalog-custom";
+
         public static readonly StyledProperty<int?> ItemInsertIndexProperty =
             AvaloniaProperty.Register<AddItemButton, int?>(nameof(ItemInsertIndex));
 
@@ -124,8 +126,7 @@ namespace HandsLiftedApp.Core.Controls
                 // Only allow if the dragged data contains text or filenames.
                 if (!e.Data.Contains(DataFormats.Text)
                     && !e.Data.Contains(DataFormats.Files)
-                   //&& !e.Data.Contains(CustomFormat))
-                   )
+                    && !e.Data.Contains(CustomFormat))
                     e.DragEffects = DragDropEffects.None;
             }
 
