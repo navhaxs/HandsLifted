@@ -9,5 +9,4 @@
 		xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
 		Title="SlideDesignerWindow">
 	<designer:SlideThemeDesigner />
-	<!-- <editors:SlideEditor /> -->
 </Window>

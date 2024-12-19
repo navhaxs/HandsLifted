@@ -11,6 +11,7 @@ using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
+using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
 
@@ -35,6 +36,8 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
 
         private void CreateSlideButton_OnClick(object? sender, RoutedEventArgs e)
         {
+            SlideEditorWindow w = new();
+            w.Show();
         }
 
         private async void RunImport(AddItemViewModel vm)

@@ -2,15 +2,84 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="200"
-             xmlns:utils="using:HandsLiftedApp.Utils"
-             xmlns:material="using:Material.Icons.Avalonia"
-             xmlns:core="clr-namespace:HandsLiftedApp.Core"
-             xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
-             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
-             x:Class="HandsLiftedApp.Core.Views.Editors.SlideEditor"
-             x:CompileBindings="False">
-    <Grid>
-        <TextBox x:Name="target" />
-    </Grid>
+             xmlns:slideElementEditor="clr-namespace:HandsLiftedApp.Core.ViewModels.SlideElementEditor"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
+             x:DataType="slideElementEditor:SlideEditorViewModel"
+             x:Class="HandsLiftedApp.Core.Views.Editors.SlideEditor">
+    
+    <UserControl.Styles>
+        <StyleInclude Source="./SelectedAdorner.axaml" />
+    </UserControl.Styles>
+
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Margin="6" FontSize="20">Slide Editor</TextBlock>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" MaxWidth="200" />
+                <ColumnDefinition Width="1" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <ListBox ItemsSource="{Binding Slides}">
+                    <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Click="MenuItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Delete Slide">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="Times" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button VerticalAlignment="Bottom" Click="Button_OnClick">Add new slide</Button>
+                <Button VerticalAlignment="Bottom" Click="AButton_OnClick">autofit</Button>
+            </Grid>
+            <GridSplitter Grid.Column="1" />
+            <Grid Grid.Column="2">
+                
+                
+                <!-- <ScrollViewer -->
+                <!--               VerticalScrollBarVisibility="Auto" -->
+                <!--               HorizontalScrollBarVisibility="Auto"> -->
+                    <ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
+                                EnableZoom="True"
+                                EnablePan="True"
+                                Background="SlateBlue" ClipToBounds="True" Focusable="True"
+                                VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Panel>
+                            <Canvas Name="Canvas"
+                                    Width="1920"
+                                    Height="1080"
+                                    Background="LightGray"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                <TextBox Name="Rectangle"
+                                         FontSize="80"
+                                         Canvas.Left="30"
+                                         Canvas.Top="30"
+                                         Width="240"
+                                         Height="240" />
+                            </Canvas>
+                        </Panel>
+                    </ZoomBorder>
+                <!-- </ScrollViewer> -->
+                
+            </Grid>
+        </Grid>
+    </DockPanel>
 </UserControl>

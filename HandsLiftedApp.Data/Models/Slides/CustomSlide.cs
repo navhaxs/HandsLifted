@@ -16,7 +16,12 @@ namespace HandsLiftedApp.Data.Data.Models.Slides
         public override string? SlideText { get; } = "";
         
         // Elements
-        public List<SlideElement> SlideElements = new();
+        private List<SlideElement> _slideElements = new();
+        public List<SlideElement> SlideElements
+        {
+            get => _slideElements;
+            set => this.RaiseAndSetIfChanged(ref _slideElements, value);
+        }
         
         // TODO - gradient
         [DataMember]
@@ -28,6 +33,6 @@ namespace HandsLiftedApp.Data.Data.Models.Slides
             get => BackgroundColour;
             set => this.RaiseAndSetIfChanged(ref BackgroundColour, value);
         }
-
+        
     }
 }
