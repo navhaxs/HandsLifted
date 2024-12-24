@@ -3,6 +3,12 @@ using HandsLiftedApp.ViewModels.Editor;
 
 namespace HandsLiftedApp.Core.ViewModels.Editor
 {
-    public class ExampleSongEditorViewModel()
-        : SongEditorViewModel(new ExampleSongItemInstance(), new PlaylistInstance());
+    public class ExampleSongEditorViewModel
+        : SongEditorViewModel
+    {
+        public ExampleSongEditorViewModel() : base(new ExampleSongItemInstance(), new PlaylistInstance())
+        {
+            // LyricEntryMode = true;
+        }
+    }
 }

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="400"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="400"
              x:DataType="editor:SongEditorViewModel"
              Background="White"
              x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricFreeTextEditor">
@@ -15,67 +15,73 @@
     </UserControl.Styles>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" MinWidth="300" />
-        </Grid.ColumnDefinitions>
+        <TextBox
+            Name="FreeTextBox"
+            CornerRadius="0"
+            AcceptsReturn="True"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            Background="White"
+            FontFamily="Consolas"
+            Foreground="Black"
+            BorderThickness="0"
+            Margin="0 0 0 0"
+            Padding="12 12 12 72"
+            TextWrapping="Wrap"
+            Watermark="Enter or paste lyrics text here..."
+            Text="{Binding FreeTextEntryField}" />
 
-        <Border Background="#DC000000" Padding="20">
-            <StackPanel Margin="0,20,40,20" VerticalAlignment="Center"
-                        HorizontalAlignment="Center">
-                <StackPanel.Styles>
-                    <Style Selector="TextBlock">
-                        <Setter Property="FontSize" Value="24" />
-                        <Setter Property="Foreground" Value="#dedede" />
-                        <Setter Property="TextWrapping" Value="Wrap" />
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="Padding" Value="0" />
-                    </Style>
-                </StackPanel.Styles>
-                <TextBlock>
-                    1. Search for the song in
-                    <Span Foreground="#2ECAFF" TextDecorations="Underline">
-                        songselect.ccli.com
-                    </Span>
-                    <avalonia:MaterialIcon
-                        Width="12"
-                        Height="12"
-                        Margin="-4"
-                        HorizontalAlignment="Left"
-                        Foreground="#2ECAFF"
-                        Kind="OpenInNew" />
-                    <LineBreak />
-                    <LineBreak />
-                    2. Copy the lyrics<LineBreak />
-                </TextBlock>
-                <DockPanel>
-                    <avalonia:MaterialIcon
-                        DockPanel.Dock="Right"
-                        Width="40"
-                        Height="40"
-                        HorizontalAlignment="Left"
-                        Foreground="#dedede"
-                        Kind="ArrowRight" />
-                    <TextBlock Text="3. Paste here" />
-                </DockPanel>
-            </StackPanel>
-        </Border>
+        <Button
+            Click="ParseAndLoadFromText_OnClick"
+            Name="AddItemButton"
+            Margin="6,0,6,8"
+            Padding="12"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            HorizontalContentAlignment="Left"
+            Background="#4d347f"
+            BorderThickness="0"
+            ClickMode="Press"
+            CornerRadius="6"
+            Cursor="Hand"
+            DockPanel.Dock="Bottom"
+            FontSize="14"
+            Foreground="White">
+            <Button.Styles>
+                <Style Selector="ScrollViewer">
+                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                </Style>
+                <Style Selector="MenuItem">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Padding" Value="8 6" />
+                </Style>
+                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#5C3AB6" />
+                </Style>
+                <Style Selector="Button:pressed /template/ ContentPresenter">
+                    <Setter Property="BorderBrush" Value="#2c628b" />
+                    <Setter Property="Background" Value="#5F5C2ED6" />
+                </Style>
+            </Button.Styles>
+            <Button.Effect>
+                <DropShadowEffect
+                    BlurRadius="6"
+                    OffsetX="0"
+                    OffsetY="1"
+                    Color="#55000000" />
+            </Button.Effect>
 
-        <ScrollViewer Grid.Column="1">
-            <TextBox
-                Name="FreeTextBox"
-                CornerRadius="0"
-                AcceptsReturn="True"
-                VerticalAlignment="Stretch"
-                Background="White"
-                FontFamily="Consolas"
-                Foreground="Black"
-                BorderThickness="0"
-                Padding="12"
-                TextWrapping="Wrap"
-                Watermark="Enter or paste lyrics text here..."
-                Text="{Binding FreeTextEntryField}" />
-        </ScrollViewer>
-
+            <DockPanel>
+                <avalonia:MaterialIcon
+                    Width="20"
+                    Height="20"
+                    DockPanel.Dock="Left"
+                    Kind="Magic" />
+                <TextBlock
+                    Margin="8,0,8,0"
+                    IsVisible="True"
+                    Text="Generate slides" />
+            </DockPanel>
+        </Button>
     </Grid>
 </UserControl>

@@ -13,6 +13,7 @@
         WindowStartupLocation="CenterOwner"
         x:Class="HandsLiftedApp.Core.Views.Setup.SetupWindow"
         x:DataType="viewModels:SetupWindowViewModel"
+        Topmost="True"
         Background="{DynamicResource SurfaceBrush}"
         Title="SetupWindow">
 
@@ -104,10 +105,12 @@
                         <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
                         <Label>Output Display (Projector)</Label>
                         <ComboBox
+                            SelectionChanged="ProjectorOutput_OnSelectionChanged"
                             SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OutputDisplayBounds}"
                             ItemsSource="{Binding AllAvailableScreens}" />
                         <Label>Stage Display</Label>
                         <ComboBox Name="StageDisplayComboBox"
+                                  SelectionChanged="StageOutput_OnSelectionChanged"
                                   SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.StageDisplayBounds}"
                                   ItemsSource="{Binding AllAvailableScreens}" />
                     </StackPanel>

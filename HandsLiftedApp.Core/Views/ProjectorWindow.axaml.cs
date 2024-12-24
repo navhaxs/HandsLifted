@@ -3,8 +3,10 @@ using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
 using Serilog;
@@ -16,7 +18,7 @@ namespace HandsLiftedApp.Core.Views
         public ProjectorWindow()
         {
             InitializeComponent();
-            
+
             Log.Information("Created ProjectorWindow");
 
             if (OperatingSystem.IsWindows())
@@ -34,8 +36,17 @@ namespace HandsLiftedApp.Core.Views
                     Caffeine.KeepAwake(isVisible);
                 }
             });
+
+            MessageBus.Current.Listen<OutputDisplayConfigurationChangeMessage>()
+                .Subscribe(async msg =>
+                {
+                    if (IsVisible && msg.ChangedDisplay == OutputDisplayConfigurationChangeMessage.Display.Projector)
+                    {
+                        Dispatcher.UIThread.InvokeAsync(() => WindowUtils.ShowAndRestoreWindowBounds(this, Globals.Instance.AppPreferences.OutputDisplayBounds));
+                    }
+                });
         }
-        
+
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
         {
             if (ControlExtension.FindAncestor<Button>((Control)e.Source) != null)
@@ -43,10 +54,11 @@ namespace HandsLiftedApp.Core.Views
 
             onToggleFullscreen();
         }
-        
+
         public void onToggleFullscreen(bool? fullscreen = null)
         {
-            bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
+            bool isFullScreenNext =
+                (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
             this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
             //this.Topmost = isFullScreenNext;
         }

@@ -7,6 +7,7 @@ using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Core.Views.Editors.Song;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
 
@@ -56,7 +57,7 @@ namespace HandsLiftedApp.Controls
                 // {
                 //             
                 // };
-                SongEditorWindow songEditorWindow = new SongEditorWindow() { DataContext = songEditorViewModel };
+                SingleSongEditorWindow songEditorWindow = new SingleSongEditorWindow() { DataContext = songEditorViewModel };
                 songEditorWindow.Show();
                 return;
             }

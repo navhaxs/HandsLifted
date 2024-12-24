@@ -21,6 +21,7 @@ using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Core.Views.Editors.Song;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
@@ -131,7 +132,7 @@ public class MainViewModel : ViewModelBase
                         var song = new SongItemInstance(Playlist);
                         itemToInsert = song;
                         SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
-                        SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
+                        SingleSongEditorWindow seq = new SingleSongEditorWindow() { DataContext = vm };
                         seq.Show();
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:

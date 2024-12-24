@@ -12,7 +12,7 @@ namespace HandsLiftedApp.Tests.Utils
         {
             Globals.Instance.AppPreferences = new AppPreferencesViewModel();
         }
-        
+
         [TestMethod()]
         [DataRow("Intro")]
         [DataRow("Chorus")]
@@ -189,10 +189,11 @@ CCLI License #999999";
             var song = SongImporter.CreateSongItemFromStringData(input);
 
             Assert.AreEqual("It Is Well With My Soul", song.Title);
-            Assert.AreEqual("It is well with my soul\r\n\r\nIt is well\r\n\r\nIt is well with my soul", song.Stanzas.First(x => x.Name == "Chorus").Lyrics);
+            Assert.AreEqual("It is well with my soul\r\n\r\nIt is well\r\n\r\nIt is well with my soul",
+                song.Stanzas.First(x => x.Name == "Chorus").Lyrics);
 
             var inverse = SongImporter.songItemToFreeText(song);
-            
+
             string asTags = @"It Is Well With My Soul
 
 [Verse 1]
@@ -246,6 +247,38 @@ For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccl
 CCLI License #999999";
 
             Assert.AreEqual(SongImporter.NormalizeLineEndingsToCRLF(asTags), inverse);
+        }
+
+        [TestMethod]
+        public void TestImportWithRepeatStanzaBlocks()
+        {
+            string input = @"This is the Song Title
+
+[Verse 1]
+This is the Verse
+
+[Chorus]
+This is the Chorus
+
+[Verse 1]
+
+[Chorus]
+
+[Chorus]";
+
+            var song = SongImporter.CreateSongItemFromStringData(input);
+
+            Assert.AreEqual("This is the Song Title", song.Title);
+            Assert.AreEqual(2, song.Stanzas.Count);
+            Assert.AreEqual("Verse 1", song.Stanzas[0].Name);
+            Assert.AreEqual("This is the Verse", song.Stanzas[0].Lyrics);
+            Assert.AreEqual("Chorus", song.Stanzas[1].Name);
+            Assert.AreEqual("This is the Chorus", song.Stanzas[1].Lyrics);
+            Assert.AreEqual(song.Stanzas[0].Id, song.Arrangement[0]);
+            Assert.AreEqual(song.Stanzas[1].Id, song.Arrangement[1]);
+            Assert.AreEqual(song.Stanzas[0].Id, song.Arrangement[2]);
+            Assert.AreEqual(song.Stanzas[1].Id, song.Arrangement[3]);
+            Assert.AreEqual(song.Stanzas[1].Id, song.Arrangement[4]);
         }
     }
 }

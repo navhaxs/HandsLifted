@@ -1,0 +1,126 @@
+﻿<Window
+    x:Class="HandsLiftedApp.Core.Views.Editors.Song.SingleSongEditorWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+    xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+    xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+    xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+    xmlns:song="clr-namespace:HandsLiftedApp.Core.Views.Editors.Song"
+    Title="Song Editor"
+    d:DesignHeight="400"
+    d:DesignWidth="800"
+    Background="{DynamicResource BackgroundBrush}"
+    x:DataType="editor:SongEditorViewModel"
+    mc:Ignorable="d">
+
+    <Design.DataContext>
+        <editor:ExampleSongEditorViewModel />
+    </Design.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <converters:StanzaSortConverter x:Key="stanzaSortConverter" />
+            <converters1:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
+
+            <Flyout x:Key="MySharedFlyout" Placement="BottomEdgeAlignedLeft">
+                <StackPanel Margin="6">
+                    <ItemsControl
+                        MinWidth="150"
+                        MinHeight="20"
+                        Margin="4"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding Song.Stanzas, Converter={StaticResource stanzaSortConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Padding="10,8"
+                                    HorizontalContentAlignment="Left"
+                                    Background="{Binding Colour}"
+                                    Click="OnAddPartClick"
+                                    Content="{Binding Name}"
+                                    Foreground="Black"
+                                    ToolTip.ShowDelay="0"
+                                    ToolTip.Tip="{Binding Lyrics}">
+                                    <Button.Styles>
+                                        <Style Selector="ToolTip">
+                                            <Setter Property="IsHitTestVisible" Value="False" />
+                                        </Style>
+                                    </Button.Styles>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Flyout>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="BackgroundBrush">#f6f4f2</SolidColorBrush>
+                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#edeafc</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
+                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#383838</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Name="Root">
+
+        <DockPanel>
+
+            <Grid Name="ContainerGrid">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.8*" MinWidth="200" />
+                        <!-- <ColumnDefinition Width="1" /> -->
+                        <!-- <ColumnDefinition Width="1*" MinWidth="200" /> -->
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <!-- <ThemeVariantScope RequestedThemeVariant="Light"> -->
+
+                            <DockPanel>
+                                <DockPanel.Styles>
+                                    <Style Selector="TextBox">
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Style>
+                                </DockPanel.Styles>
+                                <Border Background="White">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="6"
+                                            OffsetX="0"
+                                            OffsetY="1"
+                                            Color="#55000000" />
+                                    </Border.Effect>
+
+                                    <song:SongEditorControl />
+                                  
+                                </Border>
+                            </DockPanel>
+                        <!-- </ThemeVariantScope> -->
+                    </Grid>
+          
+                </Grid>
+
+        
+            </Grid>
+
+        </DockPanel>
+    </Grid>
+</Window>

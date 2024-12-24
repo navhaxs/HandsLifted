@@ -20,7 +20,7 @@ namespace HandsLiftedApp.Data.Models.Items
             UUID = Guid.NewGuid();
         }
 
-        private string _title = "New Item";
+        private string _title = "";
         [DataField]
         public string Title
         {

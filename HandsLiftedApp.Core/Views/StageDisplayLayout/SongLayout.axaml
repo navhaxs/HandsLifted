@@ -14,7 +14,7 @@
 			<StackPanel>
 				<StackPanel.Styles>
 					<Style Selector="TextBlock">
-						<Setter Property="FontSize" Value="120" />
+						<Setter Property="FontSize" Value="90" />
 						<Setter Property="Foreground" Value="White" />
 						<Setter Property="TextWrapping" Value="Wrap" />
 					</Style>

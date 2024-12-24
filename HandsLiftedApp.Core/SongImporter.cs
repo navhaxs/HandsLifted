@@ -3,10 +3,12 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using DryIoc.ImTools;
 
 namespace HandsLiftedApp.Core
 {
@@ -85,36 +87,53 @@ namespace HandsLiftedApp.Core
         public static SongItemInstance CreateSongItemFromStringData(string raw)
         {
             string text = NormalizeLineEndingsToCRLF(raw);
-            List<string> parsed = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
+            List<string> parsedBlocks = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
 
             SongItemInstance song = new SongItemInstance(Globals.Instance.MainViewModel?.Playlist)
             {
-                Title = parsed.First().Trim(),
+                Title = parsedBlocks.First().Trim(),
             };
 
             // todo: stanza builder
             string? lastStanzaBody = null;
             string? lastStanzaPartName = null;
 
-            List<string> paragraphs = parsed.GetRange(1, parsed.Count - 1).ToList();
+            HashSet<string> seenPartNames = new HashSet<string>();
+            ObservableCollection<Guid> constructedArrangement = new ObservableCollection<Guid>();
+            
+            // todo wrap in try-catch
+            List<string> paragraphs = parsedBlocks.GetRange(1, parsedBlocks.Count - 1).ToList();
 
             foreach (var (paragraph, index) in paragraphs.WithIndex())
             {
                 // get part name from first line
                 var partNameEOL = paragraph.IndexOf("\r\n");
 
-                if (partNameEOL == -1) //???
+                if (partNameEOL == -1) // this block is purely a 'name' with no 'lyrics'
                 {
                     if (isPartName(paragraph))
                     {
                         // flush existing builder
                         if (lastStanzaPartName != null && lastStanzaBody != null)
                         {
-                            song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                            var newStanza = createStanza(lastStanzaPartName, lastStanzaBody);
+                            song.Stanzas.Add(newStanza);
+                            constructedArrangement.Add(newStanza.Id);
+                            seenPartNames.Add(lastStanzaPartName);
                         }
 
                         lastStanzaPartName = stripPartName(paragraph);
-                        lastStanzaBody = "";
+                        if (seenPartNames.Contains(lastStanzaPartName))
+                        {
+                            // TODO push arrangement, do not start building a new stanza
+                            constructedArrangement.Add(song.Stanzas.First(stanza => stanza.Name == lastStanzaPartName).Id);
+                            lastStanzaBody = null;
+                        }
+                        else
+                        {
+                            // else build new stanza
+                            lastStanzaBody = "";
+                        }
                     }
                     else
                     {
@@ -137,9 +156,16 @@ namespace HandsLiftedApp.Core
                             {
                                 song.Copyright = lastStanzaBody;
                             }
+                            // else if (seenPartNames.Contains(lastStanzaPartName))
+                            // {
+                            //     constructedArrangement.Add(song.Stanzas.First(stanza => stanza.Name == lastStanzaPartName).Id);
+                            // }
                             else
                             {
-                                song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                                var newStanza = createStanza(lastStanzaPartName, lastStanzaBody);
+                                song.Stanzas.Add(newStanza);
+                                constructedArrangement.Add(newStanza.Id);
+                                seenPartNames.Add(lastStanzaPartName);
                             }
                         }
 
@@ -175,13 +201,20 @@ namespace HandsLiftedApp.Core
                 {
                     song.Copyright = lastStanzaBody;
                 }
+                else if (seenPartNames.Contains(lastStanzaPartName))
+                {
+                    constructedArrangement.Add(song.Stanzas.First(stanza => stanza.Name == lastStanzaPartName).Id);
+                }
                 else
                 {
-                    song.Stanzas.Add(createStanza(lastStanzaPartName, lastStanzaBody));
+                    var newStanza = createStanza(lastStanzaPartName, lastStanzaBody);
+                    song.Stanzas.Add(newStanza);
+                    constructedArrangement.Add(newStanza.Id);
                 }
             }
 
-            song.ResetArrangement();
+            // song.ResetArrangement();
+            song.Arrangement = constructedArrangement;
 
             return song;
         }
@@ -192,13 +225,25 @@ namespace HandsLiftedApp.Core
 
             stringBuilder.AppendLine(songItem.Title);
             stringBuilder.AppendLine("");
-            foreach (var stanza in songItem.Stanzas)
+
+            var writtenStanzas = new HashSet<Guid>();
+            foreach (var stanzaId in songItem.Arrangement)
             {
+                var stanza = songItem.Stanzas.FirstOrDefault(stanza => stanza.Id == stanzaId);
+                if (stanza == null)
+                    continue;
+                
                 stringBuilder.AppendLine($"[{stanza.Name}]");
-                stringBuilder.AppendLine(stanza.Lyrics);
+
+                if (!writtenStanzas.Contains(stanzaId))
+                {
+                    stringBuilder.AppendLine(stanza.Lyrics);
+                    writtenStanzas.Add(stanzaId);
+                }
+                
                 stringBuilder.AppendLine("");
             }
-
+            
             if (songItem.Copyright.Length > 0)
             {
                 stringBuilder.AppendLine("[Copyright]");

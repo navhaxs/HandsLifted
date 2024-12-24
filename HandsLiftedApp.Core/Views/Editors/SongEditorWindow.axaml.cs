@@ -104,7 +104,8 @@ namespace HandsLiftedApp.Core.Views.Editors
         {
             if (this.DataContext is SongEditorViewModel songEditorViewModel)
             {
-                songEditorViewModel.LyricEntryMode = true;
+                LoadXml();
+                // songEditorViewModel.LyricEntryMode = true;
             }
         }
 
@@ -153,7 +154,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                     songEditorViewModel.Song.ResetArrangement();
                 }
 
-                songEditorViewModel.LyricEntryMode = false;
+                // songEditorViewModel.LyricEntryMode = false;
             }
         }
 
@@ -161,7 +162,7 @@ namespace HandsLiftedApp.Core.Views.Editors
         {
             if (this.DataContext is SongEditorViewModel songEditorViewModel)
             {
-                songEditorViewModel.LyricEntryMode = false;
+                // songEditorViewModel.LyricEntryMode = false;
             }
         }
 
@@ -217,15 +218,15 @@ namespace HandsLiftedApp.Core.Views.Editors
                     songEditorViewModel.Song.UUID = loaded.UUID;
                     songEditorViewModel.Song.Title = loaded.Title;
                     songEditorViewModel.Song.Stanzas = loaded.Stanzas;
-                    songEditorViewModel.Song.Arrangement = loaded.Arrangement;
-                    songEditorViewModel.Song.Arrangements = loaded.Arrangements;
                     songEditorViewModel.Song.SelectedArrangementId = loaded.SelectedArrangementId;
+                    songEditorViewModel.Song.Arrangements = loaded.Arrangements;
+                    songEditorViewModel.Song.Arrangement = loaded.Arrangement;
                     songEditorViewModel.Song.Copyright = loaded.Copyright;
                     songEditorViewModel.Song.Design = loaded.Design;
                     songEditorViewModel.Song.StartOnTitleSlide = loaded.StartOnTitleSlide;
                     songEditorViewModel.Song.EndOnBlankSlide = loaded.EndOnBlankSlide;
 
-                    songEditorViewModel.Song.ResetArrangement();
+                    // songEditorViewModel.Song.ResetArrangement();
                     songEditorViewModel.Song.GenerateSlides();
                 }
             }

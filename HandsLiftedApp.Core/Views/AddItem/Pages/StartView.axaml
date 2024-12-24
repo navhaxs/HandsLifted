@@ -111,6 +111,7 @@
                 <!--     <controls:IconButton Kind="FilePowerpoint" Text="Sermon" /> -->
                 <!--     <controls:IconButton Kind="ContentCopy" Text="Bible Reading" /> -->
                 <!-- </StackPanel> -->
+                
                 <ItemsControl Margin="0,0,0,0"
                               ItemsSource="{Binding LibraryViewModel.Libraries}">
                     <ItemsControl.ItemTemplate>
@@ -125,11 +126,13 @@
                             <WrapPanel  HorizontalAlignment="Center" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
+                    
                     <!-- <ListBoxItem IsSelected="True">Songs</ListBoxItem> -->
                     <!-- <ListBoxItem>Media</ListBoxItem> -->
                     <!-- <ListBoxItem>Presentations</ListBoxItem> -->
                     <!-- <ListBoxItem>Countdowns</ListBoxItem> -->
                     <!-- <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem> -->
+                    
                 </ItemsControl>
                 <WrapPanel Margin="0 10 0 0" HorizontalAlignment="Center">
                     <controls:IconButton Kind="Star" Text="Logo" Click="CreateItemButton_OnClick"

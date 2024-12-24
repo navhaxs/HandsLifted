@@ -32,8 +32,8 @@
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="WindowBackgroundBrush">#1c1c1c</SolidColorBrush>
-                    <SolidColorBrush x:Key="BackgroundBrush">#2b2b2b</SolidColorBrush>
-                    <SolidColorBrush x:Key="SurfaceBrush">#1c1c1c</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#1c1c1c</SolidColorBrush>
+                    <SolidColorBrush x:Key="SurfaceBrush">#2b2b2b</SolidColorBrush>
                     <SolidColorBrush x:Key="DarkSurfaceBrush">#141414</SolidColorBrush>
                     <SolidColorBrush x:Key="OutlineBrush">#505050</SolidColorBrush>
                     <SolidColorBrush x:Key="PrimaryActionBrush">#513c6f</SolidColorBrush>

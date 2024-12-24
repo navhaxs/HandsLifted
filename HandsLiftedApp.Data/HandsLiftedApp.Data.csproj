@@ -13,4 +13,8 @@
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
         <PackageReference Include="Newtonsoft.Json" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HandsLiftedApp.XTransitioningContentControl\HandsLiftedApp.XTransitioningContentControl.csproj" />
+    </ItemGroup>
 </Project>

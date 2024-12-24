@@ -18,9 +18,10 @@ namespace HandsLiftedApp.Data.Models.Items
         public SongItem()
         {
 
-
-
-
+            _isEmpty = this.WhenAnyValue(x => x.Stanzas, x => x.Title,
+                    (stanzas, title) => stanzas.Count == 0 && title.Length == 0)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.IsEmpty);
         }
 
         private Guid _design = Guid.Empty;
@@ -39,6 +40,12 @@ namespace HandsLiftedApp.Data.Models.Items
             {
                 this.RaiseAndSetIfChanged(ref _stanzas, value);
             }
+        }
+        
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
+        public bool IsEmpty
+        {
+            get => _isEmpty.Value;
         }
 
         /*

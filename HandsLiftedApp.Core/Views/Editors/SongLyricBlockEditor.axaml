@@ -114,7 +114,7 @@
                                                 <Button.Flyout>
                                                     <Flyout>
                                                         <StackPanel>
-                                                            <TextBlock>Are you sure you want to delete this part?</TextBlock>
+                                                            <TextBlock>Delete this stanza?</TextBlock>
                                                             <TextBlock>This cannot be undone</TextBlock>
                                                             <Button
                                                                 HorizontalAlignment="Center"

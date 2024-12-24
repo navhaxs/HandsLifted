@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HandsLiftedApp.Core.Models.Library;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels.Editor;
+using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Core.Views.Editors.Song;
+using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using Serilog;
 
@@ -15,6 +21,8 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
     {
         private readonly ObservableAsPropertyHelper<IEnumerable<LibraryItem>> _searchResults;
         private readonly Library _library;
+
+        public ReactiveCommand<Unit, Unit> OnCreateNewSongCommand { get; }
 
         public Library Library
         {
@@ -61,6 +69,12 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
                     })
                     .ToProperty(this, c => c.SelectedItemPreview)
                 ;
+            
+            OnCreateNewSongCommand = ReactiveCommand.Create(() =>
+            {
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SingleSongEditorWindow(), false,
+                    new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
+            });
         }
 
         public IEnumerable<LibraryItem> SearchResults => _searchResults.Value;

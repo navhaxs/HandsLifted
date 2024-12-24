@@ -33,20 +33,17 @@ namespace HandsLiftedApp.Controls
         {
             AvaloniaXamlLoader.Load(this);
         }
-        private void ArrangementButtonClick(object? sender, RoutedEventArgs e)
+        private void ResetArrangementButtonClick(object? sender, RoutedEventArgs e)
         {
-            //(sender as Button)!.Content = "Ginger";
-            a();
+            if (this.DataContext is SongItemInstance songItem)
+            {
+                songItem.ResetArrangement();
+            }
         }
 
-        //public void btn_OnClick(object? sender, RoutedEventArgs args)
-        //{
-        //    (sender as Button)!.Content = "Ginger";
-        //}
         public void OnAddPartClick(object? sender, RoutedEventArgs args)
         {
             var button = (Control)sender;
-
 
             ItemsControl? arrangement = this.FindControl<ItemsControl>("PART_ArrangementTokens");
             Popup popup = button.FindAncestor<Popup>();
@@ -104,14 +101,5 @@ namespace HandsLiftedApp.Controls
             var clickedStanza = (ArrangementRef)((Control)sender).DataContext;
             ((SongItem)this.DataContext).Arrangement.RemoveAt(clickedStanza.Index);
         }
-
-        public void a()
-        {
-            //using (SongItem songItem = (SongItem)this.DataContext)
-            //{
-            //    songItem.ResetArrangement();
-            //}
-        }
-
     }
 }

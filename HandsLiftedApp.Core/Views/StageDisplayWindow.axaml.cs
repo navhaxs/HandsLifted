@@ -3,6 +3,8 @@ using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
@@ -34,6 +36,15 @@ namespace HandsLiftedApp.Core.Views
                         });
                 }
             };
+            
+            MessageBus.Current.Listen<OutputDisplayConfigurationChangeMessage>()
+                .Subscribe(async msg =>
+                {
+                    if (IsVisible && msg.ChangedDisplay == OutputDisplayConfigurationChangeMessage.Display.StageDisplay)
+                    {
+                        Dispatcher.UIThread.InvokeAsync(() => WindowUtils.ShowAndRestoreWindowBounds(this, Globals.Instance.AppPreferences.StageDisplayBounds));
+                    }
+                });
         }
         
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)

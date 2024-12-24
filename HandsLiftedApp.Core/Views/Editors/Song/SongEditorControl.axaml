@@ -1,0 +1,197 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="editor:SongEditorViewModel"
+             x:Class="HandsLiftedApp.Core.Views.Editors.Song.SongEditorControl">
+    <Grid>
+
+        <Grid.Styles>
+            <Style Selector="GridSplitter">
+                <Setter Property="Template">
+                    <ControlTemplate>
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="#282828"
+                                CornerRadius="{TemplateBinding CornerRadius}">
+                            <Border Background="{TemplateBinding Background}" MaxHeight="60" Width="1"
+                                    Margin="-6 0 0 0"
+                                    />
+                        </Border>
+                    </ControlTemplate>
+                </Setter>
+            </Style>
+        </Grid.Styles>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="380" />
+            <ColumnDefinition Width="1" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <TabControl TabStripPlacement="Left" Margin="0 0 0 0" Padding="0">
+
+            <TabControl.Styles>
+                <Style Selector="TabItem:nth-child(1)">
+                    <Setter Property="Margin" Value="4 30 0 0" />
+                </Style>
+                <Style Selector="TabItem:selected">
+                    <Setter Property="Foreground" Value="White" />
+                </Style>
+                <Style Selector="TabItem:pointerover">
+                    <Setter Property="Foreground" Value="White" />
+                </Style>
+                <Style Selector="TabItem">
+                    <Setter Property="Margin" Value="4 0 0 0" />
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="CornerRadius" Value="2 0 0 2" />
+                    <Setter Property="MinWidth" Value="60" />
+                </Style>
+                <Style Selector="TabControl /template/ ContentPresenter#PART_SelectedContentHost">
+                </Style>
+            </TabControl.Styles>
+
+            <TabItem Header="Text">
+                <editors:SongLyricFreeTextEditor />
+            </TabItem>
+
+            <TabItem Header="Stanzas">
+                <ScrollViewer>
+                    <editors:SongLyricBlockEditor />
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+        <GridSplitter Grid.Column="1"
+                      Margin="-6,0" />
+
+        <Border Grid.Column="2">
+            <Grid>
+                <DockPanel Margin="16,4, 16, 16">
+                    <controls:SongArrangementControl
+                        DockPanel.Dock="Top"
+                        DataContext="{Binding Song}"
+                        Margin="0 8" />
+                    <Border
+                        Padding="6"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="#EAEAEA"
+                        BoxShadow="inset 0 0 2 #c1c1c1"
+                        CornerRadius="6">
+                        <ScrollViewer>
+                            <ListBox
+                                Name="List"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ItemsSource="{Binding Song.Slides}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.Styles>
+                                    <StyleInclude
+                                        Source="avares://HandsLiftedApp.Controls/ListBoxItem.axaml" />
+                                </ListBox.Styles>
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel ItemHeight="160" ItemWidth="240" IsHitTestVisible="False" />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.DataTemplates>
+                                    <common:MyTemplateSelector>
+                                        <DataTemplate x:Key="SongTitleSlideInstance"
+                                                      x:DataType="slides:SongTitleSlideInstance">
+                                            <Image
+                                                Source="{Binding Thumbnail}"
+                                                RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                Stretch="Uniform" />
+                                        </DataTemplate>
+                                        <DataTemplate x:Key="SongSlideInstance"
+                                                      x:DataType="slides:SongSlideInstance">
+                                            <Image
+                                                Source="{Binding Thumbnail}"
+                                                RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                Stretch="Uniform" />
+                                        </DataTemplate>
+                                        <DataTemplate x:Key="Fallback">
+                                            <TextBlock
+                                                Background="Green"
+                                                FontSize="80"
+                                                TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </common:MyTemplateSelector>
+                                </ListBox.DataTemplates>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Border>
+                </DockPanel>
+
+                <!-- <Grid Background="#1c1c1c"> -->
+                <!--     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"> -->
+                <!--         <TextBlock HorizontalAlignment="Center">import from file</TextBlock> -->
+                <!--         <TextBlock  HorizontalAlignment="Center">import from songselect</TextBlock> -->
+                <!--     </StackPanel> -->
+                <!-- </Grid> -->
+
+                <Border IsVisible="{Binding Song.IsEmpty}">
+                    <DockPanel Background="#282828">
+                        <avalonia:MaterialIcon
+                            Width="40"
+                            Height="40"
+                            Margin="20"
+                            HorizontalAlignment="Left"
+                            Foreground="White"
+                            Kind="ArrowLeft" />
+                        <StackPanel Margin="0,20,40,20" VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="24"
+                                Foreground="White"
+                                TextWrapping="Wrap">
+                                <avalonia:MaterialIcon
+                                    Width="64"
+                                    Height="64"
+                                    Margin="-4 -4"
+                                    HorizontalAlignment="Left"
+                                    Kind="MusicNote" />
+                                <LineBreak />
+                                <LineBreak />
+                                Create slides from lyrics
+                                <LineBreak />
+                                <LineBreak />
+                                <Span Foreground="#2ECAFF" TextDecorations="Underline">
+                                    import from songselect
+                                </Span>
+                                <avalonia:MaterialIcon
+                                    Width="18"
+                                    Height="18"
+                                    Margin="-4"
+                                    HorizontalAlignment="Left"
+                                    Foreground="#2ECAFF"
+                                    Kind="OpenInNew" />
+                                <LineBreak />
+                                <LineBreak />
+                                <Span Foreground="#2ECAFF" TextDecorations="Underline">
+                                    import from file
+                                </Span>
+                                <avalonia:MaterialIcon
+                                    Width="18"
+                                    Height="18"
+                                    Margin="-4"
+                                    HorizontalAlignment="Left"
+                                    Foreground="#2ECAFF"
+                                    Kind="FolderOpen" />
+                            </TextBlock>
+                            <TextBlock />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

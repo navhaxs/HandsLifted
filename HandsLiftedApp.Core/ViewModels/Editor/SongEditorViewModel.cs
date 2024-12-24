@@ -12,8 +12,8 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     public class SongEditorViewModel : ViewModelBase
     {
-        private bool _lyricEntryMode = false;
-        public bool LyricEntryMode { get => _lyricEntryMode; set => this.RaiseAndSetIfChanged(ref _lyricEntryMode, value); }
+        // private bool _lyricEntryMode = false;
+        // public bool LyricEntryMode { get => _lyricEntryMode; set => this.RaiseAndSetIfChanged(ref _lyricEntryMode, value); }
         
         // public event EventHandler SongDataUpdated;
 

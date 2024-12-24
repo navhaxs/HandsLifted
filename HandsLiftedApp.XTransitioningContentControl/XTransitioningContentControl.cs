@@ -58,6 +58,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     from.ZIndex = 0;
                     to.ZIndex = 1;
 
+                    if (((ContentPresenter)to).Content is ISlideRender { PageTransition: not null } isr2)
+                    {
+                        transition = isr2.PageTransition;
+                    }
+
                     transition.Start(from, to, true, cancel.Token).ContinueWith(x =>
                     {
                         if (!cancel.IsCancellationRequested)

@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
@@ -55,6 +56,18 @@ namespace HandsLiftedApp.Core.Views.Setup
         private void DoneButton_OnClick(object? sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void ProjectorOutput_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (e.RemovedItems.Count > 0)
+                MessageBus.Current.SendMessage(new OutputDisplayConfigurationChangeMessage() { ChangedDisplay = OutputDisplayConfigurationChangeMessage.Display.Projector });
+        }
+        
+        private void StageOutput_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (e.RemovedItems.Count > 0)
+                MessageBus.Current.SendMessage(new OutputDisplayConfigurationChangeMessage() { ChangedDisplay = OutputDisplayConfigurationChangeMessage.Display.StageDisplay });
         }
     }
 }

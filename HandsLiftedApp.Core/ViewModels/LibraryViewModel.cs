@@ -17,6 +17,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Core.Views.Editors.Song;
 using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
@@ -208,7 +209,7 @@ namespace HandsLiftedApp.Core.ViewModels
             CreateNewSongCommand = ReactiveCommand.Create(() =>
             {
                 // TODO remove dependency on Globals.MainViewModel.Playlist 
-                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SingleSongEditorWindow(), false,
                     new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
             });
 

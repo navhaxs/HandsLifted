@@ -12,6 +12,7 @@
     xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+    xmlns:song="clr-namespace:HandsLiftedApp.Core.Views.Editors.Song"
     Title="Song Editor"
     d:DesignHeight="400"
     d:DesignWidth="800"
@@ -77,290 +78,97 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Name="Root">
 
-        <DockPanel>
-            <Grid Background="{DynamicResource HeaderBackgroundBrush}" DockPanel.Dock="Top">
-                <DockPanel Margin="6">
+    <DockPanel>
+        <Grid Background="{DynamicResource HeaderBackgroundBrush}" DockPanel.Dock="Top">
+            <DockPanel Margin="6">
 
-                    <DockPanel.Styles>
-                        <Style Selector="Button">
-                            <Setter Property="MinWidth" Value="86" />
-                            <Setter Property="CornerRadius" Value="0" />
-                            <Setter Property="Padding" Value="12 8" />
-                            <Setter Property="Margin" Value="0 0 1 0" />
-                        </Style>
-                        <Style Selector="Button:nth-child(1)">
-                            <Setter Property="CornerRadius" Value="6 0 0 6" />
-                        </Style>
-                        <Style Selector="Button:nth-last-child(1)">
-                            <Setter Property="Margin" Value="0" />
-                            <Setter Property="CornerRadius" Value="0 6 6 0" />
-                        </Style>
-                        <Style Selector="Button > DockPanel > material|MaterialIcon">
-                            <Setter Property="Margin" Value="0 0 6 0" />
-                        </Style>
-                    </DockPanel.Styles>
+                <DockPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="MinWidth" Value="86" />
+                        <Setter Property="CornerRadius" Value="0" />
+                        <Setter Property="Padding" Value="12 8" />
+                        <Setter Property="Margin" Value="0 0 1 0" />
+                    </Style>
+                    <Style Selector="Button:nth-child(1)">
+                        <Setter Property="CornerRadius" Value="6 0 0 6" />
+                    </Style>
+                    <Style Selector="Button:nth-last-child(1)">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="CornerRadius" Value="0 6 6 0" />
+                    </Style>
+                    <Style Selector="Button > DockPanel > material|MaterialIcon">
+                        <Setter Property="Margin" Value="0 0 6 0" />
+                    </Style>
+                </DockPanel.Styles>
 
-                    <Button DockPanel.Dock="Left" CornerRadius="0" Background="Transparent" BorderThickness="0"
-                            MinWidth="40" Width="20">
-                        <material:MaterialIcon Kind="Menu" />
+                <!-- <Button DockPanel.Dock="Left" CornerRadius="0" Background="Transparent" BorderThickness="0" -->
+                <!--         MinWidth="40" Width="20"> -->
+                <!--     <material:MaterialIcon Kind="Menu" /> -->
+                <!--     <Button.Flyout> -->
+                <!--         <MenuFlyout> -->
+                <!--             <MenuItem Header="ResetArrangement" DockPanel.Dock="Left" -->
+                <!--                       Click="ResetArrangement_OnClick" -->
+                <!--                       Foreground="Red" /> -->
+                <!--             <MenuItem Header="GenerateSlides" DockPanel.Dock="Left" -->
+                <!--                       Click="GenerateSlides_OnClick" -->
+                <!--                       Foreground="Red" /> -->
+                <!--             <MenuItem Header="ReverseSync" DockPanel.Dock="Left" -->
+                <!--                       Click="ReverseSyncButton_OnClick" -->
+                <!--                       Foreground="Red" /> -->
+                <!--         </MenuFlyout> -->
+                <!--     </Button.Flyout> -->
+                <!-- </Button> -->
+
+                <TextBlock Text="Song Editor" FontSize="17" VerticalAlignment="Center" Margin="6 0 0 0">
+                    <TextBlock.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="ResetArrangement" DockPanel.Dock="Left"
+                                      Click="ResetArrangement_OnClick" />
+                            <MenuItem Header="GenerateSlides" DockPanel.Dock="Left"
+                                      Click="GenerateSlides_OnClick" />
+                            <MenuItem Header="ReverseSync" DockPanel.Dock="Left"
+                                      Click="ReverseSyncButton_OnClick" />
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                </TextBlock>
+
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+
+                    <Button>
                         <Button.Flyout>
-                            <MenuFlyout>
-                                <MenuItem Header="ResetArrangement" DockPanel.Dock="Left"
-                                          Click="ResetArrangement_OnClick"
-                                          Foreground="Red" />
-                                <MenuItem Header="GenerateSlides" DockPanel.Dock="Left"
-                                          Click="GenerateSlides_OnClick"
-                                          Foreground="Red" />
-                                <MenuItem Header="ReverseSync" DockPanel.Dock="Left"
-                                          Click="ReverseSyncButton_OnClick"
-                                          Foreground="Red" />
-                            </MenuFlyout>
+                            <Flyout>
+                                <Button Click="New_OnClick" Content="This will clear all data" />
+                            </Flyout>
                         </Button.Flyout>
+                        <DockPanel>
+                            <TextBlock Text="New" DockPanel.Dock="Right" />
+                            <material:MaterialIcon Kind="PencilOutline" />
+                        </DockPanel>
                     </Button>
-
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-
-                        <Button Click="New_OnClick">
-                            <DockPanel>
-                                <TextBlock Text="New" DockPanel.Dock="Right" />
-                                <material:MaterialIcon Kind="PencilOutline" />
-                            </DockPanel>
-                        </Button>
-                        <Button>
-                            <DockPanel>
-                                <TextBlock Text="Import" DockPanel.Dock="Right" />
-                                <material:MaterialIcon Kind="FolderOutline" />
-                            </DockPanel>
-                            <Button.Flyout>
-                                <MenuFlyout Placement="BottomEdgeAlignedLeft">
-                                    <MenuItem Click="LoadFromText_OnClick" Header="From Text / Clipboard / _SongSelect..." />
-                                    <MenuItem Click="LoadFromXml_OnClick" Header="From File..." />
-                                    <MenuItem Click="LoadFromXml_OnClick" Header="From Library..." />
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
-                        <Button Click="SaveAsXml_OnClick">
-                            <DockPanel>
-                                <TextBlock Text="Export" DockPanel.Dock="Right" />
-                                <material:MaterialIcon Kind="ContentSaveOutline" />
-                            </DockPanel>
-                        </Button>
-                    </StackPanel>
-
-                    <!-- <ToggleButton Name="ToggleButtonShowImportHelp" DockPanel.Dock="Left"> -->
-                    <!--     <DockPanel> -->
-                    <!--         <material:MaterialIcon -->
-                    <!--             Kind="Import" -->
-                    <!--             Margin="8 6" /> -->
-                    <!--         <TextBlock Text="Import from text" -->
-                    <!--                    Margin="0 6 8 6" /> -->
-                    <!--     </DockPanel> -->
-                    <!-- </ToggleButton> -->
-
-                    <Grid />
-
-                </DockPanel>
-                <Grid.Effect>
-                    <DropShadowEffect
-                        BlurRadius="6"
-                        OffsetX="0"
-                        OffsetY="1"
-                        Color="#55000000" />
-                </Grid.Effect>
-            </Grid>
-
-            <!--<Menu DockPanel.Dock="Top">
-            <MenuItem Name="btnGetWavHeader" Header="Import TXT" />
-            <MenuItem Name="btnFileLoad" Header="Load XML" />
-            <MenuItem Name="btnFileSave" Header="Save XML" />
-            <MenuItem Command="{Binding SongDataUpdateCommand}" Header="SYNC" />
-        </Menu>-->
-
-            <Grid Name="ContainerGrid">
-
-                <Grid>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.8*" MinWidth="200" />
-                        <!-- <ColumnDefinition Width="1" /> -->
-                        <!-- <ColumnDefinition Width="1*" MinWidth="200" /> -->
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0">
-                        <ThemeVariantScope RequestedThemeVariant="Light">
-
-                            <DockPanel>
-                                <DockPanel.Styles>
-                                    <Style Selector="TextBox">
-                                        <Setter Property="BorderThickness" Value="0" />
-                                    </Style>
-                                </DockPanel.Styles>
-                                <Border Background="White">
-                                    <Border.Effect>
-                                        <DropShadowEffect
-                                            BlurRadius="6"
-                                            OffsetX="0"
-                                            OffsetY="1"
-                                            Color="#55000000" />
-                                    </Border.Effect>
-
-                                    <Grid>
-
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" MinWidth="300" />
-                                            <ColumnDefinition Width="1" />
-                                            <ColumnDefinition Width="3*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <ScrollViewer>
-                                            <editors:SongLyricBlockEditor />
-                                        </ScrollViewer>
-
-                                        <GridSplitter Grid.Column="1" />
-                                        <Border Grid.Column="2">
-                                            <DockPanel Margin="16,4, 16, 16">
-                                                <controls:SongArrangementControl DockPanel.Dock="Top"
-                                                    DataContext="{Binding Song}"
-                                                    Margin="0 8" />
-                                                <Border
-                                                    Padding="6"
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Stretch"
-                                                    Background="#EAEAEA"
-                                                    BoxShadow="inset 0 0 2 #c1c1c1"
-                                                    CornerRadius="6">
-                                                    <ScrollViewer>
-                                                        <ListBox
-                                                            Name="List"
-                                                            Background="Transparent"
-                                                            BorderThickness="0"
-                                                            ItemsSource="{Binding Song.Slides}"
-                                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                                            <ListBox.Styles>
-                                                                <StyleInclude
-                                                                    Source="avares://HandsLiftedApp.Controls/ListBoxItem.axaml" />
-                                                            </ListBox.Styles>
-                                                            <ListBox.ItemsPanel>
-                                                                <ItemsPanelTemplate>
-                                                                    <WrapPanel ItemHeight="160" ItemWidth="240" />
-                                                                </ItemsPanelTemplate>
-                                                            </ListBox.ItemsPanel>
-                                                            <ListBox.DataTemplates>
-                                                                <common:MyTemplateSelector>
-                                                                    <DataTemplate x:Key="SongTitleSlideInstance"
-                                                                        x:DataType="slides:SongTitleSlideInstance">
-                                                                        <Image
-                                                                            Source="{Binding Thumbnail}"
-                                                                            RenderOptions.BitmapInterpolationMode="LowQuality"
-                                                                            Stretch="Uniform" />
-                                                                    </DataTemplate>
-                                                                    <DataTemplate x:Key="SongSlideInstance"
-                                                                        x:DataType="slides:SongSlideInstance">
-                                                                        <Image
-                                                                            Source="{Binding Thumbnail}"
-                                                                            RenderOptions.BitmapInterpolationMode="LowQuality"
-                                                                            Stretch="Uniform" />
-                                                                    </DataTemplate>
-                                                                    <DataTemplate x:Key="Fallback">
-                                                                        <TextBlock
-                                                                            Background="Green"
-                                                                            FontSize="80"
-                                                                            TextWrapping="Wrap" />
-                                                                    </DataTemplate>
-                                                                </common:MyTemplateSelector>
-                                                            </ListBox.DataTemplates>
-
-                                                        </ListBox>
-                                                    </ScrollViewer>
-                                                </Border>
-                                            </DockPanel>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                            </DockPanel>
-                        </ThemeVariantScope>
-                    </Grid>
-                    <!-- -->
-                    <!-- <GridSplitter -->
-                    <!--     Grid.Column="1" -->
-                    <!--     Margin="-3,0" -->
-                    <!--     HorizontalAlignment="Stretch" -->
-                    <!--     Background="Transparent" -->
-                    <!--     BorderBrush="Transparent" -->
-                    <!--     BorderThickness="3,0" -->
-                    <!--     ZIndex="9999" /> -->
-                    <!-- -->
-
-                    <!-- -->
-                </Grid>
-
-                <!-- <Grid -->
-                <!--     Name="ImportOverlayGrid" -->
-                <!--     ColumnDefinitions="1*, 2*" -->
-                <!--     IsVisible="{Binding #ToggleButtonShowImportHelp.IsChecked}"> -->
-                <!--     <TextBox -->
-                <!--         Name="ImportPasteHereTextBox" -->
-                <!--         Grid.Column="0" -->
-                <!--         Padding="16,14,16,22" -->
-                <!--         VerticalAlignment="Stretch" -->
-                <!--         AcceptsReturn="True" -->
-                <!--         BorderThickness="0" -->
-                <!--         FontSize="16" -->
-                <!--         TextWrapping="Wrap" -->
-                <!--         Watermark="Paste lyrics here to import..." /> -->
-                <!--     <Border Grid.Column="1" Background="#CDFFFFFF"> -->
-                <!--         <DockPanel Background="#DC000000"> -->
-                <!--             <material:MaterialIcon -->
-                <!--                 Width="40" -->
-                <!--                 Height="40" -->
-                <!--                 Margin="20" -->
-                <!--                 HorizontalAlignment="Left" -->
-                <!--                 Foreground="White" -->
-                <!--                 Kind="ArrowLeft" /> -->
-                <!--             <StackPanel Margin="0,20,40,20" VerticalAlignment="Center"> -->
-                <!--                 <TextBlock -->
-                <!--                     FontSize="24" -->
-                <!--                     Foreground="White" -->
-                <!--                     TextWrapping="Wrap"> -->
-                <!--                     1. Search for the song in -->
-                <!--                     <Span Foreground="#2ECAFF" TextDecorations="Underline"> -->
-                <!--                         songselect.ccli.com -->
-                <!--                     </Span> -->
-                <!--                     <material:MaterialIcon -->
-                <!--                         Width="12" -->
-                <!--                         Height="12" -->
-                <!--                         Margin="-4" -->
-                <!--                         HorizontalAlignment="Left" -->
-                <!--                         Foreground="#2ECAFF" -->
-                <!--                         Kind="OpenInNew" /> -->
-                <!--                     <LineBreak /> -->
-                <!--                     <LineBreak /> -->
-                <!--                     2. Copy the lyrics<LineBreak /> -->
-                <!--                     <LineBreak /> -->
-                <!--                     3. Paste here -->
-                <!--                 </TextBlock> -->
-                <!--                 <TextBlock /> -->
-                <!--             </StackPanel> -->
-                <!--         </DockPanel> -->
-                <!--     </Border> -->
-                <!-- </Grid> -->
-                <!-- -->
-            </Grid>
-
-        </DockPanel>
-
-        <DockPanel IsVisible="{Binding LyricEntryMode}">
-            <DockPanel DockPanel.Dock="Top" Background="Blue">
-                <TextBlock Text="Import" VerticalAlignment="Center" />
+                    <Button Click="LoadFromText_OnClick">
+                        <DockPanel>
+                            <TextBlock Text="Import" DockPanel.Dock="Right" />
+                            <material:MaterialIcon Kind="FolderOutline" />
+                        </DockPanel>
+                    </Button>
+                    <Button Click="SaveAsXml_OnClick">
+                        <DockPanel>
+                            <TextBlock Text="Export" DockPanel.Dock="Right" />
+                            <material:MaterialIcon Kind="ContentSaveOutline" />
+                        </DockPanel>
+                    </Button>
+                </StackPanel>
+                <Grid />
             </DockPanel>
-            <DockPanel DockPanel.Dock="Bottom" Background="Blue">
-                <Button Click="ParseAndLoadFromText_OnClick" DockPanel.Dock="Right">Import</Button>
-                <Button Click="DismissLoadFromText_OnClick" DockPanel.Dock="Right">Cancel</Button>
-                <TextBlock Text="" VerticalAlignment="Center" />
-            </DockPanel>
-            <editors:SongLyricFreeTextEditor />
-        </DockPanel>
-
-    </Grid>
+            <Grid.Effect>
+                <DropShadowEffect
+                    BlurRadius="6"
+                    OffsetX="0"
+                    OffsetY="1"
+                    Color="#55000000" />
+            </Grid.Effect>
+        </Grid>
+        <song:SongEditorControl />
+    </DockPanel>
 </Window>

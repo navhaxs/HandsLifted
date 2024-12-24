@@ -62,7 +62,7 @@
             DockPanel.Dock="Top" FontSize="18" Watermark="Search song title, content, ..." />
 
         <UniformGrid Margin="0 10 0 0" DockPanel.Dock="Bottom" Columns="2">
-            <controls:IconButton Kind="ExternalLink" Text="Create new song" />
+            <controls:IconButton Kind="ExternalLink" Text="Create new song" Command="{Binding OnCreateNewSongCommand}" />
             <!-- <controls:IconButton Kind="Shimmer" Text="Create new" /> -->
             <controls:IconButton Kind="Web" Text="Import from SongSelect" />
         </UniformGrid>

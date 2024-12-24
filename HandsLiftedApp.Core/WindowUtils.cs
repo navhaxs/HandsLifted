@@ -11,25 +11,35 @@ namespace HandsLiftedApp.Core
             AppPreferencesViewModel.DisplayModel? targetSavedDisplay,
             bool? forceShow = null)
         {
-            targetWindow.Show();
 
             if (targetSavedDisplay != null &&
-                Globals.Instance.AppPreferences.OutputDisplayBounds is not AppPreferencesViewModel.UnsetDisplay) {
+                targetSavedDisplay is not AppPreferencesViewModel.UnsetDisplay) {
                 
-                var targetPosition = new PixelPoint(targetSavedDisplay.X, Globals.Instance.AppPreferences
-                    .OutputDisplayBounds.Y);
+                var targetPosition = new PixelPoint(targetSavedDisplay.X, targetSavedDisplay.Y);
 
                 if (targetWindow.Screens.All.FirstOrDefault(target => target.Bounds.Contains(targetPosition)) == null)
                 {
                     if (forceShow != true)
                         return;
                 }
+                
+                // force re-toggle
+                if (targetWindow.WindowState == WindowState.FullScreen)
+                {
+                    targetWindow.WindowState = WindowState.Normal;
+                    targetWindow.Height = 0;
+                    targetWindow.Width = 0;
+                }
 
                 targetWindow.Position = targetPosition;
+                targetWindow.Height = targetSavedDisplay.Height;
+                targetWindow.Width = targetSavedDisplay.Width;
+
                 targetWindow.WindowState = WindowState.FullScreen;
-                targetWindow.Height = Globals.Instance.AppPreferences.OutputDisplayBounds.Height;
-                targetWindow.Width = Globals.Instance.AppPreferences.OutputDisplayBounds.Width;
             }
+            
+            targetWindow.Show();
+
         }
         public static void RegisterWindowWatcher(Window targetWindow)
         {
