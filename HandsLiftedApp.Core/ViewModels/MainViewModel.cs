@@ -522,13 +522,6 @@ public class MainViewModel : ViewModelBase
         get => _bottomLeftPanelSelectedTabIndex;
         set => this.RaiseAndSetIfChanged(ref _bottomLeftPanelSelectedTabIndex, value);
     }
-
-    private double _slideThumbnailSizeMultiplier = 80;
-    public double SlideThumbnailSizeMultiplier
-    {
-        get => _slideThumbnailSizeMultiplier;
-        set => this.RaiseAndSetIfChanged(ref _slideThumbnailSizeMultiplier, value);
-    }
     
     public int ItemHeight
     {

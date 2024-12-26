@@ -145,7 +145,7 @@ public partial class MainView : UserControl
                 catch (Exception e)
                 {
                     MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                    { Title = "Playlist failed to load :(", Content = $"{e.Message}" });
+                        { Title = "Playlist failed to load :(", Content = $"{e.Message}" });
                     Log.Error("[DOC] Failed to parse playlist XML");
                     Console.WriteLine(e);
                 }
@@ -166,13 +166,13 @@ public partial class MainView : UserControl
             {
                 PlaylistDocumentService.SaveDocument(vm.Playlist);
                 MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                { Title = "Playlist Saved" });
+                    { Title = "Playlist Saved" });
             }
             catch (Exception e)
             {
                 Log.Error(e, "Failed to save document");
                 MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                { Title = "Playlist Failed to Save :(", Content = $"{e.Message}" });
+                    { Title = "Playlist Failed to Save :(", Content = $"{e.Message}" });
             }
         }
     }
@@ -240,5 +240,15 @@ public partial class MainView : UserControl
     {
         SetupWindow setupWindow = new SetupWindow();
         setupWindow.Show();
+    }
+
+    private void ZoomInButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier = Math.Min(150d, (double)((decimal)Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier + 10m));
+    }
+
+    private void ZoomOutButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier = Math.Max(50d, (double)((decimal)Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier - 10m));
     }
 }

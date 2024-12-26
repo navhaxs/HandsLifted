@@ -24,6 +24,7 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
 
         public ReactiveCommand<Unit, Unit> OnCreateNewSongCommand { get; }
 
+        // TODO this could be a list
         public Library Library
         {
             get => _library;
@@ -94,7 +95,7 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
             if (string.IsNullOrEmpty(term))
                 return items;
 
-            // // TODO: filter by file *content* as well (full-text search)
+            // TODO: filter by file *content* as well (full-text search)
             return items.Where(item => item.Title.ToLower().Contains(term));
         }
 

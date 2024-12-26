@@ -176,6 +176,14 @@ namespace HandsLiftedApp.Core.ViewModels
         
         // private List<BaseSlideTheme> _designs = new() { new BaseSlideTheme() };
         public List<BaseSlideTheme> Designs { get => new(){DefaultTheme}; }
+        
+        private double _slideThumbnailSizeMultiplier = 80;
+        [DataMember]
+        public double SlideThumbnailSizeMultiplier
+        {
+            get => _slideThumbnailSizeMultiplier;
+            set => this.RaiseAndSetIfChanged(ref _slideThumbnailSizeMultiplier, value);
+        }
 
         [DataContract]
         public class DisplayModel : ReactiveObject

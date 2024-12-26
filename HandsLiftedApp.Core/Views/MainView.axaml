@@ -10,6 +10,7 @@
              xmlns:designer="clr-namespace:HandsLiftedApp.Views.Designer"
              xmlns:library="clr-namespace:HandsLiftedApp.Views.Library"
              xmlns:navigation="clr-namespace:HandsLiftedApp.Core.Controls.Navigation"
+             xmlns:app="clr-namespace:HandsLiftedApp.Core"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HandsLiftedApp.Core.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -246,17 +247,31 @@
                     <!-- centre panel -->
                     <!-- TODO write a custom Converter to BoxShadow from {DynamicResource SurfaceBrush}-->
                     <Border
+                        Background="#141414"
                         BorderBrush="{DynamicResource GridSplitterBrush}"
                         BorderThickness="1 1 0 1"
                         CornerRadius="6,0,0,6"
                         Margin="0 0 -1 6"
                         Grid.Column="2">
                         <DockPanel>
-                            <DockPanel DockPanel.Dock="Bottom" Width="130" HorizontalAlignment="Right">
-                                <avalonia:MaterialIcon Kind="Minus" Foreground="#808080" /> 
-                                <avalonia:MaterialIcon Kind="Plus" DockPanel.Dock="Right" Foreground="#808080" />
-                                <Slider Minimum="50" Maximum="300" Name="BackgroundSlider"
-                                        Value="{Binding SlideThumbnailSizeMultiplier}" />
+                            <DockPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+                                <DockPanel.Styles>
+                                    <Style Selector="Button">
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Style>
+                                </DockPanel.Styles>
+                                <Button Padding="6 0 0 0" Click="ZoomOutButton_OnClick">
+                                    <avalonia:MaterialIcon Kind="Minus" Foreground="#808080" /> 
+                                </Button>
+                                <Button DockPanel.Dock="Right" Padding="0 0 6 0" Click="ZoomInButton_OnClick">
+                                    <avalonia:MaterialIcon Kind="Plus" Foreground="#808080" />
+                                </Button>
+                                <Slider Minimum="50" Maximum="150" Name="BackgroundSlider"
+                                        TickFrequency="0.1"
+                                        Width="100"
+                                        IsSnapToTickEnabled="True"
+                                        Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlideThumbnailSizeMultiplier}" />
                             </DockPanel>
                             <!-- -->
                             <!-- <Border -->

@@ -347,8 +347,8 @@
                                                             Path="MainViewModel.ItemHeight"
                                                             Source="{x:Static app:Globals.Instance}" />
                                                         <Binding
-                                                            FallbackValue="1"
-                                                            Path="MainViewModel.SlideThumbnailSizeMultiplier"
+                                                            FallbackValue="80"
+                                                            Path="AppPreferences.SlideThumbnailSizeMultiplier"
                                                             Source="{x:Static app:Globals.Instance}" />
                                                     </MultiBinding>
                                                 </WrapPanel.ItemHeight>
@@ -359,8 +359,8 @@
                                                             Path="MainViewModel.ItemWidth"
                                                             Source="{x:Static app:Globals.Instance}" />
                                                         <Binding
-                                                            FallbackValue="1"
-                                                            Path="MainViewModel.SlideThumbnailSizeMultiplier"
+                                                            FallbackValue="80"
+                                                            Path="AppPreferences.SlideThumbnailSizeMultiplier"
                                                             Source="{x:Static app:Globals.Instance}" />
                                                     </MultiBinding>
                                                 </WrapPanel.ItemWidth>
