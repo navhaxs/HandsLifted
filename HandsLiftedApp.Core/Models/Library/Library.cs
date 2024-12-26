@@ -66,7 +66,6 @@ namespace HandsLiftedApp.Core.Models.Library
                          // .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.OrdinalIgnoreCase))
                          .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
 
-           
                 Log.Information($"Refreshed library [{Config.Label}] [{Config.Directory}]");
                 Items.Clear();
 
@@ -75,12 +74,9 @@ namespace HandsLiftedApp.Core.Models.Library
                 {
                     Items.Add(new LibraryItem() { FullFilePath = f, Title = Path.GetFileNameWithoutExtension(f) });
                 }
-                
-                if (Items.Count > 0 && (Items.First().FullFilePath.ToLower().EndsWith("txt") || Items.First().FullFilePath.ToLower().EndsWith("xml")))
-                {
-                    isMediaBin = false;
-                }
 
+                isMediaBin = !(Items.Count > 0 && (Items.First().FullFilePath.ToLower().EndsWith("txt") ||
+                                                   Items.First().FullFilePath.ToLower().EndsWith("xml")));
             }
         }
         // private void watch()

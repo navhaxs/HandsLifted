@@ -7,6 +7,7 @@
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.Library"
     d:DesignHeight="200"
     d:DesignWidth="600"
     x:DataType="viewModels:MainViewModel"
@@ -73,36 +74,8 @@
                 BorderThickness="3,0"
                 ZIndex="9999" />
 
-            <TabControl Grid.Column="2" TabStripPlacement="Right">
-
-                <TabItem Header="Default" Focusable="False">
-                    <Grid>
-                    <ListBox
-                        HorizontalAlignment="Stretch"
-                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                        SelectedItem="{Binding LibraryViewModel.SelectedLibraryItem, Mode=OneWayToSource}"
-                        ItemsSource="{Binding LibraryViewModel.SelectedLibrary.Items}">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel ItemHeight="120" ItemWidth="200" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel PointerPressed="DockPanel_PointerPressed">
-                                    <DockPanel.ContextMenu>
-                                        <ContextMenu>
-                                           <MenuItem Header="Add to playlist" />
-                                        </ContextMenu>
-                                    </DockPanel.ContextMenu>
-                                    <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
-                                    <Viewbox>
-                                        <Image asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}"   RenderOptions.BitmapInterpolationMode="LowQuality" />
-                                    </Viewbox>
-                                </DockPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <Grid  Grid.Column="2">
+                        <library:LibraryView DataContext="{Binding LibraryViewModel.SelectedLibrary}" />
                         <Button
                             Margin="20"
                             Padding="16"
@@ -111,77 +84,33 @@
                             Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}"
                             Content="Add to playlist" />
                     </Grid>
-                </TabItem>
 
-                <TabItem Header="Default" Focusable="False">
-
-                    <Grid ColumnDefinitions="200,1,*">
-                        <!--  Centre box  -->
-                        <Grid Grid.Column="0">
-
-                            <!-- <StackPanel> -->
-                            <ListBox
-                                Background="Transparent"
-                                ItemsSource="{Binding LibraryViewModel.SelectedLibrary.Items}"
-                                SelectedItem="{Binding LibraryViewModel.SelectedLibraryItem, Mode=OneWayToSource}"
-                                HorizontalAlignment="Stretch"
-                                BorderThickness="0">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Title}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-
-                            <i:Interaction.Behaviors>
-                                <!--TODO create separate 'selectors' for status messages -->
-                                <!--<ia:DataTriggerBehavior Binding="{Binding Library.SearchResults.Size}"
-												ComparisonCondition="Equal"
-												Value="0">
-							<ia:ChangePropertyAction TargetObject="NoItemsLabel"
-													 PropertyName="IsVisible"
-													 Value="True" />
-						</ia:DataTriggerBehavior>-->
-                            </i:Interaction.Behaviors>
-                            <!-- <TextBlock Name="NoItemsLabel" Text="No items" IsVisible="False" /> -->
-                            <!-- </StackPanel> -->
-
-                        </Grid>
-
-                        <GridSplitter
-                            Grid.Column="1"
-                            Margin="-3,0"
-                            HorizontalAlignment="Stretch"
-                            Background="#808080"
-                            BorderBrush="Transparent"
-                            BorderThickness="3,0"
-                            ZIndex="9999" />
-
-                        <!--  Right box  -->
-                        <Grid Grid.Column="2" Margin="8 0">
-                            <ProgressBar IsVisible="{Binding LibraryViewModel.IsPreviewLoading}" Height="2"
-                                         IsIndeterminate="True"
-                                         VerticalAlignment="Top" />
-                            <Image
-                                Stretch="Uniform"
-                                Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" />
-                            <ScrollViewer>
-                                <TextBlock
-                                    Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" />
-                            </ScrollViewer>
-                            <Button
-                                Margin="20"
-                                Padding="16"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}"
-                                Content="Add to playlist" />
-                        </Grid>
-
-                    </Grid>
-                </TabItem>
-
-            </TabControl>
+                    <!-- -->
+                    <!--     ~1~  Right box  @1@ -->
+                    <!--     <Grid Grid.Column="2" Margin="8 0"> -->
+                    <!--         <ProgressBar IsVisible="{Binding LibraryViewModel.IsPreviewLoading}" Height="2" -->
+                    <!--                      IsIndeterminate="True" -->
+                    <!--                      VerticalAlignment="Top" /> -->
+                    <!--         <Image -->
+                    <!--             Stretch="Uniform" -->
+                    <!--             Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" /> -->
+                    <!--         <ScrollViewer> -->
+                    <!--             <TextBlock -->
+                    <!--                 Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" /> -->
+                    <!--         </ScrollViewer> -->
+                    <!--         <Button -->
+                    <!--             Margin="20" -->
+                    <!--             Padding="16" -->
+                    <!--             HorizontalAlignment="Right" -->
+                    <!--             VerticalAlignment="Bottom" -->
+                    <!--             Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}" -->
+                    <!--             Content="Add to playlist" /> -->
+                    <!--     </Grid> -->
+                    <!-- -->
+                    <!-- </Grid> -->
+            <!--     </TabItem> -->
+            <!-- -->
+            <!-- </TabControl> -->
 
         </Grid>
 
