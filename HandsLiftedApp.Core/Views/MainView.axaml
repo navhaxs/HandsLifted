@@ -252,6 +252,12 @@
                         Margin="0 0 -1 6"
                         Grid.Column="2">
                         <DockPanel>
+                            <DockPanel DockPanel.Dock="Bottom" Width="130" HorizontalAlignment="Right">
+                                <avalonia:MaterialIcon Kind="Minus" Foreground="#808080" /> 
+                                <avalonia:MaterialIcon Kind="Plus" DockPanel.Dock="Right" Foreground="#808080" />
+                                <Slider Minimum="50" Maximum="300" Name="BackgroundSlider"
+                                        Value="{Binding SlideThumbnailSizeMultiplier}" />
+                            </DockPanel>
                             <!-- -->
                             <!-- <Border -->
                             <!--     Height="50" -->
@@ -311,7 +317,7 @@
                             <!--                         Background="Transparent" -->
                             <!--                         BorderThickness="0" -->
                             <!--                         Click="OnScrollToItemClick" -->
-                            <!--                         FontSize="16" />--> 
+                            <!--                         FontSize="16" />-->
                             <!--         ~1~ <TextBlock @1@ -->
                             <!--         ~1~     Grid.Column="1" @1@ -->
                             <!--         ~1~     HorizontalAlignment="Center" @1@ -->

@@ -100,7 +100,7 @@ namespace HandsLiftedApp.Core
             // TODO important - refactor to:
             // 1. Create plain Item object
             // 2. (Callee) Convert plain Item object to "ItemInstance" - refactor this code from HandsLiftedDocXmlSerializer
-            string filename = filePath.ToLower();
+            string filename = filePath;
 
             if (filePath.ToLower().EndsWith(".xml"))
             {

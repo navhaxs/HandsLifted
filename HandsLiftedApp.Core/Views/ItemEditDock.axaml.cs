@@ -47,6 +47,8 @@ namespace HandsLiftedApp.Core.Views
                     if (filePaths == null || filePaths.Count == 0) return;
 
                     instance.SourcePresentationFile = filePaths[0].Path.LocalPath;
+                    
+                    instance.Sync();
                 }
                 catch (Exception ex)
                 {

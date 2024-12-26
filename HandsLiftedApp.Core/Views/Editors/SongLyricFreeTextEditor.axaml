@@ -34,7 +34,7 @@
         <Button
             Click="ParseAndLoadFromText_OnClick"
             Name="AddItemButton"
-            Margin="6,0,6,8"
+            Margin="6,0,6,6"
             Padding="12"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"

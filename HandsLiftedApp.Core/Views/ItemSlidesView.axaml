@@ -20,6 +20,7 @@
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:slides1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
     xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -107,9 +108,7 @@
                 </i:BehaviorCollectionTemplate>
             </Setter>-->
         </Style>
-        
     </UserControl.Styles>
-
     
     <ContentControl Content="{Binding}">
         <ContentControl.ContentTemplate>
@@ -342,30 +341,28 @@
                                             <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
                                             <WrapPanel>
                                                 <WrapPanel.ItemHeight>
-                                                    200
-                                                    <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                                    <MultiBinding Converter="{StaticResource MultiplicationConverter}">
                                                         <Binding
                                                             FallbackValue="200"
-                                                            Path="ItemHeight"
-                                                            Source="{x:Static app:Globals.Preferences}" />
+                                                            Path="MainViewModel.ItemHeight"
+                                                            Source="{x:Static app:Globals.Instance}" />
                                                         <Binding
                                                             FallbackValue="1"
-                                                            Path="SlideThumbnailSizeMultiplier"
-                                                            Source="{x:Static app:Globals.Preferences}" />
-                                                    </MultiBinding>-->
+                                                            Path="MainViewModel.SlideThumbnailSizeMultiplier"
+                                                            Source="{x:Static app:Globals.Instance}" />
+                                                    </MultiBinding>
                                                 </WrapPanel.ItemHeight>
                                                 <WrapPanel.ItemWidth>
-                                                    290
-                                                    <!--<MultiBinding Converter="{StaticResource MultiplicationConverter}">
+                                                    <MultiBinding Converter="{StaticResource MultiplicationConverter}">
                                                         <Binding
                                                             FallbackValue="290"
-                                                            Path="ItemWidth"
-                                                            Source="{x:Static app:Globals.Preferences}" />
+                                                            Path="MainViewModel.ItemWidth"
+                                                            Source="{x:Static app:Globals.Instance}" />
                                                         <Binding
                                                             FallbackValue="1"
-                                                            Path="SlideThumbnailSizeMultiplier"
-                                                            Source="{x:Static app:Globals.Preferences}" />
-                                                    </MultiBinding>-->
+                                                            Path="MainViewModel.SlideThumbnailSizeMultiplier"
+                                                            Source="{x:Static app:Globals.Instance}" />
+                                                    </MultiBinding>
                                                 </WrapPanel.ItemWidth>
                                             </WrapPanel>
                                         </ItemsPanelTemplate>

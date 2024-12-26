@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -158,7 +159,7 @@ public class MainViewModel : ViewModelBase
                         var song = new SongItemInstance(Playlist);
                         itemToInsert = song;
                         SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
-                        SingleSongEditorWindow seq = new SingleSongEditorWindow() { DataContext = vm };
+                        SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
                         seq.Show();
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:
@@ -436,21 +437,23 @@ public class MainViewModel : ViewModelBase
         // TODO broken 
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Thread.Sleep(2000);
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return;
+            
             if (ProjectorWindow == null)
             {
-                // ProjectorWindow = new ProjectorWindow() { DataContext = this };
+                ProjectorWindow = new ProjectorWindow() { DataContext = this };
             }
 
-            // ToggleProjectorWindow(Globals.Instance.AppPreferences.OnStartupShowOutput);
+            ToggleProjectorWindow(Globals.Instance.AppPreferences.OnStartupShowOutput);
 
-            // if (StageDisplayWindow == null)
-            // {
-                // StageDisplayWindow = new StageDisplayWindow();
-                // StageDisplayWindow.DataContext = this;
-            // }
+            if (StageDisplayWindow == null)
+            {
+                StageDisplayWindow = new StageDisplayWindow();
+                StageDisplayWindow.DataContext = this;
+            }
 
-            // ToggleStageDisplayWindow(Globals.Instance.AppPreferences.OnStartupShowStage);
+            ToggleStageDisplayWindow(Globals.Instance.AppPreferences.OnStartupShowStage);
         });
     }
 
@@ -512,12 +515,28 @@ public class MainViewModel : ViewModelBase
 
     #region UI
 
-    private int _BottomLeftPanelSelectedTabIndex = 0;
+    private int _bottomLeftPanelSelectedTabIndex = 0;
 
     public int BottomLeftPanelSelectedTabIndex
     {
-        get => _BottomLeftPanelSelectedTabIndex;
-        set => this.RaiseAndSetIfChanged(ref _BottomLeftPanelSelectedTabIndex, value);
+        get => _bottomLeftPanelSelectedTabIndex;
+        set => this.RaiseAndSetIfChanged(ref _bottomLeftPanelSelectedTabIndex, value);
+    }
+
+    private double _slideThumbnailSizeMultiplier = 80;
+    public double SlideThumbnailSizeMultiplier
+    {
+        get => _slideThumbnailSizeMultiplier;
+        set => this.RaiseAndSetIfChanged(ref _slideThumbnailSizeMultiplier, value);
+    }
+    
+    public int ItemHeight
+    {
+        get => 200;
+    }
+    public int ItemWidth
+    {
+        get => 290;
     }
 
     #endregion

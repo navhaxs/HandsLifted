@@ -209,7 +209,7 @@ namespace HandsLiftedApp.Core.ViewModels
             CreateNewSongCommand = ReactiveCommand.Create(() =>
             {
                 // TODO remove dependency on Globals.MainViewModel.Playlist 
-                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SingleSongEditorWindow(), false,
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
                     new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
             });
 

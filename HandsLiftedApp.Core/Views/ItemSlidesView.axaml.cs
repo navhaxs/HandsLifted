@@ -57,7 +57,7 @@ namespace HandsLiftedApp.Controls
                 // {
                 //             
                 // };
-                SingleSongEditorWindow songEditorWindow = new SingleSongEditorWindow() { DataContext = songEditorViewModel };
+                SongEditorWindow songEditorWindow = new SongEditorWindow() { DataContext = songEditorViewModel };
                 songEditorWindow.Show();
                 return;
             }

@@ -72,7 +72,7 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
             
             OnCreateNewSongCommand = ReactiveCommand.Create(() =>
             {
-                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SingleSongEditorWindow(), false,
+                MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
                     new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
             });
         }
