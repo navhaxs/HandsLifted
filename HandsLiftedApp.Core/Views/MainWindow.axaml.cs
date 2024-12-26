@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reactive;
@@ -7,6 +8,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
@@ -228,13 +230,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         }
     }
 
-    private async Task ShowOpenFileDialog(IInteractionContext<Unit, string[]?> interaction)
+    private async Task ShowOpenFileDialog(IInteractionContext<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> interaction)
     {
         try
         {
-            var dialog = new OpenFileDialog() { AllowMultiple = true };
-            var fileNames = await dialog.ShowAsync(this);
-            interaction.SetOutput(fileNames);
+            IReadOnlyList<IStorageFile> files = await StorageProvider.OpenFilePickerAsync(interaction.Input ?? new FilePickerOpenOptions
+            {
+                AllowMultiple = true
+            });
+            interaction.SetOutput(files);
         }
         catch (Exception e)
         {

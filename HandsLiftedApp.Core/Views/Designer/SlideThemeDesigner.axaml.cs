@@ -227,12 +227,37 @@ namespace HandsLiftedApp.Core.Views.Designer
         {
             try
             {
-                var filePaths = await Globals.Instance.MainViewModel.ShowOpenFileDialog.Handle(Unit.Default);
-                if (filePaths == null || filePaths.Length == 0) return;
+                var filePaths = await Globals.Instance.MainViewModel.ShowOpenFileDialog.Handle(
+                    new FilePickerOpenOptions()
+                    {
+                        AllowMultiple = false,
+                        Title = "Select Background Graphic",
+                        FileTypeFilter = new List<FilePickerFileType>()
+                        {
+                            new FilePickerFileType("Image Files")
+                            {
+                                Patterns = new List<string>()
+                                {
+                                    "*.png",
+                                    "*.jpg",
+                                    "*.jpeg",
+                                    "*.bmp"
+                                }
+                            },
+                            new FilePickerFileType("All Files")
+                            {
+                                Patterns = new List<string>()
+                                {
+                                    "*.*"
+                                }
+                            }
+                        }
+                    });
+                if (filePaths == null || filePaths.Count == 0) return;
 
-                if (AssetLoader.Exists(new Uri(filePaths[0])) || File.Exists(filePaths[0]))
+                if (AssetLoader.Exists(filePaths[0].Path) || File.Exists(filePaths[0].TryGetLocalPath()))
                 {
-                    bgGraphicFilePath.Text = filePaths[0];
+                    bgGraphicFilePath.Text = filePaths[0].TryGetLocalPath();
                 }
             }
             catch (Exception ex)

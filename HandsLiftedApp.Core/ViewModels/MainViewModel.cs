@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ByteSizeLib;
 using Config.Net;
@@ -71,7 +73,7 @@ public class MainViewModel : ViewModelBase
         SlideClickCommand = ReactiveCommand.CreateFromTask<object>(OnSlideClickCommand);
 
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
-        ShowOpenFileDialog = new Interaction<Unit, string[]?>();
+        ShowOpenFileDialog = new Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?>();
 
         EditSlideInfoCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
         {
@@ -112,10 +114,34 @@ public class MainViewModel : ViewModelBase
                 switch (addItemMessage.Type)
                 {
                     case AddItemMessage.AddItemType.Presentation:
-                        var filePaths = await ShowOpenFileDialog.Handle(Unit.Default);
-                        if (filePaths.Length > 0)
+                        var filePaths = await ShowOpenFileDialog.Handle(new FilePickerOpenOptions()
                         {
-                            itemToInsert = CreateItem.OpenPresentationFile(filePaths[0], Playlist);
+                            AllowMultiple = false,
+                            Title = "Select Presentation File",
+                            FileTypeFilter = new List<FilePickerFileType>()
+                            {
+                                new FilePickerFileType("Presentation Files")
+                                {
+                                    Patterns = new List<string>()
+                                    {
+                                        "*.ppt",
+                                        "*.pptx",
+                                        "*.odt",
+                                        "*.pdf",
+                                    }
+                                },
+                                new FilePickerFileType("All Files")
+                                {
+                                    Patterns = new List<string>()
+                                    {
+                                        "*.*"
+                                    }
+                                }
+                            }
+                        });
+                        if (filePaths.Count > 0)
+                        {
+                            itemToInsert = CreateItem.OpenPresentationFile(filePaths[0].TryGetLocalPath(), Playlist);
                         }
 
                         break;
@@ -136,7 +162,26 @@ public class MainViewModel : ViewModelBase
                         seq.Show();
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:
-                        filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
+                        filePaths = await ShowOpenFileDialog.Handle(new FilePickerOpenOptions()
+                        {
+                            AllowMultiple = false,
+                            Title = "Select Media File",
+                            FileTypeFilter = new List<FilePickerFileType>()
+                            {
+                                new FilePickerFileType("Media File")
+                                {
+                                    Patterns = Constants.SUPPORTED_VIDEO.Select(ext => $"*.{ext}")
+                                        .Concat(Constants.SUPPORTED_IMAGE.Select(ext => $"*.{ext}")).ToList()
+                                },
+                                new FilePickerFileType("All Files")
+                                {
+                                    Patterns = new List<string>()
+                                    {
+                                        "*.*"
+                                    }
+                                }
+                            }
+                        });
                         MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(Playlist)
                             { Title = "New media group" };
 
@@ -145,10 +190,10 @@ public class MainViewModel : ViewModelBase
                             if (filePath != null && filePath is string)
                             {
                                 DateTime now = DateTime.Now;
-                                string fileName = Path.GetFileName(filePath);
-                                string folderName = Path.GetDirectoryName(filePath);
+                                string fileName = Path.GetFileName(filePath.TryGetLocalPath());
+                                string folderName = Path.GetDirectoryName(filePath.TryGetLocalPath());
                                 mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = filePath });
+                                    { SourceMediaFilePath = filePath.TryGetLocalPath() });
                             }
                         }
 
@@ -160,27 +205,27 @@ public class MainViewModel : ViewModelBase
                     case AddItemMessage.AddItemType.Comment:
                         itemToInsert = new CommentItem();
                         break;
-                    case AddItemMessage.AddItemType.BibleReadingSlideGroup:
-                        filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
-                        MediaGroupItemInstance mediaGroupItem2 = new MediaGroupItemInstance(Playlist)
-                            { Title = "New media group" };
-
-                        foreach (var filePath in filePaths)
-                        {
-                            if (filePath != null && filePath is string)
-                            {
-                                DateTime now = DateTime.Now;
-                                string fileName = Path.GetFileName(filePath);
-                                string folderName = Path.GetDirectoryName(filePath);
-                                mediaGroupItem2.Items.Add(new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = filePath });
-                            }
-                        }
-
-                        mediaGroupItem2.GenerateSlides();
-
-                        itemToInsert = mediaGroupItem2;
-                        break;
+                    // case AddItemMessage.AddItemType.BibleReadingSlideGroup:
+                    //     filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
+                    //     MediaGroupItemInstance mediaGroupItem2 = new MediaGroupItemInstance(Playlist)
+                    //         { Title = "New media group" };
+                    //
+                    //     foreach (var filePath in filePaths)
+                    //     {
+                    //         if (filePath != null && filePath is string)
+                    //         {
+                    //             DateTime now = DateTime.Now;
+                    //             string fileName = Path.GetFileName(filePath);
+                    //             string folderName = Path.GetDirectoryName(filePath);
+                    //             mediaGroupItem2.Items.Add(new MediaGroupItem.MediaItem()
+                    //                 { SourceMediaFilePath = filePath });
+                    //         }
+                    //     }
+                    //
+                    //     mediaGroupItem2.GenerateSlides();
+                    //
+                    //     itemToInsert = mediaGroupItem2;
+                    //     break;
                     default:
                         Debug.Print($"Unknown AddItemType: [${addItemMessage.Type}]");
                         break;
@@ -286,7 +331,7 @@ public class MainViewModel : ViewModelBase
         _ = Update(); // calling an async function we do not want to await
     }
 
-    public Interaction<Unit, string[]?> ShowOpenFileDialog { get; }
+    public Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> ShowOpenFileDialog { get; }
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
 

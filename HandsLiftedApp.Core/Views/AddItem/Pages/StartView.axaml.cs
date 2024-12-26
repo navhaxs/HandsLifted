@@ -43,11 +43,11 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
         private async void RunImport(AddItemViewModel vm)
         {
             var filePaths = await vm.ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list
-            if (filePaths != null)
+            if (filePaths != null && filePaths.Length > 0)
             {
                 MessageBus.Current.SendMessage(new AddItemByFilePathMessage(new List<string>(filePaths), vm.ItemInsertIndex));
+                CloseWindow();
             }
-            CloseWindow();
         }
 
         private void MusicButton_OnClick(object? sender, RoutedEventArgs e)

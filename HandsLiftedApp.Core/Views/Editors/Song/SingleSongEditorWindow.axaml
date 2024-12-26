@@ -66,14 +66,14 @@
             </Flyout>
 
             <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="BackgroundBrush">#f6f4f2</SolidColorBrush>
-                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#edeafc</SolidColorBrush>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush>
-                    <SolidColorBrush x:Key="HeaderBackgroundBrush">#383838</SolidColorBrush>
-                </ResourceDictionary>
+                <!-- <ResourceDictionary x:Key="Light"> -->
+                <!--     <SolidColorBrush x:Key="BackgroundBrush">#f6f4f2</SolidColorBrush> -->
+                <!--     <SolidColorBrush x:Key="HeaderBackgroundBrush">#edeafc</SolidColorBrush> -->
+                <!-- </ResourceDictionary> -->
+                <!-- <ResourceDictionary x:Key="Dark"> -->
+                <!--     <SolidColorBrush x:Key="BackgroundBrush">#282828</SolidColorBrush> -->
+                <!--     <SolidColorBrush x:Key="HeaderBackgroundBrush">#383838</SolidColorBrush> -->
+                <!-- </ResourceDictionary> -->
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -100,18 +100,18 @@
                                         <Setter Property="BorderThickness" Value="0" />
                                     </Style>
                                 </DockPanel.Styles>
-                                <Border Background="White">
-                                    <Border.Effect>
-                                        <DropShadowEffect
-                                            BlurRadius="6"
-                                            OffsetX="0"
-                                            OffsetY="1"
-                                            Color="#55000000" />
-                                    </Border.Effect>
+                                <!-- <Border Background="White"> -->
+                                <!--     <Border.Effect> -->
+                                <!--         <DropShadowEffect -->
+                                <!--             BlurRadius="6" -->
+                                <!--             OffsetX="0" -->
+                                <!--             OffsetY="1" -->
+                                <!--             Color="#55000000" /> -->
+                                <!--     </Border.Effect> -->
 
                                     <song:SongEditorControl />
                                   
-                                </Border>
+                                <!-- </Border> -->
                             </DockPanel>
                         <!-- </ThemeVariantScope> -->
                     </Grid>

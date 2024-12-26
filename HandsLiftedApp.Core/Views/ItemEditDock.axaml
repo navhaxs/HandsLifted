@@ -30,11 +30,25 @@
                                 <Flyout
                                     Placement="Bottom">
                                     <StackPanel Margin="6" MinWidth="200">
+                                        <TextBlock TextAlignment="Center">PowerPoint Presentation</TextBlock>
+                                        <TextBlock TextAlignment="Center">File: <Run Text="{Binding SourcePresentationFile}"/></TextBlock>
                                         <TextBlock TextAlignment="Center">Last Sync: <Run Text="{Binding LastSyncDateTime}"/></TextBlock>
+                                        <Button Click="PowerPoint_EditButton_OnClick" Margin="0 6 0 0">
+                                            <DockPanel>
+                                                <avalonia:MaterialIcon Kind="Pencil" Margin="0 0 5 0" />
+                                                <TextBlock>Edit in PowerPoint</TextBlock>
+                                            </DockPanel>
+                                        </Button>
                                         <Button Click="Button_OnClick" Margin="0 6 0 0">
                                             <DockPanel>
                                                 <avalonia:MaterialIcon Kind="Sync" Margin="0 0 5 0" />
                                                 <TextBlock>Sync</TextBlock>
+                                            </DockPanel>
+                                        </Button>
+                                        <Button Click="PowerPoint_ChangeFileButton_OnClick" Margin="0 6 0 0">
+                                            <DockPanel>
+                                                <avalonia:MaterialIcon Kind="SwapHorizontal" Margin="0 0 5 0" />
+                                                <TextBlock>Change file</TextBlock>
                                             </DockPanel>
                                         </Button>
                                     </StackPanel>
