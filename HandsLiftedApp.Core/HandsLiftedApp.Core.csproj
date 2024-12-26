@@ -245,7 +245,7 @@
     <ItemGroup>
         <AdditionalFiles Include="Views\Designer\DesignerView.axaml"/>
         <AdditionalFiles Include="Views\Designer\SlideDesignerWindow.axaml"/>
-        <AdditionalFiles Include="Views\Library\LibraryView.axaml"/>
+wip        <AdditionalFiles Include="Views\LibraryView\LibraryView.axaml" />
         <AdditionalFiles Include="Views\StageDisplayLayout\DefaultLayout.axaml"/>
         <AdditionalFiles Include="Views\StageDisplayLayout\SongLayout.axaml"/>
     </ItemGroup>

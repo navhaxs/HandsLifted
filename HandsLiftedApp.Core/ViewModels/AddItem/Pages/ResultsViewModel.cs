@@ -10,7 +10,6 @@ using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
-using HandsLiftedApp.Core.Views.Editors.Song;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using Serilog;

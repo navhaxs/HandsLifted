@@ -7,11 +7,11 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.Library;
 
-namespace HandsLiftedApp.Core.Views.Library
+namespace HandsLiftedApp.Core.Views.LibraryView
 {
-    public partial class LibraryView : UserControl
+    public partial class LibraryQueryView : UserControl
     {
-        public LibraryView()
+        public LibraryQueryView()
         {
             InitializeComponent();
         }

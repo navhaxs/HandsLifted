@@ -5,7 +5,6 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
              xmlns:pages="clr-namespace:HandsLiftedApp.Core.ViewModels.AddItem.Pages"
-             xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.Library"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="520"
              x:DataType="pages:ResultsViewModel"
              x:Class="HandsLiftedApp.Core.Views.AddItem.Pages.ResultsView">
@@ -68,7 +67,6 @@
             <!-- <controls:IconButton Kind="Web" Text="Import from SongSelect" /> -->
         </UniformGrid>
 
-        <library:LibraryView />
         <ListBox
             ItemsSource="{Binding SearchResults}"
             CornerRadius="3"

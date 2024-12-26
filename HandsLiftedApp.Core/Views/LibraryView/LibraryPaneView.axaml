@@ -7,7 +7,7 @@
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-    xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.Library"
+    xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
     d:DesignHeight="200"
     d:DesignWidth="600"
     x:DataType="viewModels:MainViewModel"
@@ -75,7 +75,7 @@
                 ZIndex="9999" />
 
                     <Grid  Grid.Column="2">
-                        <library:LibraryView DataContext="{Binding LibraryViewModel.SelectedLibrary}" />
+                        <library:LibraryQueryView DataContext="{Binding LibraryViewModel.SelectedLibrary}" />
                         <Button
                             Margin="20"
                             Padding="16"
