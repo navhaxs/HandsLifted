@@ -57,7 +57,7 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
                 if (DataContext is AddItemPageViewModel vm)
                 {
                     vm.AddItemViewModel.Page =
-                        new ResultsViewModel(vm.AddItemViewModel, control.DataContext as Library);
+                        new ResultsViewModel(vm.AddItemViewModel, control.DataContext as Models.Library.Library);
                 }
             }
         }

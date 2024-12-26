@@ -389,7 +389,7 @@
             CornerRadius="6,6,6,0"
             DockPanel.Dock="Bottom">
             <Carousel BorderThickness="0" SelectedIndex="{Binding BottomLeftPanelSelectedTabIndex}">
-                <library:LibraryView />
+                <library:LibraryPaneView />
                 <designer:DesignerView />
             </Carousel>
         </Border>

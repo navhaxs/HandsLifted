@@ -1,21 +1,24 @@
-﻿using System;
+using System;
 using System.Diagnostics;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
+using Castle.Core.Logging;
 using HandsLiftedApp.Core.Models.Library;
 
-namespace HandsLiftedApp.Core.Views.Library
+namespace HandsLiftedApp.Views.Library
 {
-    public partial class LibraryView : UserControl
+    public partial class LibraryPaneView : UserControl
     {
-        public LibraryView()
+        public LibraryPaneView()
         {
             InitializeComponent();
+
+            //this.DataContext = new LogoSlide();
         }
-        
+
+        private const string CustomFormat = "application/xxx-avalonia-controlcatalog-custom";
+
         private async void DockPanel_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (sender is Control control)
@@ -24,7 +27,7 @@ namespace HandsLiftedApp.Core.Views.Library
                 {
                     var dragData = new DataObject();
                     var topLevel = TopLevel.GetTopLevel(this);
-                    IStorageFile originalCoverImage = await topLevel.StorageProvider.TryGetFileFromPathAsync((Uri)new Uri(libraryItem.FullFilePath));
+                    IStorageFile originalCoverImage = await topLevel.StorageProvider.TryGetFileFromPathAsync(new Uri(libraryItem.FullFilePath));
                     
                     dragData.Set(DataFormats.Files, new[] { originalCoverImage });
 
@@ -51,6 +54,5 @@ namespace HandsLiftedApp.Core.Views.Library
                 }
             }
         }
-
     }
 }

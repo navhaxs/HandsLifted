@@ -147,7 +147,7 @@
             <DependentUpon>SongLyricFreeTextEditor.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Library\LibraryView.axaml.cs">
+        <Compile Update="Views\Library\LibraryPaneView.axaml.cs">
             <DependentUpon>LibraryView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
