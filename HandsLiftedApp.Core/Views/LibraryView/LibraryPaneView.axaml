@@ -8,6 +8,7 @@
     xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     d:DesignHeight="200"
     d:DesignWidth="600"
     x:DataType="viewModels:MainViewModel"
@@ -25,21 +26,21 @@
     </UserControl.Styles>
 
     <!--  Wrapper  -->
-    <DockPanel>
+    <DockPanel IsVisible="{Binding Converter={x:Static ObjectConverters.IsNotNull}}">
 
         <!--  Search box  -->
-        <TextBox
-            CornerRadius="99"
-            MinWidth="400"
-            MaxWidth="400"
-            Padding="12,4"
-            HorizontalAlignment="Left"
-            Background="#35000000"
-            BorderThickness="1"
-            DockPanel.Dock="Top"
-            FontSize="16"
-            Text="{Binding LibraryViewModel.SearchTerm}"
-            Watermark="Search songs and content..." />
+        <!-- <TextBox -->
+        <!--     CornerRadius="99" -->
+        <!--     MinWidth="400" -->
+        <!--     MaxWidth="400" -->
+        <!--     Padding="12,4" -->
+        <!--     HorizontalAlignment="Left" -->
+        <!--     Background="#35000000" -->
+        <!--     BorderThickness="1" -->
+        <!--     DockPanel.Dock="Top" -->
+        <!--     FontSize="16" -->
+        <!--     Text="{Binding LibraryViewModel.SearchTerm}" -->
+        <!--     Watermark="Search songs and content..." /> -->
 
         <!--  3 Pane Splitter  -->
         <Grid ColumnDefinitions="200,1,*">
@@ -52,16 +53,24 @@
                 <ListBox Margin="0,0,0,0" BorderThickness="0"
                          ItemsSource="{Binding LibraryViewModel.Libraries}"
                          SelectedItem="{Binding LibraryViewModel.SelectedLibrary, Mode=OneWayToSource}">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="ContextMenu">
+                                <ContextMenu>
+                                    <MenuItem Header="Open in Windows Explorer" Click="MenuItem_OnClick">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Foreground="#888888" Kind="OpenInNew" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Setter>
+                        </Style>
+                    </ListBox.Styles>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Label}" />
+                            <TextBlock Text="{Binding Label}" Padding="6 4" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-                    <!-- <ListBoxItem IsSelected="True">Songs</ListBoxItem> -->
-                    <!-- <ListBoxItem>Media</ListBoxItem> -->
-                    <!-- <ListBoxItem>Presentations</ListBoxItem> -->
-                    <!-- <ListBoxItem>Countdowns</ListBoxItem> -->
-                    <!-- <ListBoxItem>Section Graphics &amp; Logos</ListBoxItem> -->
                 </ListBox>
             </DockPanel>
 
@@ -74,40 +83,42 @@
                 BorderThickness="3,0"
                 ZIndex="9999" />
 
-                    <Grid  Grid.Column="2">
-                        <library:LibraryQueryView DataContext="{Binding LibraryViewModel.SelectedLibrary}" />
-                        <Button
-                            Margin="20"
-                            Padding="16"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}"
-                            Content="Add to playlist" />
-                    </Grid>
+            <Grid Grid.Column="2">
 
-                    <!-- -->
-                    <!--     ~1~  Right box  @1@ -->
-                    <!--     <Grid Grid.Column="2" Margin="8 0"> -->
-                    <!--         <ProgressBar IsVisible="{Binding LibraryViewModel.IsPreviewLoading}" Height="2" -->
-                    <!--                      IsIndeterminate="True" -->
-                    <!--                      VerticalAlignment="Top" /> -->
-                    <!--         <Image -->
-                    <!--             Stretch="Uniform" -->
-                    <!--             Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" /> -->
-                    <!--         <ScrollViewer> -->
-                    <!--             <TextBlock -->
-                    <!--                 Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" /> -->
-                    <!--         </ScrollViewer> -->
-                    <!--         <Button -->
-                    <!--             Margin="20" -->
-                    <!--             Padding="16" -->
-                    <!--             HorizontalAlignment="Right" -->
-                    <!--             VerticalAlignment="Bottom" -->
-                    <!--             Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}" -->
-                    <!--             Content="Add to playlist" /> -->
-                    <!--     </Grid> -->
-                    <!-- -->
-                    <!-- </Grid> -->
+                <library:LibraryQueryView DataContext="{Binding LibraryViewModel.ActiveQuery}" />
+
+                <Button
+                    Margin="20"
+                    Padding="16"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}"
+                    Content="Add to playlist" />
+            </Grid>
+
+            <!-- -->
+            <!--     ~1~  Right box  @1@ -->
+            <!--     <Grid Grid.Column="2" Margin="8 0"> -->
+            <!--         <ProgressBar IsVisible="{Binding LibraryViewModel.IsPreviewLoading}" Height="2" -->
+            <!--                      IsIndeterminate="True" -->
+            <!--                      VerticalAlignment="Top" /> -->
+            <!--         <Image -->
+            <!--             Stretch="Uniform" -->
+            <!--             Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" /> -->
+            <!--         <ScrollViewer> -->
+            <!--             <TextBlock -->
+            <!--                 Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" /> -->
+            <!--         </ScrollViewer> -->
+            <!--         <Button -->
+            <!--             Margin="20" -->
+            <!--             Padding="16" -->
+            <!--             HorizontalAlignment="Right" -->
+            <!--             VerticalAlignment="Bottom" -->
+            <!--             Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}" -->
+            <!--             Content="Add to playlist" /> -->
+            <!--     </Grid> -->
+            <!-- -->
+            <!-- </Grid> -->
             <!--     </TabItem> -->
             <!-- -->
             <!-- </TabControl> -->

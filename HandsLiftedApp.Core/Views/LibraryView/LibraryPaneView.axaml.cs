@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Castle.Core.Logging;
 using HandsLiftedApp.Core.Models.Library;
@@ -53,6 +54,13 @@ namespace HandsLiftedApp.Views.Library
                     // }
                 }
             }
+        }
+
+        private void MenuItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control { DataContext: Core.Models.Library.Library library })
+                Process.Start(new ProcessStartInfo(library.Config.Directory) { UseShellExecute = true });
+
         }
     }
 }

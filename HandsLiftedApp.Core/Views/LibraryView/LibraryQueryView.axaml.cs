@@ -52,5 +52,12 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             }
         }
 
+        private void InputElement_OnKeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                SearchBox.Text = "";
+            }
+        }
     }
 }

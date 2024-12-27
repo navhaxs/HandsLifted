@@ -84,7 +84,7 @@
                         Padding="6"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Background="#EAEAEA"
+                        Background="#AAAAAA"
                         BoxShadow="inset 0 0 2 #c1c1c1"
                         CornerRadius="6">
                         <ScrollViewer>

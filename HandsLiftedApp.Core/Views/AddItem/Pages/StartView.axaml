@@ -54,7 +54,6 @@
                 Background="Transparent"
                 BorderThickness=" 0 0 0 1"
                 FontSize="20"
-                Text="{Binding LibraryViewModel.SearchTerm}"
                 Watermark="Search songs and content..." />
 
         </DockPanel>

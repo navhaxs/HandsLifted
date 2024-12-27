@@ -1,0 +1,53 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="items:SongItem"
+             x:Class="HandsLiftedApp.Core.Views.LibraryView.SongPreview">
+    <StackPanel>
+        <TextBlock Text="{Binding Title}" />
+        <ItemsControl Margin="0" ItemsSource="{Binding Stanzas}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Border Background="{Binding Colour}">
+                            <DockPanel>
+                                <TextBox
+                                    Padding="16,6,80,6"
+                                    AcceptsReturn="False"
+                                    Background="Transparent"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Foreground="Black"
+                                    Text="{Binding Path=Name}"
+                                    TextWrapping="Wrap"
+                                    Watermark="Stanza Name">
+                                </TextBox>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- Lyrics Text -->
+                        <TextBox
+                            Padding="16,6,16,6"
+                            AcceptsReturn="True"
+                            Background="Transparent"
+                            FontSize="14"
+                            LineHeight="20"
+                            Foreground="Black"
+                            Text="{Binding Path=Lyrics}"
+                            TextWrapping="Wrap"
+                            Watermark="Stanza Lyrics">
+                        </TextBox>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

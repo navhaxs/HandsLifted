@@ -12,7 +12,14 @@ namespace HandsLiftedApp.Core.ViewModels
     public class LibraryQueryViewModel : ReactiveObject
     {
         private readonly ObservableAsPropertyHelper<IEnumerable<LibraryItem>> _searchResults;
-        private readonly Library _library;
+        private LibraryItem _selectedLibraryItem;
+        private readonly List<Library> _libraries;
+        
+        private readonly ObservableAsPropertyHelper<bool> _isMediaBin;
+        public bool IsMediaBin
+        {
+            get => _isMediaBin.Value;
+        }
 
         private string _query;
         public string Query
@@ -21,6 +28,18 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _query, value);
         }
         
+        public LibraryItem SelectedLibraryItem
+        {
+            get => _selectedLibraryItem;
+            set => this.RaiseAndSetIfChanged(ref _selectedLibraryItem, value);
+        }
+        private readonly ObservableAsPropertyHelper<LibraryItemPreviewViewModel> _selectedItemPreview;
+
+        public LibraryItemPreviewViewModel SelectedLibraryItemPreview
+        {
+            get => _selectedItemPreview.Value;
+        }
+
         public IEnumerable<LibraryItem> SearchResults => _searchResults.Value;
 
         private string _searchTerm;
@@ -31,9 +50,13 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
         }
 
-        public bool IsMediaBin => true;
+        private bool IsLyricFile(string fullFilePath)
+        {
+            string str = fullFilePath.ToLower();
+            return str.EndsWith(".txt") || str.EndsWith(".xml");
+        }
 
-        public LibraryQueryViewModel()
+        public LibraryQueryViewModel(List<Library> _libraries)
         {
             _searchResults = this
                 .WhenAnyValue(x => x.SearchTerm)
@@ -44,15 +67,34 @@ namespace HandsLiftedApp.Core.ViewModels
                 .SelectMany(SearchLibrary)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
+
+            _isMediaBin = this
+                .WhenAnyValue(x => x.SearchResults)
+                .Select(x => x?.All(result => !IsLyricFile(result.FullFilePath)) ?? false)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.IsMediaBin);
+            
+            _selectedItemPreview = this
+                .WhenAnyValue(x => x.SelectedLibraryItem)
+                .Select(x => new LibraryItemPreviewViewModel(x))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.SelectedLibraryItemPreview);
+            
+            this._libraries = _libraries;
         }
         
         private async Task<IEnumerable<LibraryItem>> SearchLibrary(
             string? term, CancellationToken token)
         {
-            var items = _library?.Items?.OrderBy(a => a?.Title);
+            List<LibraryItem>? items = new();
+            foreach (var library in _libraries)
+            {
+                items.AddRange(library.Items?.OrderBy(a => a?.Title));
+            }
+            
             if (string.IsNullOrEmpty(term))
                 return items;
-
+       
             // TODO: filter by file *content* as well (full-text search)
             return items.Where(item => item.Title.ToLower().Contains(term));
         }

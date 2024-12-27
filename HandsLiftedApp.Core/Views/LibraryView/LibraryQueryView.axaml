@@ -5,54 +5,63 @@
              xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:library="clr-namespace:HandsLiftedApp.Core.Models.Library"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+             xmlns:libraryView="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:LibraryQueryViewModel"
              x:Class="HandsLiftedApp.Core.Views.LibraryView.LibraryQueryView">
-    <Grid>
-        <ListBox
-            HorizontalAlignment="Stretch"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            IsVisible="{Binding IsMediaBin}"
-            ItemsSource="{Binding SearchResults}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel ItemHeight="120" ItemWidth="200" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel PointerPressed="DockPanel_PointerPressed">
-                        <DockPanel.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Add to playlist" />
-                            </ContextMenu>
-                        </DockPanel.ContextMenu>
-                        <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
-                        <Viewbox>
-                            <Image asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}"
-                                   RenderOptions.BitmapInterpolationMode="LowQuality" />
-                        </Viewbox>
-                    </DockPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ListBox
-            HorizontalAlignment="Stretch"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            IsVisible="{Binding !IsMediaBin}"
-            ItemsSource="{Binding SearchResults}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel PointerPressed="DockPanel_PointerPressed">
-                        <DockPanel.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Add to playlist" />
-                            </ContextMenu>
-                        </DockPanel.ContextMenu>
-                        <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
-                    </DockPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </Grid>
+    <DockPanel>
+        <TextBox Watermark="Filter" x:Name="SearchBox" DockPanel.Dock="Top" Text="{Binding SearchTerm}"
+                 KeyDown="InputElement_OnKeyDown" />
+        <Grid>
+            <ListBox
+                HorizontalAlignment="Stretch"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                IsVisible="{Binding IsMediaBin}"
+                ItemsSource="{Binding SearchResults}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel ItemHeight="120" ItemWidth="200" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel PointerPressed="DockPanel_PointerPressed">
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add to playlist" />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+                            <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
+                            <Viewbox>
+                                <Image asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}"
+                                       RenderOptions.BitmapInterpolationMode="LowQuality" />
+                            </Viewbox>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Grid IsVisible="{Binding !IsMediaBin}" ColumnDefinitions="*,1,*">
+                <ListBox
+                    HorizontalAlignment="Stretch"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ItemsSource="{Binding SearchResults}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel PointerPressed="DockPanel_PointerPressed">
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add to playlist" />
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
+                                <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <GridSplitter Grid.Column="1" />
+                <libraryView:SongPreview Grid.Column="2" DataContext="{Binding SelectedLibraryItem}" />
+            </Grid>
+        </Grid>
+    </DockPanel>
+
 </UserControl>

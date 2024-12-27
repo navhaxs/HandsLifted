@@ -109,101 +109,15 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             ReloadLibraries();
 
-            Debug.Print(LibraryConfig.ToString());
-
-            // constructor
-            _searchResults = this
-                .WhenAnyValue(x => x.SearchTerm)
-                //.Throttle(TimeSpan.FromMilliseconds(100))
-                .Select(term => term?.Trim().ToLower())
-                .DistinctUntilChanged()
-                //.Where(term => !string.IsNullOrWhiteSpace(term))
-                .SelectMany(SearchLibrary)
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .ToProperty(this, x => x.SearchResults);
-
-            // We subscribe to the "ThrownExceptions" property of our OAPH, where ReactiveUI 
-            // marshals any exceptions that are thrown in SearchNuGetPackages method. 
-            // See the "Error Handling" section for more information about this.
-            _searchResults.ThrownExceptions.Subscribe(error =>
-            {
-                /* Handle errors here */
-            });
-
-            // A helper method we can use for Visibility or Spinners to show if results are available.
-            // We get the latest value of the SearchResults and make sure it's not null.
-            _isAvailable = this
-                .WhenAnyValue(x => x.SearchResults)
-                .Select(searchResults => searchResults != null)
-                .ToProperty(this, x => x.IsAvailable);
-
             _cancellationTokenSource = new CancellationTokenSource();
-
-            _selectedItemPreview = this.WhenAnyValue(x => x.SelectedLibraryItem, (_SelectedItem) =>
-                    {
-                        if (_SelectedItem != null)
-                        {
-                            try
-                            {
-                                string extension = new FileInfo(_SelectedItem.FullFilePath).Extension.ToLower();
-                                if (!Constants.SUPPORTED_IMAGE.Contains(extension.TrimStart('.')))
-                                {
-                                    long length = new FileInfo(_SelectedItem.FullFilePath).Length;
-                                    if (length < 200_000) // 0.2MB
-                                    {
-                                        return File.ReadAllText(_SelectedItem.FullFilePath);
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error("Attempt to read file for library preview failed", ex);
-                            }
-                        }
-
-                        return null;
-                    })
-                    .ToProperty(this, c => c.SelectedItemPreview)
-                ;
-            this.WhenAnyValue(x => x.SelectedLibraryItem)
-                .ObserveOn(RxApp.TaskpoolScheduler)
-                .Subscribe((_SelectedItem) =>
-                {
-                    // TODO implement this - early cancellation of BitmapLoader.LoadBitmap()
-                    _cancellationTokenSource.Cancel();
-
-                    if (_SelectedItem != null)
-                    {
-                        try
-                        {
-                            string extension = new FileInfo(_SelectedItem.FullFilePath).Extension.ToLower();
-                            if (Constants.SUPPORTED_IMAGE.Contains(extension.TrimStart('.')))
-                            {
-                                IsPreviewLoading = true;
-                                SelectedItemImagePreview = BitmapLoader.LoadBitmap(_SelectedItem.FullFilePath, 800);
-                                return;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error("Attempt to read file for library preview failed", ex);
-                        }
-                        finally
-                        {
-                            IsPreviewLoading = false;
-                        }
-                    }
-
-                    SelectedItemImagePreview = null;
-                });
 
             OnAddSelectedToPlaylistCommand = ReactiveCommand.Create(() =>
             {
-                if (SelectedLibraryItem != null)
-                {
-                    List<string> items = new List<string>() { SelectedLibraryItem.FullFilePath };
-                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(items));
-                }
+                // if (ActiveQuery != null)
+                // {
+                //     List<string> items = new List<string>() { ActiveQuery.FullFilePath };
+                //     MessageBus.Current.SendMessage(new AddItemByFilePathMessage(items));
+                // }
             });
 
             CreateNewSongCommand = ReactiveCommand.Create(() =>
@@ -217,6 +131,18 @@ namespace HandsLiftedApp.Core.ViewModels
             {
                 SelectedLibrary = Libraries.First();
             }
+
+            this.WhenAnyValue(t => t.SelectedLibrary).Subscribe(x =>
+            {
+                if (x == null)
+                {
+                    ActiveQuery = null;
+                }
+                else
+                {
+                    ActiveQuery = new LibraryQueryViewModel(new List<Library>(){x});
+                }                
+            });
         }
 
         private void WriteConfig()
@@ -261,54 +187,12 @@ namespace HandsLiftedApp.Core.ViewModels
             }
         }
 
-        // In ReactiveUI, this is the syntax to declare a read-write property
-        // that will notify Observers, as well as WPF, that a property has 
-        // changed. If we declared this as a normal property, we couldn't tell 
-        // when it has changed!
-        private string _searchTerm;
+        private LibraryQueryViewModel? _activeQuery;
 
-        public string SearchTerm
+        public LibraryQueryViewModel? ActiveQuery
         {
-            get => _searchTerm;
-            set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
-        }
-
-        // Here's the interesting part: In ReactiveUI, we can take IObservables
-        // and "pipe" them to a Property - whenever the Observable yields a new
-        // value, we will notify ReactiveObject that the property has changed.
-        // 
-        // To do this, we have a class called ObservableAsPropertyHelper - this
-        // class subscribes to an Observable and stores a copy of the latest value.
-        // It also runs an action whenever the property changes, usually calling
-        // ReactiveObject's RaisePropertyChanged.
-        private readonly ObservableAsPropertyHelper<IEnumerable<LibraryItem>> _searchResults;
-        public IEnumerable<LibraryItem> SearchResults => _searchResults.Value;
-
-        // Here, we want to create a property to represent when the application 
-        // is performing a search (i.e. when to show the "spinner" control that 
-        // lets the user know that the app is busy). We also declare this property
-        // to be the result of an Observable (i.e. its value is derived from 
-        // some other property)
-        private readonly ObservableAsPropertyHelper<bool> _isAvailable;
-        public bool IsAvailable => _isAvailable.Value;
-
-        private LibraryItem _selectedLibraryItem;
-
-        public LibraryItem SelectedLibraryItem
-        {
-            get => _selectedLibraryItem;
-            set => this.RaiseAndSetIfChanged(ref _selectedLibraryItem, value);
-        }
-
-        private async Task<IEnumerable<LibraryItem>> SearchLibrary(
-            string term, CancellationToken token)
-        {
-            return new List<LibraryItem>();
-            // if (term == null || term.Length == 0)
-            //     return Items;
-            //
-            // // TODO: filter by file *content* as well (full-text search)
-            // return Items.Where(item => item.Title.ToLower().Contains(term));
+            get => _activeQuery;
+            set => this.RaiseAndSetIfChanged(ref _activeQuery, value);
         }
 
         private ObservableCollection<Library> _libraries;
@@ -321,9 +205,5 @@ namespace HandsLiftedApp.Core.ViewModels
             get => _selectedLibrary;
             set => this.RaiseAndSetIfChanged(ref _selectedLibrary, value);
         }
-
-        // selected collection
-
-        // selected item previews
     }
 }
