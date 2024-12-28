@@ -1,0 +1,93 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:freeText="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor.FreeText"
+             xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
+             xmlns:slideElement="clr-namespace:HandsLiftedApp.Data.Models.SlideElement;assembly=HandsLiftedApp.Data"
+             xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="freeText:FreeTextSlideEditorViewModel"
+             x:Class="HandsLiftedApp.Core.Views.Editors.FreeText.FreeTextSlideEditorControl">
+    <Grid ColumnDefinitions="*,1,*,1,*">
+        <Grid RowDefinitions="*,1,*,30">
+            <ListBox ItemsSource="{Binding Slide.SlideElements}" Name="ListBox">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Click="MoveItemUp_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Move Up">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="ArrowUp" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem
+                                        Click="MoveItemDown_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Move Down">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="ArrowDown" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem
+                                        Click="DeleteItem_OnClick"
+                                        CommandParameter="{Binding}"
+                                        Header="Delete Element">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Kind="Times" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.Styles>
+            </ListBox>
+            <GridSplitter Grid.Row="1" />
+            <ContentControl Grid.Row="2" Content="{Binding #ListBox.SelectedItem}">
+                <ContentControl.ContentTemplate>
+                    <common:MyTemplateSelector>
+                        <DataTemplate x:Key="TextElement" x:DataType="slideElement:TextElement">
+                            <StackPanel>
+                                <TextBox Text="{Binding Text}" />
+                                <Slider Value="{Binding FontSize}" Minimum="1" Maximum="600" />
+                                <Slider Value="{Binding X}" Minimum="0" Maximum="1920" />
+                                <Slider Value="{Binding Y}" Minimum="0" Maximum="1080" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </common:MyTemplateSelector>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+            <Button Grid.Row="3" Content="Add TextBox" Click="Button_OnClick" />
+        </Grid>
+
+        <GridSplitter Grid.Column="1" />
+
+        <DockPanel Grid.Column="2">
+            <TextBlock DockPanel.Dock="Top" Margin="6" FontSize="20">Slide Editor</TextBlock>
+            <Grid RowDefinitions="*,1,*">
+                <editors:SlideEditor Name="VisualEditor" />
+                <GridSplitter Grid.Row="1" />
+                <DockPanel Grid.Row="2">
+                    <Button DockPanel.Dock="Top" Content="Generate XML" Click="UpdateXmlButton_OnClick" />
+                    <TextBox Name="CodeEditor" TextChanged="CodeEditor_OnTextChanged" AcceptsReturn="True" />
+                </DockPanel>
+            </Grid>
+        </DockPanel>
+
+        <GridSplitter Grid.Column="3" />
+
+        <DockPanel Grid.Column="4">
+            <TextBlock DockPanel.Dock="Top" Margin="6" FontSize="20">Preview</TextBlock>
+            <Viewbox>
+                <customSlide:CustomSlideRender Name="Render" DataContext="{Binding Slide}" />
+            </Viewbox>
+        </DockPanel>
+    </Grid>
+</UserControl>

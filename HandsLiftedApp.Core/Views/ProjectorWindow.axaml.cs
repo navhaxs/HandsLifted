@@ -47,20 +47,21 @@ namespace HandsLiftedApp.Core.Views
                 });
         }
 
+        public void onToggleFullscreen(bool? fullscreen = null)
+        {
+            bool isFullScreenNext =
+                (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
+         
+            this.ShowInTaskbar = !isFullScreenNext; // make this user option
+            this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
+        }
+
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
         {
             if (ControlExtension.FindAncestor<Button>((Control)e.Source) != null)
                 return;
 
             onToggleFullscreen();
-        }
-
-        public void onToggleFullscreen(bool? fullscreen = null)
-        {
-            bool isFullScreenNext =
-                (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
-            this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
-            //this.Topmost = isFullScreenNext;
         }
 
         private void ProjectorWindow_KeyDown(object? sender, KeyEventArgs e)

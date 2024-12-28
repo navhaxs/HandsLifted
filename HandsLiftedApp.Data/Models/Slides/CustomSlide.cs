@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Net.Mime;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Xml.Serialization;
 using Avalonia.Media;
 using HandsLiftedApp.Data.Data.Models.Types;
@@ -9,6 +12,8 @@ using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Data.Models.Slides
 {
+    [XmlInclude(typeof(TextElement))]
+
     public class CustomSlide : Slide
     {
         // TODO not really needed
@@ -16,8 +21,8 @@ namespace HandsLiftedApp.Data.Data.Models.Slides
         public override string? SlideText { get; } = "";
         
         // Elements
-        private List<SlideElement> _slideElements = new();
-        public List<SlideElement> SlideElements
+        private ObservableCollection<SlideElement> _slideElements = new();
+        public ObservableCollection<SlideElement> SlideElements
         {
             get => _slideElements;
             set => this.RaiseAndSetIfChanged(ref _slideElements, value);
@@ -34,5 +39,21 @@ namespace HandsLiftedApp.Data.Data.Models.Slides
             set => this.RaiseAndSetIfChanged(ref BackgroundColour, value);
         }
         
+        public override string? ToString()
+        {
+            var stringBuilder = new StringBuilder();
+            
+            stringBuilder.AppendLine($"CustomSlide SlideLabel={SlideLabel}");
+
+            foreach (var VARIABLE in SlideElements)
+            {
+                if (VARIABLE is TextElement textElement)
+                {
+                    stringBuilder.AppendLine($"TextElement Text={textElement.Text}");
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
     }
 }

@@ -28,9 +28,11 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            PlaylistInstance x = Globals.Instance.MainViewModel.Playlist;
-            var window = new SongEditorWindow() { DataContext = new SongEditorViewModel(new SongItemInstance(x), x) };
-            window.Closing += (sender, args) => { slideRendererWorkerWindow.Close(); };
+            // PlaylistInstance x = Globals.Instance.MainViewModel.Playlist;
+            // var window = new SongEditorWindow() { DataContext = new SongEditorViewModel(new SongItemInstance(x), x) };
+            // window.Closing += (sender, args) => { slideRendererWorkerWindow.Close(); };
+            var window = new SlideEditorWindow();
+            
             desktop.MainWindow = window;
         }
 

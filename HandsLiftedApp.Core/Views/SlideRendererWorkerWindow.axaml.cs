@@ -54,9 +54,16 @@ namespace HandsLiftedApp.Core.Views
                         if (templateControl != null)
                         {
                             root.Children.Add(templateControl);
-                            Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
-                            rtb.Render(templateControl);
-                            //rtb.Save(@"R:\buffer.bmp");
+                            try
+                            {
+                                Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
+                                rtb.Render(templateControl);
+                                //rtb.Save(@"R:\buffer.bmp");
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Fatal(e, "Something very bad happened within Slide Render process");
+                            }
                         }
                     
                         request.Callback(rtb);

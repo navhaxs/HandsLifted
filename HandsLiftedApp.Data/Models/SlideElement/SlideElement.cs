@@ -29,8 +29,8 @@ namespace HandsLiftedApp.Data.Models.SlideElement
 
         [DataMember]
         public FontWeight FontWeight { get => _fontWeight; set => this.RaiseAndSetIfChanged(ref _fontWeight, value); }
-        
-        public int FontSize { get; set; }
+
+        public int FontSize { get; set; } = 90;
         public TextAlignment TextAlignment { get; set; }
         
         [DataMember]

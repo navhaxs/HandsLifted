@@ -23,12 +23,12 @@ namespace HandsLiftedApp.Core.Views.Editors
             {
                 if (_selected is null)
                 {
-                    //AddSelected(rectangle, canvas);
+                    AddSelected(rectangle, canvas);
                 }
             };
-
-            TestWindow1 tw1 = new TestWindow1();
-            tw1.Show();
+            //
+            // TestWindow1 tw1 = new TestWindow1();
+            // tw1.Show();
         }
 
         private SelectedAdorner? _selected;

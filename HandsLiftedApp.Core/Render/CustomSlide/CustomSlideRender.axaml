@@ -1,0 +1,17 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="slides:CustomSlide"
+             PointerPressed="InputElement_OnPointerPressed"
+             Height="1080"
+             Width="1920"
+             Background="Black"
+             x:Class="HandsLiftedApp.Core.Render.CustomSlide.CustomSlideRender">
+    <!-- <Grid> -->
+        <Canvas x:Name="Root" />
+        <!-- <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="Button_OnClick">Render</Button> -->
+    <!-- </Grid> -->
+</UserControl>
