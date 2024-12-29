@@ -118,6 +118,27 @@ namespace HandsLiftedApp.Core
                         SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, powerPointPresentationItemInstance.SourceSlidesExportDirectory)
                     };
                 }
+                else if (item is PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance)
+                {
+                    return new PDFSlidesGroupItem()
+                    {
+                        UUID = pdfSlidesGroupItemInstance.UUID,
+                        Title = pdfSlidesGroupItemInstance.Title,
+                        Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(pdfSlidesGroupItemInstance.Items.Select(item =>
+                        {
+                            // TODO deep copy
+                            var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
+                            if (newMediaItem.SourceMediaFilePath != null)
+                            {
+                                newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, item.SourceMediaFilePath); 
+                            }
+                            return item;
+                        }).ToList()),
+                        AutoAdvanceTimer = pdfSlidesGroupItemInstance.AutoAdvanceTimer,
+                        SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, pdfSlidesGroupItemInstance.SourcePresentationFile),
+                        SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, pdfSlidesGroupItemInstance.SourceSlidesExportDirectory)
+                    };
+                }
 
                 return item;
                 // return new Item
