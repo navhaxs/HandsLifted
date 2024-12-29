@@ -119,6 +119,12 @@ namespace HandsLiftedApp.Core.Models
                         case ActionMessage.NavigateSlideAction.PreviousSlide:
                             NavigatePreviousSlide();
                             break;
+                        case ActionMessage.NavigateSlideAction.GotoLogo:
+                            IsLogo = true;
+                            break;
+                        case ActionMessage.NavigateSlideAction.GotoBlank:
+                            IsBlank = true;
+                            break;
                     }
                 });
 
