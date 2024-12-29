@@ -18,7 +18,7 @@ namespace HandsLiftedApp.Data.Models.Items
     {
         public SectionHeadingItem()
         {
-            Title = "(New Section)";
+            Title = "";
         }
 
         public XmlColor GroupColour = Color.Parse("#4d347f");

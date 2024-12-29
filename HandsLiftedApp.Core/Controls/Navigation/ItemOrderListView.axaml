@@ -12,10 +12,8 @@
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:mockData1="clr-namespace:HandsLiftedApp.Controls.MockData;assembly=HandsLiftedApp.Controls"
     xmlns:items1="clr-namespace:HandsLiftedApp.Controls.Items;assembly=HandsLiftedApp.Controls"
-    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
     xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     xmlns:models="clr-namespace:HandsLiftedApp.Core.Models"
-    xmlns:runtimeData="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData"
     d:DesignHeight="400"
     d:DesignWidth="200"
     x:DataType="models:PlaylistInstance"
@@ -103,7 +101,8 @@
         <Style Selector="ListBoxItem">
             <Setter Property="ContextMenu">
                 <Setter.Value>
-                    <ContextMenu AttachedToLogicalTree="StyledElement_OnAttachedToLogicalTree" Closed="MenuBase_OnClosed">
+                    <ContextMenu AttachedToLogicalTree="StyledElement_OnAttachedToLogicalTree"
+                                 Closed="MenuBase_OnClosed">
                         <MenuItem
                             Click="MoveUpItem_OnClick"
                             CommandParameter="{Binding}"
@@ -271,17 +270,23 @@
                             <Border BorderThickness="0 1 0 1"
                                     Classes="SectionHeadingBorder">
                                 <DockPanel Margin="9,0,0,0" VerticalAlignment="Stretch">
-                                    <TextBlock
-                                        Padding="8 4 0 4"
-                                        Classes="SectionHeadingTextBlock"
-                                        FontSize="12"
-                                        TextTrimming="CharacterEllipsis">
-                                        <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0}">
-                                                <Binding Path="Title" />
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
+                                    <Grid>
+                                        <TextBlock
+                                            IsVisible="{Binding Title, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                                            Padding="8 4 0 4"
+                                            Classes="SectionHeadingTextBlock"
+                                            FontSize="12"
+                                            TextTrimming="CharacterEllipsis"
+                                            Text="(New section)"
+                                            />
+                                        <TextBlock
+                                            Padding="8 4 0 4"
+                                            Classes="SectionHeadingTextBlock"
+                                            FontSize="12"
+                                            TextTrimming="CharacterEllipsis"
+                                            Text="{Binding Title}"
+                                            />
+                                    </Grid>
                                 </DockPanel>
                                 <i:Interaction.Behaviors>
                                     <behaviours:DragControlBehavior />

@@ -190,6 +190,7 @@
                                 <controls:TextBoxToggleButton
                                     Margin="16,0,8,0"
                                     FontSize="20"
+                                    Watermark="(New Section)"
                                     Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
 
                             </DockPanel>

@@ -67,13 +67,24 @@
                         Margin="14,0,14,0"
                         Kind="Pencil" />
                 </Border>
-                <TextBlock
-                    FontSize="{Binding $parent[controls:TextBoxToggleButton].FontSize}"
-                    Foreground="{Binding $parent[controls:TextBoxToggleButton].Foreground}"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    Text="{Binding $parent[controls:TextBoxToggleButton].Text}"
-                    TextTrimming="CharacterEllipsis" />
+                <Grid>
+                    <TextBlock
+                        x:Name="TextBlockWatermark"
+                        FontSize="{Binding $parent[controls:TextBoxToggleButton].FontSize}"
+                        Foreground="{Binding $parent[controls:TextBoxToggleButton].Foreground}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Text="{Binding $parent[controls:TextBoxToggleButton].Watermark}"
+                        TextTrimming="CharacterEllipsis" />
+                    <TextBlock
+                        x:Name="TextBlockDisplay"
+                        FontSize="{Binding $parent[controls:TextBoxToggleButton].FontSize}"
+                        Foreground="{Binding $parent[controls:TextBoxToggleButton].Foreground}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Text="{Binding $parent[controls:TextBoxToggleButton].Text}"
+                        TextTrimming="CharacterEllipsis" />
+                </Grid>
             </DockPanel>
         </Button>
         <TextBox x:Name="EntryTextBox" KeyDown="InputElement_OnKeyDown"

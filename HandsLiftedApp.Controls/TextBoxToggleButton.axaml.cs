@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -7,6 +8,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using ReactiveUI;
 
 namespace HandsLiftedApp.Controls
 {
@@ -15,8 +17,13 @@ namespace HandsLiftedApp.Controls
         public TextBoxToggleButton()
         {
             InitializeComponent();
+            
+            TextBlockDisplay.WhenAnyValue(x => x.Text).Subscribe(e =>
+            {
+                TextBlockWatermark.IsVisible = e != null && e.Length == 0;
+            });
         }
-        
+
         public static readonly DirectProperty<TextBoxToggleButton, Color> HoverBrushProperty =
             AvaloniaProperty.RegisterDirect<TextBoxToggleButton, Color>(
                 nameof(HoverBrush),
@@ -110,6 +117,7 @@ namespace HandsLiftedApp.Controls
                     return;
                 }
             }
+
             // TODO
             Carousel.SelectedIndex = 0;
             e.Handled = true;
@@ -129,7 +137,7 @@ namespace HandsLiftedApp.Controls
                 parentWindow.PointerPressed += OnParentWindowOnPointerPressed;
             }
         }
-        
+
         private void UnregisterEvents()
         {
             var t = TopLevel.GetTopLevel(this);
@@ -144,4 +152,4 @@ namespace HandsLiftedApp.Controls
             Carousel.SelectedIndex = 0;
         }
     }
-}   
+}
