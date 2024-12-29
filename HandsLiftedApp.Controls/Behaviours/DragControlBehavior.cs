@@ -334,7 +334,7 @@ namespace HandsLiftedApp.Behaviours
                 {
                     //Debug.Print($"Moved {SourceIndex} to {DestinationIndex}, isPastLastItemBounds: {isPastLastItemBounds}");
 
-                    if (DestinationIndex > SourceIndex)
+                    if (!isPastLastItem && DestinationIndex > SourceIndex)
                     {
                         --DestinationIndex;
                     }
