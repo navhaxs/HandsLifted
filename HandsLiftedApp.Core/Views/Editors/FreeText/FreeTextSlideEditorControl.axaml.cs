@@ -10,6 +10,7 @@ using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.SlideElement;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.FreeText
 {
@@ -102,7 +103,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                    Log.Error(exception, "Failed to parse XML");
                 }
             }
         }

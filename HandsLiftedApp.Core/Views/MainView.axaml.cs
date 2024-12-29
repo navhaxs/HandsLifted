@@ -146,8 +146,7 @@ public partial class MainView : UserControl
                 {
                     MessageBus.Current.SendMessage(new MessageWindowViewModel()
                         { Title = "Playlist failed to load :(", Content = $"{e.Message}" });
-                    Log.Error("[DOC] Failed to parse playlist XML");
-                    Console.WriteLine(e);
+                    Log.Error(e, "[DOC] Failed to parse playlist XML");
                 }
             }
         }

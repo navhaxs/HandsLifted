@@ -323,8 +323,7 @@ public class MainViewModel : ViewModelBase
             }
             catch (Exception e)
             {
-                Log.Error($"[DOC] Failed to parse playlist XML: [{settings.LastOpenedPlaylistFullPath}]");
-                Console.WriteLine(e);
+                Log.Error(e, $"[DOC] Failed to parse playlist XML: [{settings.LastOpenedPlaylistFullPath}]");
                 // ignored
             }
         }
