@@ -232,7 +232,7 @@
 
     </UserControl.Styles>
 
-    <Grid>
+    <Grid x:Name="Root">
         <ScrollViewer>
             <!-- SelectedIndex="{Binding SelectedItemIndex}" -->
             <ListBox

@@ -11,6 +11,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using Avalonia.LogicalTree;
 using HandsLiftedApp.Data.Models.Items;
@@ -33,6 +34,13 @@ namespace HandsLiftedApp.Core.Controls.Navigation
             {
                 return;
             }
+
+            this.WhenAnyValue(x => x.Bounds)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(bounds =>
+                {
+                    Root.IsVisible = bounds.Width >= 70;
+                });
 
             listBox = this.FindControl<ListBox>("itemsListBox");
             listBox.SelectionChanged += ListBox_SelectionChanged;
