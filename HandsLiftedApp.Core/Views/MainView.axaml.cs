@@ -135,12 +135,14 @@ public partial class MainView : UserControl
             {
                 try
                 {
-                    var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(
-                        files[0].Path.LocalPath);
+                    var filePath = files[0].Path.LocalPath;
+                    var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(filePath);
                     vm.Playlist.Dispose();
                     x.IsDirty = false;
                     vm.Playlist = x;
                     // vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
+
+                    vm.settings.LastOpenedPlaylistFullPath = filePath;
                 }
                 catch (Exception e)
                 {
