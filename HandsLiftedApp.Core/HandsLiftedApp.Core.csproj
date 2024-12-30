@@ -239,6 +239,10 @@
           <DependentUpon>PDFSlidesGroupItemStatusView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\ItemEditDock\ItemEditDockRoot.axaml.cs">
+          <DependentUpon>SyncItem.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 

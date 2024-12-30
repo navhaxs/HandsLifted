@@ -12,11 +12,11 @@ namespace HandsLiftedApp.Data.Data.Models.Items
 
         public ItemAutoAdvanceTimer() { }
 
-        private bool _IsEnabled = false;
+        private bool _isEnabled = false;
         /// <summary>
         /// Enable the auto-advance slide function
         /// </summary>
-        public bool IsEnabled { get => _IsEnabled; set => this.RaiseAndSetIfChanged(ref _IsEnabled, value); }
+        public bool IsEnabled { get => _isEnabled; set => this.RaiseAndSetIfChanged(ref _isEnabled, value); }
 
         // private bool _IsLooping = false;
         // /// <summary>
@@ -24,10 +24,10 @@ namespace HandsLiftedApp.Data.Data.Models.Items
         // /// </summary>
         // public bool IsLooping { get => _IsLooping; set => this.RaiseAndSetIfChanged(ref _IsLooping, value); }
 
-        private int _IntervalMs = 3_000;
+        private int _intervalMs = 3_000;
         /// <summary>
         /// Interval (miliseconds)
         /// </summary>
-        public int IntervalMs { get => _IntervalMs; set => this.RaiseAndSetIfChanged(ref _IntervalMs, value); }
+        public int IntervalMs { get => _intervalMs; set => this.RaiseAndSetIfChanged(ref _intervalMs, value); }
     }
 }

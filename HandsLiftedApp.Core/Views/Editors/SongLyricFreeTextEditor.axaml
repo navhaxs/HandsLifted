@@ -15,21 +15,23 @@
     </UserControl.Styles>
 
     <Grid>
-        <TextBox
-            Name="FreeTextBox"
-            CornerRadius="0"
-            AcceptsReturn="True"
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch"
-            Background="White"
-            FontFamily="Consolas"
-            Foreground="Black"
-            BorderThickness="0"
-            Margin="0 0 0 0"
-            Padding="12 12 12 72"
-            TextWrapping="Wrap"
-            Watermark="Enter or paste lyrics text here..."
-            Text="{Binding FreeTextEntryField}" />
+        <ScrollViewer>
+
+            <TextBox
+                Name="FreeTextBox"
+                CornerRadius="0"
+                AcceptsReturn="True"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                Background="White"
+                FontFamily="Consolas"
+                Foreground="Black"
+                BorderThickness="0"
+                Margin="12 12 12 72"
+                TextWrapping="Wrap"
+                Watermark="Enter or paste lyrics text here..."
+                Text="{Binding FreeTextEntryField}" />
+        </ScrollViewer>
 
         <Button
             Click="ParseAndLoadFromText_OnClick"
@@ -48,13 +50,6 @@
             FontSize="14"
             Foreground="White">
             <Button.Styles>
-                <Style Selector="ScrollViewer">
-                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
-                </Style>
-                <Style Selector="MenuItem">
-                    <Setter Property="FontSize" Value="14" />
-                    <Setter Property="Padding" Value="8 6" />
-                </Style>
                 <Style Selector="Button:pointerover /template/ ContentPresenter">
                     <Setter Property="Background" Value="#5C3AB6" />
                 </Style>

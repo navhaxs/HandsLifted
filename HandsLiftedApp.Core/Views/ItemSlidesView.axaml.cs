@@ -67,6 +67,18 @@ namespace HandsLiftedApp.Controls
                 songEditorWindow.Show();
                 return;
             }
+            if (sender is Control { DataContext: PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance })
+            {
+                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow () { DataContext = pdfSlidesGroupItemInstance };
+                songEditorWindow.Show();
+                return;
+            }
+            if (sender is Control { DataContext: PowerPointPresentationItemInstance powerPointPresentationItemInstance })
+            {
+                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow () { DataContext = powerPointPresentationItemInstance };
+                songEditorWindow.Show();
+                return;
+            }
         }
         
         private void MoveUpItem_OnClick(object? sender, RoutedEventArgs e)

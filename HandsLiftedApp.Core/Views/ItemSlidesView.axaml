@@ -21,6 +21,7 @@
     xmlns:slides1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
     xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
     xmlns:app="clr-namespace:HandsLiftedApp.Core"
+    xmlns:itemEditDock="clr-namespace:HandsLiftedApp.Core.Views.ItemEditDock"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -293,7 +294,7 @@
                                         DockPanel.Dock="Right">
                                         Edit
                                     </Button>
-                                    <views1:ItemEditDock DockPanel.Dock="Right" />
+                                    <itemEditDock:ItemEditDockRoot DockPanel.Dock="Right" />
                                     <!--<Ellipse
 							IsVisible="{Binding State.IsSelected, FallbackValue=False}"
 							Width="8"

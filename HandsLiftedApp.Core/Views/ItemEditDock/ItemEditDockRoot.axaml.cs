@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reactive;
 using System.Reactive.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 
-namespace HandsLiftedApp.Core.Views
+namespace HandsLiftedApp.Core.Views.ItemEditDock
 {
-    public partial class ItemEditDock : UserControl
+    public partial class ItemEditDockRoot : UserControl
     {
-        public ItemEditDock()
+        public ItemEditDockRoot()
         {
             InitializeComponent();
         }

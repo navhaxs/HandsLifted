@@ -36,7 +36,7 @@
 					<TextBox Text="{Binding Title}" />
 				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
-					<material:MaterialIcon Kind="CheckboxBlankOutline" />
+					<editors:GroupItemsEditor DataContext="{Binding}" />
 				</DataTemplate>
 			</common:MyTemplateSelector>
 		</ContentControl.ContentTemplate>
