@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.PanAndZoom;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Layout;
+using Avalonia.Skia;
 
 namespace PerspectiveDemo
 {
@@ -10,6 +14,8 @@ namespace PerspectiveDemo
     {
         public static readonly StyledProperty<Control?> ControlProperty = 
             AvaloniaProperty.Register<SelectedAdorner, Control?>(nameof(Control));
+        public static readonly StyledProperty<ZoomBorder?> ZoomBorderProperty = 
+            AvaloniaProperty.Register<SelectedAdorner, ZoomBorder?>(nameof(Control));
 
         private Canvas? _canvas;
         private Thumb? _drag;
@@ -21,6 +27,7 @@ namespace PerspectiveDemo
         private Thumb? _topRight;
         private Thumb? _bottomLeft;
         private Thumb? _bottomRight;
+        private Thumb? _centre;
         private double _leftOffset;
         private double _topOffset;
 
@@ -28,6 +35,12 @@ namespace PerspectiveDemo
         {
             get => GetValue(ControlProperty);
             set => SetValue(ControlProperty, value);
+        }
+
+        public ZoomBorder? ZoomBorder
+        {
+            get => GetValue(ZoomBorderProperty);
+            set => SetValue(ZoomBorderProperty, value);
         }
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -50,6 +63,7 @@ namespace PerspectiveDemo
             _topRight = e.NameScope.Find<Thumb>("PART_TopRight");
             _bottomLeft = e.NameScope.Find<Thumb>("PART_BottomLeft");
             _bottomRight = e.NameScope.Find<Thumb>("PART_BottomRight");
+            _centre = e.NameScope.Find<Thumb>("PART_Centre");
 
             if (_top is { })
             {
@@ -98,14 +112,14 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                _leftOffset = Canvas.GetLeft(Control);
-                _topOffset = Canvas.GetTop(Control);
+                _leftOffset = 0; //Canvas.GetLeft(Control);
+                _topOffset = 0; //Canvas.GetTop(Control);
 
                 var rect = new Rect(
-                    0,
-                    0,
-                    Control.Width, 
-                    Control.Height);
+                    Control.Bounds.Left,
+                    Control.Bounds.Top,
+                    Control.Bounds.Width, 
+                    Control.Bounds.Height);
 
                 UpdateThumbs(rect);
                 UpdateDrag(rect);
@@ -116,6 +130,8 @@ namespace PerspectiveDemo
                     Canvas.SetTop(_canvas, rect.Top);
                     _canvas.Width = rect.Width;
                     _canvas.Height = rect.Height;
+                    _canvas.HorizontalAlignment = Control.HorizontalAlignment;
+                    _canvas.VerticalAlignment = Control.VerticalAlignment;
                 }
             }
         }
@@ -183,31 +199,35 @@ namespace PerspectiveDemo
             }
         }
 
+        private double GetVectorX(VectorEventArgs e) => e.Vector.X; // ZoomBorder.ZoomX;
+
+        private double GetVectorY(VectorEventArgs e) => e.Vector.Y; // ZoomBorder.ZoomY;
         private void OnDragDeltaDrag(object? sender, VectorEventArgs e)
         {
-            Canvas.SetLeft(_top, Canvas.GetLeft(_top) + e.Vector.X);
-            Canvas.SetLeft(_bottom, Canvas.GetLeft(_bottom) + e.Vector.X);
+            Debug.Print($"DragDelta X={e.Vector.X} Y={e.Vector.Y} [{ZoomBorder.ZoomX}, {ZoomBorder.ZoomY}] X'={GetVectorX(e)} Y'={GetVectorY(e)}");
+            Canvas.SetLeft(_top, Canvas.GetLeft(_top) + GetVectorX(e));
+            Canvas.SetLeft(_bottom, Canvas.GetLeft(_bottom) + GetVectorX(e));
 
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + e.Vector.X);
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + e.Vector.X);
+            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
+            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
 
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + e.Vector.X);
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + e.Vector.X);
+            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
+            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
 
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + e.Vector.X);
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + e.Vector.X);
+            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
+            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
 
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + e.Vector.Y);
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + e.Vector.Y);
+            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
+            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
 
-            Canvas.SetTop(_left, Canvas.GetTop(_left) + e.Vector.Y);
-            Canvas.SetTop(_right, Canvas.GetTop(_right) + e.Vector.Y);
+            Canvas.SetTop(_left, Canvas.GetTop(_left) + GetVectorY(e));
+            Canvas.SetTop(_right, Canvas.GetTop(_right) + GetVectorY(e));
 
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + e.Vector.Y);
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + e.Vector.Y);
+            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
+            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
 
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + e.Vector.Y);
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + e.Vector.Y);
+            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
+            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
 
             var rect = GetRect();
 
@@ -221,9 +241,9 @@ namespace PerspectiveDemo
 
         private void OnDragDeltaTop(object? sender, VectorEventArgs e)
         {
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + e.Vector.Y);
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + e.Vector.Y);
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + e.Vector.Y);
+            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
+            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
+            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
 
             var rect = GetRect();
 
@@ -240,9 +260,9 @@ namespace PerspectiveDemo
 
         private void OnDragDeltaBottom(object? sender, VectorEventArgs e)
         {
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + e.Vector.Y);
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + e.Vector.Y);
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + e.Vector.Y);
+            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
+            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
+            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
 
             var rect = GetRect();
 
@@ -259,9 +279,9 @@ namespace PerspectiveDemo
 
         private void OnDragDeltaLeft(object? sender, VectorEventArgs e)
         {
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + e.Vector.X);
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + e.Vector.X);
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + e.Vector.X);
+            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
+            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
+            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
 
             var rect = GetRect();
 
@@ -278,9 +298,9 @@ namespace PerspectiveDemo
 
         private void OnDragDeltaRight(object? sender, VectorEventArgs e)
         {
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + e.Vector.X);
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + e.Vector.X);
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + e.Vector.X);
+            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
+            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
+            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
 
             var rect = GetRect();
 
@@ -297,13 +317,13 @@ namespace PerspectiveDemo
  
         private void OnDragDeltaTopLeft(object? sender, VectorEventArgs e)
         {
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + e.Vector.X);
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + e.Vector.X);
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + e.Vector.X);
+            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
+            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
+            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
 
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + e.Vector.Y);
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + e.Vector.Y);
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + e.Vector.Y);
+            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
+            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
+            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
 
             var rect = GetRect();
 
@@ -323,13 +343,13 @@ namespace PerspectiveDemo
 
         private void OnDragDeltaTopRight(object? sender, VectorEventArgs e)
         {
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + e.Vector.X);
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + e.Vector.X);
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + e.Vector.X);
+            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
+            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
+            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
 
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + e.Vector.Y);
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + e.Vector.Y);
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + e.Vector.Y);
+            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
+            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
+            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
             
             var rect = GetRect();
 
@@ -349,13 +369,13 @@ namespace PerspectiveDemo
 
         private void OnDragDeltaBottomLeft(object? sender, VectorEventArgs e)
         {
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + e.Vector.X);
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + e.Vector.X);
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + e.Vector.X);
+            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
+            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
+            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
 
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + e.Vector.Y);
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + e.Vector.Y);
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + e.Vector.Y);
+            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
+            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
+            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
 
             var rect = GetRect();
 
@@ -375,13 +395,13 @@ namespace PerspectiveDemo
 
         private void OnDragDeltaBottomRight(object? sender, VectorEventArgs e)
         {
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + e.Vector.X);
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + e.Vector.X);
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + e.Vector.X);
+            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
+            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
+            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
 
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + e.Vector.Y);
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + e.Vector.Y);
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + e.Vector.Y);
+            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
+            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
+            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
 
             var rect = GetRect();
 

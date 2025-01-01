@@ -25,8 +25,8 @@
     </Setter>
   </Style>
 
-  <Style Selector="controls|SelectedAdorner /template/ Grid#PART_Canvas">
-    <Setter Property="Background" Value="Transparent" />
+  <Style Selector="controls|SelectedAdorner /template/ Canvas#PART_Canvas">
+    <!-- <Setter Property="Background" Value="Transparent" /> -->
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>

@@ -19,6 +19,11 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         public FreeTextSlideEditorControl()
         {
             InitializeComponent();
+
+            VisualEditor.OnUpdateSelectedElement += (sender, args) =>
+            {
+                ListBox.SelectedItem = args.SelectedElement;
+            };
         }
 
         public void UpdateXml()
@@ -77,6 +82,30 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 if (sender is Control { DataContext: SlideElement slideElement })
                 {
                     vm.Slide.SlideElements.Remove(slideElement);
+                }
+            }
+        }
+
+        private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            {
+                if (sender is Control { DataContext: SlideElement slideElement })
+                {
+                    
+                    
+                    XmlSerializer serializer = new XmlSerializer(typeof(SlideElement));
+                    using (StringWriter writer = new())
+                    {
+                        serializer.Serialize(writer, slideElement);
+                        var obj = writer.ToString();
+                        
+                        using (StringReader reader = new StringReader(obj))
+                        {
+                            vm.Slide.SlideElements.Add(serializer.Deserialize(reader) as SlideElement);
+                        }
+                    }
+                    
                 }
             }
         }

@@ -55,6 +55,21 @@
                             Text="Add item" />
                     </DockPanel>
                 </Button>
+                <Button Click="AddItemCustomButton_OnClick" DockPanel.Dock="Left">
+                    <DockPanel>
+                        <material:MaterialIcon
+                            Width="24"
+                            Height="24"
+                            Margin="-4,-4,-4,-4"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Foreground="#888888"
+                            Kind="PlusCircleOutline" />
+                        <TextBlock
+                            Margin="12,0,0,0"
+                            Text="Add custom slide" />
+                    </DockPanel>
+                </Button>
                 <Button Click="Button_OnClick">GenerateSlides</Button>
                 <!-- <TextBlock -->
                 <!--     Padding="16,20,16,14" -->

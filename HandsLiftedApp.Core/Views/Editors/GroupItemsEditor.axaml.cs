@@ -84,6 +84,12 @@ namespace HandsLiftedApp.Core.Views.Editors
             AddItemsWorkflow();
         }
 
+        private void AddItemCustomButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            SlideEditorWindow slideEditorWindow = new();
+            slideEditorWindow.Show();
+        }
+
         private async Task AddItemsWorkflow()
         {
             // Get top level from the current control. Alternatively, you can use Window reference instead.

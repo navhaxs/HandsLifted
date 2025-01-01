@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
              x:DataType="freeText:FreeTextSlideEditorViewModel"
              ClipToBounds="True"
-             x:Class="HandsLiftedApp.Core.Views.Editors.SlideEditor">
+             x:Class="HandsLiftedApp.Core.Views.Editors.VisualSlideEditor">
 
     <UserControl.Styles>
         <StyleInclude Source="./SelectedAdorner.axaml" />
@@ -55,22 +55,21 @@
                     EnablePan="True"
                     Background="SlateBlue" ClipToBounds="True" Focusable="True"
                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Panel>
-                <Canvas Name="Canvas"
+                <Canvas Name="Root"
                         Width="1920"
                         Height="1080"
                         Background="LightGray"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
-                    <TextBox Name="Rectangle"
-                             FontSize="80"
-                             Canvas.Left="30"
-                             Canvas.Top="30"
-                             Width="240"
-                             Height="240" />
+                    <!-- <TextBox Name="Rectangle" -->
+                    <!--          FontSize="80" -->
+                    <!--          Canvas.Left="30" -->
+                    <!--          Canvas.Top="30" -->
+                    <!--          Width="240" -->
+                    <!--          Height="240" /> -->
                 </Canvas>
-            </Panel>
         </ZoomBorder>
+        <Canvas Name="FrontCanvas" />
         <!-- </ScrollViewer> -->
 
     </Grid>

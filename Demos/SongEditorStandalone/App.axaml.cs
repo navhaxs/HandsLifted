@@ -24,14 +24,14 @@ public partial class App : Application
         SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow();
         slideRendererWorkerWindow.Show();
 
-        Globals.Instance.OnStartup(ApplicationLifetime);
+        // Globals.Instance.OnStartup(ApplicationLifetime);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // PlaylistInstance x = Globals.Instance.MainViewModel.Playlist;
             // var window = new SongEditorWindow() { DataContext = new SongEditorViewModel(new SongItemInstance(x), x) };
-            // window.Closing += (sender, args) => { slideRendererWorkerWindow.Close(); };
             var window = new SlideEditorWindow();
+            window.Closing += (sender, args) => { slideRendererWorkerWindow.Close(); };
             
             desktop.MainWindow = window;
         }
