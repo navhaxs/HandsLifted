@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Core.Models;
+﻿using System;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Data.Models.Items;
 using Serilog;
 using System.IO;
@@ -104,10 +105,18 @@ namespace HandsLiftedApp.Core
 
             if (filePath.ToLower().EndsWith(".xml"))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
-                using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                try
                 {
-                    return (SongItemInstance)serializer.Deserialize(stream);
+                    XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
+                    using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                    {
+                        return (SongItem)serializer.Deserialize(stream);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failed to parse XML as Song");
+                    return null;
                 }
             }
             else if (filePath.ToLower().EndsWith(".txt"))
