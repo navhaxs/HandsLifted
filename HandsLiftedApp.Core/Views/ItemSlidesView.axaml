@@ -22,6 +22,7 @@
     xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
     xmlns:app="clr-namespace:HandsLiftedApp.Core"
     xmlns:itemEditDock="clr-namespace:HandsLiftedApp.Core.Views.ItemEditDock"
+    xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
     x:CompileBindings="False"
     d:DesignHeight="450"
     d:DesignWidth="500"
@@ -417,7 +418,9 @@
                                                 </Viewbox>
                                             </DataTemplate>
                                             <DataTemplate x:Key="CustomSlide">
-                                                <!--<customSlide:CustomAxamlSlide />-->
+                                                <Viewbox>
+                                                    <customSlide:CustomSlideRender />
+                                                </Viewbox>
                                             </DataTemplate>
                                             <DataTemplate x:Key="MyKey">
                                                 <TextBlock Background="Red" Text="{Binding Text}" />

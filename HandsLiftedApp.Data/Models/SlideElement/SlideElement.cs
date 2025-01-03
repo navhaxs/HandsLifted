@@ -26,6 +26,7 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         public int Height { get => _height; set => this.RaiseAndSetIfChanged(ref _height, value); }
     }
 
+    [XmlRoot(Namespace = Constants.Namespace)]
     public class TextElement : SlideElement
     {
         private string _text = "";
@@ -153,6 +154,7 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         }
     }
 
+    [XmlRoot(Namespace = Constants.Namespace)]
     public class ImageElement : SlideElement
     {
         public string FilePath { get; set; } = "";

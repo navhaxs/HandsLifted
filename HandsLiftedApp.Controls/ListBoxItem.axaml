@@ -105,7 +105,7 @@
                                    IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">
-                                    <Binding FallbackValue="Verse 2" Path="SlideLabel" />
+                                    <Binding FallbackValue="(Unset SlideLabel)" Path="SlideLabel" />
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>

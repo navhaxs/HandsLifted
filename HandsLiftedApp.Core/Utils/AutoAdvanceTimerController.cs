@@ -40,7 +40,7 @@ namespace HandsLiftedApp.Core.Utils
             Timer.Stop(true);
             
             itemInstance = _itemInstance;
-            itemInstanceSlide = itemInstance?.Slides[itemInstance.SelectedSlideIndex];
+            itemInstanceSlide = itemInstance?.Slides.ElementAtOrDefault(itemInstance.SelectedSlideIndex);
             slideInstance = itemInstanceSlide?.GetAsISlideInstance();
 
             IsTimerConfigured = slideInstance?.SlideTimerConfig is { IsEnabled: true };

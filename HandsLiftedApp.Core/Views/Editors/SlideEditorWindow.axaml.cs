@@ -1,9 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
-using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
-using HandsLiftedApp.Core.Views.Editors.FreeText;
 using HandsLiftedApp.Data.Data.Models.Slides;
 
 namespace HandsLiftedApp.Core.Views.Editors
@@ -13,7 +9,10 @@ namespace HandsLiftedApp.Core.Views.Editors
         public SlideEditorWindow()
         {
             InitializeComponent();
-            this.DataContext = new FreeTextSlideEditorViewModel() { Slide = new  CustomSlide() };
+            if (this.DataContext == null)
+            {
+                this.DataContext = new FreeTextSlideEditorViewModel() { Slide = new  CustomSlide() };
+            }
             // this.DataContext = new SlideEditorViewModel() { Slides = new() {new CustomSlide()}};
         }
     }

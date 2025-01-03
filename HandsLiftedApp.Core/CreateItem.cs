@@ -22,7 +22,7 @@ namespace HandsLiftedApp.Core
                 return ItemInstanceFactory.ToItemInstance(returnValue, currentPlaylist);
             }
             // if (returnValue == null)
-            
+
             // Dispatcher.UIThread.InvokeAsync(() =>
             // {
             //     // wait for UI to update...
@@ -70,30 +70,44 @@ namespace HandsLiftedApp.Core
                     // mediaGroupItem.GenerateSlides();
                     return mediaGroupItem;
                 }
+
                 Log.Error($"Unsupported file type: {filePath}");
             }
 
             return null;
         }
 
-        public static MediaSlide GenerateMediaContentSlide(MediaGroupItem.MediaItem mediaItem,
+        public static Slide? GenerateMediaContentSlide(MediaGroupItem.GroupItem item,
             MediaGroupItem parentMediaGroupItem)
         {
-            string fullFilePath = mediaItem.SourceMediaFilePath;
-            string filename = fullFilePath.ToLower();
+            if (item is MediaGroupItem.MediaItem mediaItem)
+            {
+                string? fullFilePath = mediaItem.SourceMediaFilePath;
+                string? filename = fullFilePath?.ToLower();
 
-            if (filename.EndsWith(".axaml"))
-            {
-                return new CustomAxamlSlideInstance(mediaItem);
+                if (filename == null)
+                {
+                    return null;
+                }
+                else if (filename.EndsWith(".axaml"))
+                {
+                    return new CustomAxamlSlideInstance(mediaItem);
+                }
+                else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
+                {
+                    return new VideoSlideInstance(fullFilePath);
+                }
+                else
+                {
+                    return new ImageSlideInstance(fullFilePath, parentMediaGroupItem);
+                }
             }
-            else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)))
+            else if (item is MediaGroupItem.SlideItem slideItem)
             {
-                return new VideoSlideInstance(fullFilePath);
+                return slideItem.SlideData;
             }
-            else
-            {
-                return new ImageSlideInstance(fullFilePath, parentMediaGroupItem);
-            }
+
+            return null;
         }
 
         public static Item? GenerateItem(string filePath)
@@ -126,7 +140,7 @@ namespace HandsLiftedApp.Core
             else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)) ||
                      Constants.SUPPORTED_IMAGE.Any(x => filename.EndsWith(x)))
             {
-                    string fileName = Path.GetFileName(filePath);
+                string fileName = Path.GetFileName(filePath);
                 var mediaGroupItem = new MediaGroupItem()
                     { Title = fileName };
 
@@ -145,7 +159,8 @@ namespace HandsLiftedApp.Core
                 return mediaGroupItem;
                 // return SongImporter.createSongItemFromTxtFile(filePath);
             }
-            else if (Constants.SUPPORTED_PDF.Any(x => filename.EndsWith(x)) || Constants.SUPPORTED_POWERPOINT.Any(x => filename.EndsWith(x)))
+            else if (Constants.SUPPORTED_PDF.Any(x => filename.EndsWith(x)) ||
+                     Constants.SUPPORTED_POWERPOINT.Any(x => filename.EndsWith(x)))
             {
                 return CreatePresentationItem(filename);
             }

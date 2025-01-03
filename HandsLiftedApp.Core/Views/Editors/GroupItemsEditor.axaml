@@ -8,6 +8,9 @@
     xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
     xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
     xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+    xmlns:items1="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+    xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
     x:DataType="items:MediaGroupItemInstance"
     d:DesignHeight="650"
     d:DesignWidth="400"
@@ -29,7 +32,7 @@
                     <SolidColorBrush x:Key="ForegroundBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-        <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
+            <extensions:BitmapAssetValueConverter x:Key="variableImage" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -79,9 +82,10 @@
                 <Grid />
             </DockPanel>
         </Border>
-        
+
         <DockPanel DockPanel.Dock="Bottom">
-            <TextBlock Text="Auto Advance Timer:" /> <CheckBox IsChecked="{Binding AutoAdvanceTimer.IsEnabled}">IsEnabled</CheckBox>
+            <TextBlock Text="Auto Advance Timer:" />
+            <CheckBox IsChecked="{Binding AutoAdvanceTimer.IsEnabled}">IsEnabled</CheckBox>
             <TextBox Text="{Binding AutoAdvanceTimer.IntervalMs}" />
         </DockPanel>
 
@@ -146,7 +150,7 @@
                 <Button>Copy Range To New Group</Button>
                 <Separator />-->
                 <TextBlock>Edit</TextBlock>
-                <Button>Edit Item Info</Button>
+                <Button Click="EditButton_OnClick">Edit Item Info</Button>
                 <Button Click="RemoveItemButton_OnClick">
                     <DockPanel>
                         <material:MaterialIcon
@@ -170,21 +174,55 @@
             </StackPanel>
         </ScrollViewer>
 
-
         <ListBox x:Name="listBox" ItemsSource="{Binding Items}">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="ContextMenu">
+                        <ContextMenu>
+                            <MenuItem Header="Duplicate" Click="Duplicate_OnClick">
+                                <MenuItem.Icon>
+                                    <material:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <!-- <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick"> -->
+                            <!--     <MenuItem.Icon> -->
+                            <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" /> -->
+                            <!--     </MenuItem.Icon> -->
+                            <!-- </MenuItem> -->
+                            <!-- <MenuItem Header="Remove" Click="RemoveItem_OnClick"> -->
+                            <!--     <MenuItem.Icon> -->
+                            <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="Times" /> -->
+                            <!--     </MenuItem.Icon> -->
+                            <!-- </MenuItem> -->
+                        </ContextMenu>
+                    </Setter>
+                </Style>
+            </ListBox.Styles>
             <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel>
-                        <!-- TODO make this load THUMBNAIL -->
-                        <Image
-                            Height="48"
-                            Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}" Stretch="UniformToFill"
-                            />
-                        <TextBlock 
-                            Margin="8"
-                            Text="{Binding SourceMediaFilePath}" />
-                    </DockPanel>
-                </DataTemplate>
+                <common:MyTemplateSelector>
+                    <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
+                        <DockPanel>
+                            <!-- TODO make this load THUMBNAIL -->
+                            <Image
+                                Height="48"
+                                Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
+                                Stretch="UniformToFill" />
+                            <TextBlock
+                                Margin="8"
+                                Text="{Binding SourceMediaFilePath}" />
+                        </DockPanel>
+                    </DataTemplate>
+                    <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
+                        <DockPanel>
+                            <Viewbox Height="48">
+                                <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
+                            </Viewbox>
+                            <TextBlock
+                                Margin="8"
+                                Text="CustomSlide" />
+                        </DockPanel>
+                    </DataTemplate>
+                </common:MyTemplateSelector>
             </ListBox.ItemTemplate>
         </ListBox>
         <!--      <DataGrid -->

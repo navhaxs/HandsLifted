@@ -373,17 +373,25 @@ public class MainViewModel : ViewModelBase
 
     private async Task OnSlideClickCommand(object? ac)
     {
-        ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
-        Slide slide = (Slide)args[0];
-        Item item = (Item)args[1];
+        try
+        {
+            ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
+            Slide slide = (Slide)args[0];
+            Item item = (Item)args[1];
 
-        int itemIndex = Playlist.Items.IndexOf(item);
+            int itemIndex = Playlist.Items.IndexOf(item);
 
-        int SlideIndex = item.GetAsIItemInstance().Slides.IndexOf(slide);
-        Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
+            int SlideIndex = item.GetAsIItemInstance().Slides.IndexOf(slide);
+            Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
 
-        Playlist.NavigateToReference(new SlideReference()
-            { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
+            Playlist.NavigateToReference(new SlideReference()
+                { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
+        }
+        catch (Exception e)
+        {
+            Log.Fatal(e, "Failed to OnSlideClickCommand");
+            throw;
+        }
     }
 
     public DateTime CurrentTime
@@ -438,7 +446,7 @@ public class MainViewModel : ViewModelBase
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 return;
-            
+
             if (ProjectorWindow == null)
             {
                 ProjectorWindow = new ProjectorWindow() { DataContext = this };
@@ -521,11 +529,12 @@ public class MainViewModel : ViewModelBase
         get => _bottomLeftPanelSelectedTabIndex;
         set => this.RaiseAndSetIfChanged(ref _bottomLeftPanelSelectedTabIndex, value);
     }
-    
+
     public int ItemHeight
     {
         get => 200;
     }
+
     public int ItemWidth
     {
         get => 290;

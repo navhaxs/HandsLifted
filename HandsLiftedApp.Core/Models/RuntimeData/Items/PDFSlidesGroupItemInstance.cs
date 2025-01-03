@@ -141,7 +141,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             ConvertPDF.Convert(SourcePresentationFile,
                                 targetDirectory, OnProgressUpdate);
 
-                            var newItems = new TrulyObservableCollection<MediaItem>();
+                            var newItems = new TrulyObservableCollection<GroupItem>();
                             foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
                                          .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
                             {

@@ -12,6 +12,7 @@ using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Data.Models.Slides
 {
+    [XmlRoot(Namespace = Constants.Namespace)]
     [XmlInclude(typeof(TextElement))]
 
     public class CustomSlide : Slide

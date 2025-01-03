@@ -42,17 +42,22 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = powerPointPresentationItem.UUID,
                     Title = powerPointPresentationItem.Title,
-                    Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(powerPointPresentationItem.Items
+                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(powerPointPresentationItem.Items
                         .Select(item =>
                         {
-                            // TODO deep copy
-                            var newMediaItem = new MediaGroupItem.MediaItem()
-                                { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta };
-                            if (newMediaItem.SourceMediaFilePath != null)
+                            if (item is MediaGroupItem.MediaItem mediaItem)
                             {
-                                newMediaItem.SourceMediaFilePath =
-                                    RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                        item.SourceMediaFilePath);
+                                // TODO deep copy
+                                var newMediaItem = new MediaGroupItem.MediaItem()
+                                    { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                                if (newMediaItem.SourceMediaFilePath != null)
+                                {
+                                    newMediaItem.SourceMediaFilePath =
+                                        RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                            mediaItem.SourceMediaFilePath);
+                                }
+
+                                return newMediaItem;
                             }
 
                             return item;
@@ -72,17 +77,22 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = pdfSlidesGroupItem.UUID,
                     Title = pdfSlidesGroupItem.Title,
-                    Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(pdfSlidesGroupItem.Items
+                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(pdfSlidesGroupItem.Items
                         .Select(item =>
                         {
-                            // TODO deep copy
-                            var newMediaItem = new MediaGroupItem.MediaItem()
-                                { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta };
-                            if (newMediaItem.SourceMediaFilePath != null)
+                            if (item is MediaGroupItem.MediaItem mediaItem)
                             {
-                                newMediaItem.SourceMediaFilePath =
-                                    RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                        item.SourceMediaFilePath);
+                                // TODO deep copy
+                                var newMediaItem = new MediaGroupItem.MediaItem()
+                                    { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                                if (newMediaItem.SourceMediaFilePath != null)
+                                {
+                                    newMediaItem.SourceMediaFilePath =
+                                        RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                            mediaItem.SourceMediaFilePath);
+                                }
+
+                                return newMediaItem;
                             }
 
                             return item;
@@ -102,16 +112,21 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = mediaGroupItem.UUID,
                     Title = mediaGroupItem.Title,
-                    Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(mediaGroupItem.Items.Select(item =>
+                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(mediaGroupItem.Items.Select(item =>
                     {
-                        // TODO deep copy
-                        var newMediaItem = new MediaGroupItem.MediaItem()
-                            { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta };
-                        if (newMediaItem.SourceMediaFilePath != null)
+                        if (item is MediaGroupItem.MediaItem mediaItem)
                         {
-                            newMediaItem.SourceMediaFilePath =
-                                RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                    item.SourceMediaFilePath);
+                            // TODO deep copy
+                            var newMediaItem = new MediaGroupItem.MediaItem()
+                                { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                            if (newMediaItem.SourceMediaFilePath != null)
+                            {
+                                newMediaItem.SourceMediaFilePath =
+                                    RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                        mediaItem.SourceMediaFilePath);
+                            }
+
+                            return newMediaItem;
                         }
 
                         return item;

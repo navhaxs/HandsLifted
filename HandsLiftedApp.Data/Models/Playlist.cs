@@ -6,6 +6,7 @@ using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
+using HandsLiftedApp.Data.Models.SlideElement;
 
 namespace HandsLiftedApp.Data.Models
 {
@@ -23,6 +24,11 @@ namespace HandsLiftedApp.Data.Models
     //
     [XmlInclude(typeof(ImageSlide))]
     [XmlInclude(typeof(VideoSlide))]
+    //
+    [XmlInclude(typeof(MediaGroupItem.MediaItem))]
+    [XmlInclude(typeof(MediaGroupItem.SlideItem))]
+    //
+    [XmlInclude(typeof(TextElement))]
     [Serializable]
     public class Playlist : ReactiveObject
     {

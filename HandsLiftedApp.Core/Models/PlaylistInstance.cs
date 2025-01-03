@@ -245,6 +245,7 @@ namespace HandsLiftedApp.Core.Models
             {
                 item.Index = index;
             }
+            SelectedItemIndex = SelectedItem == null ? -1 : Items.IndexOf(SelectedItem);
         }
 
         public void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -449,7 +450,7 @@ namespace HandsLiftedApp.Core.Models
                 return;
             }
 
-            var lastSelectedItemIndex = SelectedItemIndex;
+            var lastSelectedItemIndex = SelectedItemIndex; // TODO this can be wrong
 
             IItemInstance? currentItemInstance = null;
             if (slideReference.SlideIndex != null)

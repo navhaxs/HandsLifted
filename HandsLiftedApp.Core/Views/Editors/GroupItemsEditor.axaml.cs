@@ -1,11 +1,15 @@
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using DynamicData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
+using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
 
@@ -86,8 +90,12 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private void AddItemCustomButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            SlideEditorWindow slideEditorWindow = new();
-            slideEditorWindow.Show();
+            if (this.DataContext is MediaGroupItem mediaGroupItem)
+            {
+                var newSlideData = new CustomSlide();
+                mediaGroupItem.Items.Add(new MediaGroupItem.SlideItem()
+                    { SlideData = newSlideData });
+            }
         }
 
         private async Task AddItemsWorkflow()
@@ -165,6 +173,44 @@ namespace HandsLiftedApp.Core.Views.Editors
                 }
 
                 mediaGroupItem.Items.RemoveAt(listBox.SelectedIndex);
+            }
+        }
+
+        private void EditButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MediaGroupItem mediaGroupItem)
+            {
+                if (listBox.SelectedItem is MediaGroupItem.SlideItem slideItem)
+                {
+                    SlideEditorWindow slideEditorWindow = new() { DataContext = new FreeTextSlideEditorViewModel() { Slide = slideItem.SlideData }};
+                    slideEditorWindow.Show();
+                }
+            }
+        }
+
+        private void Duplicate_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MediaGroupItem mediaGroupItem)
+            {
+                if (sender is MenuItem listBoxItem)
+                {
+                    if (listBoxItem.DataContext is MediaGroupItem.GroupItem item)
+                    {
+                        var index = mediaGroupItem.Items.IndexOf(item);
+                        
+                        XmlSerializer serializer = new XmlSerializer(typeof(MediaGroupItem.GroupItem));
+                        using (StringWriter writer = new())
+                        {
+                            serializer.Serialize(writer, item);
+                            var obj = writer.ToString();
+                        
+                            using (StringReader reader = new StringReader(obj))
+                            {
+                                mediaGroupItem.Items.Insert( index + 1, serializer.Deserialize(reader) as MediaGroupItem.GroupItem);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

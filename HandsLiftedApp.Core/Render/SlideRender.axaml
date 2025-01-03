@@ -11,6 +11,7 @@
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
              xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
              xmlns:slides2="clr-namespace:HandsLiftedApp.Data.Slides"
+             xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="slides1:Slide"
              x:Class="HandsLiftedApp.Core.Render.SlideRender">
@@ -59,6 +60,9 @@
                 </DataTemplate>
                 <DataTemplate x:Key="BlankSlide">
                     <Grid Background="Black" />
+                </DataTemplate>
+                <DataTemplate x:Key="CustomSlide">
+                     <customSlide:CustomSlideRender />
                 </DataTemplate>
                 <DataTemplate x:Key="Fallback" x:DataType="slides1:Slide">
                     <TextBlock Text="{Binding }" />

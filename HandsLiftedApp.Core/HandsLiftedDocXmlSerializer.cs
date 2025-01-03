@@ -33,7 +33,8 @@ namespace HandsLiftedApp.Core
             {
                 Title = playlist.Title,
                 Meta = playlist.Meta,
-                LogoGraphicFile = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, playlist.LogoGraphicFile),
+                LogoGraphicFile =
+                    RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, playlist.LogoGraphicFile),
                 Designs = new ObservableCollection<BaseSlideTheme>(playlist.Designs.Select(design =>
                 {
                     if (design.BackgroundGraphicFilePath != null)
@@ -41,7 +42,8 @@ namespace HandsLiftedApp.Core
                         design.BackgroundGraphicFilePath =
                             RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
                                 design.BackgroundGraphicFilePath);
-                    } 
+                    }
+
                     return design;
                 }).ToList()),
                 Items = new TrulyObservableCollection<Item>()
@@ -84,16 +86,26 @@ namespace HandsLiftedApp.Core
                     {
                         UUID = mediaGroupItemInstance.UUID,
                         Title = mediaGroupItemInstance.Title,
-                        Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(mediaGroupItemInstance.Items.Select(item =>
-                        {
-                            // TODO deep copy
-                            var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
-                            if (newMediaItem.SourceMediaFilePath != null)
+                        Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(mediaGroupItemInstance.Items
+                            .Select(item =>
                             {
-                                newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, item.SourceMediaFilePath); 
-                            }
-                            return item;
-                        }).ToList()),
+                                if (item is MediaGroupItem.MediaItem mediaItem)
+                                {
+                                    // TODO deep copy
+                                    var newMediaItem = new MediaGroupItem.MediaItem()
+                                        { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                                    if (newMediaItem.SourceMediaFilePath != null)
+                                    {
+                                        newMediaItem.SourceMediaFilePath =
+                                            RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                                                mediaItem.SourceMediaFilePath);
+                                    }
+
+                                    return mediaItem;
+                                }
+
+                                return item;
+                            }).ToList()),
                         AutoAdvanceTimer = mediaGroupItemInstance.AutoAdvanceTimer
                     };
                 }
@@ -103,19 +115,31 @@ namespace HandsLiftedApp.Core
                     {
                         UUID = powerPointPresentationItemInstance.UUID,
                         Title = powerPointPresentationItemInstance.Title,
-                        Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(powerPointPresentationItemInstance.Items.Select(item =>
-                        {
-                            // TODO deep copy
-                            var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
-                            if (newMediaItem.SourceMediaFilePath != null)
+                        Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(powerPointPresentationItemInstance.Items
+                            .Select(item =>
                             {
-                                newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, item.SourceMediaFilePath); 
-                            }
-                            return item;
-                        }).ToList()),
+                                if (item is MediaGroupItem.MediaItem mediaItem)
+                                {
+                                    // TODO deep copy
+                                    var newMediaItem = new MediaGroupItem.MediaItem()
+                                        { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                                    if (newMediaItem.SourceMediaFilePath != null)
+                                    {
+                                        newMediaItem.SourceMediaFilePath =
+                                            RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                                                mediaItem.SourceMediaFilePath);
+                                    }
+
+                                    return mediaItem;
+                                }
+
+                                return item;
+                            }).ToList()),
                         AutoAdvanceTimer = powerPointPresentationItemInstance.AutoAdvanceTimer,
-                        SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, powerPointPresentationItemInstance.SourcePresentationFile),
-                        SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, powerPointPresentationItemInstance.SourceSlidesExportDirectory)
+                        SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                            powerPointPresentationItemInstance.SourcePresentationFile),
+                        SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                            powerPointPresentationItemInstance.SourceSlidesExportDirectory)
                     };
                 }
                 else if (item is PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance)
@@ -124,19 +148,30 @@ namespace HandsLiftedApp.Core
                     {
                         UUID = pdfSlidesGroupItemInstance.UUID,
                         Title = pdfSlidesGroupItemInstance.Title,
-                        Items = new TrulyObservableCollection<MediaGroupItem.MediaItem>(pdfSlidesGroupItemInstance.Items.Select(item =>
-                        {
-                            // TODO deep copy
-                            var newMediaItem = new MediaGroupItem.MediaItem() { SourceMediaFilePath = item.SourceMediaFilePath, Meta = item.Meta};
-                            if (newMediaItem.SourceMediaFilePath != null)
+                        Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(pdfSlidesGroupItemInstance.Items
+                            .Select(item =>
                             {
-                                newMediaItem.SourceMediaFilePath = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, item.SourceMediaFilePath); 
-                            }
-                            return item;
-                        }).ToList()),
-                        AutoAdvanceTimer = pdfSlidesGroupItemInstance.AutoAdvanceTimer,
-                        SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, pdfSlidesGroupItemInstance.SourcePresentationFile),
-                        SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, pdfSlidesGroupItemInstance.SourceSlidesExportDirectory)
+                                if (item is MediaGroupItem.MediaItem mediaItem)
+                                {
+                                    // TODO deep copy
+                                    var newMediaItem = new MediaGroupItem.MediaItem()
+                                        { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                                    if (newMediaItem.SourceMediaFilePath != null)
+                                    {
+                                        newMediaItem.SourceMediaFilePath =
+                                            RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                                                mediaItem.SourceMediaFilePath);
+                                    }
+
+                                    return mediaItem;
+                                }
+
+                                return item;
+                            }).ToList()),                        AutoAdvanceTimer = pdfSlidesGroupItemInstance.AutoAdvanceTimer,
+                        SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                            pdfSlidesGroupItemInstance.SourcePresentationFile),
+                        SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                            pdfSlidesGroupItemInstance.SourceSlidesExportDirectory)
                     };
                 }
 
@@ -167,7 +202,7 @@ namespace HandsLiftedApp.Core
             {
                 throw new Exception("Could not get directory path from file path.");
             }
-            
+
             XmlSerializer serializer = new XmlSerializer(typeof(Playlist));
 
             using (FileStream stream = new FileStream(filePath, FileMode.Open))
@@ -176,13 +211,15 @@ namespace HandsLiftedApp.Core
                 if (x != null)
                 {
                     Playlist deserialized = (Playlist)x;
-                    
+
                     // Map properties from PlaylistSerialized to Playlist
                     PlaylistInstance playlist = new PlaylistInstance
                     {
                         Title = deserialized.Title,
                         Meta = deserialized.Meta,
-                        LogoGraphicFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, deserialized.LogoGraphicFile),
+                        LogoGraphicFile =
+                            RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                deserialized.LogoGraphicFile),
                         Designs = new ObservableCollection<BaseSlideTheme>(deserialized.Designs.Select(design =>
                         {
                             if (design.BackgroundGraphicFilePath != null)
@@ -190,7 +227,8 @@ namespace HandsLiftedApp.Core
                                 design.BackgroundGraphicFilePath =
                                     RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                                         design.BackgroundGraphicFilePath);
-                            } 
+                            }
+
                             return design;
                         }).ToList()),
                         PlaylistFilePath = filePath
@@ -205,7 +243,7 @@ namespace HandsLiftedApp.Core
                     }
 
                     playlist.Items = new PlaylistItemInstanceCollection<Item>(Items);
-                    
+
                     return playlist;
                 }
             }
