@@ -302,12 +302,22 @@ public class MainViewModel : ViewModelBase
                 {
                     if (sourceItemInstance == destItemInstance)
                     {
-                        sourceItemInstance.Items.Move(moveSlideCommand.SourceSlideIndex, moveSlideCommand.DestSlideIndex);
+                        var calcDestSlideIndex =
+                            Math.Min(moveSlideCommand.DestSlideIndex, sourceItemInstance.Items.Count - 1);
+                        if (moveSlideCommand.SourceSlideIndex == calcDestSlideIndex)
+                        {
+                            // do nothing
+                            return;
+                        }
+                        
+                        sourceItemInstance.Items.Move(moveSlideCommand.SourceSlideIndex, calcDestSlideIndex);
                         sourceItemInstance.GenerateSlides();
                     }
                     else
                     {
-                        var itemToMove = sourceItemInstance.Items[moveSlideCommand.SourceSlideIndex];
+                        var itemToMove = sourceItemInstance.Items.ElementAtOrDefault(moveSlideCommand.SourceSlideIndex);
+                        if (itemToMove == null)
+                            return;
                         destItemInstance.Items.Insert(moveSlideCommand.DestSlideIndex, itemToMove);
                         sourceItemInstance.Items.RemoveAt(moveSlideCommand.SourceSlideIndex);
 
@@ -318,8 +328,27 @@ public class MainViewModel : ViewModelBase
 
                 // todo; ppt, pdf
                 // todo; selection
-                // 1. remove sourceSlide from sourceItem
-                // 2. move sourceSlide to targetItem
+            });
+
+        MessageBus.Current.Listen<AddFilesToGroupItemCommand>()
+            .Subscribe(command =>
+            {
+                var destItem = Playlist.Items.FirstOrDefault(item => item.UUID == command.DestItemUUID);
+                if (destItem is MediaGroupItemInstance destItemInstance)
+                {
+                    foreach (var item in command.SourceFiles)
+                    {
+                        if (item is IStorageFile file)
+                        {
+                            destItemInstance.Items.Insert(command.DestSlideIndex, new MediaGroupItem.MediaItem()
+                                { SourceMediaFilePath = file.Path.LocalPath });
+                        }
+                        // else if (item is IStorageFolder folder)
+                        // {
+                        // }
+                    }
+                    destItemInstance.GenerateSlides();
+                }
             });
 
         MessageBus.Current.Listen<MoveItemMessage>()

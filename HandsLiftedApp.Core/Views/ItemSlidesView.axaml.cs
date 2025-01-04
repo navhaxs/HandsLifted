@@ -32,8 +32,6 @@ namespace HandsLiftedApp.Controls
                 //this.DataContext = new SectionHeadingItem<ItemStateImpl>();
                 //this.DataContext = PlaylistUtils.CreateSong();
             }
-
-            
         }
 
         private void InitializeComponent()
@@ -62,7 +60,8 @@ namespace HandsLiftedApp.Controls
         {
             if (sender is Control { DataContext: SongItemInstance item })
             {
-                SongEditorViewModel songEditorViewModel = new SongEditorViewModel(item, Globals.Instance.MainViewModel.Playlist);
+                SongEditorViewModel songEditorViewModel =
+                    new SongEditorViewModel(item, Globals.Instance.MainViewModel.Playlist);
                 // songEditorViewModel.SongDataUpdated += (ex, ey) =>
                 // {
                 //             
@@ -71,47 +70,61 @@ namespace HandsLiftedApp.Controls
                 songEditorWindow.Show();
                 return;
             }
+
             if (sender is Control { DataContext: MediaGroupItemInstance mediaGroupItemInstance })
             {
-                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow () { DataContext = mediaGroupItemInstance };
+                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
+                    { DataContext = mediaGroupItemInstance };
                 songEditorWindow.Show();
                 return;
             }
+
             if (sender is Control { DataContext: PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance })
             {
-                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow () { DataContext = pdfSlidesGroupItemInstance };
+                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
+                    { DataContext = pdfSlidesGroupItemInstance };
                 songEditorWindow.Show();
                 return;
             }
-            if (sender is Control { DataContext: PowerPointPresentationItemInstance powerPointPresentationItemInstance })
+
+            if (sender is Control
+                {
+                    DataContext: PowerPointPresentationItemInstance powerPointPresentationItemInstance
+                })
             {
-                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow () { DataContext = powerPointPresentationItemInstance };
+                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
+                    { DataContext = powerPointPresentationItemInstance };
                 songEditorWindow.Show();
                 return;
             }
         }
-        
+
         private void MoveUpItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)
             {
-                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.UP });
+                MessageBus.Current.SendMessage(new MoveItemCommand()
+                    { SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.UP });
             }
         }
+
         private void MoveDownItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)
             {
-                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.DOWN });
+                MessageBus.Current.SendMessage(new MoveItemCommand()
+                    { SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.DOWN });
             }
         }
+
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)
             {
                 // TODO confirmation window
-                
-                MessageBus.Current.SendMessage(new MoveItemCommand() {SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
+
+                MessageBus.Current.SendMessage(new MoveItemCommand()
+                    { SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.REMOVE });
             }
         }
 
@@ -136,7 +149,7 @@ namespace HandsLiftedApp.Controls
 
             var rowHeight = (listBox.ItemsPanelRoot as WrapPanel).ItemHeight;
             var colWidth = (listBox.ItemsPanelRoot as WrapPanel).ItemWidth;
-            
+
             for (var idx = 0; idx < listBox.Items.Count; idx++)
             {
                 var listBoxItem = listBox.ContainerFromIndex(idx);
@@ -155,27 +168,27 @@ namespace HandsLiftedApp.Controls
                     matchIdx = listBox.Items.Count;
                     break;
                 }
-                
+
                 bool isPosWithinCurrentRow = relativePos.Y <= listBoxItem.Bounds.Height;
                 if (!isPosWithinCurrentRow)
                     continue;
- 
+
                 // lookahead to next item
-                var nextListBoxItem = listBox.ContainerFromIndex(idx+1);
+                var nextListBoxItem = listBox.ContainerFromIndex(idx + 1);
                 bool isLastColInRow = !nextListBoxItem?.Bounds.Y.Equals(listBoxItem.Bounds.Y) ?? false;
                 if (isLastColInRow)
                 {
                     matchIdx = idx + 1;
                     break;
                 }
-                
+
                 // Debug.Print($"{idx} {relativePos.ToString()} {isIntersect}");
             }
-                    
+
             Debug.Print($"MatchIdx={matchIdx}");
             return matchIdx;
         }
-        
+
         void SetupDnd(Grid dropContainer)
         {
             void DragOver(object? sender, DragEventArgs e)
@@ -219,76 +232,52 @@ namespace HandsLiftedApp.Controls
                     e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
                 }
 
-                if (e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
+                var destSlideIndex = FindItemIndexOf(dropContainer, e);
+
+                if (destSlideIndex > -1 && sender is Control { DataContext: Item destItem })
                 {
-                    var sourceSlideReference = ((SlideDragDropCustomDataFormat)e.Data.Get(SlideDragDropCustomDataFormat.CustomFormat));
-            
-                    Debug.Print(sourceSlideReference.ToString());
-                    
-                    var destSlideIndex = FindItemIndexOf(dropContainer, e);
-               
-                    if (destSlideIndex > -1 && sender is Control { DataContext: Item item })
+                    if (e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
                     {
+                        var sourceSlideReference =
+                            ((SlideDragDropCustomDataFormat)e.Data.Get(SlideDragDropCustomDataFormat.CustomFormat));
+
+                        Debug.Print(sourceSlideReference.ToString());
+
+
                         MessageBus.Current.SendMessage(new MoveSlideCommand()
                         {
                             SourceItemUUID = sourceSlideReference.SourceItemUUID,
                             SourceSlideIndex = sourceSlideReference.SourceSlideIndex,
-                            DestItemUUID = item.UUID,
+                            DestItemUUID = destItem.UUID,
                             DestSlideIndex = destSlideIndex
                         });
                     }
-
-                }
-                else if (e.Data.Contains(DataFormats.Text))
-                {
-                    //_dropState.Text = e.Data.GetText();
-                }
-                else if (e.Data.Contains(DataFormats.Files))
-                {
-                    var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
-                    var contentStr = "";
-
-                    var listOfFilePaths = new List<string>();
-                    foreach (var item in files)
+                    else if (e.Data.Contains(DataFormats.Text))
                     {
-                        // if (item is IStorageFile file)
-                        // {
-                        //     listOfFilePaths.Add(file.Path.LocalPath);
-                        //
-                        //     //var content = await DialogsPage.ReadTextFromFile(file, 500);
-                        //     var content = "content";
-                        //     contentStr +=
-                        //         $"File {item.Name}:{Environment.NewLine}{content}{Environment.NewLine}{Environment.NewLine} inserted at {ItemInsertIndex}";
-                        // }
-                        // else if (item is IStorageFolder folder)
-                        // {
-                        //     // TODO ....
-                        //     var childrenCount = 0;
-                        //     await foreach (var _ in folder.GetItemsAsync())
-                        //     {
-                        //         childrenCount++;
-                        //     }
-                        //
-                        //     contentStr +=
-                        //         $"Folder {item.Name}: items {childrenCount}{Environment.NewLine}{Environment.NewLine}";
-                        // }
+                        //_dropState.Text = e.Data.GetText();
                     }
-
-                    // MessageBus.Current.SendMessage(new AddItemByFilePathMessage(listOfFilePaths, ItemInsertIndex));
-
-                    // _dropState.Text = contentStr;
-                }
+                    else if (e.Data.Contains(DataFormats.Files))
+                    {
+                        var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
+                        MessageBus.Current.SendMessage(new AddFilesToGroupItemCommand()
+                        {
+                            SourceFiles = files,
+                            DestItemUUID = destItem.UUID,
+                            DestSlideIndex = destSlideIndex
+                        });
+                    }
 #pragma warning disable CS0618 // Type or member is obsolete
-                else if (e.Data.Contains(DataFormats.FileNames))
-                {
-                    var files = e.Data.GetFileNames();
-                    // _dropState.Text = string.Join(Environment.NewLine, files ?? Array.Empty<string>());
-                }
+                    else if (e.Data.Contains(DataFormats.FileNames))
+                    {
+                        var files = e.Data.GetFileNames();
+                        // _dropState.Text = string.Join(Environment.NewLine, files ?? Array.Empty<string>());
+                    }
 #pragma warning restore CS0618 // Type or member is obsolete
-                //else if (e.Data.Contains(CustomFormat))
-                //{
-                //    _dropState.Text = "Custom: " + e.Data.Get(CustomFormat);
-                //}
+                    //else if (e.Data.Contains(CustomFormat))
+                    //{
+                    //    _dropState.Text = "Custom: " + e.Data.Get(CustomFormat);
+                    //}
+                }
 
                 this.Background = SolidColorBrush.Parse("Transparent");
             }
