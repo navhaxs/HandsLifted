@@ -53,13 +53,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ToProperty(this, x => x.ActiveSlide);
 
             this.WhenAnyValue(
-                i => i.Items, 
+                i => i.Items, // TODO not working
                 i => i.Title,
                 i => i.AutoAdvanceTimer
             ).Subscribe(_ =>
             {
                 ItemDataModified?.Invoke(this, EventArgs.Empty);
             });
+
+            // TODO not working
+            // Items.CollectionItemChanged += (sender, args) => IsDirty = true;
+            // Items.CollectionChanged += (sender, args) => IsDirty = true;
         }
 
         public void GenerateSlides()
@@ -79,7 +83,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public List<Slide> _Slides = new();
         public ObservableCollection<Slide> Slides => new(_Slides);
 
-        public int _selectedSlideIndex = -1;
+        private int _selectedSlideIndex = -1;
 
         public int SelectedSlideIndex
         {

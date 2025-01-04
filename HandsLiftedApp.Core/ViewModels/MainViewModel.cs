@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -291,6 +292,8 @@ public class MainViewModel : ViewModelBase
                 // rules: source and dest items must both be MEDIA GROUP ITEM
                 var sourceItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.SourceItemUUID);
                 var destItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.DestItemUUID);
+                
+                // todo; ppt, pdf
                 if (sourceItem is MediaGroupItemInstance sourceItemInstance &&
                     destItem is MediaGroupItemInstance destItemInstance)
                 {
@@ -304,30 +307,63 @@ public class MainViewModel : ViewModelBase
                             return;
                         }
 
-                        var lastSelectedSlide = sourceItemInstance.Slides[sourceItemInstance.SelectedSlideIndex];
+                        var lastSelectedSlide = sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
                         
                         sourceItemInstance.Items.Move(moveSlideCommand.SourceSlideIndex, calcDestSlideIndex);
                         
                         sourceItemInstance.GenerateSlides();
                         
                         // hack - restore the last selected slide, as re-ordering slides should not affect the selected slide (however this currently causes a brief flicker)
-                        sourceItemInstance.SelectedSlideIndex = sourceItemInstance.Slides.IndexOf(lastSelectedSlide);
+                        if (lastSelectedSlide != null)
+                        {
+                            var x = sourceItemInstance.Slides.IndexOf(lastSelectedSlide);
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                Thread.Sleep(1); // causing a freeze without this, don't know why
+                                sourceItemInstance.SelectedSlideIndex = x;
+                            });
+                        }
                     }
                     else
                     {
                         var itemToMove = sourceItemInstance.Items.ElementAtOrDefault(moveSlideCommand.SourceSlideIndex);
                         if (itemToMove == null)
                             return;
+                        
+                        bool isMovingActiveSlide = Playlist.SelectedItem == sourceItemInstance && sourceItemInstance.SelectedSlideIndex == moveSlideCommand.SourceSlideIndex;
+                        var sourceItemPreviousSelectedSlide = sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
+                        var destItemPreviousSelectedSlide = destItemInstance.Slides.ElementAtOrDefault(destItemInstance.SelectedSlideIndex);
+                        
                         destItemInstance.Items.Insert(moveSlideCommand.DestSlideIndex, itemToMove);
                         sourceItemInstance.Items.RemoveAt(moveSlideCommand.SourceSlideIndex);
 
                         destItemInstance.GenerateSlides();
                         sourceItemInstance.GenerateSlides();
+
+                        if (sourceItemPreviousSelectedSlide != null)
+                        {
+                            // recalculate selectedSlideIndex (may become -1)
+                            sourceItemInstance.SelectedSlideIndex = sourceItemInstance.Slides.IndexOf(sourceItemPreviousSelectedSlide);
+                        }
+
+                        if (destItemPreviousSelectedSlide != null && !isMovingActiveSlide)
+                        {
+                            // recalculate selectedSlideIndex
+                            destItemInstance.SelectedSlideIndex =
+                                destItemInstance.Slides.IndexOf(destItemPreviousSelectedSlide);
+                        }
+
+                        // bring focus to new item if we just moved the 'active slide'
+                        if (isMovingActiveSlide) {
+                            destItemInstance.SelectedSlideIndex = moveSlideCommand.DestSlideIndex;
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                Thread.Sleep(1); // causing a freeze without this, don't know why
+                                Playlist.SelectedItemIndex = destItemInstance.Index;
+                            });
+                        }
                     }
                 }
-
-                // todo; ppt, pdf
-                // todo; selection
             });
 
         MessageBus.Current.Listen<AddFilesToGroupItemCommand>()
