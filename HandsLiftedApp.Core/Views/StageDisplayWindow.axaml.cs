@@ -57,9 +57,21 @@ namespace HandsLiftedApp.Core.Views
         
         public void onToggleFullscreen(bool? fullscreen = null)
         {
-            bool isFullScreenNext = (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
+            bool isFullScreenNext =
+                (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
+         
+            if (isFullScreenNext)
+            {
+                var bounds = Screens.ScreenFromWindow(this).Bounds;
+                this.Height = bounds.Height;
+                this.Width = bounds.Width;
+            }
+
             this.ShowInTaskbar = !isFullScreenNext; // make this user option
-            this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
+            });
         }
         
         private void ToggleFullscreen_OnClick(object? sender, RoutedEventArgs e)
