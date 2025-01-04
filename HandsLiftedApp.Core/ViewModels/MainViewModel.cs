@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -24,7 +23,6 @@ using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.Views.Editors;
-using HandsLiftedApp.Core.Views.Editors.Song;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
@@ -41,8 +39,6 @@ public class MainViewModel : ViewModelBase
     public LibraryViewModel LibraryViewModel { get; init; }
 
     public AddItemViewModel AddItemViewModel { get; init; }
-
-    public ReactiveCommand<object, Unit> SlideClickCommand { get; }
 
     public MainViewModel()
     {
@@ -70,8 +66,6 @@ public class MainViewModel : ViewModelBase
         settings = new ConfigurationBuilder<IMySettings>()
             .UseJsonFile("HandsLiftedApp.UserConfig.json")
             .Build();
-
-        SlideClickCommand = ReactiveCommand.CreateFromTask<object>(OnSlideClickCommand);
 
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?>();
@@ -309,9 +303,15 @@ public class MainViewModel : ViewModelBase
                             // do nothing
                             return;
                         }
+
+                        var lastSelectedSlide = sourceItemInstance.Slides[sourceItemInstance.SelectedSlideIndex];
                         
                         sourceItemInstance.Items.Move(moveSlideCommand.SourceSlideIndex, calcDestSlideIndex);
+                        
                         sourceItemInstance.GenerateSlides();
+                        
+                        // hack - restore the last selected slide, as re-ordering slides should not affect the selected slide (however this currently causes a brief flicker)
+                        sourceItemInstance.SelectedSlideIndex = sourceItemInstance.Slides.IndexOf(lastSelectedSlide);
                     }
                     else
                     {
@@ -429,29 +429,6 @@ public class MainViewModel : ViewModelBase
     {
         get => _debugInfoText;
         set => this.RaiseAndSetIfChanged(ref _debugInfoText, value);
-    }
-
-    private async Task OnSlideClickCommand(object? ac)
-    {
-        try
-        {
-            ReadOnlyCollection<object> args = ac as ReadOnlyCollection<object>;
-            Slide slide = (Slide)args[0];
-            Item item = (Item)args[1];
-
-            int itemIndex = Playlist.Items.IndexOf(item);
-
-            int SlideIndex = item.GetAsIItemInstance().Slides.IndexOf(slide);
-            Log.Information($"OnSlideClickCommand item=[{item.Title}] slide=[{SlideIndex}]");
-
-            Playlist.NavigateToReference(new SlideReference()
-                { SlideIndex = SlideIndex, ItemIndex = itemIndex, Slide = slide });
-        }
-        catch (Exception e)
-        {
-            Log.Fatal(e, "Failed to OnSlideClickCommand");
-            throw;
-        }
     }
 
     public DateTime CurrentTime

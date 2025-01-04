@@ -1,4 +1,5 @@
-﻿using HandsLiftedApp.Data.Slides;
+﻿using System;
+using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core.Models
 {
@@ -6,6 +7,9 @@ namespace HandsLiftedApp.Core.Models
     {
         public int? SlideIndex { get; set; }
         public Slide? Slide { get; set; }
+        
+        public Guid? ItemUUID { get; set;}
+
         public int? ItemIndex { get; set; }
 
         public override string? ToString()

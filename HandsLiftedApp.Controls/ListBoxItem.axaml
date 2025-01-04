@@ -174,18 +174,7 @@
                     </Grid>
 
                     <Interaction.Behaviors>
-                        <behaviours:SlideThumbnailDragControlBehavior />
-                        <EventTriggerBehavior EventName="PointerPressed">
-                            <InvokeCommandAction
-                                Command="{Binding ViewModel.SlideClickCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
-                                <InvokeCommandAction.CommandParameter>
-                                    <MultiBinding>
-                                        <Binding />
-                                        <Binding Path="$parent[ListBox].DataContext" />
-                                    </MultiBinding>
-                                </InvokeCommandAction.CommandParameter>
-                            </InvokeCommandAction>
-                        </EventTriggerBehavior>
+                        <behaviours:SlideThumbnailBehavior />
                     </Interaction.Behaviors>
                 </DockPanel>
             </ControlTemplate>

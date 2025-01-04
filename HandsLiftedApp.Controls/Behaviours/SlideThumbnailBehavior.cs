@@ -4,16 +4,20 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Behaviours;
+using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
+using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Controls.Behaviours
 {
     /// <summary>
     /// A behavior that allows controls to be moved around the canvas using RenderTransform of <see cref="Behavior.AssociatedObject"/>.
     /// </summary>
-    public sealed class SlideThumbnailDragControlBehavior : Behavior<Control>
+    public sealed class SlideThumbnailBehavior : Behavior<Control>
     {
         /// <summary>
         /// Identifies the <seealso cref="TargetControl"/> avalonia property.
@@ -80,15 +84,42 @@ namespace HandsLiftedApp.Controls.Behaviours
             if (target is { })
             {
                 _pointerPressedInitialPoint = e.GetPosition(_parent);
+                
+                // prevent default ListBox behaviour which would update the SelectedItemIndex (due to data binding) on click event, we want to control slide navigation ourselves - and NOT do anything if this becomes a drag event
+                e.Handled = true;
             }
         }    
         
-        private void Source_PointerReleased(object? sender, PointerEventArgs e)
+        private void Source_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             var target = TargetControl ?? AssociatedObject;
-            if (target is { })
+            if (target is { } && sender is Control parent)
             {
                 _pointerPressedInitialPoint = null;
+                
+                var parentListBox = ControlExtension.FindAncestor<ListBoxWithoutKey>(parent);
+                var parentListBoxItem = ControlExtension.FindAncestor<ListBoxItem>(parent);
+                var sourceListBoxIndex = -1;
+                for (var idx = 0; idx < parentListBox.Items.Count; idx++)
+                {
+                    if (parentListBox.ContainerFromIndex(idx) == parentListBoxItem) 
+                    {
+                        sourceListBoxIndex = idx;
+                        break;
+                    }
+                }
+
+                if (parent.DataContext is Slide slide && sourceListBoxIndex > -1)
+                {
+                    if (parentListBox.DataContext is Item item)
+                    {
+                        var slideReference = new SlideReference()
+                            { ItemUUID = item.UUID, SlideIndex = sourceListBoxIndex };
+                        Log.Information($"OnSlideClickCommand [{slideReference}]");
+
+                        MessageBus.Current.SendMessage(new NavigateToSlideReferenceAction() { SlideReference = slideReference });
+                    }
+                }
             }
         }
 

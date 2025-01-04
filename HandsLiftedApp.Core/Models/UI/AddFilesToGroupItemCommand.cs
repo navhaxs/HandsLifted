@@ -6,7 +6,6 @@ namespace HandsLiftedApp.Core.Models.UI
 {
     public class AddFilesToGroupItemCommand
     {
-        // SlideReference
         public IEnumerable<IStorageItem> SourceFiles { get; set;}
         
         // SlideReference

@@ -442,6 +442,15 @@ namespace HandsLiftedApp.Core.Models
 
         public void NavigateToReference(SlideReference slideReference)
         {
+            if (slideReference is { ItemUUID: not null, ItemIndex: null })
+            {
+                var lookup = Items.FirstOrDefault(x => x.UUID == slideReference.ItemUUID)?.Index ?? null;
+                if (lookup != null)
+                {
+                    slideReference.ItemIndex = lookup;
+                }
+            }
+            
             var nextItemIndex = slideReference.ItemIndex ?? SelectedItemIndex;
 
             if (nextItemIndex >= Items.Count)

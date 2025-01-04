@@ -34,6 +34,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public MediaGroupItemInstance(PlaylistInstance parentPlaylist)
         {
             ParentPlaylist = parentPlaylist;
+            // TODO do not use SelectedSlideIndex, rather use slide id ref ! currently this causes a flicker when re-ordering slides
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides, (selectedSlideIndex, slides) =>
                 {
                     try
@@ -48,6 +49,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     return _blankSlide;
                 })
                 .ObserveOn(RxApp.MainThreadScheduler)
+                .Throttle(TimeSpan.FromMilliseconds(50), RxApp.TaskpoolScheduler) // hack
                 .ToProperty(this, x => x.ActiveSlide);
 
             this.WhenAnyValue(
