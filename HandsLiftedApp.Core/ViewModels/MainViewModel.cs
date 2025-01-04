@@ -293,14 +293,13 @@ public class MainViewModel : ViewModelBase
                 var sourceItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.SourceItemUUID);
                 var destItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.DestItemUUID);
                 
-                // todo; ppt, pdf
-                if (sourceItem is MediaGroupItemInstance sourceItemInstance &&
-                    destItem is MediaGroupItemInstance destItemInstance)
+                if (sourceItem is MediaGroupItem sourceItemAsGroup and IItemInstance sourceItemInstance &&
+                    destItem is MediaGroupItem destItemAsGroup and IItemInstance destItemInstance)
                 {
                     if (sourceItemInstance == destItemInstance)
                     {
                         var calcDestSlideIndex =
-                            Math.Min(moveSlideCommand.DestSlideIndex, sourceItemInstance.Items.Count - 1);
+                            Math.Min(moveSlideCommand.DestSlideIndex, sourceItemAsGroup.Items.Count - 1);
                         if (moveSlideCommand.SourceSlideIndex == calcDestSlideIndex)
                         {
                             // do nothing
@@ -309,9 +308,9 @@ public class MainViewModel : ViewModelBase
 
                         var lastSelectedSlide = sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
                         
-                        sourceItemInstance.Items.Move(moveSlideCommand.SourceSlideIndex, calcDestSlideIndex);
-                        
-                        sourceItemInstance.GenerateSlides();
+                        sourceItemAsGroup.Items.Move(moveSlideCommand.SourceSlideIndex, calcDestSlideIndex);
+
+                        RegerenateSlides(sourceItem);
                         
                         // hack - restore the last selected slide, as re-ordering slides should not affect the selected slide (however this currently causes a brief flicker)
                         if (lastSelectedSlide != null)
@@ -326,7 +325,7 @@ public class MainViewModel : ViewModelBase
                     }
                     else
                     {
-                        var itemToMove = sourceItemInstance.Items.ElementAtOrDefault(moveSlideCommand.SourceSlideIndex);
+                        var itemToMove = sourceItemAsGroup.Items.ElementAtOrDefault(moveSlideCommand.SourceSlideIndex);
                         if (itemToMove == null)
                             return;
                         
@@ -334,11 +333,11 @@ public class MainViewModel : ViewModelBase
                         var sourceItemPreviousSelectedSlide = sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
                         var destItemPreviousSelectedSlide = destItemInstance.Slides.ElementAtOrDefault(destItemInstance.SelectedSlideIndex);
                         
-                        destItemInstance.Items.Insert(moveSlideCommand.DestSlideIndex, itemToMove);
-                        sourceItemInstance.Items.RemoveAt(moveSlideCommand.SourceSlideIndex);
+                        destItemAsGroup.Items.Insert(moveSlideCommand.DestSlideIndex, itemToMove);
+                        sourceItemAsGroup.Items.RemoveAt(moveSlideCommand.SourceSlideIndex);
 
-                        destItemInstance.GenerateSlides();
-                        sourceItemInstance.GenerateSlides();
+                        RegerenateSlides(destItemInstance);
+                        RegerenateSlides(sourceItemInstance);
 
                         if (sourceItemPreviousSelectedSlide != null)
                         {
@@ -359,7 +358,7 @@ public class MainViewModel : ViewModelBase
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
                                 Thread.Sleep(1); // causing a freeze without this, don't know why
-                                Playlist.SelectedItemIndex = destItemInstance.Index;
+                                Playlist.SelectedItemIndex = destItemAsGroup.Index;
                             });
                         }
                     }
@@ -425,6 +424,23 @@ public class MainViewModel : ViewModelBase
         }
 
         // _ = Update(); // calling an async function we do not want to await
+    }
+
+    private void RegerenateSlides(object item)
+    {
+        // TODO GenerateSlides() should be a generic interface shared across all implementations below:
+        if (item is MediaGroupItemInstance mediaGroupItemInstance)
+        {
+            mediaGroupItemInstance.GenerateSlides(); 
+        }
+        else if (item is PowerPointPresentationItemInstance pointPresentationItemInstance)
+        {
+            pointPresentationItemInstance.GenerateSlides(); 
+        }
+        else if (item is PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance)
+        {
+            pdfSlidesGroupItemInstance.GenerateSlides(); 
+        }
     }
 
     public Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> ShowOpenFileDialog { get; }
