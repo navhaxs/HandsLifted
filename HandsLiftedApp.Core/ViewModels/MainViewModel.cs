@@ -291,6 +291,37 @@ public class MainViewModel : ViewModelBase
                 }
             });
 
+        MessageBus.Current.Listen<MoveSlideCommand>()
+            .Subscribe((moveSlideCommand) =>
+            {
+                // rules: source and dest items must both be MEDIA GROUP ITEM
+                var sourceItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.SourceItemUUID);
+                var destItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.DestItemUUID);
+                if (sourceItem is MediaGroupItemInstance sourceItemInstance &&
+                    destItem is MediaGroupItemInstance destItemInstance)
+                {
+                    if (sourceItemInstance == destItemInstance)
+                    {
+                        sourceItemInstance.Items.Move(moveSlideCommand.SourceSlideIndex, moveSlideCommand.DestSlideIndex);
+                        sourceItemInstance.GenerateSlides();
+                    }
+                    else
+                    {
+                        var itemToMove = sourceItemInstance.Items[moveSlideCommand.SourceSlideIndex];
+                        destItemInstance.Items.Insert(moveSlideCommand.DestSlideIndex, itemToMove);
+                        sourceItemInstance.Items.RemoveAt(moveSlideCommand.SourceSlideIndex);
+
+                        destItemInstance.GenerateSlides();
+                        sourceItemInstance.GenerateSlides();
+                    }
+                }
+
+                // todo; ppt, pdf
+                // todo; selection
+                // 1. remove sourceSlide from sourceItem
+                // 2. move sourceSlide to targetItem
+            });
+
         MessageBus.Current.Listen<MoveItemMessage>()
             .Subscribe((moveItemMessage) =>
             {
@@ -328,7 +359,7 @@ public class MainViewModel : ViewModelBase
             }
         }
 
-        _ = Update(); // calling an async function we do not want to await
+        // _ = Update(); // calling an async function we do not want to await
     }
 
     public Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> ShowOpenFileDialog { get; }

@@ -321,7 +321,13 @@
 
                                 <item:ItemInfo VerticalAlignment="Top" />
 
-                                <controls:ListBoxWithoutKey
+                                <Grid 
+                                    MinHeight="100"
+                                    Background="Transparent"
+                                    x:Name="DropContainer"
+                                    AttachedToLogicalTree="DropContainer_OnAttachedToLogicalTree"
+                                    DragDrop.AllowDrop="True" HorizontalAlignment="Stretch">
+                                    <controls:ListBoxWithoutKey
                                     Name="List"
                                     AutoScrollToSelectedItem="False"
                                     Background="Transparent"
@@ -439,7 +445,8 @@
                                     </controls:ListBoxWithoutKey.DataTemplates>
 
                                 </controls:ListBoxWithoutKey>
-
+                                </Grid>
+                                
                             </StackPanel>
 
                         </Border>

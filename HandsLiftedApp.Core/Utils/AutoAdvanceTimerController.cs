@@ -74,11 +74,14 @@ namespace HandsLiftedApp.Core.Utils
                     
             if (itemInstance != null)
             {
-                var slideIndex = (itemInstance.SelectedSlideIndex + 1) % itemInstance.Slides.Count;
-                Dispatcher.UIThread.InvokeAsync(() =>
-                    MessageBus.Current.SendMessage(new NavigateToSlideReferenceAction()
-                        { SlideReference = new SlideReference() { SlideIndex = slideIndex } })
-                );
+                if (itemInstance.Slides.Count > 0)
+                {
+                    var slideIndex = (itemInstance.SelectedSlideIndex + 1) % itemInstance.Slides.Count;
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                        MessageBus.Current.SendMessage(new NavigateToSlideReferenceAction()
+                            { SlideReference = new SlideReference() { SlideIndex = slideIndex } })
+                    );
+                }
                 return;
             }
 
