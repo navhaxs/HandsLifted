@@ -49,7 +49,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     return _blankSlide;
                 })
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Throttle(TimeSpan.FromMilliseconds(50), RxApp.TaskpoolScheduler) // hack
                 .ToProperty(this, x => x.ActiveSlide);
 
             this.WhenAnyValue(

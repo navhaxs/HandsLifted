@@ -316,11 +316,7 @@ public class MainViewModel : ViewModelBase
                         if (lastSelectedSlide != null)
                         {
                             var x = sourceItemInstance.Slides.IndexOf(lastSelectedSlide);
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                Thread.Sleep(1); // causing a freeze without this, don't know why
-                                sourceItemInstance.SelectedSlideIndex = x;
-                            });
+                            sourceItemInstance.SelectedSlideIndex = x;
                         }
                     }
                     else
@@ -355,11 +351,7 @@ public class MainViewModel : ViewModelBase
                         // bring focus to new item if we just moved the 'active slide'
                         if (isMovingActiveSlide) {
                             destItemInstance.SelectedSlideIndex = moveSlideCommand.DestSlideIndex;
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                Thread.Sleep(1); // causing a freeze without this, don't know why
-                                Playlist.SelectedItemIndex = destItemAsGroup.Index;
-                            });
+                            Playlist.SelectedItemIndex = destItemAsGroup.Index;
                         }
                     }
                 }
