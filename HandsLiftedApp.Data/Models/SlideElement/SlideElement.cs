@@ -9,6 +9,7 @@ using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Models.SlideElement
 {
+    [XmlRoot(Namespace = Constants.Namespace)]
     [XmlInclude(typeof(TextElement))]
     public abstract class SlideElement : ReactiveObject
     {
