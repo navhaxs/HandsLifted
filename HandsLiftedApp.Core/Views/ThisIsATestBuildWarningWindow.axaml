@@ -1,0 +1,39 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        mc:Ignorable="d"
+        Width="590" Height="360"
+        x:Class="HandsLiftedApp.Core.Views.ThisIsATestBuildWarningWindow"
+        Topmost="True"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Title="ThisIsATestBuildWarningWindow">
+    <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Margin" Value="18 3" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </Window.Styles>
+
+    <DockPanel Margin="8">
+        <Button DockPanel.Dock="Bottom" Click="Button_OnClick" IsDefault="True" IsCancel="True" FontSize="20"
+                Margin="0 12 0 0"
+                Width="160" Padding="14" HorizontalAlignment="Right">
+            OK
+        </Button>
+
+        <Border BorderBrush="Yellow" BorderThickness="1" CornerRadius="6">
+            <StackPanel>
+                <avalonia:MaterialIcon Margin="18 18 0 0" Foreground="Yellow" Kind="Warning" Height="70" Width="70"
+                                       HorizontalAlignment="Left" />
+                <TextBlock FontSize="32">Warning</TextBlock>
+                <TextBlock>You are using an internal development build of VisionScreens Church Presentation Software, which is intended for testing.</TextBlock>
+                <TextBlock>Expect bugs.</TextBlock>
+                <TextBlock>Do not use in a live environment.</TextBlock>
+            </StackPanel>
+        </Border>
+    </DockPanel>
+</Window>

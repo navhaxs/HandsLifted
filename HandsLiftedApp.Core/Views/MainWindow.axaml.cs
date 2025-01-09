@@ -103,6 +103,12 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     WindowState = (WindowState)vm.settings.LastWindowState;
                 }
             }
+            
+            if (!Debugger.IsAttached && !Environment.MachineName.Contains("JEREMY"))
+            {
+                ThisIsATestBuildWarningWindow warningWindow = new();
+                warningWindow.ShowDialog(this);
+            }
         };
 
         this.Closing += MainWindow_Closing;

@@ -40,6 +40,15 @@ namespace HandsLiftedApp.Data.Data.Models.Slides
             set => this.RaiseAndSetIfChanged(ref BackgroundColour, value);
         }
         
+        private string? _backgroundGraphicFilePath;
+
+        [DataMember]
+        public string? BackgroundGraphicFilePath
+        {
+            get => _backgroundGraphicFilePath;
+            set => this.RaiseAndSetIfChanged(ref _backgroundGraphicFilePath, value);
+        }
+        
         public override string? ToString()
         {
             var stringBuilder = new StringBuilder();

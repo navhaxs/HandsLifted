@@ -3,15 +3,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="slides:CustomSlide"
              PointerPressed="InputElement_OnPointerPressed"
              Height="1080"
              Width="1920"
-             Background="Black"
+             Background="{Binding BackgroundAvaloniaColour}"
              x:Class="HandsLiftedApp.Core.Render.CustomSlide.CustomSlideRender">
-    <!-- <Grid> -->
+    <UserControl.Resources>
+        <extensions:BitmapAssetValueConverter x:Key="variableImage" />
+    </UserControl.Resources>
+
+    <Border>
         <Canvas x:Name="Root" />
         <!-- <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="Button_OnClick">Render</Button> -->
-    <!-- </Grid> -->
+        <Border.Background>
+            <ImageBrush
+                Source="{Binding BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
+                Stretch="UniformToFill" />
+        </Border.Background>
+    </Border>
 </UserControl>
