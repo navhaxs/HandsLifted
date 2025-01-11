@@ -153,7 +153,7 @@
                         <Style
                             Selector="Button:pointerover /template/ ContentPresenter">
                             <Setter Property="Background"
-                                    Value="#b7a6e7" />
+                                    Value="#5b39b3" />
                         </Style>
                     </DockPanel.Styles>
 
@@ -216,7 +216,7 @@
                         <Style
                             Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
                             <Setter Property="Background"
-                                    Value="#b7a6e7" />
+                                    Value="#5b39b3" />
                         </Style>
                         <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
                             <Setter Property="Background" Value="#9072EA" />

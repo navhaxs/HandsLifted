@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Core.Controls;
@@ -23,7 +25,7 @@ namespace HandsLiftedApp.Core.Assets
             {
                 Item? nearestItem = null;
                 int? itemInsertIndex = null;
-                
+
                 var parentAddItemButton = ControlExtension.FindAncestor<AddItemButton>(menuItem);
 
                 if (parentAddItemButton != null && parentAddItemButton.ItemInsertIndex != null)
@@ -45,32 +47,36 @@ namespace HandsLiftedApp.Core.Assets
                     Enum.TryParse(menuItem.CommandParameter.ToString(), out type);
 
 
-
                     if (type == AddItemMessage.AddItemType.ExistingSong || type == AddItemMessage.AddItemType.NewSong)
                     {
                         Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex = itemInsertIndex;
 
-                        var library = Globals.Instance.MainViewModel.LibraryViewModel.Libraries.First(x => x.Label.Contains("Songs"));
-                        AddItemWindow aiw = new AddItemWindow() { DataContext = Globals.Instance.MainViewModel.AddItemViewModel };
-                        Globals.Instance.MainViewModel.AddItemViewModel.Page = 
+                        var library =
+                            Globals.Instance.MainViewModel.LibraryViewModel.Libraries.First(x =>
+                                x.Label.Contains("Songs")); // hack
+                        AddItemWindow aiw = new AddItemWindow()
+                        {
+                            DataContext = Globals.Instance.MainViewModel.AddItemViewModel,
+                        };
+                        Globals.Instance.MainViewModel.AddItemViewModel.Page =
                             new ResultsViewModel(Globals.Instance.MainViewModel.AddItemViewModel, library);
                         aiw.ViewModel.ItemInsertIndex = itemInsertIndex;
                         aiw.Show();
-                        
+
                         return;
                     }
-                    
-                    
-                    MessageBus.Current.SendMessage(new AddItemMessage { Type = type, ItemToInsertAfter = nearestItem, InsertIndex = itemInsertIndex });
+
+
+                    MessageBus.Current.SendMessage(new AddItemMessage
+                        { Type = type, ItemToInsertAfter = nearestItem, InsertIndex = itemInsertIndex });
                 }
                 else
                 {
                     throw new NotImplementedException();
                 }
             }
-
         }
-        
+
         /// <summary>
         /// Finds first ancestor of given type.
         /// </summary>
@@ -111,7 +117,7 @@ namespace HandsLiftedApp.Core.Assets
         {
             Item? nearestItem = null;
             int? itemInsertIndex = null;
-                
+
             var parentAddItemButton = ControlExtension.FindAncestor<AddItemButton>(sender as Control);
 
             if (parentAddItemButton != null && parentAddItemButton.ItemInsertIndex != null)

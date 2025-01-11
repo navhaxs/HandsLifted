@@ -200,6 +200,12 @@ public class MainViewModel : ViewModelBase
                                 }
                             }
                         });
+
+                        if (filePaths.Count == 0)
+                        {
+                            return;
+                        }
+                        
                         MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(Playlist)
                             { Title = "New media group" };
 

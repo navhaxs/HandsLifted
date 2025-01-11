@@ -72,7 +72,7 @@
         <Separator />
         <MenuItem Header="_From Library..." Click="ExploreLibraryClick">
             <MenuItem.Icon>
-                <material:MaterialIcon Kind="ContentCopy" />
+                <material:MaterialIcon Kind="Bookshelf" />
             </MenuItem.Icon>
         </MenuItem>
 

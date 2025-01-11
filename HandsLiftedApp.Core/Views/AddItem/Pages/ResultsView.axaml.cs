@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
@@ -14,6 +16,16 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
         public ResultsView()
         {
             InitializeComponent();
+            
+            AttachedToLogicalTree += (_, _) =>
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    // hack
+                    Thread.Sleep(100);
+                    SearchBox.Focus();
+                });
+            };
         }
 
         private void SelectingItemsControl_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)

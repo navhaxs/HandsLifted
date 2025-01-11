@@ -32,6 +32,10 @@
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="Foreground" Value="White" />
                 </Style>
+                <Style Selector="controls|IconButton:pointerover">
+                    <Setter Property="Background" Value="#5b39b3" />
+                    <Setter Property="Foreground" Value="White" />
+                </Style>
             </DockPanel.Styles>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                 <controls:IconButton Click="CreateSlideButton_OnClick" Kind="Paintbrush" Text="Create slide" />

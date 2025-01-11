@@ -56,17 +56,10 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                     }
                 });
 
-
-            //SetupDnd("Text", d => d.Set(DataFormats.Text, $"Text was dragged"), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
-
-            //SetupDnd("Custom", d => d.Set(CustomFormat, "Test123"), DragDropEffects.Move);
             SetupDnd("Files",
                 d => d.Set(DataFormats.FileNames,
                     new[] { Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName }),
                 DragDropEffects.Copy);
-
-            MessageBus.Current.Listen<AddItemMessage>()
-                .Subscribe(async addItemMessage => { });
         }
 
         private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
