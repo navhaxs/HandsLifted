@@ -230,7 +230,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
 
         private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            HandleAddItemButtonClick.ShowAddWindow(null, sender);
+            // HandleAddItemButtonClick.ShowAddWindow(null, sender);
         }
 
         object __lockObj = new();

@@ -10,6 +10,7 @@ using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using Serilog;
@@ -72,8 +73,24 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
             
             OnCreateNewSongCommand = ReactiveCommand.Create(() =>
             {
+                
+                var song = new SongItemInstance(Globals.Instance.MainViewModel.Playlist);
+                // itemToInsert = song;
+                // SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
+                // SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
+                // seq.Show();
+                // TODO
+                // TODO
+                // TODO
+                // TODO
+                // TODO
+                // TODO
+                // TODO  add ITEM into PLAYLIST
+                // MessageBus.Current.SendMessage(new AddItemByFilePathMessage(items, vm.AddItemViewModel.ItemInsertIndex));
+
+                
                 MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
-                    new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
+                    new SongEditorViewModel(song, Globals.Instance.MainViewModel.Playlist)));
             });
         }
 

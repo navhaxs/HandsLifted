@@ -170,11 +170,14 @@ public class MainViewModel : ViewModelBase
                         itemToInsert = new MediaGroupItemInstance(Playlist);
                         break;
                     case AddItemMessage.AddItemType.NewSong:
-                        var song = new SongItemInstance(Playlist);
-                        itemToInsert = song;
-                        SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
-                        SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
-                        seq.Show();
+                        // var song = new SongItemInstance(Playlist);
+                        // itemToInsert = song;
+                        // SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
+                        // SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };
+                        // seq.Show();
+                        
+                        
+                        
                         break;
                     case AddItemMessage.AddItemType.MediaGroup:
                         filePaths = await ShowOpenFileDialog.Handle(new FilePickerOpenOptions()

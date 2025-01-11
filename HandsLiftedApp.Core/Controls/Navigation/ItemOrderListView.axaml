@@ -365,8 +365,7 @@
             Cursor="Hand"
             DataContext="{Binding Items.Count, Converter={StaticResource intMinusOneConverter}}"
             DockPanel.Dock="Bottom"
-            Click="AddContentButton_OnClick"
-            ContextMenu="{StaticResource addItemFlyout}"
+            Flyout="{StaticResource addItemFlyout}"
             FontSize="14"
             Foreground="White"
             ZIndex="999">

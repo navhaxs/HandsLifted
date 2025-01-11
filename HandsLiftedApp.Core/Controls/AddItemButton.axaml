@@ -45,9 +45,7 @@
 				Margin="0,0,18,0"
 				HorizontalAlignment="Left"
 				VerticalAlignment="Top"
-				ContextMenu="{StaticResource addItemFlyout}"
-				
-				Click="AddContentButton_OnClick"
+				Flyout="{StaticResource addItemFlyout}"
 				DockPanel.Dock="Left">
 				<Button.Styles>
 					<Style Selector="Button">

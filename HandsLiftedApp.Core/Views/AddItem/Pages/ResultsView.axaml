@@ -59,13 +59,13 @@
         <TextBox
             x:Name="SearchBox" CornerRadius="3"
             Text="{Binding SearchTerm}"
-            DockPanel.Dock="Top" FontSize="18" Watermark="Search song title, content, ..." />
+            DockPanel.Dock="Top" FontSize="18" Watermark="Search song library..." />
 
-        <UniformGrid Margin="0 10 0 0" DockPanel.Dock="Bottom" Columns="2">
-            <controls:IconButton Kind="ExternalLink" Text="Create new song" Command="{Binding OnCreateNewSongCommand}" />
-            <!-- <controls:IconButton Kind="Shimmer" Text="Create new" /> -->
-            <!-- <controls:IconButton Kind="Web" Text="Import from SongSelect" /> -->
-        </UniformGrid>
+        <controls:IconButton DockPanel.Dock="Bottom"
+                             Margin="0 12 0 0"
+                             Text="Create new song" 
+                             Kind="Sparkles"
+                             Command="{Binding OnCreateNewSongCommand}" />
 
         <ListBox
             ItemsSource="{Binding SearchResults}"

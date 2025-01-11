@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using HandsLiftedApp.Controls.Messages;
@@ -9,6 +10,7 @@ using HandsLiftedApp.Extensions;
 using ReactiveUI;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
+using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
 using HandsLiftedApp.Core.Views;
 
 namespace HandsLiftedApp.Core.Assets
@@ -41,6 +43,24 @@ namespace HandsLiftedApp.Core.Assets
                 if (menuItem.CommandParameter != null)
                 {
                     Enum.TryParse(menuItem.CommandParameter.ToString(), out type);
+
+
+
+                    if (type == AddItemMessage.AddItemType.ExistingSong || type == AddItemMessage.AddItemType.NewSong)
+                    {
+                        Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex = itemInsertIndex;
+
+                        var library = Globals.Instance.MainViewModel.LibraryViewModel.Libraries.First(x => x.Label.Contains("Songs"));
+                        AddItemWindow aiw = new AddItemWindow() { DataContext = Globals.Instance.MainViewModel.AddItemViewModel };
+                        Globals.Instance.MainViewModel.AddItemViewModel.Page = 
+                            new ResultsViewModel(Globals.Instance.MainViewModel.AddItemViewModel, library);
+                        aiw.ViewModel.ItemInsertIndex = itemInsertIndex;
+                        aiw.Show();
+                        
+                        return;
+                    }
+                    
+                    
                     MessageBus.Current.SendMessage(new AddItemMessage { Type = type, ItemToInsertAfter = nearestItem, InsertIndex = itemInsertIndex });
                 }
                 else
@@ -85,6 +105,21 @@ namespace HandsLiftedApp.Core.Assets
             }
 
             return null;
+        }
+
+        private void ExploreLibraryClick(object? sender, RoutedEventArgs e)
+        {
+            Item? nearestItem = null;
+            int? itemInsertIndex = null;
+                
+            var parentAddItemButton = ControlExtension.FindAncestor<AddItemButton>(sender as Control);
+
+            if (parentAddItemButton != null && parentAddItemButton.ItemInsertIndex != null)
+            {
+                itemInsertIndex = parentAddItemButton.ItemInsertIndex;
+            }
+
+            HandleAddItemButtonClick.ShowAddWindow(itemInsertIndex, sender);
         }
     }
 }

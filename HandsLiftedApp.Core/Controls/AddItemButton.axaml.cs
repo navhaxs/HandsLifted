@@ -61,22 +61,22 @@ namespace HandsLiftedApp.Core.Controls
 
         private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            int itemInsertIndex;
-
-            if (ItemInsertIndex != null)
-            {
-                itemInsertIndex = ItemInsertIndex.Value;
-            }
-            else if (DataContext is Item item)
-            {
-                itemInsertIndex = Globals.Instance.MainViewModel.Playlist.Items.IndexOf(item) + 1;
-            }
-            else
-            {
-                itemInsertIndex = Globals.Instance.MainViewModel.Playlist.Items.Count;
-            }
-
-            HandleAddItemButtonClick.ShowAddWindow(itemInsertIndex, sender);
+            // int itemInsertIndex;
+            //
+            // if (ItemInsertIndex != null)
+            // {
+            //     itemInsertIndex = ItemInsertIndex.Value;
+            // }
+            // else if (DataContext is Item item)
+            // {
+            //     itemInsertIndex = Globals.Instance.MainViewModel.Playlist.Items.IndexOf(item) + 1;
+            // }
+            // else
+            // {
+            //     itemInsertIndex = Globals.Instance.MainViewModel.Playlist.Items.Count;
+            // }
+            //
+            // HandleAddItemButtonClick.ShowAddWindow(itemInsertIndex, sender);
         }
 
         void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)
