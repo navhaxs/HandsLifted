@@ -67,21 +67,28 @@
 
             <!-- header -->
             <Grid Background="#41285c">
-                <Image Source="/Assets/waves.png" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                
-                <Grid MaxWidth="700" VerticalAlignment="Bottom" Margin="0 0 0 12">
-                    <Grid.Styles>
-                        <Style Selector="TextBlock">
-                            <Setter Property="Foreground" Value="White" />
-                        </Style>
-                    </Grid.Styles>
-                    <StackPanel VerticalAlignment="Bottom">
-                        <TextBlock Text="Welcome" FontSize="32" />
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Right" Margin="0 0 16 0">
-                        <TextBlock x:Name="DayOfWeekString" Text="Sunday" FontSize="22" />
-                        <TextBlock x:Name="DateString" Text="11 April 2025" FontSize="22" />
-                    </StackPanel>
+                <Grid.Styles>
+                    <Style Selector="TextBlock">
+                        <Setter Property="Foreground" Value="White" />
+                    </Style>
+                </Grid.Styles>
+
+                <Image Source="/Assets/waves.png" Stretch="None"
+                       HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+                <Grid ColumnDefinitions="2*,*" MaxWidth="700">
+                    <Grid Grid.Column="0" VerticalAlignment="Bottom" Margin="0 0 0 12">
+                        <StackPanel VerticalAlignment="Bottom">
+                            <TextBlock Text="Welcome" FontSize="32" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Column="1" Margin="0 0 0 12">
+                        <StackPanel HorizontalAlignment="Left" Margin="0 0 16 0" VerticalAlignment="Bottom">
+                            <TextBlock x:Name="DayOfWeekString" Text="Sunday" FontSize="22" />
+                            <TextBlock x:Name="DateString" Text="11 April 2025" FontSize="22" />
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Grid>
 
@@ -111,7 +118,8 @@
                                 </ItemsControl.Styles>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Button Click="LoadRecentPlaylistEntryCommand" Content="{Binding FileName}" ToolTip.Tip="{Binding FilePath}" />
+                                        <Button Click="LoadRecentPlaylistEntryCommand" Content="{Binding FileName}"
+                                                ToolTip.Tip="{Binding FilePath}" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

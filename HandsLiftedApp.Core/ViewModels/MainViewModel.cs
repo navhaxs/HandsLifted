@@ -20,8 +20,8 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels.AddItem;
-using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Data.Models.Items;
@@ -108,10 +108,53 @@ public class MainViewModel : ViewModelBase
             try
             {
                 var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(msg.FilePath);
-                Playlist.Dispose();
-                x.IsDirty = false;
-                Playlist = x;
+                
+                string? playlistDirectoryPath = Path.GetDirectoryName(msg.FilePath);
 
+                if (playlistDirectoryPath == null)
+                {
+                    throw new Exception("Could not get directory path from file path.");
+                }
+                
+                Playlist.SelectedItemIndex = -1;
+
+                // do not create new PlaylistInstance
+                // Map properties from PlaylistSerialized to Playlist
+
+                Playlist.Title = x.Title;
+                Playlist.Meta = x.Meta;
+                
+                Playlist.LogoGraphicFile =
+                    RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                        x.LogoGraphicFile);
+                
+                Playlist.Designs = new ObservableCollection<BaseSlideTheme>(x.Designs.Select(design =>
+                {
+                    if (design.BackgroundGraphicFilePath != null)
+                    {
+                        design.BackgroundGraphicFilePath =
+                            RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                design.BackgroundGraphicFilePath);
+                    }
+
+                    return design;
+                }).ToList());
+                Playlist.PlaylistFilePath = msg.FilePath;
+
+                var Items = new List<Item>();
+                foreach (var deserializedItem in x.Items)
+                {
+                    Items.Add(ItemInstanceFactory.ToItemInstance(deserializedItem, Playlist));
+                }
+                Playlist.Items = new PlaylistItemInstanceCollection<Item>(Items);
+                
+                Playlist.LastSaved = new DateTime();
+                Playlist.ActiveItemInsertIndex = null;
+                Playlist.PlaylistWorkingDirectory = playlistDirectoryPath;
+                Playlist.QuickShowItem = null;
+                Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
+
+                Playlist.IsDirty = false;
                 settings.LastOpenedPlaylistFullPath = msg.FilePath;
             }
             catch (Exception ex)

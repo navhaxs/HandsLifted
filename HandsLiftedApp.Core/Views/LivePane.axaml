@@ -99,6 +99,7 @@
                 </Grid.Background>
                 <Viewbox>
                     <!-- NEW -->
+                    <!-- <render:SlideRender Width="1920" Height="1080" DataContext="{Binding Playlist.ActiveSlide}" /> -->
                     <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
                     <!-- <viewsrender:SlideRenderer -->
                     <!--     ActiveSlide="{Binding ActiveSlide}" -->

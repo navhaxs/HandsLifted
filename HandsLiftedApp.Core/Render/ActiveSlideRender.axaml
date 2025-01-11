@@ -20,7 +20,6 @@
 
         <xTransitioningContentControl:XTransitioningContentControl
             Content="{Binding $parent[render:ActiveSlideRender].ActiveSlide}"
-
             RenderOptions.BitmapInterpolationMode="HighQuality">
 
             <xTransitioningContentControl:XTransitioningContentControl.PageTransition>
@@ -35,7 +34,7 @@
 
             <xTransitioningContentControl:XTransitioningContentControl.ContentTemplate>
                 <DataTemplate>
-                    <render:SlideRender Grid.Column="1" DataContext="{Binding .}" />
+                    <render:SlideRender DataContext="{Binding .}" />
                 </DataTemplate>
             </xTransitioningContentControl:XTransitioningContentControl.ContentTemplate>
         </xTransitioningContentControl:XTransitioningContentControl>

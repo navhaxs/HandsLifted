@@ -14,15 +14,15 @@ namespace HandsLiftedApp.Core.Render
         /// <summary>
         /// Gets or sets the active slide
         /// </summary>
-        private Slide? _activeSlide;
-        public Slide? ActiveSlide
+        private Slide _activeSlide = new BlankSlide();
+        public Slide ActiveSlide
         {
             get => _activeSlide;
             set => SetAndRaise(ActiveSlideProperty, ref _activeSlide, value);
         }
 
-        public static readonly DirectProperty<ActiveSlideRender, Slide?> ActiveSlideProperty =
-            AvaloniaProperty.RegisterDirect<ActiveSlideRender, Slide?>(
+        public static readonly DirectProperty<ActiveSlideRender, Slide> ActiveSlideProperty =
+            AvaloniaProperty.RegisterDirect<ActiveSlideRender, Slide>(
                 nameof(ActiveSlide),
                 o => o.ActiveSlide,
                 (o, v) => o.ActiveSlide = v);

@@ -194,7 +194,7 @@ namespace HandsLiftedApp.Core
         }
 
         // Deserialize Playlist from XML
-        public static PlaylistInstance DeserializePlaylist(string filePath)
+        public static Playlist DeserializePlaylist(string filePath)
         {
             string? playlistDirectoryPath = Path.GetDirectoryName(filePath);
 
@@ -211,40 +211,7 @@ namespace HandsLiftedApp.Core
                 if (x != null)
                 {
                     Playlist deserialized = (Playlist)x;
-
-                    // Map properties from PlaylistSerialized to Playlist
-                    PlaylistInstance playlist = new PlaylistInstance
-                    {
-                        Title = deserialized.Title,
-                        Meta = deserialized.Meta,
-                        LogoGraphicFile =
-                            RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                deserialized.LogoGraphicFile),
-                        Designs = new ObservableCollection<BaseSlideTheme>(deserialized.Designs.Select(design =>
-                        {
-                            if (design.BackgroundGraphicFilePath != null)
-                            {
-                                design.BackgroundGraphicFilePath =
-                                    RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                        design.BackgroundGraphicFilePath);
-                            }
-
-                            return design;
-                        }).ToList()),
-                        PlaylistFilePath = filePath
-                        // Date = deserialized.Date,
-                        // Items = Items
-                    };
-
-                    var Items = new List<Item>();
-                    foreach (var deserializedItem in deserialized.Items)
-                    {
-                        Items.Add(ItemInstanceFactory.ToItemInstance(deserializedItem, playlist));
-                    }
-
-                    playlist.Items = new PlaylistItemInstanceCollection<Item>(Items);
-
-                    return playlist;
+                    return deserialized;
                 }
             }
 
