@@ -102,12 +102,15 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 {
                     WindowState = (WindowState)vm.settings.LastWindowState;
                 }
-            }
-            
-            if (!Debugger.IsAttached && !Environment.MachineName.Contains("JEREMY"))
-            {
-                ThisIsATestBuildWarningWindow warningWindow = new();
-                warningWindow.ShowDialog(this);
+
+                if (!Debugger.IsAttached && !Environment.MachineName.Contains("JEREMY"))
+                {
+                    ThisIsATestBuildWarningWindow warningWindow = new();
+                    warningWindow.ShowDialog(this);
+                }
+
+                WelcomeWindow welcomeWindow = new() { DataContext = new WelcomeWindowViewModel(vm) };
+                welcomeWindow.ShowDialog(this);
             }
         };
 
@@ -128,7 +131,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         this.Loaded += (e, s) => { updateWin32Border(this.WindowState); };
 
         this.GetObservable(WindowStateProperty)
-             .Subscribe(v => { updateWin32Border(v); });
+            .Subscribe(v => { updateWin32Border(v); });
     }
 
     private void updateWin32Border(WindowState v)
@@ -186,14 +189,14 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
     public async void ExitApp()
     {
-
         if (this.DataContext is MainViewModel vm)
         {
             // feature: unsaved changes dirty bit
             if (vm.Playlist.IsDirty)
             {
                 Shade.IsVisible = true;
-                UnsavedChangesConfirmationWindow unsavedChangesConfirmationWindow = new UnsavedChangesConfirmationWindow();
+                UnsavedChangesConfirmationWindow unsavedChangesConfirmationWindow =
+                    new UnsavedChangesConfirmationWindow();
                 await unsavedChangesConfirmationWindow.ShowDialog(this);
                 Shade.IsVisible = false;
 
@@ -210,8 +213,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 }
             }
         }
-        
-        
+
+
         _isConfirmedExiting = true;
 
         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
@@ -236,14 +239,16 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         }
     }
 
-    private async Task ShowOpenFileDialog(IInteractionContext<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> interaction)
+    private async Task ShowOpenFileDialog(
+        IInteractionContext<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> interaction)
     {
         try
         {
-            IReadOnlyList<IStorageFile> files = await StorageProvider.OpenFilePickerAsync(interaction.Input ?? new FilePickerOpenOptions
-            {
-                AllowMultiple = true
-            });
+            IReadOnlyList<IStorageFile> files = await StorageProvider.OpenFilePickerAsync(interaction.Input ??
+                new FilePickerOpenOptions
+                {
+                    AllowMultiple = true
+                });
             interaction.SetOutput(files);
         }
         catch (Exception e)

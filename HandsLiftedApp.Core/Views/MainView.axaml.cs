@@ -130,27 +130,8 @@ public partial class MainView : UserControl
         {
             // Open reading stream from the first file.
             // await using var stream = await files[0].OpenReadAsync();
-
-            if (this.DataContext is MainViewModel vm)
-            {
-                try
-                {
-                    var filePath = files[0].Path.LocalPath;
-                    var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(filePath);
-                    vm.Playlist.Dispose();
-                    x.IsDirty = false;
-                    vm.Playlist = x;
-                    // vm.CurrentPlaylist.Playlist = XmlSerialization.ReadFromXmlFile<Playlist>(stream);
-
-                    vm.settings.LastOpenedPlaylistFullPath = filePath;
-                }
-                catch (Exception e)
-                {
-                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                        { Title = "Playlist failed to load :(", Content = $"{e.Message}" });
-                    Log.Error(e, "[DOC] Failed to parse playlist XML");
-                }
-            }
+            var filePath = files[0].Path.LocalPath;
+            MessageBus.Current.SendMessage(new LoadPlaylistAction() {FilePath = filePath});
         }
     }
 

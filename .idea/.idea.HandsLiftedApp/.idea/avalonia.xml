@@ -174,7 +174,7 @@
         <entry key="HandsLiftedApp/Views/StageDisplayLayout/SongLayout.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/StageDisplayWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="Libraries/AvaloniaNDI/AvaloniaNDI.Sample/AnimationPage.axaml" value="Libraries/AvaloniaNDI/AvaloniaNDI.Sample/AvaloniaNDI.Sample.csproj" />
-        <entry key="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/MainWindow.axaml" value="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/Avalonia.Controls.LibMpv.csproj" />
+        <entry key="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/MainWindow.axaml" value="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/Avalonia.Controls.LibMpv.Sample.csproj" />
         <entry key="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/MainWindow.xaml" value="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/LibVLCSharp.Avalonia.Sample.csproj" />
       </map>
     </option>

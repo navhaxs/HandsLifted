@@ -103,6 +103,25 @@ public class MainViewModel : ViewModelBase
             }
         });
 
+        MessageBus.Current.Listen<LoadPlaylistAction>().Subscribe((msg) =>
+        {
+            try
+            {
+                var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(msg.FilePath);
+                Playlist.Dispose();
+                x.IsDirty = false;
+                Playlist = x;
+
+                settings.LastOpenedPlaylistFullPath = msg.FilePath;
+            }
+            catch (Exception ex)
+            {
+                MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                    { Title = "Playlist failed to load :(", Content = $"{ex.Message}" });
+                Log.Error(ex, "[DOC] Failed to parse playlist XML");
+            }
+        });
+
         MessageBus.Current.Listen<AddItemMessage>()
             .Subscribe(async addItemMessage =>
             {
@@ -292,7 +311,7 @@ public class MainViewModel : ViewModelBase
                 // rules: source and dest items must both be MEDIA GROUP ITEM
                 var sourceItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.SourceItemUUID);
                 var destItem = Playlist.Items.FirstOrDefault(item => item.UUID == moveSlideCommand.DestItemUUID);
-                
+
                 if (sourceItem is MediaGroupItem sourceItemAsGroup and IItemInstance sourceItemInstance &&
                     destItem is MediaGroupItem destItemAsGroup and IItemInstance destItemInstance)
                 {
@@ -306,12 +325,13 @@ public class MainViewModel : ViewModelBase
                             return;
                         }
 
-                        var lastSelectedSlide = sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
-                        
+                        var lastSelectedSlide =
+                            sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
+
                         sourceItemAsGroup.Items.Move(moveSlideCommand.SourceSlideIndex, calcDestSlideIndex);
 
                         RegerenateSlides(sourceItem);
-                        
+
                         // hack - restore the last selected slide, as re-ordering slides should not affect the selected slide (however this currently causes a brief flicker)
                         if (lastSelectedSlide != null)
                         {
@@ -324,11 +344,15 @@ public class MainViewModel : ViewModelBase
                         var itemToMove = sourceItemAsGroup.Items.ElementAtOrDefault(moveSlideCommand.SourceSlideIndex);
                         if (itemToMove == null)
                             return;
-                        
-                        bool isMovingActiveSlide = Playlist.SelectedItem == sourceItemInstance && sourceItemInstance.SelectedSlideIndex == moveSlideCommand.SourceSlideIndex;
-                        var sourceItemPreviousSelectedSlide = sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
-                        var destItemPreviousSelectedSlide = destItemInstance.Slides.ElementAtOrDefault(destItemInstance.SelectedSlideIndex);
-                        
+
+                        bool isMovingActiveSlide = Playlist.SelectedItem == sourceItemInstance &&
+                                                   sourceItemInstance.SelectedSlideIndex ==
+                                                   moveSlideCommand.SourceSlideIndex;
+                        var sourceItemPreviousSelectedSlide =
+                            sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
+                        var destItemPreviousSelectedSlide =
+                            destItemInstance.Slides.ElementAtOrDefault(destItemInstance.SelectedSlideIndex);
+
                         destItemAsGroup.Items.Insert(moveSlideCommand.DestSlideIndex, itemToMove);
                         sourceItemAsGroup.Items.RemoveAt(moveSlideCommand.SourceSlideIndex);
 
@@ -338,7 +362,8 @@ public class MainViewModel : ViewModelBase
                         if (sourceItemPreviousSelectedSlide != null)
                         {
                             // recalculate selectedSlideIndex (may become -1)
-                            sourceItemInstance.SelectedSlideIndex = sourceItemInstance.Slides.IndexOf(sourceItemPreviousSelectedSlide);
+                            sourceItemInstance.SelectedSlideIndex =
+                                sourceItemInstance.Slides.IndexOf(sourceItemPreviousSelectedSlide);
                         }
 
                         if (destItemPreviousSelectedSlide != null && !isMovingActiveSlide)
@@ -349,7 +374,8 @@ public class MainViewModel : ViewModelBase
                         }
 
                         // bring focus to new item if we just moved the 'active slide'
-                        if (isMovingActiveSlide) {
+                        if (isMovingActiveSlide)
+                        {
                             destItemInstance.SelectedSlideIndex = moveSlideCommand.DestSlideIndex;
                             Playlist.SelectedItemIndex = destItemAsGroup.Index;
                         }
@@ -374,6 +400,7 @@ public class MainViewModel : ViewModelBase
                         // {
                         // }
                     }
+
                     destItemInstance.GenerateSlides();
                 }
             });
@@ -398,22 +425,22 @@ public class MainViewModel : ViewModelBase
         Playlist = new PlaylistInstance();
 
         // Open reading stream from the first file.
-        if (settings.LastOpenedPlaylistFullPath != null)
-        {
-            try
-            {
-                var parsedPlaylist =
-                    HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
-                Playlist.Dispose();
-                Playlist = parsedPlaylist;
-                Playlist.IsDirty = false;
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, $"[DOC] Failed to parse playlist XML: [{settings.LastOpenedPlaylistFullPath}]");
-                // ignored
-            }
-        }
+        // if (settings.LastOpenedPlaylistFullPath != null)
+        // {
+        //     try
+        //     {
+        //         var parsedPlaylist =
+        //             HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
+        //         Playlist.Dispose();
+        //         Playlist = parsedPlaylist;
+        //         Playlist.IsDirty = false;
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Log.Error(e, $"[DOC] Failed to parse playlist XML: [{settings.LastOpenedPlaylistFullPath}]");
+        //         // ignored
+        //     }
+        // }
 
         // _ = Update(); // calling an async function we do not want to await
     }
@@ -423,15 +450,15 @@ public class MainViewModel : ViewModelBase
         // TODO GenerateSlides() should be a generic interface shared across all implementations below:
         if (item is MediaGroupItemInstance mediaGroupItemInstance)
         {
-            mediaGroupItemInstance.GenerateSlides(); 
+            mediaGroupItemInstance.GenerateSlides();
         }
         else if (item is PowerPointPresentationItemInstance pointPresentationItemInstance)
         {
-            pointPresentationItemInstance.GenerateSlides(); 
+            pointPresentationItemInstance.GenerateSlides();
         }
         else if (item is PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance)
         {
-            pdfSlidesGroupItemInstance.GenerateSlides(); 
+            pdfSlidesGroupItemInstance.GenerateSlides();
         }
     }
 

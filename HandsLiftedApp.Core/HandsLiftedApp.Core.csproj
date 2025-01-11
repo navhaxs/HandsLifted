@@ -20,6 +20,8 @@
         <AvaloniaResource Include="Assets\DefaultTheme\default-bg.png"/>
         <None Remove="Assets\DefaultTheme\logo-default.png" />
         <AvaloniaResource Include="Assets\DefaultTheme\logo-default.png" />
+        <None Remove="Assets\waves.png" />
+        <AvaloniaResource Include="Assets\waves.png" />
     </ItemGroup>
 
 
