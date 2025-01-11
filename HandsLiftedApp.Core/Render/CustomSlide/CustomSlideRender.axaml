@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             xmlns:converters="clr-namespace:Avalonia.Markup.Xaml.Converters;assembly=Avalonia.Markup.Xaml"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="slides:CustomSlide"
              PointerPressed="InputElement_OnPointerPressed"
@@ -12,16 +13,20 @@
              Background="{Binding BackgroundAvaloniaColour}"
              x:Class="HandsLiftedApp.Core.Render.CustomSlide.CustomSlideRender">
     <UserControl.Resources>
+        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <extensions:BitmapAssetValueConverter x:Key="variableImage" />
     </UserControl.Resources>
 
-    <Border>
-        <Canvas x:Name="Root" />
-        <!-- <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="Button_OnClick">Render</Button> -->
-        <Border.Background>
-            <ImageBrush
-                Source="{Binding BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
-                Stretch="UniformToFill" />
-        </Border.Background>
-    </Border>
+    <Grid
+        Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}">
+        <Border>
+            <Canvas x:Name="Root" />
+            <!-- <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="Button_OnClick">Render</Button> -->
+            <Border.Background>
+                <ImageBrush
+                    Source="{Binding BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
+                    Stretch="UniformToFill" />
+            </Border.Background>
+        </Border>
+    </Grid>
 </UserControl>

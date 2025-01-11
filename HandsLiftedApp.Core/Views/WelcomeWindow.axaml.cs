@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.Views.Setup;
 using ReactiveUI;
 
@@ -21,9 +22,9 @@ namespace HandsLiftedApp.Core.Views
 
         private void LoadRecentPlaylistEntryCommand(object? sender, RoutedEventArgs e)
         {
-            if (sender is Control { DataContext: string filePath })
+            if (sender is Control { DataContext: WelcomeWindowViewModel.RecentPlaylistEntry recentPlaylistEntry })
             {
-                MessageBus.Current.SendMessage(new LoadPlaylistAction() {FilePath = filePath});
+                MessageBus.Current.SendMessage(new LoadPlaylistAction() {FilePath = recentPlaylistEntry.FilePath});
                 Close();
             }
         }

@@ -61,7 +61,9 @@
             </ListBox>
             <Button Grid.Row="1" Content="Add TextBox" Click="Button_OnClick" />
             <GridSplitter Grid.Row="2" />
-            <ContentControl Grid.Row="3" Content="{Binding #ListBox.SelectedItem}">
+            <StackPanel  Grid.Row="3">
+                
+                     <ContentControl Content="{Binding #ListBox.SelectedItem}">
                 <ContentControl.ContentTemplate>
                     <common:MyTemplateSelector>
                         <DataTemplate x:Key="TextElement" x:DataType="slideElement:TextElement">
@@ -293,20 +295,30 @@
                                                  HorizontalAlignment="Right"
                                                  Color="{Binding BackgroundAvaloniaColour, FallbackValue='Black'}" />
 
-                                    <TextBlock Text="Graphic" />
-                                    <DockPanel>
-                                        <!-- <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button> -->
-                                        <!-- <TextBox Name="bgGraphicFilePath" Watermark="" -->
-                                        <!--          Text="{Binding #designsListBox.SelectedItem.BackgroundGraphicFilePath}" /> -->
-                                    </DockPanel> 
-
                                 </StackPanel>
 
                             </ScrollViewer>
                         </DataTemplate>
                     </common:MyTemplateSelector>
                 </ContentControl.ContentTemplate>
-            </ContentControl>
+            </ContentControl> 
+                <TextBlock Text="SLIDE" />
+                <TextBlock Text="Background" />
+                                    
+                <ColorPicker Name="BackgroundColour"
+                             HorizontalAlignment="Right"
+                             Color="{Binding  Slide.BackgroundAvaloniaColour, FallbackValue='Black'}" />
+
+                <TextBlock Text="Graphic" />
+                <DockPanel>
+                    <!-- <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button> -->
+                    <TextBox Watermark=""
+                             Text="{Binding Slide.BackgroundGraphicFilePath}" />
+                </DockPanel> 
+
+
+            </StackPanel>
+      
         </Grid>
 
         <GridSplitter Grid.Column="1" />
