@@ -7,17 +7,15 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Core.ViewModels.Editor
 {
     public class SongEditorViewModel : ViewModelBase
     {
-        // private bool _lyricEntryMode = false;
-        // public bool LyricEntryMode { get => _lyricEntryMode; set => this.RaiseAndSetIfChanged(ref _lyricEntryMode, value); }
-        
-        // public event EventHandler SongDataUpdated;
-
         private SongItemInstance _song;
+        private ObservableAsPropertyHelper<string> _songEditorWindowTitle;
+        public string SongEditorWindowTitle => _songEditorWindowTitle.Value;
 
         public SongItemInstance Song
         {
@@ -37,6 +35,24 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 
             }
         }
+
+        #region "add new song"
+        
+        private int? _itemInsertIndex = null;
+        /// <summary>
+        /// null == editing an existing item
+        /// </summary>
+        public int? ItemInsertIndex
+        {
+            get => _itemInsertIndex; set => this.RaiseAndSetIfChanged(ref _itemInsertIndex, value);
+        }
+        
+        private bool _itemInserted = false;
+        public bool ItemInserted
+        {
+            get => _itemInserted; set => this.RaiseAndSetIfChanged(ref _itemInserted, value);
+        }
+        #endregion        
 
         private void _song_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -61,6 +77,11 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                         Song.Design = theme.Id;
                     }
                 });
+            
+            _songEditorWindowTitle = this.WhenAnyValue(x => x.ItemInsertIndex,
+                (int? idx) => idx == null ? "Song Editor" : "Add new song")
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.SongEditorWindowTitle);
         }
 
         public ReactiveCommand<Unit, Unit> OnClickCommand { get; }
@@ -69,8 +90,6 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         {
             Song.Stanzas.Add(new SongStanza(Guid.NewGuid(), "", ""));
         }
-
-            // MessageBus.Current.SendMessage(new PlaylistInstance.UpdateEditedItemMessage { Item = Song });
 
         private string _freeTextEntryField = "";
 

@@ -115,11 +115,24 @@
                                     <Style Selector="Button:nth-last-child(1)">
                                         <Setter Property="CornerRadius" Value="0 0 6 6" />
                                     </Style>
+                                    <!-- Wrap ToolTips -->
+                                    <Style Selector="ToolTip">
+                                        <Setter Property="Foreground"
+                                                Value="White" />
+                                        <Setter Property="MaxWidth"
+                                                Value="500" />
+                                    </Style>
+                                    <Style Selector="ToolTip TextBlock">
+                                        <Setter Property="FontSize" Value="16" />
+                                        <Setter Property="TextWrapping"
+                                                Value="Wrap" />
+                                    </Style>
                                 </ItemsControl.Styles>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Click="LoadRecentPlaylistEntryCommand" Content="{Binding FileName}"
-                                                ToolTip.Tip="{Binding FilePath}" />
+                                                ToolTip.Tip="{Binding FilePath}"
+                                                />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

@@ -36,7 +36,7 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <TabControl TabStripPlacement="Left" Margin="0 0 0 0" Padding="0">
+        <TabControl TabStripPlacement="Left" Margin="0 0 0 0" Padding="0" SelectedIndex="1">
 
             <TabControl.Styles>
                 <Style Selector="TabItem:nth-child(1)">
@@ -70,8 +70,7 @@
 
         </TabControl>
 
-        <GridSplitter Grid.Column="1"
-                      Margin="-6,0" />
+        <GridSplitter Grid.Column="1" />
 
         <Border Grid.Column="2">
             <Grid>

@@ -10,6 +10,7 @@
         ExtendClientAreaTitleBarHeightHint="90"
         ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterOwner"
+        Topmost="True"
         Title="AddItemWindow">
     <Window.Styles>
         <Style Selector="Button#CloseButton">

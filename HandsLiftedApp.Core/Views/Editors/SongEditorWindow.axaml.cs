@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Xml;
@@ -11,11 +9,14 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Gdk;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using Serilog;
+using Window = Avalonia.Controls.Window;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {
@@ -42,26 +43,15 @@ namespace HandsLiftedApp.Core.Views.Editors
             };
         }
 
-        public void OnAddPartClick(object? sender, RoutedEventArgs args)
+        public void AddToPlaylist_OnClick(object? sender, RoutedEventArgs args)
         {
-            var clickedStanza = (SongStanza)((Control)sender).DataContext;
-            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Add(clickedStanza.Id);
-        }
-
-        public void OnRepeatPartClick(object? sender, RoutedEventArgs args)
-        {
-            var clickedStanza = (ArrangementRef)((Control)sender).DataContext;
-            var lastIndex =
-                ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(clickedStanza.SongStanza.Id);
-            ((SongEditorViewModel)this.DataContext).Song.Arrangement.Insert(lastIndex + 1, clickedStanza.SongStanza.Id);
-        }
-
-        public void OnRemovePartClick(object? sender, RoutedEventArgs args)
-        {
-            var clickedStanza = (ArrangementRef)((Control)sender).DataContext;
-            var lastIndex =
-                ((SongEditorViewModel)this.DataContext).Song.Arrangement.IndexOf(clickedStanza.SongStanza.Id);
-            ((SongEditorViewModel)this.DataContext).Song.Arrangement.RemoveAt(lastIndex);
+            if (DataContext is SongEditorViewModel { ItemInsertIndex: not null, ItemInserted: false } songEditorViewModel)
+            {
+                Globals.Instance.MainViewModel.Playlist.Items.Insert(songEditorViewModel.ItemInsertIndex.Value, songEditorViewModel.Song);
+                songEditorViewModel.ItemInserted = true;
+                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = songEditorViewModel.ItemInsertIndex.Value });
+                Close();
+            }
         }
 
         private void ResetArrangement_OnClick(object? sender, RoutedEventArgs e)
@@ -87,7 +77,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                 songEditorViewModel.FreeTextEntryField = SongImporter.songItemToFreeText(songEditorViewModel.Song);
             }
         }
-
+        
         private void New_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is SongEditorViewModel songEditorViewModel)
@@ -108,70 +98,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                 // songEditorViewModel.LyricEntryMode = true;
             }
         }
-
-        private void ParseAndLoadFromText_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (this.DataContext is SongEditorViewModel songEditorViewModel)
-            {
-                var text = songEditorViewModel.FreeTextEntryField;
-                // TODO refactor to just return Stanzas
-                var songItemFromStringData = SongImporter.CreateSongItemFromStringData(text);
-                List<string> matchingStanzas = new();
-                foreach (var newStanza in songItemFromStringData.Stanzas)
-                {
-                    matchingStanzas.Add(newStanza.Name);
-                    var firstOrDefault =
-                        songEditorViewModel.Song.Stanzas.FirstOrDefault(existingStanza =>
-                            existingStanza.Name == newStanza.Name);
-
-                    if (firstOrDefault != null)
-                    {
-                        firstOrDefault.Lyrics = newStanza.Lyrics;
-                    }
-                    else
-                    {
-                        songEditorViewModel.Song.Stanzas.Add(newStanza);
-                    }
-                }
-
-                var removedSongStanzas =
-                    songEditorViewModel.Song.Stanzas.Where(existingStanza =>
-                        !matchingStanzas.Contains(existingStanza.Name)).ToList();
-                foreach (var removedSongStanza in removedSongStanzas)
-                {
-                    songEditorViewModel.Song.Stanzas.Remove(removedSongStanza);
-                    while (songEditorViewModel.Song.Arrangement.Contains(removedSongStanza.Id))
-                    {
-                        songEditorViewModel.Song.Arrangement.Remove(removedSongStanza.Id);
-                    }
-                }
-
-                songEditorViewModel.Song.Title = songItemFromStringData.Title;
-                songEditorViewModel.Song.Copyright = songItemFromStringData.Copyright;
-
-                if (songEditorViewModel.Song.Arrangement.Count == 0)
-                {
-                    songEditorViewModel.Song.ResetArrangement();
-                }
-
-                // songEditorViewModel.LyricEntryMode = false;
-            }
-        }
-
-        private void DismissLoadFromText_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (this.DataContext is SongEditorViewModel songEditorViewModel)
-            {
-                // songEditorViewModel.LyricEntryMode = false;
-            }
-        }
-
-        private void LoadFromXml_OnClick(object? sender, RoutedEventArgs e)
-        {
-            LoadXml();
-        }
-
-        private async void LoadXml()
+        
+          private async void LoadXml()
         {
             // Get top level from the current control. Alternatively, you can use Window reference instead.
             var topLevel = TopLevel.GetTopLevel(this);

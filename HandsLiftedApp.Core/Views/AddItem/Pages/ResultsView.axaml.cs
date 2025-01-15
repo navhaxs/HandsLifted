@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using HandsLiftedApp.Core.Controls;
 using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
@@ -26,6 +27,7 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
                     SearchBox.Focus();
                 });
             };
+            
         }
 
         private void SelectingItemsControl_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)

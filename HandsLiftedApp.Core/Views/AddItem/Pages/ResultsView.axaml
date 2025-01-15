@@ -62,10 +62,13 @@
             DockPanel.Dock="Top" FontSize="18" Watermark="Search song library..." />
 
         <controls:IconButton DockPanel.Dock="Bottom"
+                             x:Name="CreateNewSongButton"
                              Margin="0 12 0 0"
                              Text="Create new song" 
                              Kind="Sparkles"
-                             Command="{Binding OnCreateNewSongCommand}" />
+                             Command="{Binding OnCreateNewSongCommand}"
+                             CommandParameter="{Binding $parent[Window]}"
+                             />
 
         <ListBox
             ItemsSource="{Binding SearchResults}"

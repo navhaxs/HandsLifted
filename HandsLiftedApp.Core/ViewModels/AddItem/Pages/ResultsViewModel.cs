@@ -6,11 +6,11 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
-using HandsLiftedApp.Models.PlaylistActions;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using Serilog;
@@ -22,7 +22,7 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
         private readonly ObservableAsPropertyHelper<IEnumerable<LibraryItem>> _searchResults;
         private readonly Library _library;
 
-        public ReactiveCommand<Unit, Unit> OnCreateNewSongCommand { get; }
+        public ReactiveCommand<Window, Unit> OnCreateNewSongCommand { get; }
 
         // TODO this could be a list
         public Library Library
@@ -71,9 +71,8 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
                     .ToProperty(this, c => c.SelectedItemPreview)
                 ;
             
-            OnCreateNewSongCommand = ReactiveCommand.Create(() =>
+            OnCreateNewSongCommand = ReactiveCommand.Create<Window>(window =>
             {
-                
                 var song = new SongItemInstance(Globals.Instance.MainViewModel.Playlist);
                 // itemToInsert = song;
                 // SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
@@ -88,9 +87,10 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
                 // TODO  add ITEM into PLAYLIST
                 // MessageBus.Current.SendMessage(new AddItemByFilePathMessage(items, vm.AddItemViewModel.ItemInsertIndex));
 
-                
                 MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
-                    new SongEditorViewModel(song, Globals.Instance.MainViewModel.Playlist)));
+                    new SongEditorViewModel(song, Globals.Instance.MainViewModel.Playlist) { ItemInsertIndex = addItemViewModel.ItemInsertIndex }));
+
+                window.Close();
             });
         }
 

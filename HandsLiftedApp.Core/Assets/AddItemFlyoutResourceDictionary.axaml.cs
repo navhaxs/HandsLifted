@@ -46,7 +46,6 @@ namespace HandsLiftedApp.Core.Assets
                 {
                     Enum.TryParse(menuItem.CommandParameter.ToString(), out type);
 
-
                     if (type == AddItemMessage.AddItemType.ExistingSong || type == AddItemMessage.AddItemType.NewSong)
                     {
                         Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex = itemInsertIndex;
@@ -57,6 +56,7 @@ namespace HandsLiftedApp.Core.Assets
                         AddItemWindow aiw = new AddItemWindow()
                         {
                             DataContext = Globals.Instance.MainViewModel.AddItemViewModel,
+                            Width = 400
                         };
                         Globals.Instance.MainViewModel.AddItemViewModel.Page =
                             new ResultsViewModel(Globals.Instance.MainViewModel.AddItemViewModel, library);
