@@ -11,6 +11,7 @@ using HandsLiftedApp.Views.Editor;
 using ReactiveUI;
 using Serilog;
 using System;
+using HandsLiftedApp.Core.Utils;
 
 namespace HandsLiftedApp.Core.Views;
 
@@ -149,6 +150,7 @@ public partial class MainView : UserControl
                 PlaylistDocumentService.SaveDocument(vm.Playlist);
                 MessageBus.Current.SendMessage(new MessageWindowViewModel()
                     { Title = "Playlist Saved" });
+                MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = vm.Playlist.PlaylistFilePath});
             }
             catch (Exception e)
             {
@@ -163,29 +165,8 @@ public partial class MainView : UserControl
     {
         if (this.DataContext is MainViewModel vm)
         {
-            // Get top level from the current control. Alternatively, you can use Window reference instead.
-            var topLevel = TopLevel.GetTopLevel(this);
-
-            // Start async operation to open the dialog.
-            var xmlFileType = new FilePickerFileType("XML Document")
-            {
-                Patterns = new[] { "*.xml" },
-                MimeTypes = new[] { "text/xml" }
-            };
-
-            var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-            {
-                Title = "Save File",
-                FileTypeChoices = new[] { xmlFileType }
-            });
-
-            if (file != null)
-            {
-                var filePath = file.Path.LocalPath;
-                vm.Playlist.PlaylistFilePath = filePath;
-
-                SaveFile();
-            }
+            await PlaylistSaveService.ShowSaveAsDialog(this, vm.Playlist);
+            SaveFile();
         }
     }
 

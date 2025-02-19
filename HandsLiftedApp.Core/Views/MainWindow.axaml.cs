@@ -12,6 +12,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
@@ -204,7 +205,21 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 switch (unsavedChangesConfirmationWindow.Result)
                 {
                     case UnsavedChangesConfirmationWindow.DialogResult.Save:
-                        PlaylistDocumentService.SaveDocument(vm.Playlist);
+                        if (vm.Playlist.PlaylistFilePath == null)
+                        {
+                            // give user chance to pick save file path
+                            var filePath = await PlaylistSaveService.ShowSaveAsDialog(this, vm.Playlist);
+                            if (filePath != null)
+                            {
+                                // update MRU list
+                                MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = filePath});
+                            }
+                        }
+                        // do save
+                        if (vm.Playlist.PlaylistFilePath != null)
+                        {
+                            PlaylistDocumentService.SaveDocument(vm.Playlist);
+                        }
                         break;
                     case UnsavedChangesConfirmationWindow.DialogResult.Discard:
                         break;
@@ -214,7 +229,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 }
             }
         }
-
 
         _isConfirmedExiting = true;
 

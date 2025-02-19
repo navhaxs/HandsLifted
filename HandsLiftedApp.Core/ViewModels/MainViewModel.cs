@@ -165,6 +165,11 @@ public class MainViewModel : ViewModelBase
             }
         });
 
+        MessageBus.Current.Listen<UpdateLastOpenedPlaylistAction>().Subscribe((msg) =>
+        {
+            settings.LastOpenedPlaylistFullPath = msg.FilePath;
+        });
+
         MessageBus.Current.Listen<AddItemMessage>()
             .Subscribe(async addItemMessage =>
             {
