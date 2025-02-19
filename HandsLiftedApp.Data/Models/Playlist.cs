@@ -39,7 +39,7 @@ namespace HandsLiftedApp.Data.Models
                 return;
         }
 
-        private String _title = "Untitled Playlist";
+        private String _title = "";
         public String Title { get => _title; set => this.RaiseAndSetIfChanged(ref _title, value); }
 
         // private String _notes = "Some notes go here";

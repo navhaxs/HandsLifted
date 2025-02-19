@@ -192,7 +192,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         if (this.DataContext is MainViewModel vm)
         {
             // feature: unsaved changes dirty bit
-            if (vm.Playlist.IsDirty)
+            var isPlaylistEmpty = (vm.Playlist.Title.Length == 0 && vm.Playlist.Items.Count == 0);
+            if (vm.Playlist.IsDirty && !isPlaylistEmpty)
             {
                 Shade.IsVisible = true;
                 UnsavedChangesConfirmationWindow unsavedChangesConfirmationWindow =
