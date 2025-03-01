@@ -61,13 +61,13 @@
     <PackageVersion Include="protobuf-net" Version="3.2.30" />
     <PackageVersion Include="ReactiveHistory" Version="0.10.7" />
     <PackageVersion Include="ReactiveUI" Version="18.3.1" />
+    <PackageVersion Include="RtfDomParser" Version="7.0.0" />
     <PackageVersion Include="Serilog" Version="3.1.1" />
     <PackageVersion Include="Serilog.Expressions" Version="4.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="5.0.0" />
     <PackageVersion Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.1-dev-00968" />
     <PackageVersion Include="SIL.Scripture" Version="11.0.1" />
-    <PackageVersion Include="Simplecto.Avalonia.RichTextBox" Version="1.0.12" />
     <PackageVersion Include="SkiaSharp" Version="2.88.1" />
     <PackageVersion Include="Syncfusion.Licensing" Version="25.1.37" />
     <PackageVersion Include="Syncfusion.Presentation.NET" Version="25.1.35" />

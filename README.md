@@ -13,6 +13,12 @@ Find out more at https://visionscreens.twohandslifted.com
 ![Screenshot](screenshot-nov2023.jpg?raw=true "Screenshot")
 ![Screenshot](screenshot.jpg?raw=true "Screenshot")
 
+## Dev set up
+
+```
+SyncfusionLicenseKey
+```
+
 ## Acknowledgements
 
 Avalonia UI
