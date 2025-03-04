@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <OutputType>WinExe</OutputType>
+        <OutputType>Exe</OutputType>
         <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
         One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationIcon>app.ico</ApplicationIcon>
@@ -11,11 +11,20 @@
         <Product>VisionScreens Church Presentation Software</Product>
         <PackageIcon>app.ico</PackageIcon>
         <UserSecretsId>b7aca156-4577-4098-b109-b5a2160f5c03</UserSecretsId>
+
+<!--        &lt;!&ndash; Add these properties &ndash;&gt;-->
+<!--        <CFBundleName>YourAppName</CFBundleName>-->
+<!--        <ApplicationId>com.yourcompany.yourappname</ApplicationId>-->
+<!--        <CFBundleIdentifier>com.yourcompany.yourappname</CFBundleIdentifier>-->
+<!--        <CFBundlePackageType>APPL</CFBundlePackageType>-->
+<!--        <CFBundleShortVersionString>1.0</CFBundleShortVersionString>-->
+<!--        <CFBundleVersion>1</CFBundleVersion>-->
+
     </PropertyGroup>
 
     <PropertyGroup>
         <ApplicationManifest>app.manifest</ApplicationManifest>
-    </PropertyGroup>
+</PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Avalonia.Desktop" />
