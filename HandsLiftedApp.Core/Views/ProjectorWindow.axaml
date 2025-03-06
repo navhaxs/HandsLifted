@@ -7,6 +7,7 @@
         xmlns:avaloniaNdi="clr-namespace:AvaloniaNDI;assembly=AvaloniaNDI"
         xmlns:render1="clr-namespace:HandsLiftedApp.Views.Render"
         xmlns:app="clr-namespace:HandsLiftedApp.Core"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
         x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
@@ -47,5 +48,38 @@
                 <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
             </avaloniaNdi:NDISendContainer>
         </Viewbox>
+        
+        <Grid x:Name="ControlsOverlay">
+            <Grid.Styles>
+                <Style Selector="Button">
+                    <Setter Property="CornerRadius" Value="0" />
+                    <Setter Property="Background" Value="#33333333" />
+                </Style>
+                <Style Selector="avalonia|MaterialIcon">
+                    <Setter Property="Height" Value="56" />
+                    <Setter Property="Width" Value="56" />
+                </Style>
+            </Grid.Styles>
+
+            <Grid VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Click="FullscreenToggleButton_OnClick">
+                        <avalonia:MaterialIcon Kind="Fullscreen" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+            
+            <Grid VerticalAlignment="Bottom">
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="PreviousButton_OnClick">
+                        <avalonia:MaterialIcon Kind="ArrowLeft" />
+                    </Button>
+                    <Button Click="NextButton_OnClick">
+                        <avalonia:MaterialIcon Kind="ArrowRight" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        
+        </Grid>
     </Grid>
 </Window>

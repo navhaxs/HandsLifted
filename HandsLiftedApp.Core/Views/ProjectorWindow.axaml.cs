@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
+using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
@@ -18,6 +19,9 @@ namespace HandsLiftedApp.Core.Views
         public ProjectorWindow()
         {
             InitializeComponent();
+
+            if (Design.IsDesignMode)
+                return;
 
             Log.Information("Created ProjectorWindow");
 
@@ -42,16 +46,41 @@ namespace HandsLiftedApp.Core.Views
                 {
                     if (IsVisible && msg.ChangedDisplay == OutputDisplayConfigurationChangeMessage.Display.Projector)
                     {
-                        Dispatcher.UIThread.InvokeAsync(() => WindowUtils.ShowAndRestoreWindowBounds(this, Globals.Instance.AppPreferences.OutputDisplayBounds));
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                            WindowUtils.ShowAndRestoreWindowBounds(this,
+                                Globals.Instance.AppPreferences.OutputDisplayBounds));
                     }
                 });
+
+            RegisterControlsOverlayTimer();
+        }
+
+        public void RegisterControlsOverlayTimer()
+        {
+            ControlsOverlay.IsVisible = false;
+
+            System.Timers.Timer aTimer = new System.Timers.Timer();
+            aTimer.Elapsed += ((sender, args) =>
+            {
+                aTimer.Stop();
+                Dispatcher.UIThread.InvokeAsync(() => ControlsOverlay.IsVisible = false);
+            });
+            aTimer.Interval = 5000; // ~ 5 seconds
+            aTimer.Enabled = true;
+
+            this.PointerMoved += (sender, args) =>
+            {
+                ControlsOverlay.IsVisible = true;
+                aTimer.Stop();
+                aTimer.Start();
+            };
         }
 
         public void onToggleFullscreen(bool? fullscreen = null)
         {
             bool isFullScreenNext =
                 (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
-         
+
             if (isFullScreenNext)
             {
                 var bounds = Screens.ScreenFromWindow(this).Bounds;
@@ -60,10 +89,13 @@ namespace HandsLiftedApp.Core.Views
             }
 
             this.ShowInTaskbar = !isFullScreenNext; // make this user option
-            Dispatcher.UIThread.InvokeAsync(() =>
+            if (!OperatingSystem.IsMacOS())
             {
-                this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
-            });
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
+                });
+            }
         }
 
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
@@ -112,6 +144,23 @@ namespace HandsLiftedApp.Core.Views
         private void Close_OnClick(object? sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void PreviousButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            MessageBus.Current.SendMessage(new ActionMessage()
+                { Action = ActionMessage.NavigateSlideAction.PreviousSlide });
+        }
+
+        private void NextButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            MessageBus.Current.SendMessage(new ActionMessage()
+                { Action = ActionMessage.NavigateSlideAction.NextSlide });
+        }
+
+        private void FullscreenToggleButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            onToggleFullscreen();
         }
     }
 }
