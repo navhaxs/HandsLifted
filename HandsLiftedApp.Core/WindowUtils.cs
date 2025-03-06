@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using HandsLiftedApp.Core.ViewModels;
@@ -14,7 +15,7 @@ namespace HandsLiftedApp.Core
 
             if (targetSavedDisplay != null &&
                 targetSavedDisplay is not AppPreferencesViewModel.UnsetDisplay) {
-                
+
                 var targetPosition = new PixelPoint(targetSavedDisplay.X, targetSavedDisplay.Y);
 
                 if (targetWindow.Screens.All.FirstOrDefault(target => target.Bounds.Contains(targetPosition)) == null)
@@ -32,10 +33,11 @@ namespace HandsLiftedApp.Core
                 }
 
                 targetWindow.Position = targetPosition;
-                targetWindow.Height = targetSavedDisplay.Height;
-                targetWindow.Width = targetSavedDisplay.Width;
+                targetWindow.Height = Math.Max(100, targetSavedDisplay.Height);
+                targetWindow.Width = Math.Max(100, targetSavedDisplay.Width);
 
-                targetWindow.WindowState = WindowState.FullScreen;
+                if (!OperatingSystem.IsMacOS())
+                    targetWindow.WindowState = WindowState.FullScreen;
             }
             
             targetWindow.Show();
