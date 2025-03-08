@@ -230,7 +230,7 @@
                                 <avalonia:MaterialIcon Kind="FormatBold" />
                             </RadioButton>
                             <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentCentre}">
+                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentCenter}">
                                 <avalonia:MaterialIcon Kind="FormatItalic" />
                             </RadioButton>
                             <RadioButton CornerRadius="6"
@@ -297,7 +297,7 @@
                                 <avalonia:MaterialIcon Kind="AlignHorizontalLeft" />
                             </RadioButton>
                             <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentCentre}">
+                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentCenter}">
                                 <avalonia:MaterialIcon Kind="AlignHorizontalCentre" />
                             </RadioButton>
                             <RadioButton CornerRadius="6"

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using Avalonia.Controls;
@@ -44,10 +45,10 @@ namespace HandsLiftedApp.Core.Views.Editors
 
             var canvas = this.FindControl<Canvas>("Root");
 
-            canvas.PointerPressed += (sender, args) =>
-            {
-                RemoveSelected();
-            };
+            // canvas.PointerPressed += (sender, args) =>
+            // {
+            //     RemoveSelected();
+            // };
 
             //
             // TestWindow1 tw1 = new TestWindow1();
@@ -132,8 +133,16 @@ namespace HandsLiftedApp.Core.Views.Editors
                 if (control is null)
                     continue;
                     
-                control.PointerEntered += (s, e) =>
+                // control.PointerEntered += (s, e) =>
+                // {
+                //     if (_selected is null)
+                //     {
+                //         AddSelected(control, Root);
+                //     }
+                // };
+                control.PointerPressed += (s, e) =>
                 {
+                    RemoveSelected();
                     if (_selected is null)
                     {
                         AddSelected(control, Root);
@@ -141,6 +150,22 @@ namespace HandsLiftedApp.Core.Views.Editors
                 };
 
                 Root.Children.Add(control);
+            }
+        }
+
+        public void SelectElement(SlideElement slideElement)
+        {
+            if (_selected?.Control?.DataContext == slideElement)
+            {
+                return;
+            }
+            
+            var first = Root.Children.FirstOrDefault((control) => control.DataContext == slideElement);
+
+            RemoveSelected();
+            if (first != null)
+            {
+                AddSelected(first, Root);
             }
         }
 

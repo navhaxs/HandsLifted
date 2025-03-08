@@ -20,6 +20,12 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         {
             InitializeComponent();
 
+            if (Design.IsDesignMode)
+            {
+                this.DataContext = new FreeTextSlideEditorViewModel()
+                    { Slide = new CustomSlide() { SlideElements = new() { new TextElement() } } };
+            }
+
             VisualEditor.OnUpdateSelectedElement += (sender, args) =>
             {
                 ListBox.SelectedItem = args.SelectedElement;
@@ -134,6 +140,15 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 {
                     Log.Error(exception, "Failed to parse XML");
                 }
+            }
+        }
+
+        // TODO probably double-firing on visual editor selection click
+        private void ListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                VisualEditor.SelectElement(e.AddedItems[0] as SlideElement);
             }
         }
     }

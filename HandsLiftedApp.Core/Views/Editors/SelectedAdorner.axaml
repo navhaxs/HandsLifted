@@ -10,7 +10,7 @@
     <Setter Property="AdornerLayer.IsClipEnabled" Value="False" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Canvas Name="PART_Canvas" >
+        <Canvas Name="PART_Canvas">
           <Thumb Name="PART_Drag" Classes="drag sizeAll"  />
           <Thumb Name="PART_Top" Classes="resize topSide"  />
           <Thumb Name="PART_Bottom" Classes="resize bottomSide"  />

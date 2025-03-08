@@ -72,11 +72,13 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                 {
                     Text = textElement.Text, FontSize = Math.Max(1, textElement.FontSize),
                     Background = Brushes.Blue, Foreground = Brushes.Yellow,
-                    HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    // VerticalAlignment = textElement.VerticalAlignment,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    DataContext = slideElement
                 };
                 Canvas.SetLeft(textBlock, textElement.X);
                 Canvas.SetTop(textBlock, textElement.Y);
-
 
                 textBlock.Bind(TextBlock.TextProperty, new Binding
                 {
@@ -149,6 +151,14 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Mode = BindingMode.OneWay,
                     Converter = new XmlColorToBrushConverter()
                 });
+                
+                // TODO, this does NOT work, actually need to wrap in a border(?)
+                // textBlock.Bind(Layoutable.VerticalAlignmentProperty, new Binding
+                // {
+                //     Source = textElement,
+                //     Path = nameof(textElement.VerticalAlignment),
+                //     Mode = BindingMode.OneWay,
+                // });
                 
                 return textBlock;
             }

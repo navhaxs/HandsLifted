@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using Avalonia.Layout;
 using Avalonia.Media;
 using HandsLiftedApp.Data.Data.Models.Types;
 using Newtonsoft.Json;
@@ -40,24 +41,44 @@ namespace HandsLiftedApp.Data.Models.SlideElement
                 .ToProperty(this, x => x.LineHeight);
             
             _calculatedTextAlignmentLeft = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Left; })
+                    (textAlignment) => textAlignment == TextAlignment.Left)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
             
-            _calculatedTextAlignmentCentre = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Center; })
+            _calculatedTextAlignmentCenter = this.WhenAnyValue(x => x.TextAlignment,
+                    (textAlignment) => textAlignment == TextAlignment.Center)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .ToProperty(this, x => x.CalculatedTextAlignmentCentre);
+                .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
             
             _calculatedTextAlignmentRight = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Right; })
+                    (textAlignment) => textAlignment == TextAlignment.Right)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentRight);
             
             _calculatedTextAlignmentJustify = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Justify; })
+                    (textAlignment) => textAlignment == TextAlignment.Justify)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentJustify); 
+            
+            _calculatedVerticalAlignmentTop = this.WhenAnyValue(x => x.VerticalAlignment,
+                    (a) => a == VerticalAlignment.Top)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
+            
+            _calculatedVerticalAlignmentCenter = this.WhenAnyValue(x => x.VerticalAlignment,
+                    (a) => a == VerticalAlignment.Center)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
+            
+            _calculatedVerticalAlignmentBottom = this.WhenAnyValue(x => x.VerticalAlignment,
+                    (textAlignment) => textAlignment == VerticalAlignment.Bottom)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentRight);
+
+            _calculatedVerticalAlignmentStretch = this.WhenAnyValue(x => x.VerticalAlignment,
+                    (textAlignment) => textAlignment == VerticalAlignment.Stretch)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
         }
 
         public string Text { get => _text; set => this.RaiseAndSetIfChanged(ref _text, value); }
@@ -86,6 +107,9 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         private TextAlignment _textAlignment = TextAlignment.Center;
         public TextAlignment TextAlignment { get => _textAlignment; set => this.RaiseAndSetIfChanged(ref _textAlignment, value); }
         
+        private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
+        public VerticalAlignment VerticalAlignment { get => _verticalAlignment; set => this.RaiseAndSetIfChanged(ref _verticalAlignment, value); }
+        
         [DataMember]
         public XmlColor ForegroundColour = Color.Parse("White");
 
@@ -106,11 +130,15 @@ namespace HandsLiftedApp.Data.Models.SlideElement
             set => this.RaiseAndSetIfChanged(ref BackgroundColour, value);
         }
         
-        
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentLeft;
-        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentCentre;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentCenter;
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentRight;
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentJustify;
+
+        private readonly ObservableAsPropertyHelper<bool> _calculatedVerticalAlignmentTop;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedVerticalAlignmentCenter;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedVerticalAlignmentBottom;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedVerticalAlignmentStretch;
         
         [XmlIgnore]
         public bool CalculatedTextAlignmentLeft
@@ -120,9 +148,9 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         }
 
         [XmlIgnore]
-        public bool CalculatedTextAlignmentCentre
+        public bool CalculatedTextAlignmentCenter
         {
-            get => _calculatedTextAlignmentCentre.Value;
+            get => _calculatedTextAlignmentCenter.Value;
             set { if (value) TextAlignment = TextAlignment.Center; }
         }
         [XmlIgnore]
@@ -136,6 +164,32 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         {
             get => _calculatedTextAlignmentJustify.Value;
             set { if (value) TextAlignment = TextAlignment.Justify; }
+        }
+        
+        [XmlIgnore]
+        public bool CalculatedVerticalAlignmentTop
+        {
+            get => _calculatedVerticalAlignmentTop.Value;
+            set { if (value) VerticalAlignment = VerticalAlignment.Top; }
+        }
+
+        [XmlIgnore]
+        public bool CalculatedVerticalAlignmentCenter
+        {
+            get => _calculatedVerticalAlignmentCenter.Value;
+            set { if (value) VerticalAlignment = VerticalAlignment.Center; }
+        }
+        [XmlIgnore]
+        public bool CalculatedVerticalAlignmentBottom
+        {
+            get => _calculatedVerticalAlignmentBottom.Value;
+            set { if (value) VerticalAlignment = VerticalAlignment.Bottom; }
+        }
+        [XmlIgnore]
+        public bool CalculatedVerticalAlignmentStretch
+        {
+            get => _calculatedVerticalAlignmentStretch.Value;
+            set { if (value) VerticalAlignment = VerticalAlignment.Stretch; }
         }
         
         private readonly ObservableAsPropertyHelper<int> _calculatedLineHeight;

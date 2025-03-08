@@ -5,8 +5,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Layout;
-using Avalonia.Skia;
 
 namespace PerspectiveDemo
 {
@@ -64,6 +62,10 @@ namespace PerspectiveDemo
             _bottomLeft = e.NameScope.Find<Thumb>("PART_BottomLeft");
             _bottomRight = e.NameScope.Find<Thumb>("PART_BottomRight");
             _centre = e.NameScope.Find<Thumb>("PART_Centre");
+            
+            // TODO: Not working!
+            ((Canvas)visual).PointerWheelChanged += OnPointerWheelChanged;
+            _canvas.PointerWheelChanged += OnPointerWheelChanged;
 
             if (_top is { })
             {
@@ -417,6 +419,12 @@ namespace PerspectiveDemo
             {
                 UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
+        }
+        
+        private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+        {
+            e.Handled = false;
+            // base.OnPointerWheelChanged(e);
         }
     }
 }
