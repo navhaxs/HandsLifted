@@ -85,7 +85,7 @@
         <entry key="HandsLiftedApp.Core/Views/Editors/SongLyricEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/SongLyricFreeTextEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/TestWindow1.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
-        <entry key="HandsLiftedApp.Core/Views/Editors/VisualSlideEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/VisualSlideEditor.axaml" value="SlideEditorStandalone/SlideEditorStandalone.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ExitConfirmationWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemContentView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemEditDock.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
@@ -179,6 +179,7 @@
         <entry key="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/MainWindow.axaml" value="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/Avalonia.Controls.LibMpv.Sample.csproj" />
         <entry key="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/MainWindow.xaml" value="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/LibVLCSharp.Avalonia.Sample.csproj" />
         <entry key="ScratchApp/MainWindow.axaml" value="ScratchApp/ScratchApp.csproj" />
+        <entry key="SlideEditorStandalone/App.axaml" value="SlideEditorStandalone/SlideEditorStandalone.csproj" />
       </map>
     </option>
   </component>

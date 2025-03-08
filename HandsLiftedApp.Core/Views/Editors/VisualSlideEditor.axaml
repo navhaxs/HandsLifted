@@ -2,9 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:slideElementEditor="clr-namespace:HandsLiftedApp.Core.ViewModels.SlideElementEditor"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:freeText="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor.FreeText"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
              x:DataType="freeText:FreeTextSlideEditorViewModel"
              ClipToBounds="True"
@@ -14,7 +13,17 @@
         <StyleInclude Source="./SelectedAdorner.axaml" />
     </UserControl.Styles>
 
-    <Grid>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Click="ButtonZoomOut_OnClick"><avalonia:MaterialIcon Kind="Minus" /></Button>
+                <Slider Width="100" Minimum="0.01" Maximum="1.2" Value="{Binding #ZoomBorder.ZoomX, Mode=TwoWay}" ValueChanged="RangeBase_OnValueChanged" />
+                <Button Click="ButtonZoomIn_OnClick"><avalonia:MaterialIcon Kind="Plus" /></Button>
+                <Separator />
+                <Button Click="ButtonResetZoom_OnClick"><avalonia:MaterialIcon Kind="Restart" /></Button>
+            </StackPanel>
+        </DockPanel>
+        <Grid>
 
         <!-- <Grid> -->
         <!--     <ListBox ItemsSource="{Binding Slides}"> -->
@@ -50,10 +59,17 @@
         <!-- <ScrollViewer -->
         <!--               VerticalScrollBarVisibility="Auto" -->
         <!--               HorizontalScrollBarVisibility="Auto"> -->
+        <ScrollViewer Name="MainScrollViewer"
+                      VerticalScrollBarVisibility="Visible"
+                      HorizontalScrollBarVisibility="Visible"
+                      AllowAutoHide="False"
+                      Background="Aquamarine">
         <ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
                     EnableZoom="True"
                     EnablePan="True"
                     Background="SlateBlue" ClipToBounds="True" Focusable="True"
+                    ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible"
                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Canvas Name="Root"
                         Width="1920"
@@ -69,9 +85,10 @@
                     <!--          Height="240" /> -->
                 </Canvas>
         </ZoomBorder>
-        <Canvas Name="FrontCanvas" />
-        <!-- </ScrollViewer> -->
+        <!-- <Canvas Name="FrontCanvas" /> -->
+        </ScrollViewer>
 
     </Grid>
+    </DockPanel>
 
 </UserControl>

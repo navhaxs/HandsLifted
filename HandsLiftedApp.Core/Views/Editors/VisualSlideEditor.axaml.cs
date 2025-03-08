@@ -9,8 +9,9 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
+using Avalonia.Markup.Xaml.Converters;
 using Avalonia.Threading;
+using HandsLiftedApp.Controls.Converters;
 using HandsLiftedApp.Core.Render.CustomSlide;
 using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -115,6 +116,14 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         public void Render(CustomSlide customSlide)
         {
+            Root.Bind(Panel.BackgroundProperty, new Binding
+            {
+                Source = customSlide,
+                Path = nameof(customSlide.BackgroundAvaloniaColour),
+                Mode = BindingMode.OneWay,
+                Converter = new ColorToBrushConverter()
+            });
+
             Root.Children.Clear();
             int i = 0;
             foreach (SlideElement slideElement in customSlide.SlideElements)
@@ -206,6 +215,27 @@ namespace HandsLiftedApp.Core.Views.Editors
                     }
                 }
             }
+        }
+
+        private void ButtonResetZoom_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _zoomBorder.Uniform();
+        }
+
+        private void ButtonZoomIn_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _zoomBorder.ZoomIn();
+        }
+        
+        private void ButtonZoomOut_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _zoomBorder.ZoomOut();
+        }
+
+        private void RangeBase_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+        {
+            // TODO actually want the centre point X, Y
+            _zoomBorder?.Zoom(e.NewValue, _zoomBorder.OffsetX, _zoomBorder.OffsetY);
         }
     }
 }

@@ -9,10 +9,10 @@ namespace HandsLiftedApp.Core.Views.Editors
         public SlideEditorWindow()
         {
             InitializeComponent();
-            if (this.DataContext == null)
-            {
-                this.DataContext = new FreeTextSlideEditorViewModel() { Slide = new  CustomSlide() };
-            }
+            // if (this.DataContext == null)
+            // {
+            //     this.DataContext = new FreeTextSlideEditorViewModel() { Slide = new CustomSlide() };
+            // }
             // this.DataContext = new SlideEditorViewModel() { Slides = new() {new CustomSlide()}};
         }
     }

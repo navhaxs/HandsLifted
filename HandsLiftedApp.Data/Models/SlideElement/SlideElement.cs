@@ -87,7 +87,7 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         public TextAlignment TextAlignment { get => _textAlignment; set => this.RaiseAndSetIfChanged(ref _textAlignment, value); }
         
         [DataMember]
-        public XmlColor ForegroundColour = Color.Parse("#4d347f");
+        public XmlColor ForegroundColour = Color.Parse("White");
 
         [XmlIgnore]
         public Color ForegroundAvaloniaColour

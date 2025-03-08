@@ -102,6 +102,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaWebDemo", "Demos\Av
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Importer.OnlineSongLyrics", "HandsLiftedApp.Importer.OnlineSongLyrics\HandsLiftedApp.Importer.OnlineSongLyrics.csproj", "{6D2C1BA8-45CA-4DC6-A271-2212796A4166}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlideEditorStandalone", "SlideEditorStandalone\SlideEditorStandalone.csproj", "{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -520,6 +522,18 @@ Global
 		{6D2C1BA8-45CA-4DC6-A271-2212796A4166}.Release|x64.Build.0 = Release|Any CPU
 		{6D2C1BA8-45CA-4DC6-A271-2212796A4166}.Release|x86.ActiveCfg = Release|Any CPU
 		{6D2C1BA8-45CA-4DC6-A271-2212796A4166}.Release|x86.Build.0 = Release|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Debug|x64.Build.0 = Debug|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Debug|x86.Build.0 = Debug|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Release|x64.ActiveCfg = Release|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Release|x64.Build.0 = Release|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Release|x86.ActiveCfg = Release|Any CPU
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -549,6 +563,7 @@ Global
 		{18D14517-2181-4D05-8379-8CC74FA0383C} = {CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}
 		{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4} = {CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}
 		{D05C6ED4-FCD0-467A-A8C5-ADD82024120B} = {CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}
+		{3AD02592-E1AE-4D1B-9A04-21FDC108CEB7} = {CBF6C4DA-42BF-45AE-8714-5880A4E4ADEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F842927-3492-494F-A1CE-4A9ECF57C018}

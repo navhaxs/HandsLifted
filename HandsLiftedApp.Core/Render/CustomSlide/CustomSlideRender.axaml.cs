@@ -148,8 +148,6 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Path = nameof(textElement.BackgroundAvaloniaColour),
                     Mode = BindingMode.OneWay,
                     Converter = new XmlColorToBrushConverter()
-                    
-                    
                 });
                 
                 return textBlock;
