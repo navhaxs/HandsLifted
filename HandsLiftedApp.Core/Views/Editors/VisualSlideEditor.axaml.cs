@@ -45,15 +45,11 @@ namespace HandsLiftedApp.Core.Views.Editors
 
             var canvas = this.FindControl<Canvas>("Root");
 
-            // canvas.PointerPressed += (sender, args) =>
-            // {
-            //     RemoveSelected();
-            // };
-
-            //
-            // TestWindow1 tw1 = new TestWindow1();
-            // tw1.Show();
-
+            canvas.PointerPressed += (sender, args) =>
+            {
+                RemoveSelected();
+            };
+            
             RegisterDataContext();
 
             DataContextChanged += (sender, args) => { RegisterDataContext(); };
@@ -133,13 +129,6 @@ namespace HandsLiftedApp.Core.Views.Editors
                 if (control is null)
                     continue;
                     
-                // control.PointerEntered += (s, e) =>
-                // {
-                //     if (_selected is null)
-                //     {
-                //         AddSelected(control, Root);
-                //     }
-                // };
                 control.PointerPressed += (s, e) =>
                 {
                     RemoveSelected();
@@ -147,6 +136,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                     {
                         AddSelected(control, Root);
                     }
+
+                    e.Handled = true;
                 };
 
                 Root.Children.Add(control);
