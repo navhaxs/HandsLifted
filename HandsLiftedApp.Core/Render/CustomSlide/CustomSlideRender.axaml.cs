@@ -75,6 +75,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     HorizontalAlignment = HorizontalAlignment.Left,
                     // VerticalAlignment = textElement.VerticalAlignment,
                     VerticalAlignment = VerticalAlignment.Top,
+                    TextWrapping = TextWrapping.Wrap,
                     DataContext = slideElement
                 };
                 Canvas.SetLeft(textBlock, textElement.X);
