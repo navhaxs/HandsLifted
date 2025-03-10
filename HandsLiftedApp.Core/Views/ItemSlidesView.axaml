@@ -111,7 +111,7 @@
             </Setter>-->
         </Style>
     </UserControl.Styles>
-    
+
     <ContentControl Content="{Binding}">
         <ContentControl.ContentTemplate>
             <common:MyTemplateSelector>
@@ -234,11 +234,11 @@
                                 <Style Selector="Border.item-border">
                                     <Setter Property="Opacity" Value="0" />
                                 </Style>
-                                
+
                                 <Style Selector="Border.item-border.fade-in">
-                                    <Setter Property="Opacity" Value="1"/>
+                                    <Setter Property="Opacity" Value="1" />
                                 </Style>
-                                
+
                             </Border.Styles>
                             <Border.Transitions>
                                 <Transitions>
@@ -257,7 +257,8 @@
                                     Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                     ComparisonCondition="Equal"
                                     Value="False">
-                                    <ia:ChangePropertyAction PropertyName="BorderBrush" Value="{DynamicResource ItemOutlineBrush}" />
+                                    <ia:ChangePropertyAction PropertyName="BorderBrush"
+                                                             Value="{DynamicResource ItemOutlineBrush}" />
                                     <ia:ChangePropertyAction PropertyName="BorderThickness" Value="1" />
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
@@ -321,132 +322,134 @@
 
                                 <item:ItemInfo VerticalAlignment="Top" />
 
-                                <Grid 
+                                <Grid
                                     MinHeight="100"
                                     Background="Transparent"
                                     x:Name="DropContainer"
                                     AttachedToLogicalTree="DropContainer_OnAttachedToLogicalTree"
                                     DragDrop.AllowDrop="True" HorizontalAlignment="Stretch">
                                     <controls:ListBoxWithoutKey
-                                    Name="List"
-                                    AutoScrollToSelectedItem="False"
-                                    Background="Transparent"
-                                    ItemsSource="{Binding Slides}"
-                                    SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}"
-                                    SelectionChanged="OnSelectionChanged"
-                                    SelectionMode="Single">
-                                    <controls:ListBoxWithoutKey.Styles>
-                                        <Style Selector="controls|ListBoxWithoutKey">
-                                            <Setter Property="BorderThickness" Value="0" />
-                                        </Style>
-                                        <Style Selector="ListBoxItem">
-                                            <Setter Property="Padding" Value="0" />
-                                            <!--<Setter Property="IsHitTestVisible" Value="False" />-->
-                                            <!--<Setter Property="Focusable" Value="False"/>-->
-                                        </Style>
-                                    </controls:ListBoxWithoutKey.Styles>
-                                    <controls:ListBoxWithoutKey.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
-                                            <WrapPanel>
-                                                <WrapPanel.ItemHeight>
-                                                    <MultiBinding Converter="{StaticResource MultiplicationConverter}">
-                                                        <Binding
-                                                            FallbackValue="200"
-                                                            Path="MainViewModel.ItemHeight"
-                                                            Source="{x:Static app:Globals.Instance}" />
-                                                        <Binding
-                                                            FallbackValue="80"
-                                                            Path="AppPreferences.SlideThumbnailSizeMultiplier"
-                                                            Source="{x:Static app:Globals.Instance}" />
-                                                    </MultiBinding>
-                                                </WrapPanel.ItemHeight>
-                                                <WrapPanel.ItemWidth>
-                                                    <MultiBinding Converter="{StaticResource MultiplicationConverter}">
-                                                        <Binding
-                                                            FallbackValue="290"
-                                                            Path="MainViewModel.ItemWidth"
-                                                            Source="{x:Static app:Globals.Instance}" />
-                                                        <Binding
-                                                            FallbackValue="80"
-                                                            Path="AppPreferences.SlideThumbnailSizeMultiplier"
-                                                            Source="{x:Static app:Globals.Instance}" />
-                                                    </MultiBinding>
-                                                </WrapPanel.ItemWidth>
-                                            </WrapPanel>
-                                        </ItemsPanelTemplate>
-                                    </controls:ListBoxWithoutKey.ItemsPanel>
-                                    <controls:ListBoxWithoutKey.DataTemplates>
-                                        <common:MyTemplateSelector>
-                                            <DataTemplate x:Key="SongTitleSlideInstance"
-                                                          x:DataType="slides:SongTitleSlideInstance">
-                                                <Image
-                                                    Source="{Binding Thumbnail}"
-                                                    Stretch="Uniform" />
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="SongSlideInstance"
-                                                          x:DataType="slides:SongSlideInstance">
-                                                <Image
-                                                    Source="{Binding Thumbnail}"
-                                                    Stretch="Uniform" />
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="ImageSlideInstance">
-                                                <views1:SlideThumbnail>
+                                        Name="List"
+                                        AutoScrollToSelectedItem="False"
+                                        Background="Transparent"
+                                        ItemsSource="{Binding Slides}"
+                                        SelectedIndex="{Binding SelectedSlideIndex, Mode=OneWay}"
+                                        SelectionChanged="OnSelectionChanged"
+                                        SelectionMode="Single">
+                                        <controls:ListBoxWithoutKey.Styles>
+                                            <Style Selector="controls|ListBoxWithoutKey">
+                                                <Setter Property="BorderThickness" Value="0" />
+                                            </Style>
+                                            <Style Selector="ListBoxItem">
+                                                <Setter Property="Padding" Value="0" />
+                                                <!--<Setter Property="IsHitTestVisible" Value="False" />-->
+                                                <!--<Setter Property="Focusable" Value="False"/>-->
+                                            </Style>
+                                        </controls:ListBoxWithoutKey.Styles>
+                                        <controls:ListBoxWithoutKey.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
+                                                <WrapPanel>
+                                                    <WrapPanel.ItemHeight>
+                                                        <MultiBinding
+                                                            Converter="{StaticResource MultiplicationConverter}">
+                                                            <Binding
+                                                                FallbackValue="200"
+                                                                Path="MainViewModel.ItemHeight"
+                                                                Source="{x:Static app:Globals.Instance}" />
+                                                            <Binding
+                                                                FallbackValue="80"
+                                                                Path="AppPreferences.SlideThumbnailSizeMultiplier"
+                                                                Source="{x:Static app:Globals.Instance}" />
+                                                        </MultiBinding>
+                                                    </WrapPanel.ItemHeight>
+                                                    <WrapPanel.ItemWidth>
+                                                        <MultiBinding
+                                                            Converter="{StaticResource MultiplicationConverter}">
+                                                            <Binding
+                                                                FallbackValue="290"
+                                                                Path="MainViewModel.ItemWidth"
+                                                                Source="{x:Static app:Globals.Instance}" />
+                                                            <Binding
+                                                                FallbackValue="80"
+                                                                Path="AppPreferences.SlideThumbnailSizeMultiplier"
+                                                                Source="{x:Static app:Globals.Instance}" />
+                                                        </MultiBinding>
+                                                    </WrapPanel.ItemWidth>
+                                                </WrapPanel>
+                                            </ItemsPanelTemplate>
+                                        </controls:ListBoxWithoutKey.ItemsPanel>
+                                        <controls:ListBoxWithoutKey.ItemTemplate>
+                                            <common:MyTemplateSelector>
+                                                <DataTemplate x:Key="SongTitleSlideInstance"
+                                                              x:DataType="slides:SongTitleSlideInstance">
                                                     <Image
                                                         Source="{Binding Thumbnail}"
                                                         Stretch="Uniform" />
-                                                </views1:SlideThumbnail>
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="VideoSlide">
-                                                <views1:SlideThumbnail>
-                                                    <Grid>
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="SongSlideInstance"
+                                                              x:DataType="slides:SongSlideInstance">
+                                                    <Image
+                                                        Source="{Binding Thumbnail}"
+                                                        Stretch="Uniform" />
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="ImageSlideInstance">
+                                                    <views1:SlideThumbnail>
                                                         <Image
-                                                            RenderOptions.BitmapInterpolationMode="MediumQuality"
-                                                            Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
+                                                            Source="{Binding Thumbnail}"
                                                             Stretch="Uniform" />
-                                                    </Grid>
-                                                </views1:SlideThumbnail>
-                                                <!--<Border Padding="20">
+                                                    </views1:SlideThumbnail>
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="VideoSlide">
+                                                    <views1:SlideThumbnail>
+                                                        <Grid>
+                                                            <Image
+                                                                RenderOptions.BitmapInterpolationMode="MediumQuality"
+                                                                Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
+                                                                Stretch="Uniform" />
+                                                        </Grid>
+                                                    </views1:SlideThumbnail>
+                                                    <!--<Border Padding="20">
 								<TextBlock Foreground="Yellow" FontSize="30">Video</TextBlock>
 							</Border>-->
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="LogoSlide">
-                                                <items1:LogoSlideView />
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="VideoSlideInstance">
-                                                <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center"
-                                                           HorizontalAlignment="Center" />
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="CustomAxamlSlideInstance"
-                                                          DataType="slides1:CustomAxamlSlideInstance">
-                                                <Viewbox>
-                                                    <render:CustomAxamlSlideRender />
-                                                </Viewbox>
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="CustomSlide">
-                                                <Viewbox>
-                                                    <customSlide:CustomSlideRender />
-                                                </Viewbox>
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="MyKey">
-                                                <TextBlock Background="Red" Text="{Binding Text}" />
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="MyKey2">
-                                                <TextBlock Background="Green" Text="{Binding Text}" />
-                                            </DataTemplate>
-                                            <DataTemplate x:Key="Fallback">
-                                                <TextBlock
-                                                    Background="Green"
-                                                    FontSize="80"
-                                                    Text="{Binding FallbackValue='ItemSlidesView.DataTemplateBindingError'}"
-                                                    TextWrapping="Wrap" />
-                                            </DataTemplate>
-                                        </common:MyTemplateSelector>
-                                    </controls:ListBoxWithoutKey.DataTemplates>
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="LogoSlide">
+                                                    <items1:LogoSlideView />
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="VideoSlideInstance">
+                                                    <TextBlock Text="Video" FontSize="200" VerticalAlignment="Center"
+                                                               HorizontalAlignment="Center" />
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="CustomAxamlSlideInstance"
+                                                              DataType="slides1:CustomAxamlSlideInstance">
+                                                    <Viewbox>
+                                                        <render:CustomAxamlSlideRender />
+                                                    </Viewbox>
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="CustomSlide">
+                                                    <Viewbox>
+                                                        <customSlide:CustomSlideRender />
+                                                    </Viewbox>
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="MyKey">
+                                                    <TextBlock Background="Red" Text="{Binding Text}" />
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="MyKey2">
+                                                    <TextBlock Background="Green" Text="{Binding Text}" />
+                                                </DataTemplate>
+                                                <DataTemplate x:Key="Fallback">
+                                                    <TextBlock
+                                                        Background="Yellow"
+                                                        FontSize="80"
+                                                        Text="{Binding FallbackValue='ItemSlidesView.DataTemplateBindingError'}"
+                                                        TextWrapping="Wrap" />
+                                                </DataTemplate>
+                                            </common:MyTemplateSelector>
+                                        </controls:ListBoxWithoutKey.ItemTemplate>
 
-                                </controls:ListBoxWithoutKey>
+                                    </controls:ListBoxWithoutKey>
                                 </Grid>
-                                
+
                             </StackPanel>
 
                         </Border>
