@@ -11,6 +11,7 @@
              xmlns:core="clr-namespace:HandsLiftedApp.Core"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
+             xmlns:converters2="clr-namespace:HandsLiftedApp.Core.Converters"
              x:DataType="viewModels:MainViewModel"
              x:CompileBindings="False"
              x:Class="HandsLiftedApp.Core.Views.Designer.SlideThemeDesigner">
@@ -19,6 +20,8 @@
         <converters1:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
         <ext:BitmapAssetValueConverter x:Key="variableImage" />
         <converters1:SafeFontWeightConverter x:Key="SafeFontWeightConverter" />
+        <converters2:SlideThemeToPreviewConverter x:Key="SlideThemeToPreviewConverter" />
+        <converters1:RoundedDecimalConverter x:Key="RoundedDecimalConverter" />
     </UserControl.Resources>
 
     <Design.DataContext>
@@ -90,35 +93,12 @@
         </DockPanel>
         <!-- Preview -->
         <Grid ColumnDefinitions="3*, *">
-            <Viewbox Grid.Column="0" VerticalAlignment="Top">
-                <Grid
-                    Background="{Binding #BackgroundColour.Color, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
-                    Height="1080" Width="1920">
-                    <Border>
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="60 80">
-                            <!-- <Viewbox StretchDirection="DownOnly" -->
-                            <!--          VerticalAlignment="Stretch" -->
-                            <!--          HorizontalAlignment="Stretch"> -->
-                            <!--     <TextBlock -->
-                            <!--         Text="Oh, happy day, happy day&#x0a;You washed my sin away&#x0a;Oh, happy day, happy day&#x0a;I'll never be the same&#x0a;Forever I am changed" -->
-                            <!--         FontSize="{Binding #FontSizeTextBox.Text}" -->
-                            <!--         FontWeight="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue='SemiBold', Converter={StaticResource SafeFontWeightConverter}}" -->
-                            <!--         TextAlignment="{Binding #TextAlignmentComboBox.SelectedItem}" -->
-                            <!--         LineHeight="{Binding #LineHeightTextBox.Text}" -->
-                            <!--         HorizontalAlignment="Stretch" -->
-                            <!--         VerticalAlignment="Center" -->
-                            <!--         FontFamily="{Binding #designsListBox.SelectedItem.FontFamilyAsAvalonia, FallbackValue='Garamond, Playfair Display'}" -->
-                            <!--         Foreground="{Binding #TextColour.Color, Converter={StaticResource ColorToBrush}}" -->
-                            <!--         RenderOptions.BitmapInterpolationMode="HighQuality" /> -->
-                            <!-- </Viewbox> -->
-                        </Grid>
-                        <Border.Background>
-                            <ImageBrush
-                                Source="{Binding #bgGraphicFilePath.Text, Converter={StaticResource variableImage}}"
-                                Stretch="UniformToFill" />
-                        </Border.Background>
-                    </Border>
-                </Grid>
+            <Viewbox Grid.Column="0" StretchDirection="DownOnly"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch">
+                <!-- TODO use SongSlideView, refactor to use common properties -->
+                <!-- <render:SlideRender DataContext="{Binding #designsListBox.SelectedItem, Converter={StaticResource SlideThemeToPreviewConverter}}" Height="1080" Width="1920" /> -->
+                <designer:SongSlideView DataContext="{Binding #designsListBox.SelectedItem, Converter={StaticResource SlideThemeToPreviewConverter}}" Height="1080" Width="1920" />
             </Viewbox>
 
             <!-- <ScrollViewer Grid.Column="1"> -->
@@ -225,18 +205,18 @@
                                     <Setter Property="Width" Value="14" />
                                 </Style>
                             </UniformGrid.Styles>
-                            <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentLeft}">
+                            <ToggleButton CornerRadius="6"
+                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextFontBold}">
                                 <avalonia:MaterialIcon Kind="FormatBold" />
-                            </RadioButton>
-                            <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentCenter}">
+                            </ToggleButton>
+                            <ToggleButton CornerRadius="6"
+                                          IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextFontItalic}">
                                 <avalonia:MaterialIcon Kind="FormatItalic" />
-                            </RadioButton>
-                            <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentRight}">
+                            </ToggleButton>
+                            <ToggleButton CornerRadius="6"
+                                          IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextFontUnderline}">
                                 <avalonia:MaterialIcon Kind="FormatUnderline" />
-                            </RadioButton>
+                            </ToggleButton>
                         </UniformGrid>
                     </Border>
 
@@ -321,7 +301,7 @@
                         <Slider Name="LineHeightSlider" Minimum="0.1" Maximum="3"
                                 IsSnapToTickEnabled="True"
                                 TickFrequency="0.01"
-                                Value="{Binding #LineHeightTextBox.Text}" />
+                                Value="{Binding #LineHeightTextBox.Text, Converter={StaticResource RoundedDecimalConverter}}" />
                     </DockPanel>
 
                     <!-- <ComboBox Name="TextAlignmentComboBox" -->

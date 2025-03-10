@@ -30,6 +30,7 @@
                                  TextAlignment="{Binding Theme.TextAlignment}"
                                  LineHeight="{Binding Theme.LineHeight}"
                                  FontWeight="{Binding Theme.FontWeight}"
+                                 FontStyle="{Binding Theme.FontStyle}"
                                  HorizontalAlignment="Stretch"
                                  VerticalAlignment="Center"
                                  FontFamily="{Binding Theme.FontFamilyAsAvalonia}"

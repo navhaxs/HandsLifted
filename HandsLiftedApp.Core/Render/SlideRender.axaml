@@ -7,9 +7,7 @@
              xmlns:slides="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
              xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
              xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
-             xmlns:views="clr-namespace:HandsLiftedApp.Views"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
-             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
              xmlns:slides2="clr-namespace:HandsLiftedApp.Data.Slides"
              xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -35,9 +33,6 @@
                         RenderOptions.BitmapInterpolationMode="HighQuality"
                         Source="{Binding Cached}"
                         Stretch="Uniform" />
-                </DataTemplate>
-                <DataTemplate x:Key="SongSlide">
-                    <views:DesignerSlideTemplate Width="1920" Height="1080" />
                 </DataTemplate>
                 <DataTemplate x:Key="LogoSlide">
                     <items:LogoSlideView />

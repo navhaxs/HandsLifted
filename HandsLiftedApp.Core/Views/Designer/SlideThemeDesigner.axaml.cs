@@ -50,7 +50,8 @@ namespace HandsLiftedApp.Core.Views.Designer
             InitializeComponent();
 
             var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            var fontFamilies = FontManager.Current.SystemFonts.ToList().Map(x => x.Name);
+            var fontFamilies = FontManager.Current.SystemFonts.Map(x => x.Name).ToList();
+            fontFamilies.Sort();
             fontComboBox.ItemsSource = fontFamilies;
 
             FontWeightComboBox.ItemsSource = FontWeightOptions;
@@ -113,10 +114,6 @@ namespace HandsLiftedApp.Core.Views.Designer
         private void AddItem_OnClick(object? sender, RoutedEventArgs e)
         {
             Globals.Instance.AppPreferences.Designs.Add(new BaseSlideTheme());
-            // if (this.DataContext is MainViewModel mainViewModel)
-            // {
-            //     mainViewModel.Playlist.Designs.Add(new BaseSlideTheme());
-            // }
         }
 
         private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)

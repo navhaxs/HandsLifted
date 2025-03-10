@@ -89,10 +89,6 @@
             <DependentUpon>GroupItemsEditorWindow.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Render\SongThemes\DesignerSlideTemplate.axaml.cs">
-            <DependentUpon>DesignerSlideTemplate.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Render\SongThemes\DesignerSlideTitle.axaml.cs">
             <DependentUpon>DesignerSlideTitle.axaml</DependentUpon>
             <SubType>Code</SubType>
@@ -245,6 +241,7 @@
           <DependentUpon>SyncItem.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Remove="Render\SongThemes\DesignerSlideTemplate.axaml.cs" />
     </ItemGroup>
 
 
@@ -273,6 +270,7 @@
 
     <ItemGroup>
       <AvaloniaXaml Remove="Render\WebViewSlideRenderer.axaml" />
+      <AvaloniaXaml Remove="Render\SongThemes\DesignerSlideTemplate.axaml" />
     </ItemGroup>
 
 

@@ -12,7 +12,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Converters;
 using Avalonia.Threading;
-using HandsLiftedApp.Controls.Converters;
 using HandsLiftedApp.Core.Render.CustomSlide;
 using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -182,7 +181,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             ((ISetLogicalParent)_selected).SetParent(canvas);
             layer.Children.Add(_selected);
             
-            // ake sure someone is listening to event
+            // make sure someone is listening to event
             if (OnUpdateSelectedElement == null) return;
 
             OnUpdateSelectedElementEventArgs args = new OnUpdateSelectedElementEventArgs(control.DataContext as SlideElement);

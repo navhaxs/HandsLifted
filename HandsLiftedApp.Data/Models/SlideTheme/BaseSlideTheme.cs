@@ -27,10 +27,10 @@ namespace HandsLiftedApp.Data.SlideTheme
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
             
-            _calculatedTextAlignmentCentre = this.WhenAnyValue(x => x.TextAlignment,
+            _calculatedTextAlignmentCenter = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => { return textAlignment == TextAlignment.Center; })
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .ToProperty(this, x => x.CalculatedTextAlignmentCentre);
+                .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
             
             _calculatedTextAlignmentRight = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => { return textAlignment == TextAlignment.Right; })
@@ -41,6 +41,21 @@ namespace HandsLiftedApp.Data.SlideTheme
                     (textAlignment) => { return textAlignment == TextAlignment.Justify; })
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
+            
+            _calculatedTextFontBold = this.WhenAnyValue(x => x.FontWeight,
+                (fontWeight) => fontWeight == Avalonia.Media.FontWeight.Bold)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextFontBold);
+            
+            _calculatedTextFontItalic = this.WhenAnyValue(x => x.FontStyle,
+                (fontStyle) => fontStyle == FontStyle.Italic)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTextFontItalic);
+            
+            // _calculatedTextFontUnderline = this.WhenAnyValue(x => x.TextDecorations,
+            //     (textDecorations) => textDecorations.Any(decoration => decoration.Location == TextDecorationLocation.Underline))
+            //     .ObserveOn(RxApp.MainThreadScheduler)
+            //     .ToProperty(this, x => x.CalculatedTextFontUnderline);
         }
 
         [DataMember]
@@ -98,6 +113,24 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _fontWeight, value);
         }
 
+        private FontStyle _fontStyle = FontStyle.Normal;
+
+        [DataMember]
+        public FontStyle FontStyle
+        {
+            get => _fontStyle;
+            set => this.RaiseAndSetIfChanged(ref _fontStyle, value);
+        }
+
+        // private TextDecorationCollection _textDecorations = new();
+        //
+        // [DataMember]
+        // public TextDecorationCollection TextDecorations
+        // {
+        //     get => _textDecorations;
+        //     set => this.RaiseAndSetIfChanged(ref _textDecorations, value);
+        // }
+
         [DataMember] public XmlColor TextColour = Colors.White;
 
         [XmlIgnore]
@@ -117,9 +150,13 @@ namespace HandsLiftedApp.Data.SlideTheme
         }
 
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentLeft;
-        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentCentre;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentCenter;
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentRight;
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentJustify;
+        
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextFontBold;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTextFontItalic;
+        // private readonly ObservableAsPropertyHelper<bool> _calculatedTextFontUnderline;
         
         public bool CalculatedTextAlignmentLeft
         {
@@ -127,9 +164,9 @@ namespace HandsLiftedApp.Data.SlideTheme
             set { if (value) TextAlignment = TextAlignment.Left; }
         }
 
-        public bool CalculatedTextAlignmentCentre
+        public bool CalculatedTextAlignmentCenter
         {
-            get => _calculatedTextAlignmentCentre.Value;
+            get => _calculatedTextAlignmentCenter.Value;
             set { if (value) TextAlignment = TextAlignment.Center; }
         }
         public bool CalculatedTextAlignmentRight
@@ -137,11 +174,30 @@ namespace HandsLiftedApp.Data.SlideTheme
             get => _calculatedTextAlignmentRight.Value;
             set { if (value) TextAlignment = TextAlignment.Right; }
         }
+        
         public bool CalculatedTextAlignmentJustify
         {
             get => _calculatedTextAlignmentJustify.Value;
             set { if (value) TextAlignment = TextAlignment.Justify; }
         }
+        
+        public bool CalculatedTextFontBold
+        {
+            get => _calculatedTextFontBold.Value;
+            set { if (value) FontWeight = (XmlFontWeight)Avalonia.Media.FontWeight.Bold; }
+        }
+        
+        public bool CalculatedTextFontItalic
+        {
+            get => _calculatedTextFontItalic.Value;
+            set { FontStyle = value ? FontStyle.Italic : FontStyle.Normal; }
+        }
+        
+        // public bool CalculatedTextFontUnderline
+        // {
+        //     get => _calculatedTextFontUnderline.Value;
+        //     set { TextDecorations = value ? Avalonia.Media.TextDecorations.Underline : new TextDecorationCollection(); }
+        // }
 
         [DataMember] public XmlColor BackgroundColour = Color.Parse("#4d347f");
 
