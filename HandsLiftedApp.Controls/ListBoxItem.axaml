@@ -82,11 +82,10 @@
 							</MultiBinding>
 						</TextBlock.Text>
 					</TextBlock>-->
-                    <StackPanel
+                    <DockPanel
                         Margin="2,2,2,2"
-                        DockPanel.Dock="Bottom"
-                        Orientation="Horizontal">
-                        <TextBlock Classes="slideNumber">
+                        DockPanel.Dock="Bottom">
+                        <TextBlock Classes="slideNumber" DockPanel.Dock="Left">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">
                                     <!--  TODO: this breaks when rearranging items by using Move() on the source ObservableCollection  -->
@@ -103,6 +102,8 @@
                             </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Margin="8,0,0,0"
+                                   TextTrimming="CharacterEllipsis"
+                                   ToolTip.Tip="{Binding SlideLabel}"
                                    IsVisible="{Binding Path=SlideLabel, Converter={StaticResource stringHasValueVisibilityConverter}}">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0}">
@@ -110,7 +111,7 @@
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-                    </StackPanel>
+                    </DockPanel>
                     <Grid>
                         <Viewbox HorizontalAlignment="Left" x:Name="PART_Thumbnail">
                             <Grid Width="1280" Height="720">
