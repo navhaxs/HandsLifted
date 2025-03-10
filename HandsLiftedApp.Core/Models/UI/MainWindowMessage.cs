@@ -4,6 +4,7 @@ namespace HandsLiftedApp.Core.Models.UI
     {
         CloseWindow,
         AboutWindow,
+        WelcomeWindow,
         // PreferencesWindow
     }
     public class MainWindowMessage

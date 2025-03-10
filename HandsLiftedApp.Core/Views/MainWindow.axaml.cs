@@ -66,6 +66,10 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     IsEnabled = false;
                     wnd.ShowDialog(this);
                     break;
+                case ActionType.WelcomeWindow:
+                    WelcomeWindow welcomeWindow = new() { DataContext = new WelcomeWindowViewModel(this.DataContext as MainViewModel) };
+                    welcomeWindow.ShowDialog(this);
+                    break;
                 case ActionType.CloseWindow:
                     Close();
                     break;
@@ -110,8 +114,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     warningWindow.ShowDialog(this);
                 }
 
-                WelcomeWindow welcomeWindow = new() { DataContext = new WelcomeWindowViewModel(vm) };
-                welcomeWindow.ShowDialog(this);
+                MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.WelcomeWindow));
             }
         };
 

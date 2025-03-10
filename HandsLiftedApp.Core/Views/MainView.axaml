@@ -108,6 +108,14 @@
                             <Button.Flyout>
                                 <MenuFlyout
                                     Placement="BottomEdgeAlignedLeft">
+                                    <MenuItem Click="StartScreenButton_Clicked" Header="Start Screen">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Foreground="#888888" Kind="Home" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    
+                                    <Separator />
+                                    
                                     <MenuItem Click="NewFileButton_Clicked" Header="New">
                                         <MenuItem.Icon>
                                             <avalonia:MaterialIcon Foreground="#888888" Kind="Shimmer" />

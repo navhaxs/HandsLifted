@@ -107,8 +107,14 @@ public partial class MainView : UserControl
         }
     }
 
+    private async void StartScreenButton_Clicked(object sender, RoutedEventArgs args)
+    {
+        MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.WelcomeWindow));
+    }
+
     private async void NewFileButton_Clicked(object sender, RoutedEventArgs args)
     {
+        // TODO: confirm unsaved changes
         if (this.DataContext is MainViewModel vm)
         {
             vm.Playlist = new PlaylistInstance();
