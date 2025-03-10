@@ -137,8 +137,8 @@ namespace HandsLiftedApp.Core
             {
                 return SongImporter.createSongItemFromTxtFile(filePath);
             }
-            else if (Constants.SUPPORTED_VIDEO.Any(x => filename.EndsWith(x)) ||
-                     Constants.SUPPORTED_IMAGE.Any(x => filename.EndsWith(x)))
+            else if (Constants.SUPPORTED_VIDEO.Any(x => filename.ToLower().EndsWith(x)) ||
+                     Constants.SUPPORTED_IMAGE.Any(x => filename.ToLower().EndsWith(x)))
             {
                 string fileName = Path.GetFileName(filePath);
                 var mediaGroupItem = new MediaGroupItem()
