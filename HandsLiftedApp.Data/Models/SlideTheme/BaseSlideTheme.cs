@@ -18,27 +18,27 @@ namespace HandsLiftedApp.Data.SlideTheme
         public BaseSlideTheme()
         {
             _calculatedLineHeight = this.WhenAnyValue(x => x.FontSize, x => x.LineHeightEm,
-                    (fontSize, lineHeightEm) => { return (int)(fontSize * lineHeightEm); })
+                    (fontSize, lineHeightEm) => (int)(fontSize * lineHeightEm))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.LineHeight);
             
             _calculatedTextAlignmentLeft = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Left; })
+                    (textAlignment) => textAlignment == TextAlignment.Left)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
             
             _calculatedTextAlignmentCenter = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Center; })
+                    (textAlignment) => textAlignment == TextAlignment.Center)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
             
             _calculatedTextAlignmentRight = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Right; })
+                    (textAlignment) => textAlignment == TextAlignment.Right)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentRight);
             
             _calculatedTextAlignmentJustify = this.WhenAnyValue(x => x.TextAlignment,
-                    (textAlignment) => { return textAlignment == TextAlignment.Justify; })
+                    (textAlignment) => textAlignment == TextAlignment.Justify)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
             
@@ -199,7 +199,7 @@ namespace HandsLiftedApp.Data.SlideTheme
         //     set { TextDecorations = value ? Avalonia.Media.TextDecorations.Underline : new TextDecorationCollection(); }
         // }
 
-        [DataMember] public XmlColor BackgroundColour = Color.Parse("#4d347f");
+        [DataMember] public XmlColor BackgroundColour = Color.Parse("Black");
 
         [XmlIgnore]
         public Color BackgroundAvaloniaColour
@@ -224,7 +224,7 @@ namespace HandsLiftedApp.Data.SlideTheme
             get => _calculatedLineHeight.Value;
         }
 
-        private decimal _lineHeightEm = 1.0M;
+        private decimal _lineHeightEm = 1.2M;
 
         [DataMember]
         public decimal LineHeightEm
