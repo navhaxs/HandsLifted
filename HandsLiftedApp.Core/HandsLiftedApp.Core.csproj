@@ -265,6 +265,8 @@
       <EmbeddedResource Include="BuildInfo\GitHash.txt" />
       <None Remove="BuildInfo\BuildDateTime.txt" />
       <EmbeddedResource Include="BuildInfo\BuildDateTime.txt" />
+      <None Remove="SyncfusionLicenseKey" />
+      <EmbeddedResource Include="SyncfusionLicenseKey" />
     </ItemGroup>
 
 
