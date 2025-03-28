@@ -451,7 +451,7 @@ namespace HandsLiftedApp.Core.Models
                 }
             }
             
-            var nextItemIndex = slideReference.ItemIndex ?? SelectedItemIndex;
+            var nextItemIndex = slideReference.ItemIndex ?? SelectedItemIndex;// TODO SelectedItemIndex is -1
 
             if (nextItemIndex >= Items.Count)
             {

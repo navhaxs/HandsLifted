@@ -35,6 +35,8 @@ namespace HandsLiftedApp.Core.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
+    private const int MAX_RECENT_PLAYLISTS = 5;
+
     public IMySettings settings;
 
     public LibraryViewModel LibraryViewModel { get; init; }
@@ -155,7 +157,8 @@ public class MainViewModel : ViewModelBase
                 Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
 
                 Playlist.IsDirty = false;
-                settings.LastOpenedPlaylistFullPath = msg.FilePath;
+                // update MRU list
+                MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = msg.FilePath});
             }
             catch (Exception ex)
             {
@@ -167,7 +170,17 @@ public class MainViewModel : ViewModelBase
 
         MessageBus.Current.Listen<UpdateLastOpenedPlaylistAction>().Subscribe((msg) =>
         {
-            settings.LastOpenedPlaylistFullPath = msg.FilePath;
+            var tempList = settings.RecentPlaylistFullPathsList?.ToList() ?? new List<string>();
+            
+            if (tempList.Contains(msg.FilePath))
+            {
+                tempList.Remove(msg.FilePath);
+            }
+            tempList.Insert(0, msg.FilePath);
+            
+            settings.RecentPlaylistFullPathsList = tempList
+                .Take(MAX_RECENT_PLAYLISTS)
+                .ToArray();
         });
 
         MessageBus.Current.Listen<AddItemMessage>()
