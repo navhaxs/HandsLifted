@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Extensions;
@@ -19,17 +20,17 @@ namespace HandsLiftedApp.Core.Views.Setup
  
         public SetupWindow()
         {
-            this.DataContext = _setupWindowViewModel = new SetupWindowViewModel(this.Screens);
             InitializeComponent();
-            this.DataContext = _setupWindowViewModel;
+            this.DataContext = _setupWindowViewModel = new SetupWindowViewModel(this.Screens);
+            // this.DataContext = _setupWindowViewModel;
             this.Closed += PreferencesWindow_Closed;
+            
+            Win10DropshadowWorkaround.Register(this);
         }
-
 
         private void PreferencesWindow_Closed(object? sender, EventArgs e)
         {_setupWindowViewModel.HideDisplayItentification();
         }
-
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)
         {

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Views;
 
 namespace HandsLiftedApp.Views.App
@@ -11,6 +12,9 @@ namespace HandsLiftedApp.Views.App
         public ExitConfirmationWindow()
         {
             InitializeComponent();
+            
+            Win10DropshadowWorkaround.Register(this);
+
 #if DEBUG
             this.AttachDevTools();
 #endif

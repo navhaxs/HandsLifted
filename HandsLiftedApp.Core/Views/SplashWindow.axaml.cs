@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using HandsLiftedApp.Controls;
 
 namespace HandsLiftedApp.Core.Views
 {
@@ -7,6 +8,8 @@ namespace HandsLiftedApp.Core.Views
         public SplashWindow()
         {
             InitializeComponent();
+            
+            Win10DropshadowWorkaround.Register(this);
         }
     }
 }

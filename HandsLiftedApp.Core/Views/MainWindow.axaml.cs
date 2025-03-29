@@ -10,6 +10,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
+using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.Utils;
@@ -26,6 +27,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     public MainWindow()
     {
         InitializeComponent();
+        
+        Win10DropshadowWorkaround.Register(this);
 
         if (OperatingSystem.IsMacOS())
         {
