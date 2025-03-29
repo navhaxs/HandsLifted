@@ -40,9 +40,9 @@ name: .NET Core Desktop
 
 on:
   push:
-    branches: [ "dev", "dev-2024" ]
+    branches: [ "dev", "dev-2024", "dev-2025" ]
   pull_request:
-    branches: [ "dev", "dev-2024" ]
+    branches: [ "dev", "dev-2024", "dev-2025" ]
 
 jobs:
 
@@ -71,7 +71,7 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 #    - uses: actions/cache@v4.0.2
 #      with:
 #        path: ~/.nuget/packages
@@ -122,11 +122,11 @@ jobs:
     #     path: ${{ env.Wap_Project_Directory }}\AppPackages
     
     - name: Publish
-      run: dotnet publish ./HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj -c release -f net8.0 -r win-x64 --self-contained
+      run: dotnet publish ./HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj -c release -f net9.0 -r win-x64 --self-contained
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
       with:
         name: dist
         path: |
-          HandsLiftedApp/bin/release/net8.0/win-x64/publish
+          HandsLiftedApp/bin/release/net9.0/win-x64/publish
