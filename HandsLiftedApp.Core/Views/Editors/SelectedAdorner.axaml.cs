@@ -10,9 +10,10 @@ namespace PerspectiveDemo
 {
     public class SelectedAdorner : TemplatedControl
     {
-        public static readonly StyledProperty<Control?> ControlProperty = 
+        public static readonly StyledProperty<Control?> ControlProperty =
             AvaloniaProperty.Register<SelectedAdorner, Control?>(nameof(Control));
-        public static readonly StyledProperty<ZoomBorder?> ZoomBorderProperty = 
+
+        public static readonly StyledProperty<ZoomBorder?> ZoomBorderProperty =
             AvaloniaProperty.Register<SelectedAdorner, ZoomBorder?>(nameof(Control));
 
         private Canvas? _canvas;
@@ -62,57 +63,56 @@ namespace PerspectiveDemo
             _bottomLeft = e.NameScope.Find<Thumb>("PART_BottomLeft");
             _bottomRight = e.NameScope.Find<Thumb>("PART_BottomRight");
             _centre = e.NameScope.Find<Thumb>("PART_Centre");
-            
+
             // pass-through mouse wheel events
             this.PointerWheelChanged += OnPointerWheelChanged;
             ((Canvas)visual).PointerWheelChanged += OnPointerWheelChanged;
             _canvas.PointerWheelChanged += OnPointerWheelChanged;
-            
+
             // TODO: Also pass through mouse wheel button press event (to allow panning by scroll wheel)
-            
+
             if (_top is { })
             {
-                _top.DragDelta += OnDragDeltaTop;
+                _top.PointerMoved += OnPointerMovedTop;
             }
 
             if (_bottom is { })
             {
-                _bottom.DragDelta += OnDragDeltaBottom;
+                _bottom.PointerMoved += OnPointerMovedBottom;
             }
 
             if (_left is { })
             {
-                _left.DragDelta += OnDragDeltaLeft;
+                _left.PointerMoved += OnPointerMovedLeft;
             }
 
             if (_right is { })
             {
-                _right.DragDelta += OnDragDeltaRight;
+                _right.PointerMoved += OnPointerMovedRight;
             }
 
             if (_topLeft is { })
             {
-                _topLeft.DragDelta += OnDragDeltaTopLeft;
+                _topLeft.PointerMoved += OnPointerMovedTopLeft;
             }
 
             if (_topRight is { })
             {
-                _topRight.DragDelta += OnDragDeltaTopRight;
+                _topRight.PointerMoved += OnPointerMovedTopRight;
             }
 
             if (_bottomLeft is { })
             {
-                _bottomLeft.DragDelta += OnDragDeltaBottomLeft;
+                _bottomLeft.PointerMoved += OnPointerMovedBottomLeft;
             }
- 
+
             if (_bottomRight is { })
             {
-                _bottomRight.DragDelta += OnDragDeltaBottomRight;
+                _bottomRight.PointerMoved += OnPointerMovedBottomRight;
             }
 
             if (_drag is { })
             {
-                // _drag.DragDelta += OnDragDeltaDrag;
                 _drag.PointerMoved += OnPointerMovedDrag;
             }
 
@@ -124,7 +124,7 @@ namespace PerspectiveDemo
                 var rect = new Rect(
                     Control.Bounds.Left,
                     Control.Bounds.Top,
-                    Control.Bounds.Width, 
+                    Control.Bounds.Width,
                     Control.Bounds.Height);
 
                 UpdateThumbs(rect);
@@ -142,8 +142,8 @@ namespace PerspectiveDemo
             }
         }
 
-        // TODO reuse this logic for the corner thumb drag events too
         private Point? lastPosition;
+
         private void OnPointerMovedDrag(object? sender, PointerEventArgs e)
         {
             var visual = GetValue(AdornerLayer.AdornedElementProperty);
@@ -185,7 +185,8 @@ namespace PerspectiveDemo
 
                 if (Control is { })
                 {
-                    UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
                 }
             }
 
@@ -226,7 +227,7 @@ namespace PerspectiveDemo
 
             Canvas.SetLeft(_left, rect.Left);
             Canvas.SetTop(_left, rect.Center.Y);
-            
+
             Canvas.SetLeft(_right, rect.Right);
             Canvas.SetTop(_right, rect.Center.Y);
 
@@ -258,223 +259,283 @@ namespace PerspectiveDemo
         private double GetVectorX(VectorEventArgs e) => e.Vector.X; // ZoomBorder.ZoomX;
 
         private double GetVectorY(VectorEventArgs e) => e.Vector.Y; // ZoomBorder.ZoomY;
-        private void OnDragDeltaDrag(object? sender, VectorEventArgs e)
+
+        private void OnPointerMovedTop(object? sender, PointerEventArgs e)
         {
-            Debug.Print($"DragDelta X={e.Vector.X} Y={e.Vector.Y} [{ZoomBorder.ZoomX}, {ZoomBorder.ZoomY}] X'={GetVectorX(e)} Y'={GetVectorY(e)}");
-            Canvas.SetLeft(_top, Canvas.GetLeft(_top) + GetVectorX(e));
-            Canvas.SetLeft(_bottom, Canvas.GetLeft(_bottom) + GetVectorX(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
-
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
-
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
-
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
-
-            Canvas.SetTop(_left, Canvas.GetTop(_left) + GetVectorY(e));
-            Canvas.SetTop(_right, Canvas.GetTop(_right) + GetVectorY(e));
-
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
-
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
-
-            var rect = GetRect();
-
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetTop(_top, Canvas.GetTop(_top) + deltaY);
+                Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + deltaY);
+                Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + deltaY);
+
+                var rect = GetRect();
+
+                Canvas.SetTop(_left, rect.Center.Y);
+                Canvas.SetTop(_right, rect.Center.Y);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
+
+            lastPosition = newPosition;
         }
 
-        private void OnDragDeltaTop(object? sender, VectorEventArgs e)
+        private void OnPointerMovedBottom(object? sender, PointerEventArgs e)
         {
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            var rect = GetRect();
-
-            Canvas.SetTop(_left, rect.Center.Y);
-            Canvas.SetTop(_right, rect.Center.Y);
-  
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + deltaY);
+                Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + deltaY);
+                Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + deltaY);
+
+                var rect = GetRect();
+
+                Canvas.SetTop(_left, rect.Center.Y);
+                Canvas.SetTop(_right, rect.Center.Y);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
+
+            lastPosition = newPosition;
         }
 
-        private void OnDragDeltaBottom(object? sender, VectorEventArgs e)
+        private void OnPointerMovedLeft(object? sender, PointerEventArgs e)
         {
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            var rect = GetRect();
-
-            Canvas.SetTop(_left, rect.Center.Y);
-            Canvas.SetTop(_right, rect.Center.Y);
-
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetLeft(_left, Canvas.GetLeft(_left) + deltaX);
+                Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + deltaX);
+                Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + deltaX);
+
+                var rect = GetRect();
+
+                Canvas.SetLeft(_top, rect.Center.X);
+                Canvas.SetLeft(_bottom, rect.Center.X);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
+
+            lastPosition = newPosition;
         }
 
-        private void OnDragDeltaLeft(object? sender, VectorEventArgs e)
+        private void OnPointerMovedRight(object? sender, PointerEventArgs e)
         {
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            var rect = GetRect();
-
-            Canvas.SetLeft(_top, rect.Center.X);
-            Canvas.SetLeft(_bottom, rect.Center.X);
-
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetLeft(_right, Canvas.GetLeft(_right) + deltaX);
+                Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + deltaX);
+                Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + deltaX);
+
+                var rect = GetRect();
+
+                Canvas.SetLeft(_top, rect.Center.X);
+                Canvas.SetLeft(_bottom, rect.Center.X);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
+
+            lastPosition = newPosition;
         }
 
-        private void OnDragDeltaRight(object? sender, VectorEventArgs e)
+        private void OnPointerMovedTopLeft(object? sender, PointerEventArgs e)
         {
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            var rect = GetRect();
-
-            Canvas.SetLeft(_top, rect.Center.X);
-            Canvas.SetLeft(_bottom, rect.Center.X);
-
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetLeft(_left, Canvas.GetLeft(_left) + deltaX);
+                Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + deltaX);
+                Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + deltaX);
+
+                Canvas.SetTop(_top, Canvas.GetTop(_top) + deltaY);
+                Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + deltaY);
+                Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + deltaY);
+
+                var rect = GetRect();
+
+                Canvas.SetLeft(_top, rect.Center.X);
+                Canvas.SetLeft(_bottom, rect.Center.X);
+
+                Canvas.SetTop(_left, rect.Center.Y);
+                Canvas.SetTop(_right, rect.Center.Y);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
-        }
- 
-        private void OnDragDeltaTopLeft(object? sender, VectorEventArgs e)
-        {
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
 
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
-
-            var rect = GetRect();
-
-            Canvas.SetLeft(_top, rect.Center.X);
-            Canvas.SetLeft(_bottom, rect.Center.X);
-
-            Canvas.SetTop(_left, rect.Center.Y);
-            Canvas.SetTop(_right, rect.Center.Y);
-
-            UpdateDrag(rect);
-
-            if (Control is { })
-            {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
-            }
+            lastPosition = newPosition;
         }
 
-        private void OnDragDeltaTopRight(object? sender, VectorEventArgs e)
+        private void OnPointerMovedTopRight(object? sender, PointerEventArgs e)
         {
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            Canvas.SetTop(_top, Canvas.GetTop(_top) + GetVectorY(e));
-            Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + GetVectorY(e));
-            Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + GetVectorY(e));
-            
-            var rect = GetRect();
-
-            Canvas.SetLeft(_top, rect.Center.X);
-            Canvas.SetLeft(_bottom, rect.Center.X);
-
-            Canvas.SetTop(_left, rect.Center.Y);
-            Canvas.SetTop(_right, rect.Center.Y);
-
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetLeft(_right, Canvas.GetLeft(_right) + deltaX);
+                Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + deltaX);
+                Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + deltaX);
+
+                Canvas.SetTop(_top, Canvas.GetTop(_top) + deltaY);
+                Canvas.SetTop(_topLeft, Canvas.GetTop(_topLeft) + deltaY);
+                Canvas.SetTop(_topRight, Canvas.GetTop(_topRight) + deltaY);
+
+                var rect = GetRect();
+
+                Canvas.SetLeft(_top, rect.Center.X);
+                Canvas.SetLeft(_bottom, rect.Center.X);
+
+                Canvas.SetTop(_left, rect.Center.Y);
+                Canvas.SetTop(_right, rect.Center.Y);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
+
+            lastPosition = newPosition;
         }
 
-        private void OnDragDeltaBottomLeft(object? sender, VectorEventArgs e)
+        private void OnPointerMovedBottomLeft(object? sender, PointerEventArgs e)
         {
-            Canvas.SetLeft(_left, Canvas.GetLeft(_left) + GetVectorX(e));
-            Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + GetVectorX(e));
-            Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + GetVectorX(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
-
-            var rect = GetRect();
-
-            Canvas.SetLeft(_top, rect.Center.X);
-            Canvas.SetLeft(_bottom, rect.Center.X);
-
-            Canvas.SetTop(_left, rect.Center.Y);
-            Canvas.SetTop(_right, rect.Center.Y);
-
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetLeft(_left, Canvas.GetLeft(_left) + deltaX);
+                Canvas.SetLeft(_topLeft, Canvas.GetLeft(_topLeft) + deltaX);
+                Canvas.SetLeft(_bottomLeft, Canvas.GetLeft(_bottomLeft) + deltaX);
+
+                Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + deltaY);
+                Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + deltaY);
+                Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + deltaY);
+
+                var rect = GetRect();
+
+                Canvas.SetLeft(_top, rect.Center.X);
+                Canvas.SetLeft(_bottom, rect.Center.X);
+
+                Canvas.SetTop(_left, rect.Center.Y);
+                Canvas.SetTop(_right, rect.Center.Y);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
+
+            lastPosition = newPosition;
         }
 
-        private void OnDragDeltaBottomRight(object? sender, VectorEventArgs e)
+        private void OnPointerMovedBottomRight(object? sender, PointerEventArgs e)
         {
-            Canvas.SetLeft(_right, Canvas.GetLeft(_right) + GetVectorX(e));
-            Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + GetVectorX(e));
-            Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + GetVectorX(e));
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            var newPosition = e.GetPosition(visual);
 
-            Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + GetVectorY(e));
-            Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + GetVectorY(e));
-            Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + GetVectorY(e));
-
-            var rect = GetRect();
-
-            Canvas.SetLeft(_top, rect.Center.X);
-            Canvas.SetLeft(_bottom, rect.Center.X);
-
-            Canvas.SetTop(_left, rect.Center.Y);
-            Canvas.SetTop(_right, rect.Center.Y);
-
-            UpdateDrag(rect);
-
-            if (Control is { })
+            if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
+                var deltaX = newPosition.X - lastPosition.Value.X;
+                var deltaY = newPosition.Y - lastPosition.Value.Y;
+                
+                Canvas.SetLeft(_right, Canvas.GetLeft(_right) + deltaX);
+                Canvas.SetLeft(_topRight, Canvas.GetLeft(_topRight) + deltaX);
+                Canvas.SetLeft(_bottomRight, Canvas.GetLeft(_bottomRight) + deltaX);
+
+                Canvas.SetTop(_bottom, Canvas.GetTop(_bottom) + deltaY);
+                Canvas.SetTop(_bottomLeft, Canvas.GetTop(_bottomLeft) + deltaY);
+                Canvas.SetTop(_bottomRight, Canvas.GetTop(_bottomRight) + deltaY);
+
+                var rect = GetRect();
+
+                Canvas.SetLeft(_top, rect.Center.X);
+                Canvas.SetLeft(_bottom, rect.Center.X);
+
+                Canvas.SetTop(_left, rect.Center.Y);
+                Canvas.SetTop(_right, rect.Center.Y);
+
+                UpdateDrag(rect);
+
+                if (Control is { })
+                {
+                    UpdateControl(Control,
+                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+                }
             }
+
+            lastPosition = newPosition;
         }
-        
+
         private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
         {
             e.Handled = false;
