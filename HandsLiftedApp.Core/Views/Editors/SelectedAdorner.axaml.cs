@@ -68,7 +68,7 @@ namespace PerspectiveDemo
             this.PointerWheelChanged += OnPointerWheelChanged;
             ((Canvas)visual).PointerWheelChanged += OnPointerWheelChanged;
             _canvas.PointerWheelChanged += OnPointerWheelChanged;
-
+                
             // TODO: Also pass through mouse wheel button press event (to allow panning by scroll wheel)
 
             if (_top is { })
@@ -538,6 +538,7 @@ namespace PerspectiveDemo
 
         private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
         {
+            Debug.Print($"OnPointerWheelChanged (Handled!) {sender.GetType()}");
             e.Handled = false;
             // base.OnPointerWheelChanged(e);
         }

@@ -12,6 +12,7 @@ namespace HandsLiftedApp.Data.Models.SlideElement
 {
     [XmlRoot(Namespace = Constants.Namespace)]
     [XmlInclude(typeof(TextElement))]
+    [XmlInclude(typeof(ImageElement))]
     public abstract class SlideElement : ReactiveObject
     {
         // might need id
@@ -212,6 +213,11 @@ namespace HandsLiftedApp.Data.Models.SlideElement
     [XmlRoot(Namespace = Constants.Namespace)]
     public class ImageElement : SlideElement
     {
-        public string FilePath { get; set; } = "";
+        private string _filePath = "";
+        public string FilePath
+        {
+            get => _filePath;
+            set => this.RaiseAndSetIfChanged(ref _filePath, value);
+        }
     }
 }

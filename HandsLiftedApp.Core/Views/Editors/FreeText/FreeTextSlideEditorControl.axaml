@@ -13,7 +13,11 @@
              x:DataType="freeText:FreeTextSlideEditorViewModel"
              x:Class="HandsLiftedApp.Core.Views.Editors.FreeText.FreeTextSlideEditorControl">
     <Grid ColumnDefinitions="*,1,3*,1,2*">
-        <Grid RowDefinitions="*,30">
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Bottom">
+                <Button Content="Add TextBox" Click="ButtonAddTextElement_OnClick" />
+                <Button Content="Add Image" Click="ButtonAddImageElement_OnClick" />
+            </StackPanel>
             <ListBox ItemsSource="{Binding Slide.SlideElements}" Name="ListBox"
                      SelectionChanged="ListBox_OnSelectionChanged"
                      BorderThickness="0"
@@ -61,8 +65,7 @@
                     </Style>
                 </ListBox.Styles>
             </ListBox>
-            <Button Grid.Row="1" Content="Add TextBox" Click="Button_OnClick" />
-        </Grid>
+        </DockPanel>
 
         <GridSplitter Grid.Column="1" />
 
@@ -425,6 +428,16 @@
 
                                     </ScrollViewer>
                                 </DataTemplate>
+                                <DataTemplate x:Key="ImageElement" x:DataType="slideElement:ImageElement">
+                                    <StackPanel>
+                                        <TextBlock Text="Graphic" />
+                                        <DockPanel>
+                                            <!-- <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button> -->
+                                            <TextBox Watermark=""
+                                                     Text="{Binding FilePath}" />
+                                        </DockPanel> 
+                                    </StackPanel>
+                                </DataTemplate> 
                             </common:MyTemplateSelector>
                         </ContentControl.ContentTemplate>
                     </ContentControl>

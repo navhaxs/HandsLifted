@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -10,10 +11,13 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using HandsLiftedApp.Controls.Converters;
 using HandsLiftedApp.Converters;
 using HandsLiftedApp.Data.Models.SlideElement;
+using HandsLiftedApp.Extensions;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Render.CustomSlide
@@ -66,6 +70,72 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
         public static Control? CreateControlForElement(SlideElement slideElement)
         {
+            if (slideElement is ImageElement imageElement)
+            {
+                Bitmap? imageData = null;
+                try
+                {
+                    if (!string.IsNullOrEmpty(imageElement.FilePath))
+                    {
+                        imageData = BitmapLoader.LoadBitmap(imageElement.FilePath);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"Error loading image: {e.Message}");
+                }
+
+                Image image = new Image()
+                {
+                    Source = imageData,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Stretch = Stretch.UniformToFill,
+                    DataContext = slideElement,
+                    Width = imageElement.Width,
+                    Height = imageElement.Height,
+                };
+                Canvas.SetLeft(image, imageElement.X);
+                Canvas.SetTop(image, imageElement.Y);
+
+                image.Bind(Canvas.TopProperty, new Binding
+                {
+                    Source = imageElement,
+                    Path = nameof(imageElement.Y),
+                    Mode = BindingMode.TwoWay
+                });
+
+                image.Bind(Canvas.LeftProperty, new Binding
+                {
+                    Source = imageElement,
+                    Path = nameof(imageElement.X),
+                    Mode = BindingMode.TwoWay
+                });
+
+                image.Bind(WidthProperty, new Binding
+                {
+                    Source = imageElement,
+                    Path = nameof(imageElement.Width),
+                    Mode = BindingMode.TwoWay
+                });
+
+                image.Bind(HeightProperty, new Binding
+                {
+                    Source = imageElement,
+                    Path = nameof(imageElement.Height),
+                    Mode = BindingMode.TwoWay
+                });
+
+                image.Bind(Image.SourceProperty, new Binding
+                {
+                    Source = imageElement,
+                    Path = nameof(imageElement.FilePath),
+                    Converter = BitmapAssetValueConverter.Instance,
+                });
+
+                return image;
+            }
+
             if (slideElement is TextElement textElement)
             {
                 TextBlock textBlock = new TextBlock()
@@ -144,7 +214,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Mode = BindingMode.OneWay,
                     Converter = new XmlColorToBrushConverter()
                 });
-                
+
                 textBlock.Bind(TextBlock.BackgroundProperty, new Binding
                 {
                     Source = textElement,
@@ -152,7 +222,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Mode = BindingMode.OneWay,
                     Converter = new XmlColorToBrushConverter()
                 });
-                
+
                 // TODO, this does NOT work, actually need to wrap in a border(?)
                 // textBlock.Bind(Layoutable.VerticalAlignmentProperty, new Binding
                 // {
@@ -160,9 +230,10 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                 //     Path = nameof(textElement.VerticalAlignment),
                 //     Mode = BindingMode.OneWay,
                 // });
-                
+
                 return textBlock;
             }
+
             return null;
         }
 

@@ -48,14 +48,21 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
 
-        private void Button_OnClick(object? sender, RoutedEventArgs e)
+        private void ButtonAddTextElement_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is FreeTextSlideEditorViewModel vm)
             {
                 vm.Slide.SlideElements.Add(new TextElement());
             }
         }
-
+        
+        private void ButtonAddImageElement_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            {
+                vm.Slide.SlideElements.Add(new ImageElement());
+            }
+        }
 
         private void MoveItemUp_OnClick(object? sender, RoutedEventArgs e)
         {
