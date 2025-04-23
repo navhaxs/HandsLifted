@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
@@ -45,6 +46,11 @@ namespace HandsLiftedApp.Core.Views
                         Dispatcher.UIThread.InvokeAsync(() => WindowUtils.ShowAndRestoreWindowBounds(this, Globals.Instance.AppPreferences.StageDisplayBounds));
                     }
                 });
+        }
+        
+        private void StageDisplayWindow_KeyDown(object? sender, KeyEventArgs e)
+        {
+            KeyboardSlideNavigation.OnKeyDown(e);
         }
         
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
