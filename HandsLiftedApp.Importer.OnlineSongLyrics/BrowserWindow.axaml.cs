@@ -12,14 +12,13 @@ namespace HandsLiftedApp.Importer.OnlineSongLyrics
 
         public BrowserWindow()
         {
-            if (Design.IsDesignMode)
+            if (!Design.IsDesignMode)
             {
-                return;
+                var path = Path.Join(Directory.GetCurrentDirectory(), "webviewCache");
+                Directory.CreateDirectory(path);
             }
 
-            var path = Path.Join(Directory.GetCurrentDirectory(), "webviewCache");
-            Directory.CreateDirectory(path);
-            
+   
             // WebView.Settings.OsrEnabled = false;
             //WebView.Settings.CachePath = path;
             // WebView.Settings.LogFile = "ceflog.txt";
@@ -28,7 +27,12 @@ namespace HandsLiftedApp.Importer.OnlineSongLyrics
             // DataContext = new BrowserViewModel(PART_WebView);
             
             // PART_WebView.ShowDeveloperTools();
-            
+
+            if (Design.IsDesignMode)
+            {
+                return;
+            }
+
             Opened += ((sender, args) =>
             {
                 IntPtr handle = TryGetPlatformHandle().Handle;
