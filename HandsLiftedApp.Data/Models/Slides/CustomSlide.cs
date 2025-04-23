@@ -21,6 +21,12 @@ namespace HandsLiftedApp.Data.Data.Models.Slides
         public override string? SlideLabel { get; } = "";
         public override string? SlideText { get; } = "";
         
+        // Slide dimensions
+        
+        [DataMember]
+        public int SlideHeight { get; set; } = 1080;
+        public int SlideWidth { get; set; } = 1920;
+        
         // Elements
         private ObservableCollection<SlideElement> _slideElements = new();
         public ObservableCollection<SlideElement> SlideElements

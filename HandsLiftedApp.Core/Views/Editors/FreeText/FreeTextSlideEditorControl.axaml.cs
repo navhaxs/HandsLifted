@@ -48,11 +48,21 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
 
+        private void AddSlideElement(SlideElement slideElement)
+        {
+            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            {
+                slideElement.X = vm.Slide.SlideWidth / 2 - slideElement.Width / 2;
+                slideElement.Y = vm.Slide.SlideHeight / 2 - slideElement.Height / 2;
+                vm.Slide.SlideElements.Add(slideElement);
+            }
+        }
+
         private void ButtonAddTextElement_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is FreeTextSlideEditorViewModel vm)
             {
-                vm.Slide.SlideElements.Add(new TextElement());
+                AddSlideElement(new TextElement());
             }
         }
         
@@ -60,7 +70,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         {
             if (this.DataContext is FreeTextSlideEditorViewModel vm)
             {
-                vm.Slide.SlideElements.Add(new ImageElement());
+                AddSlideElement(new ImageElement());
             }
         }
 
