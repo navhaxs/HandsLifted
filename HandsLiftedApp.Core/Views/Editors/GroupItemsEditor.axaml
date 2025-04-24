@@ -11,6 +11,7 @@
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:items1="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     x:DataType="items:MediaGroupItemInstance"
     d:DesignHeight="650"
     d:DesignWidth="400"
@@ -202,11 +203,14 @@
                 <common:MyTemplateSelector>
                     <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
                         <DockPanel>
-                            <!-- TODO make this load THUMBNAIL -->
-                            <Image
-                                Height="48"
-                                Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"
-                                Stretch="UniformToFill" />
+                            <Viewbox Height="48">
+                                <Grid Height="720" Width="1280" Background="Black">
+                                    <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
+                                           RenderOptions.BitmapInterpolationMode="HighQuality"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalAlignment="Stretch" />
+                                </Grid>
+                            </Viewbox>
                             <TextBlock
                                 Margin="8"
                                 Text="{Binding SourceMediaFilePath}" />
@@ -241,5 +245,5 @@
         <!-- 	<DataGridTextColumn Header="SourceMediaPath" Binding="{Binding SourceMediaPath}"/> -->
         <!-- </DataGrid.Columns> -->
         <!--      </DataGrid> -->
-    </DockPanel>
+        </DockPanel>
 </UserControl>

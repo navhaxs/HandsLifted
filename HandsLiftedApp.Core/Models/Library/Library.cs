@@ -30,12 +30,17 @@ namespace HandsLiftedApp.Core.Models.Library
         private FileSystemWatcher watcher = new FileSystemWatcher();
 
         private bool _isMediaBin;
-        public bool isMediaBin { get => _isMediaBin; set => this.RaiseAndSetIfChanged(ref _isMediaBin, value); }
+
+        public bool isMediaBin
+        {
+            get => _isMediaBin;
+            set => this.RaiseAndSetIfChanged(ref _isMediaBin, value);
+        }
 
         public Library(LibraryConfig.LibraryDefinition config)
         {
             Config = config;
-            
+
             if (Design.IsDesignMode)
             {
                 Items = new ObservableCollection<LibraryItem>();
@@ -61,10 +66,10 @@ namespace HandsLiftedApp.Core.Models.Library
             if (Directory.Exists(Config.Directory) && Items != null)
             {
                 var files = new DirectoryInfo(Config.Directory).GetFiles("*.*", SearchOption.TopDirectoryOnly)
-                         .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
-                         .Select(f => f.FullName)
-                         // .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.OrdinalIgnoreCase))
-                         .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
+                    .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
+                    .Select(f => f.FullName)
+                    // .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
 
                 Log.Information($"Refreshed library [{Config.Label}] [{Config.Directory}]");
                 Items.Clear();
@@ -72,7 +77,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 // TODO: sync the Items list properly
                 foreach (var f in files)
                 {
-                    Items.Add(new LibraryItem() { FullFilePath = f, Title = Path.GetFileNameWithoutExtension(f) });
+                    Items.Add(new LibraryItem() { FullFilePath = f });
                 }
 
                 isMediaBin = !(Items.Count > 0 && (Items.First().FullFilePath.ToLower().EndsWith("txt") ||
@@ -113,9 +118,20 @@ namespace HandsLiftedApp.Core.Models.Library
         // }
     }
 
-    public class LibraryItem
+    public class LibraryItem : ReactiveObject
     {
-        public string FullFilePath { get; set; }
-        public string Title { get; set; } // display title in list view
+        public LibraryItem()
+        {
+            _title = this.WhenAnyValue(x => x.FullFilePath)
+                .Select(a => Path.GetFileName(a))
+                .ToProperty(this, x => x.Title, out _title);
+        }
+
+        private string _fullFilePath;
+        public string FullFilePath { get => _fullFilePath; set => this.RaiseAndSetIfChanged(ref _fullFilePath, value); }
+
+        private ObservableAsPropertyHelper<string> _title;
+        // display title in list view
+        public string Title { get => _title.Value; } 
     }
 }

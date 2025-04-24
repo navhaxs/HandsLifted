@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.Library;
+using HandsLiftedApp.Core.Utils;
 
 namespace HandsLiftedApp.Core.Views.LibraryView
 {
@@ -13,6 +14,8 @@ namespace HandsLiftedApp.Core.Views.LibraryView
     {
         public LibraryQueryView()
         {
+            AsyncImageLoader.ImageLoader.AsyncImageLoader = new WindowsThumbnailImageLoader();
+            
             InitializeComponent();
         }
         

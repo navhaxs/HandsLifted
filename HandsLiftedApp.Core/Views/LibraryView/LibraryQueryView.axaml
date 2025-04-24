@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             xmlns:library="clr-namespace:HandsLiftedApp.Core.Models.Library"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:libraryView="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -33,8 +32,12 @@
                             </DockPanel.ContextMenu>
                             <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
                             <Viewbox>
-                                <Image asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}"
-                                       RenderOptions.BitmapInterpolationMode="LowQuality" />
+                                <Grid Height="720" Width="1280" Background="Black">
+                                    <Image asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}"
+                                           RenderOptions.BitmapInterpolationMode="HighQuality"
+                                           VerticalAlignment="Stretch"
+                                           HorizontalAlignment="Stretch"/>
+                                </Grid>
                             </Viewbox>
                         </DockPanel>
                     </DataTemplate>
