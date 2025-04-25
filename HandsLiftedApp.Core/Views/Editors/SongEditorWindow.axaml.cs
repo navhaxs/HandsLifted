@@ -13,6 +13,7 @@ using Gdk;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Importer.OnlineSongLyrics;
 using HandsLiftedApp.Models.UI;
 using ReactiveUI;
 using Serilog;
@@ -241,6 +242,21 @@ namespace HandsLiftedApp.Core.Views.Editors
                 Debug.Print(e.Message);
                 interaction.SetOutput(null);
             }
+        }
+
+        BrowserWindow? window;
+        private void ImportFromOnline_OnClick(object? sender, RoutedEventArgs e)
+        {
+            window = new();
+            window.TextSelected += (e, text) =>
+            {
+                if (this.DataContext is SongEditorViewModel songEditorViewModel)
+                {
+                    songEditorViewModel.FreeTextEntryField = text;
+                }
+            };
+            window.Show();
+            
         }
     }
 }

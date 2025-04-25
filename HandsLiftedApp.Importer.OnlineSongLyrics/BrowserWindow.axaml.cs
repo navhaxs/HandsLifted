@@ -53,7 +53,9 @@ CCLI Song #990391
 © Public Domain
 For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccli.com
 CCLI License #317371";
-        
+
+        public event EventHandler<string>? TextSelected;
+
         private WindowsHwndSource windowClipboardManager;
 
         public BrowserWindow()
@@ -65,14 +67,14 @@ CCLI License #317371";
             }
 
             DataContext = new BrowserWindowViewModel();
-            
+
             // WebView.Settings.OsrEnabled = false;
             //WebView.Settings.CachePath = path;
             // WebView.Settings.LogFile = "ceflog.txt";
             // WebView.Settings.EnableErrorLogOnly = true;
             InitializeComponent();
             // DataContext = new BrowserViewModel(PART_WebView);
-            
+
             // PART_WebView.ShowDeveloperTools();
 
             if (Design.IsDesignMode)
@@ -88,13 +90,11 @@ CCLI License #317371";
                 // Initialize the clipboard now that we have a window soruce to use
                 windowClipboardManager = WindowsHwndSource.FromHwnd(handle);
                 windowClipboardManager.ClipboardChanged += ClipboardChanged;
-                
+
                 PART_WebView.Url = new Uri("https://songselect.com");
             });
 
-            Closing += ((sender, args) =>
-            {
-            });
+            Closing += ((sender, args) => { });
             // PART_WebView.BeforeNavigate += (request) =>
             // {
             //     Dispatcher.UIThread.InvokeAsync(() => PART_ProgressBar.IsVisible = true);
@@ -104,7 +104,12 @@ CCLI License #317371";
             //     Dispatcher.UIThread.InvokeAsync(() => PART_ProgressBar.IsVisible = false);
             // };
         }
-      
+
+        protected virtual void OnTextSelected(string selectedText)
+        {
+            TextSelected?.Invoke(this, selectedText);
+        }
+
         private void ClipboardChanged(object sender, EventArgs e)
         {
             // Create a new task that represents the asynchronous operation
@@ -113,10 +118,21 @@ CCLI License #317371";
                 {
                     string result = t.Result;
 
+
+                    string TEST_DATA = @"Before The Throne Of God
+
+Verse 1
+Before the throne of God above
+I have a strong and perfect plea
+A great High Priest whose name is Love
+Who ever lives and pleads for me";
+
                     // todo: validation
                     // string must have:
                     // - song title (... or not)
                     // - stanza > at least 1
+
+                    // if (result.Split('\n').Length > 1)
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -149,18 +165,33 @@ CCLI License #317371";
             Carousel.SelectedIndex = 1;
         }
 
+        // Debug methods
         private void WarningButton_OnClick(object? sender, RoutedEventArgs e)
         {
             Clipboard.SetTextAsync(TEST_DATA);
         }
-        
+
         private void WarningButton2_OnClick(object? sender, RoutedEventArgs e)
         {
             if (DataContext is BrowserWindowViewModel vm)
             {
                 vm.SelectedClipboardData = string.Empty;
             }
+
             Carousel.SelectedIndex = 0;
+        }
+
+        private void ImportSongButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (DataContext is BrowserWindowViewModel vm)
+            {
+                if (!string.IsNullOrEmpty(vm.SelectedClipboardData))
+                {
+                    OnTextSelected(vm.SelectedClipboardData);
+                }
+            }
+
+            Close();
         }
     }
 }

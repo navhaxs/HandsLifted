@@ -25,7 +25,7 @@
 
                 <avalonia:MaterialIcon Kind="About" Foreground="White" Width="30" Height="30" Margin="16 8 8 8" />
 
-                <Button DockPanel.Dock="Right" CornerRadius="0" VerticalAlignment="Stretch">
+                <Button DockPanel.Dock="Right" CornerRadius="0" VerticalAlignment="Stretch" Click="ImportSongButton_OnClick">
                     <DockPanel Margin="3 2">
                         <avalonia:MaterialIcon Kind="ArrowRightCircleOutline" Width="30" Height="30"
                                                Foreground="White"
@@ -48,7 +48,7 @@
         </Border>
         <Border BorderThickness="1" CornerRadius="6" Padding="2" Margin="4"
                 HorizontalAlignment="Stretch" Background="LightGray">
-            <Carousel SelectedIndex="1" Name="Carousel">
+            <Carousel SelectedIndex="0" Name="Carousel">
                 <ScrollViewer>
 
                     <Border BorderBrush="#2ECAFF" BorderThickness="2" Padding="20" CornerRadius="6"

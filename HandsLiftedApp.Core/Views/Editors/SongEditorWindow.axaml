@@ -83,7 +83,8 @@
                 <!--     </Button.Flyout> -->
                 <!-- </Button> -->
 
-                <TextBlock Text="{Binding SongEditorWindowTitle}" FontSize="17" VerticalAlignment="Center" Margin="6 0 0 0">
+                <TextBlock Text="{Binding SongEditorWindowTitle}" FontSize="17" VerticalAlignment="Center"
+                           Margin="6 0 0 0">
                     <TextBlock.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="ResetArrangement" DockPanel.Dock="Left"
@@ -97,27 +98,27 @@
                 </TextBlock>
 
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    
+
                     <!-- <Button Click="LoadFromText_OnClick"> -->
                     <!--     <DockPanel> -->
                     <!--         <TextBlock Text="Save to Library" DockPanel.Dock="Right" /> -->
                     <!--         <material:MaterialIcon Kind="Bookshelf" /> -->
                     <!--     </DockPanel> -->
                     <!-- </Button> -->
-                    
+
                     <Button Click="AddToPlaylist_OnClick">
                         <Button.IsVisible>
                             <MultiBinding Converter="{x:Static BoolConverters.And}">
                                 <Binding Path="Song.Title" Converter="{x:Static StringConverters.IsNotNullOrEmpty}" />
                                 <Binding Path="ItemInsertIndex" Converter="{x:Static ObjectConverters.IsNotNull}" />
-                            </MultiBinding> 
+                            </MultiBinding>
                         </Button.IsVisible>
                         <DockPanel>
                             <TextBlock Text="Add to Playlist" DockPanel.Dock="Right" />
                             <material:MaterialIcon Kind="AddCircleOutline" />
                         </DockPanel>
                     </Button>
-                    
+
                     <Button>
                         <Button.IsVisible>
                             <Binding Path="ItemInsertIndex" Converter="{x:Static ObjectConverters.IsNull}" />
@@ -132,7 +133,7 @@
                             <material:MaterialIcon Kind="PencilOutline" />
                         </DockPanel>
                     </Button>
-                    <Button Click="LoadFromText_OnClick">
+                    <Button>
                         <Button.IsVisible>
                             <Binding Path="ItemInsertIndex" Converter="{x:Static ObjectConverters.IsNull}" />
                         </Button.IsVisible>
@@ -140,6 +141,26 @@
                             <TextBlock Text="Import" DockPanel.Dock="Right" />
                             <material:MaterialIcon Kind="FolderOutline" />
                         </DockPanel>
+                        <Button.Flyout>
+                            <MenuFlyout
+                                Placement="BottomEdgeAlignedLeft">
+                                <MenuItem Header="From File..."
+                                          Click="LoadFromText_OnClick">
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Foreground="#888888" Kind="File" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                
+                                <MenuItem Header="From Online..."
+                                          Click="ImportFromOnline_OnClick">
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Foreground="#888888" Kind="Internet" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <Separator />
+                            </MenuFlyout>
+                        </Button.Flyout>
                     </Button>
                     <Button Click="SaveAsXml_OnClick">
                         <Button.IsVisible>
