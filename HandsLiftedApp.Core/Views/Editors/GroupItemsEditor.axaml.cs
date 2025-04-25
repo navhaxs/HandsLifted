@@ -6,7 +6,6 @@ using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using DynamicData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -138,7 +137,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                     return;
                 }
 
-                mediaGroupItem.Items.Move(listBox.SelectedIndex, listBox.SelectedIndex - 1);
+                var finalIndex = listBox.SelectedIndex - 1;
+                mediaGroupItem.Items.Move(listBox.SelectedIndex, finalIndex);
+                listBox.SelectedIndex = finalIndex;
             }
         }
 
@@ -151,7 +152,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                     return;
                 }
 
-                mediaGroupItem.Items.Move(listBox.SelectedIndex, listBox.SelectedIndex + 1);
+                var finalIndex = listBox.SelectedIndex + 1;
+                mediaGroupItem.Items.Move(listBox.SelectedIndex, finalIndex);
+                listBox.SelectedIndex = finalIndex;
             }
         }
 

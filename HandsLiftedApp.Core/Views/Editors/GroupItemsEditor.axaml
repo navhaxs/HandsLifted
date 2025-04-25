@@ -13,14 +13,14 @@
     xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     x:DataType="items:MediaGroupItemInstance"
-    d:DesignHeight="650"
+    d:DesignHeight="450"
     d:DesignWidth="400"
     mc:Ignorable="d">
-
-    <Design.DataContext>
-        <editor:ExampleMediaGroupItemInstance />
-    </Design.DataContext>
-
+    <!-- -->
+    <!-- <Design.DataContext> -->
+    <!--     <editor:ExampleMediaGroupItemInstance /> -->
+    <!-- </Design.DataContext> -->
+    <!-- -->
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
@@ -44,36 +44,36 @@
             BorderThickness="0,0,0,1"
             DockPanel.Dock="Top">
             <DockPanel>
-                <Button Click="AddItemButton_OnClick" DockPanel.Dock="Left">
-                    <DockPanel>
-                        <material:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Margin="-4,-4,-4,-4"
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Foreground="#888888"
-                            Kind="PlusCircleOutline" />
-                        <TextBlock
-                            Margin="12,0,0,0"
-                            Text="Add item" />
-                    </DockPanel>
-                </Button>
-                <Button Click="AddItemCustomButton_OnClick" DockPanel.Dock="Left">
-                    <DockPanel>
-                        <material:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Margin="-4,-4,-4,-4"
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Foreground="#888888"
-                            Kind="PlusCircleOutline" />
-                        <TextBlock
-                            Margin="12,0,0,0"
-                            Text="Add custom slide" />
-                    </DockPanel>
-                </Button>
+                <!-- <Button Click="AddItemButton_OnClick" DockPanel.Dock="Left"> -->
+                <!--     <DockPanel> -->
+                <!--         <material:MaterialIcon -->
+                <!--             Width="24" -->
+                <!--             Height="24" -->
+                <!--             Margin="-4,-4,-4,-4" -->
+                <!--             VerticalAlignment="Center" -->
+                <!--             DockPanel.Dock="Left" -->
+                <!--             Foreground="#888888" -->
+                <!--             Kind="PlusCircleOutline" /> -->
+                <!--         <TextBlock -->
+                <!--             Margin="12,0,0,0" -->
+                <!--             Text="Add item" /> -->
+                <!--     </DockPanel> -->
+                <!-- </Button> -->
+                <!-- <Button Click="AddItemCustomButton_OnClick" DockPanel.Dock="Left"> -->
+                <!--     <DockPanel> -->
+                <!--         <material:MaterialIcon -->
+                <!--             Width="24" -->
+                <!--             Height="24" -->
+                <!--             Margin="-4,-4,-4,-4" -->
+                <!--             VerticalAlignment="Center" -->
+                <!--             DockPanel.Dock="Left" -->
+                <!--             Foreground="#888888" -->
+                <!--             Kind="PlusCircleOutline" /> -->
+                <!--         <TextBlock -->
+                <!--             Margin="12,0,0,0" -->
+                <!--             Text="Add custom slide" /> -->
+                <!--     </DockPanel> -->
+                <!-- </Button> -->
                 <Button Click="Button_OnClick">GenerateSlides</Button>
                 <!-- <TextBlock -->
                 <!--     Padding="16,20,16,14" -->
@@ -84,16 +84,20 @@
             </DockPanel>
         </Border>
 
+        <TextBox
+            DockPanel.Dock="Top"
+            FontSize="16"
+            BorderThickness="0 0 0 1"
+            Text="{Binding Title}" Watermark="GroupItem Title" />
+
         <DockPanel DockPanel.Dock="Bottom">
             <TextBlock Text="Auto Advance Timer:" />
             <CheckBox IsChecked="{Binding AutoAdvanceTimer.IsEnabled}">IsEnabled</CheckBox>
             <TextBox Text="{Binding AutoAdvanceTimer.IntervalMs}" />
         </DockPanel>
 
-        <ScrollViewer>
-
+        <ScrollViewer DockPanel.Dock="Right">
             <StackPanel>
-                <TextBox Text="{Binding Title}" Watermark="GroupItem Title" />
                 <!-- <ColorPicker Color="{Binding ItemGroupColour, FallbackValue='#3a344a'}" /> -->
 
                 <!--<Separator />
@@ -102,38 +106,47 @@
                 <Button>Add Items from multiselect</Button>
                 <Button>Add Items from folder</Button>-->
                 <Separator />
-
-                <Separator />
-                <TextBlock>Move</TextBlock>
-                <Button Click="MoveItemUpButton_OnClick">
-                    <DockPanel>
-                        <material:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Margin="-4,-4,-4,-4"
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Foreground="#888888"
-                            Kind="ArrowUp" />
-                        <TextBlock>
-                            Move Item Up
-                        </TextBlock>
-                    </DockPanel>
+                
+                <Button Click="MoveItemUpButton_OnClick"
+                        Padding="8"
+                        Background="Transparent">
+                    <material:MaterialIcon
+                        Width="28"
+                        Height="28"
+                        Margin="-4,-4,-4,-4"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Left"
+                        Foreground="#888888"
+                        Kind="ArrowUp" />
                 </Button>
-                <Button Click="MoveItemDownButton_OnClick">
-                    <DockPanel>
-                        <material:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Margin="-4,-4,-4,-4"
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Foreground="#888888"
-                            Kind="ArrowDown" />
-                        <TextBlock>
-                            Move Item Down
-                        </TextBlock>
-                    </DockPanel>
+                <Button Click="MoveItemDownButton_OnClick"
+                        Padding="8"
+                        Background="Transparent">
+                    <material:MaterialIcon
+                        Width="28"
+                        Height="28"
+                        Margin="-4,-4,-4,-4"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Left"
+                        Foreground="#888888"
+                        Kind="ArrowDown" />
+                </Button>
+                <Button
+                    Padding="8"
+                    Background="Transparent">
+                    <Button.Flyout>
+                        <Flyout>
+                            <Button Click="RemoveItemButton_OnClick" Content="This will remove the selected item" />
+                        </Flyout>
+                    </Button.Flyout>
+                    <material:MaterialIcon
+                        Width="28"
+                        Height="28"
+                        Margin="-4,-4,-4,-4"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Left"
+                        Foreground="#888888"
+                        Kind="Multiply" />
                 </Button>
                 <Separator />
                 <!--<TextBlock>Move special</TextBlock>
@@ -152,19 +165,7 @@
                 <Separator />-->
                 <TextBlock>Edit</TextBlock>
                 <Button Click="EditButton_OnClick">Edit Item Info</Button>
-                <Button Click="RemoveItemButton_OnClick">
-                    <DockPanel>
-                        <material:MaterialIcon
-                            Width="24"
-                            Height="24"
-                            Margin="-4,-4,-4,-4"
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Foreground="#888888"
-                            Kind="Multiply" />
-                        <TextBlock>Remove Item</TextBlock>
-                    </DockPanel>
-                </Button>
+
                 <Separator />
                 <!-- <Button Command="{Binding ExploreFile}">Show in Explorer</Button> -->
                 <!--<Separator />
@@ -175,60 +176,127 @@
             </StackPanel>
         </ScrollViewer>
 
-        <ListBox x:Name="listBox" ItemsSource="{Binding Items}">
-            <ListBox.Styles>
-                <Style Selector="ListBoxItem">
-                    <Setter Property="ContextMenu">
-                        <ContextMenu>
-                            <MenuItem Header="Duplicate" Click="Duplicate_OnClick">
-                                <MenuItem.Icon>
-                                    <material:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <!-- <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick"> -->
-                            <!--     <MenuItem.Icon> -->
-                            <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" /> -->
-                            <!--     </MenuItem.Icon> -->
-                            <!-- </MenuItem> -->
-                            <!-- <MenuItem Header="Remove" Click="RemoveItem_OnClick"> -->
-                            <!--     <MenuItem.Icon> -->
-                            <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="Times" /> -->
-                            <!--     </MenuItem.Icon> -->
-                            <!-- </MenuItem> -->
-                        </ContextMenu>
-                    </Setter>
-                </Style>
-            </ListBox.Styles>
-            <ListBox.ItemTemplate>
-                <common:MyTemplateSelector>
-                    <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
-                        <DockPanel>
-                            <Viewbox Height="48">
-                                <Grid Height="720" Width="1280" Background="Black">
-                                    <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
-                                           RenderOptions.BitmapInterpolationMode="HighQuality"
-                                           VerticalAlignment="Stretch"
-                                           HorizontalAlignment="Stretch" />
-                                </Grid>
-                            </Viewbox>
-                            <TextBlock
-                                Margin="8"
-                                Text="{Binding SourceMediaFilePath}" />
-                        </DockPanel>
-                    </DataTemplate>
-                    <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
-                        <DockPanel>
-                            <Viewbox Height="48">
-                                <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
-                            </Viewbox>
-                            <TextBlock
-                                Margin="8"
-                                Text="CustomSlide" />
-                        </DockPanel>
-                    </DataTemplate>
-                </common:MyTemplateSelector>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <Grid>
+            <ListBox x:Name="listBox" ItemsSource="{Binding Items}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     BorderThickness="0 0 1 0">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="ContextMenu">
+                            <ContextMenu>
+                                <MenuItem Header="Duplicate" Click="Duplicate_OnClick">
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <!-- <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick"> -->
+                                <!--     <MenuItem.Icon> -->
+                                <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" /> -->
+                                <!--     </MenuItem.Icon> -->
+                                <!-- </MenuItem> -->
+                                <!-- <MenuItem Header="Remove" Click="RemoveItem_OnClick"> -->
+                                <!--     <MenuItem.Icon> -->
+                                <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="Times" /> -->
+                                <!--     </MenuItem.Icon> -->
+                                <!-- </MenuItem> -->
+                            </ContextMenu>
+                        </Setter>
+                    </Style>
+                </ListBox.Styles>
+                <ListBox.ItemTemplate>
+                    <common:MyTemplateSelector>
+                        <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
+                            <DockPanel>
+                                <Viewbox Height="48">
+                                    <Grid Height="720" Width="1280" Background="Black">
+                                        <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
+                                               RenderOptions.BitmapInterpolationMode="HighQuality"
+                                               VerticalAlignment="Stretch"
+                                               HorizontalAlignment="Stretch" />
+                                    </Grid>
+                                </Viewbox>
+                                <TextBlock
+                                    Margin="8"
+                                    TextWrapping="WrapWithOverflow"
+                                    Text="{Binding SourceMediaFilePath}" />
+                            </DockPanel>
+                        </DataTemplate>
+                        <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
+                            <DockPanel>
+                                <Viewbox Height="48">
+                                    <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
+                                </Viewbox>
+                                <TextBlock
+                                    Margin="8"
+                                    TextWrapping="WrapWithOverflow"
+                                    Text="CustomSlide" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </common:MyTemplateSelector>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Button
+                Name="AddItemButton"
+                Margin="6,0,8,8"
+                Padding="12"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                HorizontalContentAlignment="Left"
+                Background="#4d347f"
+                BorderThickness="0"
+                ClickMode="Press"
+                CornerRadius="6"
+                Cursor="Hand"
+                DockPanel.Dock="Bottom"
+                FontSize="14"
+                Foreground="White"
+                ZIndex="999">
+                <Button.Styles>
+                    <Style Selector="ScrollViewer">
+                        <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                    </Style>
+                    <Style Selector="MenuItem">
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="Padding" Value="8 6" />
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                        <Setter Property="Background" Value="#5C3AB6" />
+                    </Style>
+                    <Style Selector="Button:pressed /template/ ContentPresenter">
+                        <Setter Property="BorderBrush" Value="#2c628b" />
+                        <Setter Property="Background" Value="#5F5C2ED6" />
+                    </Style>
+                </Button.Styles>
+                <Button.Effect>
+                    <DropShadowEffect
+                        BlurRadius="6"
+                        OffsetX="0"
+                        OffsetY="1"
+                        Color="#55000000" />
+                </Button.Effect>
+
+                <DockPanel>
+                    <material:MaterialIcon
+                        Width="20"
+                        Height="20"
+                        DockPanel.Dock="Left"
+                        Kind="Plus" />
+                    <TextBlock
+                        Margin="8,0,8,0"
+                        IsVisible="True"
+                        Text="Add Item" />
+                </DockPanel>
+
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                        <MenuItem Click="AddItemButton_OnClick" Header="Add Media File" />
+                        <MenuItem Click="AddItemCustomButton_OnClick" Header="Add Custom Slide" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
+
         <!--      <DataGrid -->
         <!--          Name="DataGrid_Items" -->
         <!--          AutoGenerateColumns="False" -->
@@ -245,5 +313,5 @@
         <!-- 	<DataGridTextColumn Header="SourceMediaPath" Binding="{Binding SourceMediaPath}"/> -->
         <!-- </DataGrid.Columns> -->
         <!--      </DataGrid> -->
-        </DockPanel>
+    </DockPanel>
 </UserControl>
