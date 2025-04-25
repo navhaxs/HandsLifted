@@ -7,12 +7,14 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="Black"
              x:Class="HandsLiftedApp.Core.Render.MpvVideoSlideRenderer">
-    <Grid>
-        <TextBlock x:Name="NonProjectorWindowText" Text="Video" FontSize="200" VerticalAlignment="Center" HorizontalAlignment="Center" IsVisible="False" />
-        
-        <libmpv:SoftwareVideoView x:Name="VideoView" ShowFps="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}" />
-        
-        <!-- Not working in ProjectorWindow, only preview in MainWindow ?? -->
-        <!-- <libmpv:OpenGlVideoView x:Name="VideoView" /> -->
-    </Grid>
+    <libmpv:SoftwareVideoView x:Name="VideoView" ShowFps="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}"
+                              RenderOptions.BitmapInterpolationMode="HighQuality"
+                              UseLayoutRounding="True">
+        <libmpv:SoftwareVideoView.RenderTransform>
+            <ScaleTransform/>
+        </libmpv:SoftwareVideoView.RenderTransform>
+    </libmpv:SoftwareVideoView>
+    
+    <!-- Not working in ProjectorWindow, only preview in MainWindow ?? -->
+    <!-- <libmpv:OpenGlVideoView x:Name="VideoView" /> -->
 </UserControl>

@@ -246,7 +246,6 @@ public unsafe partial class MpvContext : IDisposable
         }
     }
 
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected int CheckCode(int code)
     {

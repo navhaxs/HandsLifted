@@ -31,20 +31,11 @@ namespace HandsLiftedApp.Core.Render
 
         private void VideoSlideRenderer_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (this.VisualRoot as Window is ProjectorWindow || Globals.Instance.AppPreferences.EnableMultiVideoRenderers)
+            if (this.DataContext is VideoSlideInstance videoSlide)
             {
-                NonProjectorWindowText.IsVisible = false;
-                if (this.DataContext is VideoSlideInstance videoSlide)
-                {
-                    Log.Debug("MpvVideoSlideRenderer Attached");
-                    _isMounted = true;
-                    VideoView.MpvContext = Globals.Instance.MpvContextInstance;
-                }
-            }
-            else if (VideoView != null)
-            {
-                VideoView.IsVisible = false;
-                NonProjectorWindowText.IsVisible = true;
+                Log.Debug("MpvVideoSlideRenderer Attached");
+                _isMounted = true;
+                VideoView.MpvContext = Globals.Instance.MpvContextInstance;
             }
         }
     }

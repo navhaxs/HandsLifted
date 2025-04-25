@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -12,35 +11,14 @@ namespace Avalonia.Controls.LibMpv;
 
 public class SoftwareVideoView : Control, IGetVideoBufferBitmap
 {
-    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromLogicalTree(e);
-        _mpvContext?.UnregisterUpdateCallback(this.UpdateVideoView);
-    }
-
-    WriteableBitmap renderTarget;
-
-    private MpvContext? _mpvContext = null;
-
-    public static readonly DirectProperty<SoftwareVideoView, MpvContext?> MpvContextProperty =
-        AvaloniaProperty.RegisterDirect<SoftwareVideoView, MpvContext?>(
-            nameof(MpvContext),
-            o => o.MpvContext,
-            (o, v) => o.MpvContext = v,
-            defaultBindingMode: BindingMode.TwoWay);
-
-    public MpvContext? MpvContext
-    {
-        get { return _mpvContext; }
-        set
-        {
-            if (ReferenceEquals(value, _mpvContext)) return;
-            _mpvContext?.StopRendering();
-            _mpvContext = value;
-            _mpvContext?.StartSoftwareRendering(this.UpdateVideoView);
-        }
-    }
-
+    private static readonly Dictionary<MpvContext, (WriteableBitmap? Bitmap, int RefCount)> SharedBitmaps = new();
+    private static readonly object SharedLock = new object();
+    private static SoftwareVideoView? PrimaryRenderer;
+    
+    private MpvContext? _mpvContext;
+    private WriteableBitmap? _currentBitmap;
+    private bool _isPrimaryRenderer;
+    
     public static readonly StyledProperty<bool> ShowFpsProperty =
         AvaloniaProperty.Register<SoftwareVideoView, bool>(nameof(ShowFps));
 
@@ -49,85 +27,199 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
         get => GetValue(ShowFpsProperty);
         set => SetValue(ShowFpsProperty, value);
     }
-
-    public WriteableBitmap GetVideoBufferBitmap() => renderTarget;
-
-    private DateTime _lastRenderTime = DateTime.Now;
-    private double _currentFps = 0;
-    private FormattedText _fpsText;
-
-    public SoftwareVideoView()
+    
+    public MpvContext? MpvContext
     {
-        ClipToBounds = true;
-        _fpsText = new FormattedText(
-            "FPS: 0",
-            CultureInfo.InvariantCulture,
-            FlowDirection.LeftToRight,
-            Typeface.Default,
-            14,
-            Brushes.Lime);
+        get => _mpvContext;
+        set
+        {
+            if (ReferenceEquals(value, _mpvContext)) return;
+
+            if (_mpvContext != null)
+            {
+                UnregisterFromSharedBitmap();
+                _mpvContext.StopRendering();
+            }
+
+            _mpvContext = value;
+
+            if (_mpvContext != null)
+            {
+                RegisterForSharedBitmap();
+                _mpvContext.StartSoftwareRendering(UpdateVideoView);
+            }
+        }
     }
 
-    public override void Render(DrawingContext context) // what calls this?
+    private void RegisterForSharedBitmap()
     {
-        if (VisualRoot == null || _mpvContext == null)
-            return;
-
-        var bitmapSize = GetPixelSize();
-
-        if (bitmapSize.Height == 0 || bitmapSize.Width == 0)
-            return;
-
-        if (renderTarget == null || renderTarget.PixelSize.Width != bitmapSize.Width ||
-            renderTarget.PixelSize.Height != bitmapSize.Height)
-            this.renderTarget = new WriteableBitmap(bitmapSize, new Vector(96.0, 96.0), PixelFormat.Bgra8888,
-                AlphaFormat.Premul);
-
-        using (ILockedFramebuffer lockedBitmap = this.renderTarget.Lock())
+        if (_mpvContext == null) return;
+        
+        lock (SharedLock)
         {
-            _mpvContext.SoftwareRender(lockedBitmap.Size.Width, lockedBitmap.Size.Height, lockedBitmap.Address, "bgra");
-        }
-
-        // TODO can this renderTarget be sent to NDI?
-        context.DrawImage(this.renderTarget,
-            new Rect(0, 0, renderTarget.PixelSize.Width, renderTarget.PixelSize.Height));
-
-        // Calculate and display FPS
-        var currentTime = DateTime.Now;
-
-        if (ShowFps)
-        {
-            var frameTime = (currentTime - _lastRenderTime).TotalSeconds;
-            if (frameTime > 0)
+            if (!SharedBitmaps.ContainsKey(_mpvContext))
             {
-                _currentFps = 0.95 * _currentFps + 0.05 * (1.0 / frameTime); // Smooth FPS
-                _fpsText = new FormattedText(
-                    $"FPS: {_currentFps:F1}",
-                    CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight,
-                    Typeface.Default,
-                    14,
-                    Brushes.Lime);
+                _isPrimaryRenderer = true;
+                PrimaryRenderer = this;
+            }
+            
+            if (!SharedBitmaps.TryGetValue(_mpvContext, out var entry))
+            {
+                SharedBitmaps[_mpvContext] = (null, 1);
+            }
+            else
+            {
+                SharedBitmaps[_mpvContext] = (entry.Bitmap, entry.RefCount + 1);
+            }
+        }
+    }
+
+    private void UnregisterFromSharedBitmap()
+    {
+        if (_mpvContext == null) return;
+        
+        lock (SharedLock)
+        {
+            if (SharedBitmaps.TryGetValue(_mpvContext, out var entry))
+            {
+                if (entry.RefCount <= 1)
+                {
+                    entry.Bitmap?.Dispose();
+                    SharedBitmaps.Remove(_mpvContext);
+                    if (_isPrimaryRenderer)
+                    {
+                        PrimaryRenderer = null;
+                        _isPrimaryRenderer = false;
+                    }
+                }
+                else
+                {
+                    SharedBitmaps[_mpvContext] = (entry.Bitmap, entry.RefCount - 1);
+                }
+            }
+        }
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        if (VisualRoot == null || _mpvContext == null || !IsVisible) return;
+
+        var width = (int)Bounds.Width;
+        var height = (int)Bounds.Height;
+
+        if (width <= 0 || height <= 0) return;
+
+        lock (SharedLock)
+        {
+            if (_isPrimaryRenderer && _mpvContext != null)
+            {
+                // Only the primary renderer updates the bitmap
+                if (SharedBitmaps.TryGetValue(_mpvContext, out var currentEntry))
+                {
+                    var bitmap = currentEntry.Bitmap;
+
+                    if (bitmap == null || bitmap.PixelSize.Width != width || bitmap.PixelSize.Height != height)
+                    {
+                        bitmap?.Dispose();
+                        bitmap = new WriteableBitmap(
+                            new PixelSize(width, height),
+                            new Vector(96, 96),
+                            PixelFormat.Bgra8888,
+                            AlphaFormat.Premul);
+                        SharedBitmaps[_mpvContext] = (bitmap, currentEntry.RefCount);
+                    }
+
+                    using (var lockedBitmap = bitmap.Lock())
+                    {
+                        _mpvContext.SoftwareRender(width, height, lockedBitmap.Address, "bgra");
+                    }
+
+                    _currentBitmap = bitmap;
+                }
+            }
+            else if (_mpvContext != null)
+            {
+                // Secondary renderers just use the shared bitmap
+                _currentBitmap = SharedBitmaps[_mpvContext].Bitmap;
             }
         }
 
-        _lastRenderTime = currentTime;
+        if (_currentBitmap != null)
+        {
+            context.DrawImage(
+                _currentBitmap,
+                new Rect(0, 0, _currentBitmap.PixelSize.Width, _currentBitmap.PixelSize.Height),
+                new Rect(Bounds.Size));
+        }
 
-        // Draw FPS counter in the top-left corner
         if (ShowFps)
-            context.DrawText(_fpsText, new Point(10, 10));
-    }
-
-    // TODO: how can this scale down for smaller preview outputs to increase overall performance when multiple outputs active?
-    private PixelSize GetPixelSize()
-    {
-        var scaling = VisualRoot!.RenderScaling;
-        //return new PixelSize(Math.Max(1, (int)(Bounds.Width * scaling)),Math.Max(1, (int)(Bounds.Height * scaling)));
-        return new PixelSize((int)Bounds.Width, (int)Bounds.Height);
+        {
+            DrawFps(context);
+        }
     }
 
     private void UpdateVideoView()
     {
-        Dispatcher.UIThread.Post(this.InvalidateVisual, DispatcherPriority.Background);
+        Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Render);
+    }
+
+    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromLogicalTree(e);
+        if (_mpvContext != null)
+        {
+            _mpvContext.StopRendering();
+            UnregisterFromSharedBitmap();
+        }
+    }
+
+    private DateTime _lastFpsUpdate = DateTime.Now;
+    private int _frameCount = 0;
+    private double _currentFps = 0;
+
+    private void DrawFps(DrawingContext context)
+    {
+        _frameCount++;
+        var now = DateTime.Now;
+        var elapsed = (now - _lastFpsUpdate).TotalSeconds;
+
+        // Update FPS calculation every second
+        if (elapsed >= 1.0)
+        {
+            _currentFps = _frameCount / elapsed;
+            _frameCount = 0;
+            _lastFpsUpdate = now;
+        }
+
+        // Create the FPS text
+        var text = new FormattedText(
+            $"FPS: {_currentFps:F1}",
+            CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight,
+            Typeface.Default,
+            14,
+            Brushes.LightGreen);
+
+        // Draw semi-transparent background
+        var padding = 4;
+        var background = new Rect(
+            0,
+            0,
+            text.Width + (padding * 2),
+            text.Height + (padding * 2));
+
+        context.FillRectangle(
+            new SolidColorBrush(Color.FromArgb(128, 0, 0, 0)),
+            background);
+
+        // Draw text
+        context.DrawText(
+            text,
+            new Point(padding, padding));
+    }
+
+    public WriteableBitmap? GetVideoBufferBitmap()
+    {
+        return _currentBitmap;
     }
 }
