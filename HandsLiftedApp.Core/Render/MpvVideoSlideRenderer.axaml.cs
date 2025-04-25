@@ -56,27 +56,9 @@ namespace HandsLiftedApp.Core.Render
                 NonProjectorWindowText.IsVisible = false;
                 if (this.DataContext is VideoSlideInstance videoSlide)
                 {
-                    Log.Debug("MpvVideoSlideRenderer Attached in ProjectorWindow");
+                    Log.Debug("MpvVideoSlideRenderer Attached");
                     _isMounted = true;
                     VideoView.MpvContext = Globals.Instance.MpvContextInstance;
-
-                    Task.Run(() =>
-                    {
-                        //Task.Delay(1000).Wait(); // a delay here fixes a noticeable "entire UI" lag when entering VideoSlid
-
-                        if (_isMounted)
-                        {
-                            // only run if slide still active
-                            if (Globals.Instance.MpvContextInstance == null)
-                            {
-                                Log.Debug("MpvVideoSlideRenderer failed: MpvContextInstance not initialized");
-                                return;
-                            }
-                            Globals.Instance.MpvContextInstance.Command("loadfile", videoSlide.SourceMediaFilePath, "replace");
-                            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", false);
-                            Log.Debug("MpvVideoSlideRenderer loadfile and play");
-                        }
-                    });
                 }
             }
             else if (VideoView != null)

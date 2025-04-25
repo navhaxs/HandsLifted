@@ -1,4 +1,5 @@
 ﻿using Avalonia.Data;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -10,6 +11,12 @@ namespace Avalonia.Controls.LibMpv;
 
 public class SoftwareVideoView : Control, IGetVideoBufferBitmap
 {
+    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromLogicalTree(e);
+        _mpvContext?.UnregisterUpdateCallback(this.UpdateVideoView);
+    }
+
     WriteableBitmap renderTarget;
 
     private MpvContext? _mpvContext = null;
@@ -62,6 +69,7 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
         context.DrawImage(this.renderTarget, new Rect(0, 0, renderTarget.PixelSize.Width, renderTarget.PixelSize.Height));
     }
 
+    // TODO: how can this scale down for smaller preview outputs to increase overall performance when multiple outputs active?
     private PixelSize GetPixelSize()
     {
         var scaling = VisualRoot!.RenderScaling;

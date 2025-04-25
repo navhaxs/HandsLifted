@@ -121,16 +121,35 @@ public class MpvMvvmContext : INotifyPropertyChanged
         }
     }
 
+    public bool? Mute
+    {
+        get => Context?.GetPropertyFlag("mute");
+        set
+        {
+            if (value == null) return;
+            Context?.SetPropertyFlag("mute", value.Value);
+        }
+    }
+
+    public double? Volume
+    {
+        get => Context?.GetPropertyDouble("volume");
+        set
+        {
+            if (value == null) return;
+            Context?.SetPropertyDouble("volume", value.Value);
+        }
+    }
 
     static PropertyToObserve[] observableProperties = new PropertyToObserve[]
     {
         new() { MvvmName=nameof(Duration), LibMpvName="duration", LibMpvFormat = mpv_format.MPV_FORMAT_INT64 },
         new() { MvvmName=nameof(TimePos), LibMpvName="time-pos", LibMpvFormat = mpv_format.MPV_FORMAT_INT64 },
         new() { MvvmName=nameof(Paused), LibMpvName="pause", LibMpvFormat = mpv_format.MPV_FORMAT_FLAG },
-        new() { MvvmName=nameof(PlaybackSpeed), LibMpvName="speed", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
+        new() { MvvmName=nameof(PlaybackSpeed), LibMpvName="speed", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE },
+        new() { MvvmName=nameof(Mute), LibMpvName="mute", LibMpvFormat = mpv_format.MPV_FORMAT_FLAG },
+        new() { MvvmName=nameof(Volume), LibMpvName="volume", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
     };
-
-
 
     string _mediaUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     public string MediaUrl

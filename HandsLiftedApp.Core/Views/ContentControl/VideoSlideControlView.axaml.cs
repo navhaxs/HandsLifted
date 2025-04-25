@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
 using HandsLiftedApp.Core;
+using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 
 namespace HandsLiftedApp.Views.ControlModules
 {
@@ -33,16 +34,21 @@ namespace HandsLiftedApp.Views.ControlModules
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             Globals.Instance.MpvContextInstance.Command("stop");
+            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", true);
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", false);
-        }
-
-        private void PauseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", true);
+            if (DataContext is VideoSlideInstance videoSlideInstance)
+            {
+                if (videoSlideInstance.TimePos == null)
+                {
+                    videoSlideInstance.PlayFromStart();
+                    return;
+                }
+            }
+            
+            Globals.Instance.MpvContextInstance.Command("cycle", "pause");;
         }
     }
 }

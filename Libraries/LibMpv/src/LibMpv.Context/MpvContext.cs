@@ -142,7 +142,7 @@ public unsafe partial class MpvContext : IDisposable
     {
         CheckDisposed();
         int code;
-        var value = new double[1] { 0 };
+        var value = new double[1] { newValue };
         fixed (double* valuePtr = value)
         {
             code = mpv_set_property(ctx, name, mpv_format.MPV_FORMAT_DOUBLE, valuePtr);

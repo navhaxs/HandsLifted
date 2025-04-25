@@ -69,6 +69,12 @@ namespace HandsLiftedApp.XTransitioningContentControl
                         {
                             HideOldPresenter();
                         }
+                        
+                        // transition complete
+                        if (((ContentPresenter)to).Content is ISlideRender isr)
+                        {
+                            isr.OnEnterSlide();
+                        }
                     }, TaskScheduler.FromCurrentSynchronizationContext());
                 }
 

@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace AvaloniaNDI
 {
@@ -599,10 +600,17 @@ Description("Function to determine whether the content requires high resolution 
             var destinationCanvas = destinationSurface.Canvas;
             using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
-            sourceBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+            try
+            {
+                sourceBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to copy pixels to NDI buffer");
 
-            // add it to the output queue
-            AddFrame(videoFrame);
+                // add it to the output queue
+                AddFrame(videoFrame);
+            }
         }
 
         private static void OnNdiSenderPropertyChanged(AvaloniaPropertyChangedEventArgs e)

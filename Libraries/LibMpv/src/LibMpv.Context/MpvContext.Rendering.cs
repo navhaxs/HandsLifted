@@ -13,7 +13,7 @@ public unsafe partial class MpvContext
         this.StopRendering();
 
         this.getProcAddress = new mpv_opengl_init_params_get_proc_address((_, name) => (void*)getProcAddress(name));
-        this.updateCallback = new mpv_render_context_set_update_callback_callback((_) => updateCallback());
+        // this.updateCallback = new mpv_render_context_set_update_callback_callback((_) => updateCallback());
 
         using MarshalHelper marshalHelper = new MarshalHelper();
 
@@ -57,7 +57,8 @@ public unsafe partial class MpvContext
         if (errorCode >= 0)
         {
             this.renderContext = (mpv_render_context*)contextPtr;
-            mpv_render_context_set_update_callback(this.renderContext, this.updateCallback, null);
+            RegisterUpdateCallback(updateCallback);
+            // mpv_render_context_set_update_callback(this.renderContext, this.updateCallback, null);
         }
 
         CheckCode(errorCode);
@@ -109,13 +110,35 @@ public unsafe partial class MpvContext
         CheckCode(errorCode);
     }
 
+    private List<UpdateCallback> updateCallbacks = new();
+    public void RegisterUpdateCallback(UpdateCallback updateCallback)
+    {
+        if (!updateCallbacks.Contains(updateCallback))
+        {
+            updateCallbacks.Add(updateCallback);
+        }
+        if (disposed) return;
+        this.updateCallback = new mpv_render_context_set_update_callback_callback((_) => updateCallbacks.ForEach((callback) => callback()));
+        if (renderContext != null)
+        {
+            mpv_render_context_set_update_callback(renderContext, this.updateCallback, null);
+        }
+    }
+    
+    public void UnregisterUpdateCallback(UpdateCallback updateCallback)
+    {
+        if (updateCallbacks.Contains(updateCallback))
+        {
+            updateCallbacks.Remove(updateCallback);
+        }
+    }
 
     public void StartSoftwareRendering(UpdateCallback updateCallback)
     {
         if (disposed) return;
         this.StopRendering();
 
-        this.updateCallback = new mpv_render_context_set_update_callback_callback((_) => updateCallback());
+        // this.updateCallback = new mpv_render_context_set_update_callback_callback((_) => updateCallback());
 
         using MarshalHelper marshalHelper = new MarshalHelper();
 
@@ -149,7 +172,8 @@ public unsafe partial class MpvContext
         if (errorCode >= 0)
         {
             this.renderContext = (mpv_render_context*)contextPtr;
-            mpv_render_context_set_update_callback(this.renderContext, this.updateCallback, null);
+            RegisterUpdateCallback(updateCallback);
+            // mpv_render_context_set_update_callback(this.renderContext, this.updateCallback, null);
         }
 
         CheckCode(errorCode);

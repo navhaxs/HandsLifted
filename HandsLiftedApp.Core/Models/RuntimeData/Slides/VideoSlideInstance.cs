@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.XTransitioningContentControl;
 using LibMpv.Client;
@@ -173,18 +174,57 @@ Read MPV documentation:
             }
         }
 
+        public bool? Mute
+        {
+            get => Globals.Instance.MpvContextInstance?.GetPropertyFlag("mute");
+            set
+            {
+                if (value == null) return;
+                Globals.Instance.MpvContextInstance?.SetPropertyFlag("mute", value.Value);
+            }
+        }
+
+        public double? Volume
+        {
+            get
+            {
+                var volume = Globals.Instance.MpvContextInstance?.GetPropertyDouble("volume");
+                Console.WriteLine($"Volume Getter: {volume}");
+                return volume;
+            }
+            set
+            {
+                if (value == null) return;
+                Console.WriteLine($"Volume Setter: {value}");
+                Globals.Instance.MpvContextInstance?.SetPropertyDouble("volume", value.Value);
+            }
+        }
 
         static PropertyToObserve[] observableProperties =
         [
             new() { MvvmName = nameof(Duration), LibMpvName = "duration", LibMpvFormat = mpv_format.MPV_FORMAT_INT64 },
             new() { MvvmName = nameof(TimePos), LibMpvName = "time-pos", LibMpvFormat = mpv_format.MPV_FORMAT_INT64 },
-            new() { MvvmName = nameof(Paused), LibMpvName = "pause", LibMpvFormat = mpv_format.MPV_FORMAT_FLAG }
+            new() { MvvmName = nameof(Paused), LibMpvName = "pause", LibMpvFormat = mpv_format.MPV_FORMAT_FLAG },
             // new() { MvvmName=nameof(PlaybackSpeed), LibMpvName="speed", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
+            new() { MvvmName = nameof(Mute), LibMpvName = "mute", LibMpvFormat = mpv_format.MPV_FORMAT_FLAG },
+            new() { MvvmName = nameof(Volume), LibMpvName = "volume", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
         ];
-        
+
         public override void OnEnterSlide()
         {
             base.OnEnterSlide();
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                PlayFromStart();
+            });
+        }
+        
+        public void PlayFromStart()
+        {
+            Globals.Instance.MpvContextInstance.Command("loadfile", SourceMediaFilePath, "replace");
+            Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", false);
         }
 
         public override void OnLeaveSlide()

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -13,6 +14,7 @@ using Avalonia.Platform;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
@@ -221,8 +223,7 @@ namespace HandsLiftedApp.Core.Models
                 .ToProperty(this, x => x.StageDisplaySlideCountText);
 
             _disposables.Add(MessageBus.Current.Listen<NavigateToSlideReferenceAction>()
-                    .Subscribe(action => NavigateToReference(action.SlideReference)))
-                ;
+                    .Subscribe(action => NavigateToReference(action.SlideReference)));
 
             this.WhenAnyValue(p => p.Items)
                 .Subscribe(items =>

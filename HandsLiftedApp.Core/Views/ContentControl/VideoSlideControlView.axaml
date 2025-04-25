@@ -3,43 +3,70 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="150"
-	 		 xmlns:material="using:Material.Icons.Avalonia"
-	 		 xmlns:slides="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
-	 		 x:DataType="slides:VideoSlideInstance"
+             xmlns:material="using:Material.Icons.Avalonia"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
+             xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
+             x:DataType="slides:VideoSlideInstance"
              x:Class="HandsLiftedApp.Views.ControlModules.VideoSlideControlView">
-	<Border Background="#3a344a" CornerRadius="6" VerticalAlignment="Top" Margin="6">
-		<StackPanel Margin="6">
-			<TextBlock Text="{Binding SlideLabel, FallbackValue='(SlideLabel is null)'}" TextTrimming="CharacterEllipsis"
-			           ToolTip.ShowDelay="0" ToolTip.Tip="{Binding SourceMediaFilePath, FallbackValue='(SourceMediaFilePath is null)'}"
-			           />
-			<DockPanel>
-				<TextBlock DockPanel.Dock="Right" Text="{Binding PrettyRemainingTime, FallbackValue='Remaining'}" />
-				<TextBlock>
-					<TextBlock.Text>
-						<MultiBinding StringFormat="{}{0} / {1}">
-							<Binding Path="PrettyTimePos" FallbackValue="Elapsed" />
-							<Binding Path="PrettyDuration" FallbackValue="Total" />
-						</MultiBinding>
-					</TextBlock.Text>
-				</TextBlock>
-			</DockPanel>
-			<Slider Minimum="0" Maximum="{Binding Duration}" Value="{Binding TimePos}" />
-			<DockPanel>
-				<StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" >
-					<Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click" FontSize="24"
-							IsVisible="{Binding Paused}">
-						<material:MaterialIcon Kind="Play" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
-					</Button>
-					<Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseButton_Click" FontSize="24"
-												IsVisible="{Binding !Paused}">
-						<material:MaterialIcon Kind="Pause" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
-					</Button>
-					<Button VerticalAlignment="Bottom" HorizontalAlignment="Left"
-							FontSize="24" Click="StopButton_Click" Margin="4 0 0 0">
-						<material:MaterialIcon Kind="Stop" Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="32" Width="32"/>
-					</Button>
-				</StackPanel>
-			</DockPanel>
-		</StackPanel>
-	</Border>
+
+    <UserControl.Resources>
+        <controlModules:BooleanToVolumeMuteIconConverter x:Key="BooleanToIconConverter" />
+        <controlModules:BooleanToPlayPauseToggleIconConverter x:Key="BooleanToPlayPauseToggleIconConverter" />
+    </UserControl.Resources>
+
+    <Border Background="#3a344a" CornerRadius="6" VerticalAlignment="Top" Margin="6">
+        <StackPanel Margin="6">
+            <TextBlock Text="{Binding SlideLabel, FallbackValue='(SlideLabel is null)'}"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip.ShowDelay="0"
+                       ToolTip.Tip="{Binding SourceMediaFilePath, FallbackValue='(SourceMediaFilePath is null)'}" />
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding PrettyRemainingTime, FallbackValue='Remaining'}" />
+                <TextBlock IsVisible="{Binding PrettyTimePos, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} / {1}">
+                            <Binding Path="PrettyTimePos" FallbackValue="Elapsed" />
+                            <Binding Path="PrettyDuration" FallbackValue="Total" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </DockPanel>
+            <Slider Minimum="0" Maximum="{Binding Duration}" Value="{Binding TimePos}" />
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" DockPanel.Dock="Left">
+                    <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click"
+                            FontSize="24">
+                        <material:MaterialIcon Kind="{Binding Paused, Converter={StaticResource BooleanToPlayPauseToggleIconConverter}}" Foreground="#888888" Margin="-4" VerticalAlignment="Center"
+                                               Height="32" Width="32" />
+                    </Button>
+                    <Button VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                            FontSize="24" Click="StopButton_Click" Margin="4 0 0 0">
+                        <material:MaterialIcon Kind="Stop" Foreground="#888888" Margin="-4" VerticalAlignment="Center"
+                                               Height="32" Width="32" />
+                    </Button>
+                </StackPanel>
+
+                <Border Background="#313131" HorizontalAlignment="Right" CornerRadius="6">
+                    <DockPanel Width="120" Margin="6 0">
+                        <!-- Mute Button -->
+                        <ToggleButton IsChecked="{Binding Mute}" VerticalAlignment="Center" FontSize="24"
+                                      Margin="4 0 0 0" DockPanel.Dock="Right">
+                            <material:MaterialIcon
+                                Kind="{Binding Mute, Converter={StaticResource BooleanToIconConverter}}"
+                                Foreground="#888888" Margin="-4" VerticalAlignment="Center" Height="24" Width="24" />
+                        </ToggleButton>
+
+                        <!-- Volume Slider -->
+                        <!-- TODO: Style the ticks -->
+                        <Slider Minimum="0" Maximum="130" Value="{Binding Volume}" VerticalAlignment="Center"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="False" 
+                                Ticks="0, 100, 130"
+                                DockPanel.Dock="Left" />
+                    </DockPanel>
+                </Border>
+
+            </DockPanel>
+        </StackPanel>
+    </Border>
 </UserControl>

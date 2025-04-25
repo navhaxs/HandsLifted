@@ -79,6 +79,12 @@ namespace HandsLiftedApp.Core.Controls.Navigation
             {
                 var point = e.GetPosition(sender as Control);
 
+                var containers = listBox.GetRealizedContainers();
+                if (containers.Count() == 0)
+                {
+                    lastHoveredIndex = -1;
+                    return;
+                }
                 var found = listBox.GetRealizedContainers().LastOrDefault(
                     (Func<Control, bool>)(container =>
                     {
