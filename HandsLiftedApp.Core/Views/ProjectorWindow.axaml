@@ -8,6 +8,7 @@
         xmlns:render1="clr-namespace:HandsLiftedApp.Views.Render"
         xmlns:app="clr-namespace:HandsLiftedApp.Core"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
         x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
@@ -33,22 +34,26 @@
         </ContextMenu>
     </Window.ContextMenu>
     <Grid>
-        <avaloniaNdi:NDISendContainer NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" NdiWidth="1920" NdiHeight="1080"
-                                      Width="1920"
-                                      Height="1080">
+        <avaloniaNdi:NDISendContainer
+            NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}"
+            NdiWidth="1920" NdiHeight="1080"
+            Width="1920"
+            Height="1080">
             <render1:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
         </avaloniaNdi:NDISendContainer>
-        
+
         <Grid Background="Black" />
-        
+
         <Viewbox>
-            <avaloniaNdi:NDISendContainer NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}" NdiWidth="1920" NdiHeight="1080"
-                                          Width="1920"
-                                          Height="1080">
+            <avaloniaNdi:NDISendContainer
+                NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}"
+                NdiWidth="1920" NdiHeight="1080"
+                Width="1920"
+                Height="1080">
                 <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
             </avaloniaNdi:NDISendContainer>
         </Viewbox>
-        
+
         <Grid x:Name="ControlsOverlay">
             <Grid.Styles>
                 <Style Selector="Button">
@@ -62,13 +67,23 @@
             </Grid.Styles>
 
             <Grid VerticalAlignment="Top">
+                <TextBlock Background="Aqua" Foreground="Black" HorizontalAlignment="Left" FontSize="22" VerticalAlignment="Top" Padding="8">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}({0}) {1} x {2}">
+                            <Binding Path="$parent[views:ProjectorWindow].BoundPosition" />
+                            <Binding Path="$parent[Window].Bounds.Width" />
+                            <Binding Path="$parent[Window].Bounds.Height" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Click="FullscreenToggleButton_OnClick">
                         <avalonia:MaterialIcon Kind="Fullscreen" />
                     </Button>
                 </StackPanel>
             </Grid>
-            
+
             <Grid VerticalAlignment="Bottom">
                 <StackPanel Orientation="Horizontal">
                     <Button Click="PreviousButton_OnClick">
@@ -79,7 +94,7 @@
                     </Button>
                 </StackPanel>
             </Grid>
-        
+
         </Grid>
     </Grid>
 </Window>

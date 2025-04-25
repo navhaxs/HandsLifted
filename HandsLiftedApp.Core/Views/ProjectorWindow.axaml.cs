@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -14,7 +18,7 @@ using Serilog;
 
 namespace HandsLiftedApp.Core.Views
 {
-    public partial class ProjectorWindow : Window
+    public partial class ProjectorWindow : Window, INotifyPropertyChanged
     {
         public ProjectorWindow()
         {
@@ -53,13 +57,32 @@ namespace HandsLiftedApp.Core.Views
                 });
 
             RegisterControlsOverlayTimer();
+           
+            this.PositionChanged += (s, e) =>
+            {
+                BoundPosition = e.Point;
+                if (aTimer != null && ControlsOverlay.IsVisible)
+                {
+                    aTimer.Stop();
+                    aTimer.Start();
+                }
+            };
         }
 
+        private PixelPoint _boundPosition;
+
+        public PixelPoint BoundPosition
+        {
+            get => _boundPosition;
+            set => SetProperty(ref _boundPosition, value);
+        }
+
+        private System.Timers.Timer? aTimer;
         public void RegisterControlsOverlayTimer()
         {
             ControlsOverlay.IsVisible = false;
 
-            System.Timers.Timer aTimer = new System.Timers.Timer();
+            aTimer = new System.Timers.Timer();
             aTimer.Elapsed += ((sender, args) =>
             {
                 aTimer.Stop();
@@ -83,7 +106,15 @@ namespace HandsLiftedApp.Core.Views
 
             if (isFullScreenNext)
             {
-                var bounds = Screens.ScreenFromWindow(this).Bounds;
+                var screen = Screens.ScreenFromPoint(Position) ?? Screens.ScreenFromWindow(this);
+
+                if (screen == null)
+                {
+                    Log.Error("Unable to find screen for projector window");
+                    return;
+                }
+
+                var bounds = screen.Bounds;
                 this.Height = bounds.Height;
                 this.Width = bounds.Width;
             }
@@ -162,5 +193,24 @@ namespace HandsLiftedApp.Core.Views
         {
             onToggleFullscreen();
         }
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        #endregion
     }
 }
