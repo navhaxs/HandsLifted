@@ -6,6 +6,7 @@ using HandsLiftedApp.XTransitioningContentControl;
 using LibMpv.Client;
 using LibMpv.Context.MVVM;
 using ReactiveUI;
+using System.Threading;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
@@ -186,16 +187,10 @@ Read MPV documentation:
 
         public double? Volume
         {
-            get
-            {
-                var volume = Globals.Instance.MpvContextInstance?.GetPropertyDouble("volume");
-                Console.WriteLine($"Volume Getter: {volume}");
-                return volume;
-            }
+            get => Globals.Instance.MpvContextInstance?.GetPropertyDouble("volume");
             set
             {
                 if (value == null) return;
-                Console.WriteLine($"Volume Setter: {value}");
                 Globals.Instance.MpvContextInstance?.SetPropertyDouble("volume", value.Value);
             }
         }
@@ -210,15 +205,31 @@ Read MPV documentation:
             new() { MvvmName = nameof(Volume), LibMpvName = "volume", LibMpvFormat = mpv_format.MPV_FORMAT_DOUBLE }
         ];
 
+        private CancellationTokenSource? _enterSlideCts;
+
         public override void OnEnterSlide()
         {
             base.OnEnterSlide();
 
+            _enterSlideCts?.Cancel(); // Cancel any previous token
+            _enterSlideCts = new CancellationTokenSource();
+            var token = _enterSlideCts.Token;
+
             Task.Run(async () =>
             {
-                await Task.Delay(1000);
-                PlayFromStart();
-            });
+                try
+                {
+                    await Task.Delay(1000, token);
+                    if (!token.IsCancellationRequested)
+                    {
+                        PlayFromStart();
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    // Task was cancelled, do nothing
+                }
+            }, token);
         }
         
         public void PlayFromStart()
@@ -229,6 +240,10 @@ Read MPV documentation:
 
         public override void OnLeaveSlide()
         {
+            _enterSlideCts?.Cancel();
+            _enterSlideCts?.Dispose();
+            _enterSlideCts = null;
+
             Globals.Instance.MpvContextInstance?.Command("stop");
             base.OnLeaveSlide();
         }

@@ -77,14 +77,6 @@ namespace HandsLiftedApp.Core.ViewModels
             get => _enableDebugStats;
             set => this.RaiseAndSetIfChanged(ref _enableDebugStats, value);
         }
-        
-        private bool _enableMultiVideoRenderers = false;
-        [DataMember]
-        public bool EnableMultiVideoRenderers
-        {
-            get => _enableMultiVideoRenderers;
-            set => this.RaiseAndSetIfChanged(ref _enableMultiVideoRenderers, value);
-        }
 
         private bool _enableOutputNDI;
         [DataMember]

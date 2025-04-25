@@ -32,10 +32,6 @@
                 IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}">
                 Enable Debug Stats (FPS Counter on video playback)
             </CheckBox>
-            <CheckBox
-                IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableMultiVideoRenderers}">
-                Enable rendering video in preview and stage display
-            </CheckBox>
         </StackPanel>
     </ScrollViewer>
 </Window>

@@ -68,13 +68,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
                         if (!cancel.IsCancellationRequested)
                         {
                             HideOldPresenter();
+                            
+                            // transition complete
+                            if (((ContentPresenter)to).Content is ISlideRender isr)
+                            {
+                                isr.OnEnterSlide();
+                            }
                         }
                         
-                        // transition complete
-                        if (((ContentPresenter)to).Content is ISlideRender isr)
-                        {
-                            isr.OnEnterSlide();
-                        }
                     }, TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
