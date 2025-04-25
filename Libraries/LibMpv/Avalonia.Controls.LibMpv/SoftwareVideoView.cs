@@ -118,6 +118,7 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
                 {
                     var bitmap = currentEntry.Bitmap;
 
+                    // Check if the bitmap needs to be recreated
                     if (bitmap == null || bitmap.PixelSize.Width != width || bitmap.PixelSize.Height != height)
                     {
                         bitmap?.Dispose();

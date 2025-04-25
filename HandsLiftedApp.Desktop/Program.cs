@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.ReactiveUI;
+using Avalonia.Rendering.Composition;
 using Avalonia.WebView.Desktop;
 using HandsLiftedApp.Core;
 using Serilog;
@@ -54,6 +55,11 @@ sealed class Program
             .UsePlatformDetect()
             // .WithInterFont() this font is gross
             .UseDesktopWebView()
+            .With(new CompositionOptions()
+            {
+                // https://github.com/AvaloniaUI/Avalonia/discussions/17808
+                UseRegionDirtyRectClipping = true
+            })
             .With<Win32PlatformOptions>(new Win32PlatformOptions()
                 {
                     WinUICompositionBackdropCornerRadius = 0
