@@ -603,13 +603,14 @@ Description("Function to determine whether the content requires high resolution 
             try
             {
                 sourceBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+                
+                // add it to the output queue
+                AddFrame(videoFrame);
             }
             catch (Exception e)
             {
+                // TODO limit this error logging to 1 message per N seconds
                 Log.Error(e, "Failed to copy pixels to NDI buffer");
-
-                // add it to the output queue
-                AddFrame(videoFrame);
             }
         }
 
