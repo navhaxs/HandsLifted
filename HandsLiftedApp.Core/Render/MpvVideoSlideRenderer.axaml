@@ -3,13 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:libmpv="using:Avalonia.Controls.LibMpv"
+             xmlns:app="clr-namespace:HandsLiftedApp.Core"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="Black"
              x:Class="HandsLiftedApp.Core.Render.MpvVideoSlideRenderer">
     <Grid>
         <TextBlock x:Name="NonProjectorWindowText" Text="Video" FontSize="200" VerticalAlignment="Center" HorizontalAlignment="Center" IsVisible="False" />
         
-        <libmpv:SoftwareVideoView x:Name="VideoView" />
+        <libmpv:SoftwareVideoView x:Name="VideoView" ShowFps="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}" />
         
         <!-- Not working in ProjectorWindow, only preview in MainWindow ?? -->
         <!-- <libmpv:OpenGlVideoView x:Name="VideoView" /> -->

@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+        xmlns:app="clr-namespace:HandsLiftedApp.Core"
         mc:Ignorable="d"
         x:Class="HandsLiftedApp.Core.Views.DebugWindow"
         x:DataType="viewModels:MainViewModel"
@@ -27,6 +28,14 @@
                     <ThemeVariant>Dark</ThemeVariant>
                 </ComboBox.Items>
             </ComboBox>
+            <CheckBox
+                IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}">
+                Enable Debug Stats (FPS Counter on video playback)
+            </CheckBox>
+            <CheckBox
+                IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableMultiVideoRenderers}">
+                Enable rendering video in preview and stage display
+            </CheckBox>
         </StackPanel>
     </ScrollViewer>
 </Window>

@@ -51,7 +51,7 @@ namespace HandsLiftedApp.Core.Render
 
         private void VideoSlideRenderer_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
         {
-            if (this.VisualRoot as Window is ProjectorWindow)
+            if (this.VisualRoot as Window is ProjectorWindow || Globals.Instance.AppPreferences.EnableMultiVideoRenderers)
             {
                 NonProjectorWindowText.IsVisible = false;
                 if (this.DataContext is VideoSlideInstance videoSlide)

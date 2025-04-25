@@ -69,6 +69,22 @@ namespace HandsLiftedApp.Core.ViewModels
                 .ToProperty(this, x => x.LogoBitmap);
 
         }
+        
+        private bool _enableDebugStats = false;
+        [DataMember]
+        public bool EnableDebugStats
+        {
+            get => _enableDebugStats;
+            set => this.RaiseAndSetIfChanged(ref _enableDebugStats, value);
+        }
+        
+        private bool _enableMultiVideoRenderers = false;
+        [DataMember]
+        public bool EnableMultiVideoRenderers
+        {
+            get => _enableMultiVideoRenderers;
+            set => this.RaiseAndSetIfChanged(ref _enableMultiVideoRenderers, value);
+        }
 
         private bool _enableOutputNDI;
         [DataMember]
