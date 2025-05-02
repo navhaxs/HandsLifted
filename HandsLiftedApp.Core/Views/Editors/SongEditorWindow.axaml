@@ -134,9 +134,6 @@
                         </DockPanel>
                     </Button>
                     <Button>
-                        <Button.IsVisible>
-                            <Binding Path="ItemInsertIndex" Converter="{x:Static ObjectConverters.IsNull}" />
-                        </Button.IsVisible>
                         <DockPanel>
                             <TextBlock Text="Import" DockPanel.Dock="Right" />
                             <material:MaterialIcon Kind="FolderOutline" />
@@ -182,6 +179,6 @@
                     Color="#55000000" />
             </Grid.Effect>
         </Grid>
-        <song:SongEditorControl />
+        <song:SongEditorControl Name="SongEditorControl" />
     </DockPanel>
 </Window>

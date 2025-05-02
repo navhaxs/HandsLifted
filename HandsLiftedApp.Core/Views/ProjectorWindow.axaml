@@ -18,6 +18,11 @@
         KeyDown="ProjectorWindow_KeyDown"
         Closing="Window_OnClosing"
         Title="ProjectorWindow">
+    
+    <Window.Resources>
+        <SolidColorBrush x:Key="FrameColor">#bfff6a00</SolidColorBrush>
+    </Window.Resources>
+
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="{Binding $parent[Window].Title}" IsEnabled="False" />
@@ -67,9 +72,9 @@
             </Grid.Styles>
 
             <Grid VerticalAlignment="Top">
-                <TextBlock Background="Aqua" Foreground="Black" HorizontalAlignment="Left" FontSize="22" VerticalAlignment="Top" Padding="8">
+                <TextBlock Background="{StaticResource FrameColor}" Foreground="Black" HorizontalAlignment="Left" FontSize="12" VerticalAlignment="Top" Padding="4">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}({0}) {1} x {2}">
+                        <MultiBinding StringFormat="{}({0}) {1:0} x {2:0}">
                             <Binding Path="$parent[views:ProjectorWindow].BoundPosition" />
                             <Binding Path="$parent[Window].Bounds.Width" />
                             <Binding Path="$parent[Window].Bounds.Height" />

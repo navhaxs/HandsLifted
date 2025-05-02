@@ -7,6 +7,7 @@ using LibMpv.Client;
 using LibMpv.Context.MVVM;
 using ReactiveUI;
 using System.Threading;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
@@ -219,7 +220,7 @@ Read MPV documentation:
             {
                 try
                 {
-                    await Task.Delay(1000, token);
+                    await Task.Delay(2400, token);
                     if (!token.IsCancellationRequested)
                     {
                         PlayFromStart();
@@ -234,6 +235,20 @@ Read MPV documentation:
         
         public void PlayFromStart()
         {
+            Log.Information("MPV loadfile");
+            
+            // Log current relevant MPV properties
+            try 
+            {
+                var videoDisplay = Globals.Instance.MpvContextInstance.GetPropertyString("video-display");
+                var wid = Globals.Instance.MpvContextInstance.GetPropertyString("wid");
+                Log.Information($"MPV properties - video-display: {videoDisplay}, wid: {wid}");
+            }
+            catch (MpvException ex)
+            {
+                Log.Error(ex, "Failed to get MPV properties");
+            }
+
             Globals.Instance.MpvContextInstance.Command("loadfile", SourceMediaFilePath, "replace");
             Globals.Instance.MpvContextInstance.SetPropertyFlag("pause", false);
         }

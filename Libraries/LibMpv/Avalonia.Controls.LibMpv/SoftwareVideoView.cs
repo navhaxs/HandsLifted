@@ -6,6 +6,7 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using AvaloniaNDI;
 using LibMpv.Client;
+using Serilog;
 
 namespace Avalonia.Controls.LibMpv;
 
@@ -47,6 +48,7 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
             {
                 RegisterForSharedBitmap();
                 _mpvContext.StartSoftwareRendering(UpdateVideoView);
+                Log.Information("Registered SoftwareVideoView with MPV context");
             }
         }
     }
@@ -57,10 +59,14 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
         
         lock (SharedLock)
         {
+            var parentWindow = this.FindLogicalAncestorOfType<Window>();
+            Log.Information("RegisterForSharedBitmap from Parent Window class: {WindowType}", parentWindow?.GetType().Name ?? "No parent window found");
+
             if (!SharedBitmaps.ContainsKey(_mpvContext))
             {
                 _isPrimaryRenderer = true;
                 PrimaryRenderer = this;
+                Log.Information("PrimaryRenderer set");
             }
             
             if (!SharedBitmaps.TryGetValue(_mpvContext, out var entry))
@@ -80,17 +86,26 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
         
         lock (SharedLock)
         {
+            var parentWindow = this.FindLogicalAncestorOfType<Window>();
+            Log.Information("UnregisterFromSharedBitmap from Parent Window class: {WindowType}", parentWindow?.GetType().Name ?? "No parent window found");
+            
+            var wasPrimaryRenderer = _isPrimaryRenderer;  // Store the state before modifications
+
             if (SharedBitmaps.TryGetValue(_mpvContext, out var entry))
             {
                 if (entry.RefCount <= 1)
                 {
+
+                    _mpvContext.StopRendering();
+
                     entry.Bitmap?.Dispose();
                     SharedBitmaps.Remove(_mpvContext);
-                    if (_isPrimaryRenderer)
-                    {
+                    // if (wasPrimaryRenderer)
+                    // {
+                        Log.Information("removed primary renderer");
                         PrimaryRenderer = null;
                         _isPrimaryRenderer = false;
-                    }
+                    // }
                 }
                 else
                 {
@@ -169,8 +184,8 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
         base.OnDetachedFromLogicalTree(e);
         if (_mpvContext != null)
         {
-            _mpvContext.StopRendering();
-            UnregisterFromSharedBitmap();
+            Log.Information("Unregistered SoftwareVideoView from MPV context");
+            MpvContext = null;
         }
     }
 

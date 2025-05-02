@@ -46,6 +46,11 @@ namespace HandsLiftedApp.Core
             try
             {
                 MpvContextInstance = new MpvContext();
+                MpvContextInstance.SetPropertyString("video-display", "no");
+                MpvContextInstance.SetPropertyString("video-sync", "display-resample");
+                MpvContextInstance.SetPropertyString("force-window", "no");
+                MpvContextInstance.SetPropertyString("vo", "libmpv");
+ 
                 Log.Information("LibMPV API {Version}", MpvContextInstance.GetMpvClientApiGetApiVersion());
             }
             catch (Exception ex)

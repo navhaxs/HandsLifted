@@ -22,8 +22,7 @@
                                 Background="#282828"
                                 CornerRadius="{TemplateBinding CornerRadius}">
                             <Border Background="{TemplateBinding Background}" MaxHeight="60" Width="1"
-                                    Margin="-6 0 0 0"
-                                    />
+                                    Margin="-6 0 0 0" />
                         </Border>
                     </ControlTemplate>
                 </Setter>
@@ -36,7 +35,7 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <TabControl TabStripPlacement="Left" Margin="0 0 0 0" Padding="0" SelectedIndex="1">
+        <TabControl TabStripPlacement="Left" Margin="0 0 0 0" Padding="0" SelectedIndex="1" Name="TabControl">
 
             <TabControl.Styles>
                 <Style Selector="TabItem:nth-child(1)">
@@ -152,6 +151,19 @@
                                 FontSize="24"
                                 Foreground="White"
                                 TextWrapping="Wrap">
+                                <TextBlock.Styles>
+                                    <Style Selector="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Style>
+                                    <Style Selector="Button > TextBlock > Span">
+                                        <Setter Property="Foreground" Value="#2ECAFF" />
+                                    </Style>
+                                    <Style Selector="Button:pointerover > TextBlock > Span">
+                                        <Setter Property="Foreground" Value="#72DBFF" />
+                                    </Style>
+                                </TextBlock.Styles>
                                 <avalonia:MaterialIcon
                                     Width="64"
                                     Height="64"
@@ -163,30 +175,40 @@
                                 Create slides from lyrics
                                 <LineBreak />
                                 <LineBreak />
-                                <Span Foreground="#2ECAFF" TextDecorations="Underline">
-                                    import from songselect
-                                </Span>
-                                <avalonia:MaterialIcon
-                                    Width="18"
-                                    Height="18"
-                                    Margin="-4"
-                                    HorizontalAlignment="Left"
-                                    Foreground="#2ECAFF"
-                                    Kind="OpenInNew" />
+                                <Button Click="ImportFromOnlineButton_OnClick" Cursor="Hand">
+                                
+                                    <TextBlock>
+                                        <Span TextDecorations="Underline">
+                                            import from songselect
+                                        </Span>
+                                        <avalonia:MaterialIcon
+                                            Width="18"
+                                            Height="18"
+                                            Margin="-4"
+                                            HorizontalAlignment="Left"
+                                            Foreground="#2ECAFF"
+                                            Kind="OpenInNew" />
+                                    </TextBlock>
+                                </Button>
+
                                 <LineBreak />
                                 <LineBreak />
-                                <Span Foreground="#2ECAFF" TextDecorations="Underline">
-                                    import from file
-                                </Span>
-                                <avalonia:MaterialIcon
-                                    Width="18"
-                                    Height="18"
-                                    Margin="-4"
-                                    HorizontalAlignment="Left"
-                                    Foreground="#2ECAFF"
-                                    Kind="FolderOpen" />
+
+                                <Button Click="ImportFromFileButton_OnClick" Cursor="Hand">
+                                    <TextBlock>
+                                        <Span TextDecorations="Underline">
+                                            import from file
+                                        </Span>
+                                        <avalonia:MaterialIcon
+                                            Width="18"
+                                            Height="18"
+                                            Margin="-4"
+                                            HorizontalAlignment="Left"
+                                            Foreground="#2ECAFF"
+                                            Kind="FolderOpen" />
+                                    </TextBlock>
+                                </Button>
                             </TextBlock>
-                            <TextBlock />
                         </StackPanel>
                     </DockPanel>
                 </Border>

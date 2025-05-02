@@ -93,74 +93,9 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private void LoadFromText_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is SongEditorViewModel songEditorViewModel)
-            {
-                LoadXml();
-                // songEditorViewModel.LyricEntryMode = true;
-            }
+            SongEditorControl.ImportFromFile();
         }
         
-          private async void LoadXml()
-        {
-            // Get top level from the current control. Alternatively, you can use Window reference instead.
-            var topLevel = TopLevel.GetTopLevel(this);
-
-            // Start async operation to open the dialog.
-            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-            {
-                Title = "Open Text File",
-                AllowMultiple = false
-            });
-
-            if (files.Count >= 1)
-            {
-                // Open reading stream from the first file.
-                await using var stream = await files[0].OpenReadAsync();
-                // Open reading stream from the first file.
-                if (this.DataContext is SongEditorViewModel songEditorViewModel)
-                {
-                    SongItem? loaded = null;
-                    try
-                    {
-                        if (files[0].Name.ToLower().EndsWith(".xml"))
-                        {
-                            XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
-                            loaded = (SongItem)serializer.Deserialize(stream);
-                        }
-                        else if (files[0].Name.ToLower().EndsWith(".txt"))
-                        {
-                            StreamReader reader = new StreamReader(stream);
-                            string txt = reader.ReadToEnd();
-                            loaded = SongImporter.CreateSongItemFromStringData(txt);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error("Failed to parse file: [{Name}]", files[0].Name);
-                    }
-
-                    if (loaded == null)
-                    {
-                        return;
-                    }
-
-                    songEditorViewModel.Song.UUID = loaded.UUID;
-                    songEditorViewModel.Song.Title = loaded.Title;
-                    songEditorViewModel.Song.Stanzas = loaded.Stanzas;
-                    songEditorViewModel.Song.SelectedArrangementId = loaded.SelectedArrangementId;
-                    songEditorViewModel.Song.Arrangements = loaded.Arrangements;
-                    songEditorViewModel.Song.Arrangement = loaded.Arrangement;
-                    songEditorViewModel.Song.Copyright = loaded.Copyright;
-                    songEditorViewModel.Song.Design = loaded.Design;
-                    songEditorViewModel.Song.StartOnTitleSlide = loaded.StartOnTitleSlide;
-                    songEditorViewModel.Song.EndOnBlankSlide = loaded.EndOnBlankSlide;
-
-                    // songEditorViewModel.Song.ResetArrangement();
-                    songEditorViewModel.Song.GenerateSlides();
-                }
-            }
-        }
-
         private void SaveAsXml_OnClick(object? sender, RoutedEventArgs e)
         {
             SaveXml();
@@ -244,19 +179,9 @@ namespace HandsLiftedApp.Core.Views.Editors
             }
         }
 
-        BrowserWindow? window;
         private void ImportFromOnline_OnClick(object? sender, RoutedEventArgs e)
         {
-            window = new();
-            window.TextSelected += (e, text) =>
-            {
-                if (this.DataContext is SongEditorViewModel songEditorViewModel)
-                {
-                    songEditorViewModel.FreeTextEntryField = text;
-                }
-            };
-            window.Show();
-            
+            SongEditorControl.ImportFromOnline();
         }
     }
 }
