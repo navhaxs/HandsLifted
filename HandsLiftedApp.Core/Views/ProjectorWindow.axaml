@@ -10,6 +10,7 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
         xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
+        xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
         x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
@@ -76,7 +77,9 @@
             </Grid.Styles>
 
             <Grid VerticalAlignment="Top">
-                <TextBlock Background="{StaticResource FrameColor}" Foreground="Black" HorizontalAlignment="Left" FontSize="12" VerticalAlignment="Top" Padding="4">
+                <TextBlock
+                    IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}"                    
+                    Background="{StaticResource FrameColor}" Foreground="Black" HorizontalAlignment="Left" FontSize="12" VerticalAlignment="Top" Padding="4">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}({0}) {1:0} x {2:0}">
                             <Binding Path="$parent[views:ProjectorWindow].BoundPosition" />
@@ -88,7 +91,15 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Click="FullscreenToggleButton_OnClick">
-                        <avalonia:MaterialIcon Kind="Fullscreen" />
+                        <avalonia:MaterialIcon>
+                            <avalonia:MaterialIcon.Kind>
+                                <Binding Path="WindowState" RelativeSource="{RelativeSource AncestorType=Window}">
+                                    <Binding.Converter>
+                                        <converters:FullscreenIconKindConverter/>
+                                    </Binding.Converter>
+                                </Binding>
+                            </avalonia:MaterialIcon.Kind>
+                        </avalonia:MaterialIcon>
                     </Button>
                 </StackPanel>
             </Grid>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -98,6 +99,8 @@ namespace HandsLiftedApp.Core.Views
                 aTimer.Start();
             };
         }
+        
+        Rect? previousBounds = null;
 
         public void onToggleFullscreen(bool? fullscreen = null)
         {
@@ -114,6 +117,8 @@ namespace HandsLiftedApp.Core.Views
                     return;
                 }
 
+                this.previousBounds = this.Bounds;
+                
                 var bounds = screen.Bounds;
                 this.Height = bounds.Height;
                 this.Width = bounds.Width;
@@ -125,6 +130,18 @@ namespace HandsLiftedApp.Core.Views
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
+                    
+
+                    if (!isFullScreenNext && previousBounds != null)
+                    {
+                        // Dispatcher.UIThread.InvokeAsync(() =>
+                        // {
+                        //     Thread.Sleep(1_000);
+
+                            this.Height = previousBounds.Value.Height;
+                            this.Width = previousBounds.Value.Width;
+                        // });
+                    }
                 });
             }
         }
