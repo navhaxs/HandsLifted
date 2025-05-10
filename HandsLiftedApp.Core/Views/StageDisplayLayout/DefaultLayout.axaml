@@ -5,6 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+             xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
              x:DataType="viewModels:MainViewModel"
              Background="Black"
              x:Class="HandsLiftedApp.Views.StageDisplayLayout.DefaultLayout">
@@ -33,8 +34,11 @@
                         </Grid.Background>
                         <Border>
                             <Viewbox>
-                                <render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" Height="1080"
-                                                    Width="1920" />
+                                <Grid>
+                                    <render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" Height="1080"
+                                                        Width="1920" />
+                                    <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
+                                </Grid>
                             </Viewbox>
                         </Border>
                     </Grid>

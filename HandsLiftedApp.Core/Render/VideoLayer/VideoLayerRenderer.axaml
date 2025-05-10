@@ -1,0 +1,23 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
+             xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+             x:DataType="slides1:Slide"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="HandsLiftedApp.Core.Render.VideoLayer.VideoLayerRenderer">
+    <ContentControl Content="{Binding}">
+        <ContentControl.ContentTemplate>
+            <common:MyTemplateSelector>
+                <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides:VideoSlideInstance">
+                    <render:MpvVideoSlideRenderer />
+                </DataTemplate>
+                <DataTemplate x:Key="Fallback" x:DataType="slides1:Slide">
+                </DataTemplate>
+            </common:MyTemplateSelector>
+        </ContentControl.ContentTemplate>
+    </ContentControl>
+</UserControl>

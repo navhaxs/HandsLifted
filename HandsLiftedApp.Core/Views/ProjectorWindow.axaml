@@ -9,6 +9,7 @@
         xmlns:app="clr-namespace:HandsLiftedApp.Core"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
+        xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
         x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
@@ -55,7 +56,10 @@
                 NdiWidth="1920" NdiHeight="1080"
                 Width="1920"
                 Height="1080">
-                <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
+                <Grid>
+                    <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
+                    <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
+                </Grid>
             </avaloniaNdi:NDISendContainer>
         </Viewbox>
 

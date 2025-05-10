@@ -7,6 +7,7 @@
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
              xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
+             xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
              mc:Ignorable="d" d:DesignWidth="440" d:DesignHeight="750"
              x:DataType="viewModels:MainViewModel"
              x:Class="HandsLiftedApp.Core.Views.LivePane">
@@ -100,7 +101,10 @@
                 <Viewbox>
                     <!-- NEW -->
                     <!-- <render:SlideRender Width="1920" Height="1080" DataContext="{Binding Playlist.ActiveSlide}" /> -->
-                    <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
+                    <Grid>
+                        <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
+                        <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
+                    </Grid>
                     <!-- <viewsrender:SlideRenderer -->
                     <!--     ActiveSlide="{Binding ActiveSlide}" -->
                     <!--     IsLive="False" -->

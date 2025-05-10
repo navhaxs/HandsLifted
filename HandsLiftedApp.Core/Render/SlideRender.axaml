@@ -47,9 +47,9 @@
                         Source="{Binding Cached}"
                         Stretch="Uniform" />
                 </DataTemplate>
-                <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides:VideoSlideInstance">
-                    <render:MpvVideoSlideRenderer />
-                </DataTemplate>
+                <!-- <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides:VideoSlideInstance"> -->
+                <!--     <render:MpvVideoSlideRenderer /> -->
+                <!-- </DataTemplate> -->
                 <DataTemplate x:Key="CustomAxamlSlideInstance" x:DataType="slides:CustomAxamlSlideInstance">
                     <render:CustomAxamlSlideRender />
                 </DataTemplate>
