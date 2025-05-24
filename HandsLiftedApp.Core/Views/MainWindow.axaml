@@ -15,6 +15,7 @@
         Background="{DynamicResource SurfaceBrush}"
         Opened="TopLevel_OnOpened"
         Title="VisionScreens">
+    
     <Border x:Name="RootBorder">
         <Grid>
             <views:MainView />

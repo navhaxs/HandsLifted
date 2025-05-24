@@ -464,7 +464,7 @@
                                 DockPanel.Dock="Left"
                                 Foreground="{DynamicResource ForegroundBrush}"
                                 Kind="Bookshelf" />
-                            <TextBlock Text="Library" />
+                            <TextBlock Text="Library" VerticalAlignment="Center" />
                         </DockPanel>
                     </ToggleButton>
 
@@ -480,7 +480,7 @@
                                 DockPanel.Dock="Left"
                                 Foreground="{DynamicResource ForegroundBrush}"
                                 Kind="Paintbrush" />
-                            <TextBlock Text="Designer" />
+                            <TextBlock Text="Designer" VerticalAlignment="Center" />
                         </DockPanel>
                     </ToggleButton>
 

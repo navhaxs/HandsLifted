@@ -9,6 +9,14 @@
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
+    
+    <!-- <NativeMenu.Menu> -->
+    <!--     <NativeMenu> -->
+    <!--         <NativeMenuItem Header="About This Application…" /> -->
+    <!--         <NativeMenuItem Header="Preferences…" /> -->
+    <!--     </NativeMenu> -->
+    <!-- </NativeMenu.Menu> -->
+    
     <Application.Styles>
         <SimpleTheme />
         <avalonia:MaterialIconStyles />

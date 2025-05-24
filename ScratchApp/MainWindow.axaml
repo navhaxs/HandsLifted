@@ -5,7 +5,17 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ScratchApp.MainWindow"
 		xmlns:local="using:ScratchApp"
-        Title="ScratchApp">
+        Title="ScratchApp"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        Background="Transparent"
+        TransparencyBackgroundFallback="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        SystemDecorations="None"
+        BorderBrush="Transparent"
+        BorderThickness="0">
 	<Window.Styles>
 		<Style Selector="Rectangle.red">
 			<Setter Property="Height" Value="100"/>

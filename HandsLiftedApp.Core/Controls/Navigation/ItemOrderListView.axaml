@@ -402,6 +402,7 @@
                 <TextBlock
                     Margin="8,0,8,0"
                     IsVisible="True"
+                    VerticalAlignment="Center"
                     Text="Add Item" />
             </DockPanel>
         </Button>

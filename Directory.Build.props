@@ -2,5 +2,6 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <AvaloniaVersion>11.2.4</AvaloniaVersion>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 </Project>

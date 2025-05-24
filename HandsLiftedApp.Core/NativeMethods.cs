@@ -1184,33 +1184,4 @@ public static class NativeMethods
         /// </summary>
         public int cyBottomHeight;
     }
-
-    // Import SetThreadExecutionState Win32 API and necessary flags
-    [DllImport("kernel32.dll")]
-    public static extern uint SetThreadExecutionState(uint esFlags);
-
-    public const uint ES_CONTINUOUS = 0x80000000;
-    public const uint ES_DISPLAY_REQUIRED = 0x00000002;
-
-    [DllImport("user32.dll")]
-    public static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
-    
-    public static string GetWindowClassName(IntPtr hWnd)
-    {
-        // Allocate a buffer to store the class name
-        StringBuilder className = new StringBuilder(256);
-
-        // Call the GetClassName function
-        int result = GetClassName(hWnd, className, className.Capacity);
-
-        if (result == 0)
-        {
-            // If the function fails, throw an exception with the error code
-            throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
-        }
-
-        // Return the class name as a string
-        return className.ToString();
-    }
-
 }

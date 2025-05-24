@@ -6,9 +6,15 @@
         x:Class="HandsLiftedApp.Core.Views.SplashWindow"
         WindowStartupLocation="CenterScreen"
         SystemDecorations="None"
-        Background="Transparent"
         ShowInTaskbar="False"
-        Title="SplashWindow">
+        Title="SplashWindow"
+        Background="Transparent"
+        TransparencyBackgroundFallback="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        BorderBrush="Transparent"
+        BorderThickness="0">
     <Window.Styles>
         <Style Selector="TextBlock">
             <Setter Property="Foreground" Value="White" />
