@@ -13,6 +13,7 @@ using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Utils.MacOS;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
 using Serilog;
@@ -70,6 +71,13 @@ namespace HandsLiftedApp.Core.Views
             };
         }
 
+        private bool _isFullScreen = false;
+        public bool IsFullScreen
+        {
+            get => _isFullScreen;
+            set => SetProperty(ref _isFullScreen, value);
+        }
+        
         private PixelPoint _boundPosition;
 
         public PixelPoint BoundPosition
@@ -101,13 +109,20 @@ namespace HandsLiftedApp.Core.Views
         }
         
         Rect? previousBounds = null;
+        PixelPoint? previousPosition = null;
 
-        public void onToggleFullscreen(bool? fullscreen = null)
+        public void onToggleFullscreen()
         {
-            bool isFullScreenNext =
-                (fullscreen != null) ? (bool)fullscreen : (this.WindowState != WindowState.FullScreen);
+            bool isRequestingFullscreen = !IsFullScreen;
+            
+            SetTopmost(isRequestingFullscreen);
 
-            if (isFullScreenNext)
+            if (OperatingSystem.IsMacOS())
+            {
+                this.SystemDecorations = isRequestingFullscreen ? SystemDecorations.None : SystemDecorations.Full;
+            }
+            
+            if (isRequestingFullscreen)
             {
                 var screen = Screens.ScreenFromPoint(Position) ?? Screens.ScreenFromWindow(this);
 
@@ -118,21 +133,24 @@ namespace HandsLiftedApp.Core.Views
                 }
 
                 this.previousBounds = this.Bounds;
+                this.previousPosition = this.Position;
                 
-                var bounds = screen.Bounds;
-                this.Height = bounds.Height;
-                this.Width = bounds.Width;
+                this.Height = screen.Bounds.Height;
+                this.Width = screen.Bounds.Width;
+                
+                this.Position = screen.Bounds.Position;
             }
-
-            this.ShowInTaskbar = !isFullScreenNext; // make this user option
-            if (!OperatingSystem.IsMacOS())
+            
+            this.ShowInTaskbar = !isRequestingFullscreen; // make this user option
+            
+            if (OperatingSystem.IsWindows())
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;
+                    this.WindowState = isRequestingFullscreen ? WindowState.FullScreen : WindowState.Normal;
                     
 
-                    if (!isFullScreenNext && previousBounds != null)
+                    if (!isRequestingFullscreen && previousBounds != null)
                     {
                         // Dispatcher.UIThread.InvokeAsync(() =>
                         // {
@@ -144,6 +162,16 @@ namespace HandsLiftedApp.Core.Views
                     }
                 });
             }
+            
+            if (OperatingSystem.IsMacOS() && !isRequestingFullscreen)
+            {
+                this.Position = (PixelPoint)previousPosition;
+
+                this.Height = previousBounds.Value.Height;
+                this.Width = previousBounds.Value.Width;
+            }
+            
+            IsFullScreen = isRequestingFullscreen;
         }
 
         private void ProjectorWindow_DoubleTapped(object? sender, TappedEventArgs e)
@@ -186,7 +214,25 @@ namespace HandsLiftedApp.Core.Views
 
         private void ToggleTopmost_OnClick(object? sender, RoutedEventArgs e)
         {
-            this.Topmost = !this.Topmost;
+            SetTopmost(!this.Topmost);
+        }
+
+        private void SetTopmost(bool requestTopmost)
+        {
+            // do not set Topmost flag on macOS - check if this breaks on Windows OS
+            // Topmost = requestTopmost;
+            
+            if (OperatingSystem.IsMacOS())
+            {
+                if (requestTopmost)
+                {
+                    MacWindowLevel.RaiseAboveDock(this);
+                }
+                else
+                {
+                    MacWindowLevel.RestoreToNormal(this);
+                }
+            }
         }
 
         private void Close_OnClick(object? sender, RoutedEventArgs e)
@@ -228,6 +274,18 @@ namespace HandsLiftedApp.Core.Views
             return true;
         }
 
+        #endregion
+
+        #region "disable topmost when contextmenu is open, because macOS fullscreen hack will otherwise hide it"
+        private void ContextMenu_OnOpening(object? sender, CancelEventArgs e)
+        {
+            SetTopmost(false);
+        }
+
+        private void ContextMenu_OnClosing(object? sender, CancelEventArgs e)
+        {
+            SetTopmost(IsFullScreen);
+        }
         #endregion
     }
 }

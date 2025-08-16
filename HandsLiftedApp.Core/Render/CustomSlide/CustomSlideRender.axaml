@@ -11,6 +11,7 @@
              Height="1080"
              Width="1920"
              Background="{Binding BackgroundAvaloniaColour}"
+             IsHitTestVisible="False"
              x:Class="HandsLiftedApp.Core.Render.CustomSlide.CustomSlideRender">
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -29,11 +30,14 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             foreach (var (i, index) in screens.All.WithIndex())
             {
-                DisplayIdentifyWindow displayIdentifyWindow = new DisplayIdentifyWindow();
+                DisplayIdentifyWindow displayIdentifyWindow = new DisplayIdentifyWindow() { Screen = i };
                 displayIdentifyWindow.Show();
                 displayIdentifyWindow.Position = new PixelPoint(i.Bounds.X, i.Bounds.Y);
                 displayIdentifyWindow.Topmost = true;
-                displayIdentifyWindow.WindowState = WindowState.FullScreen;
+                
+                if (OperatingSystem.IsWindows())
+                    displayIdentifyWindow.WindowState = WindowState.FullScreen;
+                
                 displayIdentifyWindow.ScreenBounds.Text = $"{i.Bounds.Width} x {i.Bounds.Height}";
                 displayIdentifyWindow.ScreenLocation.Text = $"({i.Bounds.X}, {i.Bounds.Y})";
                 displayIdentifyWindow.ScreenNumber.Text = " ";

@@ -10,6 +10,7 @@
         Topmost="True"
 		SystemDecorations="None"
 		ShowInTaskbar="False"
+        IsHitTestVisible="False"
 		Title="DisplayIdentifyWindow">
 	<Window.Resources>
 		<SolidColorBrush x:Key="FrameColor">#bfff6a00</SolidColorBrush>
