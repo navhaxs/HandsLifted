@@ -5,6 +5,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.UI;
@@ -26,6 +27,16 @@ namespace HandsLiftedApp.Core.Views.Setup
             this.Closed += PreferencesWindow_Closed;
             
             Win10DropshadowWorkaround.Register(this);
+            
+            var themeVariants = this.Get<ComboBox>("ThemeVariants");
+            themeVariants.SelectedItem = Application.Current!.RequestedThemeVariant;
+            themeVariants.SelectionChanged += (sender, e) =>
+            {
+                if (themeVariants.SelectedItem is ThemeVariant themeVariant)
+                {
+                    Application.Current!.RequestedThemeVariant = themeVariant;
+                }
+            };
         }
 
         private void PreferencesWindow_Closed(object? sender, EventArgs e)

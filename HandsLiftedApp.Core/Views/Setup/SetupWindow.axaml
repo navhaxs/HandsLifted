@@ -100,6 +100,23 @@
 
                 </TabControl.Styles>
 
+                <TabItem Header="General">
+                    <StackPanel>
+                        <Label>Theme</Label>
+                        <ComboBox
+                            x:Name="ThemeVariants"
+                            HorizontalAlignment="Stretch"
+                            DisplayMemberBinding="{Binding Key, x:DataType=ThemeVariant}"
+                            SelectedIndex="0">
+                            <ComboBox.Items>
+                                <ThemeVariant>Default</ThemeVariant>
+                                <ThemeVariant>Light</ThemeVariant>
+                                <ThemeVariant>Dark</ThemeVariant>
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </StackPanel>
+                </TabItem>
+
                 <TabItem Header="Displays">
                     <StackPanel>
                         <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
@@ -154,10 +171,12 @@
                 <TabItem Header="Library">
                     <StackPanel>
                         <TextBlock Text="TODO edit library.yml to configure libraries" />
-                        <Button Click="EditLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20" Margin="0 16 0 0" MinWidth="200">
+                        <Button Click="EditLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20"
+                                Margin="0 16 0 0" MinWidth="200">
                             Edit library.yml
                         </Button>
-                        <Button Click="ReloadLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20" Margin="0 16 0 0" MinWidth="200">
+                        <Button Click="ReloadLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20"
+                                Margin="0 16 0 0" MinWidth="200">
                             Reload library.yml
                         </Button>
                     </StackPanel>
