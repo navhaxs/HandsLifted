@@ -14,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
 using DryIoc.ImTools;
 using HandsLiftedApp.Data.Data.Models.Types;
 
@@ -164,15 +163,18 @@ namespace HandsLiftedApp.Core.Views.Designer
 
                         if (file != null)
                         {
-                            // User selected a file
-                            // Save the file content
-                            using (var stream = await file.OpenWriteAsync())
+                            await using (var stream = await file.OpenWriteAsync())
                             {
-                                // Write content to the file
-                                // Assuming you have a method to serialize the object to XML
-                                XmlSerializer serializer = new XmlSerializer(typeof(BaseSlideTheme));
-
-                                serializer.Serialize(stream, item);
+                                // Serialize with centralized utility and error handling
+                                var ok = await Utils.SlideThemeXmlSerializer.TrySerializeAsync(item, stream);
+                                if (!ok)
+                                {
+                                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                                    {
+                                        Title = "Export failed",
+                                        Content = "There was a problem writing the XML for this theme. Please check logs for details."
+                                    });
+                                }
                             }
                         }
                     }
@@ -196,15 +198,12 @@ namespace HandsLiftedApp.Core.Views.Designer
                     Title = "Save File",
                     FileTypeFilter = new[] { xmlFileType }
                 });
-
+                
                 if (files.Count >= 1)
                 {
                     await using var stream = await files[0].OpenReadAsync();
 
-                    XmlSerializer serializer = new XmlSerializer(typeof(BaseSlideTheme));
-
-                    var item = serializer.Deserialize(stream);
-                    if (item is BaseSlideTheme theme)
+                    if (Utils.SlideThemeXmlSerializer.TryDeserialize(stream, out var theme) && theme != null)
                     {
                         var existingMatch = mainViewModel.Playlist.Designs.FirstOrDefault(x => x.Id == theme.Id);
                         if (existingMatch != null)
@@ -215,6 +214,14 @@ namespace HandsLiftedApp.Core.Views.Designer
                         // mainViewModel.Playlist.Designs.Add(theme);
                         // Globals.Instance.AppPreferences.Designs.Add(theme);
                         Globals.Instance.AppPreferences.DefaultTheme.CopyFrom(theme);
+                    }
+                    else
+                    {
+                        MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                        {
+                            Title = "Import failed",
+                            Content = "There was a problem reading the XML for this theme. The file may be invalid or corrupted."
+                        });
                     }
                 }
             }
