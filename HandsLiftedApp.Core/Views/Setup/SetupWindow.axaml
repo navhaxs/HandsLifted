@@ -17,6 +17,19 @@
         Background="{DynamicResource SurfaceBrush}"
         Title="SetupWindow">
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="ActiveTabForegroundBrush">#513c6f</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ActiveTabForegroundBrush">White</SolidColorBrush>
+                </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
     <DockPanel>
         <Border DockPanel.Dock="Top">
             <TextBlock FontSize="16" Margin="16 6 12 6">Setup</TextBlock>
@@ -59,7 +72,7 @@
                         <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
                     </Style>
                     <Style Selector="TabItem:selected">
-                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="Foreground" Value="{DynamicResource ActiveTabForegroundBrush}" />
                     </Style>
                     <!-- <Style Selector="Tab" -->
                     <Style Selector="TabControl">

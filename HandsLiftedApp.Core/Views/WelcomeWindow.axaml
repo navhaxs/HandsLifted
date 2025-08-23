@@ -106,7 +106,7 @@
                                         <Setter Property="Padding" Value="16" />
                                         <Setter Property="FontSize" Value="16" />
                                         <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                        <Setter Property="Background" Value="#222" />
+                                        <Setter Property="Background" Value="{DynamicResource DarkSurfaceBrush}" />
                                         <Setter Property="CornerRadius" Value="0" />
                                     </Style>
                                     <Style Selector="Button:nth-child(1)">
@@ -118,7 +118,7 @@
                                     <!-- Wrap ToolTips -->
                                     <Style Selector="ToolTip">
                                         <Setter Property="Foreground"
-                                                Value="White" />
+                                                Value="{DynamicResource CaptionButtonForeground}" />
                                         <Setter Property="MaxWidth"
                                                 Value="500" />
                                     </Style>
@@ -147,7 +147,7 @@
                             <Setter Property="Height" Value="60" />
                             <Setter Property="HorizontalContentAlignment" Value="Left" />
                             <Setter Property="CornerRadius" Value="2" />
-                            <Setter Property="Background" Value="#222" />
+                            <Setter Property="Background" Value="{DynamicResource DarkSurfaceBrush}" />
                         </Style>
                         <Style Selector="Button > DockPanel">
                             <Setter Property="HorizontalAlignment" Value="Left" />

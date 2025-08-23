@@ -131,7 +131,7 @@
                 BorderBrush="{DynamicResource NavigationBarBorderBrush}"
                 CornerRadius="60"
                 Height="60"
-                Background="#313131"
+                Background="{DynamicResource DarkSurfaceBrush}"
                 Margin="6 10"
                 Padding="0"
                 MaxWidth="310"

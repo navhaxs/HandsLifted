@@ -24,7 +24,7 @@
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="ContentBackgroundBrush">White</SolidColorBrush>
                     <SolidColorBrush x:Key="ForegroundBrush">Black</SolidColorBrush>
-                    <SolidColorBrush x:Key="BackgroundFrameBrush">#66D8CEEC</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundFrameBrush">#e0deea</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="ContentBackgroundBrush">#252525</SolidColorBrush>

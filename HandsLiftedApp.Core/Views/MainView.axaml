@@ -33,6 +33,7 @@
                     <SolidColorBrush x:Key="HoverBrush">#C11F576F</SolidColorBrush>
                     <SolidColorBrush x:Key="ActiveToggleButtonBackgroundBrush">#D8CEEC</SolidColorBrush>
                     <SolidColorBrush x:Key="CaptionButtonBackground" Color="Red" />
+                    <SolidColorBrush x:Key="LibraryAndDesignerBackground" Color="#ADC5D3" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="CaptionButtonBackground" Color="Red" />
@@ -45,6 +46,7 @@
                     <SolidColorBrush x:Key="PlaylistTitleBrush">White</SolidColorBrush>
                     <SolidColorBrush x:Key="HoverBrush">#C11F576F</SolidColorBrush>
                     <SolidColorBrush x:Key="ActiveToggleButtonBackgroundBrush">#3a3449</SolidColorBrush>
+                    <SolidColorBrush x:Key="LibraryAndDesignerBackground" Color="#3a576f" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -255,7 +257,7 @@
                     <!-- centre panel -->
                     <!-- TODO write a custom Converter to BoxShadow from {DynamicResource SurfaceBrush}-->
                     <Border
-                        Background="#141414"
+                        Background="{DynamicResource DarkSurfaceBrush}"
                         BorderBrush="{DynamicResource GridSplitterBrush}"
                         BorderThickness="1 1 0 1"
                         CornerRadius="6,0,0,6"
@@ -408,7 +410,7 @@
             Margin="6,0"
             Padding="10"
             VerticalAlignment="Stretch"
-            Background="#3A576F"
+            Background="{DynamicResource LibraryAndDesignerBackground}"
             CornerRadius="6,6,6,0"
             DockPanel.Dock="Bottom">
             <Carousel BorderThickness="0" SelectedIndex="{Binding BottomLeftPanelSelectedTabIndex}">
@@ -435,7 +437,7 @@
                             <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
                         </Style>
                         <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
-                            <Setter Property="Background" Value="#3A576F" />
+                            <Setter Property="Background" Value="{DynamicResource LibraryAndDesignerBackground}" />
                             <Setter Property="CornerRadius" Value="0" />
                         </Style>
                         <Style Selector="ToggleButton:pointerover /template/ ContentPresenter">

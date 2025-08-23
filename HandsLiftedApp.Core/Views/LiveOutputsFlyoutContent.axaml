@@ -15,6 +15,7 @@
 			<Setter Property="FontSize" Value="14" />
 			<Setter Property="Background" Value="#ffffff" />
 			<Setter Property="BorderThickness" Value="0" />
+			<Setter Property="CornerRadius" Value="0" />
 		</Style>
 
 		<Style Selector="Button:pointerover">
@@ -24,19 +25,9 @@
 		<Style Selector="Button:pressed /template/ ContentPresenter">
 			<Setter Property="Background" Value="#3b2a69" />
 		</Style>
-
-		<Style Selector="Button:nth-child(1)">
-			<Setter Property="CornerRadius" Value="6 6 0 0" />
-		</Style>
-		<Style Selector="Button:nth-last-child(1)">
-			<Setter Property="CornerRadius" Value="0 0 6 6" />
-		</Style>
-		<Style Selector="Button:nth-child(1):nth-last-child(1)">
-			<Setter Property="CornerRadius" Value="6 6 6 6" />
-		</Style>
 	</UserControl.Styles>
 
-	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="6" Background="#1d1d1d">
+	<Border BorderBrush="#9a93cd" BorderThickness="1" CornerRadius="0 6 6 6" Background="{DynamicResource WindowBackgroundBrush}">
 		<StackPanel>
 			<StackPanel.Styles>
 				<Style Selector="Button">
@@ -44,7 +35,6 @@
 					<Setter Property="MinHeight" Value="50" />
 					<Setter Property="VerticalContentAlignment" Value="Top" />
 					<Setter Property="Background" Value="Transparent" />
-					<Setter Property="Foreground" Value="White" />
 				</Style>
 				<Style Selector="Button > DockPanel > CheckBox">
 					<Setter Property="Margin" Value="0 0 6 0" />
