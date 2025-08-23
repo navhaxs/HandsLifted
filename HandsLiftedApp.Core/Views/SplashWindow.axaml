@@ -9,10 +9,6 @@
         ShowInTaskbar="False"
         Title="SplashWindow"
         Background="Transparent"
-        TransparencyBackgroundFallback="Transparent"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaTitleBarHeightHint="-1"
         BorderBrush="Transparent"
         BorderThickness="0">
     <Window.Styles>
