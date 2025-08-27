@@ -165,7 +165,11 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         {
             if (e.AddedItems.Count > 0)
             {
-                VisualEditor.SelectElement(e.AddedItems[0] as SlideElement);
+                var addedItem = e.AddedItems[0];
+                if (addedItem is SlideElement element)
+                {
+                    VisualEditor.SelectElement(element);
+                }
             }
         }
     }
