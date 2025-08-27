@@ -87,9 +87,13 @@ CCLI License #317371";
                 IntPtr handle = TryGetPlatformHandle().Handle;
                 Debug.Print(handle.ToString());
 
-                // Initialize the clipboard now that we have a window soruce to use
-                windowClipboardManager = WindowsHwndSource.FromHwnd(handle);
-                windowClipboardManager.ClipboardChanged += ClipboardChanged;
+                // Initialize the clipboard now that we have a window source to use
+                // TODO: implement for other platforms
+                if (OperatingSystem.IsWindows())
+                {
+                    windowClipboardManager = WindowsHwndSource.FromHwnd(handle);
+                    windowClipboardManager.ClipboardChanged += ClipboardChanged;
+                }
 
                 PART_WebView.Url = new Uri("https://songselect.com");
             });
