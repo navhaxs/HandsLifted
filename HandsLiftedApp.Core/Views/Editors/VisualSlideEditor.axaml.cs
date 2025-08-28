@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Controls.Primitives;
@@ -91,6 +92,9 @@ namespace HandsLiftedApp.Core.Views.Editors
         private void ZoomBorder_ZoomChanged(object sender, ZoomChangedEventArgs e)
         {
             Debug.WriteLine($"[ZoomChanged] {e.ZoomX} {e.ZoomY} {e.OffsetX} {e.OffsetY}");
+                
+            // Update adorner clipping bounds when zoom changes
+            UpdateAdornerClippingBounds();
         }
 
         private void RegisterDataContext()
@@ -175,8 +179,12 @@ namespace HandsLiftedApp.Core.Views.Editors
                 IsHitTestVisible = true,
                 ClipToBounds = false,
                 Control = control,
-                ZoomBorder = _zoomBorder
+                ZoomBorder = _zoomBorder,
+                // ClippingBounds = new Rect(0, 0, this.Bounds.Width, this.Bounds.Height)
             };
+            
+            // Calculate clipping bounds in the adorner's coordinate system
+            UpdateAdornerClippingBounds();
 
             ((ISetLogicalParent)_selected).SetParent(canvas);
             layer.Children.Add(_selected);
@@ -186,6 +194,42 @@ namespace HandsLiftedApp.Core.Views.Editors
 
             OnUpdateSelectedElementEventArgs args = new OnUpdateSelectedElementEventArgs(control.DataContext as SlideElement);
             OnUpdateSelectedElement(this, args);
+        }
+        
+        private void UpdateAdornerClippingBounds()
+        {
+            if (_selected == null) return;
+
+            // Get the canvas that the adorner is attached to
+            var canvas = Root as Canvas;
+            if (canvas == null) return;
+
+            // Get the bounds of the VisualSlideEditor
+            var editorBounds = this.Bounds;
+    
+            // Transform the VisualSlideEditor bounds to the canvas coordinate system
+            var topLeftInCanvas = this.TranslatePoint(new Point(0, 0), canvas);
+            var bottomRightInCanvas = this.TranslatePoint(new Point(editorBounds.Width, editorBounds.Height), canvas);
+    
+            if (topLeftInCanvas.HasValue && bottomRightInCanvas.HasValue)
+            {
+                var clippingBounds = new Rect(
+                    topLeftInCanvas.Value.X,
+                    topLeftInCanvas.Value.Y,
+                    bottomRightInCanvas.Value.X - topLeftInCanvas.Value.X,
+                    bottomRightInCanvas.Value.Y - topLeftInCanvas.Value.Y
+                );
+        
+                _selected.ClippingBounds = clippingBounds;
+            }
+        }
+        
+        protected override void OnSizeChanged(SizeChangedEventArgs e)
+        {
+            base.OnSizeChanged(e);
+    
+            // Update clipping bounds when the editor size changes
+            UpdateAdornerClippingBounds();
         }
 
         private void RemoveSelected()

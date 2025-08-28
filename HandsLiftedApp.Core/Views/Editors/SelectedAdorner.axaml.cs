@@ -97,6 +97,16 @@ namespace PerspectiveDemo
             base.OnDetachedFromLogicalTree(e);
         }
         
+        
+        public static readonly StyledProperty<Rect?> ClippingBoundsProperty =
+            AvaloniaProperty.Register<SelectedAdorner, Rect?>(nameof(ClippingBounds));
+
+        public Rect? ClippingBounds
+        {
+            get => GetValue(ClippingBoundsProperty);
+            set => SetValue(ClippingBoundsProperty, value);
+        }
+
         private void UpdateAdornerTransform()
         {
             if (ZoomBorder != null)
@@ -121,6 +131,19 @@ namespace PerspectiveDemo
                 // Also apply to snap lines if they exist
                 if (verticalLine != null) verticalLine.RenderTransform = inverseTransform;
                 if (horizontalLine != null) horizontalLine.RenderTransform = inverseTransform;
+
+                // Apply clipping if bounds are set
+                UpdateClipping();
+            }
+        }
+
+        private void UpdateClipping()
+        {
+            if (ClippingBounds.HasValue && _canvas != null)
+            {
+                var clippingGeometry = new RectangleGeometry(ClippingBounds.Value);
+                _canvas.Clip = clippingGeometry;
+                this.Clip = clippingGeometry;
             }
         }
 
