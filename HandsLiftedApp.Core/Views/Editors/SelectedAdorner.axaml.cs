@@ -96,6 +96,33 @@ namespace PerspectiveDemo
             UpdateSnapLines(false, false);
             base.OnDetachedFromLogicalTree(e);
         }
+        
+        private void UpdateAdornerTransform()
+        {
+            if (ZoomBorder != null)
+            {
+                var zoomX = ZoomBorder.ZoomX;
+                var zoomY = ZoomBorder.ZoomY;
+
+                // Apply inverse scaling to all thumb controls to maintain consistent size
+                var inverseTransform = new ScaleTransform(1.0 / zoomX, 1.0 / zoomY);
+
+                // Apply transform to all thumb handles
+                if (_drag != null) _drag.RenderTransform = inverseTransform;
+                if (_top != null) _top.RenderTransform = inverseTransform;
+                if (_bottom != null) _bottom.RenderTransform = inverseTransform;
+                if (_left != null) _left.RenderTransform = inverseTransform;
+                if (_right != null) _right.RenderTransform = inverseTransform;
+                if (_topLeft != null) _topLeft.RenderTransform = inverseTransform;
+                if (_topRight != null) _topRight.RenderTransform = inverseTransform;
+                if (_bottomLeft != null) _bottomLeft.RenderTransform = inverseTransform;
+                if (_bottomRight != null) _bottomRight.RenderTransform = inverseTransform;
+
+                // Also apply to snap lines if they exist
+                if (verticalLine != null) verticalLine.RenderTransform = inverseTransform;
+                if (horizontalLine != null) horizontalLine.RenderTransform = inverseTransform;
+            }
+        }
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
@@ -194,6 +221,14 @@ namespace PerspectiveDemo
                     _canvas.HorizontalAlignment = Control.HorizontalAlignment;
                     _canvas.VerticalAlignment = Control.VerticalAlignment;
                 }
+            }
+            
+            UpdateAdornerTransform();
+    
+            // Subscribe to zoom changes
+            if (ZoomBorder != null)
+            {
+                ZoomBorder.ZoomChanged += (s, args) => UpdateAdornerTransform();
             }
         }
 
