@@ -70,7 +70,7 @@
   </Style>
 
   <Style Selector="Thumb:pointerover.sizeAll /template/ Rectangle#PART_Rectangle">
-    <Setter Property="Cursor" Value="SizeAll" />
+    <Setter Property="Cursor" Value="DragMove" />
   </Style>
 
   <Style Selector="Thumb:pointerover.topSide /template/ Rectangle#PART_Rectangle">

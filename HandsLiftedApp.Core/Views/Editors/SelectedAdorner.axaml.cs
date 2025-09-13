@@ -118,7 +118,6 @@ namespace PerspectiveDemo
                 var inverseTransform = new ScaleTransform(1.0 / zoomX, 1.0 / zoomY);
 
                 // Apply transform to all thumb handles
-                if (_drag != null) _drag.RenderTransform = inverseTransform;
                 if (_top != null) _top.RenderTransform = inverseTransform;
                 if (_bottom != null) _bottom.RenderTransform = inverseTransform;
                 if (_left != null) _left.RenderTransform = inverseTransform;
