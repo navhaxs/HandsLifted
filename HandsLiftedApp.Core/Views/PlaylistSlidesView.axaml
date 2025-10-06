@@ -42,6 +42,17 @@
                 <!-- first add item button -->
                 <controls1:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" />
                 
+                <Border CornerRadius="6" Background="{DynamicResource SurfaceBrush}"
+                        DockPanel.Dock="Top"
+                        IsVisible="{Binding !Items.Count}"
+                        Margin="14">
+
+                    <TextBlock Text="Playlist is empty. Begin by adding a item." 
+                               Margin="14"
+                               FontSize="16" />
+                    
+                </Border>
+                
                 <!--  "fill" the height with the last item  -->
                 <Grid DockPanel.Dock="Bottom">
                     <!--  TODO this would be a good place to put a 'add item' button  -->
