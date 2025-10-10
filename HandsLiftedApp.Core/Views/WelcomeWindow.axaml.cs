@@ -1,5 +1,7 @@
 ﻿using System;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.UI;
@@ -11,6 +13,8 @@ namespace HandsLiftedApp.Core.Views
 {
     public partial class WelcomeWindow : Window
     {
+        private bool _openMainOnClose = false;
+        
         public WelcomeWindow()
         {
             InitializeComponent();
@@ -18,12 +22,45 @@ namespace HandsLiftedApp.Core.Views
             DateTime date = DateTime.Now;
             DayOfWeekString.Text = date.ToString("dddd");
             DateString.Text = date.ToString("d MMMM yyyy");
+
+            this.Closed += (_, __) =>
+            {
+                if (_openMainOnClose)
+                {
+                    var main = new MainWindow
+                    {
+                        DataContext = Globals.Instance.MainViewModel,
+                        WindowState = WindowState.Normal
+                    };
+
+                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+                    {
+                        desktopLifetime.MainWindow = main;
+                    }
+                    
+                    main.Show();
+                }
+                else
+                {
+                    // no action was selected
+                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+                    {
+                        // terminate the application if the MainWindow is not already open
+                        var mainIsOpen = desktopLifetime.MainWindow is MainWindow { IsVisible: true };
+                        if (!mainIsOpen)
+                        {
+                            App.ExitApplication(desktopLifetime, this);
+                        }
+                    }
+                }
+            };
         }
 
         private void LoadRecentPlaylistEntryCommand(object? sender, RoutedEventArgs e)
         {
             if (sender is Control { DataContext: WelcomeWindowViewModel.RecentPlaylistEntry recentPlaylistEntry })
             {
+                _openMainOnClose = true;
                 MessageBus.Current.SendMessage(new LoadPlaylistAction() {FilePath = recentPlaylistEntry.FilePath});
                 Close();
             }
@@ -31,6 +68,7 @@ namespace HandsLiftedApp.Core.Views
 
         private void NewClicked(object? sender, RoutedEventArgs e)
         {
+            _openMainOnClose = true;
             Close();
         }
 
@@ -43,7 +81,7 @@ namespace HandsLiftedApp.Core.Views
         private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args)
         {
             // Get top level from the current control. Alternatively, you can use Window reference instead.
-            var topLevel = TopLevel.GetTopLevel(this);
+            var topLevel = GetTopLevel(this);
 
             // Start async operation to open the dialog.
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -57,6 +95,7 @@ namespace HandsLiftedApp.Core.Views
                 // Open reading stream from the first file.
                 // await using var stream = await files[0].OpenReadAsync();
                 var filePath = files[0].Path.LocalPath;
+                _openMainOnClose = true;
                 MessageBus.Current.SendMessage(new LoadPlaylistAction() {FilePath = filePath});
                 Close();
             }

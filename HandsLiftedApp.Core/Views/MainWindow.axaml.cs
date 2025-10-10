@@ -117,7 +117,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     warningWindow.ShowDialog(this);
                 }
 
-                MessageBus.Current.SendMessage(new MainWindowMessage(ActionType.WelcomeWindow));
             }
         };
 
@@ -240,7 +239,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {
-            desktopLifetime.Shutdown();
+            Close();
+            App.ExitApplication(desktopLifetime, this);
         }
         else
         {
