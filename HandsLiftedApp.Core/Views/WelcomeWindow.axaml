@@ -79,7 +79,7 @@
                 <Grid ColumnDefinitions="2*,*" MaxWidth="700">
                     <Grid Grid.Column="0" VerticalAlignment="Bottom" Margin="0 0 0 12">
                         <StackPanel VerticalAlignment="Bottom">
-                            <TextBlock Text="Welcome" FontSize="32" />
+                            <TextBlock x:Name="GreetingText" Text="Welcome" FontSize="32" />
                         </StackPanel>
                     </Grid>
 
