@@ -22,7 +22,8 @@ namespace HandsLiftedApp.Core.Views
             DateTime date = DateTime.Now;
             DayOfWeekString.Text = date.ToString("dddd");
             DateString.Text = date.ToString("d MMMM yyyy");
-            GreetingText.Text = date.Hour < 12 ? "Good Morning" : "Good Evening";
+            GreetingText.Text = date.Hour < 12 ? "Good Morning" : 
+                               date.Hour < 18 ? "Good Afternoon" : "Good Evening";
 
             this.Closed += (_, __) =>
             {

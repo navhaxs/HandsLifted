@@ -66,25 +66,9 @@
                     <StackPanel Margin="16">
 
                         <!--  Search box  -->
-                        <Border DockPanel.Dock="Top" Background="AliceBlue" CornerRadius="8" HorizontalAlignment="Left">
-
-                            <DockPanel MinWidth="400" Margin="8 2">
-
-                                <Button DockPanel.Dock="Right" Padding="20 0" CornerRadius="0" Background="Transparent"
-                                        BorderThickness="0 0 0 1" BorderBrush="#808080">
-                                    <avalonia:MaterialIcon Kind="Search" Width="22" Height="22" />
-                                </Button>
-
-                                <TextBox
-                                    Padding="12,4"
-                                    Background="Transparent"
-                                    BorderThickness=" 0 0 0 1"
-                                    FontSize="20"
-                                    Foreground="Black"
-                                    Watermark="Search songs and content..." />
-
-                            </DockPanel>
-                        </Border>
+                        <controls:SearchBox x:Name="SearchBoxControl" 
+                                            Margin="0,30"
+                                          SearchClicked="SearchBox_OnSearchClicked" />
 
                         <TextBlock DockPanel.Dock="Top" FontSize="18" Margin="0 20 0 12" Foreground="#7b8a90">Libraries</TextBlock>
 

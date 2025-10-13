@@ -20,12 +20,12 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             
             AttachedToLogicalTree += (_, _) =>
             {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    // hack
-                    Thread.Sleep(100);
-                    SearchBox.Focus();
-                });
+                // Dispatcher.UIThread.InvokeAsync(() =>
+                // {
+                //     // hack
+                //     Thread.Sleep(100);
+                //     SearchBox.Focus();
+                // });
             };
             
         }

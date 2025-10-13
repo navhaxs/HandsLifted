@@ -57,7 +57,19 @@ namespace HandsLiftedApp.Core.Views.Setup
 
         private void EditLibraryButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            Process.Start("notepad.exe", Constants.LIBRARY_CONFIG_FILEPATH);
+            if (OperatingSystem.IsWindows())
+            {
+                Process.Start("notepad.exe", Constants.LIBRARY_CONFIG_FILEPATH);
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                Process.Start("open", Constants.LIBRARY_CONFIG_FILEPATH);
+            }
+            else
+            {
+                // For Linux and other platforms, try using the default text editor
+                Process.Start("xdg-open", Constants.LIBRARY_CONFIG_FILEPATH);
+            }
         }
 
         private void ReloadLibraryButton_OnClick(object? sender, RoutedEventArgs e)

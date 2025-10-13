@@ -90,6 +90,16 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             }
         }
 
+        private void SearchBox_OnSearchButtonClick(object? sender, RoutedEventArgs e)
+        {
+            // Handle search button click - implement your search logic here
+            if (sender is Controls.SearchBox searchBox)
+            {
+                var searchText = searchBox.SearchText;
+                // TODO: Implement search functionality
+            }
+        }
+
         private void CloseWindow()
         {
             var t = TopLevel.GetTopLevel(this);
@@ -97,6 +107,11 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             {
                 parentWindow.Close();
             }
+        }
+
+        private void SearchBox_OnSearchClicked(object? sender, RoutedEventArgs e)
+        {
+            // throw new NotImplementedException();
         }
     }
 }

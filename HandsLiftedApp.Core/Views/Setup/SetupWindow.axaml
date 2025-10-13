@@ -32,7 +32,9 @@
     
     <DockPanel>
         <Border DockPanel.Dock="Top">
-            <TextBlock FontSize="16" Margin="16 6 12 6">Setup</TextBlock>
+            <TextBlock FontSize="16" Margin="16 6 12 6"
+                       HorizontalAlignment="{OnPlatform Default=Left, macOS=Center}"
+                       Text="Setup" />
         </Border>
 
         <DockPanel Background="{DynamicResource DarkSurfaceBrush}">

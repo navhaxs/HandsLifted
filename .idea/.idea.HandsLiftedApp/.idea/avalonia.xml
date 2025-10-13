@@ -28,6 +28,7 @@
         <entry key="HandsLiftedApp.Core/Assets/AddItemFlyoutResourceDictionary.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Controls/AddItemButton.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Controls/Navigation/ItemOrderListView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Controls/SearchBox.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Controls/SongArrangementControl.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Controls/TextBoxFilePathPicker.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Models/RuntimeData/Items/LogoItemRender.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

@@ -5,7 +5,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
              xmlns:pages="clr-namespace:HandsLiftedApp.Core.ViewModels.AddItem.Pages"
-             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="520"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="520"
              x:DataType="pages:ResultsViewModel"
              x:Class="HandsLiftedApp.Core.Views.AddItem.Pages.ResultsView">
 
@@ -41,57 +41,101 @@
         </Style>
     </UserControl.Styles>
 
-    <DockPanel Margin="12">
-        <DockPanel DockPanel.Dock="Top" Margin="0 0 0 12">
-            <Button DockPanel.Dock="Left" Margin="0 0 6 0"
-                    Click="BackButton_OnClick"
-                    BorderThickness="0"
-                    Padding="8 4 8 0"
-                    Background="Transparent">
-                <avalonia:MaterialIcon
-                    Kind="ArrowLeft"
-                    Width="20"
-                    Height="20" />
-            </Button>
-            <TextBlock FontSize="22" VerticalAlignment="Center" Text="{Binding Library.Label}" />
-        </DockPanel>
+    <Border>
 
-        <TextBox
-            x:Name="SearchBox" CornerRadius="3"
-            Text="{Binding SearchTerm}"
-            DockPanel.Dock="Top" FontSize="18" Watermark="Search song library..." />
+        <DockPanel Margin="12">
+            <DockPanel DockPanel.Dock="Top" Margin="0 0 0 12">
+                <Button DockPanel.Dock="Left" Margin="0 0 6 0"
+                        Click="BackButton_OnClick"
+                        BorderThickness="0"
+                        Padding="8 4 8 4"
+                        Background="Transparent">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#5C3AB6" />
+                        </Style>  
+                    </Button.Styles>
+                    <avalonia:MaterialIcon
+                        Kind="ArrowLeft"
+                        Width="20"
+                        Height="20" />
+                </Button>
+                <TextBlock FontSize="22" VerticalAlignment="Center" Text="{Binding Library.Label}" />
+            </DockPanel>
 
-        <controls:IconButton DockPanel.Dock="Bottom"
-                             x:Name="CreateNewSongButton"
-                             Margin="0 12 0 0"
-                             Text="Create new song" 
-                             Kind="Sparkles"
-                             Command="{Binding OnCreateNewSongCommand}"
-                             CommandParameter="{Binding $parent[Window]}"
-                             />
+            <!-- <TextBox -->
+            <!--     x:Name="SearchBox" CornerRadius="3" -->
+            <!--     Text="{Binding SearchTerm}" -->
+            <!--     FontSize="18" Watermark="Search song library..." /> -->
 
-        <ListBox
-            ItemsSource="{Binding SearchResults}"
-            CornerRadius="3"
-            SelectionChanged="SelectingItemsControl_OnSelectionChanged"
-            SelectedItem="{Binding SelectedLibraryItem}"
-            Margin="0 12 0 0">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Title}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <FlyoutBase.AttachedFlyout>
-                <Flyout ShowMode="Transient" Placement="Right" PlacementAnchor="Left" PlacementGravity="Right">
+            <!--  Search box  -->
+            <controls:SearchBox x:Name="SearchBoxControl"
+                                HorizontalAlignment="Left"
+                                SearchText="{Binding SearchTerm}"
+                                DockPanel.Dock="Top" />
+
+
+            <Grid ColumnDefinitions="* *">
+
+                <ScrollViewer>
+                    <StackPanel>
+                        <ListBox
+                            ItemsSource="{Binding SearchResults}"
+                            CornerRadius="3"
+                            SelectionChanged="SelectingItemsControl_OnSelectionChanged"
+                            SelectedItem="{Binding SelectedLibraryItem}"
+                            Margin="0 12 0 0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Title}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <FlyoutBase.AttachedFlyout>
+                                <Flyout ShowMode="Transient" Placement="Right" PlacementAnchor="Left"
+                                        PlacementGravity="Right">
+                                    <DockPanel>
+                                        <Button Click="AddSelectedItemButton_OnClick" DockPanel.Dock="Bottom">Add to playlist</Button>
+                                        <ScrollViewer>
+                                            <TextBlock Text="{Binding SelectedItemPreview}" TextWrapping="Wrap" />
+                                        </ScrollViewer>
+                                    </DockPanel>
+                                </Flyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </ListBox>
+
+                        <controls:IconButton DockPanel.Dock="Bottom"
+                                             x:Name="CreateNewSongButton"
+                                             Margin="0 12 0 0"
+                                             Text="Create a new song"
+                                             Kind="Import"
+                                             Command="{Binding OnCreateNewSongCommand}"
+                                             CommandParameter="{Binding $parent[Window]}" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Background="#193642" CornerRadius="8" Grid.Column="1">
                     <DockPanel>
-                        <Button Click="AddSelectedItemButton_OnClick" DockPanel.Dock="Bottom">Add to playlist</Button>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button>
+                                <DockPanel>
+                                    <TextBlock Text="Quick show" />
+                                </DockPanel>
+                            </Button>
+                            <Button>
+                                <DockPanel>
+                                    <TextBlock Text="Add to playlist" />
+                                </DockPanel>
+                            </Button>
+                        </StackPanel>
                         <ScrollViewer>
-                            <TextBlock Text="{Binding SelectedItemPreview}" TextWrapping="Wrap" />
+                            <TextBlock />
                         </ScrollViewer>
                     </DockPanel>
-                </Flyout>
-            </FlyoutBase.AttachedFlyout>
-        </ListBox>
+                </Border>
 
-    </DockPanel>
+            </Grid>
+        </DockPanel>
+
+    </Border>
+
 </UserControl>

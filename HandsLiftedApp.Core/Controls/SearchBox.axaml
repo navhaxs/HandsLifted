@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+             mc:Ignorable="d"
+             x:Class="HandsLiftedApp.Core.Controls.SearchBox">
+
+    <Border Background="#d3d3d3" HorizontalAlignment="Center">
+        <DockPanel MinWidth="440" Margin="8 2">
+            <Button x:Name="SearchButton"  
+                    DockPanel.Dock="Right" 
+                    Padding="8 0" 
+                    CornerRadius="0" 
+                    Background="Transparent"
+                    BorderThickness="0 0 0 1" 
+                    BorderBrush="#808080"
+                    Click="SearchButton_OnClick">
+                <avalonia:MaterialIcon Kind="Search" Width="22" Height="22" Foreground="Black" />
+            </Button>
+
+            <TextBox x:Name="SearchTextBox"
+                     Padding="12,4"
+                     Background="Transparent"
+                     BorderThickness=" 0 0 0 1"
+                     FontSize="22"
+                     Foreground="Black"
+                     CaretBrush="Black"
+                     Watermark="Search songs and content..."
+                     Text="{Binding SearchText, RelativeSource={RelativeSource AncestorType=controls:SearchBox}}"
+                     KeyDown="SearchTextBox_OnKeyDown" />
+        </DockPanel>
+    </Border>
+
+</UserControl>
