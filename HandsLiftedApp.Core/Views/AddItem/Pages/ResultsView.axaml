@@ -67,22 +67,16 @@
                 <TextBlock FontSize="22" VerticalAlignment="Center" Text="{Binding Library.Label}" />
             </DockPanel>
 
-            <!-- <TextBox -->
-            <!--     x:Name="SearchBox" CornerRadius="3" -->
-            <!--     Text="{Binding SearchTerm}" -->
-            <!--     FontSize="18" Watermark="Search song library..." /> -->
-
-            <!--  Search box  -->
             <controls:SearchBox x:Name="SearchBoxControl"
                                 HorizontalAlignment="Left"
-                                SearchText="{Binding SearchTerm}"
+                                SearchText="{Binding SearchTerm, Mode=TwoWay}"
                                 MinWidth="300"
                                 DockPanel.Dock="Top" />
 
             <Grid ColumnDefinitions="2* 1 3*">
 
                 <Grid>
-               
+
                     <ScrollViewer>
                         <StackPanel>
                             <ListBox
@@ -124,7 +118,15 @@
                             </ListBox>
                         </StackPanel>
                     </ScrollViewer>
-                    
+
+                    <TextBlock Text="No results"
+                               Margin="0 22 0 0"
+                               FontSize="16"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Top"
+                               Foreground="#888888"
+                               IsVisible="{Binding IsSearchResultsEmpty}" />
+
                     <Button x:Name="CreateNewSongButton"
                             VerticalAlignment="Bottom"
                             Margin="0 0 12 12"

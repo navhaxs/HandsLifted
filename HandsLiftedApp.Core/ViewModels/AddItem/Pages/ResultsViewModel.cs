@@ -19,7 +19,8 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
 {
     public class ResultsViewModel : AddItemPageViewModel
     {
-        private readonly ObservableAsPropertyHelper<IEnumerable<LibraryItem>> _searchResults;
+        private readonly ObservableAsPropertyHelper<IEnumerable<LibraryItem>?> _searchResults;
+        private readonly ObservableAsPropertyHelper<bool> _isSearchResultsEmpty;
         private readonly Library _library;
 
         public ReactiveCommand<Window, Unit> OnCreateNewSongCommand { get; }
@@ -43,6 +44,11 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
                 .SelectMany(SearchLibrary)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
+
+            _isSearchResultsEmpty = this
+                .WhenAnyValue(x => x.SearchResults)
+                .Select(results => results == null || !results.Any())
+                .ToProperty(this, x => x.IsSearchResultsEmpty);
 
             _selectedItemPreview = this.WhenAnyValue(x => x.SelectedLibraryItem, (_SelectedItem) =>
                     {
@@ -100,6 +106,8 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
         }
 
         public IEnumerable<LibraryItem> SearchResults => _searchResults.Value;
+
+        public bool IsSearchResultsEmpty => _isSearchResultsEmpty.Value;
 
         private string _searchTerm;
 

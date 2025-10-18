@@ -11,19 +11,19 @@ namespace HandsLiftedApp.Core.Controls
         public static readonly StyledProperty<string> SearchTextProperty =
             AvaloniaProperty.Register<SearchBox, string>(nameof(SearchText), defaultValue: string.Empty);
 
-                public static readonly StyledProperty<string> WatermarkProperty =
-                    AvaloniaProperty.Register<SearchBox, string>(nameof(Watermark), "Search...");
+        public static readonly StyledProperty<string> WatermarkProperty =
+            AvaloniaProperty.Register<SearchBox, string>(nameof(Watermark), "Search...");
 
-                public string SearchText
-                {
-                    get => GetValue(SearchTextProperty);
-                    set => SetValue(SearchTextProperty, value);
-                }
+        public string SearchText
+        {
+            get => GetValue(SearchTextProperty);
+            set => SetValue(SearchTextProperty, value);
+        }
 
-                public string Watermark
-                {
-                    get => GetValue(WatermarkProperty);
-                    set => SetValue(WatermarkProperty, value);
+        public string Watermark
+        {
+            get => GetValue(WatermarkProperty);
+            set => SetValue(WatermarkProperty, value);
         }
 
         public static readonly RoutedEvent<RoutedEventArgs> SearchClickedEvent =
@@ -38,11 +38,8 @@ namespace HandsLiftedApp.Core.Controls
         public SearchBox()
         {
             InitializeComponent();
-
-            // Bind the SearchText property to the TextBox
-            SearchTextBox.Bind(TextBox.TextProperty, new Avalonia.Data.Binding(nameof(SearchText)) { Source = this });
         }
-
+ 
         private void SearchButton_OnClick(object? sender, RoutedEventArgs e)
         {
             TriggerSearch();
