@@ -1,23 +1,29 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-		Width="380"
-		Height="140"
-		WindowStartupLocation="CenterOwner"
-		ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
-        SystemDecorations="None"        
-		ShowInTaskbar="False"
-		CanResize="False"
-		x:Class="HandsLiftedApp.Views.App.ExitConfirmationWindow"
-		Icon="/Assets/app.ico"
-        Title="Confirm Exit">
-	<DockPanel Margin="15">
+                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                 mc:Ignorable="d"
+                                 Width="380"
+                                 Height="140"
+                                 WindowStartupLocation="CenterOwner"
+                                 ExtendClientAreaToDecorationsHint="True"
+                                 ExtendClientAreaChromeHints="NoChrome"
+                                 SystemDecorations="None"
+                                 ShowInTaskbar="False"
+                                 CanResize="False"
+                                 x:Class="HandsLiftedApp.Views.App.ExitConfirmationWindow"
+                                 Background="Transparent"
+                                 TransparencyLevelHint="Transparent"
+                                 Icon="/Assets/app.ico"
+                                 Title="Confirm Exit">
+	<Border CornerRadius="8" 
+	        Background="{DynamicResource BackgroundBrush}"
+	        BorderBrush="{DynamicResource WindowBorderBrush}"
+	        BorderThickness="1">
+		<DockPanel Margin="15">
 
-		<StackPanel Margin="0 10 0 0" DockPanel.Dock="Bottom"
-			Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+			<StackPanel Margin="0 10 0 0" DockPanel.Dock="Bottom"
+				Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
 			<StackPanel.Styles>
 				<Style Selector="Button">
 					<Setter Property="FontSize" Value="14" />
@@ -55,5 +61,6 @@
 					   />
 		</StackPanel>
 
-	</DockPanel>
+		</DockPanel>
+	</Border>
 </Window>

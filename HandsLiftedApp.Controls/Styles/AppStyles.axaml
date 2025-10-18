@@ -13,6 +13,7 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <SolidColorBrush x:Key="WindowBackgroundBrush">#ededf1</SolidColorBrush>
+                    <SolidColorBrush x:Key="WindowBorderBrush">#958e99</SolidColorBrush>
                     <SolidColorBrush x:Key="BackgroundBrush">White</SolidColorBrush>
                     <SolidColorBrush x:Key="SurfaceBrush">#ededf1</SolidColorBrush>
                     <SolidColorBrush x:Key="DarkSurfaceBrush">#11000000</SolidColorBrush>
@@ -32,6 +33,7 @@
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="WindowBackgroundBrush">#1c1c1c</SolidColorBrush>
+	                <SolidColorBrush x:Key="WindowBorderBrush">#3b3b3b</SolidColorBrush>
                     <SolidColorBrush x:Key="BackgroundBrush">#1c1c1c</SolidColorBrush>
                     <SolidColorBrush x:Key="SurfaceBrush">#2b2b2b</SolidColorBrush>
                     <SolidColorBrush x:Key="DarkSurfaceBrush">#141414</SolidColorBrush>
