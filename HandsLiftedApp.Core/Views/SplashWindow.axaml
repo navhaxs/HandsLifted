@@ -5,6 +5,7 @@
         mc:Ignorable="d" Width="660" Height="360"
         x:Class="HandsLiftedApp.Core.Views.SplashWindow"
         WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="Transparent"
         SystemDecorations="None"
         ShowInTaskbar="False"
         Title="SplashWindow"

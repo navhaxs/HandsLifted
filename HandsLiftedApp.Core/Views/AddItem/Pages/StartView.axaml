@@ -153,7 +153,7 @@
                         <!--                          CommandParameter="Comment" /> -->
                         <!-- </WrapPanel> -->
                         
-                        <TextBlock DockPanel.Dock="Top" FontSize="18" Margin="0 20 0 12" Foreground="#7b8a90">Recent</TextBlock>
+                        <!-- <TextBlock DockPanel.Dock="Top" FontSize="18" Margin="0 20 0 12" Foreground="#7b8a90">Recent</TextBlock> -->
 
                         
                     </StackPanel>

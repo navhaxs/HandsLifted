@@ -40,7 +40,7 @@
                     <SolidColorBrush x:Key="NavigationBarBrush">#3F3B43</SolidColorBrush>
                     <SolidColorBrush x:Key="NavigationBarBorderBrush">#49454d</SolidColorBrush>
                     <SolidColorBrush x:Key="ButtonBackgroundBrush">#958e99</SolidColorBrush>
-                    <SolidColorBrush x:Key="TextBrush">#1c1921</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextBrush">White</SolidColorBrush>
                     <SolidColorBrush x:Key="EditButtonBackgroundBrush">#242131</SolidColorBrush>
                     <SolidColorBrush x:Key="HoverBackgroundBrush">#5c3ab6</SolidColorBrush>
                     <SolidColorBrush x:Key="ItemOutlineBrush">#242131</SolidColorBrush>

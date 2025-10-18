@@ -9,6 +9,10 @@
              x:DataType="pages:ResultsViewModel"
              x:Class="HandsLiftedApp.Core.Views.AddItem.Pages.ResultsView">
 
+    <Design.DataContext>
+        <pages:MockResultsViewModel />
+    </Design.DataContext>
+
     <UserControl.Styles>
         <StyleInclude Source="../Styles.axaml" />
         <Style Selector="controls|IconButton:nth-child(1)">
@@ -53,7 +57,7 @@
                     <Button.Styles>
                         <Style Selector="Button:pointerover /template/ ContentPresenter">
                             <Setter Property="Background" Value="#5C3AB6" />
-                        </Style>  
+                        </Style>
                     </Button.Styles>
                     <avalonia:MaterialIcon
                         Kind="ArrowLeft"
@@ -75,60 +79,98 @@
                                 DockPanel.Dock="Top" />
 
 
-            <Grid ColumnDefinitions="* *">
+            <Grid ColumnDefinitions="2* 1 3*">
 
-                <ScrollViewer>
-                    <StackPanel>
-                        <ListBox
-                            ItemsSource="{Binding SearchResults}"
-                            CornerRadius="3"
-                            SelectionChanged="SelectingItemsControl_OnSelectionChanged"
-                            SelectedItem="{Binding SelectedLibraryItem}"
-                            Margin="0 12 0 0">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Title}" />
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                            <FlyoutBase.AttachedFlyout>
-                                <Flyout ShowMode="Transient" Placement="Right" PlacementAnchor="Left"
-                                        PlacementGravity="Right">
-                                    <DockPanel>
-                                        <Button Click="AddSelectedItemButton_OnClick" DockPanel.Dock="Bottom">Add to playlist</Button>
-                                        <ScrollViewer>
-                                            <TextBlock Text="{Binding SelectedItemPreview}" TextWrapping="Wrap" />
-                                        </ScrollViewer>
-                                    </DockPanel>
-                                </Flyout>
-                            </FlyoutBase.AttachedFlyout>
-                        </ListBox>
+                <Grid>
+               
+                    <ScrollViewer>
+                        <StackPanel>
+                            <ListBox
+                                ItemsSource="{Binding SearchResults}"
+                                CornerRadius="3"
+                                SelectionChanged="SelectingItemsControl_OnSelectionChanged"
+                                SelectedItem="{Binding SelectedLibraryItem}"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                Margin="0 12 2 0">
 
-                        <controls:IconButton DockPanel.Dock="Bottom"
-                                             x:Name="CreateNewSongButton"
-                                             Margin="0 12 0 0"
-                                             Text="Create a new song"
-                                             Kind="Import"
-                                             Command="{Binding OnCreateNewSongCommand}"
-                                             CommandParameter="{Binding $parent[Window]}" />
-                    </StackPanel>
-                </ScrollViewer>
+                                <ListBox.Styles>
+                                    <Style Selector="ListBoxItem">
+                                        <Setter Property="CornerRadius" Value="8" />
+                                        <Setter Property="Margin" Value="2" />
+                                    </Style>
+                                    <!-- -->
+                                    <!-- ~1~ For selected state @1@ -->
+                                    <!-- <Style Selector="ListBoxItem:selected"> -->
+                                    <!--     <Setter Property="Background" Value="Blue" /> -->
+                                    <!-- </Style> -->
+                                    <!-- -->
+                                    <!-- ~1~ For hover state @1@ -->
+                                    <!-- <Style Selector="ListBoxItem:pointerover"> -->
+                                    <!--     <Setter Property="Background" Value="Green" /> -->
+                                    <!-- </Style> -->
+                                    <Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+                                        <Setter Property="CornerRadius" Value="8" />
+                                        <Setter Property="BorderBrush" Value="#4E4E4E" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                    </Style>
+                                </ListBox.Styles>
 
-                <Border Background="#193642" CornerRadius="8" Grid.Column="1">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Title}" Margin="12" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                    
+                    <Button x:Name="CreateNewSongButton"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 12 12"
+                            Padding="8"
+                            HorizontalContentAlignment="Left"
+                            CornerRadius="4"
+                            Command="{Binding OnCreateNewSongCommand}"
+                            CommandParameter="{Binding $parent[Window]}">
+                        <DockPanel>
+                            <avalonia:MaterialIcon Kind="PlusCircleOutline" Margin="0 0 8 0" />
+                            <TextBlock Text="New Song" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Button>
+
+                </Grid>
+
+                <GridSplitter Grid.Column="1" Margin="0 12" />
+
+                <Border Background="#193642" CornerRadius="8" Grid.Column="2" Margin="12"
+                        IsVisible="{Binding SelectedItemPreview, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <DockPanel>
-                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right"
+                                    Margin="12">
+                            <StackPanel.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Margin" Value="8 0 0 0" />
+                                </Style>
+                            </StackPanel.Styles>
+                            <!-- <Button> -->
+                            <!--     <DockPanel> -->
+                            <!--         <TextBlock Text="Quick show" Margin="8" /> -->
+                            <!--     </DockPanel> -->
+                            <!-- </Button> -->
+                            <Button
+                                Click="AddSelectedItemButton_OnClick">
                                 <DockPanel>
-                                    <TextBlock Text="Quick show" />
-                                </DockPanel>
-                            </Button>
-                            <Button>
-                                <DockPanel>
-                                    <TextBlock Text="Add to playlist" />
+                                    <avalonia:MaterialIcon Kind="ArrowRight" DockPanel.Dock="Left" Margin="2" />
+                                    <TextBlock Text="Add to playlist" Margin="8" />
                                 </DockPanel>
                             </Button>
                         </StackPanel>
-                        <ScrollViewer>
-                            <TextBlock />
+                        <ScrollViewer
+                            Margin="12">
+                            <TextBlock x:Name="PreviewTextBlock"
+                                       Text="{Binding SelectedItemPreview}" />
                         </ScrollViewer>
                     </DockPanel>
                 </Border>

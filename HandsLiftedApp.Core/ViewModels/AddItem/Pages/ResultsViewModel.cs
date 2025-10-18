@@ -46,6 +46,11 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
 
             _selectedItemPreview = this.WhenAnyValue(x => x.SelectedLibraryItem, (_SelectedItem) =>
                     {
+                        if (Design.IsDesignMode)
+                        {
+                            return "Design Mode";
+                        }
+                        
                         if (_SelectedItem != null)
                         {
                             try
