@@ -12,7 +12,7 @@ namespace HandsLiftedApp.Core.Controls
             AvaloniaProperty.Register<SearchBox, string>(nameof(SearchText), defaultValue: string.Empty);
 
         public static readonly StyledProperty<string> WatermarkProperty =
-            AvaloniaProperty.Register<SearchBox, string>(nameof(Watermark), "Search...");
+            AvaloniaProperty.Register<SearchBox, string>(nameof(Watermark), "Search");
 
         public string SearchText
         {
@@ -43,6 +43,11 @@ namespace HandsLiftedApp.Core.Controls
         private void SearchButton_OnClick(object? sender, RoutedEventArgs e)
         {
             TriggerSearch();
+        }
+
+        private void ClearButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            SearchText = string.Empty;
         }
 
         private void SearchTextBox_OnKeyDown(object? sender, KeyEventArgs e)

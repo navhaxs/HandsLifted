@@ -4,20 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+             d:DesignWidth="300"
              mc:Ignorable="d"
              x:Class="HandsLiftedApp.Core.Controls.SearchBox">
 
     <Border Background="#d3d3d3" HorizontalAlignment="Stretch" CornerRadius="4">
         <DockPanel Margin="8 2">
-            <Button x:Name="SearchButton"  
+            <Button x:Name="ClearButton"  
                     DockPanel.Dock="Right" 
                     Padding="8 0" 
                     CornerRadius="0" 
                     Background="Transparent"
                     BorderThickness="0 0 0 1" 
                     BorderBrush="#808080"
-                    Click="SearchButton_OnClick">
-                <avalonia:MaterialIcon Kind="Search" Width="22" Height="22" Foreground="Black" />
+                    IsVisible="{Binding SearchText, RelativeSource={RelativeSource AncestorType=controls:SearchBox}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                    Click="ClearButton_OnClick">
+                <avalonia:MaterialIcon Kind="ClearOutline" Width="22" Height="22" Foreground="Black" />
             </Button>
 
             <TextBox x:Name="SearchTextBox"
