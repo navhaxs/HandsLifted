@@ -7,8 +7,8 @@
              mc:Ignorable="d"
              x:Class="HandsLiftedApp.Core.Controls.SearchBox">
 
-    <Border Background="#d3d3d3" HorizontalAlignment="Center" CornerRadius="4">
-        <DockPanel MinWidth="440" Margin="8 2">
+    <Border Background="#d3d3d3" HorizontalAlignment="Stretch" CornerRadius="4">
+        <DockPanel Margin="8 2">
             <Button x:Name="SearchButton"  
                     DockPanel.Dock="Right" 
                     Padding="8 0" 

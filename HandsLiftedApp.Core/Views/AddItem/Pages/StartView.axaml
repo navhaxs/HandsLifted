@@ -68,7 +68,9 @@
                         <!--  Search box  -->
                         <controls:SearchBox x:Name="SearchBoxControl" 
                                             Margin="0,30"
-                                          SearchClicked="SearchBox_OnSearchClicked" />
+                                            MinWidth="440"
+                                            HorizontalAlignment="Center"
+                                            SearchClicked="SearchBox_OnSearchClicked" />
 
                         <TextBlock DockPanel.Dock="Top" FontSize="18" Margin="0 20 0 12" Foreground="#7b8a90">Libraries</TextBlock>
 

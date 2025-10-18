@@ -155,7 +155,7 @@
                     Color="#66000000" />
             </Setter.Value>
         </Setter>
-        <Setter Property="Margin" Value="0 0 12 12" />
+        <Setter Property="Margin" Value="0 8 12 8" />
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="BorderBrush" Value="{DynamicResource OutlineBrush}" />
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
