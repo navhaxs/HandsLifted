@@ -32,6 +32,11 @@ public partial class App : Application
 
     public override async void OnFrameworkInitializationCompleted()
     {
+        if (Design.IsDesignMode)
+        {
+            return;
+        }
+        
         // must create renderer BEFORE slides start loading during Globals.OnStartup (auto-loading previous playlist)
         SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow();
         slideRendererWorkerWindow.Show();
