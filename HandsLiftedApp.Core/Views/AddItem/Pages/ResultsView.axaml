@@ -146,7 +146,7 @@
 
                 <GridSplitter Grid.Column="1" Margin="-4 12" Background="Transparent" />
 
-                <Border Background="#193642" CornerRadius="8" Grid.Column="2" Margin="12"
+                <Border Background="{DynamicResource ActiveContentBackgroundBrush}" CornerRadius="8" Grid.Column="2" Margin="12"
                         IsVisible="{Binding SelectedItemPreview, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right"

@@ -62,7 +62,7 @@
                     </DockPanel>
                 </TabItem.Header>
 
-                <ScrollViewer Background="#193642">
+                <ScrollViewer Background="{DynamicResource ActiveContentBackgroundBrush}">
                     <StackPanel Margin="16">
 
                         <!--  Search box  -->

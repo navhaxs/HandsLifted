@@ -10,6 +10,19 @@
         </UniformGrid>
     </Design.PreviewWith>
 
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="ActiveContentBackgroundBrush">#cfe4ed</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ActiveContentBackgroundBrush">#193642</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+
     <Style Selector="controls|IconButton">
         <Setter Property="Background" Value="LightGray" />
         <Setter Property="BorderBrush" Value="DarkGray" />
