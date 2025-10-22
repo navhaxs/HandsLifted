@@ -14,13 +14,11 @@
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     x:DataType="items:MediaGroupItemInstance"
     d:DesignHeight="450"
-    d:DesignWidth="400"
+    d:DesignWidth="800"
     mc:Ignorable="d">
-    <!-- -->
-    <!-- <Design.DataContext> -->
-    <!--     <editor:ExampleMediaGroupItemInstance /> -->
-    <!-- </Design.DataContext> -->
-    <!-- -->
+    <Design.DataContext>
+        <editor:MockMediaGroupItemInstance />
+    </Design.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
@@ -75,6 +73,29 @@
                 <!--     </DockPanel> -->
                 <!-- </Button> -->
                 <Button Click="Button_OnClick">GenerateSlides</Button>
+                
+                <!-- View mode toggle -->
+                <StackPanel Orientation="Horizontal" Margin="12,0">
+                    <ToggleButton x:Name="ListViewToggle" 
+                                  IsChecked="True"
+                                  Padding="8"
+                                  ToolTip.Tip="List View"
+                                  Click="ViewToggle_OnClick">
+                        <material:MaterialIcon Kind="ViewList" Width="18" Height="18" />
+                    </ToggleButton>
+                    <ToggleButton x:Name="GridViewToggle" 
+                                  IsChecked="False"
+                                  Padding="8"
+                                  ToolTip.Tip="Grid View"
+                                  Click="ViewToggle_OnClick">
+                        <material:MaterialIcon Kind="ViewModule" Width="18" Height="18" />
+                    </ToggleButton>
+                </StackPanel>
+
+                <UniformGrid DockPanel.Dock="Right" VerticalAlignment="Stretch">
+                    <Button Click="Button_OnClick"><DockPanel><material:MaterialIcon Kind="Times" /><TextBlock Text="Abort cancel" /></DockPanel></Button>
+                    <Button Click="Button_OnClick"><DockPanel><material:MaterialIcon Kind="Check" /><TextBlock Text="Apply" /></DockPanel></Button>
+                </UniformGrid>
                 <!-- <TextBlock -->
                 <!--     Padding="16,20,16,14" -->
                 <!--     VerticalAlignment="Center" -->
@@ -177,124 +198,292 @@
         </ScrollViewer>
 
         <Grid>
-            <ListBox x:Name="listBox" ItemsSource="{Binding Items}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     BorderThickness="0 0 1 0">
-                <ListBox.Styles>
-                    <Style Selector="ListBoxItem">
-                        <Setter Property="ContextMenu">
-                            <ContextMenu>
-                                <MenuItem Header="Duplicate" Click="Duplicate_OnClick">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <!-- <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick"> -->
-                                <!--     <MenuItem.Icon> -->
-                                <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" /> -->
-                                <!--     </MenuItem.Icon> -->
-                                <!-- </MenuItem> -->
-                                <!-- <MenuItem Header="Remove" Click="RemoveItem_OnClick"> -->
-                                <!--     <MenuItem.Icon> -->
-                                <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="Times" /> -->
-                                <!--     </MenuItem.Icon> -->
-                                <!-- </MenuItem> -->
-                            </ContextMenu>
-                        </Setter>
-                    </Style>
-                </ListBox.Styles>
-                <ListBox.ItemTemplate>
-                    <common:MyTemplateSelector>
-                        <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
-                            <DockPanel>
-                                <Viewbox Height="48">
-                                    <Grid Height="720" Width="1280" Background="Black">
-                                        <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
-                                               RenderOptions.BitmapInterpolationMode="HighQuality"
-                                               VerticalAlignment="Stretch"
-                                               HorizontalAlignment="Stretch" />
-                                    </Grid>
-                                </Viewbox>
-                                <TextBlock
-                                    Margin="8"
-                                    TextWrapping="WrapWithOverflow"
-                                    Text="{Binding SourceMediaFilePath}" />
-                            </DockPanel>
-                        </DataTemplate>
-                        <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
-                            <DockPanel>
-                                <Viewbox Height="48">
-                                    <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
-                                </Viewbox>
-                                <TextBlock
-                                    Margin="8"
-                                    TextWrapping="WrapWithOverflow"
-                                    Text="CustomSlide" />
-                            </DockPanel>
-                        </DataTemplate>
-                    </common:MyTemplateSelector>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <ScrollViewer>
+                <StackPanel>
+                    <ItemsControl x:Name="itemsControl" ItemsSource="{Binding ItemsWithAddButton}"
+                                  BorderThickness="0 0 1 0"
+                                  DragDrop.AllowDrop="True">
+                        <ItemsControl.Styles>
+                            <Style Selector="ContentPresenter">
+                                <Setter Property="ContextMenu">
+                                    <ContextMenu>
+                                        <MenuItem Header="Duplicate" Click="Duplicate_OnClick">
+                                            <MenuItem.Icon>
+                                                <material:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </Setter>
+                            </Style>
+                        </ItemsControl.Styles>
 
-            <Button
-                Name="AddItemButton"
-                Margin="6,0,8,8"
-                Padding="12"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                HorizontalContentAlignment="Left"
-                Background="#4d347f"
-                BorderThickness="0"
-                ClickMode="Press"
-                CornerRadius="6"
-                Cursor="Hand"
-                DockPanel.Dock="Bottom"
-                FontSize="14"
-                Foreground="White"
-                ZIndex="999">
-                <Button.Styles>
-                    <Style Selector="ScrollViewer">
-                        <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
-                    </Style>
-                    <Style Selector="MenuItem">
-                        <Setter Property="FontSize" Value="14" />
-                        <Setter Property="Padding" Value="8 6" />
-                    </Style>
-                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#5C3AB6" />
-                    </Style>
-                    <Style Selector="Button:pressed /template/ ContentPresenter">
-                        <Setter Property="BorderBrush" Value="#2c628b" />
-                        <Setter Property="Background" Value="#5F5C2ED6" />
-                    </Style>
-                </Button.Styles>
-                <Button.Effect>
-                    <DropShadowEffect
-                        BlurRadius="6"
-                        OffsetX="0"
-                        OffsetY="1"
-                        Color="#55000000" />
-                </Button.Effect>
+                        <!-- Default List View Panel -->
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel x:Name="ListPanel" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                <DockPanel>
-                    <material:MaterialIcon
-                        Width="20"
-                        Height="20"
-                        DockPanel.Dock="Left"
-                        Kind="Plus" />
-                    <TextBlock
-                        Margin="8,0,8,0"
-                        IsVisible="True"
-                        Text="Add Item" />
-                </DockPanel>
+                        <ItemsControl.Resources>
+                            <!-- List View Templates -->
+                            <common:MyTemplateSelector x:Key="ListTemplateSelector">
+                                <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
+                                    <Border BorderBrush="#E0E0E0" BorderThickness="0 0 0 1" Padding="8"
+                                            DragDrop.AllowDrop="True" PointerPressed="Item_PointerPressed">
+                                        <DockPanel>
+                                            <Viewbox Height="48" Width="64">
+                                                <Grid Height="720" Width="1280" Background="Black">
+                                                    <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
+                                                           RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                           VerticalAlignment="Stretch"
+                                                           HorizontalAlignment="Stretch" />
+                                                </Grid>
+                                            </Viewbox>
+                                            <TextBlock
+                                                Margin="8"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="WrapWithOverflow"
+                                                Text="{Binding SourceMediaFilePath}" />
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                                <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
+                                    <Border BorderBrush="#E0E0E0" BorderThickness="0 0 0 1" Padding="8"
+                                            DragDrop.AllowDrop="True" PointerPressed="Item_PointerPressed">
+                                        <DockPanel>
+                                            <Viewbox Height="48" Width="64">
+                                                <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
+                                            </Viewbox>
+                                            <TextBlock
+                                                Margin="8"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="WrapWithOverflow"
+                                                Text="CustomSlide" />
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                                <DataTemplate x:Key="AddItemPlaceholder" x:DataType="items:AddItemPlaceholder">
+                                    <Button Margin="8" 
+                                            Padding="16"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Background="Transparent"
+                                            BorderBrush="#CCCCCC"
+                                            BorderThickness="2"
+                                            CornerRadius="4"
+                                            Cursor="Hand">
+                                        <Button.Styles>
+                                            <Style Selector="Button:pointerover">
+                                                <Setter Property="Background" Value="#F5F5F5" />
+                                            </Style>
+                                        </Button.Styles>
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                                <MenuItem Click="AddItemButton_OnClick" Header="Add Media File" />
+                                                <MenuItem Click="AddItemCustomButton_OnClick" Header="Add Custom Slide" />
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                        <DockPanel>
+                                            <material:MaterialIcon
+                                                Width="24"
+                                                Height="24"
+                                                DockPanel.Dock="Left"
+                                                Foreground="#666666"
+                                                Kind="Plus" />
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="#666666"
+                                                Text="Add new slide" />
+                                        </DockPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </common:MyTemplateSelector>
 
-                <Button.Flyout>
-                    <MenuFlyout Placement="BottomEdgeAlignedLeft">
-                        <MenuItem Click="AddItemButton_OnClick" Header="Add Media File" />
-                        <MenuItem Click="AddItemCustomButton_OnClick" Header="Add Custom Slide" />
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
+                            <!-- Grid View Templates -->
+                            <common:MyTemplateSelector x:Key="GridTemplateSelector">
+                                <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
+                                    <Border BorderBrush="#E0E0E0" 
+                                            BorderThickness="1" 
+                                            Padding="8" 
+                                            Margin="4"
+                                            CornerRadius="4"
+                                            Background="White"
+                                            Width="160"
+                                            Height="140"
+                                            DragDrop.AllowDrop="True" PointerPressed="Item_PointerPressed">
+                                        <DockPanel>
+                                            <TextBlock
+                                                Margin="0,8,0,0"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap"
+                                                FontSize="10"
+                                                MaxHeight="32"
+                                                Text="{Binding SourceMediaFilePath}"
+                                                DockPanel.Dock="Bottom"
+                                            />
+                                            <Viewbox Height="90">
+                                                <Grid Height="720" Width="1280" Background="Black">
+                                                    <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
+                                                           RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                           VerticalAlignment="Stretch"
+                                                           HorizontalAlignment="Stretch" />
+                                                </Grid>
+                                            </Viewbox>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                                <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
+                                    <Border BorderBrush="#E0E0E0" 
+                                            BorderThickness="1" 
+                                            Padding="8" 
+                                            Margin="4"
+                                            CornerRadius="4"
+                                            Background="White"
+                                            Width="160"
+                                            Height="140"
+                                            DragDrop.AllowDrop="True" PointerPressed="Item_PointerPressed">
+                                        <StackPanel>
+                                            <Viewbox Height="90">
+                                                <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
+                                            </Viewbox>
+                                            <TextBlock
+                                                Margin="0,8,0,0"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap"
+                                                FontSize="10"
+                                                MaxHeight="32"
+                                                Text="Custom Slide" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                                <DataTemplate x:Key="AddItemPlaceholder" x:DataType="items:AddItemPlaceholder">
+                                    <Border BorderBrush="#CCCCCC" 
+                                            BorderThickness="2" 
+                                            Padding="8" 
+                                            Margin="4"
+                                            CornerRadius="4"
+                                            Background="Transparent"
+                                            Width="160"
+                                            Height="120"
+                                            Cursor="Hand">
+                                        <Button Background="Transparent"
+                                                BorderThickness="0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalContentAlignment="Center"
+                                                VerticalContentAlignment="Center">
+                                            <Button.Styles>
+                                                <Style Selector="Button:pointerover">
+                                                    <Setter Property="Background" Value="#F5F5F5" />
+                                                </Style>
+                                            </Button.Styles>
+                                            <Button.Flyout>
+                                                <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                                    <MenuItem Click="AddItemButton_OnClick" Header="Add Media File" />
+                                                    <MenuItem Click="AddItemCustomButton_OnClick" Header="Add Custom Slide" />
+                                                </MenuFlyout>
+                                            </Button.Flyout>
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <material:MaterialIcon
+                                                    Width="32"
+                                                    Height="32"
+                                                    HorizontalAlignment="Center"
+                                                    Foreground="#666666"
+                                                    Kind="Plus" />
+                                                <TextBlock
+                                                    Margin="0,8,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    TextAlignment="Center"
+                                                    Foreground="#666666"
+                                                    FontSize="11"
+                                                    Text="Add new slide" />
+                                            </StackPanel>
+                                        </Button>
+                                    </Border>
+                                </DataTemplate>
+                            </common:MyTemplateSelector>
+                        </ItemsControl.Resources>
+
+                        <ItemsControl.ItemTemplate>
+                            <common:MyTemplateSelector>
+                                <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
+                                    <Border BorderBrush="#E0E0E0" BorderThickness="0 0 0 1" Padding="8">
+                                        <DockPanel>
+                                            <Viewbox Height="48" Width="64">
+                                                <Grid Height="720" Width="1280" Background="Black">
+                                                    <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
+                                                           RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                           VerticalAlignment="Stretch"
+                                                           HorizontalAlignment="Stretch" />
+                                                </Grid>
+                                            </Viewbox>
+                                            <TextBlock
+                                                Margin="8"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="WrapWithOverflow"
+                                                Text="{Binding SourceMediaFilePath}" />
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                                <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
+                                    <Border BorderBrush="#E0E0E0" BorderThickness="0 0 0 1" Padding="8">
+                                        <DockPanel>
+                                            <Viewbox Height="48" Width="64">
+                                                <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
+                                            </Viewbox>
+                                            <TextBlock
+                                                Margin="8"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="WrapWithOverflow"
+                                                Text="CustomSlide" />
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                                <DataTemplate x:Key="AddItemPlaceholder" x:DataType="items:AddItemPlaceholder">
+                                    <Button Margin="8" 
+                                            Padding="16"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Background="Transparent"
+                                            BorderBrush="#CCCCCC"
+                                            BorderThickness="2"
+                                            CornerRadius="4"
+                                            Cursor="Hand">
+                                        <Button.Styles>
+                                            <Style Selector="Button:pointerover">
+                                                <Setter Property="Background" Value="#F5F5F5" />
+                                            </Style>
+                                        </Button.Styles>
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                                <MenuItem Click="AddItemButton_OnClick" Header="Add Media File" />
+                                                <MenuItem Click="AddItemCustomButton_OnClick" Header="Add Custom Slide" />
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                        <DockPanel>
+                                            <material:MaterialIcon
+                                                Width="24"
+                                                Height="24"
+                                                DockPanel.Dock="Left"
+                                                Foreground="#666666"
+                                                Kind="Plus" />
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="#666666"
+                                                Text="Add new slide" />
+                                        </DockPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </common:MyTemplateSelector>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
+                </StackPanel>
+            </ScrollViewer>
+
         </Grid>
 
         <!--      <DataGrid -->

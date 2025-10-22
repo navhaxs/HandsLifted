@@ -30,7 +30,6 @@
     <PackageVersion Include="ColorHelper" Version="1.8.1" />
     <PackageVersion Include="ConcurrentPriorityQueue" Version="2.1.0" />
     <PackageVersion Include="Config.Net" Version="5.2.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="DebounceThrottle" Version="2.0.0" />
     <PackageVersion Include="DynamicData" Version="7.9.1" />
     <PackageVersion Include="DynamicData.ReactiveUI" Version="6.11.0.2613" />

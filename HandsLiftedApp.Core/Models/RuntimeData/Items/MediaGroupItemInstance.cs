@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using Avalonia.Controls;
@@ -24,6 +25,11 @@ using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
+    public class AddItemPlaceholder
+    {
+        // Placeholder class to represent the "Add new slide" button in the UI
+    }
+
     public class MediaGroupItemInstance : MediaGroupItem, IItemInstance, IItemDirtyBit {
         public PlaylistInstance ParentPlaylist { get; set; }
         
@@ -51,6 +57,23 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
+            // Set up reactive ItemsWithAddButton property that observes collection changes
+            _itemsWithAddButton = this.WhenAnyValue(x => x.Items)
+                .Select(items => 
+                {
+                    if (items == null)
+                        return Observable.Return(new[] { new AddItemPlaceholder() }.AsEnumerable());
+                    
+                    return Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
+                        h => items.CollectionChanged += h,
+                        h => items.CollectionChanged -= h)
+                        .Select(_ => items.Cast<object>().Concat(new[] { new AddItemPlaceholder() }))
+                        .StartWith(items.Cast<object>().Concat(new[] { new AddItemPlaceholder() }));
+                })
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.ItemsWithAddButton);
+
             this.WhenAnyValue(
                 i => i.Items, // TODO not working
                 i => i.Title,
@@ -64,6 +87,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             // Items.CollectionItemChanged += (sender, args) => IsDirty = true;
             // Items.CollectionChanged += (sender, args) => IsDirty = true;
         }
+
+        private ObservableAsPropertyHelper<IEnumerable<object>> _itemsWithAddButton;
+
+        public IEnumerable<object> ItemsWithAddButton => _itemsWithAddButton.Value;
 
         public void GenerateSlides()
         {
