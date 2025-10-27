@@ -97,6 +97,14 @@ namespace HandsLiftedApp.Controls
                 songEditorWindow.Show();
                 return;
             }
+            
+            if (sender is Control { DataContext: GoogleSlidesGroupItemInstance googleSlidesGroupItemInstance })
+            {
+                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
+                    { DataContext = googleSlidesGroupItemInstance };
+                songEditorWindow.Show();
+                return;
+            }
         }
 
         private void MoveUpItem_OnClick(object? sender, RoutedEventArgs e)

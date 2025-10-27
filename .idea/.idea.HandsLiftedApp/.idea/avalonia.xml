@@ -73,6 +73,7 @@
         <entry key="HandsLiftedApp.Core/Views/Editors/FreeText/FreeTextSlideEditorControl.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GenericContentEditorView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GenericContentEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/GoogleSlides/GoogleSlidesItemEdit.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GroupItemsEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GroupItemsEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/ItemContentView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

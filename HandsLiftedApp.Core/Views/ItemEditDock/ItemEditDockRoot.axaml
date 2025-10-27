@@ -85,8 +85,6 @@
                                 <Flyout
                                     Placement="Bottom">
                                     <StackPanel Margin="6" MinWidth="200">
-                                        <TextBlock>Google Slides Presentation ID:</TextBlock>
-                                        <TextBox Text="{Binding SourceGooglePresentationId}" />
                                         <TextBlock TextAlignment="Center">
                                             Last Sync:
                                             <Run Text="{Binding LastSyncDateTime}" />
