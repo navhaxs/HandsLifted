@@ -25,8 +25,7 @@ namespace HandsLiftedApp.Core
             ExpressionTemplate OUTPUT_TEMPLATE = new ExpressionTemplate(
                 "[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
             Log.Logger = new LoggerConfiguration()
-                //.MinimumLevel.Debug()
-                .MinimumLevel.Verbose()
+                .MinimumLevel.Debug()
                 .Enrich.FromLogContext()
                 .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
                 .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
@@ -66,12 +65,12 @@ namespace HandsLiftedApp.Core
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.Fatal("CurrentDomain_UnhandledExceptionEventArgs. Please report this error. {ex}", e.ExceptionObject);
+            Log.Fatal("[HandsLiftedUnhandledException] {ex}", e.ExceptionObject);
         }
 
         private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
-            Log.Fatal( e.Exception, "TaskScheduler_UnobservedTaskException. Please report this error.");
+            Log.Error( e.Exception, "[HandsLiftedUnobservedTaskException]. Please report this error.");
         }
     }
 }
