@@ -202,7 +202,18 @@
                         <TextBlock Text="Google Slides API Key" />
                         
                         <Grid Margin="0 4 0 0" />
-                        <TextBox />
+                        <TextBlock Text="Client Id" />
+                        <TextBox
+                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.GoogleClientId}"
+                        />
+                        
+                        <Grid Margin="0 4 0 0" />
+                        <TextBlock Text="Client Secret" />
+                        <TextBox
+                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.GoogleClientSecret}"
+                            />
+                        
+                        <Grid Margin="0 4 0 0" />
                         
                         <Button HorizontalAlignment="Left" Padding="16 6"
                                 Margin="0 6 0 0">

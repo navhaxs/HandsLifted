@@ -26,7 +26,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 
         private static readonly object syncSlidesLock = new object();
 
-        public static ImportStats RunGoogleSlidesImportTask(IProgress<ImportStats>? progress, GoogleSlidesPresentationImporter task)
+        public static ImportStats RunGoogleSlidesImportTask(IProgress<ImportStats>? progress, GoogleSlidesPresentationImporter task, string clientId, string clientSecret)
         {
             Log.Information($"Running Google Slides import for {task}");
             ImportStats stats = new ImportStats() { Task = task };
@@ -34,6 +34,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
             {
                 try
                 {
+                                       
                     UserCredential credential;
                     // Load client secrets.
                     using (var stream =
@@ -43,7 +44,11 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                          automatically when the authorization flow completes for the first time. */
                         string credPath = "token.json";
                         credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                            GoogleClientSecrets.FromStream(stream).Secrets,
+                            new ClientSecrets
+                            {
+                                ClientId = clientId,
+                                ClientSecret = clientSecret
+                            },
                             Scopes,
                             "user",
                             CancellationToken.None,

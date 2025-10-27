@@ -4,7 +4,6 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Runtime.Serialization;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using HandsLiftedApp.Data.SlideTheme;
@@ -165,6 +164,24 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             get => _ndiLyricsOutputName;
             set => this.RaiseAndSetIfChanged(ref _ndiLyricsOutputName, value);
+        }
+
+        private string _googleClientId;
+
+        [DataMember]
+        public String GoogleClientId
+        {
+            get => _googleClientId;
+            set => this.RaiseAndSetIfChanged(ref _googleClientId, value);
+        }
+        
+        private string _googleClientSecret;
+
+        [DataMember]
+        public String GoogleClientSecret
+        {
+            get => _googleClientSecret;
+            set => this.RaiseAndSetIfChanged(ref _googleClientSecret, value);
         }
         
         private String _logoGraphicFile = @"avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png";

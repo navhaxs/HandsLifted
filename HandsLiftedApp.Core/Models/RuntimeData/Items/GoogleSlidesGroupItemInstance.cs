@@ -30,7 +30,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             get => _IsBusy;
             set => this.RaiseAndSetIfChanged(ref _IsBusy, value);
         }
-        
+
         private double _ImportProgress = -1;
 
         public double ImportProgress
@@ -138,18 +138,22 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Directory.CreateDirectory(targetDirectory);
 
                             Log.Debug($"Importing Google Slides Presentation: {SourceGooglePresentationId}");
-                            
-                            var importStats = Main.RunGoogleSlidesImportTask(null, new Main.GoogleSlidesPresentationImporter()
-                            {
-                                GoogleSlidesPresentationId = SourceGooglePresentationId,
-                                OutputDirectory = targetDirectory
-                            });
-                            
+
+                            var importStats = Main.RunGoogleSlidesImportTask(null,
+                                new Main.GoogleSlidesPresentationImporter()
+                                {
+                                    GoogleSlidesPresentationId = SourceGooglePresentationId,
+                                    OutputDirectory = targetDirectory,
+                                },
+                                Globals.Instance.AppPreferences.GoogleClientId,
+                                Globals.Instance.AppPreferences.GoogleClientSecret
+                            );
+
                             this.Title = importStats.Title;
 
                             string exportDirectory = Path.Join(targetDirectory, "_export");
                             Directory.CreateDirectory(exportDirectory);
-                            
+
                             Log.Debug($"Importing PDF file: {importStats.OutputFullFilePath}");
                             ConvertPDF.Convert(importStats.OutputFullFilePath,
                                 exportDirectory);
@@ -175,6 +179,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         {
                             Log.Error(e, "Error importing Google Slides presentation file");
                         }
+
                         IsBusy = false;
                     }
                 }
