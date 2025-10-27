@@ -6,7 +6,7 @@ namespace Avalonia.Controls.LibMpv
     {
         public MainWindow()
         {
-            DataContext = new MpvMvvmContext(); // new MainWindowModel();
+            DataContext = new MainWindowModel();
             InitializeComponent();
         }
     }

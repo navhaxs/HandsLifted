@@ -30,13 +30,13 @@ public class MpvMvvmContext : INotifyPropertyChanged
 
     public MpvMvvmContext()
     {
-        // Register propertyes for observation
-        foreach (var observableProperty in observableProperties)
-            Context.ObserveProperty(observableProperty.LibMpvName, observableProperty.LibMpvFormat, 0);
-
-        // Register router LibMpv => MVVM
-        Context.PropertyChanged += MpvContextPropertyChanged;
-
+        // // Register propertyes for observation
+        // foreach (var observableProperty in observableProperties)
+        //     Context.ObserveProperty(observableProperty.LibMpvName, observableProperty.LibMpvFormat, 0);
+        //
+        // // Register router LibMpv => MVVM
+        // Context.PropertyChanged += MpvContextPropertyChanged;
+        //
     }
 
     // Route property changed events to MVVM context

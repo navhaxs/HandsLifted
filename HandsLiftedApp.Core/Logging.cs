@@ -42,6 +42,7 @@ namespace HandsLiftedApp.Core
             var isAssemblyDebugBuild = Assembly.GetExecutingAssembly().GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled);
             Log.Information("Debug: {IsAssemblyDebugBuild}", isAssemblyDebugBuild);
             Log.Information("Startup at {Now}", DateTime.Now);
+            Log.Information("Current Directory [{CurrentDirectory}]", Environment.CurrentDirectory);
 
             Log.Information("Runtime Identifier: {RID}", RuntimeInformation.RuntimeIdentifier);
             Log.Information("Avalonia {Version}", Assembly.GetAssembly(typeof(Avalonia.Application))?.GetName().Version);

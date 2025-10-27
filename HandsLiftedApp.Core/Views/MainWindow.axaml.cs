@@ -82,6 +82,9 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         MessageBus.Current.Listen<MainWindowModalMessage>()
             .Subscribe(x =>
             {
+                if (x.Window.IsVisible)
+                    return;
+                
                 if (x.ShowAsDialog)
                     Shade.IsVisible = true;
 

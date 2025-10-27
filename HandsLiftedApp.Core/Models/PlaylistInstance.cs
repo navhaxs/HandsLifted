@@ -452,7 +452,7 @@ namespace HandsLiftedApp.Core.Models
             
             var nextItemIndex = slideReference.ItemIndex ?? SelectedItemIndex;// TODO SelectedItemIndex is -1
 
-            if (nextItemIndex >= Items.Count)
+            if (nextItemIndex < 0 || nextItemIndex >= Items.Count)
             {
                 Log.Error("NavigateToReference {SlideReference} out of bounds", slideReference);
                 return;

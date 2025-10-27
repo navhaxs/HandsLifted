@@ -6,22 +6,22 @@
     xmlns:local="clr-namespace:Avalonia.Controls.LibMpv"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:libMpv="clr-namespace:Avalonia.Controls.LibMpv;assembly=Avalonia.Controls.LibMpv"
-    xmlns:mvvm="clr-namespace:LibMpv.Context.MVVM;assembly=LibMpv.Context.MVVM"
     Title="Avalonia.Controls.LibMpv"
-    x:DataType="mvvm:MpvMvvmContext"
+    x:DataType="local:MainWindowModel"
+    x:CompileBindings="True"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid ColumnDefinitions="*" RowDefinitions="*,Auto">
         <TabControl SelectedIndex="{Binding SelectedContext, Mode=TwoWay}">
             <TabItem Header="Software">
-                <libMpv:SoftwareVideoView MpvContext="{Binding Context}" />
+                <libMpv:SoftwareVideoView MpvContext="{Binding SelectedContext}" />
             </TabItem>
             <TabItem Header="OpenGL">
-                <libMpv:OpenGlVideoView MpvContext="{Binding Context}" />
+                <libMpv:OpenGlVideoView MpvContext="{Binding SelectedContext}" />
             </TabItem>
             <TabItem Header="Native">
-                <libMpv:NativeVideoView MpvContext="{Binding Context}" />
+                <libMpv:NativeVideoView MpvContext="{Binding SelectedContext}" />
             </TabItem>
         </TabControl>
         <Grid
@@ -41,8 +41,8 @@
                 Margin="5"
                 Orientation="Horizontal"
                 Spacing="5">
-                <TextBlock Text="{Binding TimePos}" />
-                <TextBlock Text="{Binding Duration}" />
+                <!-- <TextBlock Text="{Binding ActiveContext.TimePos}" /> -->
+                <!-- <TextBlock Text="{Binding ActiveContext.Duration}" /> -->
                 <Button
                     x:Name="LoadButton"
                     HorizontalAlignment="Right"

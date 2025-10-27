@@ -11,7 +11,7 @@ namespace Avalonia.Controls.LibMpv
         [STAThread]
         public static void Main(string[] args)
         {
-            FindLibMpv();
+            // FindLibMpv();
 
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }

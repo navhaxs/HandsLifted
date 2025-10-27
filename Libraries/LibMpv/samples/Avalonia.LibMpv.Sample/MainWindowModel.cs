@@ -23,6 +23,18 @@ public class MainWindowModel : ReactiveObject
         }
     }
 
+    public MpvContext? ActiveContext
+    {
+        get
+        {
+            if (SelectedContext >= 0 && SelectedContext < contexts.Length)
+            {
+                return contexts[SelectedContext];
+            }
+            return null;
+        }
+    }
+
     string _mediaUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     public string MediaUrl
     {
