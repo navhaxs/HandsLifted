@@ -26,7 +26,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 
         private static readonly object syncSlidesLock = new object();
 
-        public static ImportStats RunGoogleSlidesImportTask(IProgress<ImportStats> progress, ImportTask task)
+        public static ImportStats RunGoogleSlidesImportTask(IProgress<ImportStats>? progress, GoogleSlidesPresentationImporter task)
         {
             Log.Information($"Running Google Slides import for {task}");
             ImportStats stats = new ImportStats() { Task = task };
@@ -51,11 +51,9 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                         Console.WriteLine("Credential file saved to: " + credPath);
                     }
 
-
                     if (credential.Token.IsExpired(SystemClock.Default))
                     {
                         var m = credential.GetAccessTokenForRequestAsync().Result;
-
                         //If the token is expired recreate the token
                         TokenResponse token = credential.Flow.RefreshTokenAsync(credential.UserId, credential.Token.RefreshToken, CancellationToken.None).Result;
                         credential.Token = token;
@@ -103,7 +101,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                     for (var i = 0; i < slides.Count; i++)
                     {
                         var slide = slides[i];
-                        Debug.Print($"Slide {i}: ObjectId={slide.ObjectId}");
+                        Debug.Print($"Slide {i}: ObjectId={slide.ObjectId}"); // TODO: store this slide.ObjectId so that subsequent 'syncs' can determine and maintain current active/relative slide selection
                         Console.WriteLine("- Slide #{0} contains {1} elements.", i + 1, slide.PageElements?.Count);
 
                         //{
@@ -210,7 +208,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
             }
         }
 
-        public class ImportTask
+        public class GoogleSlidesPresentationImporter
         {
             public string GoogleSlidesPresentationId { get; set; }
             public string OutputDirectory { get; set; }
@@ -227,7 +225,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
             public String OutputFileName;
             public String OutputFullFilePath;
 
-            public ImportTask Task { get; set; }
+            public GoogleSlidesPresentationImporter Task { get; set; }
             public double JobPercentage { get; set; }
 
             public JobStatusEnum JobStatus { get; set; }

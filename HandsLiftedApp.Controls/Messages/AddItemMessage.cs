@@ -23,5 +23,8 @@ namespace HandsLiftedApp.Controls.Messages
             BibleReadingSlideGroup,
             Comment
         }
+        
+        // TODO make this an interface?
+        public string? CreateInfo { get; init; } = null;
     }
 }

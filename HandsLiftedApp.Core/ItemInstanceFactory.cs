@@ -106,6 +106,40 @@ namespace HandsLiftedApp.Core
                 g.GenerateSlides();
                 return g;
             }
+            else if (deserializedItem is GoogleSlidesGroupItem googleSlidesGroupItem)
+            {
+                var g = new GoogleSlidesGroupItemInstance(playlist)
+                {
+                    UUID = googleSlidesGroupItem.UUID,
+                    Title = googleSlidesGroupItem.Title,
+                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(googleSlidesGroupItem.Items
+                        .Select(item =>
+                        {
+                            if (item is MediaGroupItem.MediaItem mediaItem)
+                            {
+                                // TODO deep copy
+                                var newMediaItem = new MediaGroupItem.MediaItem()
+                                    { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                                if (newMediaItem.SourceMediaFilePath != null)
+                                {
+                                    newMediaItem.SourceMediaFilePath =
+                                        RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                            mediaItem.SourceMediaFilePath);
+                                }
+
+                                return newMediaItem;
+                            }
+
+                            return item;
+                        }).ToList()),
+                    AutoAdvanceTimer = googleSlidesGroupItem.AutoAdvanceTimer,
+                    SourceGooglePresentationId = googleSlidesGroupItem.SourceGooglePresentationId,
+                    SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                        googleSlidesGroupItem.SourceSlidesExportDirectory)
+                };
+                g.GenerateSlides();
+                return g;
+            }
             else if (deserializedItem is MediaGroupItem mediaGroupItem)
             {
                 var g = new MediaGroupItemInstance(playlist)

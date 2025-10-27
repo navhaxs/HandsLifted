@@ -91,11 +91,13 @@
         <entry key="HandsLiftedApp.Core/Views/ExitConfirmationWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemContentView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemEditDock.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/ItemEditDock/ItemEditDockRoot.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemEditDock/ItemTimer.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemEditDock/SyncItem.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemIcon.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemInfo.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/ItemSlidesView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Items/GoogleSlidesGroupItemStatusView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Items/PDFSlidesGroupItemStatusView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Items/PowerPointPresentationItemStatusView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Items/PowerPointPresentationItemView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
@@ -125,6 +127,7 @@
         <entry key="HandsLiftedApp.Core/Views/ThisIsATestBuildWarningWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/UnsavedChangesConfirmationWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/WelcomeWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.GoogleSlidesImporter/ImportGoogleSlidesWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Importer.OnlineSongLyrics/BrowserWindow.axaml" value="Demos/AvaloniaWebDemo/AvaloniaWebDemo.csproj" />
         <entry key="HandsLiftedApp.Importer.PowerPoint.Bridge/App.axaml" value="HandsLiftedApp.Importer.PowerPoint.Bridge/HandsLiftedApp.Importer.PowerPoint.Bridge.csproj" />
         <entry key="HandsLiftedApp.Importer.PowerPoint.Bridge/MainWindow.axaml" value="HandsLiftedApp.Importer.PowerPoint.Bridge/HandsLiftedApp.Importer.PowerPoint.Bridge.csproj" />
@@ -178,6 +181,7 @@
         <entry key="HandsLiftedApp/Views/StageDisplayLayout/SongLayout.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="HandsLiftedApp/Views/StageDisplayWindow.axaml" value="HandsLiftedApp/HandsLiftedApp.csproj" />
         <entry key="Libraries/AvaloniaNDI/AvaloniaNDI.Sample/AnimationPage.axaml" value="Libraries/AvaloniaNDI/AvaloniaNDI.Sample/AvaloniaNDI.Sample.csproj" />
+        <entry key="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/App.axaml" value="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/Avalonia.Controls.LibMpv.Sample.csproj" />
         <entry key="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/MainWindow.axaml" value="Libraries/LibMpv/samples/Avalonia.LibMpv.Sample/Avalonia.Controls.LibMpv.Sample.csproj" />
         <entry key="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/MainWindow.xaml" value="Libraries/vlcsharpavalonia/samples/LibVLCSharp.Avalonia.Sample/LibVLCSharp.Avalonia.Sample.csproj" />
         <entry key="ScratchApp/MainWindow.axaml" value="ScratchApp/ScratchApp.csproj" />

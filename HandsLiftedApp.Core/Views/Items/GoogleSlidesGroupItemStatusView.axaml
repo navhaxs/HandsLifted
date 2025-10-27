@@ -1,0 +1,19 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="150"
+             x:DataType="items:GoogleSlidesGroupItemInstance"
+             IsVisible="{Binding IsBusy}"
+             x:Class="HandsLiftedApp.Core.Views.Items.GoogleSlidesGroupItemStatusView">
+    <StackPanel>
+        <Border MinHeight="2">
+            <StackPanel>
+                <ProgressBar IsIndeterminate="False" MinHeight="2" Value="{Binding  ImportProgress}" />
+                <TextBlock Margin="10 6 10 0">Importing <Run Text="{Binding SourceGooglePresentationId}" />...</TextBlock>
+            </StackPanel>
+        </Border>
+        <!-- <Button Click="Button_OnClick" IsEnabled="{Binding !IsBusy}">Sync</Button> -->
+    </StackPanel>
+</UserControl>

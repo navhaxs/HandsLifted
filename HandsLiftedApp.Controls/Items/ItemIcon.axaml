@@ -39,7 +39,7 @@
 				<DataTemplate x:Key="LogoItemInstance">
 					<material:MaterialIcon Kind="Star" />
 				</DataTemplate>
-				<DataTemplate x:Key="GoogleSlidesGroupItem">
+				<DataTemplate x:Key="GoogleSlidesGroupItemInstance">
 					<material:MaterialIcon Kind="Slideshow" />
 				</DataTemplate>
 				<DataTemplate x:Key="PowerPointPresentationItemInstance">

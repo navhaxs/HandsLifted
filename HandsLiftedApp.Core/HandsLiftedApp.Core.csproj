@@ -61,6 +61,7 @@
     <ItemGroup>
         <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj"/>
         <ProjectReference Include="..\HandsLiftedApp.Data\HandsLiftedApp.Data.csproj"/>
+        <ProjectReference Include="..\HandsLiftedApp.GoogleSlidesImporter\HandsLiftedApp.Importer.GoogleSlides.csproj" />
         <ProjectReference Include="..\HandsLiftedApp.Importer.OnlineSongLyrics\HandsLiftedApp.Importer.OnlineSongLyrics.csproj" />
         <ProjectReference Include="..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
         <ProjectReference Include="..\HandsLiftedApp.Importer.PowerPointLib\HandsLiftedApp.Importer.PowerPointLib.csproj" />
@@ -248,6 +249,10 @@
           <SubType>Code</SubType>
         </Compile>
         <Compile Remove="Render\SongThemes\DesignerSlideTemplate.axaml.cs" />
+        <Compile Update="Views\Items\GoogleSlidesGroupItemStatusView.axaml.cs">
+          <DependentUpon>GoogleSlidesGroupItemStatusView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 

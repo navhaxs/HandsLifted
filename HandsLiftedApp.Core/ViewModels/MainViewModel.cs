@@ -189,6 +189,12 @@ public class MainViewModel : ViewModelBase
                 Item? itemToInsert = null;
                 switch (addItemMessage.Type)
                 {
+                    case AddItemMessage.AddItemType.GoogleSlides:
+                        itemToInsert = new GoogleSlidesGroupItemInstance(Playlist)
+                        {
+                            SourceGooglePresentationId = addItemMessage.CreateInfo
+                        };
+                        break;
                     case AddItemMessage.AddItemType.Presentation:
                         var filePaths = await ShowOpenFileDialog.Handle(new FilePickerOpenOptions()
                         {

@@ -79,7 +79,7 @@ namespace HandsLiftedApp.Importer.PDF
                     using (SKBitmap skBitmap = new SKBitmap())
                     {
                         // install the pixels with the color type of the pixel data
-                        var info = new SKImageInfo(scaledPageWidth, scaledPageHeight, SKImageInfo.PlatformColorType,
+                        var info = new SKImageInfo(scaledPageWidth, scaledPageHeight, OperatingSystem.IsMacOS() ? SKColorType.Bgra8888 : SKImageInfo.PlatformColorType,
                             SKAlphaType.Unpremul);
             
                         var scan0 = fpdfview.FPDFBitmapGetBuffer(bitmap);

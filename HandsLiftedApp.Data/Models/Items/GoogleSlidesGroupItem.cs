@@ -6,7 +6,7 @@ namespace HandsLiftedApp.Data.Models.Items
 {
     [XmlRoot("GoogleSlides", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
-    public class GoogleSlidesGroupItem : SlidesGroupItem
+    public class GoogleSlidesGroupItem : MediaGroupItem
     {
         public GoogleSlidesGroupItem()
         {

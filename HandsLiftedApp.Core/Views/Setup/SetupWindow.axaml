@@ -196,6 +196,21 @@
                     </StackPanel>
                 </TabItem>
 
+                <TabItem Header="Integrations">
+                    <StackPanel Margin="12">
+
+                        <TextBlock Text="Google Slides API Key" />
+                        
+                        <Grid Margin="0 4 0 0" />
+                        <TextBox />
+                        
+                        <Button HorizontalAlignment="Left" Padding="16 6"
+                                Margin="0 6 0 0">
+                            Sign in with Google
+                        </Button>
+                    </StackPanel>
+                </TabItem>
+
             </TabControl>
         </DockPanel>
 

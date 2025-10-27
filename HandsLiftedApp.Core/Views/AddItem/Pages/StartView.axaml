@@ -162,7 +162,6 @@
 
                 </ScrollViewer>
 
-
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -172,7 +171,6 @@
                     </DockPanel>
                 </TabItem.Header>
 
-
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -181,7 +179,17 @@
                         <avalonia:MaterialIcon Kind="Import" Height="32" Width="32" />
                     </DockPanel>
                 </TabItem.Header>
-
+                <ScrollViewer Background="{DynamicResource ActiveContentBackgroundBrush}">
+                    <StackPanel>
+                        <Button HorizontalContentAlignment="Left" Click="ButtonImportGoogleSlides_OnClick">
+                            <DockPanel>
+                                <avalonia:MaterialIcon Kind="Slideshow" DockPanel.Dock="Left" Width="34" Height="34" Margin="8" />
+                                <TextBlock Text="Import Google Slides" VerticalAlignment="Center" FontSize="14" />
+                            </DockPanel>
+                        </Button>
+                    </StackPanel>
+                    
+                </ScrollViewer>
             </TabItem>
         </TabControl>
 

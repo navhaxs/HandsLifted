@@ -30,6 +30,7 @@ namespace HandsLiftedApp.Behaviours
         private Point _previous;
         private bool isDragging = false;
         private DateTime? _whenPointerPressed;
+        private double DEADZONE = 8;
 
         /// <summary>
         /// Gets or sets the target control to be moved around instead of <see cref="IBehavior.AssociatedObject"/>. This is a avalonia property.
@@ -185,7 +186,7 @@ namespace HandsLiftedApp.Behaviours
             {
                 Point pos = args.GetPosition(_parent);
 
-                if (!isDragging && Math.Abs(pos.Y - _previous.Y) > 6) // deadzone
+                if (!isDragging && Math.Abs(pos.Y - _previous.Y) > DEADZONE)
                 {
                     isDragging = true;
                 }

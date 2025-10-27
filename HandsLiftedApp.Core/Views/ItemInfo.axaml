@@ -21,6 +21,9 @@
 				<DataTemplate x:Key="PDFSlidesGroupItemInstance">
 					<items1:PDFSlidesGroupItemStatusView />
 				</DataTemplate>
+				<DataTemplate x:Key="GoogleSlidesGroupItemInstance">
+					<items1:GoogleSlidesGroupItemStatusView />
+				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
 				</DataTemplate>
 			</common:MyTemplateSelector>

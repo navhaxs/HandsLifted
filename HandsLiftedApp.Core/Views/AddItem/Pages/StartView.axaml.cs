@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Controls.Messages;
+using HandsLiftedApp.Core.Controls;
 using HandsLiftedApp.Core.Models.Library;
-using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
 using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Importer.GoogleSlides;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
 
@@ -57,7 +56,7 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
                 if (DataContext is AddItemPageViewModel vm)
                 {
                     vm.AddItemViewModel.Page =
-                        new ResultsViewModel(vm.AddItemViewModel, control.DataContext as Models.Library.Library);
+                        new ResultsViewModel(vm.AddItemViewModel, control.DataContext as Library);
                 }
             }
         }
@@ -93,7 +92,7 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
         private void SearchBox_OnSearchButtonClick(object? sender, RoutedEventArgs e)
         {
             // Handle search button click - implement your search logic here
-            if (sender is Controls.SearchBox searchBox)
+            if (sender is SearchBox searchBox)
             {
                 var searchText = searchBox.SearchText;
                 // TODO: Implement search functionality
@@ -112,6 +111,24 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
         private void SearchBox_OnSearchClicked(object? sender, RoutedEventArgs e)
         {
             // throw new NotImplementedException();
+        }
+
+        private async void ButtonImportGoogleSlides_OnClick(object? sender, RoutedEventArgs e)
+        {
+
+            Window? window = this.VisualRoot as Window;
+            var GoogleSlidesPresentationId = await ImportWizard.Run(window);
+
+            if (GoogleSlidesPresentationId == null)
+            {
+                // abort
+                CloseWindow();
+                return;
+            }
+        
+            var itemInsertIndex = Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex;
+            MessageBus.Current.SendMessage(new AddItemMessage() {InsertIndex = itemInsertIndex, Type = AddItemMessage.AddItemType.GoogleSlides, CreateInfo = GoogleSlidesPresentationId});
+            CloseWindow();
         }
     }
 }
