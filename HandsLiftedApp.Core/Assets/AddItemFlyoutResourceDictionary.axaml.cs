@@ -56,7 +56,6 @@ namespace HandsLiftedApp.Core.Assets
                         AddItemWindow aiw = new AddItemWindow()
                         {
                             DataContext = Globals.Instance.MainViewModel.AddItemViewModel,
-                            Width = 400
                         };
                         Globals.Instance.MainViewModel.AddItemViewModel.Page =
                             new ResultsViewModel(Globals.Instance.MainViewModel.AddItemViewModel, library);
