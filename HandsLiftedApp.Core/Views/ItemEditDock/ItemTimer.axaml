@@ -26,7 +26,7 @@
                     <DockPanel VerticalAlignment="Center" Margin="6">
                         <avalonia:MaterialIcon Kind="TimerOutline" />
                         <CheckBox Margin="6 0"
-                                   IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" />
+                                  IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" />
                         <TextBox Margin="6 0"
                                    Text="{Binding IntervalMs}" VerticalAlignment="Center" />
                     </DockPanel>

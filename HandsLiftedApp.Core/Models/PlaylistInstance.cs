@@ -9,10 +9,12 @@ using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
@@ -236,6 +238,15 @@ namespace HandsLiftedApp.Core.Models
                     p => p.Designs,
                     p => p.Items)
                 .Subscribe(_ => IsDirty = true);
+
+            MessageBus.Current.Listen<OnTimerEnabledToggleEvent>().Subscribe(mwvm =>
+            {
+                var selectedItem = SelectedItem?.GetAsIItemInstance();
+                if (selectedItem != null)
+                {
+                    Dispatcher.UIThread.InvokeAsync(() => AutoAdvanceTimer.OnSlideNavigation(selectedItem));
+                }
+            });
         }
 
         public void UpdateIndexes()

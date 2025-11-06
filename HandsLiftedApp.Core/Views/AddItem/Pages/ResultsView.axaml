@@ -73,80 +73,89 @@
                                 MinWidth="300"
                                 DockPanel.Dock="Top" />
 
-            <Grid ColumnDefinitions="2* 1 3*">
+            <Grid ColumnDefinitions="3* 1 2*">
 
-                <Grid>
+                <Border Background="{DynamicResource DarkSurfaceBrush}" CornerRadius="8" Margin="0 12 0 0">
 
-                    <ScrollViewer>
-                        <StackPanel>
-                            <ListBox
-                                ItemsSource="{Binding SearchResults}"
-                                CornerRadius="3"
-                                SelectionChanged="SelectingItemsControl_OnSelectionChanged"
-                                SelectedItem="{Binding SelectedLibraryItem}"
-                                BorderThickness="0"
-                                Background="Transparent"
-                                Margin="0 12 2 0">
+                    <DockPanel>
+                        
+                        <Button x:Name="CreateNewSongButton"
+                                VerticalAlignment="Bottom"
+                                Margin="12"
+                                Padding="8"
+                                HorizontalContentAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                CornerRadius="4"
+                                DockPanel.Dock="Bottom"
+                                Command="{Binding OnCreateNewSongCommand}"
+                                CommandParameter="{Binding $parent[Window]}">
+                            <DockPanel>
+                                <avalonia:MaterialIcon Kind="PlusCircleOutline" Margin="0 0 8 0" DockPanel.Dock="Left" />
+                                <TextBlock Text="New Song" VerticalAlignment="Center" Margin="0" Padding="0" />
+                            </DockPanel>
+                        </Button>
 
-                                <ListBox.Styles>
-                                    <Style Selector="ListBoxItem">
-                                        <Setter Property="CornerRadius" Value="8" />
-                                        <Setter Property="Margin" Value="2" />
-                                    </Style>
-                                    <!-- -->
-                                    <!-- ~1~ For selected state @1@ -->
-                                    <!-- <Style Selector="ListBoxItem:selected"> -->
-                                    <!--     <Setter Property="Background" Value="Blue" /> -->
-                                    <!-- </Style> -->
-                                    <!-- -->
-                                    <!-- ~1~ For hover state @1@ -->
-                                    <!-- <Style Selector="ListBoxItem:pointerover"> -->
-                                    <!--     <Setter Property="Background" Value="Green" /> -->
-                                    <!-- </Style> -->
-                                    <Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
-                                        <Setter Property="CornerRadius" Value="8" />
-                                        <Setter Property="BorderBrush" Value="#4E4E4E" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                    </Style>
-                                </ListBox.Styles>
+                        <Grid>
 
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Title}" Margin="12" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </StackPanel>
-                    </ScrollViewer>
+                        <ScrollViewer>
+                            <StackPanel>
+                                <ListBox
+                                    ItemsSource="{Binding SearchResults}"
+                                    CornerRadius="3"
+                                    SelectionChanged="SelectingItemsControl_OnSelectionChanged"
+                                    SelectedItem="{Binding SelectedLibraryItem}"
+                                    BorderThickness="0"
+                                    Background="Transparent"
+                                    Margin="0 12 2 0">
 
-                    <TextBlock Text="No results"
-                               Margin="0 22 0 0"
-                               FontSize="16"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Top"
-                               Foreground="#888888"
-                               IsVisible="{Binding IsSearchResultsEmpty}" />
+                                    <ListBox.Styles>
+                                        <Style Selector="ListBoxItem">
+                                            <Setter Property="CornerRadius" Value="8" />
+                                            <Setter Property="Margin" Value="2" />
+                                        </Style>
+                                        <!-- -->
+                                        <!-- ~1~ For selected state @1@ -->
+                                        <!-- <Style Selector="ListBoxItem:selected"> -->
+                                        <!--     <Setter Property="Background" Value="Blue" /> -->
+                                        <!-- </Style> -->
+                                        <!-- -->
+                                        <!-- ~1~ For hover state @1@ -->
+                                        <!-- <Style Selector="ListBoxItem:pointerover"> -->
+                                        <!--     <Setter Property="Background" Value="Green" /> -->
+                                        <!-- </Style> -->
+                                        <Style Selector="ListBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+                                            <Setter Property="CornerRadius" Value="8" />
+                                            <Setter Property="BorderBrush" Value="#4E4E4E" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                        </Style>
+                                    </ListBox.Styles>
 
-                    <Button x:Name="CreateNewSongButton"
-                            VerticalAlignment="Bottom"
-                            Margin="0 0 12 12"
-                            Padding="8"
-                            HorizontalContentAlignment="Left"
-                            VerticalContentAlignment="Center"
-                            CornerRadius="4"
-                            Command="{Binding OnCreateNewSongCommand}"
-                            CommandParameter="{Binding $parent[Window]}">
-                        <DockPanel>
-                            <avalonia:MaterialIcon Kind="PlusCircleOutline" Margin="0 0 8 0" DockPanel.Dock="Left" />
-                            <TextBlock Text="New Song" VerticalAlignment="Center" Margin="0" Padding="0" />
-                        </DockPanel>
-                    </Button>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Title}" Margin="12" />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </ScrollViewer>
 
-                </Grid>
+                        <TextBlock Text="No results"
+                                   Margin="0 22 0 0"
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   Foreground="#888888"
+                                   IsVisible="{Binding IsSearchResultsEmpty}" />
+                    </Grid>
+                        
+                    </DockPanel>
+                        
+                </Border>
 
                 <GridSplitter Grid.Column="1" Margin="-4 12" Background="Transparent" />
 
-                <Border Background="{DynamicResource ActiveContentBackgroundBrush}" CornerRadius="8" Grid.Column="2" Margin="12"
+                <Border Background="{DynamicResource ActiveContentBackgroundBrush}" CornerRadius="8" Grid.Column="2"
+                        Margin="12"
                         IsVisible="{Binding SelectedItemPreview, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right"

@@ -122,7 +122,6 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             if (GoogleSlidesPresentationId == null)
             {
                 // abort
-                CloseWindow();
                 return;
             }
         
