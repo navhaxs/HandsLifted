@@ -30,7 +30,7 @@
     <PackageVersion Include="ColorHelper" Version="1.8.1" />
     <PackageVersion Include="ConcurrentPriorityQueue" Version="2.1.0" />
     <PackageVersion Include="Config.Net" Version="5.2.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="DebounceThrottle" Version="2.0.0" />
     <PackageVersion Include="DynamicData" Version="7.9.1" />
     <PackageVersion Include="DynamicData.ReactiveUI" Version="6.11.0.2613" />
@@ -43,7 +43,7 @@
     <PackageVersion Include="LibUsbDotNet" Version="3.0.102-alpha" />
     <PackageVersion Include="LibVLCSharp" Version="3.8.2" />
     <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.8.2" />
-    <PackageVersion Include="Magick.NET-Q16-HDRI-AnyCPU" Version="13.4.0" />
+    <PackageVersion Include="Magick.NET-Q16-HDRI-AnyCPU" Version="14.9.1" />
     <PackageVersion Include="Material.Icons.Avalonia" Version="2.4.1" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
