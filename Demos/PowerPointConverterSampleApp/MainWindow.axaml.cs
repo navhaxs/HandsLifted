@@ -3,12 +3,11 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Importer.PowerPointInteropData;
 using HandsLiftedApp.Importer.PowerPointLib;
@@ -18,9 +17,14 @@ namespace PowerPointConverterSampleApp;
 
 public partial class MainWindow : Window
 {
+    ViewModel dataContext = new();
+    
     public MainWindow()
     {
         InitializeComponent();
+
+        DataContext = dataContext;
+        
         _dropState = this.Get<TextBlock>("DropState");
         // new Thread(() =>
         // {
@@ -51,8 +55,12 @@ public partial class MainWindow : Window
             DragDropEffects.Copy);
     }
 
-    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    private void RunConvertButton_OnClick(object? sender, RoutedEventArgs e)
     {
+        var inputFilePath = dataContext.FilePath;
+        
+        if (inputFilePath == null) return;
+        
         if (UseNativeImport.IsChecked == true)
         {
             // TODO ensure Host is started
@@ -60,50 +68,31 @@ public partial class MainWindow : Window
             {
                 client.Connect();
 
-                ImportTask importTask = new ImportTask() { PPTXFilePath = InputPPTX.Text };
+                ImportTask importTask = new ImportTask() { PPTXFilePath = inputFilePath };
                 Serializer.Serialize(client, importTask);
             }
             // TODO shutdown Host
         }
         else
         {
-            PresentationImporter.Run(InputPPTX.Text);
+            PresentationImporter.Run(inputFilePath);
         }
     }
     private readonly TextBlock _dropState;
-     private void SetupDnd(string suffix, Func<DataObject, Task> factory, DragDropEffects effects)
+
+    private void SetupDnd(string suffix, Func<DataObject, Task> factory, DragDropEffects effects)
         {
             var dragMe = this.Get<Border>("DragMe" + suffix);
-            var dragState = this.Get<TextBlock>("DragState" + suffix);
 
-            async void DoDrag(object? sender, PointerPressedEventArgs e)
+            void DragLeave(object? sender, DragEventArgs e)
             {
-                var dragData = new DataObject();
-                await factory(dragData);
-
-                var result = await DragDrop.DoDragDrop(e, dragData, effects);
-                switch (result)
-                {
-                    case DragDropEffects.Move:
-                        dragState.Text = "Data was moved";
-                        break;
-                    case DragDropEffects.Copy:
-                        dragState.Text = "Data was copied";
-                        break;
-                    case DragDropEffects.Link:
-                        dragState.Text = "Data was linked";
-                        break;
-                    case DragDropEffects.None:
-                        dragState.Text = "The drag operation was canceled";
-                        break;
-                    default:
-                        dragState.Text = "Unknown result";
-                        break;
-                }
+                dragMe[!BorderBrushProperty] = new DynamicResourceExtension("DarkGrayColor");
             }
 
             void DragOver(object? sender, DragEventArgs e)
             {
+                dragMe[!BorderBrushProperty] = new DynamicResourceExtension("SystemAccentColor");
+                
                 if (e.Source is Control c && c.Name == "MoveTarget")
                 {
                     e.DragEffects = e.DragEffects & (DragDropEffects.Move);
@@ -121,6 +110,8 @@ public partial class MainWindow : Window
 
             async void Drop(object? sender, DragEventArgs e)
             {
+                dragMe[!BorderBrushProperty] = new DynamicResourceExtension("DarkGrayColor");
+
                 if (e.Source is Control c && c.Name == "MoveTarget")
                 {
                     e.DragEffects = e.DragEffects & (DragDropEffects.Move);
@@ -137,27 +128,14 @@ public partial class MainWindow : Window
                 else if (e.Data.Contains(DataFormats.Files))
                 {
                     var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
-                    var contentStr = "";
-
                     foreach (var item in files)
                     {
                         if (item is IStorageFile file)
                         {
-                            // var content = await DialogsPage.ReadTextFromFile(file, 500);
-                            contentStr += $"File {item.Name}:{Environment.NewLine}{file.Name}{Environment.NewLine}{Environment.NewLine}";
-                        }
-                        else if (item is IStorageFolder folder)
-                        {
-                            var childrenCount = 0;
-                            await foreach (var _ in folder.GetItemsAsync())
-                            {
-                                childrenCount++;
-                            }
-                            contentStr += $"Folder {item.Name}: items {childrenCount}{Environment.NewLine}{Environment.NewLine}";
+                            SelectFile(file.Path.LocalPath);
+                            return;
                         }
                     }
-
-                    _dropState.Text = contentStr;
                 }
 #pragma warning disable CS0618 // Type or member is obsolete
                 else if (e.Data.Contains(DataFormats.FileNames))
@@ -168,10 +146,53 @@ public partial class MainWindow : Window
 #pragma warning restore CS0618 // Type or member is obsolete
             }
 
-            dragMe.PointerPressed += DoDrag;
+            // dragMe.PointerPressed += DoDrag;
 
             AddHandler(DragDrop.DropEvent, Drop);
             AddHandler(DragDrop.DragOverEvent, DragOver);
+            AddHandler(DragDrop.DragLeaveEvent, DragLeave);
         }
 
+    private async void Button_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog() { AllowMultiple = false };
+        var window = TopLevel.GetTopLevel(this) as Window;
+        var filePaths = await dialog.ShowAsync(window);
+
+        if (filePaths == null || filePaths.Length == 0) return;
+        SelectFile(filePaths[0]);
+    }
+
+    private void ClearButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        dataContext.FilePath = null;
+        dataContext.Status = DocumentStatus.Inactive;
+    }
+
+    private void SelectFile(string localPath)
+    {
+        // DragTargetBorder[!BackgroundProperty] = new DynamicResourceExtension("AccentColor");
+                
+        // Source - https://stackoverflow.com/a
+// Posted by David Thibault, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-12-30, License - CC BY-SA 4.0
+
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        var file = new FileInfo(localPath);
+        double len = file.Length;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1) {
+            order++;
+            len = len/1024;
+        }
+
+// Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+// show a single decimal place, and no space.
+        string result = String.Format("{0:0.##} {1}", len, sizes[order]);
+
+        dataContext.Status = DocumentStatus.Active;
+        dataContext.FilePath = localPath;
+        
+        _dropState.Text = $"Selected file:\n{file.Name}\n({result})";
+    }
 }

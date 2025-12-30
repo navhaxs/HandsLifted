@@ -16,24 +16,25 @@ public partial class App : Application
         try
         {
             var x = LoadConfigFromResource("PowerPointConverterSampleApp.SyncfusionLicenseKey");
+            if (x == null) throw new Exception("SyncfusionLicenseKey not found");
             string syncfusionLicenseKey = new StreamReader(x).ReadToEnd().Trim();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicenseKey);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
+            // ignored
         }
 
         AvaloniaXamlLoader.Load(this);
     }
 
-    private Stream LoadConfigFromResource(string configFileName)
+    private Stream? LoadConfigFromResource(string configFileName)
     {
-        Assembly assembly;
-        Stream configStream = null;
+        Stream? configStream = null;
         try
         {
-            assembly = Assembly.GetExecutingAssembly();
-            configStream = (Stream)assembly.GetManifestResourceStream(configFileName);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            configStream = assembly.GetManifestResourceStream(configFileName)!;
         }
         catch (Exception ex)
         {

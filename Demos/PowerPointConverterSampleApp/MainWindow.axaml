@@ -2,25 +2,101 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:powerPointConverterSampleApp="clr-namespace:PowerPointConverterSampleApp"
+        mc:Ignorable="d"
+        Width="400"
+        Height="500"
         x:Class="PowerPointConverterSampleApp.MainWindow"
-        Title="PowerPointConverterSampleApp">
-    <Border         
-        BorderBrush="Black"
-        BorderThickness="2"
-                    BoxShadow="0 0 10 0 DarkGray" Margin="50" CornerRadius="8">
-        
-    <StackPanel DragDrop.AllowDrop="True">
-        <TextBlock Name="DropState" />
-        <Border Name="DragMeFiles"
-                Padding="16"
-                BorderBrush="{DynamicResource SystemAccentColor}"
-                BorderThickness="2">
-            <TextBlock Name="DragStateFiles" TextWrapping="Wrap">Drag Me (files)</TextBlock>
+        Padding="20"
+        CanMaximize="False"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        x:DataType="powerPointConverterSampleApp:ViewModel"
+        Title="PowerPoint Presentation Export Utility">
+
+    <Window.Styles>
+        <Style Selector="Border#DragTargetBorder">
+            <Setter Property="Background" Value="{DynamicResource InactiveColor}" />
+        </Style>
+
+        <Style Selector="Border#DragTargetBorder avalonia|MaterialIcon">
+            <Setter Property="Kind" Value="ArrowCollapseDown" />
+        </Style>
+
+        <Style Selector="Border#DragTargetBorder.active">
+            <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+        </Style>
+
+        <Style Selector="Border#DragTargetBorder.active avalonia|MaterialIcon">
+            <Setter Property="Kind" Value="FileDocumentCheck" />
+        </Style>
+    </Window.Styles>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Margin="0 2 0 0">
+            <!-- <HeaderedContentControl Header="Options"> -->
+                <StackPanel>
+                    <HeaderedContentControl Header="Export format">
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+                            <RadioButton GroupName="Mode" Content="PDF" IsChecked="True" />
+                            <RadioButton GroupName="Mode" Content="PNG" />
+                        </StackPanel>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Page range">
+                        <TextBox Watermark="(all pages)" />
+                    </HeaderedContentControl>
+                    <CheckBox x:Name="UseNativeImport">Use native Microsoft PowerPoint</CheckBox>
+                </StackPanel>
+            <!-- </HeaderedContentControl> -->
+            <Button Margin="0 8 0 0" Click="RunConvertButton_OnClick" Padding="25 14">Convert</Button>
+        </StackPanel>
+
+        <Border DragDrop.AllowDrop="True"
+                Background="Transparent"
+                Name="DragMeFiles"
+                CornerRadius="6"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource DarkGrayColor}">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <Grid HorizontalAlignment="Center">
+                    <Border Classes.active="{Binding IsActive}"
+                            x:Name="DragTargetBorder"
+                            CornerRadius="8" Padding="30 20"
+                            HorizontalAlignment="Center">
+                        <avalonia:MaterialIcon
+                            Foreground="White"
+                            Width="50"
+                            Height="50" />
+                    </Border>
+
+                    <Button
+                        IsVisible="{Binding IsActive}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Padding="6"
+                        Margin="-5"
+                        CornerRadius="16"
+                        Click="ClearButton_OnClick">
+                        <avalonia:MaterialIcon
+                            Kind="Times"
+                            Foreground="White"
+                            Width="12"
+                            Height="12" />
+                    </Button>
+                </Grid>
+
+                <TextBlock IsVisible="{Binding IsActive}" Name="DropState" Margin="0 14 0 0" LineHeight="19"
+                           TextAlignment="Center" />
+
+                <TextBlock IsVisible="{Binding !IsActive}" Margin="0 14 0 0" LineHeight="19">
+                    <Run Text="Drag pptx file here, or" />
+                    <HyperlinkButton Content="browse" Padding="0" Click="Button_OnClick" />
+                </TextBlock>
+            </StackPanel>
         </Border>
-        <TextBox x:Name="InputPPTX" Watermark="Input PPTX"></TextBox>
-        <CheckBox x:Name="UseNativeImport">Use native Microsoft PowerPoint</CheckBox>
-        <Button Click="Button_OnClick">Run</Button>
-    </StackPanel>
-    </Border>
+
+    </DockPanel>
 </Window>
