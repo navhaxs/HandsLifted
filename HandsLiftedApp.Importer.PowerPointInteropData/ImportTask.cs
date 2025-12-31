@@ -6,13 +6,22 @@ namespace HandsLiftedApp.Importer.PowerPointInteropData;
 public class ImportTask
 {
     [ProtoMember(1)]
-    public string PPTXFilePath { get; set; }
+    public string pptxFile { get; set; }
 
     public string OutputDirectory
     {
         get
         {
-            return Path.GetDirectoryName(PPTXFilePath);
+            return Path.GetDirectoryName(pptxFile);
         }
+    }
+
+    [ProtoMember(2)]
+    public ExportFileFormatType ExportFileFormat { get; set; } = ExportFileFormatType.PNG;
+    
+    public enum ExportFileFormatType
+    {
+        PNG,
+        PDF
     }
 }

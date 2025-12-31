@@ -24,6 +24,13 @@ namespace PowerPointConverterSampleApp
             get => _filePath;
             set => this.RaiseAndSetIfChanged(ref _filePath, value);
         }
+        
+        private bool _isBusy = false;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => this.RaiseAndSetIfChanged(ref _isBusy, value);
+        }
 
         private DocumentStatus _status = DocumentStatus.Inactive;
         public DocumentStatus Status
@@ -33,5 +40,20 @@ namespace PowerPointConverterSampleApp
         }
 
         public bool IsActive => Status == DocumentStatus.Active;
+
+        private bool _progressIsIndeterminate = false;
+        public bool ProgressIsIndeterminate
+        {
+            get => _progressIsIndeterminate;
+            set => this.RaiseAndSetIfChanged(ref _progressIsIndeterminate, value);
+        }
+
+        private double _progressIsValue = 0;
+        public double ProgressValue
+        {
+            get => _progressIsValue;
+            set => this.RaiseAndSetIfChanged(ref _progressIsValue, value);
+        }
+
     }
 }

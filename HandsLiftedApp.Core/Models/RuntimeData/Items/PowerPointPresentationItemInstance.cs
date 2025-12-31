@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using HandsLiftedApp.Importer.PDF;
+using HandsLiftedApp.Importer.PowerPointInteropData;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -131,7 +132,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Directory.CreateDirectory(targetDirectory);
 
                             Log.Debug($"Importing PowerPoint file: {SourcePresentationFile}");
-                            PresentationImporter.Run(SourcePresentationFile);
+                            PresentationFileFormatConverter.Run(new ImportTask {pptxFile = SourcePresentationFile, ExportFileFormat = ImportTask.ExportFileFormatType.PDF});
 
                             Log.Debug($"Importing PDF file: {SourcePresentationFile}");
                             ConvertPDF.Convert(SourcePresentationFile + ".pdf",
@@ -151,9 +152,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             GenerateSlides();
 
                             Log.Debug($"Import OK");
-
                             LastSyncDateTime = DateTime.Now;
-
                         }
                         catch (Exception e)
                         {

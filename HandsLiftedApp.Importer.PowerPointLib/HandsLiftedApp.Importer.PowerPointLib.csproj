@@ -11,4 +11,9 @@
       <PackageReference Include="Syncfusion.PresentationRenderer.NET" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\HandsLiftedApp.Importer.PowerPointInteropData\HandsLiftedApp.Importer.PowerPointInteropData.csproj" />
+      <ProjectReference Include="..\HandsLiftedApp.Utils\HandsLiftedApp.Common.csproj" />
+    </ItemGroup>
+
 </Project>
