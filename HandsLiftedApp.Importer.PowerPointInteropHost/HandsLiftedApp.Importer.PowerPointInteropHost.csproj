@@ -14,6 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HandsLiftedApp.Importer.PowerPointInteropData\HandsLiftedApp.Importer.PowerPointInteropData.csproj" />
+      <ProjectReference Include="..\HandsLiftedApp.Importer.FileFormatConvertTaskData\HandsLiftedApp.Importer.FileFormatConvertTaskData.csproj" />
     </ItemGroup>
 </Project>

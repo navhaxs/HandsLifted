@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace HandsLiftedApp.Importer.PowerPointInteropData
+namespace HandsLiftedApp.Importer.FileFormatConvertTaskData
 {
     [ProtoContract]
     public class ImportStats
@@ -16,9 +16,12 @@ namespace HandsLiftedApp.Importer.PowerPointInteropData
 
         [ProtoMember(4)]
         public DateTime CompletionTime { get; set; }
+        
+        [ProtoMember(5)]
+        public string StatusMessage { get; set; }
 
         [ProtoMember(5)]
-        public string FileName { get; set; }
+        public string OutputFilePath { get; set; }
 
         public enum JobStatusEnum
         {

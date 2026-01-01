@@ -1,11 +1,11 @@
 ﻿using PDFiumCore;
 using SkiaSharp;
 using System.Diagnostics;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 
 namespace HandsLiftedApp.Importer.PDF
 {
     // https://github.com/dlemstra/Magick.NET/blob/main/docs/ConvertPDF.md
-
     // end user must install  Ghostscript x.xx.x for Windows (64 bit)  https://ghostscript.com/releases/gsdnld.html
 
     public class ConvertPDF
@@ -13,8 +13,10 @@ namespace HandsLiftedApp.Importer.PDF
         const int VIEWPORT_X = 0;
         const int VIEWPORT_Y = 0;
 
-        public static void Convert(string inputPdfFile, string outputDir, Action<double>? onProgressUpdate = null)
+        public static void Convert(ImportTask task, IProgress<ImportStats>? progress = null)
         {
+            ImportStats stats = new ImportStats() { Task = task };
+            
             try
             {
                 fpdfview.FPDF_InitLibrary();
@@ -22,7 +24,7 @@ namespace HandsLiftedApp.Importer.PDF
                 // White color.
                 uint color = uint.MaxValue;
                 // Load the document.
-                var document = fpdfview.FPDF_LoadDocument(inputPdfFile, null);
+                var document = fpdfview.FPDF_LoadDocument(task.InputFile, null);
             
                 if (document == null)
                 {
@@ -90,7 +92,7 @@ namespace HandsLiftedApp.Importer.PDF
                         // TODO pad leading 0's
                         int maxPageNumberDigits = (int)Math.Floor(Math.Log10(pageCount) + 1);
                         string thisPageNumberPadded = (i + 1).ToString(new string('0', maxPageNumberDigits));
-                        string slideOutFile = Path.Join(outputDir, $"Slide.{thisPageNumberPadded}.png");
+                        string slideOutFile = Path.Join(task.OutputDirectory, $"Slide.{thisPageNumberPadded}.png");
             
                         using (Stream s = File.Create(slideOutFile))
                         {
@@ -104,21 +106,36 @@ namespace HandsLiftedApp.Importer.PDF
                     }
             
                     fpdfview.FPDF_ClosePage(page);
-            
-                    if (onProgressUpdate != null)
-                        onProgressUpdate((double)i / pageCount * 100);
+
+                    if (progress != null)
+                    {
+                        stats.JobPercentage = (double)i / pageCount * 100;
+                        stats.StatusMessage = $"Exporting slide {i + 1} of {pageCount}";
+                        progress.Report(stats);
+                    }
                 }
             
                 fpdfview.FPDF_CloseDocument(document);
                 fpdfview.FPDF_DestroyLibrary();
                 GC.Collect();
             
-                if (onProgressUpdate != null)
-                    onProgressUpdate(100d);
+                if (progress != null)
+                {
+                    stats.JobStatus = ImportStats.JobStatusEnum.CompletionSuccess;
+                    stats.CompletionTime = DateTime.Now;
+                    stats.JobPercentage = 100d;
+                    progress.Report(stats);
+                }
             }
             catch (Exception e)
             {
                 Debug.Print(e.ToString());
+                
+                stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
+                stats.CompletionTime = DateTime.Now;
+
+                if (progress != null)
+                    progress.Report(stats);
             }
         }
     }

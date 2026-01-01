@@ -9,7 +9,8 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Platform.Storage;
-using HandsLiftedApp.Importer.PowerPointInteropData;
+using HandsLiftedApp.Importer.PDF;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 using HandsLiftedApp.Importer.PowerPointLib;
 
 namespace PowerPointConverterSampleApp;
@@ -23,6 +24,8 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         DataContext = viewModel;
+        
+        NativePowerPointInteropService.OnCompletion += (_, _) => viewModel.Status = ApplicationState.Completed;
 
         _dropState = this.Get<TextBlock>("DropState");
 
@@ -46,7 +49,11 @@ public partial class MainWindow : Window
         {
             Debug.Print(value.JobPercentage.ToString());
             viewModel.ProgressValue = value.JobPercentage;
-            viewModel.IsBusy = value.JobStatus == ImportStats.JobStatusEnum.Running;
+
+            if (value.JobStatus == ImportStats.JobStatusEnum.CompletionSuccess)
+            {
+                viewModel.Status = ApplicationState.Completed;
+            }
         }
     }
 
@@ -55,11 +62,26 @@ public partial class MainWindow : Window
         var inputFilePath = viewModel.FilePath;
         if (inputFilePath == null || viewModel.IsBusy) return;
 
-        viewModel.IsBusy = true;
+        viewModel.Status = ApplicationState.Busy;
 
+        if (inputFilePath.ToLower().EndsWith(".pdf"))
+        {
+            Task.Run(() =>
+            {
+                ConvertPDF.Convert(new ImportTask
+                {
+                    InputFile = inputFilePath,
+                    OutputDirectory = Path.GetDirectoryName(inputFilePath)!,
+                    ExportFileFormat = ImportTask.ExportFileFormatType.PNG
+                }, new ProgressReporter());
+            });
+            return;
+        }
+        
         var importTask = new ImportTask
         {
-            pptxFile = inputFilePath,
+            InputFile = inputFilePath,
+            OutputDirectory = Path.GetDirectoryName(inputFilePath)!,
             ExportFileFormat = PDF_RadioButton.IsChecked == true
                 ? ImportTask.ExportFileFormatType.PDF
                 : ImportTask.ExportFileFormatType.PNG
@@ -76,6 +98,7 @@ public partial class MainWindow : Window
             Task.Run(() =>
             {
                 PresentationFileFormatConverter.Run(importTask, new ProgressReporter());
+                viewModel.Status = ApplicationState.Completed;
                 return Task.CompletedTask;
             });
         }
@@ -167,7 +190,7 @@ public partial class MainWindow : Window
     private void ClearButton_OnClick(object? sender, RoutedEventArgs e)
     {
         viewModel.FilePath = null;
-        viewModel.Status = DocumentStatus.Inactive;
+        viewModel.Status = ApplicationState.Init;
     }
 
     private void SelectFile(string localPath)
@@ -191,10 +214,29 @@ public partial class MainWindow : Window
         // Adjust the format string to your preferences. For example "{0:0.#}{1}" would
         // show a single decimal place, and no space.
         string result = String.Format("{0:0.##} {1}", len, sizes[order]);
-
-        viewModel.Status = DocumentStatus.Active;
+        
+        viewModel.Status = ApplicationState.Ready;
         viewModel.FilePath = localPath;
 
         _dropState.Text = $"Selected file:\n{file.Name}\n({result})";
+    }
+
+    private void ShowOutputButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        OpenInExplorer(viewModel.OutputFilePath);
+    }
+
+    private void OpenInExplorer(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return;
+
+        if (Directory.Exists(path))
+        {
+            Process.Start("explorer.exe", path);
+        }
+        else if (File.Exists(path))
+        {
+            Process.Start("explorer.exe", $"/select, \"{path}\"");
+        }
     }
 }

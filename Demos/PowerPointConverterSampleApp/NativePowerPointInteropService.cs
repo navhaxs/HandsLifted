@@ -4,12 +4,14 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text.Json;
 using System.Threading.Tasks;
-using HandsLiftedApp.Importer.PowerPointInteropData;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 
 namespace PowerPointConverterSampleApp
 {
     public static class NativePowerPointInteropService
     {
+        public static event EventHandler? OnCompletion;
+        
         private static Process? _helperProcess;
 
         public static void StartHelper()
@@ -96,8 +98,15 @@ namespace PowerPointConverterSampleApp
                 var decoded = JsonSerializer.Deserialize<ImportStats>(msg);
                 if (decoded != null)
                 {
+                    viewModel.ProgressStatusMessage = decoded.StatusMessage;
                     viewModel.ProgressValue = decoded.JobPercentage;
-                    viewModel.IsBusy = decoded.JobStatus == ImportStats.JobStatusEnum.Running;
+                    viewModel.Status = ApplicationState.Busy;
+                    viewModel.OutputFilePath = decoded.OutputFilePath;
+
+                    if (decoded.JobStatus == ImportStats.JobStatusEnum.CompletionSuccess)
+                    {
+                        OnCompletion?.Invoke(viewModel, EventArgs.Empty);
+                    }
                 }
             }
             catch (Exception)

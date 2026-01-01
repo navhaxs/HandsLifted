@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using HandsLiftedApp.Importer.PowerPointInteropData;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 using NetOffice;
 using NetOffice.PowerPointApi.Enums;
 
@@ -24,9 +24,8 @@ namespace HandsLiftedApp.Importer.PowerPoint
             {
                 Application thisApplication = new Application();
 
-                stats.FileName = Path.GetFileName(task.pptxFile);
 
-                Presentation thisPresentation = thisApplication.Presentations.Open(task.pptxFile,
+                Presentation thisPresentation = thisApplication.Presentations.Open(task.InputFile,
                     MsoTriState.msoTrue, MsoTriState.msoFalse, MsoTriState.msoFalse);
 
                 Directory.CreateDirectory(task.OutputDirectory);
@@ -46,9 +45,14 @@ namespace HandsLiftedApp.Importer.PowerPoint
                 {
                     try
                     {
-                        string pdfFile = Path.Combine(task.OutputDirectory,
-                            Path.GetFileNameWithoutExtension(task.pptxFile)) + ".pdf";
+                        stats.StatusMessage = "Exporting slides...";
+                        
+                        if (progress != null)
+                            progress.Report(stats); 
 
+                        string pdfFile = Path.Combine(task.OutputDirectory,
+                            Path.GetFileNameWithoutExtension(task.InputFile)) + ".pdf";
+                        stats.OutputFilePath = pdfFile;
                         thisPresentation.SaveAs(pdfFile, PpSaveAsFileType.ppSaveAsPDF, MsoTriState.msoCTrue);
 
                         // *ExportAsFixedFormat* would not work...
@@ -87,6 +91,8 @@ namespace HandsLiftedApp.Importer.PowerPoint
                 }
                 else
                 {
+                    stats.OutputFilePath = task.OutputDirectory;
+                    
                     Slides? slides = null;
                     try
                     {
@@ -163,6 +169,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
 
                             stats.JobStatus = ImportStats.JobStatusEnum.Running;
                             stats.JobPercentage = progressPercentage;
+                            stats.StatusMessage = $"Exporting slide {slide.SlideIndex} of {slides.Count}";
 
                             if (progress != null)
                                 progress.Report(stats);

@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using HandsLiftedApp.Importer.PDF;
-using HandsLiftedApp.Importer.PowerPointInteropData;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -132,11 +132,26 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Directory.CreateDirectory(targetDirectory);
 
                             Log.Debug($"Importing PowerPoint file: {SourcePresentationFile}");
-                            PresentationFileFormatConverter.Run(new ImportTask {pptxFile = SourcePresentationFile, ExportFileFormat = ImportTask.ExportFileFormatType.PDF});
+                            PresentationFileFormatConverter.Run(new ImportTask
+                            {
+                                InputFile = SourcePresentationFile,
+                                OutputDirectory = targetDirectory,
+                                ExportFileFormat = ImportTask.ExportFileFormatType.PDF
+                            }, new ImportTaskReporter(stats =>
+                            {
+                                // OnProgressUpdate(stats.JobPercentage);
+                            }));
 
                             Log.Debug($"Importing PDF file: {SourcePresentationFile}");
-                            ConvertPDF.Convert(SourcePresentationFile + ".pdf",
-                                targetDirectory);
+                            ConvertPDF.Convert(new ImportTask
+                            {
+                                InputFile = SourcePresentationFile + ".pdf", // TODO use output of last task
+                                OutputDirectory = targetDirectory,
+                                ExportFileFormat = ImportTask.ExportFileFormatType.PDF
+                            }, new ImportTaskReporter(stats =>
+                            {
+                                // OnProgressUpdate(stats.JobPercentage);
+                            }));
 
                             var newItems = new TrulyObservableCollection<GroupItem>();
                             foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)

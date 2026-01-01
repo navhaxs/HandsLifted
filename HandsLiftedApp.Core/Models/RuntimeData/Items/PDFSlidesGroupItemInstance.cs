@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 using HandsLiftedApp.Importer.PDF;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
@@ -49,7 +50,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         private BlankSlide _blankSlide = new();
 
         private static readonly object syncSlidesLock = new object();
-
+        
         public PDFSlidesGroupItemInstance(PlaylistInstance parentPlaylist)
         {
             ParentPlaylist = parentPlaylist;
@@ -138,8 +139,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Directory.CreateDirectory(targetDirectory);
                             
                             Log.Debug($"Importing PDF file: {SourcePresentationFile}");
-                            ConvertPDF.Convert(SourcePresentationFile,
-                                targetDirectory, OnProgressUpdate);
+                            
+     
+
+                            ConvertPDF.Convert(new ImportTask()
+                                {
+                                    InputFile = SourcePresentationFile,
+                                    OutputDirectory = targetDirectory,
+                                    ExportFileFormat = ImportTask.ExportFileFormatType.PNG
+                                }, new ImportTaskReporter(stats =>
+                                {
+                                    OnProgressUpdate(stats.JobPercentage);
+                                }));
 
                             var newItems = new TrulyObservableCollection<GroupItem>();
                             foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
@@ -173,37 +184,5 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             ImportProgress = (double)obj;
         }
-
-        /// <summary>
-        /// mutates *this* SlidesGroupItem and then returns a *new* SlidesGroupItem
-        /// </summary>
-        /// <param name="start"></param>
-        /// <returns></returns>
-        // public PDFSlidesGroupItemInstance? slice(int start)
-        // {
-        //     if (start == 0)
-        //     {
-        //         return null;
-        //     }
-        //
-        //     PDFSlidesGroupItemInstance slidesGroup = new(ParentPlaylist) { Title = $"{Title} (Split copy)" };
-        //
-        //     // TODO optimise below to a single loop
-        //     // tricky bit: ensure index logic works whilst removing at the same time
-        //
-        //     for (int i = start; i < _Slides.Count; i++)
-        //     {
-        //         slidesGroup._Slides.Add(_Slides[i]);
-        //     }
-        //
-        //     var count = _Slides.Count;
-        //     for (int i = start; i < count; i++)
-        //     {
-        //         _Slides.RemoveAt(_Slides.Count - 1);
-        //     }
-        //
-        //
-        //     return slidesGroup;
-        // }
     }
 }

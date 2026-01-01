@@ -27,7 +27,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\HandsLiftedApp.Importer.PowerPointInteropData\HandsLiftedApp.Importer.PowerPointInteropData.csproj" />
+      <ProjectReference Include="..\..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj" />
+      <ProjectReference Include="..\..\HandsLiftedApp.Importer.PDF\HandsLiftedApp.Importer.PDF.csproj" />
+      <ProjectReference Include="..\..\HandsLiftedApp.Importer.FileFormatConvertTaskData\HandsLiftedApp.Importer.FileFormatConvertTaskData.csproj" />
       <ProjectReference Include="..\..\HandsLiftedApp.Importer.PowerPointLib\HandsLiftedApp.Importer.PowerPointLib.csproj" />
     </ItemGroup>
 

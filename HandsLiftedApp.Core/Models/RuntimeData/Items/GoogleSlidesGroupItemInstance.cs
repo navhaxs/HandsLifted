@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 using HandsLiftedApp.Importer.GoogleSlides;
 using HandsLiftedApp.Importer.PDF;
 
@@ -155,8 +156,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Directory.CreateDirectory(exportDirectory);
 
                             Log.Debug($"Importing PDF file: {importStats.OutputFullFilePath}");
-                            ConvertPDF.Convert(importStats.OutputFullFilePath,
-                                exportDirectory);
+                            ConvertPDF.Convert(new ImportTask() { InputFile = importStats.OutputFullFilePath, OutputDirectory = exportDirectory, ExportFileFormat = ImportTask.ExportFileFormatType.PNG});
 
                             var newItems = new TrulyObservableCollection<GroupItem>();
                             foreach (var convertedFilePath in Directory.GetFiles(exportDirectory)

@@ -12,4 +12,8 @@
     <PackageReference Include="PDFiumCore" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HandsLiftedApp.Importer.FileFormatConvertTaskData\HandsLiftedApp.Importer.FileFormatConvertTaskData.csproj" />
+  </ItemGroup>
+
 </Project>

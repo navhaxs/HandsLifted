@@ -94,7 +94,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Importer.Pow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPointConverterSampleApp", "Demos\PowerPointConverterSampleApp\PowerPointConverterSampleApp.csproj", "{18D14517-2181-4D05-8379-8CC74FA0383C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Importer.PowerPointInteropData", "HandsLiftedApp.Importer.PowerPointInteropData\HandsLiftedApp.Importer.PowerPointInteropData.csproj", "{76B9E7DF-0A51-49E3-8D7F-2F534088438B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Importer.FileFormatConvertTaskData", "HandsLiftedApp.Importer.FileFormatConvertTaskData\HandsLiftedApp.Importer.FileFormatConvertTaskData.csproj", "{76B9E7DF-0A51-49E3-8D7F-2F534088438B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SongEditorStandalone", "Demos\SongEditorStandalone\SongEditorStandalone.csproj", "{A2BEAEAC-6CE0-4D02-B8AC-088356EEE2E4}"
 EndProject

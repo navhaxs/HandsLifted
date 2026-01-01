@@ -5,6 +5,7 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:powerPointConverterSampleApp="clr-namespace:PowerPointConverterSampleApp"
         xmlns:avalonia1="clr-namespace:LoadingIndicators.Avalonia;assembly=LoadingIndicators.Avalonia"
+        xmlns:converters="clr-namespace:HandsLiftedApp.Converters;assembly=HandsLiftedApp.Controls"
         mc:Ignorable="d"
         Width="400"
         Height="500"
@@ -29,9 +30,22 @@
         </Style>
 
         <Style Selector="Border#DragTargetBorder.active avalonia|MaterialIcon">
+            <Setter Property="Kind" Value="FileDocument" />
+        </Style>
+
+        <Style Selector="Border#DragTargetBorder.completed">
+            <Setter Property="Background" Value="#00aa4d" />
+        </Style>
+
+        <Style Selector="Border#DragTargetBorder.completed avalonia|MaterialIcon">
             <Setter Property="Kind" Value="FileDocumentCheck" />
         </Style>
+
     </Window.Styles>
+        
+    <Window.Resources>
+        <converters:StringHasValueVisibilityConverter x:Key="stringHasValueVisibilityConverter" />
+    </Window.Resources>
 
     <DockPanel>
 
@@ -44,6 +58,12 @@
                 <StackPanel DockPanel.Dock="Bottom" Margin="0 2 0 0">
                     <!-- <HeaderedContentControl Header="Options"> -->
                     <StackPanel>
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="IsPPTX"/>
+                                <Binding Path="IsReady"/>
+                            </MultiBinding>
+                        </Button.IsVisible>
                         <HeaderedContentControl Header="Export format">
                             <StackPanel Orientation="Horizontal" Spacing="16">
                                 <RadioButton x:Name="PDF_RadioButton" GroupName="Mode" Content="PDF" IsChecked="True" />
@@ -56,7 +76,10 @@
                         <CheckBox x:Name="UseNativeImport" IsChecked="True">Use native Microsoft PowerPoint</CheckBox>
                     </StackPanel>
                     <!-- </HeaderedContentControl> -->
-                    <Button Margin="0 8 0 0" Click="RunConvertButton_OnClick" Padding="25 14">Convert</Button>
+                    <Button IsVisible="{Binding IsReady}" Margin="0 8 0 0" Click="RunConvertButton_OnClick"
+                            Padding="25 14">
+                        Convert
+                    </Button>
                 </StackPanel>
 
                 <Border DragDrop.AllowDrop="True"
@@ -69,7 +92,8 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
                         <Grid HorizontalAlignment="Center">
-                            <Border Classes.active="{Binding IsActive}"
+                            <Border Classes.active="{Binding IsReady}"
+                                    Classes.completed="{Binding IsCompleted}"
                                     x:Name="DragTargetBorder"
                                     CornerRadius="8" Padding="30 20"
                                     HorizontalAlignment="Center">
@@ -80,7 +104,7 @@
                             </Border>
 
                             <Button
-                                IsVisible="{Binding IsActive}"
+                                IsVisible="{Binding IsReady}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Top"
                                 Padding="6"
@@ -95,22 +119,64 @@
                             </Button>
                         </Grid>
 
-                        <TextBlock IsVisible="{Binding IsActive}" Name="DropState" Margin="0 14 0 0"
+                        <TextBlock IsVisible="{Binding IsReady}" Name="DropState" Margin="0 14 0 0"
                                    TextAlignment="Center" />
 
-                        <TextBlock IsVisible="{Binding !IsActive}" Margin="0 14 0 0" TextAlignment="Center">
-                            <Run Text="Drag &amp; drop pptx file" />
+                        <TextBlock IsVisible="{Binding IsInit}" Margin="0 14 0 0" TextAlignment="Center">
+                            <Run Text="Drag &amp; drop file" />
                             <LineBreak />
                             <Run Text="or" />
                             <LineBreak />
                             <HyperlinkButton Content="Select file" Padding="0" Click="BrowseOpenFileButton_OnClick"
                                              Margin="0 0 0 -2" />
+                            <LineBreak />
+                            <LineBreak />
+                            <Run Text="PPTX and PDF are supported" Foreground="DarkGray" />
                         </TextBlock>
+
+                        <TextBlock IsVisible="{Binding IsCompleted}"
+                                   Text="{Binding FileName, StringFormat='{}{0} successfully converted'}"
+                                   TextAlignment="Center"
+                                   FontWeight="Bold" 
+                                   Margin="0 14 0 0"
+                                   />
+                        <TextBlock Margin="0 14 0 0" TextAlignment="Center">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="IsCompleted"/>
+                                    <Binding Path="OutputFileName" Converter="{StaticResource stringHasValueVisibilityConverter}"/>
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            <Run Text="{Binding OutputFileName, StringFormat='Saved as {0}'}" />
+                        </TextBlock>
+                        <TextBlock IsVisible="{Binding IsCompleted}" Margin="0 6 0 0" TextAlignment="Center">
+                            <HyperlinkButton Content="Show in File Explorer" Padding="0"
+                                             Click="ShowOutputButton_OnClick"
+                                             Margin="0 0 0 -2" />
+                        </TextBlock>
+                        
+                        <Button Click="ClearButton_OnClick"
+                                IsVisible="{Binding IsCompleted}"
+                                HorizontalAlignment="Center"
+                                Margin="0 40 0 -2">
+                            <DockPanel>
+                                <avalonia:MaterialIcon
+                                    Margin="0 0 4 0"
+                                    Kind="Restart"
+                                    Width="20"
+                                    Height="20" />
+                                <TextBlock Text="Start over" />
+                            </DockPanel>
+                        </Button>
                     </StackPanel>
                 </Border>
             </DockPanel>
-            <Grid IsVisible="{Binding IsBusy}" Background="#eeeeeeee" />
-            <avalonia1:LoadingIndicator IsActive="{Binding IsBusy}" Mode="ThreeDots" SpeedRatio="1.2" />
+            <Grid IsVisible="{Binding IsBusy}" Background="#eeeeeeee">
+                <StackPanel VerticalAlignment="Center">
+                    <avalonia1:LoadingIndicator IsActive="{Binding IsBusy}" Mode="ThreeDots" SpeedRatio="1" />
+                    <TextBlock Text="{Binding ProgressStatusMessage}" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </DockPanel>
 </Window>

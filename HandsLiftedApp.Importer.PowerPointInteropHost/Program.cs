@@ -4,7 +4,7 @@ using System.IO.Pipes;
 using System.Text.Json;
 using System.Threading.Tasks;
 using HandsLiftedApp.Importer.PowerPoint;
-using HandsLiftedApp.Importer.PowerPointInteropData;
+using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 
 namespace HandsLiftedApp.Importer.PowerPointInteropHost;
 
@@ -60,7 +60,7 @@ class Program
     {
         var cmd = JsonSerializer.Deserialize<ImportTask>(json);
 
-        System.Diagnostics.Debug.Print(cmd.pptxFile);
+        System.Diagnostics.Debug.Print(cmd.InputFile);
 
         Converter.RunPowerPointImportTask(cmd, new ProgressReporter());
 
