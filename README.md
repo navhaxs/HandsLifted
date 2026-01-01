@@ -8,7 +8,7 @@ Find out more at https://visionscreens.twohandslifted.com
 > 
 > Under heavy & rapid development.
 
-(c) Jeremy Wong 2015-2025
+(c) Jeremy Wong 2015-2026
 
 ![Screenshot](screenshot-nov2023.jpg?raw=true "Screenshot")
 ![Screenshot](screenshot.jpg?raw=true "Screenshot")
