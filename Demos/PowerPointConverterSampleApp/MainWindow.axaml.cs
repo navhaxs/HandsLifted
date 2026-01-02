@@ -47,12 +47,13 @@ public partial class MainWindow : Window
     {
         public void Report(ImportStats value)
         {
-            Debug.Print(value.JobPercentage.ToString());
             viewModel.ProgressValue = value.JobPercentage;
+            viewModel.ProgressStatusMessage = value.StatusMessage;
 
             if (value.JobStatus == ImportStats.JobStatusEnum.CompletionSuccess)
             {
                 viewModel.Status = ApplicationState.Completed;
+                viewModel.OutputFilePath = value.OutputFilePath;
             }
         }
     }
@@ -189,12 +190,20 @@ public partial class MainWindow : Window
 
     private void ClearButton_OnClick(object? sender, RoutedEventArgs e)
     {
+        ResetInitState();
+    }
+
+    private void ResetInitState()
+    {
         viewModel.FilePath = null;
         viewModel.Status = ApplicationState.Init;
+        viewModel.ProgressValue = 0d;
     }
 
     private void SelectFile(string localPath)
     {
+        ResetInitState();
+
         // DragTargetBorder[!BackgroundProperty] = new DynamicResourceExtension("AccentColor");
 
         // Source - https://stackoverflow.com/a

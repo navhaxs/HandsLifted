@@ -10,9 +10,11 @@ public static class PresentationFileFormatConverter
     public static void Run(ImportTask task, IProgress<ImportStats>? progress = null)
     {
         using var presentation = Presentation.Open(task.InputFile);
+        string outputFilePath;
         if (task.ExportFileFormat == ImportTask.ExportFileFormatType.PNG)
         {
             presentation.PresentationRenderer = new PresentationRenderer();
+            outputFilePath = task.OutputDirectory;
             foreach (var (slide, slideIndex) in presentation.Slides.WithIndex())
             {
                 progress?.Report(new ImportStats
@@ -25,7 +27,7 @@ public static class PresentationFileFormatConverter
 
                 using var stream = slide.ConvertToImage(ExportImageFormat.Png);
                 using var fileStreamOutput =
-                    File.Create(Path.Combine(task.OutputDirectory, $"slide_{slideIndex}.png"));
+                    File.Create(Path.Combine(outputFilePath, $"slide_{slideIndex}.png"));
                 stream.CopyTo(fileStreamOutput);
             }
         }
@@ -46,6 +48,7 @@ public static class PresentationFileFormatConverter
             // save to disk once conversion succeeded
             string targetPdfFile = Path.Combine(task.OutputDirectory,
                 Path.GetFileNameWithoutExtension(task.InputFile)) + ".pdf";
+            outputFilePath = targetPdfFile;
             using var file = new FileStream(targetPdfFile, FileMode.Create, FileAccess.Write);
             stream.WriteTo(file);
         }
@@ -54,7 +57,8 @@ public static class PresentationFileFormatConverter
         {
             Task = task,
             JobStatus = ImportStats.JobStatusEnum.CompletionSuccess,
-            JobPercentage = 100
+            OutputFilePath = outputFilePath,
+            JobPercentage = 100d
         });
     }
 }
