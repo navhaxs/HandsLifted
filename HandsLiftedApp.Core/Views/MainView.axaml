@@ -79,23 +79,18 @@
                                   MaxWidth="800" />
             </Grid.ColumnDefinitions>
 
-            <Ellipse Fill="White" Height="6" Width="6"
-                     IsVisible="{Binding Playlist.IsDirty}"
-                     IsHitTestVisible="False"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Top" />
-
             <!-- inner grid: left panel and content -->
             <DockPanel>
 
                 <DockPanel
                     Height="70"
+                    Margin="0 8 0 0"
                     DockPanel.Dock="Top">
 
                     <DockPanel>
                         <Button
                             Name="AppMenuButton"
-                            Margin="8,8,0,0"
+                            Margin="8,0,0,0"
                             CornerRadius="0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -222,9 +217,16 @@
                         <Grid IsHitTestVisible="False" />
                     </DockPanel>
 
+                    <Ellipse Fill="White" Height="6" Width="6"
+                             DockPanel.Dock="Left"
+                             IsVisible="{Binding Playlist.IsDirty}"
+                             IsHitTestVisible="False"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center" />
+                    
                     <controls:TextBoxToggleButton
                         DockPanel.Dock="Top"
-                        Margin="0,8,0,0"
+                        Margin="0,0,0,0"
                         VerticalAlignment="Center"
                         Padding="7"
                         HorizontalAlignment="Left"
