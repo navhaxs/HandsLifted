@@ -4,7 +4,7 @@
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <BuildDateTime>$([System.DateTime]::Now)</BuildDateTime>
+        <BuildDateTime>$([System.DateTime]::Now.ToString("dd/MM/yyyy"))</BuildDateTime>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
