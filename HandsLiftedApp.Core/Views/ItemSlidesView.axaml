@@ -195,11 +195,9 @@
                                     FontSize="20"
                                     Watermark="(New Section)"
                                     Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
-
                             </DockPanel>
                             <!--<item:ItemInfo VerticalAlignment="Top" />-->
                         </StackPanel>
-
                     </Border>
                 </DataTemplate>
                 <!-- default template for all other item types -->
@@ -307,6 +305,7 @@
 							/>-->
                                     <controls:TextBoxToggleButton
                                         FontSize="20"
+                                        Watermark="(New Item)"
                                         Text="{Binding Title, FallbackValue='Rock Of Ages'}" />
                                     <!-- <TextBox -->
                                     <!--     Background="Transparent" -->

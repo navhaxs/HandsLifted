@@ -342,6 +342,14 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
+                                <TextBlock
+                                    IsVisible="{Binding Title, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                                    Padding="0,8,0,8"
+                                    Classes="ItemTextBlock"
+                                    FontSize="12"
+                                    TextTrimming="CharacterEllipsis"
+                                    Text="(New item)"
+                                />
                                 <i:Interaction.Behaviors>
                                     <behaviours:DragControlBehavior />
                                 </i:Interaction.Behaviors>
