@@ -11,19 +11,18 @@ namespace HandsLiftedApp.Core.ViewModels
 {
     public class SetupWindowViewModel : ReactiveObject
     {
-        private List<AppPreferencesViewModel.DisplayModel> _AllAvailableScreens = new();
-        public List<AppPreferencesViewModel.DisplayModel> AllAvailableScreens { get => _AllAvailableScreens; set => this.RaiseAndSetIfChanged(ref _AllAvailableScreens, value); }
+        private List<AppPreferencesViewModel.DisplayModel?> _AllAvailableScreens = new();
+        public List<AppPreferencesViewModel.DisplayModel?> AllAvailableScreens { get => _AllAvailableScreens; set => this.RaiseAndSetIfChanged(ref _AllAvailableScreens, value); }
         List<DisplayIdentifyWindow> wnds = new();
         
         public SetupWindowViewModel(Screens screens)
         {
-            AllAvailableScreens = screens.All.Select(i => new AppPreferencesViewModel.DisplayModel(i.Bounds)).ToList();
-            AllAvailableScreens.Add(new AppPreferencesViewModel.UnsetDisplay());
+            AllAvailableScreens = screens.All.Select(i => new AppPreferencesViewModel.DisplayModel(i.Bounds)).ToList<AppPreferencesViewModel.DisplayModel?>();
             foreach (var (i, index) in AllAvailableScreens.WithIndex())
             {
-                i.Label = $"Display {index + 1}";
+                if (i != null) i.Label = $"Display {index + 1}";
             };
-
+            AllAvailableScreens.Add(null);
         }
 
         public void ShowDisplayIdentification(Screens screens)

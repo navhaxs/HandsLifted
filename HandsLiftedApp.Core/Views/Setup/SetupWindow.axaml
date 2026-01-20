@@ -132,18 +132,30 @@
                 </TabItem>
 
                 <TabItem Header="Displays">
-                    <StackPanel>
-                        <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
+                    <StackPanel Margin="8">
                         <Label>Output Display (Projector)</Label>
                         <ComboBox
                             SelectionChanged="ProjectorOutput_OnSelectionChanged"
                             SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OutputDisplayBounds}"
-                            ItemsSource="{Binding AllAvailableScreens}" />
+                            ItemsSource="{Binding AllAvailableScreens}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TargetNullValue='(Unset)'}" />                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Grid Height="16" />
                         <Label>Stage Display</Label>
                         <ComboBox Name="StageDisplayComboBox"
                                   SelectionChanged="StageOutput_OnSelectionChanged"
                                   SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.StageDisplayBounds}"
-                                  ItemsSource="{Binding AllAvailableScreens}" />
+                                  ItemsSource="{Binding AllAvailableScreens}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TargetNullValue='(Unset)'}" />                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Grid Height="16" />
+                        <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
                     </StackPanel>
 
                 </TabItem>

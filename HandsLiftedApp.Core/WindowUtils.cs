@@ -13,8 +13,7 @@ namespace HandsLiftedApp.Core
             bool? forceShow = null)
         {
 
-            if (targetSavedDisplay != null &&
-                targetSavedDisplay is not AppPreferencesViewModel.UnsetDisplay) {
+            if (targetSavedDisplay != null) {
 
                 var targetPosition = new PixelPoint(targetSavedDisplay.X, targetSavedDisplay.Y);
 

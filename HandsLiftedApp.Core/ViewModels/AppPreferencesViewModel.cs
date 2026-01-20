@@ -125,17 +125,17 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _onStartupShowLogo, value);
         }
 
-        private DisplayModel _stageDisplayBounds;
+        private DisplayModel? _stageDisplayBounds;
         [DataMember]
-        public DisplayModel StageDisplayBounds
+        public DisplayModel? StageDisplayBounds
         {
             get => _stageDisplayBounds;
             set => this.RaiseAndSetIfChanged(ref _stageDisplayBounds, value);
         }
 
-        private DisplayModel _outputDisplayBounds;
+        private DisplayModel? _outputDisplayBounds;
         [DataMember]
-        public DisplayModel OutputDisplayBounds
+        public DisplayModel? OutputDisplayBounds
         {
             get => _outputDisplayBounds;
             set => this.RaiseAndSetIfChanged(ref _outputDisplayBounds, value);
@@ -284,15 +284,6 @@ namespace HandsLiftedApp.Core.ViewModels
                     hashcode = hashcode * 7302013 ^ Height.GetHashCode();
                     return hashcode;
                 }
-            }
-        }
-
-        [DataContract]
-        public class UnsetDisplay : DisplayModel
-        {
-            public override string? ToString()
-            {
-                return "(Unset)";
             }
         }
     }
