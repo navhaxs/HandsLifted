@@ -129,5 +129,12 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             MessageBus.Current.SendMessage(new AddItemMessage() {InsertIndex = itemInsertIndex, Type = AddItemMessage.AddItemType.GoogleSlides, CreateInfo = GoogleSlidesPresentationId});
             CloseWindow();
         }
+        
+        private async void ButtonCreateFreeTextSlide_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var itemInsertIndex = Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex;
+            MessageBus.Current.SendMessage(new AddItemMessage() {InsertIndex = itemInsertIndex, Type = AddItemMessage.AddItemType.BlankGroup});
+            CloseWindow();
+        }
     }
 }

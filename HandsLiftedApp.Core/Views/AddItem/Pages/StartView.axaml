@@ -170,7 +170,28 @@
                         <avalonia:MaterialIcon Kind="PlusCircleOutline" Height="32" Width="32" />
                     </DockPanel>
                 </TabItem.Header>
-
+                <ScrollViewer Background="{DynamicResource ActiveContentBackgroundBrush}">
+                    <StackPanel>
+                        <Button HorizontalContentAlignment="Left" Click="ButtonCreateFreeTextSlide_OnClick">
+                            <DockPanel>
+                                <avalonia:MaterialIcon Kind="Slideshow" DockPanel.Dock="Left" Width="34" Height="34" Margin="8" />
+                                <TextBlock Text="Create free-text slide" VerticalAlignment="Center" FontSize="14" />
+                            </DockPanel>
+                        </Button>
+                        <Button HorizontalContentAlignment="Left" Click="ButtonCreateFreeTextSlide_OnClick">
+                            <DockPanel>
+                                <avalonia:MaterialIcon Kind="Slideshow" DockPanel.Dock="Left" Width="34" Height="34" Margin="8" />
+                                <TextBlock Text="Create Bible Reading slide" VerticalAlignment="Center" FontSize="14" />
+                            </DockPanel>
+                        </Button>
+                        <Button HorizontalContentAlignment="Left" Click="ButtonCreateFreeTextSlide_OnClick">
+                            <DockPanel>
+                                <avalonia:MaterialIcon Kind="Slideshow" DockPanel.Dock="Left" Width="34" Height="34" Margin="8" />
+                                <TextBlock Text="Create Scripture slide" VerticalAlignment="Center" FontSize="14" />
+                            </DockPanel>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -188,7 +209,6 @@
                             </DockPanel>
                         </Button>
                     </StackPanel>
-                    
                 </ScrollViewer>
             </TabItem>
         </TabControl>
