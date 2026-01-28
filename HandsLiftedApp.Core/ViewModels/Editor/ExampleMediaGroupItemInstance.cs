@@ -1,13 +1,14 @@
 ﻿using DynamicData;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Core.ViewModels.Editor
 {
-    internal class ExampleMediaGroupItemInstance : MediaGroupItemInstance
+    public class ExampleMediaGroupItemInstance : MediaGroupItemInstance
     {
-        public ExampleMediaGroupItemInstance(PlaylistInstance parentPlaylist = null) : base(parentPlaylist)
+        public ExampleMediaGroupItemInstance(): base(null)
         {
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide1.PNG" });
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide2.PNG" });
@@ -15,6 +16,12 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide4.PNG" });
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide5.PNG" });
             this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide6.PNG" });
+            var newSlideData = new CustomSlide();
+            this.Items.Add(new MediaGroupItem.SlideItem() { SlideData = newSlideData });
+            this.Items.Add(new MediaGroupItem.SlideItem() { SlideData = new CustomSlide() });
+            this.Items.Add(new MediaGroupItem.SlideItem() { SlideData = new CustomSlide() });
+            this.Items.Add(new MediaGroupItem.SlideItem() { SlideData = new CustomSlide() });
+            this.Items.Add(new MediaGroupItem.SlideItem() { SlideData = new CustomSlide() });
         }
     }
 }

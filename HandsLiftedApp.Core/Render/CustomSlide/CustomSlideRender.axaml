@@ -15,17 +15,16 @@
              x:Class="HandsLiftedApp.Core.Render.CustomSlide.CustomSlideRender">
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
-        <extensions:BitmapAssetValueConverter x:Key="variableImage" />
+        <extensions:BitmapAssetValueConverter x:Key="VariableImage" />
     </UserControl.Resources>
 
     <Grid
         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}">
         <Border>
             <Canvas x:Name="Root" />
-            <!-- <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="Button_OnClick">Render</Button> -->
             <Border.Background>
                 <ImageBrush
-                    Source="{Binding BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
+                    Source="{Binding BackgroundGraphicFilePath, Converter={StaticResource VariableImage}}"
                     Stretch="UniformToFill" />
             </Border.Background>
         </Border>

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -7,7 +8,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
@@ -38,7 +38,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             // interaction.SetOutput(fileNames);
         }
 
-        private void GroupItemsEditorWindow_DataContextChanged(object? sender, System.EventArgs e)
+        private void GroupItemsEditorWindow_DataContextChanged(object? sender, EventArgs e)
         {
             //this.FindControl<DataGrid>("DataGrid").ItemsSource = ViewModel.Item.Slides;
         }
@@ -185,7 +185,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             {
                 if (listBox.SelectedItem is MediaGroupItem.SlideItem slideItem)
                 {
-                    SlideEditorWindow slideEditorWindow = new() { DataContext = new FreeTextSlideEditorViewModel() { Slide = slideItem.SlideData }};
+                    SlideEditorWindow slideEditorWindow = new() { DataContext = slideItem.SlideData };
                     slideEditorWindow.Show();
                 }
             }

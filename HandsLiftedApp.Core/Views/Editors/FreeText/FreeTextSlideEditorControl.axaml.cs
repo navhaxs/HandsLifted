@@ -1,14 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Xml.Serialization;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
 using HandsLiftedApp.Data.Data.Models.Slides;
-using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.SlideElement;
 using Serilog;
 
@@ -22,8 +17,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
             if (Design.IsDesignMode)
             {
-                this.DataContext = new FreeTextSlideEditorViewModel()
-                    { Slide = new CustomSlide() { SlideElements = new() { new TextElement() } } };
+                this.DataContext = new CustomSlide() { SlideElements = new() { new TextElement() } };
             }
 
             VisualEditor.OnUpdateSelectedElement += (sender, args) =>
@@ -34,13 +28,13 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         public void UpdateXml()
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
                 _enableXMLParse = false;
                 XmlSerializer serializer = new XmlSerializer(typeof(CustomSlide));
                 using (StringWriter writer = new())
                 {
-                    serializer.Serialize(writer, vm.Slide);
+                    serializer.Serialize(writer, vm);
                     CodeEditor.Text = writer.ToString();
                 }
 
@@ -50,17 +44,17 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         private void AddSlideElement(SlideElement slideElement)
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
-                slideElement.X = vm.Slide.SlideWidth / 2 - slideElement.Width / 2;
-                slideElement.Y = vm.Slide.SlideHeight / 2 - slideElement.Height / 2;
-                vm.Slide.SlideElements.Add(slideElement);
+                slideElement.X = vm.SlideWidth / 2 - slideElement.Width / 2;
+                slideElement.Y = vm.SlideHeight / 2 - slideElement.Height / 2;
+                vm.SlideElements.Add(slideElement);
             }
         }
 
         private void ButtonAddTextElement_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
                 AddSlideElement(new TextElement());
             }
@@ -68,7 +62,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         
         private void ButtonAddImageElement_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
                 AddSlideElement(new ImageElement());
             }
@@ -76,42 +70,42 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         private void MoveItemUp_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
                 if (sender is Control { DataContext: SlideElement slideElement })
                 {
-                    var indexOf = vm.Slide.SlideElements.IndexOf(slideElement);
-                    vm.Slide.SlideElements.Move(indexOf, Math.Max(indexOf - 1, 0));
+                    var indexOf = vm.SlideElements.IndexOf(slideElement);
+                    vm.SlideElements.Move(indexOf, Math.Max(indexOf - 1, 0));
                 }
             }
         }
 
         private void MoveItemDown_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
                 if (sender is Control { DataContext: SlideElement slideElement })
                 {
-                    var indexOf = vm.Slide.SlideElements.IndexOf(slideElement);
-                    vm.Slide.SlideElements.Move(indexOf, Math.Min(indexOf + 1, vm.Slide.SlideElements.Count - 1));
+                    var indexOf = vm.SlideElements.IndexOf(slideElement);
+                    vm.SlideElements.Move(indexOf, Math.Min(indexOf + 1, vm.SlideElements.Count - 1));
                 }
             }
         }
 
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
                 if (sender is Control { DataContext: SlideElement slideElement })
                 {
-                    vm.Slide.SlideElements.Remove(slideElement);
+                    vm.SlideElements.Remove(slideElement);
                 }
             }
         }
 
         private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (this.DataContext is CustomSlide vm)
             {
                 if (sender is Control { DataContext: SlideElement slideElement })
                 {
@@ -125,7 +119,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                         
                         using (StringReader reader = new StringReader(obj))
                         {
-                            vm.Slide.SlideElements.Add(serializer.Deserialize(reader) as SlideElement);
+                            vm.SlideElements.Add(serializer.Deserialize(reader) as SlideElement);
                         }
                     }
                     
@@ -142,7 +136,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         private void CodeEditor_OnTextChanged(object? sender, TextChangedEventArgs e)
         {
-            if (_enableXMLParse && this.DataContext is FreeTextSlideEditorViewModel vm)
+            if (_enableXMLParse && this.DataContext is CustomSlide vm)
             {
                 try
                 {
@@ -150,7 +144,8 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
                     using (StringReader reader = new StringReader(CodeEditor.Text))
                     {
-                        vm.Slide = serializer.Deserialize(reader) as CustomSlide;
+                        // TODO does this work?
+                        vm = serializer.Deserialize(reader) as CustomSlide;
                     }
                 }
                 catch (Exception exception)

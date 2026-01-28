@@ -4,14 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:freeText="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor.FreeText"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:converters="clr-namespace:Avalonia.Markup.Xaml.Converters;assembly=Avalonia.Markup.Xaml"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
-             x:DataType="freeText:FreeTextSlideEditorViewModel"
+             x:DataType="slides:CustomSlide"
              ClipToBounds="True"
              x:Class="HandsLiftedApp.Core.Views.Editors.VisualSlideEditor">
-
+    
     <UserControl.Styles>
         <StyleInclude Source="./SelectedAdorner.axaml" />
     </UserControl.Styles>
+    
+    <UserControl.Resources>
+        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
+        <extensions:BitmapAssetValueConverter x:Key="VariableImage" />
+    </UserControl.Resources>
 
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom">
@@ -78,13 +86,19 @@
                             ScrollViewer.HorizontalScrollBarVisibility="Visible"
                             ScrollViewer.VerticalScrollBarVisibility="Visible"
                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                    <Canvas Name="Root"
-                            Width="1920"
-                            Height="1080"
-                            Background="LightGray"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                    </Canvas>
+                    <Grid
+                        Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
+                        Width="1920"
+                        Height="1080">
+                    <Border>
+                        <Canvas Name="Root" Background="Transparent" />
+                        <Border.Background>
+                            <ImageBrush
+                                Source="{Binding   BackgroundGraphicFilePath, Converter={StaticResource VariableImage}}"
+                                Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
+                    </Grid>
                 </ZoomBorder>
                 <!-- <Canvas Name="FrontCanvas" /> -->
             </ScrollViewer>

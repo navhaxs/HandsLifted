@@ -116,13 +116,13 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         public void Render(CustomSlide customSlide)
         {
-            Root.Bind(Panel.BackgroundProperty, new Binding
-            {
-                Source = customSlide,
-                Path = nameof(customSlide.BackgroundAvaloniaColour),
-                Mode = BindingMode.OneWay,
-                Converter = new ColorToBrushConverter()
-            });
+            // Root.Bind(Panel.BackgroundProperty, new Binding
+            // {
+            //     Source = customSlide,
+            //     Path = nameof(customSlide.BackgroundAvaloniaColour),
+            //     Mode = BindingMode.OneWay,
+            //     Converter = new ColorToBrushConverter()
+            // });
 
             Root.Children.Clear();
             int i = 0;

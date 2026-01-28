@@ -1,26 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using Avalonia.Controls;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using HandsLiftedApp.Core.Models.AppState;
-using HandsLiftedApp.Core.Models.RuntimeData;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using HandsLiftedApp.Core.Utils;
-using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
-using HandsLiftedApp.Models.PlaylistActions;
-using HandsLiftedApp.Utils;
 using ReactiveUI;
-using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {

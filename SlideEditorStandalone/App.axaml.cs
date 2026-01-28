@@ -3,11 +3,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core;
-using HandsLiftedApp.Core.ViewModels;
-using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
-using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
+using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views;
-using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using ReactiveUI;
 
@@ -44,7 +41,7 @@ public partial class App : Application
             
             // PlaylistInstance x = Globals.Instance.MainViewModel.Playlist;
             // var window = new SongEditorWindow() { DataContext = new SongEditorViewModel(new SongItemInstance(x), x) };
-            var window = new SlideEditorWindow() { DataContext = new FreeTextSlideEditorViewModel() { Slide = data }};
+            var window = new MainWindow() { DataContext = new ExampleMediaGroupItemInstance() { }};
             
             window.Closing += (sender, args) => { slideRendererWorkerWindow.Close(); };
             

@@ -2,15 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:freeText="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor.FreeText"
              xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
              xmlns:slideElement="clr-namespace:HandsLiftedApp.Data.Models.SlideElement;assembly=HandsLiftedApp.Data"
              xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
-             x:DataType="freeText:FreeTextSlideEditorViewModel"
+             x:DataType="slides:CustomSlide"
              x:Class="HandsLiftedApp.Core.Views.Editors.FreeText.FreeTextSlideEditorControl">
     <Grid ColumnDefinitions="*,1,3*,1,2*">
         <DockPanel>
@@ -18,7 +18,7 @@
                 <Button Content="Add TextBox" Click="ButtonAddTextElement_OnClick" />
                 <Button Content="Add Image" Click="ButtonAddImageElement_OnClick" />
             </StackPanel>
-            <ListBox ItemsSource="{Binding Slide.SlideElements}" Name="ListBox"
+            <ListBox ItemsSource="{Binding SlideElements}" Name="ListBox"
                      SelectionChanged="ListBox_OnSelectionChanged"
                      BorderThickness="0"
                      SelectionMode="AlwaysSelected, Single">
@@ -72,7 +72,7 @@
         <DockPanel Grid.Column="2">
             <TabControl>
                 <TabItem Header="Visual">
-                    <editors:VisualSlideEditor Name="VisualEditor" DataContext="{Binding Slide}" />
+                    <editors:VisualSlideEditor Name="VisualEditor" DataContext="{Binding }" />
                 </TabItem>
                 <TabItem Header="Code">
                     <DockPanel Grid.Row="2">
@@ -82,7 +82,7 @@
                 </TabItem>
                 <TabItem Header="Preview">
                     <Viewbox>
-                        <customSlide:CustomSlideRender Name="Render" DataContext="{Binding Slide}" />
+                        <customSlide:CustomSlideRender Name="Render" DataContext="{Binding }" />
                     </Viewbox>
                 </TabItem>
             </TabControl>
@@ -449,13 +449,13 @@
                     <TextBlock Text="Background" />
 
                     <ColorPicker HorizontalAlignment="Right"
-                                 Color="{Binding  Slide.BackgroundAvaloniaColour, FallbackValue='Black'}" />
+                                 Color="{Binding  BackgroundAvaloniaColour, FallbackValue='Black'}" />
 
                     <TextBlock Text="Graphic" />
                     <DockPanel>
                         <!-- <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button> -->
                         <TextBox Watermark=""
-                                 Text="{Binding Slide.BackgroundGraphicFilePath}" />
+                                 Text="{Binding BackgroundGraphicFilePath}" />
                     </DockPanel>
 
                 </StackPanel>

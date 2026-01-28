@@ -1,0 +1,98 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:freeText="clr-namespace:HandsLiftedApp.Core.Views.Editors.FreeText"
+             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             xmlns:items1="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:editor1="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="items:MediaGroupItemInstance"
+             x:Class="HandsLiftedApp.Core.Views.Editors.SlideGroupEditor.SlideGroupEditor">
+    <Design.DataContext>
+        <editor1:ExampleMediaGroupItemInstance />
+    </Design.DataContext>
+    
+    <UserControl.Resources>
+        <converters:SlideToSlideDataConverter x:Key="SlideToSlideDataConverter" />
+    </UserControl.Resources>
+
+    <DockPanel>
+        <ScrollViewer DockPanel.Dock="Bottom">
+            <StackPanel Orientation="Horizontal" >
+                <ListBox Name="Thumbstrip" ItemsSource="{Binding Items}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="ContextMenu">
+                                <ContextMenu>
+                                    <MenuItem Header="Duplicate" Click="Duplicate_OnClick">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <!-- <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick"> -->
+                                    <!--     <MenuItem.Icon> -->
+                                    <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" /> -->
+                                    <!--     </MenuItem.Icon> -->
+                                    <!-- </MenuItem> -->
+                                    <MenuItem Header="Remove" Click="RemoveItem_OnClick">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Foreground="#888888" Kind="Times" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Setter>
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.ItemTemplate>
+                        <common:MyTemplateSelector>
+                            <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
+                                <DockPanel>
+                                    <Viewbox Height="48">
+                                        <Grid Height="720" Width="1280" Background="Black">
+                                            <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
+                                                   RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                   VerticalAlignment="Stretch"
+                                                   HorizontalAlignment="Stretch" />
+                                        </Grid>
+                                    </Viewbox>
+                                    <!-- <TextBlock -->
+                                    <!--     Margin="8" -->
+                                    <!--     TextWrapping="WrapWithOverflow" -->
+                                    <!--     Text="{Binding SourceMediaFilePath}" /> -->
+                                </DockPanel>
+                            </DataTemplate>
+                            <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
+                                <DockPanel>
+                                    <Viewbox Height="48">
+                                        <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
+                                    </Viewbox>
+                                    <!-- <TextBlock -->
+                                    <!--     Margin="8" -->
+                                    <!--     TextWrapping="WrapWithOverflow" -->
+                                    <!--     Text="CustomSlide" /> -->
+                                </DockPanel>
+                            </DataTemplate>
+                        </common:MyTemplateSelector>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Content="Insert Item"
+                        HorizontalAlignment="Stretch"
+                        Click="AddSlide_OnClick"
+                        />
+            </StackPanel>
+        </ScrollViewer>
+
+        <freeText:FreeTextSlideEditorControl DataContext="{Binding #Thumbstrip.SelectedItem, Converter={StaticResource SlideToSlideDataConverter}}" />
+    </DockPanel>
+</UserControl>
