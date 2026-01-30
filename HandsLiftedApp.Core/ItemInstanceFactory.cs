@@ -11,9 +11,9 @@ namespace HandsLiftedApp.Core
 {
     public static class ItemInstanceFactory
     {
-        public static Item ToItemInstance(Item deserializedItem, PlaylistInstance playlist)
+        public static Item ToItemInstance(Item deserializedItem, PlaylistInstance? playlist)
         {
-            var playlistDirectoryPath = playlist.PlaylistWorkingDirectory;
+            var playlistDirectoryPath = playlist?.PlaylistWorkingDirectory;
             if (deserializedItem is LogoItem i)
             {
                 return new LogoItemInstance(playlist) { Title = i.Title };

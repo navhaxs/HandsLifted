@@ -13,7 +13,6 @@ namespace HandsLiftedApp.Core.Views.Editors.SlideGroupEditor
             InitializeComponent();
         }
 
-
         private void Duplicate_OnClick(object? sender, RoutedEventArgs e)
         {
             if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)

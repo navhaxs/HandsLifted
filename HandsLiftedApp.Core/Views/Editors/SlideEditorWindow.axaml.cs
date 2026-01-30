@@ -1,6 +1,4 @@
 ﻿using Avalonia.Controls;
-using HandsLiftedApp.Core.ViewModels.Editor.FreeText;
-using HandsLiftedApp.Data.Data.Models.Slides;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {

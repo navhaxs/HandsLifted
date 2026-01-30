@@ -23,7 +23,8 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <ScrollViewer DockPanel.Dock="Bottom">
+        <ScrollViewer DockPanel.Dock="Bottom"
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
             <StackPanel Orientation="Horizontal" >
                 <ListBox Name="Thumbstrip" ItemsSource="{Binding Items}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemsPanel>
