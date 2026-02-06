@@ -138,18 +138,60 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
             if (slideElement is TextElement textElement)
             {
+                Border textBlockContainer = new Border()
+                {
+                    VerticalAlignment = VerticalAlignment.Top,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                };
+                Canvas.SetLeft(textBlockContainer, textElement.X);
+                Canvas.SetTop(textBlockContainer, textElement.Y);
+                textBlockContainer.Bind(Canvas.TopProperty, new Binding
+                {
+                    Source = textElement,
+                    Path = nameof(textElement.Y),
+                    Mode = BindingMode.TwoWay
+                });
+
+                textBlockContainer.Bind(Canvas.LeftProperty, new Binding
+                {
+                    Source = textElement,
+                    Path = nameof(textElement.X),
+                    Mode = BindingMode.TwoWay
+                });
+
+                textBlockContainer.Bind(Layoutable.WidthProperty, new Binding
+                {
+                    Source = textElement,
+                    Path = nameof(textElement.Width),
+                    Mode = BindingMode.TwoWay
+                });
+
+                textBlockContainer.Bind(Layoutable.HeightProperty, new Binding
+                {
+                    Source = textElement,
+                    Path = nameof(textElement.Height),
+                    Mode = BindingMode.TwoWay
+                });
+                
+                textBlockContainer.Bind(TextBlock.BackgroundProperty, new Binding
+                {
+                    Source = textElement,
+                    Path = nameof(textElement.BackgroundAvaloniaColour),
+                    Mode = BindingMode.OneWay,
+                    Converter = new XmlColorToBrushConverter()
+                });
+
                 TextBlock textBlock = new TextBlock()
                 {
                     Text = textElement.Text, FontSize = Math.Max(1, textElement.FontSize),
-                    Background = Brushes.Blue, Foreground = Brushes.Yellow,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    // VerticalAlignment = textElement.VerticalAlignment,
-                    VerticalAlignment = VerticalAlignment.Top,
+                    Background = Brushes.Transparent,
+                    Foreground = Brushes.Yellow,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = textElement.VerticalAlignment,
                     TextWrapping = TextWrapping.Wrap,
                     DataContext = slideElement
                 };
-                Canvas.SetLeft(textBlock, textElement.X);
-                Canvas.SetTop(textBlock, textElement.Y);
+                textBlockContainer.Child = textBlock;
 
                 textBlock.Bind(TextBlock.TextProperty, new Binding
                 {
@@ -162,34 +204,6 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                 {
                     Source = textElement,
                     Path = nameof(textElement.FontSize),
-                    Mode = BindingMode.TwoWay
-                });
-
-                textBlock.Bind(Canvas.TopProperty, new Binding
-                {
-                    Source = textElement,
-                    Path = nameof(textElement.Y),
-                    Mode = BindingMode.TwoWay
-                });
-
-                textBlock.Bind(Canvas.LeftProperty, new Binding
-                {
-                    Source = textElement,
-                    Path = nameof(textElement.X),
-                    Mode = BindingMode.TwoWay
-                });
-
-                textBlock.Bind(TextBlock.WidthProperty, new Binding
-                {
-                    Source = textElement,
-                    Path = nameof(textElement.Width),
-                    Mode = BindingMode.TwoWay
-                });
-
-                textBlock.Bind(TextBlock.HeightProperty, new Binding
-                {
-                    Source = textElement,
-                    Path = nameof(textElement.Height),
                     Mode = BindingMode.TwoWay
                 });
 
@@ -214,24 +228,15 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Mode = BindingMode.OneWay,
                     Converter = new XmlColorToBrushConverter()
                 });
-
-                textBlock.Bind(TextBlock.BackgroundProperty, new Binding
+                
+                textBlock.Bind(Layoutable.VerticalAlignmentProperty, new Binding
                 {
                     Source = textElement,
-                    Path = nameof(textElement.BackgroundAvaloniaColour),
+                    Path = nameof(textElement.VerticalAlignment),
                     Mode = BindingMode.OneWay,
-                    Converter = new XmlColorToBrushConverter()
                 });
 
-                // TODO, this does NOT work, actually need to wrap in a border(?)
-                // textBlock.Bind(Layoutable.VerticalAlignmentProperty, new Binding
-                // {
-                //     Source = textElement,
-                //     Path = nameof(textElement.VerticalAlignment),
-                //     Mode = BindingMode.OneWay,
-                // });
-
-                return textBlock;
+                return textBlockContainer;
             }
 
             return null;

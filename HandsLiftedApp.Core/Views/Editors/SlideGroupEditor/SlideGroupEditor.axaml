@@ -11,6 +11,7 @@
              xmlns:editor1="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+             xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="items:MediaGroupItemInstance"
              x:Class="HandsLiftedApp.Core.Views.Editors.SlideGroupEditor.SlideGroupEditor">
@@ -54,11 +55,20 @@
                                 </ContextMenu>
                             </Setter>
                         </Style>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Interaction.Behaviors">
+                                <!-- <BehaviorCollection> -->
+                                    <!-- <behaviours:SlideThumbnailBehavior /> -->
+                                <!-- </BehaviorCollection> -->
+                            </Setter>
+                        </Style>
+
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
                         <common:MyTemplateSelector>
                             <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
-                                <DockPanel>
+                                <Grid>
+                                    <DockPanel>
                                     <Viewbox Height="48">
                                         <Grid Height="720" Width="1280" Background="Black">
                                             <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
@@ -72,17 +82,26 @@
                                     <!--     TextWrapping="WrapWithOverflow" -->
                                     <!--     Text="{Binding SourceMediaFilePath}" /> -->
                                 </DockPanel>
+                                    <Interaction.Behaviors>
+                                        <behaviours:SlideThumbnailBehavior />
+                                    </Interaction.Behaviors>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
-                                <DockPanel>
-                                    <Viewbox Height="48">
-                                        <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
-                                    </Viewbox>
-                                    <!-- <TextBlock -->
-                                    <!--     Margin="8" -->
-                                    <!--     TextWrapping="WrapWithOverflow" -->
-                                    <!--     Text="CustomSlide" /> -->
-                                </DockPanel>
+                                <Grid>
+                                    <DockPanel>
+                                        <Viewbox Height="48">
+                                            <customSlide:CustomSlideRender DataContext="{Binding SlideData}" />
+                                        </Viewbox>
+                                        <!-- <TextBlock -->
+                                        <!--     Margin="8" -->
+                                        <!--     TextWrapping="WrapWithOverflow" -->
+                                        <!--     Text="CustomSlide" /> -->
+                                    </DockPanel>
+                                    <Interaction.Behaviors>
+                                        <behaviours:SlideThumbnailBehavior />
+                                    </Interaction.Behaviors>
+                                </Grid>
                             </DataTemplate>
                         </common:MyTemplateSelector>
                     </ListBox.ItemTemplate>

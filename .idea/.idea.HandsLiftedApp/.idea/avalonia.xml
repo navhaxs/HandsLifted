@@ -71,6 +71,7 @@
         <entry key="HandsLiftedApp.Core/Views/Designer/SlideThemeDesigner.axaml" value="Demos/SongEditorStandalone/SongEditorStandalone.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Designer/SongSlideView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/FreeText/FreeTextSlideEditorControl.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/FreeText/Parts/VisualSlideEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GenericContentEditorView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GenericContentEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GoogleSlides/GoogleSlidesItemEdit.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

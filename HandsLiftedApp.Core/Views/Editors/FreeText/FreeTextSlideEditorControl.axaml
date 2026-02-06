@@ -12,6 +12,19 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
              x:DataType="slides:CustomSlide"
              x:Class="HandsLiftedApp.Core.Views.Editors.FreeText.FreeTextSlideEditorControl">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ToolbarHeaderBackground">#54423CCD</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ToolbarHeaderBackground">#383838</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid ColumnDefinitions="*,1,3*,1,2*">
         <DockPanel>
             <StackPanel DockPanel.Dock="Bottom">
@@ -67,7 +80,7 @@
             </ListBox>
         </DockPanel>
 
-        <GridSplitter Grid.Column="1" />
+        <GridSplitter Grid.Column="1" Margin="-4 12" />
 
         <DockPanel Grid.Column="2">
             <TabControl>
@@ -88,7 +101,7 @@
             </TabControl>
         </DockPanel>
 
-        <GridSplitter Grid.Column="3" />
+        <GridSplitter Grid.Column="3" Margin="-4 12" />
 
         <DockPanel Grid.Column="4">
             <ScrollViewer>
@@ -98,7 +111,7 @@
                         <Style Selector="TextBlock.heading">
                             <Setter Property="FontSize" Value="14" />
                             <Setter Property="Padding" Value="0 8 0 2" />
-                            <Setter Property="Background" Value="#383838" />
+                            <Setter Property="Background" Value="{DynamicResource ToolbarHeaderBackground}" />
                         </Style>
                     </StackPanel.Styles>
 
@@ -138,7 +151,7 @@
                                             <TextBlock Text="Font" />
 
                                             <controls:ComboBoxWithoutWheelScroll x:Name="fontComboBox"
-                                                SelectedItem="{Binding FontFamilyAsText}">
+                                                    SelectedItem="{Binding FontFamilyAsText}">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}"
@@ -316,7 +329,7 @@
                                                     </RadioButton>
                                                 </UniformGrid>
                                             </Border>
-                                            
+
                                             <Border
                                                 Margin="0,6"
                                                 Background="Transparent"
@@ -435,9 +448,9 @@
                                             <!-- <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button> -->
                                             <TextBox Watermark=""
                                                      Text="{Binding FilePath}" />
-                                        </DockPanel> 
+                                        </DockPanel>
                                     </StackPanel>
-                                </DataTemplate> 
+                                </DataTemplate>
                             </common:MyTemplateSelector>
                         </ContentControl.ContentTemplate>
                     </ContentControl>
