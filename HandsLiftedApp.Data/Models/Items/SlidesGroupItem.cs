@@ -9,6 +9,7 @@ namespace HandsLiftedApp.Data.Models.Items
 {
     [XmlRoot("SlidesGroupItem", Namespace = Constants.Namespace, IsNullable = false)]
     // // TODO: need to define list of media, rather than Slide ??? for serialization
+    // TODO: Can this be removed in favour of MediaGroupItem
     [XmlInclude(typeof(ImageSlide))]
     [XmlInclude(typeof(VideoSlide))]
     [XmlInclude(typeof(CustomAxamlSlide))]

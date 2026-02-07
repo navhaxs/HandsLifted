@@ -12,22 +12,19 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
              xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
+             xmlns:slideItemEditor="clr-namespace:HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor.SlideItemEditor"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="items:MediaGroupItemInstance"
-             x:Class="HandsLiftedApp.Core.Views.Editors.SlideGroupEditor.SlideGroupEditor">
+             x:Class="HandsLiftedApp.Core.Views.Editors.SlideGroupEditor.MediaGroupItemEditor">
     <Design.DataContext>
         <editor1:ExampleMediaGroupItemInstance />
     </Design.DataContext>
-    
-    <UserControl.Resources>
-        <converters:SlideToSlideDataConverter x:Key="SlideToSlideDataConverter" />
-    </UserControl.Resources>
-
     <DockPanel>
         <ScrollViewer DockPanel.Dock="Bottom"
                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-            <StackPanel Orientation="Horizontal" >
-                <ListBox Name="Thumbstrip" ItemsSource="{Binding Items}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Orientation="Horizontal">
+                <ListBox Name="Thumbstrip" ItemsSource="{Binding Items}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" />
@@ -42,26 +39,31 @@
                                             <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <!-- <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick"> -->
-                                    <!--     <MenuItem.Icon> -->
-                                    <!--         <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" /> -->
-                                    <!--     </MenuItem.Icon> -->
-                                    <!-- </MenuItem> -->
                                     <MenuItem Header="Remove" Click="RemoveItem_OnClick">
                                         <MenuItem.Icon>
                                             <avalonia:MaterialIcon Foreground="#888888" Kind="Times" />
                                         </MenuItem.Icon>
                                     </MenuItem>
+                                    <MenuItem Header="Move Up" Click="MoveUpItem_OnClick">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Foreground="#888888" Kind="ArrowLeft" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Move Down" Click="MoveDownItem_OnClick">
+                                        <MenuItem.Icon>
+                                            <avalonia:MaterialIcon Foreground="#888888" Kind="ArrowRight" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </Setter>
                         </Style>
-                        <Style Selector="ListBoxItem">
-                            <Setter Property="Interaction.Behaviors">
-                                <!-- <BehaviorCollection> -->
-                                    <!-- <behaviours:SlideThumbnailBehavior /> -->
-                                <!-- </BehaviorCollection> -->
-                            </Setter>
-                        </Style>
+                        <!-- <Style Selector="ListBoxItem"> -->
+                        <!--     <Setter Property="Interaction.Behaviors"> -->
+                        <!--         ~1~ <BehaviorCollection> @1@ -->
+                        <!--             ~1~ <behaviours:SlideThumbnailBehavior /> @1@ -->
+                        <!--         ~1~ </BehaviorCollection> @1@ -->
+                        <!--     </Setter> -->
+                        <!-- </Style> -->
 
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
@@ -69,22 +71,23 @@
                             <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
                                 <Grid>
                                     <DockPanel>
-                                    <Viewbox Height="48">
-                                        <Grid Height="720" Width="1280" Background="Black">
-                                            <Image asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
-                                                   RenderOptions.BitmapInterpolationMode="HighQuality"
-                                                   VerticalAlignment="Stretch"
-                                                   HorizontalAlignment="Stretch" />
-                                        </Grid>
-                                    </Viewbox>
-                                    <!-- <TextBlock -->
-                                    <!--     Margin="8" -->
-                                    <!--     TextWrapping="WrapWithOverflow" -->
-                                    <!--     Text="{Binding SourceMediaFilePath}" /> -->
-                                </DockPanel>
-                                    <Interaction.Behaviors>
-                                        <behaviours:SlideThumbnailBehavior />
-                                    </Interaction.Behaviors>
+                                        <Viewbox Height="48">
+                                            <Grid Height="720" Width="1280" Background="Black">
+                                                <Image
+                                                    asyncImageLoader:ImageLoader.Source="{Binding SourceMediaFilePath}"
+                                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                    VerticalAlignment="Stretch"
+                                                    HorizontalAlignment="Stretch" />
+                                            </Grid>
+                                        </Viewbox>
+                                        <!-- <TextBlock -->
+                                        <!--     Margin="8" -->
+                                        <!--     TextWrapping="WrapWithOverflow" -->
+                                        <!--     Text="{Binding SourceMediaFilePath}" /> -->
+                                    </DockPanel>
+                                    <!-- <Interaction.Behaviors> -->
+                                    <!--     <behaviours:SlideThumbnailBehavior /> -->
+                                    <!-- </Interaction.Behaviors> -->
                                 </Grid>
                             </DataTemplate>
                             <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
@@ -98,21 +101,37 @@
                                         <!--     TextWrapping="WrapWithOverflow" -->
                                         <!--     Text="CustomSlide" /> -->
                                     </DockPanel>
-                                    <Interaction.Behaviors>
-                                        <behaviours:SlideThumbnailBehavior />
-                                    </Interaction.Behaviors>
+                                    <!-- <Interaction.Behaviors> -->
+                                    <!--     <behaviours:SlideThumbnailBehavior /> -->
+                                    <!-- </Interaction.Behaviors> -->
                                 </Grid>
                             </DataTemplate>
                         </common:MyTemplateSelector>
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Button Content="Insert Item"
-                        HorizontalAlignment="Stretch"
-                        Click="AddSlide_OnClick"
-                        />
+                        HorizontalAlignment="Stretch">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                            <MenuItem Click="AddSlide_OnClick" Header="Add Slide" />
+                            <MenuItem Click="AddMedia_OnClick" Header="Add Media" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
             </StackPanel>
         </ScrollViewer>
 
-        <freeText:FreeTextSlideEditorControl DataContext="{Binding #Thumbstrip.SelectedItem, Converter={StaticResource SlideToSlideDataConverter}}" />
+        <ContentControl Content="{Binding #Thumbstrip.SelectedItem}">
+            <ContentControl.ContentTemplate>
+                <common:MyTemplateSelector>
+                    <DataTemplate x:Key="MediaItem" x:DataType="items1:MediaGroupItem+MediaItem">
+                        <freeText:MediaItemEditor />
+                    </DataTemplate>
+                    <DataTemplate x:Key="SlideItem" x:DataType="items1:MediaGroupItem+SlideItem">
+                        <slideItemEditor:SlideItemEditor />
+                    </DataTemplate>
+                </common:MyTemplateSelector>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
     </DockPanel>
 </UserControl>

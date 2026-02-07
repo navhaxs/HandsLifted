@@ -22,7 +22,7 @@ using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {
-    public partial class VisualSlideEditor : UserControl
+    public partial class CustomSlideDesigner : UserControl
     {
         private readonly ZoomBorder? _zoomBorder;
         
@@ -39,7 +39,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             }
         }
         
-        public VisualSlideEditor()
+        public CustomSlideDesigner()
         {
             InitializeComponent();
 
@@ -116,17 +116,9 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         public void Render(CustomSlide customSlide)
         {
-            // Root.Bind(Panel.BackgroundProperty, new Binding
-            // {
-            //     Source = customSlide,
-            //     Path = nameof(customSlide.BackgroundAvaloniaColour),
-            //     Mode = BindingMode.OneWay,
-            //     Converter = new ColorToBrushConverter()
-            // });
-
             Root.Children.Clear();
             int i = 0;
-            foreach (SlideElement slideElement in customSlide.SlideElements)
+            foreach (SlideElement slideElement in customSlide.SlideElements.Reverse())
             {
                 var control = CustomSlideRender.CreateControlForElement(slideElement);
                 if (control is null)

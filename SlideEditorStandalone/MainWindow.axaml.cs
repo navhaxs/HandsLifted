@@ -37,9 +37,13 @@ public partial class MainWindow : Window
             AllowMultiple = false
         });
         
+        var filePath = files.Count > 0 ? files[0].TryGetLocalPath() : null;
+        
+        if (filePath == null) return;
+        
         XmlSerializer serializer = new XmlSerializer(typeof(MediaGroupItem));
 
-        using (FileStream stream = new FileStream(files[0].TryGetLocalPath(), FileMode.Open))
+        using (FileStream stream = new FileStream(filePath, FileMode.Open))
         {
             var x = serializer.Deserialize(stream);
             if (x != null)
@@ -48,11 +52,6 @@ public partial class MainWindow : Window
                 DataContext = ItemInstanceFactory.ToItemInstance((MediaGroupItem)x, null);
             }
         }
-
-        // if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
-        // {
-        //
-        // }
     }
 
     private void SaveButton_OnClick(object? sender, RoutedEventArgs e)
@@ -60,10 +59,16 @@ public partial class MainWindow : Window
         Save();
     }
 
-
     private async void Save()
     {
         var topLevel = TopLevel.GetTopLevel(this);
+        // Start async operation to open the dialog.
+        var files = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save File",
+        });
+        
+        if (files is null) return;
 
         if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
         {
@@ -73,12 +78,6 @@ public partial class MainWindow : Window
                 XmlSerializer serializer = new XmlSerializer(typeof(MediaGroupItem));
                 serializer.Serialize(memoryStream, convertMe);
                 
-                // Start async operation to open the dialog.
-                var files = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-                {
-                    Title = "Save File",
-                });
-
                 // serialization was successful - only now do we write to disk
                 await using var stream = await files.OpenWriteAsync();
 

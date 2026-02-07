@@ -253,8 +253,8 @@
           <DependentUpon>GoogleSlidesGroupItemStatusView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Editors\FreeText\Parts\VisualSlideEditor.axaml.cs">
-          <DependentUpon>VisualSlideEditor.axaml</DependentUpon>
+        <Compile Update="Views\Editors\MediaGroupItem\MediaItem\MediaItemEditor.axaml.cs">
+          <DependentUpon>SlideItemEditor.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>

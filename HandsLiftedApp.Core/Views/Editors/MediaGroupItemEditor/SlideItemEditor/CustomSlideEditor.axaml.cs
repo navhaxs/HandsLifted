@@ -1,23 +1,27 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using HandsLiftedApp.Data.Data.Models.Slides;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Models.SlideElement;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.FreeText
 {
-    public partial class FreeTextSlideEditorControl : UserControl
+    public partial class CustomSlideEditor : UserControl
     {
-        public FreeTextSlideEditorControl()
+        public CustomSlideEditor()
         {
             InitializeComponent();
 
             if (Design.IsDesignMode)
             {
-                this.DataContext = new CustomSlide() { SlideElements = new() { new TextElement() } };
+                this.DataContext = new CustomSlide() { SlideElements = new() { new TextElement() { Text = "Bible Reading" }, new ImageElement() { FilePath = "avares://HandsLiftedApp.Core/Assets/app.png"} } };
             }
 
             VisualEditor.OnUpdateSelectedElement += (sender, args) =>
@@ -52,6 +56,33 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
 
+        private async void ChangeImageElement_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control control)
+            {
+                if (control.DataContext is ImageElement imageElement)
+                {
+                    var result = await SelectFilePicker();
+                    if (!string.IsNullOrWhiteSpace(result))
+                    {
+                        imageElement.FilePath = result;
+                    }
+                }
+            }
+        }
+        
+        private async void ChangeSlideBgGraphic_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is CustomSlide customSlide)
+            {
+                var result = await SelectFilePicker();
+                if (!string.IsNullOrWhiteSpace(result))
+                {
+                    customSlide.BackgroundGraphicFilePath = result;
+                }
+            }
+        }
+        
         private void ButtonAddTextElement_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is CustomSlide vm)
@@ -167,5 +198,24 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 }
             }
         }
+        
+        private async Task<string?> SelectFilePicker()
+        {
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel is null)
+                return null;
+
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Select File",
+                AllowMultiple = false
+            });
+
+            if (files is null || files.Count == 0)
+                return null;
+
+            return files[0].TryGetLocalPath();
+        }
+
     }
 }

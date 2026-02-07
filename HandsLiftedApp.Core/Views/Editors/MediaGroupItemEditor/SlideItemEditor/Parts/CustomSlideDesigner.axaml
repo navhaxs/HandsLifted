@@ -9,10 +9,10 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
              x:DataType="slides:CustomSlide"
              ClipToBounds="True"
-             x:Class="HandsLiftedApp.Core.Views.Editors.VisualSlideEditor">
+             x:Class="HandsLiftedApp.Core.Views.Editors.CustomSlideDesigner">
     
     <UserControl.Styles>
-        <StyleInclude Source="../../SelectedAdorner.axaml" />
+        <StyleInclude Source="../../../SelectedAdorner.axaml" />
     </UserControl.Styles>
     
     <UserControl.Resources>

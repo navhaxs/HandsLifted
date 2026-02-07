@@ -1,0 +1,39 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
+             xmlns:slideElement="clr-namespace:HandsLiftedApp.Data.Models.SlideElement;assembly=HandsLiftedApp.Data"
+             xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
+             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+             xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
+             x:DataType="items:MediaGroupItem+MediaItem"
+             x:Class="HandsLiftedApp.Core.Views.Editors.FreeText.MediaItemEditor">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <extensions:BitmapAssetValueConverter x:Key="VariableImage" />
+            <converters:FilePathToNameConverter x:Key="FilePathToNameConverter" />
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ToolbarHeaderBackground">#54423CCD</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ToolbarHeaderBackground">#383838</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <DockPanel Margin="20">
+        <TextBox Text="{Binding SourceMediaFilePath}" DockPanel.Dock="Bottom" />
+        <Image
+            Margin="20"
+            RenderOptions.BitmapInterpolationMode="MediumQuality"
+            Source="{Binding SourceMediaFilePath, Converter={StaticResource VariableImage}}"
+            Stretch="Uniform" />
+    </DockPanel>
+</UserControl>

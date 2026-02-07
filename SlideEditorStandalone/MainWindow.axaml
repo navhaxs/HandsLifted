@@ -3,14 +3,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:slideGroupEditor="clr-namespace:HandsLiftedApp.Core.Views.Editors.SlideGroupEditor;assembly=HandsLiftedApp.Core"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SlideEditorStandalone.MainWindow"
         Title="SlideEditorStandalone">
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Button Click="LoadButton_OnClick">Load</Button>
-            <Button Click="SaveButton_OnClick">Save</Button>
+            <Button Click="LoadButton_OnClick">
+                <DockPanel>
+                    <TextBlock Text="Load" DockPanel.Dock="Bottom" />
+                    <avalonia:MaterialIcon Kind="FolderOpen" />
+                </DockPanel>
+            </Button>
+            <Button Click="SaveButton_OnClick">
+                <DockPanel>
+                    <TextBlock Text="Save" DockPanel.Dock="Bottom" />
+                    <avalonia:MaterialIcon Kind="Floppy" />
+                </DockPanel>
+            </Button>
         </StackPanel>
-        <slideGroupEditor:SlideGroupEditor />
+        <slideGroupEditor:MediaGroupItemEditor />
     </DockPanel>
 </Window>

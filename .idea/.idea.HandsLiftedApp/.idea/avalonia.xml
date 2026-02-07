@@ -71,6 +71,7 @@
         <entry key="HandsLiftedApp.Core/Views/Designer/SlideThemeDesigner.axaml" value="Demos/SongEditorStandalone/SongEditorStandalone.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Designer/SongSlideView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/FreeText/FreeTextSlideEditorControl.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/FreeText/Parts/FreeTextSlideDesigner.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/FreeText/Parts/VisualSlideEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GenericContentEditorView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GenericContentEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
@@ -79,10 +80,28 @@
         <entry key="HandsLiftedApp.Core/Views/Editors/GroupItemsEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/GroupItemsEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/ItemContentView.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/MediaGroupItemEditor.axaml" value="SlideEditorStandalone/SlideEditorStandalone.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/MediaItem/MediaItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/MediaItem/SlideItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/MediaItemEditor/MediaItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/SlideItem/CustomSlideEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/SlideItem/MediaItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/SlideItem/Parts/CustomSlideDesigner.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/SlideItem/SlideItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/SlideItemEditor/CustomSlideEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/SlideItemEditor/Parts/CustomSlideDesigner.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItem/SlideItemEditor/SlideItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/MediaGroupItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/MediaItemEditor/MediaItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/CustomSlideEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/Parts/CustomSlideDesigner.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/SlideItemEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/SelectedAdorner.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/SlideEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/SlideEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
-        <entry key="HandsLiftedApp.Core/Views/Editors/SlideGroupEditor/SlideGroupEditor.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/SlideGroupEditor/FreeText/FreeTextSlideEditorControl.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/SlideGroupEditor/FreeText/Parts/FreeTextSlideDesigner.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
+        <entry key="HandsLiftedApp.Core/Views/Editors/SlideGroupEditor/SlideGroupEditor.axaml" value="SlideEditorStandalone/SlideEditorStandalone.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/SlideInfoEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/Song/SingleSongEditorWindow.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />
         <entry key="HandsLiftedApp.Core/Views/Editors/Song/SongEditorControl.axaml" value="HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj" />

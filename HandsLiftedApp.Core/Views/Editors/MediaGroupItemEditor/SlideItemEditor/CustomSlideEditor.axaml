@@ -9,11 +9,15 @@
              xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
              x:DataType="slides:CustomSlide"
-             x:Class="HandsLiftedApp.Core.Views.Editors.FreeText.FreeTextSlideEditorControl">
+             x:Class="HandsLiftedApp.Core.Views.Editors.FreeText.CustomSlideEditor">
     <UserControl.Resources>
         <ResourceDictionary>
+            <extensions:BitmapAssetValueConverter x:Key="VariableImage" />
+            <converters:FilePathToNameConverter x:Key="FilePathToNameConverter" />
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="ToolbarHeaderBackground">#54423CCD</SolidColorBrush>
@@ -25,7 +29,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid ColumnDefinitions="*,1,3*,1,2*">
+    <Grid ColumnDefinitions="*,1,3*,1,*">
         <DockPanel>
             <StackPanel DockPanel.Dock="Bottom">
                 <Button Content="Add TextBox" Click="ButtonAddTextElement_OnClick" />
@@ -77,6 +81,78 @@
                         </Setter>
                     </Style>
                 </ListBox.Styles>
+                <ListBox.DataTemplates>
+                    <common:MyTemplateSelector>
+                        <DataTemplate x:Key="ImageElement"
+                                      x:DataType="slideElement:ImageElement">
+                            <DockPanel Height="40">
+                                <Border CornerRadius="6">
+                                    <Border.Background>
+                                        <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+                                            <VisualBrush.Visual>
+                                                <Canvas
+                                                    Width="16"
+                                                    Height="16"
+                                                    Background="#1a1a1a">
+                                                    <Rectangle
+                                                        Width="8"
+                                                        Height="8"
+                                                        Fill="#1c1c1c" />
+                                                    <Rectangle
+                                                        Canvas.Left="8"
+                                                        Canvas.Top="8"
+                                                        Width="8"
+                                                        Height="8"
+                                                        Fill="#1c1c1c" />
+                                                </Canvas>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </Border.Background>
+                                    <Image Source="{Binding FilePath, Converter={StaticResource VariableImage}}" />
+                                </Border>
+                                <StackPanel>
+                                    <TextBlock Text="Image" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding FilePath, Converter={StaticResource FilePathToNameConverter}}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </DataTemplate>
+                        <DataTemplate x:Key="TextElement"
+                                      x:DataType="slideElement:TextElement">
+                            <DockPanel Height="40">
+                                <Border CornerRadius="6">
+                                    <Border.Background>
+                                        <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
+                                            <VisualBrush.Visual>
+                                                <Canvas
+                                                    Width="16"
+                                                    Height="16"
+                                                    Background="#1a1a1a">
+                                                    <Rectangle
+                                                        Width="8"
+                                                        Height="8"
+                                                        Fill="#1c1c1c" />
+                                                    <Rectangle
+                                                        Canvas.Left="8"
+                                                        Canvas.Top="8"
+                                                        Width="8"
+                                                        Height="8"
+                                                        Fill="#1c1c1c" />
+                                                </Canvas>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </Border.Background>
+                                    <Viewbox>
+                                        <avalonia:MaterialIcon Kind="FormatText" Height="100" Width="100" />
+                                    </Viewbox>
+                                </Border>
+                                <StackPanel>
+                                    <TextBlock Text="Text" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Text}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </DataTemplate>
+                    </common:MyTemplateSelector>
+                </ListBox.DataTemplates>
             </ListBox>
         </DockPanel>
 
@@ -85,7 +161,7 @@
         <DockPanel Grid.Column="2">
             <TabControl>
                 <TabItem Header="Visual">
-                    <editors:VisualSlideEditor Name="VisualEditor" DataContext="{Binding }" />
+                    <editors:CustomSlideDesigner Name="VisualEditor" DataContext="{Binding }" />
                 </TabItem>
                 <TabItem Header="Code">
                     <DockPanel Grid.Row="2">
@@ -445,7 +521,7 @@
                                     <StackPanel>
                                         <TextBlock Text="Graphic" />
                                         <DockPanel>
-                                            <!-- <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button> -->
+                                            <Button Click="ChangeImageElement_OnClick" DockPanel.Dock="Right">...</Button>
                                             <TextBox Watermark=""
                                                      Text="{Binding FilePath}" />
                                         </DockPanel>
@@ -466,7 +542,7 @@
 
                     <TextBlock Text="Graphic" />
                     <DockPanel>
-                        <!-- <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button> -->
+                        <Button Click="ChangeSlideBgGraphic_OnClick" DockPanel.Dock="Right">...</Button>
                         <TextBox Watermark=""
                                  Text="{Binding BackgroundGraphicFilePath}" />
                     </DockPanel>

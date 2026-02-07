@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -60,7 +61,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
         {
             Root.Children.Clear();
             int i = 0;
-            foreach (SlideElement slideElement in customSlide.SlideElements)
+            foreach (SlideElement slideElement in customSlide.SlideElements.Reverse())
             {
                 var control = CreateControlForElement(slideElement);
                 if (control is not null)
@@ -90,7 +91,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Source = imageData,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
-                    Stretch = Stretch.UniformToFill,
+                    Stretch = Stretch.Uniform,
                     DataContext = slideElement,
                     Width = imageElement.Width,
                     Height = imageElement.Height,

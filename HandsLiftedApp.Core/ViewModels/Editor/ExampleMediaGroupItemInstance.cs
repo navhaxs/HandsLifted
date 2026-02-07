@@ -10,12 +10,10 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
     {
         public ExampleMediaGroupItemInstance(): base(null)
         {
-            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide1.PNG" });
-            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide2.PNG" });
-            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide3.PNG" });
-            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide4.PNG" });
-            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide5.PNG" });
-            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "D:\\VisionScreensCore-TestData\\Slide6.PNG" });
+            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png" });
+            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png" });
+            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png" });
+            this.Items.Add(new MediaGroupItem.MediaItem() { SourceMediaFilePath = "avares://HandsLiftedApp.Core/Assets/DefaultTheme/VisionScreens_1440_placeholder.png" });
             var newSlideData = new CustomSlide();
             this.Items.Add(new MediaGroupItem.SlideItem() { SlideData = newSlideData });
             this.Items.Add(new MediaGroupItem.SlideItem() { SlideData = new CustomSlide() });
