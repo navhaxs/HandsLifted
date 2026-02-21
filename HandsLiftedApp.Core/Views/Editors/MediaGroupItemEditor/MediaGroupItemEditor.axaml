@@ -15,7 +15,7 @@
              xmlns:slideItemEditor="clr-namespace:HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor.SlideItemEditor"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="items:MediaGroupItemInstance"
-             x:Class="HandsLiftedApp.Core.Views.Editors.SlideGroupEditor.MediaGroupItemEditor">
+             x:Class="HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor.MediaGroupItemEditor">
     <Design.DataContext>
         <editor1:ExampleMediaGroupItemInstance />
     </Design.DataContext>

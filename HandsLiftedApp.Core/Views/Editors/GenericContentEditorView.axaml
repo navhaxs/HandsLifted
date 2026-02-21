@@ -9,6 +9,7 @@
 	 		 xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
 	 		 xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
 	 		 xmlns:googleSlides="clr-namespace:HandsLiftedApp.Core.Views.Editors.GoogleSlides"
+	 		 xmlns:mediaGroupItemEditor="clr-namespace:HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor"
 	 		 x:Class="HandsLiftedApp.Core.Views.GenericContentEditorView"
              x:CompileBindings="False">
 	<!--<UserControl.Styles>
@@ -22,7 +23,7 @@
 				<DataTemplate x:Key="SongItemInstance">
 			   	</DataTemplate>
 				<DataTemplate x:Key="MediaGroupItemInstance">
-					<editors:GroupItemsEditor DataContext="{Binding}" />
+					<mediaGroupItemEditor:MediaGroupItemEditor DataContext="{Binding}" />
 				</DataTemplate>
 				<DataTemplate x:Key="GoogleSlidesGroupItemInstance">
 					<googleSlides:GoogleSlidesItemEditView DataContext="{Binding}" />

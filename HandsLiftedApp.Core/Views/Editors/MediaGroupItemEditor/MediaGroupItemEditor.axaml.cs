@@ -5,7 +5,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 
-namespace HandsLiftedApp.Core.Views.Editors.SlideGroupEditor
+namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 {
     public partial class MediaGroupItemEditor : UserControl
     {
