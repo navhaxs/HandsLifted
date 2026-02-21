@@ -10,8 +10,6 @@
              xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
              xmlns:editor1="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
-             xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
              xmlns:slideItemEditor="clr-namespace:HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor.SlideItemEditor"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="items:MediaGroupItemInstance"
@@ -20,6 +18,28 @@
         <editor1:ExampleMediaGroupItemInstance />
     </Design.DataContext>
     <DockPanel>
+        
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button Click="LoadButton_OnClick">
+                <DockPanel>
+                    <TextBlock Text="Import" DockPanel.Dock="Bottom" />
+                    <avalonia:MaterialIcon Kind="FolderOpen" />
+                </DockPanel>
+            </Button>
+            <Button Click="SaveButton_OnClick">
+                <DockPanel>
+                    <TextBlock Text="Export" DockPanel.Dock="Bottom" />
+                    <avalonia:MaterialIcon Kind="Floppy" />
+                </DockPanel>
+            </Button>
+            <Button Click="ApplyButton_OnClick">
+                <DockPanel>
+                    <TextBlock Text="GenerateSlides" DockPanel.Dock="Bottom" />
+                    <avalonia:MaterialIcon Kind="Refresh" />
+                </DockPanel>
+            </Button>
+        </StackPanel>
+        
         <ScrollViewer DockPanel.Dock="Bottom"
                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
             <StackPanel Orientation="Horizontal">
