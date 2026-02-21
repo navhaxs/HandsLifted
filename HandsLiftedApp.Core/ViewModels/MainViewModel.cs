@@ -518,7 +518,7 @@ public class MainViewModel : ViewModelBase
         //     }
         // }
 
-        // _ = Update(); // calling an async function we do not want to await
+        _ = Update(); // calling an async function we do not want to await
     }
 
     private void RegerenateSlides(object item)
