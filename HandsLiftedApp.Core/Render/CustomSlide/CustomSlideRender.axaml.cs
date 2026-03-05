@@ -141,6 +141,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
             {
                 Border textBlockContainer = new Border()
                 {
+                    DataContext = textElement,
                     VerticalAlignment = VerticalAlignment.Top,
                     HorizontalAlignment = HorizontalAlignment.Left,
                 };
