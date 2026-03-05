@@ -38,7 +38,7 @@
             <ListBox ItemsSource="{Binding SlideElements}" Name="ListBox"
                      SelectionChanged="ListBox_OnSelectionChanged"
                      BorderThickness="0"
-                     SelectionMode="AlwaysSelected, Single">
+                     SelectionMode="Single">
                 <ListBox.Styles>
                     <Style Selector="ListBoxItem">
                         <Setter Property="ContextMenu">

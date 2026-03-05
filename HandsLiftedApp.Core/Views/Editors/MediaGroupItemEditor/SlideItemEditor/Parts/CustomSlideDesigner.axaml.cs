@@ -8,10 +8,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Controls.Primitives;
-using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml.Converters;
 using Avalonia.Threading;
 using HandsLiftedApp.Core.Render.CustomSlide;
 using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
@@ -39,6 +37,9 @@ namespace HandsLiftedApp.Core.Views.Editors
             }
         }
         
+        public delegate void OnDeselectElementHandler(object sender, OnUpdateSelectedElementEventArgs e);
+        public event OnDeselectElementHandler OnDeselectElement;
+        
         public CustomSlideDesigner()
         {
             InitializeComponent();
@@ -48,6 +49,8 @@ namespace HandsLiftedApp.Core.Views.Editors
             canvas.PointerPressed += (sender, args) =>
             {
                 RemoveSelected();
+                // TODO could pass last selected element to OnDeselectElement args
+                OnDeselectElement?.Invoke(this, new OnUpdateSelectedElementEventArgs(null));
             };
             
             RegisterDataContext();

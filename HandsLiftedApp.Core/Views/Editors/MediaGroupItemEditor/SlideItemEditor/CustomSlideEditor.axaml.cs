@@ -28,6 +28,10 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             {
                 ListBox.SelectedItem = args.SelectedElement;
             };
+            VisualEditor.OnDeselectElement += (sender, args) =>
+            {
+                ListBox.SelectedItem = null;
+            };
         }
 
         public void UpdateXml()
