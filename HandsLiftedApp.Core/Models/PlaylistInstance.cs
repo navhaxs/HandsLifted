@@ -496,7 +496,11 @@ namespace HandsLiftedApp.Core.Models
             // lastly clear LOGO
             if (PresentationState != PresentationStateEnum.Slides)
             {
-                PresentationState = PresentationStateEnum.Slides;
+                // prevents a flicker if switching from LOGO (active) -> changing to a different slide
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    PresentationState = PresentationStateEnum.Slides;
+                });
             }
 
             Log.Debug("NavigateToReference {SlideReference}", slideReference);
