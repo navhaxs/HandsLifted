@@ -20,6 +20,7 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.Views;
@@ -104,7 +105,15 @@ public class MainViewModel : ViewModelBase
                 }
             }
         });
-
+        
+        // AutoSave trigger
+        Observable.FromEventPattern(
+                handler => Playlist.Changed += handler,
+                handler => Playlist.Changed -= handler)
+            .Throttle(TimeSpan.FromSeconds(30))
+            .Where(_ => Playlist.IsDirty)
+            .Subscribe(_ => PlaylistDocumentService.AutoSaveDocument(Playlist));
+        
         MessageBus.Current.Listen<LoadPlaylistAction>().Subscribe((msg) =>
         {
             try
@@ -498,26 +507,6 @@ public class MainViewModel : ViewModelBase
                     $"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
             });
 
-        Playlist = new PlaylistInstance();
-
-        // Open reading stream from the first file.
-        // if (settings.LastOpenedPlaylistFullPath != null)
-        // {
-        //     try
-        //     {
-        //         var parsedPlaylist =
-        //             HandsLiftedDocXmlSerializer.DeserializePlaylist(settings.LastOpenedPlaylistFullPath);
-        //         Playlist.Dispose();
-        //         Playlist = parsedPlaylist;
-        //         Playlist.IsDirty = false;
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Log.Error(e, $"[DOC] Failed to parse playlist XML: [{settings.LastOpenedPlaylistFullPath}]");
-        //         // ignored
-        //     }
-        // }
-
         _ = Update(); // calling an async function we do not want to await
     }
 
@@ -542,7 +531,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
 
-    private PlaylistInstance _playlist;
+    private PlaylistInstance _playlist = new();
 
     public PlaylistInstance Playlist
     {

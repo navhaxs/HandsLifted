@@ -237,7 +237,12 @@ namespace HandsLiftedApp.Core.Models
                     p => p.LogoGraphicFile,
                     p => p.Designs,
                     p => p.Items)
-                .Subscribe(_ => IsDirty = true);
+                .Subscribe(_ =>
+                {
+                    IsDirty = true;
+                    Log.Verbose("Playlist changed: {Title}", Title);
+                    Changed?.Invoke(this, EventArgs.Empty);
+                });
 
             MessageBus.Current.Listen<OnTimerEnabledToggleEvent>().Subscribe(mwvm =>
             {
@@ -262,6 +267,8 @@ namespace HandsLiftedApp.Core.Models
         {
             UpdateIndexes();
             IsDirty = true;
+            Log.Verbose("Playlist items collection changed");
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         private PlaylistItemInstanceCollection<Item> _items = new();
@@ -278,9 +285,13 @@ namespace HandsLiftedApp.Core.Models
             }
         }
 
+        public event EventHandler? Changed;
+
         private void OnValueOnItemDataModified(object? sender, EventArgs args)
         {
             IsDirty = true;
+            Log.Verbose("Playlist item data modified");
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         public AutoAdvanceTimerController AutoAdvanceTimer { get; init; } = new();

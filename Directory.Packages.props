@@ -40,6 +40,7 @@
     <PackageVersion Include="GridExtra.Avalonia" Version="0.9.1" />
     <PackageVersion Include="HanumanInstitute.LibMpv.Avalonia" Version="0.9.1" />
     <PackageVersion Include="HidApi.Net" Version="1.1.0" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageVersion Include="LibUsbDotNet" Version="3.0.102-alpha" />
     <PackageVersion Include="LibVLCSharp" Version="3.8.2" />
     <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.8.2" />

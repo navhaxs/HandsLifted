@@ -7,14 +7,30 @@ using System.Threading;
 using System.Threading.Tasks;
 using HandsLiftedApp.Utils;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using Serilog.Templates;
 
 namespace HandsLiftedApp.Core
 {
     public static class Logging
     {
+        public static readonly LoggingLevelSwitch LevelSwitch = new LoggingLevelSwitch(
+#if DEBUG
+            LogEventLevel.Verbose
+#else
+            LogEventLevel.Debug
+#endif
+        );
+
         public static void InitLogging()
         {
+            var envLogLevel = Environment.GetEnvironmentVariable("VISIONSCREENS_LOG_LEVEL");
+            if (!string.IsNullOrEmpty(envLogLevel) && Enum.TryParse<LogEventLevel>(envLogLevel, true, out var level))
+            {
+                LevelSwitch.MinimumLevel = level;
+            }
+
             if (OperatingSystem.IsWindows() && !Debugger.IsAttached)
             {
                 ConsoleUtils.AllocConsole();
@@ -25,7 +41,7 @@ namespace HandsLiftedApp.Core
             ExpressionTemplate OUTPUT_TEMPLATE = new ExpressionTemplate(
                 "[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.ControlledBy(LevelSwitch)
                 .Enrich.FromLogContext()
                 .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
                 .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
