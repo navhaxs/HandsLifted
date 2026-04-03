@@ -114,7 +114,7 @@ public class MainViewModel : ViewModelBase
             .Where(_ => Playlist.IsDirty)
             .Subscribe(_ => PlaylistDocumentService.AutoSaveDocument(Playlist));
         
-        MessageBus.Current.Listen<LoadPlaylistAction>().Subscribe((msg) =>
+        MessageBus.Current.Listen<LoadPlaylistAction>().Subscribe(async (msg) =>
         {
             try
             {
@@ -124,6 +124,24 @@ public class MainViewModel : ViewModelBase
                     // playlist already open, just update MRU and return
                     MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() { FilePath = msg.FilePath });
                     return;
+                }
+                
+                string loadFilePath = msg.FilePath;
+                
+                if (PlaylistDocumentService.IsAutoSaveNewer(msg.FilePath))
+                {
+                    var confirmation = new ShowRestoreAutosaveConfirmationAction();
+                    MessageBus.Current.SendMessage(confirmation);
+                    bool restore = await confirmation.TaskCompletionSource.Task;
+                    if (restore)
+                    {
+                        loadFilePath = PlaylistDocumentService.GetAutoSavePlaylistFilePath(msg.FilePath);
+                        Log.Information("Restoring autosave from {FilePath}", loadFilePath);
+                    }
+                    else
+                    {
+                        PlaylistDocumentService.DeleteAutoSave(msg.FilePath);
+                    }
                 }
 
                 var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(msg.FilePath);
@@ -173,7 +191,7 @@ public class MainViewModel : ViewModelBase
                 Playlist.QuickShowItem = null;
                 Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
 
-                Playlist.IsDirty = false;
+                Playlist.IsDirty = (loadFilePath != msg.FilePath);
                 // update MRU list
                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = msg.FilePath});
             }
@@ -621,6 +639,12 @@ public class MainViewModel : ViewModelBase
     {
         // Apply OnStartup* AppPreferences:
         Playlist.IsLogo = Globals.Instance.AppPreferences.OnStartupShowLogo;
+
+        var lastOpened = settings.RecentPlaylistFullPathsList?.FirstOrDefault();
+        if (lastOpened != null && File.Exists(lastOpened))
+        {
+            MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = lastOpened });
+        }
 
         // TODO broken 
         Dispatcher.UIThread.InvokeAsync(() =>

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -51,6 +50,17 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             };
             IsEnabled = false;
             mw.ShowDialog(this);
+        });
+
+        MessageBus.Current.Listen<ShowRestoreAutosaveConfirmationAction>().Subscribe(async action =>
+        {
+            RestoreAutosaveConfirmationWindow window = new();
+            Shade.IsVisible = true;
+            IsEnabled = false;
+            await window.ShowDialog(this);
+            IsEnabled = true;
+            Shade.IsVisible = false;
+            action.TaskCompletionSource.SetResult(window.Result);
         });
 
         MessageBus.Current.Listen<MainWindowMessage>().Subscribe(mwvm =>
@@ -230,6 +240,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                         }
                         break;
                     case UnsavedChangesConfirmationWindow.DialogResult.Discard:
+                        PlaylistDocumentService.DeleteAutoSave(vm.Playlist.PlaylistFilePath);
                         break;
                     case UnsavedChangesConfirmationWindow.DialogResult.Cancel:
                         // abort application exit

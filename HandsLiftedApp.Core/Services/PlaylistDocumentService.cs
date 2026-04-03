@@ -17,11 +17,7 @@ namespace HandsLiftedApp.Core.Services
             HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, playlist.PlaylistFilePath);
             playlist.IsDirty = false;
 
-            string autosavePath = GetAutoSavePlaylistFilePath(playlist.PlaylistFilePath);
-            if (File.Exists(autosavePath))
-            {
-                File.Delete(autosavePath);
-            }
+            DeleteAutoSave(playlist.PlaylistFilePath);
         }
 
         public static string GetAutoSavePlaylistFilePath(string fullPath)
@@ -40,6 +36,31 @@ namespace HandsLiftedApp.Core.Services
             Log.Information("Autosaving playlist to {AutoSavePath}", autosavePath);
             HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, autosavePath);
             // Do NOT set IsDirty = false here, so the user still knows they have unsaved changes
+        }
+
+        public static bool IsAutoSaveNewer(string playlistFilePath)
+        {
+            if (string.IsNullOrEmpty(playlistFilePath)) return false;
+
+            string autosavePath = GetAutoSavePlaylistFilePath(playlistFilePath);
+            if (!File.Exists(autosavePath)) return false;
+
+            var playlistFileInfo = new FileInfo(playlistFilePath);
+            var autosaveFileInfo = new FileInfo(autosavePath);
+
+            return autosaveFileInfo.LastWriteTime > playlistFileInfo.LastWriteTime;
+        }
+
+        public static void DeleteAutoSave(string? playlistFilePath)
+        {
+            if (string.IsNullOrEmpty(playlistFilePath)) return;
+
+            string autosavePath = GetAutoSavePlaylistFilePath(playlistFilePath);
+            if (File.Exists(autosavePath))
+            {
+                Log.Information("Deleting autosave file {AutoSavePath}", autosavePath);
+                File.Delete(autosavePath);
+            }
         }
     }
 }
