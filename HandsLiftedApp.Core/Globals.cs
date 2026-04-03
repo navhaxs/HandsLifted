@@ -92,6 +92,15 @@ namespace HandsLiftedApp.Core
                 .ToProperty(this, x => x.LogoBitmap);
         }
 
+        public void OnShutdown()
+        {
+            if (MpvContextInstance != null)
+            {
+                MpvContextInstance.Dispose();
+                MpvContextInstance = null;
+            }
+        }
+
         private static Stream LoadConfigFromResource(string configFileName)
         {
             Assembly assembly;

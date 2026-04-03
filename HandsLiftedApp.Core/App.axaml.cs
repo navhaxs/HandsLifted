@@ -26,6 +26,7 @@ public partial class App : Application
                 if (window != sender)
                     window.Close();
             }
+            Globals.Instance.OnShutdown();
             desktopLifetime.Shutdown();
         }
     }
