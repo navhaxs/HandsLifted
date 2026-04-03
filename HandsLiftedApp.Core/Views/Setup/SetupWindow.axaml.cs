@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Styling;
-using Avalonia.Threading;
 using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
-using HandsLiftedApp.Extensions;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Setup
@@ -23,8 +20,16 @@ namespace HandsLiftedApp.Core.Views.Setup
         {
             InitializeComponent();
             this.DataContext = _setupWindowViewModel = new SetupWindowViewModel(this.Screens);
-            // this.DataContext = _setupWindowViewModel;
             this.Closed += PreferencesWindow_Closed;
+            
+            this.KeyDown += (sender, e) =>
+            {
+                if (e.Key == Key.Escape)
+                {
+                    Close();
+                    e.Handled = true;
+                }
+            };
             
             Win10DropshadowWorkaround.Register(this);
             
