@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -13,6 +14,7 @@ namespace HandsLiftedApp.Core.Views
 {
     public partial class WelcomeWindow : Window
     {
+        // flag indicating whether the user has selected an action that should result in opening the MainWindow
         private bool _openMainOnClose = false;
         
         public WelcomeWindow()
@@ -29,18 +31,27 @@ namespace HandsLiftedApp.Core.Views
             {
                 if (_openMainOnClose)
                 {
-                    var main = new MainWindow
-                    {
-                        DataContext = Globals.Instance.MainViewModel,
-                        WindowState = WindowState.Normal
-                    };
-
                     if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
                     {
-                        desktopLifetime.MainWindow = main;
+                        // check if MainWindow already exists
+                        if (desktopLifetime.Windows.FirstOrDefault(w => w is MainWindow) is MainWindow existingMainWindow)
+                        {
+                            // bring existing MainWindow to front
+                            existingMainWindow.Activate();
+                        }
+                        else
+                        {
+                            // create a new MainWindow
+                            var main = new MainWindow
+                            {
+                                DataContext = Globals.Instance.MainViewModel,
+                                WindowState = WindowState.Normal
+                            };
+
+                            desktopLifetime.MainWindow = main;
+                            main.Show();
+                        }
                     }
-                    
-                    main.Show();
                 }
                 else
                 {
