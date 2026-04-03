@@ -35,7 +35,6 @@ namespace HandsLiftedApp.Utils
                         var cached = Cache.GetBitmap(pathOrUri);
                         if (cached != null)
                         {
-                            Log.Verbose($"Loading image {pathOrUri} - cache hit");
                             return cached;
                         }
 
