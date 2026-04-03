@@ -118,6 +118,14 @@ public class MainViewModel : ViewModelBase
         {
             try
             {
+                // check if the playlist is already loaded
+                if (string.Equals(msg.FilePath, Playlist.PlaylistFilePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // playlist already open, just update MRU and return
+                    MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() { FilePath = msg.FilePath });
+                    return;
+                }
+
                 var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(msg.FilePath);
                 
                 string? playlistDirectoryPath = Path.GetDirectoryName(msg.FilePath);
