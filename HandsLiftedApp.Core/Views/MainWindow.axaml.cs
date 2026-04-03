@@ -10,6 +10,7 @@ using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Controls;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.Utils;
@@ -18,6 +19,7 @@ using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views.App;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views;
 
@@ -63,7 +65,18 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             action.TaskCompletionSource.SetResult(window.Result);
         });
 
-        MessageBus.Current.Listen<MainWindowMessage>().Subscribe(mwvm =>
+        MessageBus.Current.Listen<ShowUnsavedChangesConfirmationAction>().Subscribe(async action =>
+        {
+            UnsavedChangesConfirmationWindow window = new();
+            Shade.IsVisible = true;
+            IsEnabled = false;
+            await window.ShowDialog(this);
+            IsEnabled = true;
+            Shade.IsVisible = false;
+            action.TaskCompletionSource.SetResult(window.Result);
+        });
+
+        MessageBus.Current.Listen<MainWindowMessage>().Subscribe(async mwvm =>
         {
             Window wnd;
             switch (mwvm.Action)
@@ -87,6 +100,11 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     Close();
                     break;
             }
+        });
+
+        MessageBus.Current.Listen<NewPlaylistAction>().Subscribe(async _ =>
+        {
+            await HandleNewPlaylist();
         });
 
         MessageBus.Current.Listen<MainWindowModalMessage>()
@@ -214,13 +232,11 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             var isPlaylistEmpty = (vm.Playlist.Title.Length == 0 && vm.Playlist.Items.Count == 0);
             if (vm.Playlist.IsDirty && !isPlaylistEmpty)
             {
-                Shade.IsVisible = true;
-                UnsavedChangesConfirmationWindow unsavedChangesConfirmationWindow =
-                    new UnsavedChangesConfirmationWindow();
-                await unsavedChangesConfirmationWindow.ShowDialog(this);
-                Shade.IsVisible = false;
+                var confirmation = new ShowUnsavedChangesConfirmationAction();
+                MessageBus.Current.SendMessage(confirmation);
+                var result = await confirmation.TaskCompletionSource.Task;
 
-                switch (unsavedChangesConfirmationWindow.Result)
+                switch (result)
                 {
                     case UnsavedChangesConfirmationWindow.DialogResult.Save:
                         if (vm.Playlist.PlaylistFilePath == null)
@@ -231,6 +247,11 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                             {
                                 // update MRU list
                                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = filePath});
+                            }
+                            else
+                            {
+                                // user canceled save dialog, abort application exit
+                                return;
                             }
                         }
                         // do save
@@ -298,6 +319,73 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         if (DataContext is MainViewModel vm)
         {
             vm.OnMainWindowOpened();
+        }
+    }
+
+    public async Task HandleNewPlaylist()
+    {
+        if (this.DataContext is MainViewModel vm)
+        {
+            // prompt user to save any unsaved changes
+            var isPlaylistEmpty = (vm.Playlist.Title.Length == 0 && vm.Playlist.Items.Count == 0);
+            if (vm.Playlist.IsDirty && !isPlaylistEmpty)
+            {
+                var confirmation = new ShowUnsavedChangesConfirmationAction();
+                MessageBus.Current.SendMessage(confirmation);
+                var result = await confirmation.TaskCompletionSource.Task;
+
+                switch (result)
+                {
+                    case UnsavedChangesConfirmationWindow.DialogResult.Save:
+                        if (vm.Playlist.PlaylistFilePath == null)
+                        {
+                            // give user chance to pick save file path
+                            var filePath = await PlaylistSaveService.ShowSaveAsDialog(this, vm.Playlist);
+                            if (filePath != null)
+                            {
+                                // update MRU list
+                                MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = filePath});
+                            }
+                            else
+                            {
+                                // user canceled save dialog, abort new playlist creation
+                                return;
+                            }
+                        }
+                        // do save
+                        if (vm.Playlist.PlaylistFilePath != null)
+                        {
+                            PlaylistDocumentService.SaveDocument(vm.Playlist);
+                        }
+                        break;
+                    case UnsavedChangesConfirmationWindow.DialogResult.Discard:
+                        PlaylistDocumentService.DeleteAutoSave(vm.Playlist.PlaylistFilePath);
+                        break;
+                    case UnsavedChangesConfirmationWindow.DialogResult.Cancel:
+                        // abort new playlist creation
+                        return;
+                }
+            }
+
+            // proceed with creating new playlist
+            try
+            {
+                // delete autosave for the current playlist if it exists
+                if (!string.IsNullOrEmpty(vm.Playlist.PlaylistFilePath))
+                {
+                    PlaylistDocumentService.DeleteAutoSave(vm.Playlist.PlaylistFilePath);
+                }
+
+                // create a new empty playlist
+                vm.Playlist = new PlaylistInstance();
+                vm.Playlist.IsDirty = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                    { Title = "Failed to create new playlist :(", Content = $"{ex.Message}" });
+                Log.Error(ex, "[DOC] Failed to create new playlist");
+            }
         }
     }
 }

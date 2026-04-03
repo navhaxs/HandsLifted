@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Controller;
-using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.ViewModels;
@@ -114,11 +113,7 @@ public partial class MainView : UserControl
 
     private async void NewFileButton_Clicked(object sender, RoutedEventArgs args)
     {
-        // TODO: confirm unsaved changes
-        if (this.DataContext is MainViewModel vm)
-        {
-            vm.Playlist = new PlaylistInstance();
-        }
+        MessageBus.Current.SendMessage(new NewPlaylistAction());
     }
 
     private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args)

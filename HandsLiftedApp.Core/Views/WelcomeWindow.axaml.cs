@@ -82,6 +82,7 @@ namespace HandsLiftedApp.Core.Views
         private void NewClicked(object? sender, RoutedEventArgs e)
         {
             _openMainOnClose = true;
+            MessageBus.Current.SendMessage(new NewPlaylistAction());
             Close();
         }
 
