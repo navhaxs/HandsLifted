@@ -3,5 +3,6 @@
     public class LoadPlaylistAction
     {
         public string FilePath { get; set; }
+        public bool IsStartupLoad { get; set; } = false;
     }
 }

@@ -118,13 +118,25 @@ public class MainViewModel : ViewModelBase
         {
             try
             {
-                // check if the playlist is already loaded
-                if (string.Equals(msg.FilePath, Playlist.PlaylistFilePath, StringComparison.OrdinalIgnoreCase))
+                // check for unsaved changes to current playlist
+                if (!msg.IsStartupLoad && Playlist.IsDirty)
                 {
-                    // playlist already open, just update MRU and return
-                    MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() { FilePath = msg.FilePath });
-                    return;
+                    var confirmation = new ShowUnsavedChangesConfirmationAction();
+                    MessageBus.Current.SendMessage(confirmation);
+                    var result = await confirmation.TaskCompletionSource.Task;
+                    if (result == UnsavedChangesConfirmationWindow.DialogResult.Save)
+                    {
+                        PlaylistDocumentService.SaveDocument(Playlist);
+                    }
+                    else if (result == UnsavedChangesConfirmationWindow.DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    // else discard, proceed
                 }
+                
+                // delete autosaves when loading/reloading playlist
+                PlaylistDocumentService.DeleteAutoSave(msg.FilePath);
                 
                 string loadFilePath = msg.FilePath;
                 
@@ -137,10 +149,6 @@ public class MainViewModel : ViewModelBase
                     {
                         loadFilePath = PlaylistDocumentService.GetAutoSavePlaylistFilePath(msg.FilePath);
                         Log.Information("Restoring autosave from {FilePath}", loadFilePath);
-                    }
-                    else
-                    {
-                        PlaylistDocumentService.DeleteAutoSave(msg.FilePath);
                     }
                 }
 
@@ -643,7 +651,7 @@ public class MainViewModel : ViewModelBase
         var lastOpened = settings.RecentPlaylistFullPathsList?.FirstOrDefault();
         if (lastOpened != null && File.Exists(lastOpened))
         {
-            MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = lastOpened });
+            MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = lastOpened, IsStartupLoad = true });
         }
 
         // TODO broken 
