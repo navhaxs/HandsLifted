@@ -160,7 +160,7 @@
             <DependentUpon>LibraryView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\ExitConfirmationWindow.axaml.cs">
+        <Compile Update="Views\Confirmation\ExitConfirmationWindow.axaml.cs">
             <DependentUpon>ExitConfirmationWindow.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
@@ -216,8 +216,12 @@
           <DependentUpon>AutoAdvanceTimerControlViewWrapper.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\UnsavedChangesConfirmationWindow.axaml.cs">
+        <Compile Update="Views\Confirmation\UnsavedChangesConfirmationWindow.axaml.cs">
           <DependentUpon>UnsavedChangesConfirmationWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Confirmation\RestoreAutosaveConfirmationWindow.axaml.cs">
+          <DependentUpon>RestoreAutosaveConfirmationWindow.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
         <Compile Update="Assets\AddItemFlyoutResourceDictionary.axaml.cs">

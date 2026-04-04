@@ -13,7 +13,7 @@
         SystemDecorations="None"
         ShowInTaskbar="False"
         CanResize="False"
-        x:Class="HandsLiftedApp.Core.Views.UnsavedChangesConfirmationWindow"
+        x:Class="HandsLiftedApp.Core.Views.Confirmation.UnsavedChangesConfirmationWindow"
         Icon="/Assets/app.ico"
         Title="Unsaved Changes">
     <Border CornerRadius="8"
@@ -21,7 +21,7 @@
             BorderBrush="{DynamicResource WindowBorderBrush}"
             BorderThickness="1">
         <DockPanel Margin="15">
-            <StackPanel Margin="0 10 0 0" DockPanel.Dock="Bottom"
+            <StackPanel Margin="0 10 0 0" DockPanel.Dock="Bottom" Classes="dialog-buttons"
                         Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
                 <Button Content="Save" IsDefault="True" Click="OnConfirmSave" />
                 <Button Content="Don't Save" Click="OnConfirmDiscard" />

@@ -24,6 +24,7 @@ using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;

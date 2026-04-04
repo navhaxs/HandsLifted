@@ -288,4 +288,19 @@
 
 
 
+    <Style Selector="StackPanel.dialog-buttons > Button">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="MinWidth" Value="80" />
+    </Style>
+    <Style Selector="StackPanel.dialog-buttons > Button[IsDefault=true]">
+        <Setter Property="BorderBrush" Value="#0061e0" />
+        <Setter Property="Background" Value="#0061e0" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="StackPanel.dialog-buttons > Button[IsDefault=true]:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BorderBrush" Value="#053e94" />
+        <Setter Property="Background" Value="#053e94" />
+    </Style>
+
 </Styles>

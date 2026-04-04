@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Core.Views.Confirmation;
 
 namespace HandsLiftedApp.Core.Models.UI
 {

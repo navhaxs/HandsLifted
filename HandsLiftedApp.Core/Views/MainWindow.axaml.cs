@@ -15,6 +15,7 @@ using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Utils;
 using HandsLiftedApp.Views.App;
