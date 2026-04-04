@@ -362,7 +362,7 @@ public class MainViewModel : ViewModelBase
                     //     itemToInsert = mediaGroupItem2;
                     //     break;
                     default:
-                        Debug.Print($"Unknown AddItemType: [${addItemMessage.Type}]");
+                        Log.Warning("Unknown AddItemType: {AddItemType}", addItemMessage.Type);
                         break;
                 }
 
@@ -548,8 +548,7 @@ public class MainViewModel : ViewModelBase
                     Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
                 }
 
-                Debug.Print(
-                    $"Moving playlist item {moveItemMessage.SourceIndex} to {moveItemMessage.DestinationIndex}");
+                Log.Debug("Moving playlist item {SourceIndex} to {DestinationIndex}", moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);
             });
 
         _ = Update(); // calling an async function we do not want to await

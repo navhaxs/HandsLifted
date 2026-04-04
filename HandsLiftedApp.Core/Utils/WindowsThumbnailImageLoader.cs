@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using AsyncImageLoader;
 using Avalonia.Media.Imaging;
+using Serilog;
 using ShellThumbs;
 
 namespace HandsLiftedApp.Core.Utils;
@@ -23,7 +24,7 @@ public class WindowsThumbnailImageLoader : IAsyncImageLoader
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading thumbnail: {ex.Message}");
+                Log.Error(ex, "Error loading thumbnail for {Url}", url);
             }
             return null;
         });

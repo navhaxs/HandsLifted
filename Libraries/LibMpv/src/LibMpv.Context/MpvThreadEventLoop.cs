@@ -16,7 +16,7 @@ public unsafe class MpvThreadEventLoop : IEventLoop, IDisposable
         {
             isEventLoopRunning = false;
             mpv_wakeup(context);
-            evenLoopThread.Join();
+            evenLoopThread?.Join(500);
         }
     }
 

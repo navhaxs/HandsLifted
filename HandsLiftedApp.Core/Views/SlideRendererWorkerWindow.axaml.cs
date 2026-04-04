@@ -20,6 +20,8 @@ namespace HandsLiftedApp.Core.Views
 {
     public partial class SlideRendererWorkerWindow : Window
     {
+        private bool _isClosing = false;
+
         public SlideRendererWorkerWindow()
         {
             InitializeComponent();
@@ -28,12 +30,15 @@ namespace HandsLiftedApp.Core.Views
                 return;
 
             this.Opened += SlideRendererWorkerWindow_Opened;
+            this.Closing += (s, e) => _isClosing = true;
 
             MessageBus.Current.Listen<SlideRenderRequestMessage>()
                 .Subscribe((request) =>
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        if (_isClosing) return;
+
                         RenderTargetBitmap rtb = new RenderTargetBitmap(new PixelSize(1920, 1080));
                     
                         Control? templateControl = null;

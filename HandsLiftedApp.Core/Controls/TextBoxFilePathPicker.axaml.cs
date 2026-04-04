@@ -6,7 +6,8 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
-    
+using Serilog;
+
 namespace HandsLiftedApp.Core.Controls
 {
     public partial class TextBoxFilePathPicker : UserControl
@@ -81,7 +82,7 @@ namespace HandsLiftedApp.Core.Controls
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                Log.Error(ex, "Error picking file");
             }
         }
     }

@@ -16,6 +16,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using DryIoc.ImTools;
 using HandsLiftedApp.Data.Data.Models.Types;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Designer
 {
@@ -266,7 +267,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                Log.Error(ex, "Error changing theme background graphic");
             }
         }
     }

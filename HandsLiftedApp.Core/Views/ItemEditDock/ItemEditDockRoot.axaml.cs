@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.ItemEditDock
 {
@@ -49,7 +50,7 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
                 }
                 catch (Exception ex)
                 {
-                    Debug.Print(ex.Message);
+                    Log.Error(ex, "Error changing PowerPoint file");
                 }
             }
         }

@@ -17,11 +17,11 @@ public unsafe class MpvSimpleEventLoop : IEventLoop, IDisposable
             isEventLoopRunning = false;
             mpv_wakeup(context);
 
-            if (Task.CurrentId == evenLoopTask.Id)
+            if (evenLoopTask == null || (Task.CurrentId.HasValue && Task.CurrentId == evenLoopTask.Id))
             {
                 return;
             }
-            evenLoopTask.Wait();
+            evenLoopTask.Wait(500);
         }
     }
 

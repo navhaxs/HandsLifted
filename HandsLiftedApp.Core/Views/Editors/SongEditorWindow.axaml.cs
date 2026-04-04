@@ -174,7 +174,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             }
             catch (Exception e)
             {
-                Debug.Print(e.Message);
+                Log.Error(e, "Error showing open file dialog");
                 interaction.SetOutput(null);
             }
         }

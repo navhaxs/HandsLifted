@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views
 {
@@ -40,7 +41,7 @@ namespace HandsLiftedApp.Core.Views
             }
             catch (Exception e)
             {
-                Debug.Print(e.Message);
+                Log.Error(e, "Error showing open file dialog");
                 interaction.SetOutput(null);
             }
         }

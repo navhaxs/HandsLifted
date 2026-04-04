@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -6,6 +7,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.ViewModels;
+
+using Serilog;
 
 namespace HandsLiftedApp.Core;
 
@@ -24,7 +27,16 @@ public partial class App : Application
             foreach (var window in desktopLifetime.Windows.ToList())
             {
                 if (window != sender)
-                    window.Close();
+                {
+                    try
+                    {
+                        window.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error closing window {WindowType}", window.GetType().Name);
+                    }
+                }
             }
             Globals.Instance.OnShutdown();
             desktopLifetime.Shutdown();

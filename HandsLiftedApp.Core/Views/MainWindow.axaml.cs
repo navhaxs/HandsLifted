@@ -275,7 +275,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {
-            Close();
             App.ExitApplication(desktopLifetime, this);
         }
         else
@@ -310,7 +309,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         }
         catch (Exception e)
         {
-            Debug.Print(e.Message);
+            Log.Error(e, "Error opening file");
             interaction.SetOutput(null);
         }
     }

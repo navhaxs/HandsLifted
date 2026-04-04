@@ -96,8 +96,24 @@ namespace HandsLiftedApp.Core
         {
             if (MpvContextInstance != null)
             {
-                MpvContextInstance.Dispose();
+                try
+                {
+                    MpvContextInstance.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error disposing MpvContext");
+                }
                 MpvContextInstance = null;
+            }
+
+            try
+            {
+                ImportWorkerThread?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error disposing ImportWorkerThread");
             }
         }
 
