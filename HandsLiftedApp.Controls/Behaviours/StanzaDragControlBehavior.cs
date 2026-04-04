@@ -33,6 +33,7 @@ namespace HandsLiftedApp.Controls.Behaviours
         private Point _previous;
         private int _insertIndex;
         private int _previousInsertIndex = -1;
+        private int _sourceIndex = -1;
 
         /// <summary>
         /// Gets or sets the target control to be moved around instead of <see cref="IBehavior.AssociatedObject"/>. This is a avalonia property.
@@ -100,7 +101,7 @@ namespace HandsLiftedApp.Controls.Behaviours
 
                 if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
                 {
-                    ItemsControl listBox = GetParent(target);
+                    var listBox = GetParent(target);
                     int SourceIndex = listBox.IndexFromContainer(GetItem(target));
 
                     SongItem ctx = (SongItem)listBox.DataContext;
@@ -138,6 +139,10 @@ namespace HandsLiftedApp.Controls.Behaviours
                 
                 var items = GetParent(target).GetLogicalChildren().Select(x => x as Control).ToList();
                 CalculateItemPositions(items);
+
+                // Track the source index of the dragged item
+                var parentListBox = GetParent(target);
+                _sourceIndex = parentListBox.IndexFromContainer(GetItem(target));
 
                 _insertIndex = -1;
                 _previousInsertIndex = -1;
@@ -189,12 +194,12 @@ namespace HandsLiftedApp.Controls.Behaviours
 
         private int CalculateInsertPosition(List<Control> logicals, Point pos)
         {
-            if (logicals.Count == 0 || pos.X < 0)
+            if (logicals.Count == 0)
             {
                 return -1;
             }
 
-            if (pos.Y < 0 || pos.Y > (itemWidthsByRow.Count) * RowHeight)
+            if (pos.X < 0 || pos.Y < 0 || pos.Y > (itemWidthsByRow.Count) * RowHeight)
             {
                 return -1;
             }
@@ -241,6 +246,95 @@ namespace HandsLiftedApp.Controls.Behaviours
                 _rootAdornerLayer.Children.Clear();
             }
         }
+
+        private void UpdateItemPreview(ItemsControl listBox, Control draggedItem, int sourceIndex, int destinationIndex)
+        {
+            // Reset all items to their normal state
+            for (int i = 0; i < listBox.ItemCount; i++)
+            {
+                var container = listBox.ContainerFromIndex(i);
+                if (container is Control ctrl)
+                {
+                    ctrl.ZIndex = 0;
+                    ctrl.Opacity = 1.0;
+                    
+                    // Clear any render transforms
+                    if (ctrl.RenderTransform is TranslateTransform tr)
+                    {
+                        tr.X = 0;
+                        tr.Y = 0;
+                    }
+                }
+            }
+
+            // Get the dragged container
+            var draggedContainer = GetItem(draggedItem);
+            draggedContainer.ZIndex = 1000;
+            draggedContainer.Opacity = 0.8; // Keep dragged item semi-transparent
+
+            // Determine the range of items that need to shift
+            int minIndex = Math.Min(sourceIndex, destinationIndex);
+            int maxIndex = Math.Max(sourceIndex, destinationIndex);
+
+            // Shift items to create visual preview
+            if (sourceIndex < destinationIndex)
+            {
+                // Dragging forward: shift items between source and destination backward
+                for (int i = sourceIndex + 1; i <= destinationIndex && i < listBox.ItemCount; i++)
+                {
+                    var container = listBox.ContainerFromIndex(i);
+                    if (container is Control ctrl && ctrl != draggedContainer)
+                    {
+                        // Shift backward to make room
+                        if (ctrl.RenderTransform is TranslateTransform tr)
+                        {
+                            tr.X = -(draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100);
+                        }
+                        else
+                        {
+                            ctrl.RenderTransform = new TranslateTransform 
+                            { 
+                                X = -(draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100)
+                            };
+                        }
+                    }
+                }
+            }
+            else if (sourceIndex > destinationIndex)
+            {
+                // Dragging backward: shift items between destination and source forward
+                for (int i = destinationIndex; i < sourceIndex && i < listBox.ItemCount; i++)
+                {
+                    var container = listBox.ContainerFromIndex(i);
+                    if (container is Control ctrl && ctrl != draggedContainer)
+                    {
+                        // Shift forward to make room
+                        if (ctrl.RenderTransform is TranslateTransform tr)
+                        {
+                            tr.X = (draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100);
+                        }
+                        else
+                        {
+                            ctrl.RenderTransform = new TranslateTransform 
+                            { 
+                                X = (draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100)
+                            };
+                        }
+                    }
+                }
+            }
+
+            // Make the source item's space invisible (collapse it)
+            if (sourceIndex >= 0 && sourceIndex < listBox.ItemCount)
+            {
+                var sourceContainer = listBox.ContainerFromIndex(sourceIndex);
+                if (sourceContainer is Control sourceCtrl && sourceCtrl != draggedContainer)
+                {
+                    sourceCtrl.Opacity = 0.0; // Hide the original position
+                }
+            }
+        }
+
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
         {
             var target = TargetControl ?? AssociatedObject;
@@ -268,81 +362,25 @@ namespace HandsLiftedApp.Controls.Behaviours
                 if (target.RenderTransform is TranslateTransform tr)
                 {
                     tr.X += pos1.X - _previous.X;
-                    tr.Y = Math.Floor(pos1.Y / RowHeight) * RowHeight;
+                    tr.Y += pos1.Y - _previous.Y;
                 }
 
                 _previous = pos1;
 
                 var items = listBox.GetLogicalChildren().Select(x => x as Control).ToList();
-                _insertIndex = CalculateInsertPosition(items, pos1);
-                    
-                if (_insertIndex == -1)
+                int newInsertIndex = CalculateInsertPosition(items, pos1);
+                
+                // If the mouse is outside the bounds, reset preview insert index to the original source position
+                if (newInsertIndex == -1)
                 {
-                    ResetHover(GetParent(target)); 
-                    return;
+                    newInsertIndex = _sourceIndex;
                 }
                 
-                ContentPresenter hoveredItem = items[Math.Min(_insertIndex, items.Count - 1)] as ContentPresenter;
-
-                // check if dragging past the last item
-                ContentPresenter? lastItem = (ContentPresenter)listBox.GetLogicalChildren()
-                    .MaxBy(listBoxItem => ((ContentPresenter)listBoxItem).Bounds.Bottom);
-
-                // TODO
-                bool isPastLastItem =
-                    false; // (lastItem != null) && (isPastLastItem = pos1.Y > lastItem.Bounds.Bottom);
-
-                for (int i = 0; i < listBox.ItemCount; i++)
+                // Only update preview if insertion position changed
+                if (newInsertIndex != _previousInsertIndex)
                 {
-                    var listBoxItemContainer = listBox.ContainerFromIndex(i);
-                    // Keep items at default z-index except for the hovered one and the dragged container
-                    var draggedContainer = GetItem(target);
-                    if (listBoxItemContainer != hoveredItem && listBoxItemContainer != draggedContainer)
-                    {
-                        listBoxItemContainer.ZIndex = 0;
-                    }
-                }
-
-                // Ensure dragged container always has highest ZIndex
-                var draggedContainerFinal = GetItem(target);
-                draggedContainerFinal.ZIndex = 1000;
-
-                // Only update adorner if insertion position changed
-                if (_insertIndex != _previousInsertIndex)
-                {
-                    // Clear all adorners from the root layer at once
-                    if (_rootAdornerLayer != null)
-                    {
-                        _rootAdornerLayer.Children.Clear();
-                    }
-
-                    if (hoveredItem != target)
-                    {
-                        hoveredItem.ZIndex = 100;  // Ensure hovered item and adorner are on top
-                        var adornerElement = hoveredItem;
-
-                        if (_rootAdornerLayer != null)
-                        {
-                            var adornedElement = 
-                                
-                                (_insertIndex >= listBox.ItemCount) ?
-                                    new Border()
-                                    {
-                                        //CornerRadius = new CornerRadius(3, 0, 0, 3),
-                                        BorderThickness = new Thickness(0, 0, 4, 0),
-                                        BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
-                                    }
-                                    :
-                                new Border()
-                            {
-                                //CornerRadius = new CornerRadius(3, 0, 0, 3),
-                                BorderThickness = new Thickness(4, 0, 0, 0),
-                                BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
-                            };
-                            _rootAdornerLayer.Children.Add(adornedElement);
-                            AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
-                        }
-                    }
+                    _insertIndex = newInsertIndex;
+                    UpdateItemPreview(listBox, target, _sourceIndex, _insertIndex);
                 }
 
                 _previousInsertIndex = _insertIndex;
@@ -367,10 +405,31 @@ namespace HandsLiftedApp.Controls.Behaviours
             {
                 var target = TargetControl ?? AssociatedObject;
                 target.RenderTransform = new TranslateTransform();
+                target.Opacity = 1.0;
                 
                 // Reset ZIndex on the dragged container
                 var draggedContainer = GetItem(target);
                 draggedContainer.ZIndex = 0;
+
+                // Reset all items to normal state
+                ItemsControl listBox = GetParent(target);
+                if (listBox != null)
+                {
+                    for (int i = 0; i < listBox.ItemCount; i++)
+                    {
+                        var container = listBox.ContainerFromIndex(i);
+                        if (container is Control ctrl)
+                        {
+                            ctrl.Opacity = 1.0;
+                            ctrl.ZIndex = 0;
+                            if (ctrl.RenderTransform is TranslateTransform tr)
+                            {
+                                tr.X = 0;
+                                tr.Y = 0;
+                            }
+                        }
+                    }
+                }
 
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
@@ -383,6 +442,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                 }
 
                 _parent = null;
+                _sourceIndex = -1;
             }
         }
 
