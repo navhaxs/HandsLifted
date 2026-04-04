@@ -17,6 +17,19 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             InitializeComponent();
         }
 
+        protected override void OnDataContextChanged(EventArgs e)
+        {
+            base.OnDataContextChanged(e);
+
+            if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
+            {
+                if (mediaGroupItemInstance.Items.Count > 0)
+                {
+                    Thumbstrip.SelectedIndex = 0;
+                }
+            }
+        }
+
         private void LoadButton_OnClick(object? sender, RoutedEventArgs e)
         {
             Open();
