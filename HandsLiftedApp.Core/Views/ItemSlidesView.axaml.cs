@@ -125,6 +125,15 @@ namespace HandsLiftedApp.Controls
             }
         }
 
+        private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control control)
+            {
+                MessageBus.Current.SendMessage(new MoveItemCommand()
+                    { SourceItem = (Item)control.DataContext, Direction = MoveItemCommand.DirectionValue.DUPLICATE });
+            }
+        }
+
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)

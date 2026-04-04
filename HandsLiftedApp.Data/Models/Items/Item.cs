@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 using ReactiveUI;
 
@@ -28,6 +29,19 @@ namespace HandsLiftedApp.Data.Models.Items
             {
                 this.RaiseAndSetIfChanged(ref _title, value);
                 this.RaisePropertyChanged(nameof(Slides));
+            }
+        }
+
+        public virtual Item Clone()
+        {
+            XmlSerializer serializer = new XmlSerializer(this.GetType());
+            using (MemoryStream ms = new MemoryStream())
+            {
+                serializer.Serialize(ms, this);
+                ms.Position = 0;
+                var item = (Item)serializer.Deserialize(ms);
+                item.UUID = Guid.NewGuid();
+                return item;
             }
         }
         //

@@ -10,7 +10,8 @@ namespace HandsLiftedApp.Controls.Messages
         {
             UP,
             DOWN,
-            REMOVE
+            REMOVE,
+            DUPLICATE
         }
     }
 }

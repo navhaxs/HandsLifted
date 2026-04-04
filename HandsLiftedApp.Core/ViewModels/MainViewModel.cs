@@ -417,6 +417,16 @@ public class MainViewModel : ViewModelBase
                     case MoveItemCommand.DirectionValue.REMOVE:
                         Playlist.Items.RemoveAt(theSelectedIndex);
                         break;
+                    case MoveItemCommand.DirectionValue.DUPLICATE:
+                        if (theSelectedIndex != -1)
+                        {
+                            var itemToDuplicate = Playlist.Items[theSelectedIndex];
+                            var serializedItem = HandsLiftedDocXmlSerializer.SerializeItem(itemToDuplicate, Playlist.PlaylistWorkingDirectory);
+                            var clonedItem = serializedItem.Clone();
+                            var newItemInstance = ItemInstanceFactory.ToItemInstance(clonedItem, Playlist);
+                            Playlist.Items.Insert(theSelectedIndex + 1, newItemInstance);
+                        }
+                        break;
                 }
 
                 if (currentSelectedItem != null)

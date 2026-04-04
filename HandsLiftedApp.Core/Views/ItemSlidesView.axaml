@@ -74,6 +74,14 @@
                         <avalonia:MaterialIcon Kind="ArrowDown" />
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem
+                    Click="DuplicateItem_OnClick"
+                    CommandParameter="{Binding}"
+                    Header="Duplicate Item">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Kind="ContentDuplicate" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem
                     CommandParameter="{Binding}"

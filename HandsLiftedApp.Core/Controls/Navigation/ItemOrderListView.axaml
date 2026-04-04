@@ -119,6 +119,14 @@
                                 <material:MaterialIcon Kind="ArrowDown" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem
+                            Click="DuplicateItem_OnClick"
+                            CommandParameter="{Binding}"
+                            Header="Duplicate Item">
+                            <MenuItem.Icon>
+                                <material:MaterialIcon Kind="ContentDuplicate" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <Separator />
                         <MenuItem
                             Click="DeleteItem_OnClick"
