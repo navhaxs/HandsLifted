@@ -105,8 +105,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             {
                 if (Thumbstrip.SelectedItem is MediaGroupItem.GroupItem selectedItem)
                 {
-                    // TODO implement cloning
-                    var duplicatedSlide = selectedItem; //.Clone();
+                    var duplicatedSlide = selectedItem.Clone();
                     mediaGroupItemInstance.Items.Insert(Thumbstrip.SelectedIndex + 1, duplicatedSlide);
                 }
             }

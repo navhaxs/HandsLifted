@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Xml.Serialization;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -95,6 +96,16 @@ namespace HandsLiftedApp.Data.Models.Items
         [Serializable]
         public abstract class GroupItem : ReactiveObject
         {
+            public virtual GroupItem Clone()
+            {
+                XmlSerializer serializer = new XmlSerializer(this.GetType());
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    serializer.Serialize(ms, this);
+                    ms.Position = 0;
+                    return (GroupItem)serializer.Deserialize(ms);
+                }
+            }
         }
 
         [XmlRoot(Namespace = Constants.Namespace)]
