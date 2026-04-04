@@ -23,6 +23,25 @@ namespace HandsLiftedApp.Controls
             InitializeComponent();
 
             EditCommand = ReactiveCommand.Create(RunTheThing);
+
+            var flyout = this.Resources["MySharedFlyout"] as Flyout;
+            if (flyout != null)
+            {
+                flyout.Opened += (s, e) =>
+                {
+                    if (flyout.Target is Control target)
+                    {
+                        target.Classes.Add("flyout-open");
+                    }
+                };
+                flyout.Closed += (s, e) =>
+                {
+                    if (flyout.Target is Control target)
+                    {
+                        target.Classes.Remove("flyout-open");
+                    }
+                };
+            }
         }
         void RunTheThing()
         {
@@ -48,18 +67,36 @@ namespace HandsLiftedApp.Controls
             ItemsControl? arrangement = this.FindControl<ItemsControl>("PART_ArrangementTokens");
             Popup popup = button.FindAncestor<Popup>();
 
+            // Find the index of the item that opened the flyout
             int idx = 0;
-            while (idx < arrangement.Items.Count)
+            bool found = false;
+            ContentPresenter contentPresenter = popup?.FindAncestor<ContentPresenter>();
+
+            if (contentPresenter != null)
             {
-                Control? control = arrangement.ContainerFromIndex(idx);
-                ContentPresenter contentPresenter = popup.FindAncestor<ContentPresenter>();
-
-                if (control == contentPresenter)
+                while (idx < arrangement.Items.Count)
                 {
-                    break;
+                    Control? control = arrangement.ContainerFromIndex(idx);
+                    if (control == contentPresenter)
+                    {
+                        found = true;
+                        break;
+                    }
+                    idx++;
                 }
+            }
+            else
+            {
+                // If no ContentPresenter is found, it's likely the global add button at the end
+                idx = arrangement.Items.Count;
+            }
 
-                Debug.WriteLine(idx);
+            // Check if the flyout was opened from an "After" button
+            var placementTarget = popup?.PlacementTarget as Control;
+            bool isAfter = placementTarget?.Tag?.ToString() == "After";
+
+            if (found && isAfter)
+            {
                 idx++;
             }
 

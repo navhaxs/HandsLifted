@@ -14,10 +14,6 @@
              x:DataType="items:SongItemInstance"
              x:Class="HandsLiftedApp.Controls.SongArrangementControl">
 
-    <!--<Design.DataContext>
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>-->
-
     <Design.DataContext>
         <vme:ExampleSongItemInstance />
     </Design.DataContext>
@@ -25,10 +21,10 @@
     <UserControl.Resources>
         <ResourceDictionary>
 
-            <converters:StanzaSortConverter x:Key="stanzaSortConverter" />
+            <converters:StanzaSortConverter x:Key="StanzaSortConverter" />
 
             <Flyout Placement="BottomEdgeAlignedLeft" x:Key="MySharedFlyout">
-                <ItemsControl ItemsSource="{Binding Stanzas, Converter={StaticResource stanzaSortConverter}}"
+                <ItemsControl ItemsSource="{Binding Stanzas, Converter={StaticResource StanzaSortConverter}}"
                               MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -57,10 +53,10 @@
 
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="ForegroundText">Red</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundText">White</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="ForegroundText">Red</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForegroundText">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -84,7 +80,7 @@
                 </TextBlock.ContextMenu>
             </TextBlock>
 
-            <Button x:Name="AddPartFlyoutToggleButton" BorderThickness="0" Background="Transparent"
+            <Button x:Name="AddPartFlyoutToggleButton" IsVisible="False"
                     VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10"
                     Cursor="Hand"
                     Flyout="{StaticResource MySharedFlyout}">
@@ -104,16 +100,27 @@
                     </Style>
                     <Style
                         Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-child(1) DockPanel#PART_Container Path#PART_Before">
-                        <Setter Property="IsVisible" Value="False" />
+                        <Setter Property="IsVisible" Value="True" />
                     </Style>
                     <Style
                         Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-child(1) DockPanel#PART_Container Border#PART_Content">
-                        <Setter Property="CornerRadius" Value="4 0 0 4" />
-                        <Setter Property="Padding" Value="18 0 12 0" />
+                        <Setter Property="CornerRadius" Value="0" />
+                        <Setter Property="Padding" Value="12 0" />
                     </Style>
                     <Style
                         Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-last-child(1) DockPanel#PART_Container">
                         <Setter Property="Margin" Value="0 2 0 2" />
+                    </Style>
+                    
+                    <!-- Hover Buttons visibility -->
+                    <Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter Button.HoverInsertButton.AfterButton">
+                        <Setter Property="IsVisible" Value="False" />
+                    </Style>
+                    <Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-last-child(1) Button.HoverInsertButton.AfterButton">
+                        <Setter Property="IsVisible" Value="True" />
+                    </Style>
+                    <Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter Button.HoverInsertButton.BeforeButton">
+                        <Setter Property="IsVisible" Value="True" />
                     </Style>
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
@@ -126,10 +133,18 @@
                         <Grid Classes="Pill">
                             <Grid.Styles>
                                 <Style Selector="Button.HoverInsertButton">
-                                    <Setter Property="IsVisible" Value="False" />
+                                    <Setter Property="Opacity" Value="0" />
+                                    <Setter Property="Width" Value="20" />
+                                    <Setter Property="ZIndex" Value="100" />
+                                    <Setter Property="Background" Value="Transparent" />
                                 </Style>
-                                <Style Selector="Grid.Pill:pointerover Button.HoverInsertButton">
-                                    <Setter Property="IsVisible" Value="True" />
+                                <Style Selector="Button.HoverInsertButton:pointerover">
+                                    <Setter Property="Opacity" Value="1" />
+                                    <Setter Property="Background" Value="Yellow" />
+                                </Style>
+                                <Style Selector="Button.HoverInsertButton.flyout-open">
+                                    <Setter Property="Opacity" Value="1" />
+                                    <Setter Property="Background" Value="Yellow" />
                                 </Style>
                             </Grid.Styles>
                             <DockPanel Name="PART_Container" Cursor="Hand" Background="Transparent">
@@ -154,9 +169,7 @@
                                     <behaviours:StanzaDragControlBehavior />
                                 </i:Interaction.Behaviors>
                             </DockPanel>
-                            <Button DockPanel.Dock="Right"
-                                    Classes="HoverInsertButton"
-                                    Margin="0 0 0 0"
+                            <Button Classes="HoverInsertButton BeforeButton"
                                     HorizontalAlignment="Left"
                                     BorderThickness="0"
                                     Cursor="Hand"
@@ -164,21 +177,23 @@
                                     Flyout="{StaticResource MySharedFlyout}">
                                 <material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4"
                                                        VerticalAlignment="Center" />
-                                <Button.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Background" Value="Transparent" />
-                                    </Style>
-                                    <Style Selector="Button:pointerover">
-                                        <Setter Property="Background" Value="Yellow" />
-                                    </Style>
-                                </Button.Styles>
+                            </Button>
+                            <Button Classes="HoverInsertButton AfterButton"
+                                    Tag="After"
+                                    HorizontalAlignment="Right"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
+                                    Flyout="{StaticResource MySharedFlyout}">
+                                <material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4"
+                                                       VerticalAlignment="Center" />
                             </Button>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Button Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
+            <Button IsVisible="False" Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
 
         </DockPanel>
 

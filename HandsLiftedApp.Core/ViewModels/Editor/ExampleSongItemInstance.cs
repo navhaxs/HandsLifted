@@ -7,7 +7,7 @@ namespace HandsLiftedApp.ViewModels.Editor
 {
     public class ExampleSongItemInstance : SongItemInstance
     {
-        public ExampleSongItemInstance(PlaylistInstance? parentPlaylist = null) : base(parentPlaylist)
+        public ExampleSongItemInstance() : base(null)
         {
 
             this.Title = "Rock Of Ages";
