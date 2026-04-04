@@ -193,7 +193,7 @@ namespace HandsLiftedApp.Core.Models
 
             _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
                 .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
-                .Select(x =>
+                .SelectMany(async x =>
                 {
                     if (string.IsNullOrEmpty(x))
                     {
@@ -204,7 +204,7 @@ namespace HandsLiftedApp.Core.Models
                     {
                         if (File.Exists(x) || AssetLoader.Exists(new Uri(x)))
                         {
-                            return BitmapLoader.LoadBitmap(x);
+                            return await BitmapLoader.LoadBitmapAsync(x);
                         }
                     }
                     catch (Exception ex)

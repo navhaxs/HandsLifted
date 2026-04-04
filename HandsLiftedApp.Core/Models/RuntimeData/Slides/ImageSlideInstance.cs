@@ -8,6 +8,7 @@ using ReactiveUI;
 using System;
 using System.Reactive.Linq;
 using HandsLiftedApp.Core.Models.Thumbnail;
+using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
@@ -34,25 +35,16 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
                 .Subscribe(a => SlideTimerConfig = a);
         }
 
-        private void GenerateBitmaps()
+        private async Task GenerateBitmaps()
         {
-            lock (loadDataLock)
+            if (Cached is not null && Thumbnail is not null)
             {
-                // MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
-                //     this,
-                //     (obitmap) =>
-                //     {
-                if (Cached is not null && Thumbnail is not null)
-                {
-                    return;
-                }
-                
-                var obitmap = BitmapLoader.LoadBitmap(SourceMediaFilePath);
-                Cached = obitmap;
-                Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
-                //     }
-                // ));
+                return;
             }
+
+            var obitmap = await BitmapLoader.LoadBitmapAsync(SourceMediaFilePath);
+            Cached = obitmap;
+            Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
         }
 
         Bitmap _cached;
@@ -84,7 +76,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
         {
             base.OnPreloadSlide();
 
-            GenerateBitmaps();
+            _ = GenerateBitmaps();
         }
     }
 }

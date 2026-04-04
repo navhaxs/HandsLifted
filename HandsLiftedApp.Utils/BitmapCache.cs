@@ -4,6 +4,7 @@ namespace HandsLiftedApp.Common
 {
     public class BitmapCache
     {
+        private readonly object _lock = new();
         private int capacity;
         private Dictionary<string, Bitmap> cache;
         private LinkedList<string> lruList;
@@ -17,39 +18,45 @@ namespace HandsLiftedApp.Common
 
         public Bitmap? GetBitmap(string key)
         {
-            if (cache.TryGetValue(key, out var bitmap))
+            lock (_lock)
             {
-                // Move the key to the head of the list
-                lruList.Remove(key);
-                lruList.AddFirst(key);
-                return bitmap;
-            }
+                if (cache.TryGetValue(key, out var bitmap))
+                {
+                    // Move the key to the head of the list
+                    lruList.Remove(key);
+                    lruList.AddFirst(key);
+                    return bitmap;
+                }
 
-            return null;
+                return null;
+            }
         }
 
         public void AddBitmap(string key, Bitmap bitmap)
         {
-            if (cache.ContainsKey(key))
+            lock (_lock)
             {
-                // Move the key to the head of the list
-                lruList.Remove(key);
-                lruList.AddFirst(key);
-            }
-            else
-            {
-                if (cache.Count == capacity)
+                if (cache.ContainsKey(key))
                 {
-                    // Remove the least recently used bitmap
-                    var evictedKey = lruList.Last.Value;
-                    lruList.RemoveLast();
-                    cache.Remove(evictedKey);
+                    // Move the key to the head of the list
+                    lruList.Remove(key);
+                    lruList.AddFirst(key);
+                }
+                else
+                {
+                    if (cache.Count == capacity)
+                    {
+                        // Remove the least recently used bitmap
+                        var evictedKey = lruList.Last.Value;
+                        lruList.RemoveLast();
+                        cache.Remove(evictedKey);
+                    }
+
+                    lruList.AddFirst(key);
                 }
 
-                lruList.AddFirst(key);
+                cache[key] = bitmap;
             }
-
-            cache[key] = bitmap;
         }
     }
 }

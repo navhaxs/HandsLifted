@@ -9,7 +9,12 @@ namespace HandsLiftedApp.Utils
     {
         public static BitmapCache Cache = new(20);
 
-        public static Bitmap LoadBitmap(string pathOrUri, int? decodeToWidth = null)
+        public static Task<Bitmap?> LoadBitmapAsync(string pathOrUri, int? decodeToWidth = null)
+        {
+            return Task.Run(() => LoadBitmap(pathOrUri, decodeToWidth));
+        }
+
+        public static Bitmap? LoadBitmap(string pathOrUri, int? decodeToWidth = null)
         {
             try
             {
