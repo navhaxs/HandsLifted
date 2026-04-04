@@ -32,6 +32,7 @@ namespace HandsLiftedApp.Controls.Behaviours
         private Control? _parent;
         private Point _previous;
         private int _insertIndex;
+        private int _previousInsertIndex = -1;
 
         /// <summary>
         /// Gets or sets the target control to be moved around instead of <see cref="IBehavior.AssociatedObject"/>. This is a avalonia property.
@@ -118,20 +119,28 @@ namespace HandsLiftedApp.Controls.Behaviours
                     _parent.PointerMoved += Parent_PointerMoved;
                     _parent.PointerReleased += Parent_PointerReleased;
 
-                    target.Opacity = 0.6;
+                    target.Opacity = 0.8;
+                    
+                    // Find the container for the dragged item and set its ZIndex
+                    var draggedContainer = GetItem(target);
+                    draggedContainer.ZIndex = 1000;  // Bring dragged item container to front
 
                     var m = _parent.GetVisualRoot();
-                    if (m is Window)
+                    if (m is Window window)
                     {
-                        (m as Window).LostFocus += StanzaDragControlBehavior_LostFocus;
-                        (m as Window).PointerPressed += StanzaDragControlBehavior_PointerPressed;
+                        window.LostFocus += StanzaDragControlBehavior_LostFocus;
+                        window.PointerPressed += StanzaDragControlBehavior_PointerPressed;
                     }
+                    
+                    // Get the adorner layer from the parent ItemsControl
+                    _rootAdornerLayer = AdornerLayer.GetAdornerLayer(_parent);
                 }
                 
                 var items = GetParent(target).GetLogicalChildren().Select(x => x as Control).ToList();
                 CalculateItemPositions(items);
 
                 _insertIndex = -1;
+                _previousInsertIndex = -1;
             }
         }
 
@@ -150,6 +159,7 @@ namespace HandsLiftedApp.Controls.Behaviours
 
         private List<List<double>> itemWidthsByRow = new();
         private double RowHeight { get; set; }
+        private AdornerLayer? _rootAdornerLayer;
 
         private void CalculateItemPositions(List<Control> logicals)
         {
@@ -226,16 +236,9 @@ namespace HandsLiftedApp.Controls.Behaviours
 
         void ResetHover(ItemsControl listBox)
         {
-            for (int i = 0; i < listBox.ItemCount; i++)
+            if (_rootAdornerLayer != null)
             {
-                var listBoxItemContainer = listBox.ContainerFromIndex(i);
-                listBoxItemContainer.Classes.Remove("draggingover");
-                var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
-
-                if (adornerLayer != null)
-                {
-                    adornerLayer.Children.Clear();
-                }
+                _rootAdornerLayer.Children.Clear();
             }
         }
         private void Parent_PointerMoved(object? sender, PointerEventArgs args)
@@ -292,47 +295,57 @@ namespace HandsLiftedApp.Controls.Behaviours
                 for (int i = 0; i < listBox.ItemCount; i++)
                 {
                     var listBoxItemContainer = listBox.ContainerFromIndex(i);
-                    var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
-                    adornerLayer.Children.Clear();
-                    listBoxItemContainer.ZIndex = 5;
-                }
-
-                if (isPastLastItem)
-                {
-                    hoveredItem = lastItem;
-                }
-
-                if (hoveredItem is null)
-                    return;
-
-                if (hoveredItem != target)
-                {
-                    hoveredItem.ZIndex = 1;
-                    var adornerElement = hoveredItem;
-                    var adornerLayer = AdornerLayer.GetAdornerLayer(adornerElement);
-
-                    if (adornerLayer != null)
+                    // Keep items at default z-index except for the hovered one and the dragged container
+                    var draggedContainer = GetItem(target);
+                    if (listBoxItemContainer != hoveredItem && listBoxItemContainer != draggedContainer)
                     {
-                        var adornedElement = 
-                            
-                            (_insertIndex >= listBox.ItemCount) ?
-                                new Border()
-                                {
-                                    //CornerRadius = new CornerRadius(3, 0, 0, 3),
-                                    BorderThickness = new Thickness(0, 0, 4, 0),
-                                    BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
-                                }
-                                :
-                            new Border()
-                        {
-                            //CornerRadius = new CornerRadius(3, 0, 0, 3),
-                            BorderThickness = new Thickness(4, 0, 0, 0),
-                            BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
-                        };
-                        adornerLayer.Children.Add(adornedElement);
-                        AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
+                        listBoxItemContainer.ZIndex = 0;
                     }
                 }
+
+                // Ensure dragged container always has highest ZIndex
+                var draggedContainerFinal = GetItem(target);
+                draggedContainerFinal.ZIndex = 1000;
+
+                // Only update adorner if insertion position changed
+                if (_insertIndex != _previousInsertIndex)
+                {
+                    // Clear all adorners from the root layer at once
+                    if (_rootAdornerLayer != null)
+                    {
+                        _rootAdornerLayer.Children.Clear();
+                    }
+
+                    if (hoveredItem != target)
+                    {
+                        hoveredItem.ZIndex = 100;  // Ensure hovered item and adorner are on top
+                        var adornerElement = hoveredItem;
+
+                        if (_rootAdornerLayer != null)
+                        {
+                            var adornedElement = 
+                                
+                                (_insertIndex >= listBox.ItemCount) ?
+                                    new Border()
+                                    {
+                                        //CornerRadius = new CornerRadius(3, 0, 0, 3),
+                                        BorderThickness = new Thickness(0, 0, 4, 0),
+                                        BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
+                                    }
+                                    :
+                                new Border()
+                            {
+                                //CornerRadius = new CornerRadius(3, 0, 0, 3),
+                                BorderThickness = new Thickness(4, 0, 0, 0),
+                                BorderBrush = new SolidColorBrush(Color.Parse("#FF4B31"))
+                            };
+                            _rootAdornerLayer.Children.Add(adornedElement);
+                            AdornerLayer.SetAdornedElement(adornedElement, adornerElement);
+                        }
+                    }
+                }
+
+                _previousInsertIndex = _insertIndex;
             }
         }
 
@@ -354,11 +367,20 @@ namespace HandsLiftedApp.Controls.Behaviours
             {
                 var target = TargetControl ?? AssociatedObject;
                 target.RenderTransform = new TranslateTransform();
+                
+                // Reset ZIndex on the dragged container
+                var draggedContainer = GetItem(target);
+                draggedContainer.ZIndex = 0;
 
                 _parent.PointerMoved -= Parent_PointerMoved;
                 _parent.PointerReleased -= Parent_PointerReleased;
 
                 UpdateCursor();
+
+                if (_rootAdornerLayer != null)
+                {
+                    _rootAdornerLayer.Children.Clear();
+                }
 
                 _parent = null;
             }
@@ -371,12 +393,11 @@ namespace HandsLiftedApp.Controls.Behaviours
                 var listBoxItemContainer = listBox.ContainerFromIndex(i);
                 listBoxItemContainer.Classes.Remove("draggingover");
                 listBoxItemContainer.FindDescendantOfType<DockPanel>().Opacity = 1;
-                var adornerLayer = AdornerLayer.GetAdornerLayer(listBoxItemContainer);
+            }
 
-                if (adornerLayer != null)
-                {
-                    adornerLayer.Children.Clear();
-                }
+            if (_rootAdornerLayer != null)
+            {
+                _rootAdornerLayer.Children.Clear();
             }
         }
 
@@ -420,3 +441,5 @@ namespace HandsLiftedApp.Controls.Behaviours
         }
     }
 }
+
+
