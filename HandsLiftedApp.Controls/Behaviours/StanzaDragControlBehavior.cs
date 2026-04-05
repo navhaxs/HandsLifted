@@ -163,81 +163,82 @@ namespace HandsLiftedApp.Controls.Behaviours
             ResetDraggingState();
         }
 
-        private List<List<double>> itemWidthsByRow = new();
-        private double RowHeight { get; set; }
+        private List<List<Rect>> itemBoundsByRow = new();
+        private List<Rect> _flatItemBounds = new();
         private AdornerLayer? _rootAdornerLayer;
 
         private void CalculateItemPositions(List<Control> items)
         {
-            itemWidthsByRow = new();
+            _flatItemBounds = items.Select(item => item.Bounds).ToList();
+            itemBoundsByRow = new();
             if (items.Count == 0) return;
 
             var firstItem = items.First();
             var lastY = firstItem.Bounds.Y;
-            RowHeight = firstItem.Bounds.Height;
             
             var currentRow = 0;
             foreach (var item in items)
             {
-                if (item.Bounds.Y != lastY)
+                if (Math.Abs(item.Bounds.Y - lastY) > 1.0)
                 {
                     lastY = item.Bounds.Y;
                     currentRow++;
                 }
 
-                if (itemWidthsByRow.ElementAtOrDefault(currentRow) == null)
+                if (itemBoundsByRow.ElementAtOrDefault(currentRow) == null)
                 {
-                    itemWidthsByRow.Add(new List<double>());
+                    itemBoundsByRow.Add(new List<Rect>());
                 }
 
-                itemWidthsByRow[currentRow].Add(item.Bounds.Width);
+                itemBoundsByRow[currentRow].Add(item.Bounds);
             }
         }
 
         private int CalculateInsertPosition(List<Control> items, Point pos)
         {
-            if (items.Count == 0)
+            if (items.Count == 0 || itemBoundsByRow.Count == 0)
             {
                 return -1;
             }
 
-            // If the position is above the first row, it might be the first item
-            if (pos.Y < 0)
+            // Above first row
+            if (pos.Y < itemBoundsByRow[0][0].Top)
             {
                 return -1;
             }
 
             var idx = 0;
-            var row = 0;
-            foreach (var rowWidths in itemWidthsByRow)
+            for (int row = 0; row < itemBoundsByRow.Count; row++)
             {
-                double rowX = 0;
-                double totalRowHeight = (row + 1) * RowHeight;
+                var rowBounds = itemBoundsByRow[row];
                 
-                foreach (var width in rowWidths)
+                // Determine vertical cutoff for this row's influence.
+                // We use the top of the next row as the cutoff to avoid using midpoints.
+                // For the last row, we use its own bottom edge.
+                double nextRowTop = (row < itemBoundsByRow.Count - 1) 
+                    ? itemBoundsByRow[row + 1].First().Top 
+                    : rowBounds[0].Bottom;
+
+                // If pointer is within this row's vertical scope
+                if (pos.Y < nextRowTop)
                 {
-                    if (pos.Y <= totalRowHeight)
+                    foreach (var bounds in rowBounds)
                     {
-                        if (pos.X < (rowX + width))
+                        // Use the right edge as the threshold.
+                        // Any pointer position within an item's bounds targets that item's index.
+                        if (pos.X < bounds.Right)
                         {
                             return idx;
                         }
+                        idx++;
                     }
-
-                    rowX += width;
-                    idx++;
+                    return idx; // Past last item in this row
                 }
 
-                // If pointer is past the last item on this row, but still on this row
-                if (pos.Y <= totalRowHeight)
-                {
-                    return idx;
-                }
-                
-                row++;
+                idx += rowBounds.Count;
             }
 
-            // If we've gone through all rows and haven't returned, we're likely past the last row
+            // Past last row
             return items.Count;
         }
 
@@ -250,150 +251,101 @@ namespace HandsLiftedApp.Controls.Behaviours
             }
         }
 
-        private Point GetPositionAtIndex(int index)
-        {
-            var currentIdx = 0;
-            var currentRow = 0;
-            
-            if (itemWidthsByRow.Count == 0)
-                return new Point(0, 0);
-
-            foreach (var rowKV in itemWidthsByRow)
-            {
-                double rowX = 0;
-                double rowY = currentRow * RowHeight;
-
-                foreach (var width in rowKV)
-                {
-                    if (currentIdx == index)
-                    {
-                        return new Point(rowX, rowY);
-                    }
-
-                    rowX += width;
-                    currentIdx++;
-                }
-
-                if (currentIdx == index)
-                {
-                    return new Point(rowX, rowY);
-                }
-
-                currentRow++;
-            }
-
-            return new Point(0, 0);
-        }
 
         private void UpdateItemPreview(ItemsControl listBox, Control draggedItem, int sourceIndex, int destinationIndex)
         {
-            // Reset all items to their normal state
-            for (int i = 0; i < listBox.ItemCount; i++)
-            {
-                var container = listBox.ContainerFromIndex(i);
-                if (container is Control ctrl)
-                {
-                    ctrl.ZIndex = 0;
-                    ctrl.Opacity = 1.0;
-                    
-                    // Clear any render transforms
-                    if (ctrl.RenderTransform is TranslateTransform tr)
-                    {
-                        tr.X = 0;
-                        tr.Y = 0;
-                    }
-                }
-            }
+            var items = listBox.GetLogicalChildren().OfType<Control>().ToList();
+            if (items.Count == 0 || _flatItemBounds.Count != items.Count) return;
 
             // Get the dragged container
             var draggedContainer = GetItem(draggedItem);
-            draggedContainer.ZIndex = 1000;
-            draggedContainer.Opacity = 0.8; // Keep dragged item semi-transparent
 
-            // Draw placeholder in adorner layer where the item would be dropped
-            if (_rootAdornerLayer != null)
+            // Reset all items to their normal state (except the dragged one's basic properties)
+            foreach (var ctrl in items)
             {
-                if (_placeholder == null)
-                {
-                    _placeholder = new Border
-                    {
-                        Background = Brushes.LightBlue,
-                        Opacity = 0.3,
-                        BorderBrush = Brushes.DodgerBlue,
-                        BorderThickness = new Thickness(1),
-                        CornerRadius = new CornerRadius(2),
-                        IsHitTestVisible = false,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        RenderTransform = new TranslateTransform()
-                    };
-                    _rootAdornerLayer.Children.Add(_placeholder);
-                }
-
-                _placeholder.Width = draggedContainer.Bounds.Width;
-                _placeholder.Height = draggedContainer.Bounds.Height;
-
-                Point destPos = GetPositionAtIndex(destinationIndex);
-
-                // Translate destPos from listBox to _rootAdornerLayer coordinates
-                var listBoxPos = listBox.TranslatePoint(destPos, _rootAdornerLayer);
-                if (listBoxPos.HasValue && _placeholder.RenderTransform is TranslateTransform tt)
-                {
-                    tt.X = listBoxPos.Value.X;
-                    tt.Y = listBoxPos.Value.Y;
-                }
+                ctrl.ZIndex = (ctrl == draggedContainer) ? 1000 : 0;
+                ctrl.Opacity = (ctrl == draggedContainer) ? 0.8 : 1.0;
             }
 
-            // Determine the range of items that need to shift
-            int minIndex = Math.Min(sourceIndex, destinationIndex);
-            int maxIndex = Math.Max(sourceIndex, destinationIndex);
+            // Determine the virtual sequence of items
+            var sequence = Enumerable.Range(0, items.Count).ToList();
+            var movedItemIdx = sequence[sourceIndex];
+            sequence.RemoveAt(sourceIndex);
+            
+            // destinationIndex should be within valid range [0, items.Count]
+            int targetIndex = Math.Clamp(destinationIndex, 0, items.Count);
+            sequence.Insert(targetIndex, movedItemIdx);
 
-            // Shift items to create visual preview
-            if (sourceIndex < destinationIndex)
+            // Calculate new positions based on individual item widths and original row structure
+            int seqIdx = 0;
+            for (int r = 0; r < itemBoundsByRow.Count; r++)
             {
-                // Dragging forward: shift items between source and destination backward
-                int shiftEndIndex = Math.Min(destinationIndex, listBox.ItemCount - 1);
-                for (int i = sourceIndex + 1; i <= shiftEndIndex; i++)
+                var rowOriginalBounds = itemBoundsByRow[r];
+                if (rowOriginalBounds.Count == 0) continue;
+
+                double currentX = rowOriginalBounds[0].Left;
+                double currentY = rowOriginalBounds[0].Top;
+
+                for (int i = 0; i < rowOriginalBounds.Count; i++)
                 {
-                    var container = listBox.ContainerFromIndex(i);
-                    if (container is Control ctrl && ctrl != draggedContainer)
+                    if (seqIdx >= sequence.Count) break;
+
+                    int itemIdx = sequence[seqIdx];
+                    Point targetPos = new Point(currentX, currentY);
+
+                    if (itemIdx == movedItemIdx)
                     {
-                        // Shift backward to make room
-                        if (ctrl.RenderTransform is TranslateTransform tr)
+                        // Update placeholder in adorner layer
+                        if (_rootAdornerLayer != null)
                         {
-                            tr.X = -(draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100);
-                        }
-                        else
-                        {
-                            ctrl.RenderTransform = new TranslateTransform 
-                            { 
-                                X = -(draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100)
-                            };
+                            if (_placeholder == null)
+                            {
+                                _placeholder = new Border
+                                {
+                                    Background = Brushes.LightBlue,
+                                    Opacity = 0.3,
+                                    BorderBrush = Brushes.DodgerBlue,
+                                    BorderThickness = new Thickness(1),
+                                    CornerRadius = new CornerRadius(2),
+                                    IsHitTestVisible = false,
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    VerticalAlignment = VerticalAlignment.Top,
+                                    RenderTransform = new TranslateTransform()
+                                };
+                                _rootAdornerLayer.Children.Add(_placeholder);
+                            }
+
+                            _placeholder.Width = draggedContainer.Bounds.Width;
+                            _placeholder.Height = draggedContainer.Bounds.Height;
+
+                            var listBoxPos = listBox.TranslatePoint(targetPos, _rootAdornerLayer);
+                            if (listBoxPos.HasValue && _placeholder.RenderTransform is TranslateTransform tt)
+                            {
+                                tt.X = listBoxPos.Value.X;
+                                tt.Y = listBoxPos.Value.Y;
+                            }
                         }
                     }
-                }
-            }
-            else if (sourceIndex > destinationIndex)
-            {
-                // Dragging backward: shift items between destination and source forward
-                for (int i = destinationIndex; i < sourceIndex && i < listBox.ItemCount; i++)
-                {
-                    var container = listBox.ContainerFromIndex(i);
-                    if (container is Control ctrl && ctrl != draggedContainer)
+                    else
                     {
-                        // Shift forward to make room
-                        if (ctrl.RenderTransform is TranslateTransform tr)
-                        {
-                            tr.X = (draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100);
-                        }
-                        else
-                        {
-                            ctrl.RenderTransform = new TranslateTransform 
-                            { 
-                                X = (draggedContainer.Bounds.Width > 0 ? draggedContainer.Bounds.Width : 100)
-                            };
-                        }
+                        var ctrl = items[itemIdx];
+                        var originalPos = _flatItemBounds[itemIdx].Position;
+                        if (ctrl.RenderTransform is not TranslateTransform)
+                            ctrl.RenderTransform = new TranslateTransform();
+
+                        var tt = (TranslateTransform)ctrl.RenderTransform;
+                        tt.X = targetPos.X - originalPos.X;
+                        tt.Y = targetPos.Y - originalPos.Y;
                     }
+
+                    // Advance X by the width of the item now at this position plus original gap
+                    currentX += _flatItemBounds[itemIdx].Width;
+                    if (i < rowOriginalBounds.Count - 1)
+                    {
+                        double gap = rowOriginalBounds[i + 1].Left - rowOriginalBounds[i].Right;
+                        currentX += gap;
+                    }
+                    seqIdx++;
                 }
             }
         }
@@ -434,7 +386,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                 int newInsertIndex = CalculateInsertPosition(items, currentPos);
                 
                 // If the mouse is outside the bounds, reset preview insert index to the original source position
-                if (newInsertIndex == -1)
+                if (newInsertIndex == -1 || newInsertIndex == items.Count)
                 {
                     newInsertIndex = _sourceIndex;
                 }
@@ -559,7 +511,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("Failed to move item", ex);
+                        Log.Error(ex, "Failed to move item");
                     }
                 }
             }
