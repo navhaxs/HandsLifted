@@ -476,7 +476,6 @@ namespace HandsLiftedApp.Core.Models
 
             if (nextItemIndex < 0 || nextItemIndex >= Items.Count)
             {
-                Log.Error("NavigateToReference {SlideReference} out of bounds", slideReference);
                 return;
             }
 
