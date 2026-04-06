@@ -1,14 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using Avalonia.Skia;
-using Avalonia.Skia.Helpers;
 using Avalonia.Threading;
 using NAudio.Wave;
 using NewTek;
 using NewTek.NDI;
-using SkiaSharp;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -147,7 +143,7 @@ Description("Function to determine whether the content requires high resolution 
             {
                 if (value != isPausedValue)
                 {
-                    SetAndRaise(IsOnPreviewProperty, ref isPausedValue, value);
+                    SetAndRaise(IsSendPausedProperty, ref isPausedValue, value);
                 }
             }
         }
@@ -277,18 +273,17 @@ Description("Function to determine whether the content requires high resolution 
             // release the GC pinning of the byte[]'s
             interleavedHandle.Free();
 
-            Monitor.Enter(sendInstanceLock);
-
-            // send the planar frame
-            if (sendInstancePtr != IntPtr.Zero)
+            lock (sendInstanceLock)
             {
-                if (!IsSendPaused)
+                // send the planar frame
+                if (sendInstancePtr != IntPtr.Zero)
                 {
-                    NDIlib.send_send_audio_v2(sendInstancePtr, ref audioFrame);
+                    if (!IsSendPaused)
+                    {
+                        NDIlib.send_send_audio_v2(sendInstancePtr, ref audioFrame);
+                    }
                 }
             }
-
-            Monitor.Exit(sendInstanceLock);
         }
 
         // TODO this was from WPF. Is there an Avalonia way to do this?
@@ -310,25 +305,6 @@ Description("Function to determine whether the content requires high resolution 
             // start up a thread to receive on
             sendThread = new Thread(SendThreadProc) { IsBackground = true, Name = "WpfNdiSendThread" };
             sendThread.Start();
-
-            _loop = Task.Factory.StartNew(() =>
-            {
-                Arguments args;
-                while (true && _disposed == false)
-                {
-                    if (_argQueue.TryDequeue(out args))
-                    {
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            OnCompositionTargetRendering();
-                        });
-                    }
-
-                    // TODO: 2x here is a hack for testing
-                    // (1/60fps)*1000 = 16.67 ms
-                    Thread.Sleep(TimeSpan.FromMilliseconds(2 * 16.67d));
-                }
-            });
 
             this.LayoutUpdated += NDISendContainer_LayoutUpdated;
 
@@ -374,11 +350,15 @@ Description("Function to determine whether the content requires high resolution 
         {
             if (!_disposed)
             {
-                Window.GetTopLevel(this).RequestAnimationFrame((TimeSpan s) =>
+                var topLevel = Window.GetTopLevel(this);
+                if (topLevel != null)
                 {
-                    _argQueue.Enqueue(new Arguments() { });
-                    GetNextRenderTick();
-                });
+                    topLevel.RequestAnimationFrame((TimeSpan s) =>
+                    {
+                        OnCompositionTargetRendering();
+                        GetNextRenderTick();
+                    });
+                }
             }
         }
 
@@ -408,27 +388,16 @@ Description("Function to determine whether the content requires high resolution 
         {
             if (!_disposed)
             {
+                exitThread = true;
+                pendingFrames.CompleteAdding();
+
                 // clean up the audio capture if needed
                 if (audioCap != null)
                 {
                     audioCap.StopRecording();
-
-                    // have to let it stop
-                    while (audioCap.CaptureState != NAudio.CoreAudioApi.CaptureState.Stopped)
-                    {
-                        Thread.Sleep(10);
-                    }
-
-                    audioCap.Dispose();
-                    audioCap = null;
                 }
 
-                // free allocated frame if needed
-                if (audioFrame.p_data != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(audioFrame.p_data);
-                    audioFrame.p_data = IntPtr.Zero;
-                }
+                ReleaseBuffers();
 
                 if (disposing)
                 {
@@ -443,25 +412,27 @@ Description("Function to determine whether the content requires high resolution 
                         sendThread = null;
                     }
 
-                    // cause the pulling of frames to fail
-                    pendingFrames.CompleteAdding();
-
                     // clear any pending frames
                     while (pendingFrames.Count > 0)
                     {
-                        NDIlib.video_frame_v2_t discardFrame = pendingFrames.Take();
-                        Marshal.FreeHGlobal(discardFrame.p_data);
+                        if (pendingFrames.TryTake(out var discardFrame))
+                        {
+                            _freeBuffers.Add(discardFrame.p_data);
+                        }
                     }
 
                     pendingFrames.Dispose();
                 }
 
                 // Destroy the NDI sender
-                if (sendInstancePtr != IntPtr.Zero)
+                lock (sendInstanceLock)
                 {
-                    NDIlib.send_destroy(sendInstancePtr);
+                    if (sendInstancePtr != IntPtr.Zero)
+                    {
+                        NDIlib.send_destroy(sendInstancePtr);
 
-                    sendInstancePtr = IntPtr.Zero;
+                        sendInstancePtr = IntPtr.Zero;
+                    }
                 }
 
                 try
@@ -471,146 +442,231 @@ Description("Function to determine whether the content requires high resolution 
                 }
                 catch (DllNotFoundException) { }
 
-                _loop = null;
-
                 _disposed = true;
             }
         }
 
         private bool _disposed = false;
-        private class Arguments
+
+        private const int BufferPoolSize = 3;
+        private readonly List<IntPtr> _bufferPool = new();
+        private readonly BlockingCollection<IntPtr> _freeBuffers = new();
+        private RenderTargetBitmap rtb;
+
+        // Separate buffer (outside the send pool) that holds a copy of the last
+        // non-blank rendered frame. Used to substitute black frames produced by
+        // Avalonia crossfade transitions fading fully to transparent/black.
+        private IntPtr _lastGoodFramePtr = IntPtr.Zero;
+        private int _lastGoodFrameSize = 0;
+        private bool _hasLastGoodFrame = false;
+
+        private void ReleaseBuffers()
         {
-            public int coolInt;
-            public double whatever;
-            public string stringyThing;
+            lock (sendInstanceLock)
+            {
+                while (_freeBuffers.TryTake(out _)) { }
+                foreach (var ptr in _bufferPool)
+                {
+                    Marshal.FreeHGlobal(ptr);
+                }
+                _bufferPool.Clear();
+
+                if (rtb != null)
+                {
+                    rtb.Dispose();
+                    rtb = null;
+                }
+
+                if (_lastGoodFramePtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(_lastGoodFramePtr);
+                    _lastGoodFramePtr = IntPtr.Zero;
+                    _lastGoodFrameSize = 0;
+                    _hasLastGoodFrame = false;
+                }
+            }
         }
 
-        private ConcurrentQueue<Arguments> _argQueue = new ConcurrentQueue<Arguments>();
-        private Task _loop;
-
-
-        public void ThrottledFunction(TimeSpan t)
+        private void EnsureBuffers(int width, int height)
         {
-            _argQueue.Enqueue(new Arguments() { });
+            // stride: 32bpp = 4 bytes per pixel
+            int newStride = width * 4;
+            int newBufferSize = height * newStride;
+
+            if (_bufferPool.Count > 0 && bufferSize == newBufferSize && stride == newStride)
+                return;
+
+            ReleaseBuffers();
+
+            stride = newStride;
+            bufferSize = newBufferSize;
+            aspectRatio = (float)width / (float)height;
+
+            for (int i = 0; i < BufferPoolSize; i++)
+            {
+                IntPtr ptr = Marshal.AllocHGlobal(bufferSize);
+                _bufferPool.Add(ptr);
+                _freeBuffers.Add(ptr);
+            }
+
+            _lastGoodFramePtr = Marshal.AllocHGlobal(bufferSize);
+            _lastGoodFrameSize = bufferSize;
+            _hasLastGoodFrame = false;
+
+            var scale = 1;
+            rtb = new RenderTargetBitmap(new PixelSize(width, height), new Vector(96 * scale, 96 * scale));
         }
 
-        RenderTargetBitmap rtb;
+        // Sample every Nth pixel and check luma; returns true when the frame is
+        // almost entirely black (i.e. produced by a fully-faded crossfade).
+        private static unsafe bool IsLikelyBlankFrame(byte* pixels, int byteCount)
+        {
+            const int step = 32 * 4; // sample every 32nd pixel
+            const int lumaThreshold = 8;
+            int samples = 0, brightSamples = 0;
+
+            for (int i = 0; i <= byteCount - 4; i += step)
+            {
+                int luma = (pixels[i + 2] * 54 + pixels[i + 1] * 183 + pixels[i] * 19) >> 8; // R·54 + G·183 + B·19
+                if (luma > lumaThreshold) brightSamples++;
+                samples++;
+            }
+
+            // blank only when almost no sampled pixel has visible brightness
+            return samples > 0 && brightSamples <= Math.Max(1, samples / 100);
+        }
+
+        private static readonly TimeSpan _staticThrottleInterval = TimeSpan.FromMilliseconds(500);
+        private static readonly NDIlib.FourCC_type_e _nativeFourCC =
+            OperatingSystem.IsMacOS() ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA;
+
+        private DateTime _lastFrameRenderTime = DateTime.MinValue;
+        private IGetVideoBufferBitmap? _cachedVideoControl;
+        private Visual? _lastChild;
 
         private unsafe void OnCompositionTargetRendering()
         {
-            if (IsSendPaused)
+            if (IsSendPaused || sendInstancePtr == IntPtr.Zero || this.Child == null)
                 return;
 
-#if DEBUG
-            if (Design.IsDesignMode)
-                return;
-#endif
+            // Detect child change BEFORE the throttle check so a new slide immediately bypasses
+            // the 500ms static-content throttle and is captured without delay.
+            if (_lastChild != this.Child)
+            {
+                _lastChild = this.Child;
+                _cachedVideoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
+                _lastFrameRenderTime = DateTime.MinValue; // force immediate capture on content switch
+            }
 
-            // skip if UI thread has pending render jobs (fixes blinking/flashing empty frames)
-            if (Dispatcher.UIThread.HasJobsWithPriority(DispatcherPriority.Render))
-                return;
+            // Throttling for static content
+            if (IsContentHighResCheckFunc != null && !IsContentHighResCheckFunc(this))
+            {
+                // Throttle static content to ~2fps (500ms)
+                if (DateTime.UtcNow - _lastFrameRenderTime < _staticThrottleInterval)
+                    return;
+            }
 
-            // TODO: cache this value so its not called on *every* call
-            if (NDIlib.send_get_no_connections(sendInstancePtr, 0) == 0)
-                return;
-
-            if (this.Child == null)
-                return;
+            // NOTE: HasJobsWithPriority(DispatcherPriority.Render) has been intentionally removed.
+            // During slide transitions Avalonia's animation system continuously queues Render-priority
+            // dispatcher jobs on every compositor tick. That check therefore returned true on every
+            // frame while any transition was active, preventing all frames from reaching the send
+            // thread and causing Studio Monitor to go black. RequestAnimationFrame already fires after
+            // composition, so the visual tree is always in a fully laid-out state at this point.
 
             int xres = NdiWidth;
             int yres = NdiHeight;
 
-            int frNum = NdiFrameRateNumerator;
-            int frDen = NdiFrameRateDenominator;
-
-            // sanity
-            if (sendInstancePtr == IntPtr.Zero || xres < 8 || yres < 8)
+            if (xres < 8 || yres < 8)
                 return;
 
-            if (rtb == null || rtb.PixelSize.Width != xres || rtb.PixelSize.Height != yres)
+            EnsureBuffers(xres, yres);
+
+            if (!_freeBuffers.TryTake(out IntPtr bufferPtr))
             {
-                // Create a properly sized RenderTargetBitmap
-                var scale = 1; // VisualRoot!.RenderScaling;
-                rtb = new RenderTargetBitmap(new PixelSize(xres, yres), new Vector(96 * scale, 96 * scale));
+                // Pool exhausted, skip frame
+                return;
             }
-            
-            // directly copy buffer for video playback content
-            var videoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
-            
-            // render the Avalonia visual
-            bool isValidVideoSource = false;
-            Bitmap? sourceBitmap = null;
-            if (videoControl != null)
-            {
-                var buffer = videoControl.GetVideoBufferBitmap();
-                if (buffer != null)
-                {
-                    isValidVideoSource = true;
-                    sourceBitmap = buffer;
-                }
-            }
-
-            if (sourceBitmap == null)
-            {
-                rtb.Render(this.Child);
-                sourceBitmap = rtb;
-            }
-
-            stride = (xres * 32/*BGRA bpp*/ + 7) / 8;
-            bufferSize = yres * stride;
-            aspectRatio = (float)xres / (float)yres;
-
-            // allocate some memory for a video buffer
-            IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
-            
-            // We are going to create a progressive frame at 60Hz.
-            NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()
-            {
-                // Resolution
-                xres = NdiWidth,
-                yres = NdiHeight,
-                // Use BGRA video
-                FourCC = (OperatingSystem.IsMacOS() && !isValidVideoSource) ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA,
-                // The frame-rate
-                frame_rate_N = frNum,
-                frame_rate_D = frDen,
-                // The aspect ratio
-                picture_aspect_ratio = aspectRatio,
-                // This is a progressive frame
-                frame_format_type = NDIlib.frame_format_type_e.frame_format_type_progressive,
-                // Timecode.
-                timecode = NDIlib.send_timecode_synthesize,
-                // The video memory used for this frame
-                p_data = bufferPtr,
-                // The line to line stride of this image
-                line_stride_in_bytes = stride,
-                // no metadata
-                p_metadata = IntPtr.Zero,
-                // only valid on received frames
-                timestamp = 0
-            };
-
-            // define the surface properties
-            var info = new SKImageInfo(xres, yres);
-
-            // construct a surface around the existing memory
-            var destinationSurface = SKSurface.Create(info, bufferPtr, info.RowBytes);
-
-            // get the canvas from the surface
-            var destinationCanvas = destinationSurface.Canvas;
-            using IDrawingContextImpl iHaveTheDestination = DrawingContextHelper.WrapSkiaCanvas(destinationCanvas, SkiaPlatform.DefaultDpi);
 
             try
             {
+                Bitmap? sourceBitmap = null;
+                if (_cachedVideoControl != null)
+                {
+                    sourceBitmap = _cachedVideoControl.GetVideoBufferBitmap();
+                }
+
+                if (sourceBitmap == null)
+                {
+                    rtb.Render(this.Child);
+                    sourceBitmap = rtb;
+                }
+
                 sourceBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
-                
-                // add it to the output queue
-                AddFrame(videoFrame);
+
+                // Force all pixels to fully opaque. Avalonia crossfade/opacity transitions produce
+                // semi-transparent pixels (premultiplied BGRA alpha=0) that NDI receivers composite
+                // against their black background, causing brief black flashes during rapid changes.
+                // Compositing premultiplied alpha over black = keep RGB as-is, set A = 0xFF.
+                bool isBlank;
+                unsafe
+                {
+                    byte* p = (byte*)bufferPtr;
+                    for (int i = 3; i < bufferSize; i += 4)
+                        p[i] = 0xFF;
+
+                    isBlank = IsLikelyBlankFrame(p, bufferSize);
+                }
+
+                if (isBlank && _hasLastGoodFrame && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize)
+                {
+                    // This frame is blank (crossfade fully faded out, new content not yet visible).
+                    // Substitute the last known-good frame so NDI receivers see the previous slide
+                    // held rather than a black flash.
+                    unsafe
+                    {
+                        Buffer.MemoryCopy((void*)_lastGoodFramePtr, (void*)bufferPtr, bufferSize, bufferSize);
+                    }
+                }
+                else if (!isBlank && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize)
+                {
+                    // This is a valid frame — update the last-good-frame store.
+                    unsafe
+                    {
+                        Buffer.MemoryCopy((void*)bufferPtr, (void*)_lastGoodFramePtr, bufferSize, bufferSize);
+                    }
+                    _hasLastGoodFrame = true;
+                }
+
+                NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()
+                {
+                    xres = xres,
+                    yres = yres,
+                    FourCC = _nativeFourCC,
+                    frame_rate_N = NdiFrameRateNumerator,
+                    frame_rate_D = NdiFrameRateDenominator,
+                    picture_aspect_ratio = aspectRatio,
+                    frame_format_type = NDIlib.frame_format_type_e.frame_format_type_progressive,
+                    timecode = NDIlib.send_timecode_synthesize,
+                    p_data = bufferPtr,
+                    line_stride_in_bytes = stride,
+                };
+
+                if (pendingFrames.TryAdd(videoFrame))
+                {
+                    // Only stamp the time when a frame actually reaches the queue.
+                    // Stamping before the enqueue caused the static throttle to believe frames
+                    // were being delivered even when the send thread was starved.
+                    _lastFrameRenderTime = DateTime.UtcNow;
+                }
+                else
+                {
+                    _freeBuffers.Add(bufferPtr);
+                }
             }
             catch (Exception e)
             {
-                // TODO limit this error logging to 1 message per N seconds
                 Log.Error(e, "Failed to copy pixels to NDI buffer");
+                _freeBuffers.Add(bufferPtr);
             }
         }
 
@@ -626,7 +682,7 @@ Description("Function to determine whether the content requires high resolution 
             if (Design.IsDesignMode)
                 return;
 
-            Monitor.Enter(sendInstanceLock);
+            lock (sendInstanceLock)
             {
                 // we need a name
                 if (String.IsNullOrEmpty(NdiName))
@@ -649,7 +705,7 @@ Description("Function to determine whether the content requires high resolution 
                 if (NdiGroups.Count > 0)
                 {
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < NdiGroups.Count(); i++)
+                    for (int i = 0; i < NdiGroups.Count; i++)
                     {
                         sb.Append(NdiGroups[i]);
 
@@ -675,9 +731,6 @@ Description("Function to determine whether the content requires high resolution 
                 // free the strings we allocated
                 Marshal.FreeHGlobal(sourceNamePtr);
                 Marshal.FreeHGlobal(groupsNamePtr);
-
-                // unlock
-                Monitor.Exit(sendInstanceLock);
             }
         }
 
@@ -694,78 +747,70 @@ Description("Function to determine whether the content requires high resolution 
 
             while (!exitThread)
             {
-                if (Monitor.TryEnter(sendInstanceLock))
+                NDIlib.video_frame_v2_t frame;
+                if (pendingFrames.TryTake(out frame, 250))
                 {
-                    // if this is not here, then we must be being reconfigured
-                    if (sendInstancePtr == IntPtr.Zero)
+                    // Drain any additional queued frames, always upgrading to the NEWEST.
+                    // BlockingCollection uses FIFO order, so each TryTake here gives a frame
+                    // rendered more recently. Return the older buffer to the free pool.
+                    NDIlib.video_frame_v2_t newerFrame;
+                    while (pendingFrames.TryTake(out newerFrame))
                     {
-                        // unlock
-                        Monitor.Exit(sendInstanceLock);
-
-                        // give up some time
-                        Thread.Sleep(20);
-
-                        // loop again
-                        continue;
+                        _freeBuffers.Add(frame.p_data); // return older buffer to pool
+                        frame = newerFrame;              // upgrade to the more recent frame
                     }
 
-                    try
+                    lock (sendInstanceLock)
                     {
-                        // get the next available frame
-                        NDIlib.video_frame_v2_t frame;
-                        if (pendingFrames.TryTake(out frame, 250))
+                        // if this is not here, then we must be being reconfigured
+                        if (sendInstancePtr == IntPtr.Zero || IsSendPaused)
                         {
-                            // this dropps frames if the UI is rendernig ahead of the specified NDI frame rate
-                            while (pendingFrames.Count > 1)
+                            _freeBuffers.Add(frame.p_data);
+                        }
+                        else
+                        {
+                            try
                             {
-                                NDIlib.video_frame_v2_t discardFrame = pendingFrames.Take();
-                                Marshal.FreeHGlobal(discardFrame.p_data);
-                            }
 
-                            // We now submit the frame. Note that this call will be clocked so that we end up submitting 
-                            // at exactly the requested rate.
-                            // If WPF can't keep up with what you requested of NDI, then it will be sent at the rate WPF is rendering.
-                            if (!IsSendPaused)
-                            {
                                 NDIlib.send_send_video_v2(sendInstancePtr, ref frame);
                             }
-
-                            // free the memory from this frame
-                            Marshal.FreeHGlobal(frame.p_data);
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, "Error in NDI SendThreadProc - sending video");
+                            }
+                            finally
+                            {
+                                _freeBuffers.Add(frame.p_data);
+                            }
                         }
                     }
-                    catch (OperationCanceledException)
-                    {
-                        pendingFrames.CompleteAdding();
-                    }
-                    catch
-                    {
-                    }
-
-                    // unlock
-                    Monitor.Exit(sendInstanceLock);
-                }
-                else
-                {
-                    Thread.Sleep(20);
                 }
 
                 // check tally
-                NDIlib.send_get_tally(sendInstancePtr, ref tally, 0);
-
-                // if tally changed trigger an update
-                if (lastProg != tally.on_program || lastPrev != tally.on_preview)
+                IntPtr currentSendInstancePtr;
+                lock (sendInstanceLock)
                 {
-                    // save the last values
-                    lastProg = tally.on_program;
-                    lastPrev = tally.on_preview;
+                    currentSendInstancePtr = sendInstancePtr;
+                }
 
-                    // set these on the UI thread
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                if (currentSendInstancePtr != IntPtr.Zero)
+                {
+                    NDIlib.send_get_tally(currentSendInstancePtr, ref tally, 0);
+
+                    // if tally changed trigger an update
+                    if (lastProg != tally.on_program || lastPrev != tally.on_preview)
                     {
-                        IsOnProgram = lastProg;
-                        IsOnPreview = lastPrev;
-                    });
+                        // save the last values
+                        lastProg = tally.on_program;
+                        lastPrev = tally.on_preview;
+
+                        // set these on the UI thread
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            IsOnProgram = lastProg;
+                            IsOnPreview = lastPrev;
+                        });
+                    }
                 }
             }
         }
