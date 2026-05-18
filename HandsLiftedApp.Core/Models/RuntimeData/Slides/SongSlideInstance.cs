@@ -4,6 +4,7 @@ using ReactiveUI;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using DebounceThrottle;
 using DynamicData.Binding;
 using HandsLiftedApp.Core;
@@ -66,6 +67,9 @@ namespace HandsLiftedApp.Data.Slides
                 }
             ));
         }
+
+        [XmlIgnore]
+        public bool HasMotionBackground => (ParentSongItem as SongItemInstance)?.HasMotionBackground ?? false;
 
         private BaseSlideTheme? _theme;
         public BaseSlideTheme? Theme

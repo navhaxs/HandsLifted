@@ -62,6 +62,30 @@ namespace HandsLiftedApp.Core.Views
                             try
                             {
                                 Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
+
+                                // Force transparent background for motion background slides
+                                // after bindings have resolved but before rendering the bitmap
+                                if (request.Data is SongSlideInstance { HasMotionBackground: true } &&
+                                    templateControl is SongSlideView slideView &&
+                                    slideView.Content is Grid slideGrid)
+                                {
+                                    slideGrid.Background = Avalonia.Media.Brushes.Transparent;
+                                    if (slideGrid.Children.Count > 0 && slideGrid.Children[0] is Border border)
+                                    {
+                                        border.Background = null;
+                                    }
+                                }
+                                else if (request.Data is SongTitleSlideInstance { HasMotionBackground: true } &&
+                                    templateControl is DesignerSlideTitle titleView &&
+                                    titleView.Content is Grid titleGrid)
+                                {
+                                    titleGrid.Background = Avalonia.Media.Brushes.Transparent;
+                                    if (titleGrid.Children.Count > 0 && titleGrid.Children[0] is Border titleBorder)
+                                    {
+                                        titleBorder.Background = null;
+                                    }
+                                }
+
                                 rtb.Render(templateControl);
                                 //rtb.Save(@"R:\buffer.bmp");
                             }

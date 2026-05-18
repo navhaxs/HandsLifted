@@ -22,6 +22,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public SongTitleSlideInstance(SongItemInstance? parentSongItem) : base()
         {
+            ParentSongItem = parentSongItem;
             Log.Verbose("Creating slide instance");
             Theme = Globals.Instance.AppPreferences?.DefaultTheme;
 
@@ -59,7 +60,10 @@ namespace HandsLiftedApp.Data.Slides
         }
 
         // refs
-        public SongItemInstance? ParentSongItem { get; } = null;
+        public SongItemInstance? ParentSongItem { get; }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool HasMotionBackground => ParentSongItem?.HasMotionBackground ?? false;
 
         Bitmap _cached;
 

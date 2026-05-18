@@ -64,6 +64,9 @@ namespace HandsLiftedApp.Data.Models.Items
         private string? _selectedArrangementId;
         public string? SelectedArrangementId { get => _selectedArrangementId; set => this.RaiseAndSetIfChanged(ref _selectedArrangementId, value); }
 
+        private string? _motionBackgroundVideoPath;
+        public string? MotionBackgroundVideoPath { get => _motionBackgroundVideoPath; set => this.RaiseAndSetIfChanged(ref _motionBackgroundVideoPath, value); }
+
         [XmlIgnore]
         private ObservableCollection<Guid> _arrangement = new ObservableCollection<Guid>();
 

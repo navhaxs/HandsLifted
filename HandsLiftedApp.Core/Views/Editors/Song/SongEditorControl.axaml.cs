@@ -104,5 +104,40 @@ namespace HandsLiftedApp.Core.Views.Editors.Song
         {
             ImportFromFile();
         }
+
+        private async void BrowseMotionBackground_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel == null) return;
+
+            var videoFileType = new FilePickerFileType("Video Files")
+            {
+                Patterns = new[] { "*.mp4", "*.mov", "*.avi", "*.wmv", "*.mkv", "*.webm" }
+            };
+
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Select Motion Background Video",
+                AllowMultiple = false,
+                FileTypeFilter = new[] { videoFileType }
+            });
+
+            if (files.Count >= 1)
+            {
+                var path = files[0].TryGetLocalPath();
+                if (path != null && this.DataContext is SongEditorViewModel vm)
+                {
+                    vm.Song.MotionBackgroundVideoPath = path;
+                }
+            }
+        }
+
+        private void ClearMotionBackground_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is SongEditorViewModel vm)
+            {
+                vm.Song.MotionBackgroundVideoPath = null;
+            }
+        }
     }
 }

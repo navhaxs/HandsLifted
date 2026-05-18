@@ -1,0 +1,2 @@
+﻿install:
+  - ps: Install-DotNet -Version 10.0.101

@@ -19,6 +19,7 @@
     <!-- <Grid ColumnDefinitions="*,*"> -->
 
         <xTransitioningContentControl:XTransitioningContentControl
+            x:Name="TransitionControl"
             Content="{Binding $parent[render:ActiveSlideRender].ActiveSlide}"
             RenderOptions.BitmapInterpolationMode="HighQuality">
 

@@ -7,6 +7,7 @@
              xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides"
              xmlns:converters1="clr-namespace:Avalonia.Markup.Xaml.Converters;assembly=Avalonia.Markup.Xaml"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+             xmlns:coreConverters="clr-namespace:HandsLiftedApp.Core.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="slides1:SongSlideInstance"
              x:Class="HandsLiftedApp.Core.Views.Designer.SongSlideView">
@@ -15,11 +16,18 @@
         <ResourceDictionary>
             <converters1:ColorToBrushConverter x:Key="ColorToBrush" />
             <extensions:BitmapAssetValueConverter x:Key="variableImage" />
+            <coreConverters:MotionBackgroundBrushConverter x:Key="MotionBackgroundBrush" />
+            <coreConverters:MotionBackgroundImageConverter x:Key="MotionBackgroundImage" />
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid
-        Background="{Binding Theme.BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}">
+    <Grid>
+        <Grid.Background>
+            <MultiBinding Converter="{StaticResource MotionBackgroundBrush}" FallbackValue="Black">
+                <Binding Path="HasMotionBackground" />
+                <Binding Path="Theme.BackgroundAvaloniaColour" />
+            </MultiBinding>
+        </Grid.Background>
         <Border>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="60 80">
                 <!-- <Viewbox StretchDirection="DownOnly" -->
@@ -41,9 +49,14 @@
                 <!-- </Viewbox> -->
             </Grid>
             <Border.Background>
-                <ImageBrush
-                    Source="{Binding Theme.BackgroundGraphicFilePath, Converter={StaticResource variableImage}}"
-                    Stretch="UniformToFill" />
+                <ImageBrush Stretch="UniformToFill">
+                    <ImageBrush.Source>
+                        <MultiBinding Converter="{StaticResource MotionBackgroundImage}">
+                            <Binding Path="HasMotionBackground" />
+                            <Binding Path="Theme.BackgroundGraphicFilePath" />
+                        </MultiBinding>
+                    </ImageBrush.Source>
+                </ImageBrush>
             </Border.Background>
         </Border>
     </Grid>

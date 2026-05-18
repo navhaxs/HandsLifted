@@ -186,6 +186,9 @@ public class MainViewModel : ViewModelBase
                     return design;
                 }).ToList());
                 Playlist.PlaylistFilePath = msg.FilePath;
+                Playlist.PlaylistWorkingDirectory = playlistDirectoryPath;
+                
+                Log.Debug("Playlist load: PlaylistWorkingDirectory={PlaylistWorkingDirectory}", playlistDirectoryPath);
 
                 var Items = new List<Item>();
                 foreach (var deserializedItem in x.Items)
@@ -196,7 +199,6 @@ public class MainViewModel : ViewModelBase
                 
                 Playlist.LastSaved = new DateTime();
                 Playlist.ActiveItemInsertIndex = null;
-                Playlist.PlaylistWorkingDirectory = playlistDirectoryPath;
                 Playlist.QuickShowItem = null;
                 Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
 

@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:libmpv="using:Avalonia.Controls.LibMpv"
+             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+             Width="1920"
+             Height="1080"
+             Opacity="0"
+             x:Class="HandsLiftedApp.Core.Render.MotionBackground.MotionBackgroundLayer">
+	<UserControl.Transitions>
+		<Transitions>
+			<DoubleTransition Property="Opacity" Duration="0:0:0.5" Easing="CubicEaseInOut" />
+		</Transitions>
+	</UserControl.Transitions>
+	<libmpv:SoftwareVideoView x:Name="VideoView"
+	                          RenderOptions.BitmapInterpolationMode="HighQuality" />
+</UserControl>

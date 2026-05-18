@@ -67,6 +67,22 @@
                 </ScrollViewer>
             </TabItem>
 
+            <TabItem Header="Motion Background">
+                <DockPanel Margin="8">
+                    <Button DockPanel.Dock="Right"
+                            Click="ClearMotionBackground_OnClick"
+                            Content="Clear"
+                            Margin="4,0,0,0" />
+                    <Button DockPanel.Dock="Right"
+                            Click="BrowseMotionBackground_OnClick"
+                            Content="..."
+                            Margin="4,0,0,0" />
+                    <TextBox IsReadOnly="True"
+                             Watermark="No video file selected"
+                             Text="{Binding Song.MotionBackgroundVideoPath}" />
+                </DockPanel>
+            </TabItem>
+
         </TabControl>
 
         <GridSplitter Grid.Column="1" />

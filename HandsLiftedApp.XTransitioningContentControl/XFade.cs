@@ -17,7 +17,14 @@ namespace HandsLiftedApp.XTransitioningContentControl
         private readonly Animation _fadeInAnimation;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CrossFade"/> class.
+        /// When true, the old content fades out simultaneously with the new content fading in
+        /// (cross-dissolve). When false, the new content fades in over the stationary old content
+        /// (PowerPoint-style fade). Default is false.
+        /// </summary>
+        public bool CrossDissolve { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XFade"/> class.
         /// </summary>
         public XFade()
             : this(TimeSpan.Zero)
@@ -25,7 +32,7 @@ namespace HandsLiftedApp.XTransitioningContentControl
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CrossFade"/> class.
+        /// Initializes a new instance of the <see cref="XFade"/> class.
         /// </summary>
         /// <param name="duration">The duration of the animation.</param>
         public XFade(TimeSpan duration)
@@ -34,6 +41,18 @@ namespace HandsLiftedApp.XTransitioningContentControl
             {
                 Children =
                 {
+                    new KeyFrame()
+                    {
+                        Setters =
+                        {
+                            new Setter
+                            {
+                                Property = Visual.OpacityProperty,
+                                Value = 0d
+                            }
+                        },
+                        Cue = new Cue(1d)
+                    }
                 }
             };
             _fadeInAnimation = new Animation
@@ -52,7 +71,6 @@ namespace HandsLiftedApp.XTransitioningContentControl
                         },
                         Cue = new Cue(1d)
                     }
-
                 }
             };
             _fadeOutAnimation.Duration = _fadeInAnimation.Duration = duration;
@@ -101,10 +119,11 @@ namespace HandsLiftedApp.XTransitioningContentControl
                     disposables.Add(to.SetValue(Visual.OpacityProperty, 0, Avalonia.Data.BindingPriority.Animation)!);
                 }
 
-                //if (from != null)
-                //{
-                //    tasks.Add(_fadeOutAnimation.RunAsync(from, cancellationToken));
-                //}
+                // Cross-dissolve: fade out old content simultaneously
+                if (CrossDissolve && from != null)
+                {
+                    tasks.Add(_fadeOutAnimation.RunAsync(from, cancellationToken));
+                }
 
                 if (to != null)
                 {

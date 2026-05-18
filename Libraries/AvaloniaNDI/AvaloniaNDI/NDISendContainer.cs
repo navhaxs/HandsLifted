@@ -554,8 +554,21 @@ Description("Function to determine whether the content requires high resolution 
             if (_lastChild != this.Child)
             {
                 _lastChild = this.Child;
-                _cachedVideoControl = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().FirstOrDefault();
+                // Only use the video buffer shortcut when there's exactly one video control
+                // with an active bitmap. Multiple active controls (e.g., motion background +
+                // video slide) require full composited render to capture all layers correctly.
+                var videoControls = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().ToList();
+                _cachedVideoControl = videoControls.Count == 1 ? videoControls[0] : null;
                 _lastFrameRenderTime = DateTime.MinValue; // force immediate capture on content switch
+            }
+
+            // Re-evaluate the shortcut at runtime: if the cached control's bitmap is null
+            // (not yet rendering), or if multiple video controls now have active bitmaps,
+            // fall back to full render for this frame.
+            Bitmap? videoShortcutBitmap = null;
+            if (_cachedVideoControl != null)
+            {
+                videoShortcutBitmap = _cachedVideoControl.GetVideoBufferBitmap();
             }
 
             // Throttling for static content
@@ -589,11 +602,7 @@ Description("Function to determine whether the content requires high resolution 
 
             try
             {
-                Bitmap? sourceBitmap = null;
-                if (_cachedVideoControl != null)
-                {
-                    sourceBitmap = _cachedVideoControl.GetVideoBufferBitmap();
-                }
+                Bitmap? sourceBitmap = videoShortcutBitmap;
 
                 if (sourceBitmap == null)
                 {
@@ -601,7 +610,17 @@ Description("Function to determine whether the content requires high resolution 
                     sourceBitmap = rtb;
                 }
 
-                sourceBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+                try
+                {
+                    sourceBitmap.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+                }
+                catch (NullReferenceException)
+                {
+                    // Bitmap's internal buffer not yet initialized (race during video context setup).
+                    // Skip this frame silently.
+                    _freeBuffers.Add(bufferPtr);
+                    return;
+                }
 
                 // Force all pixels to fully opaque. Avalonia crossfade/opacity transitions produce
                 // semi-transparent pixels (premultiplied BGRA alpha=0) that NDI receivers composite

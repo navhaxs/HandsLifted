@@ -6,6 +6,7 @@ using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
+using Serilog;
 
 namespace HandsLiftedApp.Core
 {
@@ -20,6 +21,13 @@ namespace HandsLiftedApp.Core
             }
             else if (deserializedItem is SongItem songItem)
             {
+                var resolvedMotionBgPath = !string.IsNullOrEmpty(songItem.MotionBackgroundVideoPath)
+                    ? RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, songItem.MotionBackgroundVideoPath)
+                    : null;
+                
+                Log.Debug("ItemInstanceFactory: SongItem '{Title}' MotionBg raw='{RawPath}', resolved='{ResolvedPath}', base='{BasePath}'",
+                    songItem.Title, songItem.MotionBackgroundVideoPath, resolvedMotionBgPath, playlistDirectoryPath);
+                
                 var song = new SongItemInstance(playlist)
                 {
                     UUID = songItem.UUID,
@@ -31,7 +39,8 @@ namespace HandsLiftedApp.Core
                     Copyright = songItem.Copyright,
                     Design = songItem.Design,
                     StartOnTitleSlide = songItem.StartOnTitleSlide,
-                    EndOnBlankSlide = songItem.EndOnBlankSlide
+                    EndOnBlankSlide = songItem.EndOnBlankSlide,
+                    MotionBackgroundVideoPath = resolvedMotionBgPath
                 };
                 // song.GenerateSlides();
                 return song;

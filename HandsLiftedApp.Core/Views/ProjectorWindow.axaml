@@ -10,6 +10,7 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
         xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
+        xmlns:motionBg="clr-namespace:HandsLiftedApp.Core.Render.MotionBackground"
         xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
@@ -57,7 +58,8 @@
                 NdiWidth="1920" NdiHeight="1080"
                 Width="1920"
                 Height="1080">
-                <Grid>
+                <Grid Background="Black">
+                    <motionBg:MotionBackgroundLayer ActiveItem="{Binding Playlist.SelectedItem}" />
                     <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
                     <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                 </Grid>

@@ -11,10 +11,15 @@ namespace HandsLiftedApp.Core.Utils
             {
                 return path;
             }
-            else
+
+            // If the base directory is not absolute, we can't reliably resolve —
+            // return the path as-is to avoid producing garbage paths
+            if (!Path.IsPathFullyQualified(relativeTo))
             {
-                return Path.Combine(relativeTo, path);
+                return path;
             }
+
+            return Path.GetFullPath(Path.Combine(relativeTo, path));
         }
 
         public static string? ToRelativePath(string? relativeTo, string? path)
@@ -23,6 +28,14 @@ namespace HandsLiftedApp.Core.Utils
             {
                 return null;
             }
+
+            // If the base directory is not absolute, we can't compute a meaningful
+            // relative path — store the path as-is (absolute)
+            if (!Path.IsPathFullyQualified(relativeTo))
+            {
+                return path;
+            }
+
             return Path.GetRelativePath(relativeTo, path);
         }
     }

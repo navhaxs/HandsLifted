@@ -13,6 +13,7 @@ using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
+using Serilog;
 
 namespace HandsLiftedApp.Core
 {
@@ -78,7 +79,7 @@ namespace HandsLiftedApp.Core
             }
             else if (item is SongItemInstance songItemInstance)
             {
-                return new SongItem()
+                var songSerialized = new SongItem()
                 {
                     UUID = songItemInstance.UUID,
                     Title = songItemInstance.Title,
@@ -91,6 +92,24 @@ namespace HandsLiftedApp.Core
                     StartOnTitleSlide = songItemInstance.StartOnTitleSlide,
                     EndOnBlankSlide = songItemInstance.EndOnBlankSlide
                 };
+
+                if (!string.IsNullOrEmpty(songItemInstance.MotionBackgroundVideoPath))
+                {
+                    // Only convert to relative if the path is a valid absolute path
+                    if (Path.IsPathFullyQualified(songItemInstance.MotionBackgroundVideoPath))
+                    {
+                        songSerialized.MotionBackgroundVideoPath =
+                            RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                                songItemInstance.MotionBackgroundVideoPath);
+                    }
+                    else
+                    {
+                        Log.Warning("Skipping save of non-absolute MotionBackgroundVideoPath: {Path}",
+                            songItemInstance.MotionBackgroundVideoPath);
+                    }
+                }
+
+                return songSerialized;
             }
             else if (item is SlidesGroupItemInstance slidesGroupItemInstance)
             {

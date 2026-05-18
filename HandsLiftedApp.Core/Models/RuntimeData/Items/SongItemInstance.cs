@@ -6,7 +6,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
+using Avalonia.Media.Imaging;
 using DebounceThrottle;
+using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -93,6 +96,26 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
+
+            this.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+                .Scan(
+                    new { Previous = (string?)null, Current = (string?)null },
+                    (acc, newValue) => new { Previous = acc.Current, Current = newValue })
+                .Subscribe(pair =>
+                {
+                    this.RaisePropertyChanged(nameof(HasMotionBackground));
+
+                    var wasValid = MotionBackgroundService.IsValidVideoFile(pair.Previous);
+                    var isValid = MotionBackgroundService.IsValidVideoFile(pair.Current);
+
+                    // When path changes from null/empty to a valid path, regenerate all slide bitmaps
+                    if (!wasValid && isValid)
+                    {
+                        RegenerateAllSlideBitmaps();
+                    }
+                    // When path changes from valid to null/empty, defer regeneration
+                    // until next slide transition (do not regenerate immediately)
+                });
 
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides,
                     (selectedSlideIndex, slides) => { return slides.ElementAtOrDefault(selectedSlideIndex); })
@@ -369,6 +392,39 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             get => _arrangementAsRefList;
             set => this.RaiseAndSetIfChanged(ref _arrangementAsRefList, value);
+        }
+
+        [XmlIgnore]
+        public bool HasMotionBackground =>
+            !string.IsNullOrWhiteSpace(MotionBackgroundVideoPath)
+            && MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoPath);
+
+        private void RegenerateAllSlideBitmaps()
+        {
+            foreach (var slide in Slides.OfType<SongSlideInstance>())
+            {
+                MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
+                    slide,
+                    (bitmap) =>
+                    {
+                        slide.Cached = bitmap;
+                        slide.Thumbnail = BitmapUtils.CreateThumbnail(bitmap);
+                    }
+                ));
+            }
+
+            // Also regenerate title slide bitmap
+            if (titleSlide is SongTitleSlideInstance titleInstance)
+            {
+                MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
+                    titleInstance,
+                    (bitmap) =>
+                    {
+                        titleInstance.Cached = bitmap;
+                        titleInstance.Thumbnail = BitmapUtils.CreateThumbnail(bitmap);
+                    }
+                ));
+            }
         }
     }
 

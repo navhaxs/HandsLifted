@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -19,7 +20,14 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
     private MpvContext? _mpvContext;
     private WriteableBitmap? _currentBitmap;
     private bool _isPrimaryRenderer;
-    
+
+    public static readonly DirectProperty<SoftwareVideoView, MpvContext?> MpvContextProperty =
+        AvaloniaProperty.RegisterDirect<SoftwareVideoView, MpvContext?>(
+            nameof(MpvContext),
+            o => o.MpvContext,
+            (o, v) => o.MpvContext = v,
+            defaultBindingMode: BindingMode.TwoWay);
+
     public static readonly StyledProperty<bool> ShowFpsProperty =
         AvaloniaProperty.Register<SoftwareVideoView, bool>(nameof(ShowFps));
 
