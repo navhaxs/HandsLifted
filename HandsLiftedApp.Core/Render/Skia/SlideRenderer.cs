@@ -9,6 +9,11 @@ namespace HandsLiftedApp.Core.Render.Skia;
 public static class SlideRenderer
 {
     // Entry point for SlideCanvas (called every frame during transitions)
+    /// <remarks>
+    /// Transition diffing uses <see cref="TextLineElement.Text"/> as the identity key via a <see cref="HashSet{T}"/>.
+    /// If the same text appears on multiple lines within a single spec, only one instance is tracked —
+    /// duplicate lines will not fade out correctly when removed. This is an accepted MVP limitation.
+    /// </remarks>
     public static void Draw(
         SKCanvas canvas,
         SlideRenderSpec? current,
@@ -67,6 +72,8 @@ public static class SlideRenderer
     {
         var info = new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
         using var surface = SKSurface.Create(info);
+        if (surface is null)
+            throw new InvalidOperationException($"SKSurface.Create failed for {width}x{height}.");
         Draw(surface.Canvas, spec, previous, progress, width, height);
         using var image = surface.Snapshot();
         return SKBitmap.FromImage(image);
@@ -77,8 +84,11 @@ public static class SlideRenderer
         switch (bg)
         {
             case SolidBackground solid:
-                canvas.DrawRect(0, 0, width, height, new SKPaint { Color = solid.Color });
+            {
+                using var solidPaint = new SKPaint { Color = solid.Color };
+                canvas.DrawRect(0, 0, width, height, solidPaint);
                 break;
+            }
 
             case ImageBackground img:
                 using (var bmp = SKBitmap.Decode(img.FilePath))
