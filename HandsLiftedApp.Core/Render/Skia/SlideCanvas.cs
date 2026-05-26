@@ -61,12 +61,6 @@ public sealed class SlideCanvas : Control
 
     // ── Avalonia rendering ─────────────────────────────────────────────────
 
-    protected override void OnMeasureInvalidated()
-    {
-        base.OnMeasureInvalidated();
-        InvalidateVisual();
-    }
-
     public override void Render(DrawingContext context)
     {
         base.Render(context);
