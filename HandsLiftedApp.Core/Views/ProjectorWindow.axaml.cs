@@ -89,12 +89,19 @@ namespace HandsLiftedApp.Core.Views
                 .Subscribe(OnActiveSlideChanged);
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            _slideSubscription?.Dispose();
+        }
+
         private void OnActiveSlideChanged(Slide? slide)
         {
             SlideRenderSpec? spec = slide switch
             {
                 SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
                 SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
+                // Other slide types (image, logo, custom AXAML) are not yet migrated to Skia — canvas shows blank.
                 _                        => null,
             };
             MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));
