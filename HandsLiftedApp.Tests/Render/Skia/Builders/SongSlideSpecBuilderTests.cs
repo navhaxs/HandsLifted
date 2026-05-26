@@ -44,7 +44,7 @@ public class SongSlideSpecBuilderTests
     }
 
     [TestMethod]
-    public void Build_HasMotionBackground_ReturnsTransparentBackground()
+    public void Build_NoMotionBackground_ReturnsNonTransparentBackground()
     {
         // SongSlideInstance.HasMotionBackground is driven by its parent SongItemInstance.
         // For now, test the false branch (no motion background):
@@ -58,9 +58,20 @@ public class SongSlideSpecBuilderTests
     }
 
     [TestMethod]
-    public void Build_NullText_ReturnsEmptyElements()
+    public void Build_EmptyText_ReturnsEmptyElements()
     {
         var slide = new SongSlideInstance(null, null, "id4") { Text = "" };
+        slide.Theme = MakeTheme();
+
+        var spec = SongSlideSpecBuilder.Build(slide);
+
+        Assert.AreEqual(0, spec.Elements.Count);
+    }
+
+    [TestMethod]
+    public void Build_WhitespaceOnlyText_ReturnsEmptyElements()
+    {
+        var slide = new SongSlideInstance(null, null, "id5") { Text = "   " };
         slide.Theme = MakeTheme();
 
         var spec = SongSlideSpecBuilder.Build(slide);

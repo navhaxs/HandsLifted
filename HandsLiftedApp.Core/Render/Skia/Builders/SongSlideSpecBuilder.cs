@@ -48,20 +48,20 @@ public static class SongSlideSpecBuilder
     private static IReadOnlyList<RenderElement> BuildTextElements(string text, BaseSlideTheme theme)
     {
         string[] lines = text.Split('\n');
+        var nonEmptyLines = lines.Where(l => !string.IsNullOrEmpty(l)).ToArray();
+
         using var typeface = GetTypeface(theme);
         using var measurePaint = new SKPaint(new SKFont(typeface, theme.FontSize));
 
         float lineHeight = theme.LineHeight;
-        float totalHeight = lines.Length * lineHeight;
+        float totalHeight = nonEmptyLines.Length * lineHeight;
         float startY = (CanvasHeight - totalHeight) / 2f;
         var color = ToSkColor(theme.TextAvaloniaColour);
 
-        var result = new List<RenderElement>(lines.Length);
-        foreach (var (line, i) in lines.Select((l, i) => (l, i)))
+        var result = new List<RenderElement>(nonEmptyLines.Length);
+        for (int i = 0; i < nonEmptyLines.Length; i++)
         {
-            if (string.IsNullOrEmpty(line))
-                continue;
-
+            string line = nonEmptyLines[i];
             float textWidth = measurePaint.MeasureText(line);
             float x = theme.TextAlignment switch
             {
