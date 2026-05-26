@@ -47,11 +47,11 @@ public static class SongSlideSpecBuilder
 
     private static IReadOnlyList<RenderElement> BuildTextElements(string text, BaseSlideTheme theme)
     {
-        string[] lines = text.Split('\n');
-        var nonEmptyLines = lines.Where(l => !string.IsNullOrEmpty(l)).ToArray();
+        var nonEmptyLines = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         using var typeface = GetTypeface(theme);
-        using var measurePaint = new SKPaint(new SKFont(typeface, theme.FontSize));
+        using var measureFont = new SKFont(typeface, theme.FontSize);
+        using var measurePaint = new SKPaint(measureFont);
 
         float lineHeight = theme.LineHeight;
         float totalHeight = nonEmptyLines.Length * lineHeight;
