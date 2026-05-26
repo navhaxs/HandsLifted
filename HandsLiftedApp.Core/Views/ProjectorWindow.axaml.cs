@@ -13,7 +13,11 @@ using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Render.Skia;
+using HandsLiftedApp.Core.Render.Skia.Builders;
 using HandsLiftedApp.Core.Utils.MacOS;
+using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
 using Serilog;
@@ -69,6 +73,31 @@ namespace HandsLiftedApp.Core.Views
                     aTimer.Start();
                 }
             };
+        }
+
+        private IDisposable? _slideSubscription;
+
+        protected override void OnDataContextChanged(EventArgs e)
+        {
+            base.OnDataContextChanged(e);
+            _slideSubscription?.Dispose();
+
+            if (DataContext is not MainViewModel vm) return;
+
+            _slideSubscription = vm.Playlist
+                .WhenAnyValue(p => p.ActiveSlide)
+                .Subscribe(OnActiveSlideChanged);
+        }
+
+        private void OnActiveSlideChanged(Slide? slide)
+        {
+            SlideRenderSpec? spec = slide switch
+            {
+                SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
+                SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
+                _                        => null,
+            };
+            MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));
         }
 
         private bool _isFullScreen = false;

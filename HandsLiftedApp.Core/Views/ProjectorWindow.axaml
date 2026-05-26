@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-        xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+        xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
         xmlns:avaloniaNdi="clr-namespace:AvaloniaNDI;assembly=AvaloniaNDI"
         xmlns:render1="clr-namespace:HandsLiftedApp.Views.Render"
         xmlns:app="clr-namespace:HandsLiftedApp.Core"
@@ -60,7 +60,7 @@
                 Height="1080">
                 <Grid Background="Black">
                     <motionBg:MotionBackgroundLayer ActiveItem="{Binding Playlist.SelectedItem}" />
-                    <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
+                    <skia:SlideCanvas x:Name="MainSlideCanvas" />
                     <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                 </Grid>
             </avaloniaNdi:NDISendContainer>
