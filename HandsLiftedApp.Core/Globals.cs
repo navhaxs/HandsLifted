@@ -10,6 +10,7 @@ using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.ViewModels;
 using LibMpv.Client;
+using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
 
@@ -72,15 +73,15 @@ namespace HandsLiftedApp.Core
 
             // Initialize app preferences state here
             {
-                // Create the AutoSuspendHelper.
-                var suspension = new AutoSuspendHelper(applicationLifetime);
-                RxApp.SuspensionHost.CreateNewAppState = () => new AppPreferencesViewModel();
-                RxApp.SuspensionHost.SetupDefaultSuspendResume(
-                    new NewtonsoftJsonSuspensionDriver<AppPreferencesViewModel>(Constants.APP_STATE_FILEPATH));
-                suspension.OnFrameworkInitializationCompleted();
-
-                // Load the saved view model state.
-                AppPreferences = RxApp.SuspensionHost.GetAppState<AppPreferencesViewModel>();
+                if (File.Exists(Constants.APP_STATE_FILEPATH))
+                {
+                    var json = File.ReadAllText(Constants.APP_STATE_FILEPATH);
+                    AppPreferences = JsonConvert.DeserializeObject<AppPreferencesViewModel>(json);
+                }
+                else
+                {
+                    AppPreferences = new AppPreferencesViewModel();
+                }
             }
 
             MainViewModel = new();

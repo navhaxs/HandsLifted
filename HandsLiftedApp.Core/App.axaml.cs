@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -7,7 +8,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.ViewModels;
-
+using Newtonsoft.Json;
 using Serilog;
 
 namespace HandsLiftedApp.Core;
@@ -57,6 +58,13 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            
+            desktop.Exit += (_, __) =>
+            {
+                var json = JsonConvert.SerializeObject(Globals.Instance.AppPreferences);
+                File.WriteAllText(Constants.APP_STATE_FILEPATH, json);
+            };
+            
             SplashWindow splashScreen = new();
             desktop.MainWindow = splashScreen;
             try {

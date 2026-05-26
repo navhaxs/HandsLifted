@@ -10,6 +10,8 @@
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
              xmlns:slides2="clr-namespace:HandsLiftedApp.Data.Slides"
              xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
+             xmlns:views="clr-namespace:HandsLiftedApp.Views"
+             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="slides1:Slide"
              x:Class="HandsLiftedApp.Core.Render.SlideRender">
@@ -21,18 +23,18 @@
         <ContentControl.ContentTemplate>
             <common:MyTemplateSelector>
                 <DataTemplate x:Key="SongTitleSlideInstance" x:DataType="slides2:SongTitleSlideInstance">
-                    <!-- <views:DesignerSlideTitle Width="1920" Height="1080" /> -->
-                    <Image
-                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                        Source="{Binding Cached}"
-                        Stretch="Uniform" />
+                    <views:DesignerSlideTitle Width="1920" Height="1080" />
+                    <!-- <Image -->
+                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
+                    <!--     Source="{Binding Cached}" -->
+                    <!--     Stretch="Uniform" /> -->
                 </DataTemplate>
                 <DataTemplate x:Key="SongSlideInstance" x:DataType="slides2:SongSlideInstance">
-                    <!-- <designer:SongSlideView Width="1920" Height="1080" /> -->
-                    <Image
-                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                        Source="{Binding Cached}"
-                        Stretch="Uniform" />
+                    <designer:SongSlideView Width="1920" Height="1080" />
+                    <!-- <Image -->
+                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
+                    <!--     Source="{Binding Cached}" -->
+                    <!--     Stretch="Uniform" /> -->
                 </DataTemplate>
                 <DataTemplate x:Key="LogoSlide">
                     <items:LogoSlideView />
