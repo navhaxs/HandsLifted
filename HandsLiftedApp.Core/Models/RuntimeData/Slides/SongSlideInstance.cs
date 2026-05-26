@@ -12,7 +12,8 @@ using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.Thumbnail;
-using HandsLiftedApp.Core.Views;
+using HandsLiftedApp.Core.Render.Skia;
+using HandsLiftedApp.Core.Render.Skia.Builders;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 
@@ -58,14 +59,10 @@ namespace HandsLiftedApp.Data.Slides
 
         private void GenerateBitmaps()
         {
-            MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
-                this,
-                (obitmap) =>
-                {
-                    this.Cached = obitmap;
-                    Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
-                }
-            ));
+            var spec = SongSlideSpecBuilder.Build(this);
+            using var skBitmap = SlideRenderer.RenderToSKBitmap(spec);
+            Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
+            Thumbnail = BitmapUtils.CreateThumbnail(Cached);
         }
 
         [XmlIgnore]

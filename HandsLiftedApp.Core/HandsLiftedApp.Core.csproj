@@ -188,10 +188,6 @@
             <DependentUpon>SongLayout.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\SlideRendererWorkerWindow.axaml.cs">
-            <DependentUpon>SlideRendererWorkerWindow.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Render\AltSlideRenderer.axaml.cs">
             <DependentUpon>AltSlideRenderer.axaml</DependentUpon>
             <SubType>Code</SubType>

@@ -24,7 +24,7 @@ public partial class App : Application
     {
         if (applicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {
-            // this will close *all windows*. namely, SlideRendererWorkerWindow
+            // this will close *all windows*
             foreach (var window in desktopLifetime.Windows.ToList())
             {
                 if (window != sender)
@@ -50,10 +50,6 @@ public partial class App : Application
         {
             return;
         }
-        
-        // must create renderer BEFORE slides start loading during Globals.OnStartup (auto-loading previous playlist)
-        SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow();
-        slideRendererWorkerWindow.Show();
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

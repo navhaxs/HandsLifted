@@ -5,6 +5,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+             xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
              xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
              xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
@@ -102,7 +103,7 @@
                     <!-- NEW -->
                     <!-- <render:SlideRender Width="1920" Height="1080" DataContext="{Binding Playlist.ActiveSlide}" /> -->
                     <Grid>
-                        <render:ActiveSlideRender ActiveSlide="{Binding Playlist.ActiveSlide}" />
+                        <skia:SlideCanvas x:Name="LivePreviewCanvas" />
                         <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                     </Grid>
                     <!-- <viewsrender:SlideRenderer -->

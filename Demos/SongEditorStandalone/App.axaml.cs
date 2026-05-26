@@ -20,18 +20,13 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // must create renderer BEFORE slides start loading during Globals.OnStartup (auto-loading previous playlist)
-        SlideRendererWorkerWindow slideRendererWorkerWindow = new SlideRendererWorkerWindow();
-        slideRendererWorkerWindow.Show();
-
         // Globals.Instance.OnStartup(ApplicationLifetime);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             PlaylistInstance playlist = Globals.Instance.MainViewModel.Playlist;
             var window = new SongEditorWindow() { DataContext = new SongEditorViewModel(new SongItemInstance(playlist), playlist) };
-            window.Closing += (sender, args) => { slideRendererWorkerWindow.Close(); };
-            
+
             desktop.MainWindow = window;
         }
 

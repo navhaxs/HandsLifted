@@ -3,6 +3,11 @@ using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
+using HandsLiftedApp.Core.Render.Skia;
+using HandsLiftedApp.Core.Render.Skia.Builders;
+using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Data.Slides;
+using ReactiveUI;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +17,8 @@ namespace HandsLiftedApp.Core.Views
 {
     public partial class LivePane : UserControl
     {
+        private IDisposable? _slideSubscription;
+
         public LivePane()
         {
             InitializeComponent();
@@ -27,6 +34,35 @@ namespace HandsLiftedApp.Core.Views
                     }
                 },
                 DragDropEffects.Copy);
+        }
+
+        protected override void OnDataContextChanged(EventArgs e)
+        {
+            base.OnDataContextChanged(e);
+            _slideSubscription?.Dispose();
+
+            if (DataContext is not MainViewModel vm) return;
+
+            _slideSubscription = vm.Playlist
+                .WhenAnyValue(p => p.ActiveSlide)
+                .Subscribe(OnActiveSlideChanged);
+        }
+
+        protected override void OnDetachedFromVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+            _slideSubscription?.Dispose();
+        }
+
+        private void OnActiveSlideChanged(Slide? slide)
+        {
+            SlideRenderSpec? spec = slide switch
+            {
+                SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
+                SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
+                _                        => null,
+            };
+            LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));
         }
 
         private void SetupDnd(string suffix, Func<DataObject, Task> factory, DragDropEffects effects)

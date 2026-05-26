@@ -9,7 +9,6 @@ using System.Xml.Serialization;
 using Avalonia.Media.Imaging;
 using DebounceThrottle;
 using HandsLiftedApp.Core.Services;
-using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -403,27 +402,19 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             foreach (var slide in Slides.OfType<SongSlideInstance>())
             {
-                MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
-                    slide,
-                    (bitmap) =>
-                    {
-                        slide.Cached = bitmap;
-                        slide.Thumbnail = BitmapUtils.CreateThumbnail(bitmap);
-                    }
-                ));
+                var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongSlideSpecBuilder.Build(slide);
+                using var skBitmap = HandsLiftedApp.Core.Render.Skia.SlideRenderer.RenderToSKBitmap(spec);
+                slide.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
+                slide.Thumbnail = BitmapUtils.CreateThumbnail(slide.Cached);
             }
 
             // Also regenerate title slide bitmap
             if (titleSlide is SongTitleSlideInstance titleInstance)
             {
-                MessageBus.Current.SendMessage(new SlideRenderRequestMessage(
-                    titleInstance,
-                    (bitmap) =>
-                    {
-                        titleInstance.Cached = bitmap;
-                        titleInstance.Thumbnail = BitmapUtils.CreateThumbnail(bitmap);
-                    }
-                ));
+                var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongTitleSlideSpecBuilder.Build(titleInstance);
+                using var skBitmap = HandsLiftedApp.Core.Render.Skia.SlideRenderer.RenderToSKBitmap(spec);
+                titleInstance.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
+                titleInstance.Thumbnail = BitmapUtils.CreateThumbnail(titleInstance.Cached);
             }
         }
     }

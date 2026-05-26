@@ -11,6 +11,13 @@ namespace HandsLiftedApp.Core
 {
     public class BitmapUtils
     {
+        public static Bitmap SKBitmapToAvalonia(SKBitmap skBitmap)
+        {
+            using var data = skBitmap.Encode(SKEncodedImageFormat.Png, 100);
+            using var stream = new System.IO.MemoryStream(data.ToArray());
+            return new Bitmap(stream);
+        }
+
         public static Bitmap? CreateThumbnail(Bitmap? source)
         {
             if (source == null)
