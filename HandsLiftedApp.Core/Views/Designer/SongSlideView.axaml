@@ -2,77 +2,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:converters="clr-namespace:HandsLiftedApp.Converters;assembly=HandsLiftedApp.Controls"
-             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
              xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides"
-             xmlns:converters1="clr-namespace:Avalonia.Markup.Xaml.Converters;assembly=Avalonia.Markup.Xaml"
-             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
-             xmlns:coreConverters="clr-namespace:HandsLiftedApp.Core.Converters"
              xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
+             xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
              mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
              x:DataType="slides1:SongSlideInstance"
              x:Class="HandsLiftedApp.Core.Views.Designer.SongSlideView">
-    
+
     <Design.DataContext>
         <designer:DesignModeSongSlideInstance />
-    </Design.DataContext> 
-    
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <converters1:ColorToBrushConverter x:Key="ColorToBrush" />
-            <extensions:BitmapAssetValueConverter x:Key="variableImage" />
-            <coreConverters:MotionBackgroundBrushConverter x:Key="MotionBackgroundBrush" />
-            <coreConverters:MotionBackgroundImageConverter x:Key="MotionBackgroundImage" />
-        </ResourceDictionary>
-    </UserControl.Resources>
+    </Design.DataContext>
 
     <Grid>
-        <Grid.Background>
-            <MultiBinding Converter="{StaticResource MotionBackgroundBrush}" FallbackValue="Black">
-                <Binding Path="HasMotionBackground" />
-                <Binding Path="Theme.BackgroundAvaloniaColour" />
-            </MultiBinding>
-        </Grid.Background>
-        <Border >
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="60 80">
-                <!-- <Viewbox StretchDirection="DownOnly" -->
-                <!--          VerticalAlignment="Stretch" -->
-                <!--          HorizontalAlignment="Stretch"> -->
-                <Border Background="Transparent">
-                    <TextBlock
-                         Text="{Binding Text}"
-                         TextAlignment="{Binding Theme.TextAlignment}"
-                         LineHeight="{Binding Theme.LineHeight}"
-                         FontWeight="{Binding Theme.FontWeight}"
-                         FontStyle="{Binding Theme.FontStyle}"
-                         HorizontalAlignment="Stretch"
-                         VerticalAlignment="Center"
-                         FontFamily="{Binding Theme.FontFamilyAsAvalonia}"
-                         RenderOptions.BitmapInterpolationMode="HighQuality"
-                         TextWrapping="Wrap"
-                         Foreground="{Binding Theme.TextAvaloniaColour, Converter={StaticResource ColorToBrush}}"
-                         FontSize="{Binding Theme.FontSize}">
-                        <TextBlock.Effect>
-                            <DropShadowDirectionEffect ShadowDepth="40" 
-                                                       Direction="0" 
-                                                       BlurRadius="20" 
-                                                       Color="Black" 
-                                                       Opacity="1" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                </Border>
-                <!-- </Viewbox> -->
-            </Grid>
-            <Border.Background>
-                <ImageBrush Stretch="UniformToFill">
-                    <ImageBrush.Source>
-                        <MultiBinding Converter="{StaticResource MotionBackgroundImage}">
-                            <Binding Path="HasMotionBackground" />
-                            <Binding Path="Theme.BackgroundGraphicFilePath" />
-                        </MultiBinding>
-                    </ImageBrush.Source>
-                </ImageBrush>
-            </Border.Background>
-        </Border>
+        <skia:SlideCanvas x:Name="SlideCanvas" />
+        <!-- Editing overlays go here in future tasks (resize handles, text boxes) -->
     </Grid>
 </UserControl>
