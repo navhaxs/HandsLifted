@@ -106,6 +106,7 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 				Log.Debug("[MotionBg] Issuing loadfile command for: {FilePath}", videoFilePath);
 				_motionMpvContext.Command("loadfile", videoFilePath);
 				_currentVideoPath = videoFilePath;
+				Services.MotionBackgroundService.PublishActiveContext(_motionMpvContext);
 				Log.Debug("[MotionBg] Playback started successfully for: {FilePath}", videoFilePath);
 			}
 			catch (MpvException ex)
@@ -162,6 +163,7 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 				Log.Debug("[MotionBg] MpvContext already disposed during stop");
 			}
 
+			Services.MotionBackgroundService.PublishActiveContext(null);
 			Services.MotionBackgroundService.DisposeContext(ref _motionMpvContext);
 			_currentVideoPath = null;
 			_isFirstFrameReceived = false;

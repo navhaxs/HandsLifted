@@ -6,6 +6,7 @@
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
              xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
+             xmlns:motionBg="clr-namespace:HandsLiftedApp.Core.Render.MotionBackground"
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
              xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
              xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
@@ -103,6 +104,7 @@
                     <!-- NEW -->
                     <!-- <render:SlideRender Width="1920" Height="1080" DataContext="{Binding Playlist.ActiveSlide}" /> -->
                     <Grid Width="1920" Height="1080" Background="Black">
+                        <motionBg:MotionBackgroundObserver />
                         <skia:SlideCanvas x:Name="LivePreviewCanvas" />
                         <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                     </Grid>

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reactive.Subjects;
 using HandsLiftedApp.Core.Utils;
 using LibMpv.Client;
 using Serilog;
@@ -8,6 +9,22 @@ namespace HandsLiftedApp.Core.Services
 {
 	public static class MotionBackgroundService
 	{
+		// Replays the current context to new subscribers (BehaviorSubject starts with null).
+		private static readonly BehaviorSubject<MpvContext?> _activeContextSubject = new(null);
+
+		/// <summary>
+		/// Emits the currently active MpvContext whenever playback starts or stops.
+		/// New subscribers immediately receive the current value.
+		/// </summary>
+		public static IObservable<MpvContext?> ActiveContext => _activeContextSubject;
+
+		/// <summary>
+		/// Called by MotionBackgroundLayer to broadcast the active context to all observers.
+		/// Pass null when playback stops.
+		/// </summary>
+		internal static void PublishActiveContext(MpvContext? context) =>
+			_activeContextSubject.OnNext(context);
+
 		private static readonly string[] SupportedVideoExtensions =
 		{
 			".mp4", ".mov", ".avi", ".wmv", ".mkv", ".webm"
