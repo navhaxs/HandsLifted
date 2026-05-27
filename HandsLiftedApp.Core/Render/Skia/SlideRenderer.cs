@@ -22,8 +22,6 @@ public static class SlideRenderer
         int width,
         int height)
     {
-        canvas.Clear(SKColors.Transparent);
-
         DrawBackground(canvas, current?.Background ?? previous?.Background, width, height);
 
         // Elements in current: unchanged lines stay at 1.0, new lines fade in
