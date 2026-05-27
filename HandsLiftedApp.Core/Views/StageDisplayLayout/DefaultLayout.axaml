@@ -36,7 +36,7 @@
                         <Border>
                             <Viewbox>
                                 <Grid>
-                                    <motionBg:MotionBackgroundLayer ActiveItem="{Binding Playlist.SelectedItem}" />
+                                    <motionBg:MotionBackgroundObserver />
                                     <render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" Height="1080"
                                                         Width="1920" />
                                     <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
