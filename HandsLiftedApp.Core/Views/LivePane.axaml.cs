@@ -19,6 +19,7 @@ namespace HandsLiftedApp.Core.Views
     public partial class LivePane : UserControl
     {
         private IDisposable? _slideSubscription;
+        private MainViewModel? _vm;
 
         public LivePane()
         {
@@ -43,6 +44,7 @@ namespace HandsLiftedApp.Core.Views
             _slideSubscription?.Dispose();
 
             if (DataContext is not MainViewModel vm) return;
+            _vm = vm;
 
             _slideSubscription = vm.Playlist
                 .WhenAnyValue(p => p.ActiveSlide)
@@ -57,9 +59,11 @@ namespace HandsLiftedApp.Core.Views
 
         private void OnActiveSlideChanged(Slide? slide)
         {
-            Log.Debug("[LivePane] OnActiveSlideChanged: {SlideType}, ImagePath={Path}",
+            var logoPath = _vm?.Playlist.LogoGraphicFile;
+            Log.Debug("[LivePane] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
                 slide?.GetType().Name ?? "null",
-                (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-");
+                (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-",
+                logoPath ?? "-");
 
             SlideRenderSpec? spec = slide switch
             {
@@ -68,6 +72,10 @@ namespace HandsLiftedApp.Core.Views
                 ImageSlideInstance img   => string.IsNullOrWhiteSpace(img.SourceMediaFilePath)
                     ? null
                     : new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
+                LogoSlide                => string.IsNullOrWhiteSpace(logoPath)
+                    ? null
+                    : new SlideRenderSpec(new ImageBackground(logoPath), Array.Empty<RenderElement>()),
+                // Other slide types (custom AXAML, blank) — canvas shows blank.
                 _                        => null,
             };
             LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));

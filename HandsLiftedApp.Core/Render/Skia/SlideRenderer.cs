@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Avalonia.Platform;
 using Serilog;
 using SkiaSharp;
 
@@ -96,24 +97,36 @@ public static class SlideRenderer
                     Log.Warning("[SlideRenderer] ImageBackground has null/empty FilePath");
                     break;
                 }
-                if (!File.Exists(img.FilePath))
-                {
-                    Log.Warning("[SlideRenderer] Image file not found: {FilePath}", img.FilePath);
-                    break;
-                }
                 try
                 {
-                    using var stream = File.OpenRead(img.FilePath);
-                    using var bmp = SKBitmap.Decode(stream);
-                    if (bmp != null)
+                    Stream? imgStream = null;
+                    if (img.FilePath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
                     {
-                        var dest = new SKRect(0, 0, width, height);
-                        using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
-                        canvas.DrawBitmap(bmp, dest, paint);
+                        imgStream = AssetLoader.Open(new Uri(img.FilePath));
                     }
                     else
                     {
-                        Log.Warning("[SlideRenderer] SKBitmap.Decode returned null for: {FilePath}", img.FilePath);
+                        if (!File.Exists(img.FilePath))
+                        {
+                            Log.Warning("[SlideRenderer] Image file not found: {FilePath}", img.FilePath);
+                            break;
+                        }
+                        imgStream = File.OpenRead(img.FilePath);
+                    }
+
+                    using (imgStream)
+                    {
+                        using var bmp = SKBitmap.Decode(imgStream);
+                        if (bmp != null)
+                        {
+                            var dest = new SKRect(0, 0, width, height);
+                            using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
+                            canvas.DrawBitmap(bmp, dest, paint);
+                        }
+                        else
+                        {
+                            Log.Warning("[SlideRenderer] SKBitmap.Decode returned null for: {FilePath}", img.FilePath);
+                        }
                     }
                 }
                 catch (Exception ex)
