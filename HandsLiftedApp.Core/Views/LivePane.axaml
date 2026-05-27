@@ -102,7 +102,7 @@
                 <Viewbox>
                     <!-- NEW -->
                     <!-- <render:SlideRender Width="1920" Height="1080" DataContext="{Binding Playlist.ActiveSlide}" /> -->
-                    <Grid>
+                    <Grid Width="1920" Height="1080" Background="Black">
                         <skia:SlideCanvas x:Name="LivePreviewCanvas" />
                         <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                     </Grid>
