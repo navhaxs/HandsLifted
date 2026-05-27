@@ -13,6 +13,7 @@ using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Controller;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.Render.Skia.Builders;
 using HandsLiftedApp.Core.Utils.MacOS;
@@ -101,7 +102,8 @@ namespace HandsLiftedApp.Core.Views
             {
                 SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
                 SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
-                // Other slide types (image, logo, custom AXAML) are not yet migrated to Skia — canvas shows blank.
+                ImageSlideInstance img   => new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
+                // Other slide types (logo, custom AXAML) — canvas shows blank.
                 _                        => null,
             };
             MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));

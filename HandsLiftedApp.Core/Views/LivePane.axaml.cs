@@ -60,6 +60,7 @@ namespace HandsLiftedApp.Core.Views
             {
                 SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
                 SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
+                ImageSlideInstance img   => new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
                 _                        => null,
             };
             LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));
