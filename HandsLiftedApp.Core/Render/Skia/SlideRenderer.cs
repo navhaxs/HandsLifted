@@ -1,7 +1,9 @@
 // HandsLiftedApp.Core/Render/Skia/SlideRenderer.cs
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Serilog;
 using SkiaSharp;
 
 namespace HandsLiftedApp.Core.Render.Skia;
@@ -89,14 +91,34 @@ public static class SlideRenderer
             }
 
             case ImageBackground img:
-                using (var bmp = SKBitmap.Decode(img.FilePath))
+                if (string.IsNullOrWhiteSpace(img.FilePath))
                 {
+                    Log.Warning("[SlideRenderer] ImageBackground has null/empty FilePath");
+                    break;
+                }
+                if (!File.Exists(img.FilePath))
+                {
+                    Log.Warning("[SlideRenderer] Image file not found: {FilePath}", img.FilePath);
+                    break;
+                }
+                try
+                {
+                    using var stream = File.OpenRead(img.FilePath);
+                    using var bmp = SKBitmap.Decode(stream);
                     if (bmp != null)
                     {
                         var dest = new SKRect(0, 0, width, height);
                         using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
                         canvas.DrawBitmap(bmp, dest, paint);
                     }
+                    else
+                    {
+                        Log.Warning("[SlideRenderer] SKBitmap.Decode returned null for: {FilePath}", img.FilePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[SlideRenderer] Exception decoding image: {FilePath}", img.FilePath);
                 }
                 break;
 

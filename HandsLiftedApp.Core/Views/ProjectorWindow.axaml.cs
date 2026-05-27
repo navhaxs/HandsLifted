@@ -98,11 +98,17 @@ namespace HandsLiftedApp.Core.Views
 
         private void OnActiveSlideChanged(Slide? slide)
         {
+            Log.Debug("[ProjectorWindow] OnActiveSlideChanged: {SlideType}, ImagePath={Path}",
+                slide?.GetType().Name ?? "null",
+                (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-");
+
             SlideRenderSpec? spec = slide switch
             {
                 SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
                 SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
-                ImageSlideInstance img   => new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
+                ImageSlideInstance img   => string.IsNullOrWhiteSpace(img.SourceMediaFilePath)
+                    ? null
+                    : new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
                 // Other slide types (logo, custom AXAML) — canvas shows blank.
                 _                        => null,
             };

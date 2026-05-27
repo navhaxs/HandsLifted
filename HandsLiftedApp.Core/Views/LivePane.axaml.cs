@@ -8,6 +8,7 @@ using HandsLiftedApp.Core.Render.Skia.Builders;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
+using Serilog;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -56,11 +57,17 @@ namespace HandsLiftedApp.Core.Views
 
         private void OnActiveSlideChanged(Slide? slide)
         {
+            Log.Debug("[LivePane] OnActiveSlideChanged: {SlideType}, ImagePath={Path}",
+                slide?.GetType().Name ?? "null",
+                (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-");
+
             SlideRenderSpec? spec = slide switch
             {
                 SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
                 SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
-                ImageSlideInstance img   => new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
+                ImageSlideInstance img   => string.IsNullOrWhiteSpace(img.SourceMediaFilePath)
+                    ? null
+                    : new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
                 _                        => null,
             };
             LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));
