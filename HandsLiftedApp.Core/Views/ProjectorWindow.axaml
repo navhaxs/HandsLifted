@@ -59,7 +59,7 @@
                 Width="1920"
                 Height="1080">
                 <Grid Background="Black">
-                    <motionBg:MotionBackgroundLayer ActiveItem="{Binding Playlist.SelectedItem}" />
+                    <motionBg:MotionBackgroundObserver />
                     <skia:SlideCanvas x:Name="MainSlideCanvas" />
                     <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                 </Grid>
