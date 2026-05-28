@@ -21,7 +21,9 @@ public static class SlideRenderer
     private static readonly Queue<string> CacheOrder = new(8);
     private const int MaxCacheEntries = 8;
 
-    private static SKBitmap? LoadCachedBitmap(string filePath)
+    /// <param name="maxWidth">If &gt; 0 and decoded image exceeds this, scale down (preload only).</param>
+    /// <param name="maxHeight">If &gt; 0 and decoded image exceeds this, scale down (preload only).</param>
+    private static SKBitmap? LoadCachedBitmap(string filePath, int maxWidth = 0, int maxHeight = 0)
     {
         lock (CacheLock)
         {
@@ -50,6 +52,24 @@ public static class SlideRenderer
             {
                 Log.Warning("[SlideRenderer] SKBitmap.Decode returned null for: {FilePath}", filePath);
                 return null;
+            }
+
+            // Scale down to target if image exceeds it — moves per-frame scaling cost to preload.
+            // Only scale DOWN; upscaling is cheap at draw time and would lose quality.
+            if (maxWidth > 0 && maxHeight > 0 &&
+                (decoded.Width > maxWidth || decoded.Height > maxHeight))
+            {
+                Log.Debug("[SlideRenderer] Pre-scaling {W}x{H} → {MaxW}x{MaxH}: {Path}",
+                    decoded.Width, decoded.Height, maxWidth, maxHeight, filePath);
+                var info = new SKImageInfo(maxWidth, maxHeight, decoded.ColorType, decoded.AlphaType);
+                var scaled = decoded.Resize(info, SKFilterQuality.High);
+                decoded.Dispose();
+                decoded = scaled;
+                if (decoded == null)
+                {
+                    Log.Warning("[SlideRenderer] SKBitmap.Resize returned null for: {FilePath}", filePath);
+                    return null;
+                }
             }
         }
         catch (Exception ex)
@@ -86,11 +106,13 @@ public static class SlideRenderer
     /// Warms the bitmap cache for an image-backed spec.
     /// Call from a background thread before starting a transition to avoid
     /// first-frame decode stutter on the render thread.
+    /// Images larger than <paramref name="maxWidth"/>×<paramref name="maxHeight"/> are scaled
+    /// down at preload time so per-frame drawing is a cheap 1:1 blit instead of a full-res downscale.
     /// </summary>
-    public static void Preload(SlideRenderSpec? spec)
+    public static void Preload(SlideRenderSpec? spec, int maxWidth = 1920, int maxHeight = 1080)
     {
         if (spec?.Background is ImageBackground img && !string.IsNullOrWhiteSpace(img.FilePath))
-            LoadCachedBitmap(img.FilePath);
+            LoadCachedBitmap(img.FilePath, maxWidth, maxHeight);
     }
 
     // ── Draw entry point ───────────────────────────────────────────────────────
@@ -199,7 +221,7 @@ public static class SlideRenderer
                     break;
                 }
 
-                var bmp = LoadCachedBitmap(img.FilePath);
+                var bmp = LoadCachedBitmap(img.FilePath, width, height);
                 if (bmp != null)
                 {
                     var dest = new SKRect(0, 0, width, height);
