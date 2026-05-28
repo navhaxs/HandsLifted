@@ -168,6 +168,7 @@ public class MainViewModel : ViewModelBase
                 // Map properties from PlaylistSerialized to Playlist
 
                 Playlist.Title = x.Title;
+                Playlist.SlideTransitionDurationMs = x.SlideTransitionDurationMs;
                 Playlist.Meta = x.Meta;
                 
                 Playlist.LogoGraphicFile =
