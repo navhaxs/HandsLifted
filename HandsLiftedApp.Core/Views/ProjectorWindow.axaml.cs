@@ -119,7 +119,7 @@ namespace HandsLiftedApp.Core.Views
                 // Other slide types (custom AXAML, blank) — canvas shows blank.
                 _                        => null,
             };
-            MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));
+            MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
         }
 
         /// <summary>
