@@ -16,7 +16,7 @@ public static class SongTitleSlideSpecBuilder
     private const float CopyrightBottomMargin = 60f;
 
     private static readonly DropShadowSpec DefaultShadow =
-        new DropShadowSpec(0f, 40f, 20f, SKColors.Black);
+        new DropShadowSpec(0f, 15f, 20f, SKColors.Black);
 
     public static SlideRenderSpec Build(SongTitleSlideInstance slide)
     {

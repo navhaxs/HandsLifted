@@ -113,11 +113,11 @@ public unsafe partial class MpvContext
     private List<UpdateCallback> updateCallbacks = new();
     public void RegisterUpdateCallback(UpdateCallback updateCallback)
     {
+        if (disposed) return;
         if (!updateCallbacks.Contains(updateCallback))
         {
             updateCallbacks.Add(updateCallback);
         }
-        if (disposed) return;
         this.updateCallback = new mpv_render_context_set_update_callback_callback((_) => updateCallbacks.ForEach((callback) => callback()));
         if (renderContext != null)
         {
@@ -127,6 +127,7 @@ public unsafe partial class MpvContext
     
     public void UnregisterUpdateCallback(UpdateCallback updateCallback)
     {
+        if (disposed) return;
         if (updateCallbacks.Contains(updateCallback))
         {
             updateCallbacks.Remove(updateCallback);
@@ -239,6 +240,7 @@ public unsafe partial class MpvContext
 
     public void StopRendering()
     {
+        if (disposed) return;
         this.Command("stop");
         if (renderContext != null)
         {

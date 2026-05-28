@@ -11,6 +11,77 @@ namespace HandsLiftedApp.Core.Render.Skia;
 
 public static class SlideRenderer
 {
+    // ── Image bitmap cache ─────────────────────────────────────────────────────
+    // Avoids re-decoding the same image from disk on every frame during transitions.
+    // Cache is keyed by file path. FIFO eviction, max 8 entries.
+    // Cache owns the bitmaps and disposes evicted ones.
+
+    private static readonly object CacheLock = new();
+    private static readonly Dictionary<string, SKBitmap> BitmapCache = new(8);
+    private static readonly Queue<string> CacheOrder = new(8);
+    private const int MaxCacheEntries = 8;
+
+    private static SKBitmap? LoadCachedBitmap(string filePath)
+    {
+        lock (CacheLock)
+        {
+            if (BitmapCache.TryGetValue(filePath, out var cached))
+                return cached;
+        }
+
+        // Decode outside lock — expensive operation
+        SKBitmap? decoded = null;
+        try
+        {
+            Stream? imgStream = filePath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase)
+                ? AssetLoader.Open(new Uri(filePath))
+                : File.Exists(filePath) ? File.OpenRead(filePath) : null;
+
+            if (imgStream == null)
+            {
+                Log.Warning("[SlideRenderer] Image not found: {FilePath}", filePath);
+                return null;
+            }
+
+            using (imgStream)
+                decoded = SKBitmap.Decode(imgStream);
+
+            if (decoded == null)
+            {
+                Log.Warning("[SlideRenderer] SKBitmap.Decode returned null for: {FilePath}", filePath);
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[SlideRenderer] Exception decoding image: {FilePath}", filePath);
+            return null;
+        }
+
+        lock (CacheLock)
+        {
+            // Another thread may have populated it while we decoded outside the lock
+            if (BitmapCache.TryGetValue(filePath, out var race))
+            {
+                decoded.Dispose();
+                return race;
+            }
+
+            if (BitmapCache.Count >= MaxCacheEntries)
+            {
+                var oldest = CacheOrder.Dequeue();
+                if (BitmapCache.Remove(oldest, out var evicted))
+                    evicted.Dispose();
+            }
+
+            BitmapCache[filePath] = decoded;
+            CacheOrder.Enqueue(filePath);
+            return decoded;
+        }
+    }
+
+    // ── Draw entry point ───────────────────────────────────────────────────────
+
     // Entry point for SlideCanvas (called every frame during transitions)
     /// <remarks>
     /// Transition diffing uses <see cref="TextLineElement.Text"/> as the identity key via a <see cref="HashSet{T}"/>.
@@ -25,7 +96,21 @@ public static class SlideRenderer
         int width,
         int height)
     {
-        DrawBackground(canvas, current?.Background ?? previous?.Background, width, height);
+        var prevBg = previous?.Background;
+        var currBg = current?.Background;
+
+        if (progress < 1f && prevBg != null && currBg != null && prevBg != currBg)
+        {
+            // Fade-over: previous stays at full opacity, current fades in on top.
+            // Avoids the mid-transition darkening that occurs when both images are
+            // drawn at partial opacity over a black canvas.
+            DrawBackground(canvas, prevBg, 1f, width, height);
+            DrawBackground(canvas, currBg, progress, width, height);
+        }
+        else
+        {
+            DrawBackground(canvas, currBg ?? prevBg, 1f, width, height);
+        }
 
         // Elements in current: unchanged lines stay at 1.0, new lines fade in
         if (current != null)
@@ -80,13 +165,16 @@ public static class SlideRenderer
         return SKBitmap.FromImage(image);
     }
 
-    private static void DrawBackground(SKCanvas canvas, BackgroundSpec? bg, int width, int height)
+    private static void DrawBackground(SKCanvas canvas, BackgroundSpec? bg, float alpha, int width, int height)
     {
+        if (alpha <= 0f) return;
+
         switch (bg)
         {
             case SolidBackground solid:
             {
-                using var solidPaint = new SKPaint { Color = solid.Color };
+                var color = solid.Color.WithAlpha((byte)(solid.Color.Alpha * alpha));
+                using var solidPaint = new SKPaint { Color = color };
                 canvas.DrawRect(0, 0, width, height, solidPaint);
                 break;
             }
@@ -97,47 +185,21 @@ public static class SlideRenderer
                     Log.Warning("[SlideRenderer] ImageBackground has null/empty FilePath");
                     break;
                 }
-                try
-                {
-                    Stream? imgStream = null;
-                    if (img.FilePath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
-                    {
-                        imgStream = AssetLoader.Open(new Uri(img.FilePath));
-                    }
-                    else
-                    {
-                        if (!File.Exists(img.FilePath))
-                        {
-                            Log.Warning("[SlideRenderer] Image file not found: {FilePath}", img.FilePath);
-                            break;
-                        }
-                        imgStream = File.OpenRead(img.FilePath);
-                    }
 
-                    using (imgStream)
-                    {
-                        using var bmp = SKBitmap.Decode(imgStream);
-                        if (bmp != null)
-                        {
-                            var dest = new SKRect(0, 0, width, height);
-                            using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
-                            canvas.DrawBitmap(bmp, dest, paint);
-                        }
-                        else
-                        {
-                            Log.Warning("[SlideRenderer] SKBitmap.Decode returned null for: {FilePath}", img.FilePath);
-                        }
-                    }
-                }
-                catch (Exception ex)
+                var bmp = LoadCachedBitmap(img.FilePath);
+                if (bmp != null)
                 {
-                    Log.Error(ex, "[SlideRenderer] Exception decoding image: {FilePath}", img.FilePath);
+                    var dest = new SKRect(0, 0, width, height);
+                    using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
+                    if (alpha < 1f)
+                        paint.Color = SKColors.White.WithAlpha((byte)(255 * alpha));
+                    canvas.DrawBitmap(bmp, dest, paint);
                 }
                 break;
 
             case TransparentBackground:
             default:
-                // leave the canvas cleared to transparent (done above)
+                // leave the canvas cleared to transparent
                 break;
         }
     }

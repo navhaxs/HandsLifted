@@ -18,7 +18,7 @@ public static class SongSlideSpecBuilder
     // Drop shadow parameters matching the previous DropShadowDirectionEffect XAML:
     // ShadowDepth=40, Direction=0 (straight down), BlurRadius=20, Color=Black, Opacity=1
     private static readonly DropShadowSpec DefaultShadow =
-        new DropShadowSpec(0f, 40f, 20f, SKColors.Black);
+        new DropShadowSpec(0f, 15f, 20f, SKColors.Black);
 
     public static SlideRenderSpec Build(SongSlideInstance slide)
     {

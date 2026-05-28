@@ -100,7 +100,7 @@ namespace HandsLiftedApp.Core.Views
 
         private void OnActiveSlideChanged(Slide? slide)
         {
-            var logoPath = _vm?.Playlist.LogoGraphicFile;
+            var logoPath = NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
             Log.Debug("[ProjectorWindow] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
                 slide?.GetType().Name ?? "null",
                 (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-",
@@ -120,6 +120,31 @@ namespace HandsLiftedApp.Core.Views
                 _                        => null,
             };
             MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(120));
+        }
+
+        /// <summary>
+        /// Repairs paths where the serializer has mangled an avares:// URI into a Windows-style
+        /// absolute path (e.g. "C:\...\avares:\Assembly\Assets\...").
+        /// Returns the corrected avares:// URI, or the original path unchanged for normal files.
+        /// </summary>
+        private static string? NormalizeMediaPath(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return path;
+
+            var idx = path.IndexOf("avares:", StringComparison.OrdinalIgnoreCase);
+            if (idx > 0)
+            {
+                // Repair paths mangled by the serializer, e.g.:
+                //   "C:\VisionScreens Data\avares:\Assembly\Assets\logo.png"
+                // → "avares://Assembly/Assets/logo.png"
+                var rest = path.Substring(idx + "avares:".Length)
+                               .Replace('\\', '/')
+                               .TrimStart('/');
+                if (rest.Length == 0) return path; // malformed — return original unchanged
+                return "avares://" + rest;
+            }
+
+            return path;
         }
 
         private bool _isFullScreen = false;

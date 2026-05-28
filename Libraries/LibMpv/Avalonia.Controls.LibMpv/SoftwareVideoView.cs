@@ -46,17 +46,32 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
 
             if (_mpvContext != null)
             {
+                // Always unregister our update callback before releasing the context.
+                // Primaries: UnregisterFromSharedBitmap calls StopRendering (and frees
+                // the render context) only when the last reference leaves — do NOT
+                // call StopRendering unconditionally here, it sends Command("stop") to
+                // mpv and would interrupt active playback for all remaining views.
+                _mpvContext.UnregisterUpdateCallback(UpdateVideoView);
                 UnregisterFromSharedBitmap();
-                _mpvContext.StopRendering();
             }
 
             _mpvContext = value;
 
             if (_mpvContext != null)
             {
-                RegisterForSharedBitmap();
-                _mpvContext.StartSoftwareRendering(UpdateVideoView);
-                Log.Information("Registered SoftwareVideoView with MPV context");
+                RegisterForSharedBitmap(); // sets _isPrimaryRenderer
+                if (_isPrimaryRenderer)
+                {
+                    // Primary creates the render context and owns the update pump.
+                    _mpvContext.StartSoftwareRendering(UpdateVideoView);
+                }
+                else
+                {
+                    // Secondary reuses the existing render context.
+                    // RegisterUpdateCallback adds our callback without touching the render context.
+                    _mpvContext.RegisterUpdateCallback(UpdateVideoView);
+                }
+                Log.Information("Registered SoftwareVideoView with MPV context (isPrimary={IsPrimary})", _isPrimaryRenderer);
             }
         }
     }
