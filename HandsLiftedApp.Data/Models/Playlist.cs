@@ -69,5 +69,12 @@ namespace HandsLiftedApp.Data.Models
             get => _items;
             set => this.RaiseAndSetIfChanged(ref _items, value);
         }
+
+        private double _slideTransitionDurationMs = 120.0;
+        public double SlideTransitionDurationMs
+        {
+            get => _slideTransitionDurationMs;
+            set => this.RaiseAndSetIfChanged(ref _slideTransitionDurationMs, value);
+        }
     }
 }
