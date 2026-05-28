@@ -245,6 +245,36 @@
                 </UniformGrid>
             </Border>
 
+            <Border
+                Height="35"
+                Margin="6,0,6,6"
+                Background="Transparent"
+                MaxWidth="300"
+                CornerRadius="6"
+                DockPanel.Dock="Top">
+                <DockPanel>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Margin="8,0,6,0"
+                        FontSize="13"
+                        Text="Fade:" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Right"
+                        Margin="4,0,8,0"
+                        FontSize="13"
+                        Text="{Binding Playlist.SlideTransitionDurationMs, StringFormat='{}{0:0}ms'}" />
+                    <Slider
+                        VerticalAlignment="Center"
+                        Minimum="0"
+                        Maximum="2000"
+                        TickFrequency="100"
+                        SmallChange="50"
+                        LargeChange="200"
+                        Value="{Binding Playlist.SlideTransitionDurationMs, Mode=TwoWay}" />
+                </DockPanel>
+            </Border>
+
             <!-- <views:DebugInfoView HorizontalAlignment="Stretch" /> -->
             <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
 
