@@ -244,6 +244,14 @@ namespace HandsLiftedApp.Core.Models
                     Changed?.Invoke(this, EventArgs.Empty);
                 });
 
+            this.WhenAnyValue(p => p.SlideTransitionDurationMs)
+                .Skip(1) // skip initial value on subscribe
+                .Subscribe(_ =>
+                {
+                    IsDirty = true;
+                    Changed?.Invoke(this, EventArgs.Empty);
+                });
+
             MessageBus.Current.Listen<OnTimerEnabledToggleEvent>().Subscribe(mwvm =>
             {
                 var selectedItem = SelectedItem?.GetAsIItemInstance();
