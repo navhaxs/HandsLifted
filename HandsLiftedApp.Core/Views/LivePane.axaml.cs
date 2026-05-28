@@ -57,7 +57,7 @@ namespace HandsLiftedApp.Core.Views
             _slideSubscription?.Dispose();
         }
 
-        private void OnActiveSlideChanged(Slide? slide)
+        private async void OnActiveSlideChanged(Slide? slide)
         {
             var logoPath = NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
             Log.Debug("[LivePane] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
@@ -78,6 +78,12 @@ namespace HandsLiftedApp.Core.Views
                 // Other slide types (custom AXAML, blank) — canvas shows blank.
                 _                        => null,
             };
+
+            // Pre-warm bitmap cache on a background thread so the render thread never
+            // has to decode a large image during the first transition frame.
+            if (spec?.Background is ImageBackground)
+                await Task.Run(() => SlideRenderer.Preload(spec));
+
             LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
         }
 

@@ -80,6 +80,19 @@ public static class SlideRenderer
         }
     }
 
+    // ── Preload API ────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Warms the bitmap cache for an image-backed spec.
+    /// Call from a background thread before starting a transition to avoid
+    /// first-frame decode stutter on the render thread.
+    /// </summary>
+    public static void Preload(SlideRenderSpec? spec)
+    {
+        if (spec?.Background is ImageBackground img && !string.IsNullOrWhiteSpace(img.FilePath))
+            LoadCachedBitmap(img.FilePath);
+    }
+
     // ── Draw entry point ───────────────────────────────────────────────────────
 
     // Entry point for SlideCanvas (called every frame during transitions)
