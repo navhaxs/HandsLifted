@@ -36,6 +36,7 @@ namespace HandsLiftedApp.Core
                 Meta = playlist.Meta,
                 LogoGraphicFile =
                     RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, playlist.LogoGraphicFile),
+                SlideTransitionDurationMs = playlist.SlideTransitionDurationMs,
                 Designs = new ObservableCollection<BaseSlideTheme>(playlist.Designs.Select(design =>
                 {
                     if (design.BackgroundGraphicFilePath != null)
