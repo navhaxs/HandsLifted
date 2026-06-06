@@ -119,9 +119,10 @@ public static class SlideRenderer
 
     // Entry point for SlideCanvas (called every frame during transitions)
     /// <remarks>
-    /// Transition diffing uses <see cref="TextLineElement.Text"/> as the identity key via a <see cref="HashSet{T}"/>.
-    /// If the same text appears on multiple lines within a single spec, only one instance is tracked —
-    /// duplicate lines will not fade out correctly when removed. This is an accepted MVP limitation.
+    /// Transition diffing uses (Text, Bounds.Top) as the identity key. A line is considered
+    /// "unchanged" only when its text AND its vertical position are identical between slides.
+    /// This correctly cross-fades lines that share text but move position (e.g. same line in a
+    /// 3-line block vs a 4-line block, where vertical centering shifts all Y coordinates).
     /// </remarks>
     public static void Draw(
         SKCanvas canvas,
@@ -147,37 +148,39 @@ public static class SlideRenderer
             DrawBackground(canvas, currBg ?? prevBg, 1f, width, height);
         }
 
-        // Elements in current: unchanged lines stay at 1.0, new lines fade in
+        // Elements in current: unchanged lines stay at 1.0, new/moved lines fade in.
+        // Identity = (Text, Bounds.Top): same text at a different Y means the block
+        // shifted (e.g. 3-line → 4-line), so the line must cross-fade.
         if (current != null)
         {
-            var previousTexts = previous?.Elements
+            var previousKeys = previous?.Elements
                 .OfType<TextLineElement>()
-                .Select(e => e.Text)
-                .ToHashSet(StringComparer.Ordinal)
-                ?? new HashSet<string>(StringComparer.Ordinal);
+                .Select(e => (e.Text, e.Bounds.Top))
+                .ToHashSet()
+                ?? new HashSet<(string, float)>();
 
             foreach (var element in current.Elements)
             {
                 if (element is TextLineElement textEl)
                 {
-                    float alpha = previousTexts.Contains(textEl.Text) ? 1f : progress;
+                    float alpha = previousKeys.Contains((textEl.Text, textEl.Bounds.Top)) ? 1f : progress;
                     DrawTextElement(canvas, textEl, alpha);
                 }
             }
         }
 
-        // Elements only in previous: fade out
+        // Elements only in previous (by text+position): fade out
         if (previous != null && progress < 1f)
         {
-            var currentTexts = current?.Elements
+            var currentKeys = current?.Elements
                 .OfType<TextLineElement>()
-                .Select(e => e.Text)
-                .ToHashSet(StringComparer.Ordinal)
-                ?? new HashSet<string>(StringComparer.Ordinal);
+                .Select(e => (e.Text, e.Bounds.Top))
+                .ToHashSet()
+                ?? new HashSet<(string, float)>();
 
             foreach (var element in previous.Elements)
             {
-                if (element is TextLineElement textEl && !currentTexts.Contains(textEl.Text))
+                if (element is TextLineElement textEl && !currentKeys.Contains((textEl.Text, textEl.Bounds.Top)))
                     DrawTextElement(canvas, textEl, 1f - progress);
             }
         }
