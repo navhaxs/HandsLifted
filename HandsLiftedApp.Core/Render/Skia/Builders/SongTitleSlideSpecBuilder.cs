@@ -29,7 +29,7 @@ public static class SongTitleSlideSpecBuilder
             elements.Add(BuildTitleElement(slide.Title, slide.Theme));
 
         if (!string.IsNullOrWhiteSpace(slide.Copyright))
-            elements.Add(BuildCopyrightElement(slide.Copyright, slide.Theme));
+            elements.AddRange(BuildCopyrightElements(slide.Copyright, slide.Theme));
 
         return new SlideRenderSpec(bg, elements);
     }
@@ -62,20 +62,33 @@ public static class SongTitleSlideSpecBuilder
             ToSkColor(theme.TextAvaloniaColour), DefaultShadow);
     }
 
-    private static TextLineElement BuildCopyrightElement(string copyright, BaseSlideTheme theme)
+    private static IEnumerable<RenderElement> BuildCopyrightElements(string copyright, BaseSlideTheme theme)
     {
+        var lines = copyright.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         float copyrightSize = theme.FontSize * CopyrightSizeRatio;
+        float lineHeight = copyrightSize * 1.2f;
+        int n = lines.Length;
+
+        var result = new List<RenderElement>(n);
         using var typeface = GetTypeface(theme);
         using var measureFont = new SKFont(typeface, copyrightSize);
         using var measurePaint = new SKPaint(measureFont);
-        float textWidth = measurePaint.MeasureText(copyright);
-        float x = (CanvasWidth - textWidth) / 2f;
-        float lineHeight = copyrightSize * 1.2f;
-        float y = CanvasHeight - lineHeight - CopyrightBottomMargin;
-        var bounds = new SKRect(x, y, x + textWidth, y + lineHeight);
-        var elemTypeface = GetTypeface(theme);
-        return new TextLineElement(copyright, bounds, elemTypeface, copyrightSize,
-            ToSkColor(theme.TextAvaloniaColour), DefaultShadow);
+        var color = ToSkColor(theme.TextAvaloniaColour);
+
+        for (int i = 0; i < n; i++)
+        {
+            string line = lines[i];
+            if (string.IsNullOrEmpty(line)) continue; // empty line = spacing gap only
+
+            // Stack lines above the bottom margin; empty lines still consume vertical space.
+            float lineTop = CanvasHeight - CopyrightBottomMargin - (n - i) * lineHeight;
+            float textWidth = measurePaint.MeasureText(line);
+            float x = (CanvasWidth - textWidth) / 2f;
+            var bounds = new SKRect(x, lineTop, x + textWidth, lineTop + lineHeight);
+            result.Add(new TextLineElement(line, bounds, GetTypeface(theme), copyrightSize, color, DefaultShadow));
+        }
+
+        return result;
     }
 
     private static SKTypeface GetTypeface(BaseSlideTheme theme)
