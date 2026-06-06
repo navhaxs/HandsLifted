@@ -20,6 +20,7 @@ namespace HandsLiftedApp.Core.Views
     {
         private IDisposable? _slideSubscription;
         private MainViewModel? _vm;
+        private int _transitionGeneration;
 
         public LivePane()
         {
@@ -59,6 +60,11 @@ namespace HandsLiftedApp.Core.Views
 
         private async void OnActiveSlideChanged(Slide? slide)
         {
+            // Generation token: if another slide change fires while we are preloading,
+            // our token will be stale and we must not call Transition() — doing so would
+            // override the newer slide with an out-of-order result.
+            int myGeneration = System.Threading.Interlocked.Increment(ref _transitionGeneration);
+
             var logoPath = NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
             Log.Debug("[LivePane] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
                 slide?.GetType().Name ?? "null",
@@ -83,6 +89,9 @@ namespace HandsLiftedApp.Core.Views
             // has to decode a large image during the first transition frame.
             if (spec?.Background is ImageBackground)
                 await Task.Run(() => SlideRenderer.Preload(spec));
+
+            // Bail out if a newer slide change arrived while we were preloading.
+            if (myGeneration != _transitionGeneration) return;
 
             LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
         }
