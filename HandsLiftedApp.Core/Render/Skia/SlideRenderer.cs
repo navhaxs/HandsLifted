@@ -137,11 +137,27 @@ public static class SlideRenderer
 
         if (progress < 1f && prevBg != null && currBg != null && prevBg != currBg)
         {
-            // Fade-over: previous stays at full opacity, current fades in on top.
-            // Avoids the mid-transition darkening that occurs when both images are
-            // drawn at partial opacity over a black canvas.
-            DrawBackground(canvas, prevBg, 1f, width, height);
-            DrawBackground(canvas, currBg, progress, width, height);
+            if (currBg is TransparentBackground)
+            {
+                // Fading FROM opaque (image/solid) TO transparent (song/blank slide):
+                // fade the previous background OUT so the motion video layer below shows through.
+                DrawBackground(canvas, prevBg, 1f - progress, width, height);
+            }
+            else if (prevBg is TransparentBackground)
+            {
+                // Fading FROM transparent (song/blank) TO opaque (image/solid):
+                // fade the current background IN to cover the motion video layer.
+                DrawBackground(canvas, currBg, progress, width, height);
+            }
+            else
+            {
+                // Fade-over between two opaque backgrounds (image→image, solid→image, etc.):
+                // keep previous at full opacity while current fades in on top.
+                // Avoids the mid-transition darkening that occurs when both backgrounds
+                // are drawn at partial opacity over the black canvas.
+                DrawBackground(canvas, prevBg, 1f, width, height);
+                DrawBackground(canvas, currBg, progress, width, height);
+            }
         }
         else
         {
