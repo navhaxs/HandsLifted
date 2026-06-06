@@ -12,6 +12,7 @@ public static class SongTitleSlideSpecBuilder
 {
     private const int CanvasWidth = 1920;
     private const int CanvasHeight = 1080;
+    private const float HorizontalMargin = 80f;
     private const float CopyrightSizeRatio = 0.45f;
     private const float CopyrightBottomMargin = 60f;
 
@@ -54,7 +55,12 @@ public static class SongTitleSlideSpecBuilder
         using var measureFont = new SKFont(typeface, theme.FontSize);
         using var measurePaint = new SKPaint(measureFont);
         float textWidth = measurePaint.MeasureText(title);
-        float x = (CanvasWidth - textWidth) / 2f;
+        float x = theme.TextAlignment switch
+        {
+            TextAlignment.Right => CanvasWidth - textWidth - HorizontalMargin,
+            TextAlignment.Left  => HorizontalMargin,
+            _                   => (CanvasWidth - textWidth) / 2f, // Center / Justify
+        };
         float y = (CanvasHeight - theme.LineHeight) / 2f;
         var bounds = new SKRect(x, y, x + textWidth, y + theme.LineHeight);
         var elemTypeface = GetTypeface(theme);
@@ -83,7 +89,12 @@ public static class SongTitleSlideSpecBuilder
             // Stack lines above the bottom margin; empty lines still consume vertical space.
             float lineTop = CanvasHeight - CopyrightBottomMargin - (n - i) * lineHeight;
             float textWidth = measurePaint.MeasureText(line);
-            float x = (CanvasWidth - textWidth) / 2f;
+            float x = theme.TextAlignment switch
+            {
+                TextAlignment.Right => CanvasWidth - textWidth - HorizontalMargin,
+                TextAlignment.Left  => HorizontalMargin,
+                _                   => (CanvasWidth - textWidth) / 2f, // Center / Justify
+            };
             var bounds = new SKRect(x, lineTop, x + textWidth, lineTop + lineHeight);
             result.Add(new TextLineElement(line, bounds, GetTypeface(theme), copyrightSize, color, DefaultShadow));
         }
