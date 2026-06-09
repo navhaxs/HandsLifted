@@ -135,6 +135,14 @@ namespace HandsLiftedApp.Core.Views
             // Bail out if a newer slide change arrived while we were preloading.
             if (myGeneration != _transitionGeneration) return;
 
+            // Skip animation when the projector window is hidden — avoids starting a
+            // DispatcherTimer that fires InvalidateVisual() on an invisible window.
+            if (!IsVisible)
+            {
+                MainSlideCanvas.Spec = spec;
+                return;
+            }
+
             MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
         }
 
