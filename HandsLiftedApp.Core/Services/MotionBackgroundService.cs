@@ -19,6 +19,12 @@ namespace HandsLiftedApp.Core.Services
 		public static IObservable<MpvContext?> ActiveContext => _activeContextSubject;
 
 		/// <summary>
+		/// Returns the currently active MpvContext synchronously, or null if no motion
+		/// background is playing. Use for lightweight polling (e.g. NDI throttle check).
+		/// </summary>
+		public static MpvContext? CurrentContext => _activeContextSubject.Value;
+
+		/// <summary>
 		/// Called by MotionBackgroundLayer to broadcast the active context to all observers.
 		/// Pass null when playback stops.
 		/// </summary>

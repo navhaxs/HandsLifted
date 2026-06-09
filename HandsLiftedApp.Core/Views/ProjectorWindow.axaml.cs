@@ -17,6 +17,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.Render.Skia.Builders;
 using HandsLiftedApp.Core.Utils.MacOS;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
@@ -33,6 +34,15 @@ namespace HandsLiftedApp.Core.Views
 
             if (Design.IsDesignMode)
                 return;
+
+            // Main NDI output (motion background + slide canvas + video layer):
+            // high-res when a motion background is playing or a slide transition is active.
+            NdiMainContainer.IsContentHighResCheckFunc = _ =>
+                MotionBackgroundService.CurrentContext != null || MainSlideCanvas.IsTransitioning;
+
+            // Lyrics NDI output (AltSlideRenderer only): high-res during slide transitions.
+            NdiLyricsContainer.IsContentHighResCheckFunc = _ =>
+                MainSlideCanvas.IsTransitioning;
 
             Log.Information("Created ProjectorWindow");
 

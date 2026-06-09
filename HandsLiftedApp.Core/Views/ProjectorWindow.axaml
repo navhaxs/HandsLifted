@@ -43,6 +43,7 @@
     </Window.ContextMenu>
     <Grid>
         <avaloniaNdi:NDISendContainer
+            x:Name="NdiLyricsContainer"
             NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}"
             NdiWidth="1920" NdiHeight="1080"
             Width="1920"
@@ -54,6 +55,7 @@
 
         <Viewbox>
             <avaloniaNdi:NDISendContainer
+                x:Name="NdiMainContainer"
                 NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}"
                 NdiWidth="1920" NdiHeight="1080"
                 Width="1920"

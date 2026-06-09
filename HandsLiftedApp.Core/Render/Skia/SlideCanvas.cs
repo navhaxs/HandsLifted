@@ -24,6 +24,13 @@ public sealed class SlideCanvas : Control
     // ── Public API ──────────────────────────────────────────────────────────
 
     /// <summary>
+    /// True while a cross-fade transition timer is running.
+    /// Useful for external code that needs to know whether animated content is active
+    /// (e.g. to suppress NDI throttling during slide changes).
+    /// </summary>
+    public bool IsTransitioning => _timer != null;
+
+    /// <summary>
     /// Sets the spec immediately with no animation. Use in the editor.
     /// </summary>
     public SlideRenderSpec? Spec
