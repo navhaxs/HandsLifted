@@ -34,6 +34,12 @@ namespace HandsLiftedApp.Core
         public MpvContext? MpvContextInstance { get; set; }
         public AppPreferencesViewModel AppPreferences { get; set; }
 
+        /// <summary>
+        /// Set to true by OnShutdown() so windows can distinguish an app-exit close
+        /// (which must be allowed) from a user-triggered close (which may be suppressed).
+        /// </summary>
+        public bool IsShuttingDown { get; private set; }
+
         public ImportWorkerThread ImportWorkerThread { get; } = new();
 
         public void OnStartup(IApplicationLifetime applicationLifetime)
@@ -95,6 +101,8 @@ namespace HandsLiftedApp.Core
 
         public void OnShutdown()
         {
+            IsShuttingDown = true;
+
             if (MpvContextInstance != null)
             {
                 try

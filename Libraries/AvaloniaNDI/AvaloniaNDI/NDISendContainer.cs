@@ -404,10 +404,12 @@ Description("Function to determine whether the content requires high resolution 
                     // tell the thread to exit
                     exitThread = true;
 
-                    // wait for it to exit
+                    // wait for it to exit (bounded: TryTake timeout=250ms + one
+                    // send_send_video_v2 call with NdiClockToVideo=true ≈ 16ms)
                     if (sendThread != null)
                     {
-                        sendThread.Join();
+                        if (!sendThread.Join(2000))
+                            Log.Warning("[NDI] Send thread did not exit within 2 s during dispose");
 
                         sendThread = null;
                     }

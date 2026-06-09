@@ -303,6 +303,13 @@ namespace HandsLiftedApp.Core.Views
 
         private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
         {
+            // During app shutdown, allow the close so the visual tree is properly
+            // detached — this lets NDISendContainer.DetachedFromVisualTree fire
+            // Dispose(), which calls send_destroy() and terminates NDI native threads.
+            // Suppressing close during shutdown leaves native threads running and hangs the process.
+            if (Globals.Instance.IsShuttingDown)
+                return;
+
             this.IsVisible = false;
             e.Cancel = true;
         }
