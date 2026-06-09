@@ -403,6 +403,12 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 
 		#endregion
 
+		protected override void OnDetachedFromVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
+		{
+			base.OnDetachedFromVisualTree(e);
+			Dispose();
+		}
+
 		public void Dispose()
 		{
 			_pendingFadeOutTimer?.Dispose();
