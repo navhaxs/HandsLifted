@@ -198,7 +198,7 @@ namespace HandsLiftedApp.Core.Views
                 Dispatcher.UIThread.InvokeAsync(() => ControlsOverlay.IsVisible = false);
             });
             aTimer.Interval = 5000; // ~ 5 seconds
-            aTimer.Enabled = true;
+            aTimer.AutoReset = false; // one-shot; restarted on each pointer move
 
             this.PointerMoved += (sender, args) =>
             {
