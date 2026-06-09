@@ -545,11 +545,29 @@ Description("Function to determine whether the content requires high resolution 
         private DateTime _lastFrameRenderTime = DateTime.MinValue;
         private IGetVideoBufferBitmap? _cachedVideoControl;
         private Visual? _lastChild;
+        private bool _hadConnections = false;
 
         private unsafe void OnCompositionTargetRendering()
         {
             if (IsSendPaused || sendInstancePtr == IntPtr.Zero || this.Child == null)
                 return;
+
+            // Skip all rendering work when no NDI receivers are connected.
+            // send_get_no_connections with timeout=0 is non-blocking (polls current count).
+            // When a new client connects after a period of no connections, reset the
+            // static-content throttle timestamp so the first frame is sent immediately
+            // rather than waiting up to 500 ms.
+            int connections = NDIlib.send_get_no_connections(sendInstancePtr, 0);
+            if (connections == 0)
+            {
+                _hadConnections = false;
+                return;
+            }
+            if (!_hadConnections)
+            {
+                _lastFrameRenderTime = DateTime.MinValue; // force immediate capture on reconnect
+                _hadConnections = true;
+            }
 
             // Detect child change BEFORE the throttle check so a new slide immediately bypasses
             // the 500ms static-content throttle and is captured without delay.
