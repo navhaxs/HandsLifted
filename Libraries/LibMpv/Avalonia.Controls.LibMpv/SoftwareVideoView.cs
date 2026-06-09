@@ -20,6 +20,7 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
     private MpvContext? _mpvContext;
     private WriteableBitmap? _currentBitmap;
     private bool _isPrimaryRenderer;
+    private volatile bool _newFrameAvailable;
 
     public static readonly DirectProperty<SoftwareVideoView, MpvContext?> MpvContextProperty =
         AvaloniaProperty.RegisterDirect<SoftwareVideoView, MpvContext?>(
@@ -56,6 +57,7 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
             }
 
             _mpvContext = value;
+            _newFrameAvailable = false;
 
             if (_mpvContext != null)
             {
@@ -151,9 +153,14 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
         {
             if (_isPrimaryRenderer && _mpvContext != null)
             {
-                // Only the primary renderer updates the bitmap
-                if (SharedBitmaps.TryGetValue(_mpvContext, out var currentEntry))
+                // Only the primary renderer updates the bitmap, and only when mpv
+                // has signalled a new frame is ready. Extra Avalonia render passes
+                // (e.g. driven by SlideCanvas transition timer) just reblit the last
+                // decoded frame — avoids calling mpv_render_context_render() faster
+                // than mpv produces frames, which disrupts its decode pipeline timing.
+                if (_newFrameAvailable && SharedBitmaps.TryGetValue(_mpvContext, out var currentEntry))
                 {
+                    _newFrameAvailable = false;
                     var bitmap = currentEntry.Bitmap;
 
                     // Check if the bitmap needs to be recreated
@@ -174,6 +181,11 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
                     }
 
                     _currentBitmap = bitmap;
+                }
+                else if (SharedBitmaps.TryGetValue(_mpvContext, out var existingEntry))
+                {
+                    // No new frame — reuse last decoded bitmap
+                    _currentBitmap = existingEntry.Bitmap;
                 }
             }
             else if (_mpvContext != null)
@@ -199,6 +211,7 @@ public class SoftwareVideoView : Control, IGetVideoBufferBitmap
 
     private void UpdateVideoView()
     {
+        _newFrameAvailable = true;
         Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Render);
     }
 
