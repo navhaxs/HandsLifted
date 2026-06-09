@@ -13,6 +13,7 @@ public abstract record BackgroundSpec;
 public record TransparentBackground() : BackgroundSpec;
 public record SolidBackground(SKColor Color) : BackgroundSpec;
 public record ImageBackground(string FilePath) : BackgroundSpec;
+public record SkiaBitmapBackground(SKBitmap Bitmap) : BackgroundSpec;
 
 public abstract record RenderElement(SKRect Bounds);
 

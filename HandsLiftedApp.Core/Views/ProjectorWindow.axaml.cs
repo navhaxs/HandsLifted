@@ -123,7 +123,7 @@ namespace HandsLiftedApp.Core.Views
                 LogoSlide                => string.IsNullOrWhiteSpace(logoPath)
                     ? null
                     : new SlideRenderSpec(new ImageBackground(logoPath), Array.Empty<RenderElement>()),
-                // Other slide types (custom AXAML, blank) — canvas shows blank.
+                HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs => CustomSlideSpecBuilder.Build(cs),
                 _                        => null,
             };
 

@@ -135,18 +135,20 @@ public static class SlideRenderer
         var prevBg = previous?.Background;
         var currBg = current?.Background;
 
-        if (progress < 1f && prevBg != null && currBg != null && prevBg != currBg)
+        if (progress < 1f && currBg != null && currBg != prevBg)
         {
             if (currBg is TransparentBackground)
             {
                 // Fading FROM opaque (image/solid) TO transparent (song/blank slide):
                 // fade the previous background OUT so the motion video layer below shows through.
-                DrawBackground(canvas, prevBg, 1f - progress, width, height);
+                if (prevBg != null)
+                    DrawBackground(canvas, prevBg, 1f - progress, width, height);
             }
-            else if (prevBg is TransparentBackground)
+            else if (prevBg == null || prevBg is TransparentBackground)
             {
-                // Fading FROM transparent (song/blank) TO opaque (image/solid):
+                // Fading FROM nothing/transparent (song/blank/no selection) TO opaque (image/solid):
                 // fade the current background IN to cover the motion video layer.
+                // prevBg == null covers the initial-selection case (no previous slide).
                 DrawBackground(canvas, currBg, progress, width, height);
             }
             else
@@ -250,6 +252,16 @@ public static class SlideRenderer
                     canvas.DrawBitmap(bmp, dest, paint);
                 }
                 break;
+
+            case SkiaBitmapBackground bmpBg:
+            {
+                var dest = new SKRect(0, 0, width, height);
+                using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
+                if (alpha < 1f)
+                    paint.Color = SKColors.White.WithAlpha((byte)(255 * alpha));
+                canvas.DrawBitmap(bmpBg.Bitmap, dest, paint);
+                break;
+            }
 
             case TransparentBackground:
             default:
