@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -79,7 +78,6 @@ namespace HandsLiftedApp.Core.Views
 
         private IDisposable? _slideSubscription;
         private MainViewModel? _vm;
-        private int _transitionGeneration;
 
         protected override void OnDataContextChanged(EventArgs e)
         {
@@ -100,12 +98,12 @@ namespace HandsLiftedApp.Core.Views
             _slideSubscription?.Dispose();
         }
 
-        private async void OnActiveSlideChanged(Slide? slide)
+        private void OnActiveSlideChanged(Slide? slide)
         {
-            // Generation token: if another slide change fires while we are preloading,
-            // our token will be stale and we must not call Transition() — doing so would
-            // override the newer slide with an out-of-order result.
-            int myGeneration = System.Threading.Interlocked.Increment(ref _transitionGeneration);
+            // Bitmap preload is intentionally omitted here — LivePane.OnActiveSlideChanged
+            // already runs Task.Run(Preload) for image slides on the same ActiveSlide change,
+            // and the bitmap cache is shared. A second preload call would race to find the
+            // entry already cached (no-op) but wastes a thread-pool job.
 
             var logoPath = NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
             Log.Debug("[ProjectorWindow] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
@@ -126,14 +124,6 @@ namespace HandsLiftedApp.Core.Views
                 HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs => CustomSlideSpecBuilder.Build(cs),
                 _                        => null,
             };
-
-            // Pre-warm bitmap cache on a background thread so the render thread never
-            // has to decode a large image during the first transition frame.
-            if (spec?.Background is ImageBackground)
-                await Task.Run(() => SlideRenderer.Preload(spec));
-
-            // Bail out if a newer slide change arrived while we were preloading.
-            if (myGeneration != _transitionGeneration) return;
 
             // Skip animation when the projector window is hidden — avoids starting a
             // DispatcherTimer that fires InvalidateVisual() on an invisible window.
