@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
@@ -208,46 +209,87 @@ namespace HandsLiftedApp.Controls
 
         void SetupDnd(Grid dropContainer)
         {
-            void DragOver(object? sender, DragEventArgs e)
+            Control? lastAdornerElement = null;
+
+            void ClearAdorner()
             {
-                if (e.Source is Control c && c.Name == "MoveTarget")
+                if (lastAdornerElement == null) return;
+                AdornerLayer.GetAdornerLayer(lastAdornerElement)?.Children.Clear();
+                lastAdornerElement = null;
+            }
+
+            void ShowInsertAdorner(int insertIndex)
+            {
+                var listBox = dropContainer.FindDescendantOfType<ListBoxWithoutKey>();
+                if (listBox == null || insertIndex < 0) return;
+
+                Control? target;
+                bool onRight;
+
+                if (insertIndex >= listBox.Items.Count)
                 {
-                    e.DragEffects = e.DragEffects & (DragDropEffects.Move);
+                    target = listBox.ContainerFromIndex(listBox.Items.Count - 1);
+                    onRight = true;
                 }
                 else
                 {
-                    e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
+                    target = listBox.ContainerFromIndex(insertIndex);
+                    onRight = false;
                 }
 
-                this.Background = SolidColorBrush.Parse("Red");
+                if (target == null || target == lastAdornerElement) return;
 
-                // Only allow if the dragged data contains text or filenames.
+                ClearAdorner();
+
+                var adornerLayer = AdornerLayer.GetAdornerLayer(target);
+                if (adornerLayer == null) return;
+
+                var indicator = new Border
+                {
+                    BorderThickness = onRight ? new Thickness(0, 0, 2, 0) : new Thickness(2, 0, 0, 0),
+                    BorderBrush = new SolidColorBrush(Color.Parse("#9a93cd")),
+                    IsHitTestVisible = false
+                };
+                adornerLayer.Children.Add(indicator);
+                AdornerLayer.SetAdornedElement(indicator, target);
+                lastAdornerElement = target;
+            }
+
+            void DragOver(object? sender, DragEventArgs e)
+            {
+                if (e.Source is Control c && c.Name == "MoveTarget")
+                    e.DragEffects = e.DragEffects & DragDropEffects.Move;
+                else
+                    e.DragEffects = e.DragEffects & DragDropEffects.Copy;
+
                 if (!e.Data.Contains(DataFormats.Text)
                     && !e.Data.Contains(DataFormats.Files)
                     && !e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
+                {
                     e.DragEffects = DragDropEffects.None;
+                    return;
+                }
 
                 if (e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
                 {
-                    FindItemIndexOf(dropContainer, e);
+                    var insertIndex = FindItemIndexOf(dropContainer, e);
+                    ShowInsertAdorner(insertIndex);
                 }
             }
 
             void DragLeave(object? sender, DragEventArgs e)
             {
-                this.Background = SolidColorBrush.Parse("Transparent");
+                ClearAdorner();
             }
 
             async void Drop(object? sender, DragEventArgs e)
             {
                 if (e.Source is Control c && c.Name == "MoveTarget")
-                {
-                    e.DragEffects = e.DragEffects & (DragDropEffects.Move);
-                }
+                    e.DragEffects = e.DragEffects & DragDropEffects.Move;
                 else
-                {
-                    e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
-                }
+                    e.DragEffects = e.DragEffects & DragDropEffects.Copy;
+
+                ClearAdorner();
 
                 var destSlideIndex = FindItemIndexOf(dropContainer, e);
 
@@ -256,10 +298,7 @@ namespace HandsLiftedApp.Controls
                     if (e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
                     {
                         var sourceSlideReference =
-                            ((SlideDragDropCustomDataFormat)e.Data.Get(SlideDragDropCustomDataFormat.CustomFormat));
-
-                        Debug.Print(sourceSlideReference.ToString());
-
+                            (SlideDragDropCustomDataFormat)e.Data.Get(SlideDragDropCustomDataFormat.CustomFormat);
 
                         MessageBus.Current.SendMessage(new MoveSlideCommand()
                         {
@@ -268,10 +307,6 @@ namespace HandsLiftedApp.Controls
                             DestItemUUID = destItem.UUID,
                             DestSlideIndex = destSlideIndex
                         });
-                    }
-                    else if (e.Data.Contains(DataFormats.Text))
-                    {
-                        //_dropState.Text = e.Data.GetText();
                     }
                     else if (e.Data.Contains(DataFormats.Files))
                     {
@@ -283,23 +318,15 @@ namespace HandsLiftedApp.Controls
                             DestSlideIndex = destSlideIndex
                         });
                     }
-#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618
                     else if (e.Data.Contains(DataFormats.FileNames))
                     {
-                        var files = e.Data.GetFileNames();
-                        // _dropState.Text = string.Join(Environment.NewLine, files ?? Array.Empty<string>());
+                        _ = e.Data.GetFileNames();
                     }
-#pragma warning restore CS0618 // Type or member is obsolete
-                    //else if (e.Data.Contains(CustomFormat))
-                    //{
-                    //    _dropState.Text = "Custom: " + e.Data.Get(CustomFormat);
-                    //}
+#pragma warning restore CS0618
                 }
-
-                this.Background = SolidColorBrush.Parse("Transparent");
             }
 
-            //dragMe.PointerPressed += DoDrag;
             dropContainer.AddHandler(DragDrop.DropEvent, Drop);
             dropContainer.AddHandler(DragDrop.DragOverEvent, DragOver);
             dropContainer.AddHandler(DragDrop.DragLeaveEvent, DragLeave);
