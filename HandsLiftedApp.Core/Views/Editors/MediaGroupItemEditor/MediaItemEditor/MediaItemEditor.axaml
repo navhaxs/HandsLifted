@@ -29,7 +29,10 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <DockPanel Margin="20">
-        <TextBox Text="{Binding SourceMediaFilePath}" DockPanel.Dock="Bottom" />
+        <DockPanel DockPanel.Dock="Bottom">
+            <Button Content="..." DockPanel.Dock="Right" Click="BrowseButton_OnClick" />
+            <TextBox Text="{Binding SourceMediaFilePath}" />
+        </DockPanel>
         <Image
             Margin="20"
             RenderOptions.BitmapInterpolationMode="MediumQuality"
