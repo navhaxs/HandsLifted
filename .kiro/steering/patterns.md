@@ -20,7 +20,16 @@
 - `SoftwareVideoView` uses a **shared bitmap pattern** — multiple views can share one `MpvContext`, but only the "primary renderer" (first to register) updates the `WriteableBitmap`.
 - Each `SoftwareVideoView` instance that uses its own `MpvContext` becomes its own primary renderer. This is the pattern used by `MotionBackgroundLayer` (one context per output window).
 - The `MpvContext` property on `SoftwareVideoView` is a `DirectProperty` — set it to connect/disconnect the view from a context.
-- **First frame detection**: Subscribe to `MpvContext.VideoReconfig` event. It fires when the video dimensions are configured (i.e., first frame is decoded and ready to render).
+
+## MotionBackgroundLayer Lifecycle
+
+- `MotionBackgroundLayer` subscribes to `ActiveItem` property changes. Each output window has its own instance.
+- **Fade-out is deferred** — When stopping, the layer fades to Opacity=0 over 500ms, then the callback fires to actually stop/dispose the MpvContext. During this window, `_currentVideoPath` is still set.
+- **Cancellation pattern** — A `_pendingFadeOutTimer` (`IDisposable`) and `_isStopPending` flag track in-flight fade-outs. When a new item arrives while a stop is pending:
+  - Same video requested → cancel timer, fade back in (resume playback)
+  - Different video requested → cancel timer, stop immediately, start new video
+  - No video requested → let the pending stop proceed naturally
+- **First frame detection**: Subscribe to `MpvContext.VideoReconfig` event. It fires when the video dimensions are configured (i.e., first frame is decoded and ready to render). `FadeIn()` is called only on the first VideoReconfig event.
 - **Error detection during playback**: Subscribe to `MpvContext.EndFile` event. Check `e.Reason == MPV_END_FILE_REASON_ERROR`.
 
 ## NDI Output
@@ -75,3 +84,7 @@
 5. **NDI video shortcut with multiple SoftwareVideoViews** — Adding a new `SoftwareVideoView` (e.g., motion background) to the NDI container tree disables the single-video shortcut. The full render path handles compositing correctly.
 6. **XFade mode mismatch** — Using simultaneous fade for opaque slides causes dip-to-black. Using fade-in-only for transparent slides causes double-text. The mode must match the content type.
 7. **Relative paths passing IsValidVideoFile** — Always check `Path.IsPathFullyQualified` for file paths that will be used with `File.Exists` or passed to external libraries. Relative paths with valid extensions will pass extension-only checks but fail at runtime.
+8. **Deferred callbacks racing with new requests** — Timer-based fade-out callbacks (e.g., `Observable.Timer(FadeOutDuration)`) can fire after a new item has already been activated. Always track pending operations with a cancellable `IDisposable` and a `_isStopPending` flag. When a new request arrives, cancel the pending timer and handle the new request immediately rather than letting the stale callback execute later.
+9. **"Same video already playing" check during pending stop** — If a fade-out+stop is scheduled but hasn't completed, `_currentVideoPath` is still set. A new item requesting the same video will incorrectly hit the "already playing" early-return and do nothing — then the pending stop fires and kills playback. Always check `_isStopPending` before the "same video" shortcut.
+10. **Extending features across slide types** — `SongSlideInstance` and `SongTitleSlideInstance` are separate types. When adding a feature to one (e.g., `HasMotionBackground`), search for all pattern-match sites (`is SongSlideInstance`, `as SongSlideInstance`, `.OfType<SongSlideInstance>()`) and extend them to cover the other type too. Key sites: `ActiveSlideRender.UpdateCrossDissolveMode`, `SlideRendererWorkerWindow` bitmap rendering, `SongItemInstance.RegenerateAllSlideBitmaps`.
+11. **Multiple MotionBackgroundLayer instances** — Each output window (ProjectorWindow, StageDisplayWindow) has its own `MotionBackgroundLayer` instance. They each independently subscribe to `ActiveItem` changes and manage their own `MpvContext`. The `OnActiveItemChanged` handler fires once per instance per item change — this is expected, not a bug.
