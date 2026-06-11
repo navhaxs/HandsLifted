@@ -1,28 +1,33 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        MinWidth="1000" MinHeight="500"
-        x:Class="HandsLiftedApp.Core.Views.MainWindow"
-        Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
-        ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
-        ExtendClientAreaTitleBarHeightHint="90"
-        ExtendClientAreaToDecorationsHint="True"
-        WindowStartupLocation="CenterScreen"
-        WindowState="Normal"
-        Background="{DynamicResource SurfaceBrush}"
-        Opened="TopLevel_OnOpened"
-        Title="VisionScreens">
-    
+<Window
+    Background="{DynamicResource SurfaceBrush}"
+    ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
+    ExtendClientAreaTitleBarHeightHint="90"
+    ExtendClientAreaToDecorationsHint="True"
+    Icon="/Assets/app.ico"
+    MinHeight="500"
+    MinWidth="1000"
+    Opened="TopLevel_OnOpened"
+    ShowInTaskbar="True"
+    Title="VisionScreens"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Normal"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Border x:Name="RootBorder">
         <Grid>
             <views:MainView />
             <Rectangle
-                x:Name="Shade"
                 Fill="#80000000"
-                IsVisible="False" />
+                IsVisible="False"
+                x:Name="Shade" />
         </Grid>
     </Border>
 

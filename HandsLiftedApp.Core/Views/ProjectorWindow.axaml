@@ -1,53 +1,68 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-        xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
-        xmlns:avaloniaNdi="clr-namespace:AvaloniaNDI;assembly=AvaloniaNDI"
-        xmlns:render1="clr-namespace:HandsLiftedApp.Views.Render"
-        xmlns:app="clr-namespace:HandsLiftedApp.Core"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
-        xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
-        xmlns:motionBg="clr-namespace:HandsLiftedApp.Core.Render.MotionBackground"
-        xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        Icon="avares://HandsLiftedApp.Core/Assets/app.ico"
-        x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
-        x:DataType="viewModels:MainViewModel"
-        Background="Black"
-        DoubleTapped="ProjectorWindow_DoubleTapped"
-        KeyDown="ProjectorWindow_KeyDown"
-        Closing="Window_OnClosing"
-        Title="ProjectorWindow">
-    
+﻿<Window
+    Background="Black"
+    Closing="Window_OnClosing"
+    DoubleTapped="ProjectorWindow_DoubleTapped"
+    KeyDown="ProjectorWindow_KeyDown"
+    Title="ProjectorWindow"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.ProjectorWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:avaloniaNdi="clr-namespace:AvaloniaNDI;assembly=AvaloniaNDI"
+    xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:motionBg="clr-namespace:HandsLiftedApp.Core.Render.MotionBackground"
+    xmlns:render1="clr-namespace:HandsLiftedApp.Views.Render"
+    xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
+    xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Window.Resources>
         <SolidColorBrush x:Key="FrameColor">#bfff6a00</SolidColorBrush>
     </Window.Resources>
 
     <Window.ContextMenu>
-        <ContextMenu Opening="ContextMenu_OnOpening" Closing="ContextMenu_OnClosing">
+        <ContextMenu Closing="ContextMenu_OnClosing" Opening="ContextMenu_OnOpening">
             <MenuItem Header="{Binding $parent[Window].Title}" IsEnabled="False" />
-            <MenuItem x:Name="ToggleFullscreen" Header="Toggle Fullscreen" Click="ToggleFullscreen_OnClick" IsChecked="{Binding $parent[views:ProjectorWindow].IsFullScreen}" />
-            <MenuItem x:Name="ToggleTopmost" Header="Topmost" Click="ToggleTopmost_OnClick" IsChecked="{Binding $parent[views:ProjectorWindow].Topmost}">
+            <MenuItem
+                Click="ToggleFullscreen_OnClick"
+                Header="Toggle Fullscreen"
+                IsChecked="{Binding $parent[views:ProjectorWindow].IsFullScreen}"
+                x:Name="ToggleFullscreen" />
+            <MenuItem
+                Click="ToggleTopmost_OnClick"
+                Header="Topmost"
+                IsChecked="{Binding $parent[views:ProjectorWindow].Topmost}"
+                x:Name="ToggleTopmost">
                 <MenuItem.Icon>
-                    <CheckBox BorderThickness="0"
-                              IsHitTestVisible="False"
-                              IsChecked="{Binding $parent[Window].Topmost}" />
+                    <CheckBox
+                        BorderThickness="0"
+                        IsChecked="{Binding $parent[Window].Topmost}"
+                        IsHitTestVisible="False" />
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem x:Name="Close" Header="Close" Click="Close_OnClick" />
+            <MenuItem
+                Click="Close_OnClick"
+                Header="Close"
+                x:Name="Close" />
         </ContextMenu>
     </Window.ContextMenu>
     <Grid>
         <avaloniaNdi:NDISendContainer
-            x:Name="NdiLyricsContainer"
+            Height="1080"
+            NdiHeight="1080"
             NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}"
-            NdiWidth="1920" NdiHeight="1080"
+            NdiWidth="1920"
             Width="1920"
-            Height="1080">
+            x:Name="NdiLyricsContainer">
             <render1:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
         </avaloniaNdi:NDISendContainer>
 
@@ -55,11 +70,12 @@
 
         <Viewbox>
             <avaloniaNdi:NDISendContainer
-                x:Name="NdiMainContainer"
+                Height="1080"
+                NdiHeight="1080"
                 NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}"
-                NdiWidth="1920" NdiHeight="1080"
+                NdiWidth="1920"
                 Width="1920"
-                Height="1080">
+                x:Name="NdiMainContainer">
                 <Grid Background="Black">
                     <motionBg:MotionBackgroundObserver />
                     <skia:SlideCanvas x:Name="MainSlideCanvas" />
@@ -83,8 +99,13 @@
 
             <Grid VerticalAlignment="Top">
                 <TextBlock
-                    IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}"                    
-                    Background="{StaticResource FrameColor}" Foreground="Black" HorizontalAlignment="Left" FontSize="12" VerticalAlignment="Top" Padding="4">
+                    Background="{StaticResource FrameColor}"
+                    FontSize="12"
+                    Foreground="Black"
+                    HorizontalAlignment="Left"
+                    IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}"
+                    Padding="4"
+                    VerticalAlignment="Top">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}({0}) {1:0} x {2:0}">
                             <Binding Path="$parent[views:ProjectorWindow].BoundPosition" />
@@ -94,13 +115,13 @@
                     </TextBlock.Text>
                 </TextBlock>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button Click="FullscreenToggleButton_OnClick">
                         <avalonia:MaterialIcon>
                             <avalonia:MaterialIcon.Kind>
                                 <Binding Path="WindowState" RelativeSource="{RelativeSource AncestorType=Window}">
                                     <Binding.Converter>
-                                        <converters:FullscreenIconKindConverter/>
+                                        <converters:FullscreenIconKindConverter />
                                     </Binding.Converter>
                                 </Binding>
                             </avalonia:MaterialIcon.Kind>
