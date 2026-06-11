@@ -63,7 +63,11 @@ namespace HandsLiftedApp.Core.Models.Library
 
         void Refresh()
         {
-            if (Directory.Exists(Config.Directory) && Items != null)
+            if (!Directory.Exists(Config.Directory))
+            {
+                Log.Error($"Library [{Config.Label}] fail - directory [{Config.Directory}] does not exist");
+            }
+            else
             {
                 var files = new DirectoryInfo(Config.Directory).GetFiles("*.*", SearchOption.TopDirectoryOnly)
                     .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
