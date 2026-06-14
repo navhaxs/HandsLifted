@@ -183,6 +183,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         void UpdateStanzaSlides()
         {
+            System.Collections.Generic.List<IRenderable>? toRender = null;
             lock (stantaSlidesLock)
             {
                 try
@@ -311,7 +312,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     this.RaisePropertyChanged("Slides");
                     // Enqueue newly created slides for background thumbnail generation.
                     // Cached == null identifies slides created this call (existing slides keep their cached bitmap).
-                    var toRender = new System.Collections.Generic.List<IRenderable>();
+                    toRender = new System.Collections.Generic.List<IRenderable>();
                     foreach (var slide in newSlides)
                     {
                         if (slide is SongSlideInstance s && s.Cached == null)
@@ -319,16 +320,16 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }
                     if (TitleSlide is SongTitleSlideInstance titleInst && titleInst.Cached == null)
                         toRender.Add(titleInst);
-                    if (toRender.Count > 0)
-                        Globals.Instance.SlideRenderQueue.EnqueueBatch(toRender);
                 }
                 catch (Exception ex)
                 {
                     Log.Error("SongItemInstance.GenerateSlides", ex);
                 }
- 
+
 
             }
+            if (toRender?.Count > 0)
+                Globals.Instance.SlideRenderQueue.EnqueueBatch(toRender);
 
         }
 
