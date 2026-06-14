@@ -41,7 +41,7 @@ public sealed class SlideRenderQueue
     /// Returns a Task for testing; callers in production should fire-and-forget.
     /// </summary>
     public Task EnqueueBatchAsync(IEnumerable<Action> workItems)
-        => Task.WhenAll(workItems.Select(RunWithGate));
+        => Task.WhenAll(workItems.Select(RunWithGate).ToList());
 
     /// <summary>Fire-and-forget convenience overload for production use.</summary>
     public void Enqueue(IRenderable renderable)

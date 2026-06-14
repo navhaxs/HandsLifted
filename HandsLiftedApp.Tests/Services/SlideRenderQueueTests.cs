@@ -47,7 +47,7 @@ public class SlideRenderQueueTests
                     current++;
                     if (current > maxObserved) maxObserved = current;
                 }
-                Thread.Sleep(20);
+                Thread.Sleep(50); // hold slot long enough to observe concurrent peak
                 lock (sync) { current--; }
             }));
 
