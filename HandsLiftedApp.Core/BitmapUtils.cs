@@ -18,6 +18,14 @@ namespace HandsLiftedApp.Core
             return new Bitmap(stream);
         }
 
+        public static SKBitmap? AvaloniaToSKBitmap(Bitmap avaBitmap)
+        {
+            using var ms = new System.IO.MemoryStream();
+            avaBitmap.Save(ms);
+            ms.Seek(0, System.IO.SeekOrigin.Begin);
+            return SKBitmap.Decode(ms);
+        }
+
         public static Bitmap? CreateThumbnail(Bitmap? source)
         {
             if (source == null)
