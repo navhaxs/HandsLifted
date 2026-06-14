@@ -41,6 +41,7 @@ namespace HandsLiftedApp.Core
         public bool IsShuttingDown { get; private set; }
 
         public ImportWorkerThread ImportWorkerThread { get; } = new();
+        public SlideRenderQueue SlideRenderQueue { get; } = new SlideRenderQueue();
 
         public void OnStartup(IApplicationLifetime applicationLifetime)
         {
