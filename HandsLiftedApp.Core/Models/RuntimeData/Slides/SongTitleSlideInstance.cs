@@ -11,6 +11,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.Thumbnail;
 using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.Render.Skia.Builders;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
@@ -20,7 +21,7 @@ using SkiaSharp;
 
 namespace HandsLiftedApp.Data.Slides
 {
-    public class SongTitleSlideInstance : SongTitleSlide, ISlideInstance
+    public class SongTitleSlideInstance : SongTitleSlide, ISlideInstance, IRenderable
     {
         private DebounceDispatcher debounceDispatcher = new(200);
 
@@ -47,28 +48,30 @@ namespace HandsLiftedApp.Data.Slides
                 .Subscribe(designId =>
                 {
                     Theme = ResolveTheme(designId);
-                    debounceDispatcher.Debounce(() => GenerateBitmaps());
+                    RequestRender();
                 });
 
             parentSongItem?.WhenAnyValue(x => x.MotionBackgroundVideoPath)
                 .Skip(1)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(_ => debounceDispatcher.Debounce(() => GenerateBitmaps()));
+                .Subscribe(_ => RequestRender());
 
             this.WhenAnyValue(x => x.Theme)
                 .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
                 .Switch()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(_ => debounceDispatcher.Debounce(() => GenerateBitmaps()));
+                .Subscribe(_ => RequestRender());
 
             this.WhenAnyValue(s => s.Title, s => s.Copyright) // todo dirty bit?
+                .Skip(1)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
-
-            debounceDispatcher.Debounce(() => GenerateBitmaps());
+                .Subscribe(_ => RequestRender());
         }
 
-        private void GenerateBitmaps()
+        private void RequestRender()
+            => debounceDispatcher.Debounce(() => Globals.Instance.SlideRenderQueue.Enqueue(this));
+
+        public void Render()
         {
             SKBitmap? videoFrame = null;
             if (HasMotionBackground && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -93,8 +96,11 @@ namespace HandsLiftedApp.Data.Slides
             var spec = SongTitleSlideSpecBuilder.Build(this, videoFrame);
             using var skBitmap = SlideRenderer.RenderToSKBitmap(spec);
             videoFrame?.Dispose();
-            Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
-            Thumbnail = BitmapUtils.CreateThumbnail(Cached);
+            var cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
+            var thumb = BitmapUtils.CreateThumbnail(cached);
+            Avalonia.Threading.Dispatcher.UIThread.Post(
+                () => { Cached = cached; Thumbnail = thumb; },
+                Avalonia.Threading.DispatcherPriority.Background);
         }
 
         private BaseSlideTheme? _theme;
