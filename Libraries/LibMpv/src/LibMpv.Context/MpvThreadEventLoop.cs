@@ -22,7 +22,7 @@ public unsafe class MpvThreadEventLoop : IEventLoop, IDisposable
 
     public void Start()
     {
-        evenLoopThread = new Thread(ProcessEvents);
+        evenLoopThread = new Thread(ProcessEvents) { IsBackground = true };
         isEventLoopRunning = true;
         evenLoopThread.Start();
     }
