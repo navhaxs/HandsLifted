@@ -123,12 +123,17 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
                 if (!string.IsNullOrEmpty(imageElement.FilePath))
                 {
-                    _ = BitmapLoader.LoadBitmapAsync(imageElement.FilePath).ContinueWith(
+                    var capturedPath = imageElement.FilePath;
+                    _ = BitmapLoader.LoadBitmapAsync(capturedPath).ContinueWith(
                         t =>
                         {
                             if (t.Result != null)
                                 Avalonia.Threading.Dispatcher.UIThread.Post(
-                                    () => image.Source = t.Result,
+                                    () =>
+                                    {
+                                        if (imageElement.FilePath == capturedPath)
+                                            image.Source = t.Result;
+                                    },
                                     Avalonia.Threading.DispatcherPriority.Background);
                         },
                         System.Threading.Tasks.TaskContinuationOptions.OnlyOnRanToCompletion);
