@@ -153,7 +153,7 @@ public class MainViewModel : ViewModelBase
                     }
                 }
 
-                var x = HandsLiftedDocXmlSerializer.DeserializePlaylist(msg.FilePath);
+                var x = await Task.Run(() => HandsLiftedDocXmlSerializer.DeserializePlaylist(loadFilePath));
                 
                 string? playlistDirectoryPath = Path.GetDirectoryName(msg.FilePath);
 
@@ -208,7 +208,10 @@ public class MainViewModel : ViewModelBase
                 Playlist.QuickShowItem = null;
                 Playlist.PresentationState = PlaylistInstance.PresentationStateEnum.Slides;
 
-                Playlist.IsDirty = (loadFilePath != msg.FilePath);
+                // Defer the dirty reset to Background priority so deferred OAPH initial-value
+                // emissions from BaseSlideTheme (via ObserveOn(MainThreadScheduler)) fire first.
+                bool finalIsDirty = loadFilePath != msg.FilePath;
+                await Dispatcher.UIThread.InvokeAsync(() => Playlist.IsDirty = finalIsDirty, DispatcherPriority.Background);
                 // update MRU list
                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = msg.FilePath});
             }
