@@ -198,13 +198,15 @@ public class MainViewModel : ViewModelBase
                 
                 Log.Debug("Playlist load: PlaylistWorkingDirectory={PlaylistWorkingDirectory}", playlistDirectoryPath);
 
-                var Items = await Task.Run(() =>
+                var Items = new List<Item>();
+                foreach (var deserializedItem in x.Items)
                 {
-                    var list = new List<Item>();
-                    foreach (var deserializedItem in x.Items)
-                        list.Add(ItemInstanceFactory.ToItemInstance(deserializedItem, Playlist));
-                    return list;
-                });
+                    // Background priority: lets Render/Input/DataBind dispatch between items,
+                    // keeping the loading indicator animated and UI responsive.
+                    Items.Add(await Dispatcher.UIThread.InvokeAsync(
+                        () => ItemInstanceFactory.ToItemInstance(deserializedItem, Playlist),
+                        DispatcherPriority.Background));
+                }
                 Playlist.Items = new PlaylistItemInstanceCollection<Item>(Items);
                 Playlist.IsPlaylistLoading = false;
 
