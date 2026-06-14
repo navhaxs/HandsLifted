@@ -433,7 +433,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 {
                     try
                     {
-                        var avaBmp = WindowsThumbnailProvider.GetThumbnail(
+                        using var avaBmp = WindowsThumbnailProvider.GetThumbnail(
                             MotionBackgroundVideoPath, 1920, 1080, ThumbnailOptions.None);
                         if (avaBmp != null)
                             videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);

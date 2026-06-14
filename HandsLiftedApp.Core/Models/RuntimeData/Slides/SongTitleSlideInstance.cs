@@ -73,7 +73,7 @@ namespace HandsLiftedApp.Data.Slides
                 {
                     try
                     {
-                        var avaBmp = WindowsThumbnailProvider.GetThumbnail(
+                        using var avaBmp = WindowsThumbnailProvider.GetThumbnail(
                             videoPath, 1920, 1080, ThumbnailOptions.None);
                         if (avaBmp != null)
                             videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
