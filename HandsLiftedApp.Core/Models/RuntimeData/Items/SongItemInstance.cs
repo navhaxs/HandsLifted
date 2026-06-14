@@ -264,8 +264,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             }
                             else
                             {
-                                var slide = new SongSlideInstance(this, _datum, slideId)
-                                    { Text = Text, Label = Label, }; //, Index = i };
+                                var slide = new SongSlideInstance(this, _datum, slideId, text: Text, label: Label);
                                 newSlides.Insert(i, slide);
                             }
 
@@ -288,7 +287,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         else
                         {
                             newSlides.Insert(i,
-                                new SongSlideInstance(this, new SongStanza(), "BLANK") { }); // { Index = i });
+                                new SongSlideInstance(this, new SongStanza(), "BLANK")); // { Index = i });
                         }
 
                         i++;
@@ -310,6 +309,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     StanzaSlides = newSlides;
                     // this.RaisePropertyChanged("StanzaSlides");
                     this.RaisePropertyChanged("Slides");
+                    // Enqueue newly created slides for background thumbnail generation.
+                    // Cached == null identifies slides created this call (existing slides keep their cached bitmap).
+                    var toRender = new System.Collections.Generic.List<IRenderable>();
+                    foreach (var slide in newSlides)
+                    {
+                        if (slide is SongSlideInstance s && s.Cached == null)
+                            toRender.Add(s);
+                    }
+                    if (TitleSlide is SongTitleSlideInstance titleInst && titleInst.Cached == null)
+                        toRender.Add(titleInst);
+                    if (toRender.Count > 0)
+                        Globals.Instance.SlideRenderQueue.EnqueueBatch(toRender);
                 }
                 catch (Exception ex)
                 {
