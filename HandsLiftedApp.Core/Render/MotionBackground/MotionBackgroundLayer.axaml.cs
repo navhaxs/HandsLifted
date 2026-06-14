@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
+using ReactiveUI;
 using Avalonia.Threading;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models.Items;
@@ -25,6 +26,7 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 		/// The _currentVideoPath is still set (context alive) but we've committed to stopping.
 		/// </summary>
 		private bool _isStopPending;
+		private IDisposable? _activeItemPathSubscription;
 
 		/// <summary>
 		/// Gets or sets the fade-in duration for the motion background layer.
@@ -314,6 +316,9 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 		/// </summary>
 		private void OnActiveItemChanged(Item? newItem)
 		{
+			_activeItemPathSubscription?.Dispose();
+			_activeItemPathSubscription = null;
+
 			var songItem = newItem as SongItemInstance;
 			var hasMotionBackground = songItem?.HasMotionBackground == true;
 			var newVideoPath = hasMotionBackground ? songItem!.MotionBackgroundVideoPath : null;
@@ -399,6 +404,17 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			{
 				Log.Debug("[MotionBg] No action needed (no current playback, no new motion background)");
 			}
+
+			// When the active item's motion background path changes (e.g. user edits it in the
+			// song editor while this song is already live), re-run this handler so the transition
+			// logic picks up the new path immediately.
+			if (songItem != null)
+			{
+				_activeItemPathSubscription = songItem
+					.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+					.Skip(1)
+					.Subscribe(_ => Dispatcher.UIThread.Post(() => OnActiveItemChanged(newItem)));
+			}
 		}
 
 		#endregion
@@ -415,6 +431,8 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			_pendingFadeOutTimer = null;
 			_activeItemSubscription?.Dispose();
 			_activeItemSubscription = null;
+			_activeItemPathSubscription?.Dispose();
+			_activeItemPathSubscription = null;
 			StopPlayback();
 		}
 	}
