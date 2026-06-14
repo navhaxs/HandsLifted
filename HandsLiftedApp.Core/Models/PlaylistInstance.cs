@@ -388,6 +388,14 @@ namespace HandsLiftedApp.Core.Models
             set => this.RaiseAndSetIfChanged(ref _isDirty, value);
         }
 
+        private bool _isPlaylistLoading = false;
+
+        public bool IsPlaylistLoading
+        {
+            get => _isPlaylistLoading;
+            set => this.RaiseAndSetIfChanged(ref _isPlaylistLoading, value);
+        }
+
         private string _playlistWorkingDirectory = @"VisionScreensUserData\";
 
         public string PlaylistWorkingDirectory

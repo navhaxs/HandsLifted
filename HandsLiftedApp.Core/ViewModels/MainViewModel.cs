@@ -153,6 +153,8 @@ public class MainViewModel : ViewModelBase
                     }
                 }
 
+                Playlist.IsPlaylistLoading = true;
+
                 var x = await Task.Run(() => HandsLiftedDocXmlSerializer.DeserializePlaylist(loadFilePath));
                 
                 string? playlistDirectoryPath = Path.GetDirectoryName(msg.FilePath);
@@ -202,7 +204,8 @@ public class MainViewModel : ViewModelBase
                     Items.Add(ItemInstanceFactory.ToItemInstance(deserializedItem, Playlist));
                 }
                 Playlist.Items = new PlaylistItemInstanceCollection<Item>(Items);
-                
+                Playlist.IsPlaylistLoading = false;
+
                 Playlist.LastSaved = new DateTime();
                 Playlist.ActiveItemInsertIndex = null;
                 Playlist.QuickShowItem = null;
@@ -217,6 +220,7 @@ public class MainViewModel : ViewModelBase
             }
             catch (Exception ex)
             {
+                Playlist.IsPlaylistLoading = false;
                 MessageBus.Current.SendMessage(new MessageWindowViewModel()
                     { Title = "Playlist failed to load :(", Content = $"{ex.Message}" });
                 Log.Error(ex, "[DOC] Failed to parse playlist XML");

@@ -23,6 +23,7 @@
 
         <controls:CustomScrollViewer
             x:Name="scrollViewer"
+            IsVisible="{Binding !IsPlaylistLoading}"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Visible">
             <controls:CustomScrollViewer.Styles>
@@ -94,6 +95,20 @@
 
             </DockPanel>
         </controls:CustomScrollViewer>
+
+        <!-- Loading overlay shown during playlist load -->
+        <Border IsVisible="{Binding IsPlaylistLoading}"
+                Background="{DynamicResource SurfaceBrush}"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+                <ProgressBar IsIndeterminate="True" Width="200" />
+                <TextBlock Text="Loading playlist&#x2026;"
+                           HorizontalAlignment="Center"
+                           FontSize="14"
+                           Foreground="{DynamicResource SystemBaseMediumColor}" />
+            </StackPanel>
+        </Border>
 
     </Grid>
 </UserControl>
