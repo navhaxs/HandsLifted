@@ -5,21 +5,34 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using Avalonia.Media.Imaging;
 using DebounceThrottle;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using Serilog;
+using ShellThumbs;
+using SkiaSharp;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
     public class SongItemInstance : SongItem, IItemInstance, IItemDirtyBit
     {
         public PlaylistInstance? ParentPlaylist { get; set; }
+
+        public bool HasThemeSelection => true;
+
+        public BaseSlideTheme? ResolvedDesignTheme
+        {
+            get => ParentPlaylist?.Designs.FirstOrDefault(d => d.Id == Design);
+            set => Design = value?.Id ?? Guid.Empty;
+        }
+
         private SongTitleSlide titleSlide;
         private DebounceDispatcher debounceDispatcher = new(200);
         
@@ -46,6 +59,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
         {
             ParentPlaylist = parentPlaylist;
+
+            this.WhenAnyValue(x => x.Design)
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
+
             titleSlide = new SongTitleSlideInstance(this);
 
             _titleSlide = this.WhenAnyValue(x => x.Title, x => x.Copyright,
@@ -411,8 +428,25 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             // Also regenerate title slide bitmap
             if (titleSlide is SongTitleSlideInstance titleInstance)
             {
-                var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongTitleSlideSpecBuilder.Build(titleInstance);
+                SKBitmap? videoFrame = null;
+                if (HasMotionBackground && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    try
+                    {
+                        var avaBmp = WindowsThumbnailProvider.GetThumbnail(
+                            MotionBackgroundVideoPath, 1920, 1080, ThumbnailOptions.None);
+                        if (avaBmp != null)
+                            videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", MotionBackgroundVideoPath);
+                    }
+                }
+
+                var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongTitleSlideSpecBuilder.Build(titleInstance, videoFrame);
                 using var skBitmap = HandsLiftedApp.Core.Render.Skia.SlideRenderer.RenderToSKBitmap(spec);
+                videoFrame?.Dispose();
                 titleInstance.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
                 titleInstance.Thumbnail = BitmapUtils.CreateThumbnail(titleInstance.Cached);
             }
