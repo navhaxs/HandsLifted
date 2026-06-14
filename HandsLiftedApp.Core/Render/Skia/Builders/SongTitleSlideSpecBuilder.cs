@@ -16,12 +16,18 @@ public static class SongTitleSlideSpecBuilder
     private const float CopyrightSizeRatio = 0.45f;
     private const float CopyrightBottomMargin = 60f;
 
-    private static readonly DropShadowSpec DefaultShadow =
-        new DropShadowSpec(0f, 15f, 20f, SKColors.Black);
+    private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
+        theme.DropShadowEnabled
+            ? new DropShadowSpec(
+                (float)theme.DropShadowOffsetX,
+                (float)theme.DropShadowOffsetY,
+                (float)theme.DropShadowBlurRadius,
+                ToSkColor(theme.DropShadowColour))
+            : null;
 
-    public static SlideRenderSpec Build(SongTitleSlideInstance slide)
+    public static SlideRenderSpec Build(SongTitleSlideInstance slide, SKBitmap? videoFrame = null)
     {
-        var bg = BuildBackground(slide);
+        var bg = BuildBackground(slide, videoFrame);
         if (slide.Theme == null) return new SlideRenderSpec(bg, Array.Empty<RenderElement>());
 
         var elements = new List<RenderElement>();
@@ -35,8 +41,11 @@ public static class SongTitleSlideSpecBuilder
         return new SlideRenderSpec(bg, elements);
     }
 
-    private static BackgroundSpec BuildBackground(SongTitleSlideInstance slide)
+    private static BackgroundSpec BuildBackground(SongTitleSlideInstance slide, SKBitmap? videoFrame = null)
     {
+        if (videoFrame != null)
+            return new SkiaBitmapBackground(videoFrame);
+
         if (slide.HasMotionBackground)
             return new TransparentBackground();
 
@@ -65,7 +74,7 @@ public static class SongTitleSlideSpecBuilder
         var bounds = new SKRect(x, y, x + textWidth, y + theme.LineHeight);
         var elemTypeface = GetTypeface(theme);
         return new TextLineElement(title, bounds, elemTypeface, theme.FontSize,
-            ToSkColor(theme.TextAvaloniaColour), DefaultShadow);
+            ToSkColor(theme.TextAvaloniaColour), GetShadow(theme));
     }
 
     private static IEnumerable<RenderElement> BuildCopyrightElements(string copyright, BaseSlideTheme theme)
@@ -96,7 +105,7 @@ public static class SongTitleSlideSpecBuilder
                 _                   => (CanvasWidth - textWidth) / 2f, // Center / Justify
             };
             var bounds = new SKRect(x, lineTop, x + textWidth, lineTop + lineHeight);
-            result.Add(new TextLineElement(line, bounds, GetTypeface(theme), copyrightSize, color, DefaultShadow));
+            result.Add(new TextLineElement(line, bounds, GetTypeface(theme), copyrightSize, color, GetShadow(theme)));
         }
 
         return result;

@@ -5,6 +5,7 @@ using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.Render.Skia.Builders;
 using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Data.Slides;
+using SkiaSharp;
 
 namespace HandsLiftedApp.Tests.Render.Skia.Builders;
 
@@ -60,5 +61,42 @@ public class SongTitleSlideSpecBuilderTests
         var titleEl     = (TextLineElement)spec.Elements[0];
         var copyrightEl = (TextLineElement)spec.Elements[1];
         Assert.IsTrue(copyrightEl.FontSize < titleEl.FontSize);
+    }
+
+    [TestMethod]
+    public void Build_WithVideoFrame_UsesSkiaBitmapBackground()
+    {
+        var slide = new SongTitleSlideInstance(null) { Title = "Holy Forever", Copyright = "" };
+        slide.Theme = MakeTheme();
+        using var videoFrame = new SkiaSharp.SKBitmap(4, 4);
+
+        var spec = SongTitleSlideSpecBuilder.Build(slide, videoFrame);
+
+        Assert.IsInstanceOfType(spec.Background, typeof(SkiaBitmapBackground));
+        Assert.AreSame(videoFrame, ((SkiaBitmapBackground)spec.Background).Bitmap);
+    }
+
+    [TestMethod]
+    public void Build_WithNullVideoFrame_UsesSolidBackground()
+    {
+        var slide = new SongTitleSlideInstance(null) { Title = "Test", Copyright = "" };
+        slide.Theme = MakeTheme();
+
+        var spec = SongTitleSlideSpecBuilder.Build(slide, null);
+
+        Assert.IsInstanceOfType(spec.Background, typeof(SolidBackground));
+    }
+
+    [TestMethod]
+    public void Build_VideoFrameTakesPriorityOverThemeImage()
+    {
+        var slide = new SongTitleSlideInstance(null) { Title = "Test", Copyright = "" };
+        slide.Theme = MakeTheme();
+        slide.Theme.BackgroundGraphicFilePath = "some/image.png";
+        using var videoFrame = new SkiaSharp.SKBitmap(4, 4);
+
+        var spec = SongTitleSlideSpecBuilder.Build(slide, videoFrame);
+
+        Assert.IsInstanceOfType(spec.Background, typeof(SkiaBitmapBackground));
     }
 }
