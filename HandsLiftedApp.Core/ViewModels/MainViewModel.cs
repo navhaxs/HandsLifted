@@ -198,16 +198,23 @@ public class MainViewModel : ViewModelBase
                 
                 Log.Debug("Playlist load: PlaylistWorkingDirectory={PlaylistWorkingDirectory}", playlistDirectoryPath);
 
-                var Items = new List<Item>();
+                var builtItems = new List<Item>();
                 foreach (var deserializedItem in x.Items)
                 {
-                    // Background priority: lets Render/Input/DataBind dispatch between items,
-                    // keeping the loading indicator animated and UI responsive.
-                    Items.Add(await Dispatcher.UIThread.InvokeAsync(
+                    builtItems.Add(await Dispatcher.UIThread.InvokeAsync(
                         () => ItemInstanceFactory.ToItemInstance(deserializedItem, Playlist),
                         DispatcherPriority.Background));
                 }
-                Playlist.Items = new PlaylistItemInstanceCollection<Item>(Items);
+                // Assign empty collection first so ItemsControl starts with zero items,
+                // then add each item at Background priority. Template creation spreads
+                // across N dispatcher yields instead of one synchronous batch.
+                Playlist.Items = new PlaylistItemInstanceCollection<Item>();
+                foreach (var item in builtItems)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(
+                        () => Playlist.Items.Add(item),
+                        DispatcherPriority.Background);
+                }
                 Playlist.IsPlaylistLoading = false;
 
                 Playlist.LastSaved = new DateTime();
