@@ -72,7 +72,7 @@ namespace HandsLiftedApp.Core.ViewModels
             {
                 // config is for loading...
                 LibraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
-                    { Label = "Songs", Directory = @"D:\data\VisionScreens\Song Library" });
+                    { Label = "Songs", Directory = @"D:\data\VisionScreens\Song Library", Type = LibraryType.Song });
                 LibraryConfig.LibraryItems.Add(new LibraryConfig.LibraryDefinition()
                 {
                     Label = "Church News",
@@ -93,15 +93,27 @@ namespace HandsLiftedApp.Core.ViewModels
             }
             else
             {
+                // Migration: if all entries have default Type (Media), infer Song by label
+                if (lastSavedConfig.LibraryItems.All(d => d.Type == LibraryType.Media))
+                {
+                    foreach (var def in lastSavedConfig.LibraryItems.Where(d =>
+                        d.Label.Contains("song", StringComparison.OrdinalIgnoreCase) ||
+                        d.Label.Contains("lyric", StringComparison.OrdinalIgnoreCase)))
+                        def.Type = LibraryType.Song;
+                    WriteConfig();
+                }
                 LibraryConfig = lastSavedConfig;
             }
 
             // runtime...
             Libraries = new ObservableCollection<Library>();
 
-            foreach (var library in LibraryConfig.LibraryItems)
+            foreach (var libDef in LibraryConfig.LibraryItems)
             {
-                Libraries.Add(new Library(library));
+                Library lib = libDef.Type == LibraryType.Song
+                    ? new SongLibrary(libDef, new FileSystemSongLibrarySource(libDef.Directory))
+                    : new Library(libDef);
+                Libraries.Add(lib);
             }
         }
 

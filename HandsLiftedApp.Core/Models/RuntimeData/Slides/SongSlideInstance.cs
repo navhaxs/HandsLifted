@@ -23,16 +23,36 @@ namespace HandsLiftedApp.Data.Slides
     {
         private DebounceDispatcher debounceDispatcher = new(200);
 
+        private static BaseSlideTheme ResolveTheme(Guid designId)
+        {
+            if (designId != Guid.Empty)
+            {
+                var theme = Globals.Instance.MainViewModel?.Playlist?.Designs
+                    .FirstOrDefault(d => d.Id == designId);
+                if (theme != null) return theme;
+            }
+            return Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
+        }
+
         public SongSlideInstance(SongItemInstance? parentSongItem, SongStanza? parentSongStanza, string id) : base(
             parentSongItem, parentSongStanza, id)
         {
-            Theme = Globals.Instance.AppPreferences?.DefaultTheme;
+            Theme = ResolveTheme(parentSongItem?.Design ?? Guid.Empty);
 
-            Globals.Instance.AppPreferences?.DefaultTheme.WhenAnyPropertyChanged().Subscribe(x =>
-            {
-                Theme = x;
-                debounceDispatcher.Debounce(() => GenerateBitmaps());
-            });
+            parentSongItem?.WhenAnyValue(x => x.Design)
+                .Skip(1)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(designId =>
+                {
+                    Theme = ResolveTheme(designId);
+                    debounceDispatcher.Debounce(() => GenerateBitmaps());
+                });
+
+            this.WhenAnyValue(x => x.Theme)
+                .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(_ => debounceDispatcher.Debounce(() => GenerateBitmaps()));
 
             debounceDispatcher.Debounce(() => GenerateBitmaps());
 

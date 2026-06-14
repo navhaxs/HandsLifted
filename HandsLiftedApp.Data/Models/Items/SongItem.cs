@@ -17,7 +17,6 @@ namespace HandsLiftedApp.Data.Models.Items
     {
         public SongItem()
         {
-
             _isEmpty = this.WhenAnyValue(x => x.Stanzas, x => x.Title,
                     (stanzas, title) => stanzas.Count == 0 && title.Length == 0)
                 .ObserveOn(RxApp.MainThreadScheduler)

@@ -3,6 +3,7 @@ using ReactiveUI;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using HandsLiftedApp.Data.Data.Models.Types;
@@ -242,13 +243,50 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _backgroundGraphicFilePath, value);
         }
 
-        // StrokeColour
-        // StrokeThickness
+        private bool _dropShadowEnabled = true;
 
-        // DropShadowColour
-        // DropShadowRadius
+        [DataMember]
+        public bool DropShadowEnabled
+        {
+            get => _dropShadowEnabled;
+            set => this.RaiseAndSetIfChanged(ref _dropShadowEnabled, value);
+        }
 
-        // [XmlAttribute]
+        private decimal _dropShadowOffsetX = 0M;
+
+        [DataMember]
+        public decimal DropShadowOffsetX
+        {
+            get => _dropShadowOffsetX;
+            set => this.RaiseAndSetIfChanged(ref _dropShadowOffsetX, value);
+        }
+
+        private decimal _dropShadowOffsetY = 8M;
+
+        [DataMember]
+        public decimal DropShadowOffsetY
+        {
+            get => _dropShadowOffsetY;
+            set => this.RaiseAndSetIfChanged(ref _dropShadowOffsetY, value);
+        }
+
+        private decimal _dropShadowBlurRadius = 20M;
+
+        [DataMember]
+        public decimal DropShadowBlurRadius
+        {
+            get => _dropShadowBlurRadius;
+            set => this.RaiseAndSetIfChanged(ref _dropShadowBlurRadius, value);
+        }
+
+        [DataMember] public XmlColor DropShadowColour = Colors.Black;
+
+        [XmlIgnore]
+        public Color DropShadowAvaloniaColour
+        {
+            get => DropShadowColour;
+            set => this.RaiseAndSetIfChanged(ref DropShadowColour, value);
+        }
 
         // TODO - KV map for additional properties
         public override string ToString()
@@ -261,14 +299,11 @@ namespace HandsLiftedApp.Data.SlideTheme
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
 
-            var properties = GetType().GetProperties()
-                .Where(p => p.CanWrite && p.CanRead);
+            foreach (var prop in GetType().GetProperties().Where(p => p.CanWrite && p.CanRead))
+                prop.SetValue(this, prop.GetValue(other));
 
-            foreach (var prop in properties)
-            {
-                var value = prop.GetValue(other);
-                prop.SetValue(this, value);
-            }
+            foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
+                field.SetValue(this, field.GetValue(other));
         }
     }
 }

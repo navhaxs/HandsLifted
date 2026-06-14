@@ -1,22 +1,36 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-             xmlns:libraryView="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="viewModels:LibraryQueryViewModel"
-             x:Class="HandsLiftedApp.Core.Views.LibraryView.LibraryQueryView">
+﻿<UserControl
+    d:DesignHeight="350"
+    d:DesignWidth="600"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.LibraryView.LibraryQueryView"
+    x:DataType="viewModels:LibraryQueryViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:libraryView="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Design.DataContext>
+        <viewModels:LibraryQueryViewModel />
+    </Design.DataContext>
+
     <DockPanel>
-        <TextBox Watermark="Filter" x:Name="SearchBox" DockPanel.Dock="Top" Text="{Binding SearchTerm}"
-                 KeyDown="InputElement_OnKeyDown" />
+        <TextBox
+            DockPanel.Dock="Top"
+            KeyDown="InputElement_OnKeyDown"
+            Text="{Binding SearchTerm}"
+            Watermark="Filter"
+            x:Name="SearchBox" />
         <Grid>
+
+            <!--  Media Bin  -->
             <ListBox
                 HorizontalAlignment="Stretch"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 IsVisible="{Binding IsMediaBin}"
-                ItemsSource="{Binding SearchResults}">
+                ItemsSource="{Binding SearchResults}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel ItemHeight="120" ItemWidth="200" />
@@ -30,39 +44,60 @@
                                     <MenuItem Header="Add to playlist" />
                                 </ContextMenu>
                             </DockPanel.ContextMenu>
-                            <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
+                            <TextBlock DockPanel.Dock="Bottom" Text="{Binding Title}" />
                             <Viewbox>
-                                <Grid Height="720" Width="1280" Background="Black">
-                                    <Image asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}"
-                                           RenderOptions.BitmapInterpolationMode="HighQuality"
-                                           VerticalAlignment="Stretch"
-                                           HorizontalAlignment="Stretch"/>
+                                <Grid
+                                    Background="Black"
+                                    Height="720"
+                                    Width="1280">
+                                    <Image
+                                        HorizontalAlignment="Stretch"
+                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                        VerticalAlignment="Stretch"
+                                        asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}" />
                                 </Grid>
                             </Viewbox>
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Grid IsVisible="{Binding !IsMediaBin}" ColumnDefinitions="*,1,*">
+
+            <!--  Song Library  -->
+            <Grid ColumnDefinitions="2*,1,3*" IsVisible="{Binding !IsMediaBin}">
+
+                <!--  listbox  -->
                 <ListBox
+                    BorderThickness="0"
                     HorizontalAlignment="Stretch"
+                    ItemsSource="{Binding SearchResults}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ItemsSource="{Binding SearchResults}">
+                    SelectedItem="{Binding SelectedLibraryItem}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <DockPanel PointerPressed="DockPanel_PointerPressed">
-                                <DockPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Add to playlist" />
-                                    </ContextMenu>
-                                </DockPanel.ContextMenu>
-                                <TextBlock Text="{Binding Title}" DockPanel.Dock="Bottom" />
-                            </DockPanel>
+                            <Border>
+                                <DockPanel PointerPressed="DockPanel_PointerPressed">
+                                    <DockPanel.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add to playlist" />
+                                        </ContextMenu>
+                                    </DockPanel.ContextMenu>
+                                    <TextBlock
+                                        DockPanel.Dock="Bottom"
+                                        FontSize="14"
+                                        Padding="2"
+                                        Text="{Binding Title}" />
+                                </DockPanel>
+                            </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <GridSplitter Grid.Column="1" />
-                <libraryView:SongPreview Grid.Column="2" DataContext="{Binding SelectedLibraryItem}" />
+
+                <!--  preview pane  -->
+                <libraryView:SongPreview
+                    Grid.Column="2"
+                    LibraryItem="{Binding SelectedLibraryItem}"
+                    SongItem="{Binding SelectedSongItem}" />
             </Grid>
         </Grid>
     </DockPanel>

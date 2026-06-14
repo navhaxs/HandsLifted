@@ -1,73 +1,75 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-             xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
-             xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
-             xmlns:motionBg="clr-namespace:HandsLiftedApp.Core.Render.MotionBackground"
-             xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
-             xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
-             xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
-             mc:Ignorable="d" d:DesignWidth="440" d:DesignHeight="750"
-             x:DataType="viewModels:MainViewModel"
-             x:Class="HandsLiftedApp.Core.Views.LivePane">
+﻿<UserControl
+    d:DesignHeight="750"
+    d:DesignWidth="440"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.LivePane"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:controlModules="clr-namespace:HandsLiftedApp.Views.ControlModules"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:motionBg="clr-namespace:HandsLiftedApp.Core.Render.MotionBackground"
+    xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
+    xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DockPanel>
 
         <Border
+            DockPanel.Dock="Top"
             Height="70"
-            VerticalAlignment="Center"
-            DockPanel.Dock="Top">
+            VerticalAlignment="Center">
             <DockPanel>
 
                 <ToggleButton
-                    Name="LiveButton"
-                    Margin="2,0,0,6"
-                    Padding="0"
-                    VerticalAlignment="Bottom"
                     Background="Transparent"
                     BorderThickness="0"
                     ClickMode="Press"
                     DockPanel.Dock="Left"
                     FontSize="18"
                     HotKey="Ctrl+L"
-                    IsChecked="{Binding #liveFlyout.IsOpen, Mode=TwoWay}">
+                    IsChecked="{Binding #liveFlyout.IsOpen, Mode=TwoWay}"
+                    Margin="2,0,0,6"
+                    Name="LiveButton"
+                    Padding="0"
+                    VerticalAlignment="Bottom">
                     <ToggleButton.Styles>
                         <!--  override default styles  -->
                         <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
                             <Setter Property="Background" Value="Transparent" />
                         </Style>
                         <!--  custom styles  -->
-                        <Style Selector="ToggleButton:pointerover > Border">
+                        <Style Selector="ToggleButton:pointerover &gt; Border">
                             <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
                         </Style>
-                        <Style Selector="ToggleButton:pressed > Border">
+                        <Style Selector="ToggleButton:pressed &gt; Border">
                             <Setter Property="Background" Value="#9a93cd" />
                         </Style>
-                        <Style Selector="ToggleButton:checked > Border">
+                        <Style Selector="ToggleButton:checked &gt; Border">
                             <Setter Property="Background" Value="#5C3AB6" />
                         </Style>
                     </ToggleButton.Styles>
-                    <Border Padding="12,6" CornerRadius="4">
+                    <Border CornerRadius="4 4 0 0" Padding="12,6">
                         <DockPanel>
                             <avalonia:MaterialIcon
-                                Width="26"
+                                DockPanel.Dock="Right"
+                                Foreground="{DynamicResource CaptionButtonForeground}"
                                 Height="22"
+                                Kind="ChevronRight"
                                 Margin="0"
                                 Padding="0"
                                 VerticalAlignment="Bottom"
-                                DockPanel.Dock="Right"
-                                Foreground="{DynamicResource CaptionButtonForeground}"
-                                Kind="ChevronRight" />
-                            <TextBlock VerticalAlignment="Bottom" Text="Live" />
+                                Width="26" />
+                            <TextBlock Text="Live" VerticalAlignment="Bottom" />
                         </DockPanel>
                     </Border>
                 </ToggleButton>
 
                 <Popup
-                    Name="liveFlyout"
                     IsLightDismissEnabled="True"
+                    Name="liveFlyout"
                     PlacementMode="BottomEdgeAlignedLeft"
                     PlacementTarget="{Binding #LiveButton}">
                     <controls:LiveOutputsFlyoutContent Margin="0" />
@@ -78,67 +80,77 @@
 
         <DockPanel>
 
-            <Grid DockPanel.Dock="Top" DragDrop.AllowDrop="True" x:Name="DragTarget">
+            <Grid
+                DockPanel.Dock="Top"
+                DragDrop.AllowDrop="True"
+                x:Name="DragTarget">
                 <Grid.Background>
                     <VisualBrush DestinationRect="0,0,128,128" TileMode="Tile">
                         <VisualBrush.Visual>
                             <Canvas
-                                Width="16"
+                                Background="#1a1a1a"
                                 Height="16"
-                                Background="#1a1a1a">
+                                Width="16">
                                 <Rectangle
-                                    Width="8"
+                                    Fill="#1c1c1c"
                                     Height="8"
-                                    Fill="#1c1c1c" />
+                                    Width="8" />
                                 <Rectangle
                                     Canvas.Left="8"
                                     Canvas.Top="8"
-                                    Width="8"
+                                    Fill="#1c1c1c"
                                     Height="8"
-                                    Fill="#1c1c1c" />
+                                    Width="8" />
                             </Canvas>
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </Grid.Background>
                 <Viewbox>
-                    <!-- NEW -->
+                    <!--  NEW  -->
                     <!-- <render:SlideRender Width="1920" Height="1080" DataContext="{Binding Playlist.ActiveSlide}" /> -->
-                    <Grid Width="1920" Height="1080" Background="Black">
+                    <Grid
+                        Background="Black"
+                        Height="1080"
+                        Width="1920">
                         <motionBg:MotionBackgroundLayer ActiveItem="{Binding Playlist.SelectedItem}" />
                         <skia:SlideCanvas x:Name="LivePreviewCanvas" />
                         <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                     </Grid>
-                    <!-- <viewsrender:SlideRenderer -->
-                    <!--     ActiveSlide="{Binding ActiveSlide}" -->
-                    <!--     IsLive="False" -->
-                    <!--     PageTransition="{Binding ActiveItemPageTransition}" /> -->
+                    <!--  <viewsrender:SlideRenderer  -->
+                    <!--  ActiveSlide="{Binding ActiveSlide}"  -->
+                    <!--  IsLive="False"  -->
+                    <!--  PageTransition="{Binding ActiveItemPageTransition}" />  -->
 
-                    <!-- OLD -->
+                    <!--  OLD  -->
                     <!--<views:ActiveSlideOutput Width="1920" Height="1080" />-->
                     <!--<views:LowerThirdSlideTemplate Name="LivePreview" Width="1920" Height="1080" />-->
                     <!--<viewsrender:SlideRenderer DataContext="{Binding SlidesSelectedItem}" Width="1920" Height="1080" IsLive="False" />-->
                 </Viewbox>
-                <TextBlock x:Name="_dropState" VerticalAlignment="Bottom" IsVisible="{Binding Playlist.IsQuickShow}" />
+                <TextBlock
+                    IsVisible="{Binding Playlist.IsQuickShow}"
+                    VerticalAlignment="Bottom"
+                    x:Name="_dropState" />
             </Grid>
-            <!-- <controlmodules:SlidesGroupItemViewWrapper DataContext="{Binding Playlist.State.SelectedItem}" -->
-            <!--                                            DockPanel.Dock="Top" /> -->
+            <!--  <controlmodules:SlidesGroupItemViewWrapper DataContext="{Binding Playlist.State.SelectedItem}"  -->
+            <!--  DockPanel.Dock="Top" />  -->
 
             <Grid DockPanel.Dock="Top" Height="2">
-                <ProgressBar MinHeight="2"
-                             IsVisible="{Binding Playlist.AutoAdvanceTimer.IsTimerConfigured}"
-                             Value="{Binding Playlist.AutoAdvanceTimer.Timer.ElapsedTime, FallbackValue=0}"
-                             Maximum="{Binding Playlist.AutoAdvanceTimer.Timer.TotalTime, FallbackValue=0}" />
+                <ProgressBar
+                    IsVisible="{Binding Playlist.AutoAdvanceTimer.IsTimerConfigured}"
+                    Maximum="{Binding Playlist.AutoAdvanceTimer.Timer.TotalTime, FallbackValue=0}"
+                    MinHeight="2"
+                    Value="{Binding Playlist.AutoAdvanceTimer.Timer.ElapsedTime, FallbackValue=0}" />
             </Grid>
 
             <Border
+                Background="{DynamicResource DarkSurfaceBrush}"
                 BorderBrush="{DynamicResource NavigationBarBorderBrush}"
                 CornerRadius="60"
+                DockPanel.Dock="Top"
                 Height="60"
-                Background="{DynamicResource DarkSurfaceBrush}"
-                Margin="6 10"
-                Padding="0"
+                Margin="6,10"
                 MaxWidth="310"
-                DockPanel.Dock="Top">
+                Padding="0">
 
                 <DockPanel>
 
@@ -158,42 +170,38 @@
                             <Setter Property="Width" Value="50" />
                             <Setter Property="Foreground" Value="#888888" />
                         </Style>
-                        <Style
-                            Selector="Button:pointerover /template/ ContentPresenter">
-                            <Setter Property="Background"
-                                    Value="#5b39b3" />
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#5b39b3" />
                         </Style>
                     </DockPanel.Styles>
 
-                    <Button DockPanel.Dock="Left"
-                            Command="{Binding OnPrevSlideClickCommand}">
+                    <Button Command="{Binding OnPrevSlideClickCommand}" DockPanel.Dock="Left">
                         <avalonia:MaterialIcon Kind="ArrowLeftCircle" />
                     </Button>
 
-                    <Button DockPanel.Dock="Right"
-                            Command="{Binding OnNextSlideClickCommand}">
+                    <Button Command="{Binding OnNextSlideClickCommand}" DockPanel.Dock="Right">
                         <avalonia:MaterialIcon Kind="ArrowRightCircle" />
                     </Button>
 
                     <Viewbox StretchDirection="DownOnly">
                         <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
                             FontSize="15"
+                            HorizontalAlignment="Center"
                             Margin="0"
-                            Text="{Binding Playlist.StageDisplaySlideCountText, FallbackValue='Slide A/B'}" />
+                            Text="{Binding Playlist.StageDisplaySlideCountText, FallbackValue='Slide A/B'}"
+                            VerticalAlignment="Center" />
                     </Viewbox>
 
                 </DockPanel>
             </Border>
 
             <Border
+                Background="Transparent"
+                CornerRadius="6"
+                DockPanel.Dock="Top"
                 Height="35"
                 Margin="6,6"
-                Background="Transparent"
-                MaxWidth="300"
-                CornerRadius="6"
-                DockPanel.Dock="Top">
+                MaxWidth="300">
                 <UniformGrid Columns="2" Rows="1">
                     <UniformGrid.Styles>
                         <Style Selector="RadioButton">
@@ -208,23 +216,20 @@
                                         <ToggleButton
                                             Background="Transparent"
                                             BorderBrush="{DynamicResource OutlineBrush}"
-                                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-                                            IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                            VerticalAlignment="{TemplateBinding VerticalAlignment}" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </Style>
                         <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
-                            <Setter Property="Background"
-                                    Value="{DynamicResource PrimaryActionBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
                         </Style>
-                        <Style
-                            Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
-                            <Setter Property="Background"
-                                    Value="#5b39b3" />
+                        <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#5b39b3" />
                         </Style>
                         <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
                             <Setter Property="Background" Value="#9072EA" />
@@ -246,32 +251,32 @@
             </Border>
 
             <Border
+                Background="Transparent"
+                CornerRadius="6"
+                DockPanel.Dock="Top"
                 Height="35"
                 Margin="6,0,6,6"
-                Background="Transparent"
-                MaxWidth="300"
-                CornerRadius="6"
-                DockPanel.Dock="Top">
+                MaxWidth="300">
                 <DockPanel>
                     <TextBlock
-                        VerticalAlignment="Center"
+                        FontSize="13"
                         Margin="8,0,6,0"
-                        FontSize="13"
-                        Text="Fade:" />
+                        Text="Fade:"
+                        VerticalAlignment="Center" />
                     <TextBlock
-                        VerticalAlignment="Center"
                         DockPanel.Dock="Right"
-                        Margin="4,0,8,0"
                         FontSize="13"
-                        Text="{Binding Playlist.SlideTransitionDurationMs, StringFormat='{}{0:0}ms'}" />
+                        Margin="4,0,8,0"
+                        Text="{Binding Playlist.SlideTransitionDurationMs, StringFormat='{}{0:0}ms'}"
+                        VerticalAlignment="Center" />
                     <Slider
-                        VerticalAlignment="Center"
-                        Minimum="0"
-                        Maximum="2000"
-                        TickFrequency="100"
-                        SmallChange="50"
                         LargeChange="200"
-                        Value="{Binding Playlist.SlideTransitionDurationMs, Mode=TwoWay}" />
+                        Maximum="2000"
+                        Minimum="0"
+                        SmallChange="50"
+                        TickFrequency="100"
+                        Value="{Binding Playlist.SlideTransitionDurationMs, Mode=TwoWay}"
+                        VerticalAlignment="Center" />
                 </DockPanel>
             </Border>
 
@@ -279,18 +284,17 @@
             <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
 
             <TextBlock
-                Padding="5,5,5,4"
-                HorizontalAlignment="Center"
                 DockPanel.Dock="Bottom"
                 FontSize="28"
+                HorizontalAlignment="Center"
+                Padding="5,5,5,4"
                 Text="{Binding CurrentTime, StringFormat='{}{0:h:mm tt}'}" />
 
             <!--  controlmodules  -->
             <!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
             <StackPanel DockPanel.Dock="Top">
                 <controlModules:VideoSlideControlViewWrapper DataContext="{Binding Playlist.ActiveSlide}" />
-                <controlModules:AutoAdvanceTimerControlViewWrapper
-                    DataContext="{Binding Playlist.AutoAdvanceTimer}" />
+                <controlModules:AutoAdvanceTimerControlViewWrapper DataContext="{Binding Playlist.AutoAdvanceTimer}" />
             </StackPanel>
             <!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
             <!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">
@@ -303,7 +307,7 @@
 						</DockPanel>
 					</Border>-->
 
-            <!-- Fill rest of space -->
+            <!--  Fill rest of space  -->
             <Grid />
 
         </DockPanel>

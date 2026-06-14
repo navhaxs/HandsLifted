@@ -92,6 +92,12 @@ namespace HandsLiftedApp.Core.Views
             setupWindow.ShowDialog(this);
         }
         
+        private void LibraryClicked(object? sender, RoutedEventArgs e)
+        {
+            LibraryWindow w = new LibraryWindow() { DataContext = Globals.Instance.MainViewModel };
+            w.ShowDialog(this);
+        }
+        
         private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args)
         {
             // Get top level from the current control. Alternatively, you can use Window reference instead.

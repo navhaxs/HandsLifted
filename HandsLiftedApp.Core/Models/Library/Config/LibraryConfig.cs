@@ -2,6 +2,8 @@
 
 namespace HandsLiftedApp.Core.Models.Library.Config
 {
+    public enum LibraryType { Song, Media }
+
     public class LibraryConfig
     {
         public List<LibraryDefinition> LibraryItems { get; set; } = new();
@@ -11,6 +13,7 @@ namespace HandsLiftedApp.Core.Models.Library.Config
             public string Label { get; set; }
             public string Icon { get; set; }
             public string Directory { get; set; }
+            public LibraryType Type { get; set; } = LibraryType.Media;
         }
     }
 }

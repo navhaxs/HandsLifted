@@ -6,6 +6,7 @@ using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.SlideTheme;
+using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -62,28 +63,36 @@ namespace HandsLiftedApp.Core.Views.Designer
                 .Subscribe((x) =>
                 {
                     if (designsListBox.SelectedIndex == -1)
-                    {
                         designsListBox.SelectedIndex = 0;
-                    }
+                    SyncEditorToSelection();
                 });
 
-            designsListBox.SelectionChanged += (sender, args) =>
+            designsListBox.SelectionChanged += (sender, args) => SyncEditorToSelection();
+
+            designsListBox.DataContextChanged += (sender, args) => SyncEditorToSelection();
+        }
+
+        private const string PreviewText =
+            "Shine Jesus shine\nFill this land\nWith the Father's glory\nBlaze Spirit blaze\nSet our hearts on fire";
+
+        private void SyncEditorToSelection()
+        {
+            var item = designsListBox.SelectedItem as BaseSlideTheme;
+            themeEditorPanel.DataContext = item;
+            if (item != null)
             {
-                if (designsListBox.SelectedValue is BaseSlideTheme item)
+                fontComboBox.SelectedValue = item.FontFamilyAsText;
+                FontWeightComboBox.SelectedValue = item.FontWeight;
+                themePreviewSlideView.SetSlide(new SongSlideInstance(null, null, null)
                 {
-                    fontComboBox.SelectedValue = item.FontFamilyAsText;
-                }
-            };
-            
-            designsListBox.DataContextChanged += (sender, args) =>
+                    Text = PreviewText,
+                    Theme = item,
+                });
+            }
+            else
             {
-                if (designsListBox.SelectedValue is BaseSlideTheme item)
-                {
-                    fontComboBox.SelectedValue = item.FontFamilyAsText;
-                    FontWeightComboBox.SelectedValue = item.FontWeight;
-                }
-            };
-        
+                themePreviewSlideView.SetSlide(null);
+            }
         }
 
         private void RemoveItem_OnClick(object? sender, RoutedEventArgs e)
@@ -94,11 +103,14 @@ namespace HandsLiftedApp.Core.Views.Designer
                 {
                     if (control.DataContext is BaseSlideTheme item)
                     {
-                        if (mainViewModel.Playlist.Designs.Count > 1)
+                        if (item.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id)
                         {
-                            // TODO what happens if this theme is in use?
-                            designsListBox.SelectedIndex =
-                                0; // hack, keep at least 1 selected valid item to avoid avalonia crashing on some null font error
+                            MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                                { Title = "Cannot remove the global default theme" });
+                        }
+                        else if (mainViewModel.Playlist.Designs.Count > 1)
+                        {
+                            designsListBox.SelectedIndex = 0;
                             mainViewModel.Playlist.Designs.Remove(item);
                         }
                         else
@@ -113,7 +125,12 @@ namespace HandsLiftedApp.Core.Views.Designer
 
         private void AddItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            Globals.Instance.AppPreferences.Designs.Add(new BaseSlideTheme());
+            if (this.DataContext is MainViewModel mainViewModel)
+            {
+                var newTheme = new BaseSlideTheme();
+                mainViewModel.Playlist.Designs.Add(newTheme);
+                designsListBox.SelectedIndex = mainViewModel.Playlist.Designs.Count - 1;
+            }
         }
 
         private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
@@ -124,18 +141,12 @@ namespace HandsLiftedApp.Core.Views.Designer
                 {
                     if (control.DataContext is BaseSlideTheme item)
                     {
-                        mainViewModel.Playlist.Designs.Add(new BaseSlideTheme()
-                        {
-                            Name = $"{item.Name} (Copy)",
-                            FontFamilyAsAvalonia = FontFamily.Parse("Arial"), //dxitem.FontFamily,
-                            FontWeight = item.FontWeight,
-                            TextColour = item.TextColour,
-                            TextAlignment = item.TextAlignment,
-                            BackgroundColour = item.BackgroundColour,
-                            FontSize = item.FontSize,
-                            LineHeightEm = item.LineHeightEm,
-                            BackgroundGraphicFilePath = item.BackgroundGraphicFilePath,
-                        });
+                        var copy = new BaseSlideTheme();
+                        copy.CopyFrom(item);
+                        copy.Id = Guid.NewGuid();
+                        copy.Name = $"{item.Name} (Copy)";
+                        mainViewModel.Playlist.Designs.Add(copy);
+                        designsListBox.SelectedIndex = mainViewModel.Playlist.Designs.Count - 1;
                     }
                 }
             }
@@ -206,15 +217,11 @@ namespace HandsLiftedApp.Core.Views.Designer
 
                     if (Utils.SlideThemeXmlSerializer.TryDeserialize(stream, out var theme) && theme != null)
                     {
-                        var existingMatch = mainViewModel.Playlist.Designs.FirstOrDefault(x => x.Id == theme.Id);
-                        if (existingMatch != null)
-                        {
-                            theme.Id = new Guid();
-                        }
+                        if (mainViewModel.Playlist.Designs.Any(x => x.Id == theme.Id))
+                            theme.Id = Guid.NewGuid();
 
-                        // mainViewModel.Playlist.Designs.Add(theme);
-                        // Globals.Instance.AppPreferences.Designs.Add(theme);
-                        Globals.Instance.AppPreferences.DefaultTheme.CopyFrom(theme);
+                        mainViewModel.Playlist.Designs.Add(theme);
+                        designsListBox.SelectedIndex = mainViewModel.Playlist.Designs.Count - 1;
                     }
                     else
                     {

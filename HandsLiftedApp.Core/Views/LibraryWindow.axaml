@@ -1,9 +1,32 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="HandsLiftedApp.Core.Views.LibraryWindow"
-        Title="LibraryWindow">
-    Welcome to Avalonia!
+﻿<Window
+    Title="LibraryWindow"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.LibraryWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:library="clr-namespace:HandsLiftedApp.Views.Library"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal">
+                <avalonia:MaterialIcon
+                    Height="26"
+                    Kind="Bookshelf"
+                    Margin="20,0,0,0"
+                    Width="26" />
+                <TextBlock FontSize="22" Margin="16">Library</TextBlock>
+            </StackPanel>
+        </Grid>
+        <library:LibraryPaneView />
+    </DockPanel>
 </Window>

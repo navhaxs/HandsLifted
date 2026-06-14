@@ -15,10 +15,14 @@ public static class SongSlideSpecBuilder
     private const int CanvasHeight = 1080;
     private const float HorizontalMargin = 80f;
 
-    // Drop shadow parameters matching the previous DropShadowDirectionEffect XAML:
-    // ShadowDepth=40, Direction=0 (straight down), BlurRadius=20, Color=Black, Opacity=1
-    private static readonly DropShadowSpec DefaultShadow =
-        new DropShadowSpec(0f, 15f, 20f, SKColors.Black);
+    private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
+        theme.DropShadowEnabled
+            ? new DropShadowSpec(
+                (float)theme.DropShadowOffsetX,
+                (float)theme.DropShadowOffsetY,
+                (float)theme.DropShadowBlurRadius,
+                ToSkColor(theme.DropShadowColour))
+            : null;
 
     public static SlideRenderSpec Build(SongSlideInstance slide)
     {
@@ -74,7 +78,7 @@ public static class SongSlideSpecBuilder
 
             // Create a fresh SKTypeface per element (the measurement typeface is disposed above)
             var elemTypeface = GetTypeface(theme);
-            result.Add(new TextLineElement(line, bounds, elemTypeface, theme.FontSize, color, DefaultShadow));
+            result.Add(new TextLineElement(line, bounds, elemTypeface, theme.FontSize, color, GetShadow(theme)));
         }
         return result;
     }

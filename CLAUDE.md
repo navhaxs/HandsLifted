@@ -116,6 +116,38 @@ private static string? NormalizeMediaPath(string? path)
 
 ---
 
+## Avalonia binding gotchas
+
+### Element-name path bindings don't track intermediate object changes
+
+With `x:CompileBindings="False"`, runtime bindings like `{Binding #listBox.SelectedItem.FontSize}` do **not** reliably re-evaluate when `SelectedItem` changes. The binding sees the initial value but goes stale on selection changes.
+
+**Fix pattern**: Set the editor panel's `DataContext` imperatively in a `SelectionChanged` handler, then use simple `{Binding FontSize}` in the editor controls.
+
+```csharp
+private void SyncEditorToSelection()
+{
+    var item = listBox.SelectedItem as MyModel;
+    editorPanel.DataContext = item;
+    // also manually sync any ComboBox SelectedValue/SelectedItem here
+}
+// Wire to: SelectionChanged, DataContextChanged, ItemsSource subscription
+```
+
+### Observing all property changes on a ReactiveObject
+
+`WhenAnyPropertyChanged()` (ReactiveUI extension) may not be accessible from all projects. Use `ReactiveObject.Changed` instead — available directly on any `ReactiveObject`:
+
+```csharp
+// Subscribe to ALL property changes of a nested ReactiveObject, switching on object changes:
+var innerChanges = outer
+    .WhenAnyValue(o => o.InnerObject)
+    .Select(inner => inner?.Changed.Select(_ => Unit.Default) ?? Observable.Never<Unit>())
+    .Switch();
+```
+
+---
+
 ## SKBitmap / SkiaSharp gotchas
 
 - `SKBitmap.Decode(string filename)` silently returns `null` on failure — no exception. Always null-check.

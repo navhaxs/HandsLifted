@@ -18,6 +18,7 @@ using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
+using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Models.PlaylistActions;
@@ -31,6 +32,7 @@ namespace HandsLiftedApp.Core.Models
     public class PlaylistInstance : Playlist, IDisposable
     {
         private List<IDisposable> _disposables = new();
+        private readonly Dictionary<Guid, IDisposable> _designSubscriptions = new();
 
         public PlaylistInstance()
         {
@@ -232,6 +234,16 @@ namespace HandsLiftedApp.Core.Models
                     items.CollectionChanged += OnItemsCollectionChanged;
                 });
 
+            this.WhenAnyValue(p => p.Designs)
+                .Subscribe(designs =>
+                {
+                    designs.CollectionChanged -= OnDesignsCollectionChanged;
+                    designs.CollectionChanged += OnDesignsCollectionChanged;
+                    foreach (var sub in _designSubscriptions.Values) sub.Dispose();
+                    _designSubscriptions.Clear();
+                    foreach (var theme in designs) SubscribeToDesignChanges(theme);
+                });
+
             this.WhenAnyValue(
                     p => p.Title,
                     p => p.LogoGraphicFile,
@@ -277,6 +289,40 @@ namespace HandsLiftedApp.Core.Models
             IsDirty = true;
             Log.Verbose("Playlist items collection changed");
             Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnDesignsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            IsDirty = true;
+            Log.Verbose("Playlist designs collection changed");
+            Changed?.Invoke(this, EventArgs.Empty);
+            if (e.NewItems != null)
+                foreach (BaseSlideTheme theme in e.NewItems)
+                    SubscribeToDesignChanges(theme);
+            if (e.OldItems != null)
+                foreach (BaseSlideTheme theme in e.OldItems)
+                    UnsubscribeFromDesignChanges(theme);
+        }
+
+        private void SubscribeToDesignChanges(BaseSlideTheme theme)
+        {
+            if (_designSubscriptions.ContainsKey(theme.Id)) return;
+            if (theme.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id) return;
+            _designSubscriptions[theme.Id] = theme.Changed
+                .Subscribe(_ =>
+                {
+                    IsDirty = true;
+                    Changed?.Invoke(this, EventArgs.Empty);
+                });
+        }
+
+        private void UnsubscribeFromDesignChanges(BaseSlideTheme theme)
+        {
+            if (_designSubscriptions.TryGetValue(theme.Id, out var sub))
+            {
+                sub.Dispose();
+                _designSubscriptions.Remove(theme.Id);
+            }
         }
 
         private PlaylistItemInstanceCollection<Item> _items = new();
@@ -721,6 +767,11 @@ namespace HandsLiftedApp.Core.Models
             {
                 disposable.Dispose();
             }
+            foreach (var sub in _designSubscriptions.Values)
+            {
+                sub.Dispose();
+            }
+            _designSubscriptions.Clear();
         }
     }
 }

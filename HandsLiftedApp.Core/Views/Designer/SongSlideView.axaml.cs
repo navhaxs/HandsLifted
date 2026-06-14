@@ -1,4 +1,5 @@
 using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -21,18 +22,32 @@ public partial class SongSlideView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        if (DataContext is SongSlideInstance slide)
+            SetSlide(slide);
+    }
+
+    public void SetSlide(SongSlideInstance? slide)
+    {
         _subscription?.Dispose();
         _subscription = null;
 
-        if (DataContext is not SongSlideInstance slide) return;
+        if (slide == null)
+        {
+            SlideCanvas.Spec = null;
+            return;
+        }
 
-        // Theme inner-property changes trigger this subscription indirectly:
-        // SongSlideInstance reassigns Theme whenever DefaultTheme properties change.
-        _subscription = slide
-            .WhenAnyValue(s => s.Text, s => s.Theme)
+        var themePropertyChanges = slide
+            .WhenAnyValue(s => s.Theme)
+            .Select(t => t?.Changed.Select(_ => Unit.Default) ?? Observable.Never<Unit>())
+            .Switch();
+
+        _subscription = Observable
+            .Merge(
+                slide.WhenAnyValue(s => s.Text, s => s.Theme).Select(_ => Unit.Default),
+                themePropertyChanges
+            )
             .Subscribe(_ => RebuildSpec(slide));
-
-        RebuildSpec(slide);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)

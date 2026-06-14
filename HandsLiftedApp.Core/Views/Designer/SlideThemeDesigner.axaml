@@ -21,6 +21,7 @@
         <ext:BitmapAssetValueConverter x:Key="variableImage" />
         <converters1:SafeFontWeightConverter x:Key="SafeFontWeightConverter" />
         <converters2:SlideThemeToPreviewConverter x:Key="SlideThemeToPreviewConverter" />
+        <converters2:IsDefaultThemeConverter x:Key="IsDefaultThemeConverter" />
         <converters1:RoundedDecimalConverter x:Key="RoundedDecimalConverter" />
     </UserControl.Resources>
 
@@ -36,7 +37,7 @@
                 SelectedIndex="0"
                 MinWidth="80"
                 Name="designsListBox"
-                ItemsSource="{Binding Path=AppPreferences.Designs, Source={x:Static core:Globals.Instance}}">
+                ItemsSource="{Binding Playlist.Designs}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Import" Click="ImportItem_OnClick">
@@ -74,6 +75,12 @@
                         <DockPanel>
                             <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" HorizontalAlignment="Center"
                                        Margin="0 6 0 0" />
+                            <TextBlock Text="default"
+                                       DockPanel.Dock="Bottom"
+                                       HorizontalAlignment="Center"
+                                       FontSize="10"
+                                       Foreground="#888888"
+                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultThemeConverter}}" />
                             <!-- <Viewbox Height="60"> -->
                             <!--     <Grid -->
                             <!--         Height="130" -->
@@ -98,7 +105,7 @@
                                      HorizontalAlignment="Stretch">
                 <!-- TODO use SongSlideView, refactor to use common properties -->
                 <!-- <render:SlideRender DataContext="{Binding #designsListBox.SelectedItem, Converter={StaticResource SlideThemeToPreviewConverter}}" Height="1080" Width="1920" /> -->
-                <designer:SongSlideView DataContext="{Binding #designsListBox.SelectedItem, Converter={StaticResource SlideThemeToPreviewConverter}}" Height="1080" Width="1920" />
+                <designer:SongSlideView x:Name="themePreviewSlideView" Height="1080" Width="1920" />
             </Viewbox>
 
             <!-- <ScrollViewer Grid.Column="1"> -->
@@ -106,7 +113,7 @@
             <!-- </ScrollViewer> -->
 
             <ScrollViewer Grid.Column="1">
-                <StackPanel Margin="12 8">
+                <StackPanel x:Name="themeEditorPanel" Margin="12 8">
 
                     <StackPanel.Styles>
                         <Style Selector="ColorPicker">
@@ -114,14 +121,13 @@
                         </Style>
                     </StackPanel.Styles>
 
-                    <!-- <TextBlock Text="Name" /> -->
-                    <!-- <TextBox Name="Name" Watermark="" Text="{Binding #designsListBox.SelectedItem.Name}" /> -->
-                    <!-- -->
+                    <TextBlock Text="Name" />
+                    <TextBox Watermark="" Text="{Binding Name}" />
 
                     <!-- "Garamond, Playfair Display" -->
                     <TextBlock Text="Font" />
                     <controls:ComboBoxWithoutWheelScroll x:Name="fontComboBox"
-                                                         SelectedItem="{Binding #designsListBox.SelectedItem.FontFamilyAsText}">
+                                                         SelectedItem="{Binding FontFamilyAsText}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" 
@@ -137,14 +143,14 @@
                         <StackPanel>
                             <DockPanel>
                                 <controls:ComboBoxWithoutWheelScroll Name="FontWeightComboBox"
-                                                                     SelectedValue="{Binding #designsListBox.SelectedItem.FontWeight, FallbackValue=SemiBold, Converter={StaticResource SafeFontWeightConverter}}" />
+                                                                     SelectedValue="{Binding FontWeight, FallbackValue=SemiBold, Converter={StaticResource SafeFontWeightConverter}}" />
                             </DockPanel>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Margin="5 0 0 0">
                             <DockPanel>
                                 <TextBox Name="FontSizeTextBox"
-                                         Text="{Binding #designsListBox.SelectedItem.FontSize, FallbackValue=90}" />
+                                         Text="{Binding FontSize, FallbackValue=90}" />
                                 <!-- <Slider Name="FontSizeSlider" Minimum="1" Maximum="200" -->
                                 <!--         IsSnapToTickEnabled="True" -->
                                 <!--         TickFrequency="1" -->
@@ -206,15 +212,15 @@
                                 </Style>
                             </UniformGrid.Styles>
                             <ToggleButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextFontBold}">
+                                         IsChecked="{Binding CalculatedTextFontBold}">
                                 <avalonia:MaterialIcon Kind="FormatBold" />
                             </ToggleButton>
                             <ToggleButton CornerRadius="6"
-                                          IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextFontItalic}">
+                                          IsChecked="{Binding CalculatedTextFontItalic}">
                                 <avalonia:MaterialIcon Kind="FormatItalic" />
                             </ToggleButton>
                             <ToggleButton CornerRadius="6"
-                                          IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextFontUnderline}">
+                                          IsChecked="{Binding CalculatedTextFontUnderline}">
                                 <avalonia:MaterialIcon Kind="FormatUnderline" />
                             </ToggleButton>
                         </UniformGrid>
@@ -273,19 +279,19 @@
                                 </Style>
                             </UniformGrid.Styles>
                             <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentLeft}">
+                                         IsChecked="{Binding CalculatedTextAlignmentLeft}">
                                 <avalonia:MaterialIcon Kind="AlignHorizontalLeft" />
                             </RadioButton>
                             <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentCenter}">
+                                         IsChecked="{Binding CalculatedTextAlignmentCenter}">
                                 <avalonia:MaterialIcon Kind="AlignHorizontalCentre" />
                             </RadioButton>
                             <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentRight}">
+                                         IsChecked="{Binding CalculatedTextAlignmentRight}">
                                 <avalonia:MaterialIcon Kind="AlignHorizontalRight" />
                             </RadioButton>
                             <RadioButton CornerRadius="6"
-                                         IsChecked="{Binding #designsListBox.SelectedItem.CalculatedTextAlignmentJustify}">
+                                         IsChecked="{Binding CalculatedTextAlignmentJustify}">
                                 <avalonia:MaterialIcon Kind="AlignHorizontalDistribute" />
                             </RadioButton>
                         </UniformGrid>
@@ -297,7 +303,7 @@
                     <DockPanel>
                         <TextBox Name="LineHeightTextBox"
                                  MinWidth="30"
-                                 Text="{Binding #designsListBox.SelectedItem.LineHeightEm, FallbackValue=1}" />
+                                 Text="{Binding LineHeightEm, FallbackValue=1}" />
                         <Slider Name="LineHeightSlider" Minimum="0.1" Maximum="3"
                                 IsSnapToTickEnabled="True"
                                 TickFrequency="0.01"
@@ -311,7 +317,7 @@
                     <DockPanel>
                         <ColorPicker Name="TextColour"
                                      DockPanel.Dock="Right"
-                                     Color="{Binding #designsListBox.SelectedItem.TextAvaloniaColour, FallbackValue='White'}" />
+                                     Color="{Binding TextAvaloniaColour, FallbackValue='White'}" />
                         <TextBlock Text="Colour" />
                     </DockPanel>
 
@@ -321,14 +327,57 @@
 
                     <ColorPicker Name="BackgroundColour"
                                  HorizontalAlignment="Right"
-                                 Color="{Binding #designsListBox.SelectedItem.BackgroundAvaloniaColour, FallbackValue='Black'}" />
+                                 Color="{Binding BackgroundAvaloniaColour, FallbackValue='Black'}" />
 
                     <TextBlock Text="Graphic" />
                     <DockPanel>
                         <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button>
                         <TextBox Name="bgGraphicFilePath" Watermark=""
-                                 Text="{Binding #designsListBox.SelectedItem.BackgroundGraphicFilePath}" />
+                                 Text="{Binding BackgroundGraphicFilePath}" />
                     </DockPanel>
+
+                    <Border Height="1" Margin="0 10" Background="#808080" />
+
+                    <DockPanel Margin="0 0 0 4">
+                        <CheckBox DockPanel.Dock="Right"
+                                  IsChecked="{Binding DropShadowEnabled}" />
+                        <TextBlock Text="Drop Shadow" VerticalAlignment="Center" />
+                    </DockPanel>
+
+                    <StackPanel IsEnabled="{Binding DropShadowEnabled}">
+                        <TextBlock Text="Offset Y" />
+                        <DockPanel>
+                            <TextBox Name="ShadowOffsetYTextBox" MinWidth="40"
+                                     Text="{Binding DropShadowOffsetY, FallbackValue=8}" />
+                            <Slider Minimum="-100" Maximum="100"
+                                    IsSnapToTickEnabled="True" TickFrequency="1"
+                                    Value="{Binding #ShadowOffsetYTextBox.Text, Converter={StaticResource RoundedDecimalConverter}}" />
+                        </DockPanel>
+
+                        <TextBlock Text="Offset X" />
+                        <DockPanel>
+                            <TextBox Name="ShadowOffsetXTextBox" MinWidth="40"
+                                     Text="{Binding DropShadowOffsetX, FallbackValue=0}" />
+                            <Slider Minimum="-100" Maximum="100"
+                                    IsSnapToTickEnabled="True" TickFrequency="1"
+                                    Value="{Binding #ShadowOffsetXTextBox.Text, Converter={StaticResource RoundedDecimalConverter}}" />
+                        </DockPanel>
+
+                        <TextBlock Text="Blur" />
+                        <DockPanel>
+                            <TextBox Name="ShadowBlurRadiusTextBox" MinWidth="40"
+                                     Text="{Binding DropShadowBlurRadius, FallbackValue=20}" />
+                            <Slider Minimum="0" Maximum="100"
+                                    IsSnapToTickEnabled="True" TickFrequency="1"
+                                    Value="{Binding #ShadowBlurRadiusTextBox.Text, Converter={StaticResource RoundedDecimalConverter}}" />
+                        </DockPanel>
+
+                        <DockPanel Margin="0 4 0 0">
+                            <ColorPicker DockPanel.Dock="Right"
+                                         Color="{Binding DropShadowAvaloniaColour, FallbackValue='Black'}" />
+                            <TextBlock Text="Colour" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </StackPanel>
 
                 </StackPanel>
             </ScrollViewer>

@@ -8,4 +8,11 @@ namespace HandsLiftedApp.Core.Models.Library
     {
         IEnumerable<SongLibraryEntry> GetEntries();
     }
+
+    internal record SongIndexEntry(
+        string FilePath,
+        string Title,
+        string Copyright,
+        string LyricText
+    );
 }

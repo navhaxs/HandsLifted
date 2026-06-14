@@ -37,17 +37,21 @@ namespace HandsLiftedApp.Core
                 LogoGraphicFile =
                     RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, playlist.LogoGraphicFile),
                 SlideTransitionDurationMs = playlist.SlideTransitionDurationMs,
-                Designs = new ObservableCollection<BaseSlideTheme>(playlist.Designs.Select(design =>
-                {
-                    if (design.BackgroundGraphicFilePath != null)
+                Designs = new ObservableCollection<BaseSlideTheme>(playlist.Designs
+                    .Where(d => d.Id != Globals.Instance.AppPreferences?.DefaultTheme?.Id)
+                    .Select(design =>
                     {
-                        design.BackgroundGraphicFilePath =
-                            RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
-                                design.BackgroundGraphicFilePath);
-                    }
-
-                    return design;
-                }).ToList()),
+                        var copy = new BaseSlideTheme();
+                        copy.CopyFrom(design);
+                        if (copy.BackgroundGraphicFilePath != null &&
+                            !copy.BackgroundGraphicFilePath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            copy.BackgroundGraphicFilePath =
+                                RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                                    copy.BackgroundGraphicFilePath);
+                        }
+                        return copy;
+                    }).ToList()),
                 Items = new TrulyObservableCollection<Item>()
             };
 

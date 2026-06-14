@@ -1,16 +1,17 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-        mc:Ignorable="d"
-        Width="970"
-        Height="600"
-        WindowStartupLocation="CenterOwner"
-        x:Class="HandsLiftedApp.Core.Views.WelcomeWindow"
-        x:DataType="viewModels:WelcomeWindowViewModel"
-        Title="Welcome to VisionScreens">
+﻿<Window
+    Height="600"
+    Title="Welcome to VisionScreens"
+    Width="970"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.WelcomeWindow"
+    x:DataType="viewModels:WelcomeWindowViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
         <viewModels:WelcomeWindowViewModel />
@@ -66,10 +67,10 @@
         <!--         </Button> -->
         <!--     </Grid> -->
         <!-- </Grid> -->
-        <!-- -->
+        <!--    -->
         <Grid RowDefinitions="1*, 1, 4*">
 
-            <!-- header -->
+            <!--  header  -->
             <Grid Background="#41285c">
                 <Grid.Styles>
                     <Style Selector="TextBlock">
@@ -77,38 +78,68 @@
                     </Style>
                 </Grid.Styles>
 
-                <Image Source="/Assets/waves.png" Stretch="None"
-                       HorizontalAlignment="Left" VerticalAlignment="Top" />
+                <Image
+                    HorizontalAlignment="Left"
+                    Source="/Assets/waves.png"
+                    Stretch="None"
+                    VerticalAlignment="Top" />
 
                 <Grid ColumnDefinitions="2*,*" MaxWidth="700">
-                    <Grid Grid.Column="0" VerticalAlignment="Bottom" Margin="0 0 0 12">
+                    <Grid
+                        Grid.Column="0"
+                        Margin="0,0,0,12"
+                        VerticalAlignment="Bottom">
                         <StackPanel VerticalAlignment="Bottom">
-                            <TextBlock x:Name="GreetingText" Text="Welcome" FontSize="32" />
+                            <TextBlock
+                                FontSize="32"
+                                Text="Welcome"
+                                x:Name="GreetingText" />
                         </StackPanel>
                     </Grid>
 
-                    <Grid Grid.Column="1" Margin="0 0 0 12">
-                        <StackPanel HorizontalAlignment="Left" Margin="0 0 16 0" VerticalAlignment="Bottom">
-                            <TextBlock x:Name="DayOfWeekString" Text="Sunday" FontSize="22" />
-                            <TextBlock x:Name="DateString" Text="11 April 2025" FontSize="22" />
+                    <Grid Grid.Column="1" Margin="0,0,0,12">
+                        <StackPanel
+                            HorizontalAlignment="Left"
+                            Margin="0,0,16,0"
+                            VerticalAlignment="Bottom">
+                            <TextBlock
+                                FontSize="22"
+                                Text="Sunday"
+                                x:Name="DayOfWeekString" />
+                            <TextBlock
+                                FontSize="22"
+                                Text="11 April 2025"
+                                x:Name="DateString" />
                         </StackPanel>
                     </Grid>
                 </Grid>
             </Grid>
 
-            <!-- content -->
-            <Grid ColumnDefinitions="2*,*" Grid.Row="2" MaxWidth="700" Margin="0 22 0 0 ">
+            <!--  content  -->
+            <Grid
+                ColumnDefinitions="2*,*"
+                Grid.Row="2"
+                Margin="0,22,0,0"
+                MaxWidth="700">
 
-                <!-- left -->
-                <Grid Margin="0 0 60 60">
-                    <Border CornerRadius="6" Background="{DynamicResource SurfaceBrush}" MaxHeight="400" VerticalAlignment="Top">
-                        <StackPanel Margin="12 10 0 12" HorizontalAlignment="Stretch">
-                            <TextBlock Text="Recent playlists" FontSize="22" Margin="0 0 0 12" />
-                            <TextBlock Text="No recent playlists"
-                                       Margin="0 14"
-                                       FontSize="16"
-                                       IsVisible="{Binding !RecentPlaylists.Count}" />
-                            <ScrollViewer Margin="0 0 12 0">
+                <!--  left  -->
+                <Grid Margin="0,0,60,60">
+                    <Border
+                        Background="{DynamicResource SurfaceBrush}"
+                        CornerRadius="6"
+                        MaxHeight="400"
+                        VerticalAlignment="Top">
+                        <StackPanel HorizontalAlignment="Stretch" Margin="12,10,0,12">
+                            <TextBlock
+                                FontSize="22"
+                                Margin="0,0,0,12"
+                                Text="Recent playlists" />
+                            <TextBlock
+                                FontSize="16"
+                                IsVisible="{Binding !RecentPlaylists.Count}"
+                                Margin="0,14"
+                                Text="No recent playlists" />
+                            <ScrollViewer Margin="0,0,12,0">
                                 <ItemsControl ItemsSource="{Binding RecentPlaylists}">
                                     <ItemsControl.Styles>
                                         <Style Selector="Button">
@@ -124,23 +155,22 @@
                                         <Style Selector="Button:nth-last-child(1)">
                                             <Setter Property="CornerRadius" Value="0 0 6 6" />
                                         </Style>
-                                        <!-- Wrap ToolTips -->
+                                        <!--  Wrap ToolTips  -->
                                         <Style Selector="ToolTip">
-                                            <Setter Property="Foreground"
-                                                    Value="{DynamicResource CaptionButtonForeground}" />
-                                            <Setter Property="MaxWidth"
-                                                    Value="500" />
+                                            <Setter Property="Foreground" Value="{DynamicResource CaptionButtonForeground}" />
+                                            <Setter Property="MaxWidth" Value="500" />
                                         </Style>
                                         <Style Selector="ToolTip TextBlock">
                                             <Setter Property="FontSize" Value="16" />
-                                            <Setter Property="TextWrapping"
-                                                    Value="Wrap" />
+                                            <Setter Property="TextWrapping" Value="Wrap" />
                                         </Style>
                                     </ItemsControl.Styles>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Button Click="LoadRecentPlaylistEntryCommand" Content="{Binding FileName}"
-                                                    ToolTip.Tip="{Binding FilePath}" />
+                                            <Button
+                                                Click="LoadRecentPlaylistEntryCommand"
+                                                Content="{Binding FileName}"
+                                                ToolTip.Tip="{Binding FilePath}" />
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -149,8 +179,8 @@
                     </Border>
                 </Grid>
 
-                <!-- right -->
-                <StackPanel Grid.Column="1" Margin="0 8 0 0">
+                <!--  right  -->
+                <StackPanel Grid.Column="1" Margin="0,8,0,0">
                     <StackPanel.Styles>
                         <Style Selector="Button">
                             <Setter Property="Height" Value="60" />
@@ -158,19 +188,19 @@
                             <Setter Property="CornerRadius" Value="2" />
                             <Setter Property="Background" Value="{DynamicResource DarkSurfaceBrush}" />
                         </Style>
-                        <Style Selector="Button > DockPanel">
+                        <Style Selector="Button &gt; DockPanel">
                             <Setter Property="HorizontalAlignment" Value="Left" />
                         </Style>
-                        <Style Selector="Button > DockPanel > avalonia|MaterialIcon">
+                        <Style Selector="Button &gt; DockPanel &gt; avalonia|MaterialIcon">
                             <Setter Property="Margin" Value="16 0 0 0" />
                             <Setter Property="Width" Value="20" />
                             <Setter Property="Height" Value="20" />
                         </Style>
-                        <Style Selector="Button > DockPanel > TextBlock">
+                        <Style Selector="Button &gt; DockPanel &gt; TextBlock">
                             <Setter Property="Margin" Value="12 0 0 0" />
                             <Setter Property="FontSize" Value="18" />
                         </Style>
-                        <Style Selector="StackPanel > Border">
+                        <Style Selector="StackPanel &gt; Border">
                             <Setter Property="Margin" Value="0 6" />
                         </Style>
                     </StackPanel.Styles>
@@ -193,6 +223,12 @@
                         <DockPanel>
                             <avalonia:MaterialIcon Kind="Tools" />
                             <TextBlock Text="Set Up" />
+                        </DockPanel>
+                    </Button>
+                    <Button Click="LibraryClicked">
+                        <DockPanel>
+                            <avalonia:MaterialIcon Kind="Bookshelf" />
+                            <TextBlock Text="Library" />
                         </DockPanel>
                     </Button>
                 </StackPanel>

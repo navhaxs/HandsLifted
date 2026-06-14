@@ -37,6 +37,14 @@ namespace HandsLiftedApp.Core.Models.Library
             set => this.RaiseAndSetIfChanged(ref _isMediaBin, value);
         }
 
+        protected enum ConstructorMode { SkipRefresh }
+
+        protected Library(LibraryConfig.LibraryDefinition config, ConstructorMode _)
+        {
+            Config = config;
+            Items = new ObservableCollection<LibraryItem>();
+        }
+
         public Library(LibraryConfig.LibraryDefinition config)
         {
             Config = config;
@@ -47,21 +55,23 @@ namespace HandsLiftedApp.Core.Models.Library
                 return;
             }
 
-            // Globals.AppPreferences.WhenAnyValue(prefs => prefs.LibraryPath).Subscribe(libraryPath =>
-            // {
-            //     rootDirectory = libraryPath;
-            //     Refresh();
-            //     watch();
-            // });
             Items = new ObservableCollection<LibraryItem>();
-            // rootDirectory = Globals.AppPreferences.LibraryPath;
 
             Refresh();
 
             // watch();
         }
 
-        void Refresh()
+        public virtual IEnumerable<LibraryItem> Search(string? term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+                return Items.OrderBy(i => i.Title);
+            return Items
+                .Where(i => i.Title.Contains(term, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(i => i.Title);
+        }
+
+        protected virtual void Refresh()
         {
             if (!Directory.Exists(Config.Directory))
             {

@@ -61,7 +61,7 @@ public class MainViewModel : ViewModelBase
             Playlist.Items.Add(new SongItemInstance(Playlist));
             Playlist.Items.Add(new SectionHeadingItem());
             Playlist.Items.Add(new MediaGroupItemInstance(Playlist));
-            Playlist.Designs.Add(new BaseSlideTheme() { Name = "Default" });
+            Playlist.Designs.Add(Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme() { Name = "Default" });
 
             LibraryViewModel.ReloadLibraries();
 
@@ -175,17 +175,22 @@ public class MainViewModel : ViewModelBase
                     RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         x.LogoGraphicFile);
                 
-                Playlist.Designs = new ObservableCollection<BaseSlideTheme>(x.Designs.Select(design =>
+                var loadedDesigns = x.Designs.Select(design =>
                 {
-                    if (design.BackgroundGraphicFilePath != null)
+                    if (design.BackgroundGraphicFilePath != null &&
+                        !design.BackgroundGraphicFilePath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
                     {
                         design.BackgroundGraphicFilePath =
                             RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                                 design.BackgroundGraphicFilePath);
                     }
-
                     return design;
-                }).ToList());
+                });
+                var defaultTheme = Globals.Instance.AppPreferences?.DefaultTheme;
+                var designsWithDefault = defaultTheme != null
+                    ? new[] { defaultTheme }.Concat(loadedDesigns)
+                    : loadedDesigns;
+                Playlist.Designs = new ObservableCollection<BaseSlideTheme>(designsWithDefault.ToList());
                 Playlist.PlaylistFilePath = msg.FilePath;
                 Playlist.PlaylistWorkingDirectory = playlistDirectoryPath;
                 

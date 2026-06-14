@@ -15,7 +15,7 @@ namespace HandsLiftedApp.Core.Converters
             {
                 return new SongSlideInstance(null, null, null)
                 {
-                    // SlideTheme = baseSlideTheme,
+                    Theme = baseSlideTheme,
                     Text = @"Shine Jesus shine
 Fill this land
 With the Father's glory

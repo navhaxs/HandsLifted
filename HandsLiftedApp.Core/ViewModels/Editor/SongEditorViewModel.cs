@@ -77,6 +77,15 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                         Song.Design = theme.Id;
                     }
                 });
+
+            song.WhenAnyValue(x => x.Design)
+                .Select(id => playlistInstance.Designs.FirstOrDefault(d => d.Id == id))
+                .DistinctUntilChanged()
+                .Subscribe(theme =>
+                {
+                    if (_selectedSlideTheme?.Id != theme?.Id)
+                        this.RaiseAndSetIfChanged(ref _selectedSlideTheme, theme, nameof(SelectedSlideTheme));
+                });
             
             _songEditorWindowTitle = this.WhenAnyValue(x => x.ItemInsertIndex,
                 (int? idx) => idx == null ? "Song Editor" : "Add new song")

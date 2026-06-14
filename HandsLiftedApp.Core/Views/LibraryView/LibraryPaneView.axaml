@@ -1,18 +1,16 @@
 <UserControl
-    x:Class="HandsLiftedApp.Views.Library.LibraryPaneView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-    xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
-    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-    d:DesignHeight="200"
+    d:DesignHeight="500"
     d:DesignWidth="600"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Views.Library.LibraryPaneView"
     x:DataType="viewModels:MainViewModel"
-    mc:Ignorable="d">
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
         <viewModels:MainViewModel />
@@ -29,18 +27,18 @@
     <DockPanel IsVisible="{Binding Converter={x:Static ObjectConverters.IsNotNull}}">
 
         <!--  Search box  -->
-        <!-- <TextBox -->
-        <!--     CornerRadius="99" -->
-        <!--     MinWidth="400" -->
-        <!--     MaxWidth="400" -->
-        <!--     Padding="12,4" -->
-        <!--     HorizontalAlignment="Left" -->
-        <!--     Background="#35000000" -->
-        <!--     BorderThickness="1" -->
-        <!--     DockPanel.Dock="Top" -->
-        <!--     FontSize="16" -->
-        <!--     Text="{Binding LibraryViewModel.SearchTerm}" -->
-        <!--     Watermark="Search songs and content..." /> -->
+        <!--  <TextBox  -->
+        <!--  CornerRadius="99"  -->
+        <!--  MinWidth="400"  -->
+        <!--  MaxWidth="400"  -->
+        <!--  Padding="12,4"  -->
+        <!--  HorizontalAlignment="Left"  -->
+        <!--  Background="#35000000"  -->
+        <!--  BorderThickness="1"  -->
+        <!--  DockPanel.Dock="Top"  -->
+        <!--  FontSize="16"  -->
+        <!--  Text="{Binding LibraryViewModel.SearchTerm}"  -->
+        <!--  Watermark="Search songs and content..." />  -->
 
         <!--  3 Pane Splitter  -->
         <Grid ColumnDefinitions="200,1,*">
@@ -48,16 +46,16 @@
             <!--  Left box  -->
             <DockPanel Grid.Column="0">
 
-                <Button DockPanel.Dock="Bottom" Command="{Binding LibraryViewModel.CreateNewSongCommand}">Add new song</Button>
-
-                <ListBox Margin="0,0,0,0" BorderThickness="0"
-                         ItemsSource="{Binding LibraryViewModel.Libraries}"
-                         SelectedItem="{Binding LibraryViewModel.SelectedLibrary, Mode=OneWayToSource}">
+                <ListBox
+                    BorderThickness="0"
+                    ItemsSource="{Binding LibraryViewModel.Libraries}"
+                    Margin="0,0,0,0"
+                    SelectedItem="{Binding LibraryViewModel.SelectedLibrary, Mode=OneWayToSource}">
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="ContextMenu">
                                 <ContextMenu>
-                                    <MenuItem Header="Open in Windows Explorer" Click="MenuItem_OnClick">
+                                    <MenuItem Click="MenuItem_OnClick" Header="Open in Windows Explorer">
                                         <MenuItem.Icon>
                                             <avalonia:MaterialIcon Foreground="#888888" Kind="OpenInNew" />
                                         </MenuItem.Icon>
@@ -68,59 +66,56 @@
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Label}" Padding="6 4" />
+                            <TextBlock Padding="6,4" Text="{Binding Label}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </DockPanel>
 
             <GridSplitter
-                Grid.Column="1"
-                Margin="-3,0"
-                HorizontalAlignment="Stretch"
                 Background="#808080"
                 BorderBrush="Transparent"
                 BorderThickness="3,0"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
+                Margin="-3,0"
                 ZIndex="9999" />
 
             <Grid Grid.Column="2">
-
-                <library:LibraryQueryView DataContext="{Binding LibraryViewModel.ActiveQuery}" />
-
-                <Button
-                    Margin="20"
-                    Padding="16"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}"
-                    Content="Add to playlist" />
+                <ContentControl Content="{Binding LibraryViewModel.ActiveQuery}">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate DataType="viewModels:LibraryQueryViewModel">
+                            <library:LibraryQueryView />
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
             </Grid>
 
-            <!-- -->
-            <!--     ~1~  Right box  @1@ -->
+            <!--    -->
+            <!--  ~1~  Right box  @1@  -->
             <!--     <Grid Grid.Column="2" Margin="8 0"> -->
-            <!--         <ProgressBar IsVisible="{Binding LibraryViewModel.IsPreviewLoading}" Height="2" -->
-            <!--                      IsIndeterminate="True" -->
-            <!--                      VerticalAlignment="Top" /> -->
-            <!--         <Image -->
-            <!--             Stretch="Uniform" -->
-            <!--             Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" /> -->
+            <!--  <ProgressBar IsVisible="{Binding LibraryViewModel.IsPreviewLoading}" Height="2"  -->
+            <!--  IsIndeterminate="True"  -->
+            <!--  VerticalAlignment="Top" />  -->
+            <!--  <Image  -->
+            <!--  Stretch="Uniform"  -->
+            <!--  Source="{Binding Path=LibraryViewModel.SelectedItemImagePreview}" />  -->
             <!--         <ScrollViewer> -->
-            <!--             <TextBlock -->
-            <!--                 Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" /> -->
+            <!--  <TextBlock  -->
+            <!--  Text="{Binding Path=LibraryViewModel.SelectedItemPreview, FallbackValue='preview content goes here'}" />  -->
             <!--         </ScrollViewer> -->
-            <!--         <Button -->
-            <!--             Margin="20" -->
-            <!--             Padding="16" -->
-            <!--             HorizontalAlignment="Right" -->
-            <!--             VerticalAlignment="Bottom" -->
-            <!--             Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}" -->
-            <!--             Content="Add to playlist" /> -->
+            <!--  <Button  -->
+            <!--  Margin="20"  -->
+            <!--  Padding="16"  -->
+            <!--  HorizontalAlignment="Right"  -->
+            <!--  VerticalAlignment="Bottom"  -->
+            <!--  Command="{Binding LibraryViewModel.OnAddSelectedToPlaylistCommand}"  -->
+            <!--  Content="Add to playlist" />  -->
             <!--     </Grid> -->
-            <!-- -->
+            <!--    -->
             <!-- </Grid> -->
             <!--     </TabItem> -->
-            <!-- -->
+            <!--    -->
             <!-- </TabControl> -->
 
         </Grid>
