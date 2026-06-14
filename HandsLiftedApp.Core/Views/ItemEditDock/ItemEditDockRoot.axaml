@@ -13,6 +13,33 @@
     <ContentControl Content="{Binding}">
         <ContentControl.ContentTemplate>
             <common:MyTemplateSelector>
+                <DataTemplate x:Key="SongItemInstance" x:DataType="items1:SongItemInstance">
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Padding="22,6"
+                            Margin="6 6 0 6"
+                            Background="{DynamicResource EditButtonBackgroundBrush}"
+                            BorderBrush="#b3aed9"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <TextBlock>Theme</TextBlock>
+                            <Button.Flyout>
+                                <Flyout Placement="Bottom">
+                                    <ComboBox
+                                        ItemsSource="{Binding ParentPlaylist.Designs}"
+                                        SelectedItem="{Binding ResolvedDesignTheme}"
+                                        MinWidth="180">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
                 <DataTemplate x:Key="PowerPointPresentationItemInstance"
                               x:DataType="items1:PowerPointPresentationItemInstance">
                     <StackPanel Orientation="Horizontal">

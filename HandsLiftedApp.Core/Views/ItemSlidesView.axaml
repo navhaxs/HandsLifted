@@ -328,28 +328,7 @@
 
                                 </DockPanel>
 
-                                <DockPanel IsVisible="{Binding HasThemeSelection, FallbackValue=False}"
-                                           Margin="18 2 12 4">
-                                    <TextBlock DockPanel.Dock="Left"
-                                               Text="Theme"
-                                               VerticalAlignment="Center"
-                                               FontSize="12"
-                                               Opacity="0.6"
-                                               Margin="0 0 8 0" />
-                                    <ComboBox ItemsSource="{Binding ParentPlaylist.Designs}"
-                                              SelectedItem="{Binding ResolvedDesignTheme}"
-                                              Padding="6 2"
-                                              MaxHeight="30"
-                                              FontSize="12">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Name}" />
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                </DockPanel>
-
-                                <item:ItemInfo VerticalAlignment="Top" />
+<item:ItemInfo VerticalAlignment="Top" />
 
                                 <Grid
                                     MinHeight="100"
