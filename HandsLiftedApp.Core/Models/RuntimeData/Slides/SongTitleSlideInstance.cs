@@ -50,6 +50,11 @@ namespace HandsLiftedApp.Data.Slides
                     debounceDispatcher.Debounce(() => GenerateBitmaps());
                 });
 
+            parentSongItem?.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+                .Skip(1)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(_ => debounceDispatcher.Debounce(() => GenerateBitmaps()));
+
             this.WhenAnyValue(x => x.Theme)
                 .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
                 .Switch()
