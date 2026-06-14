@@ -73,22 +73,9 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
         {
             if (slideElement is ImageElement imageElement)
             {
-                Bitmap? imageData = null;
-                try
-                {
-                    if (!string.IsNullOrEmpty(imageElement.FilePath))
-                    {
-                        imageData = BitmapLoader.LoadBitmap(imageElement.FilePath);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Error loading image: {e.Message}");
-                }
-
                 Image image = new Image()
                 {
-                    Source = imageData,
+                    Source = null,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
                     Stretch = Stretch.Uniform,
@@ -133,6 +120,19 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Path = nameof(imageElement.FilePath),
                     Converter = BitmapAssetValueConverter.Instance,
                 });
+
+                if (!string.IsNullOrEmpty(imageElement.FilePath))
+                {
+                    _ = BitmapLoader.LoadBitmapAsync(imageElement.FilePath).ContinueWith(
+                        t =>
+                        {
+                            if (t.Result != null)
+                                Avalonia.Threading.Dispatcher.UIThread.Post(
+                                    () => image.Source = t.Result,
+                                    Avalonia.Threading.DispatcherPriority.Background);
+                        },
+                        System.Threading.Tasks.TaskContinuationOptions.OnlyOnRanToCompletion);
+                }
 
                 return image;
             }

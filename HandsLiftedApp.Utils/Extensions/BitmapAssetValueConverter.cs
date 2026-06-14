@@ -29,7 +29,12 @@ namespace HandsLiftedApp.Extensions
                 if (rawUri.Length == 0)
                     return null;
 
-                return BitmapLoader.LoadBitmap(rawUri);
+                // avares:// paths are fast in-memory assets — stay sync
+                if (rawUri.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
+                    return BitmapLoader.LoadBitmap(rawUri);
+
+                // File paths: return cached bitmap or null (async load will set Source directly)
+                return BitmapLoader.Cache.GetBitmap(rawUri);
             }
 
             throw new NotSupportedException();
