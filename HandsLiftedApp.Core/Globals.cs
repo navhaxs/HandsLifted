@@ -106,15 +106,18 @@ namespace HandsLiftedApp.Core
 
             if (MpvContextInstance != null)
             {
-                try
-                {
-                    MpvContextInstance.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Error disposing MpvContext");
-                }
+                // MpvContext.Dispose() calls mpv_terminate_destroy() which can block for
+                // hundreds of milliseconds waiting for libmpv's internal threads to exit.
+                // Running it off the UI thread lets Avalonia's shutdown proceed without
+                // hanging the dispatcher; Environment.Exit(0) in Program.cs kills any
+                // remaining native threads if they don't finish in time.
+                var ctx = MpvContextInstance;
                 MpvContextInstance = null;
+                System.Threading.Tasks.Task.Run(() =>
+                {
+                    try { ctx.Dispose(); }
+                    catch (Exception ex) { Log.Error(ex, "Error disposing MpvContext"); }
+                });
             }
 
             try
