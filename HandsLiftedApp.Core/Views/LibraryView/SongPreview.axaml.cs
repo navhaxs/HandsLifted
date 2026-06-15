@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Models.PlaylistActions;
-using HandsLiftedApp.Models.UI;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
@@ -39,6 +41,14 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             InitializeComponent();
         }
 
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            bool hasMainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)
+                ?.Windows.OfType<MainWindow>().Any() ?? false;
+            AddToPlaylistButton.IsVisible = hasMainWindow;
+        }
+
         private void AddToPlaylistButton_OnClick(object? sender, RoutedEventArgs e)
         {
             if (LibraryItem == null) return;
@@ -50,12 +60,17 @@ namespace HandsLiftedApp.Core.Views.LibraryView
         {
             if (SongItem is not { } songItem) return;
 
-            var instance = ItemInstanceFactory.ToItemInstance(songItem, Globals.Instance.MainViewModel.Playlist) as SongItemInstance;
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var instance = ItemInstanceFactory.ToItemInstance(songItem, playlist) as SongItemInstance;
             if (instance == null) return;
 
-            MessageBus.Current.SendMessage(new MainWindowModalMessage(
-                new SongEditorWindow(), false,
-                new SongEditorViewModel(instance, Globals.Instance.MainViewModel.Playlist)));
+            var editor = new SongEditorWindow { DataContext = new SongEditorViewModel(instance, playlist) };
+            editor.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            var parent = TopLevel.GetTopLevel(this) as Window;
+            if (parent != null)
+                editor.Show(parent);
+            else
+                editor.Show();
         }
     }
 }

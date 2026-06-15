@@ -1,7 +1,7 @@
 ﻿<Window
-    Height="600"
+    Height="500"
     Title="Welcome to VisionScreens"
-    Width="970"
+    Width="870"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d"
     x:Class="HandsLiftedApp.Core.Views.WelcomeWindow"
@@ -24,50 +24,53 @@
     </Window.Styles>
 
     <DockPanel>
-        <!-- <Grid DockPanel.Dock="Bottom" Background="#1F1F1F"> -->
-        <!--     <Grid ColumnDefinitions="*,6,*,6,*" Margin="0 14" MaxWidth="400"> -->
-        <!--         <Grid.Styles> -->
-        <!--             <Style Selector="Button"> -->
-        <!--                 <Setter Property="Height" Value="40" /> -->
-        <!--                 <Setter Property="HorizontalContentAlignment" Value="Center" /> -->
-        <!--                 <Setter Property="CornerRadius" Value="6" /> -->
-        <!--                 <Setter Property="Background" Value="#222" /> -->
-        <!--             </Style> -->
-        <!--             <Style Selector="Button > DockPanel"> -->
-        <!--                 <Setter Property="HorizontalAlignment" Value="Stretch" /> -->
-        <!--             </Style> -->
-        <!--             <Style Selector="Button > DockPanel > avalonia|MaterialIcon"> -->
-        <!--                 <Setter Property="Margin" Value="16 0 0 0" /> -->
-        <!--                 <Setter Property="Width" Value="20" /> -->
-        <!--                 <Setter Property="Height" Value="20" /> -->
-        <!--             </Style> -->
-        <!--             <Style Selector="Button > DockPanel > TextBlock"> -->
-        <!--                 <Setter Property="Margin" Value="8 0 20 0" /> -->
-        <!--                 <Setter Property="TextAlignment" Value="Center" /> -->
-        <!--                 <Setter Property="FontSize" Value="14" /> -->
-        <!--             </Style> -->
-        <!--         </Grid.Styles> -->
-        <!--         <Button> -->
-        <!--             <DockPanel> -->
-        <!--                 <avalonia:MaterialIcon Kind="Tools" /> -->
-        <!--                 <TextBlock Text="Setup" /> -->
-        <!--             </DockPanel> -->
-        <!--         </Button> -->
-        <!--         <Button Grid.Column="2"> -->
-        <!--             <DockPanel> -->
-        <!--                 <avalonia:MaterialIcon Kind="Bookshelf" /> -->
-        <!--                 <TextBlock Text="Library" /> -->
-        <!--             </DockPanel> -->
-        <!--         </Button> -->
-        <!--         <Button Grid.Column="4"> -->
-        <!--             <DockPanel> -->
-        <!--                 <avalonia:MaterialIcon Kind="Shutdown" /> -->
-        <!--                 <TextBlock Text="Exit" /> -->
-        <!--             </DockPanel> -->
-        <!--         </Button> -->
-        <!--     </Grid> -->
-        <!-- </Grid> -->
-        <!--    -->
+        <Grid Background="#1F1F1F" DockPanel.Dock="Bottom">
+            <Grid
+                ColumnDefinitions="*,6,*,6,*"
+                Margin="0,14"
+                MaxWidth="700">
+                <Grid.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Height" Value="40" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="CornerRadius" Value="2" />
+                        <Setter Property="Background" Value="#222" />
+                    </Style>
+                    <Style Selector="Button &gt; DockPanel">
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    </Style>
+                    <Style Selector="Button &gt; DockPanel &gt; avalonia|MaterialIcon">
+                        <Setter Property="Margin" Value="16 0 0 0" />
+                        <Setter Property="Width" Value="20" />
+                        <Setter Property="Height" Value="20" />
+                    </Style>
+                    <Style Selector="Button &gt; DockPanel &gt; TextBlock">
+                        <Setter Property="Margin" Value="8 0 20 0" />
+                        <Setter Property="TextAlignment" Value="Center" />
+                        <Setter Property="FontSize" Value="14" />
+                    </Style>
+                </Grid.Styles>
+                <Button Click="SetUpClicked">
+                    <DockPanel>
+                        <avalonia:MaterialIcon Kind="Tools" />
+                        <TextBlock Text="Setup" />
+                    </DockPanel>
+                </Button>
+                <Button Click="LibraryClicked" Grid.Column="2">
+                    <DockPanel>
+                        <avalonia:MaterialIcon Kind="Bookshelf" />
+                        <TextBlock Text="Library" />
+                    </DockPanel>
+                </Button>
+                <Button Click="ExitClicked" Grid.Column="4">
+                    <DockPanel>
+                        <avalonia:MaterialIcon Kind="Shutdown" />
+                        <TextBlock Text="Exit" />
+                    </DockPanel>
+                </Button>
+            </Grid>
+        </Grid>
+
         <Grid RowDefinitions="1*, 1, 4*">
 
             <!--  header  -->
@@ -97,7 +100,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid Grid.Column="1" Margin="0,0,0,12">
+                    <Grid Grid.Column="1" Margin="16,0,0,12">
                         <StackPanel
                             HorizontalAlignment="Left"
                             Margin="0,0,16,0"
@@ -117,88 +120,103 @@
 
             <!--  content  -->
             <Grid
-                ColumnDefinitions="2*,*"
+                ColumnDefinitions="2*,1,*"
                 Grid.Row="2"
-                Margin="0,22,0,0"
+                Margin="0"
                 MaxWidth="700">
 
                 <!--  left  -->
-                <Grid Margin="0,0,60,60">
-                    <Border
-                        Background="{DynamicResource SurfaceBrush}"
-                        CornerRadius="6"
-                        MaxHeight="400"
-                        VerticalAlignment="Top">
-                        <StackPanel HorizontalAlignment="Stretch" Margin="12,10,0,12">
-                            <TextBlock
-                                FontSize="22"
-                                Margin="0,0,0,12"
-                                Text="Recent playlists" />
-                            <TextBlock
-                                FontSize="16"
-                                IsVisible="{Binding !RecentPlaylists.Count}"
-                                Margin="0,14"
-                                Text="No recent playlists" />
-                            <ScrollViewer Margin="0,0,12,0">
-                                <ItemsControl ItemsSource="{Binding RecentPlaylists}">
-                                    <ItemsControl.Styles>
-                                        <Style Selector="Button">
-                                            <Setter Property="Padding" Value="16" />
-                                            <Setter Property="FontSize" Value="16" />
-                                            <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                            <Setter Property="Background" Value="{DynamicResource DarkSurfaceBrush}" />
-                                            <Setter Property="CornerRadius" Value="2" />
-                                        </Style>
-                                        <Style Selector="Button:nth-child(1)">
-                                            <Setter Property="CornerRadius" Value="6 6 0 0" />
-                                        </Style>
-                                        <Style Selector="Button:nth-last-child(1)">
-                                            <Setter Property="CornerRadius" Value="0 0 6 6" />
-                                        </Style>
-                                        <!--  Wrap ToolTips  -->
-                                        <Style Selector="ToolTip">
-                                            <Setter Property="Foreground" Value="{DynamicResource CaptionButtonForeground}" />
-                                            <Setter Property="MaxWidth" Value="500" />
-                                        </Style>
-                                        <Style Selector="ToolTip TextBlock">
-                                            <Setter Property="FontSize" Value="16" />
-                                            <Setter Property="TextWrapping" Value="Wrap" />
-                                        </Style>
-                                    </ItemsControl.Styles>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Button
-                                                Click="LoadRecentPlaylistEntryCommand"
-                                                Content="{Binding FileName}"
-                                                ToolTip.Tip="{Binding FilePath}" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </StackPanel>
-                    </Border>
+                <Grid Margin="0,18,60,60">
+                    <!--  <Border  -->
+                    <!--  Background="{DynamicResource SurfaceBrush}"  -->
+                    <!--  CornerRadius="6"  -->
+                    <!--  MaxHeight="400"  -->
+                    <!--  VerticalAlignment="Top">  -->
+                    <StackPanel HorizontalAlignment="Stretch" Margin="0,10,0,12">
+                        <TextBlock
+                            FontSize="18"
+                            Margin="0,0,0,12"
+                            Text="Recent playlists" />
+                        <TextBlock
+                            FontSize="16"
+                            IsVisible="{Binding !RecentPlaylists.Count}"
+                            Margin="0,14"
+                            Text="No recent playlists" />
+                        <ScrollViewer Margin="0,0,12,0">
+                            <ItemsControl ItemsSource="{Binding RecentPlaylists}">
+                                <ItemsControl.Styles>
+                                    <Style Selector="Button">
+                                        <Setter Property="Padding" Value="16 12" />
+                                        <Setter Property="FontSize" Value="16" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                        <Setter Property="Background" Value="{DynamicResource DarkSurfaceBrush}" />
+                                        <Setter Property="CornerRadius" Value="2" />
+                                    </Style>
+                                    <Style Selector="Button:nth-child(1)">
+                                        <Setter Property="CornerRadius" Value="6 6 0 0" />
+                                    </Style>
+                                    <Style Selector="Button:nth-last-child(1)">
+                                        <Setter Property="CornerRadius" Value="0 0 6 6" />
+                                    </Style>
+                                    <!--  Wrap ToolTips  -->
+                                    <Style Selector="ToolTip">
+                                        <Setter Property="Foreground" Value="{DynamicResource CaptionButtonForeground}" />
+                                        <Setter Property="MaxWidth" Value="500" />
+                                    </Style>
+                                    <Style Selector="ToolTip TextBlock">
+                                        <Setter Property="FontSize" Value="16" />
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </ItemsControl.Styles>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Click="LoadRecentPlaylistEntryCommand" ToolTip.Tip="{Binding FilePath}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <avalonia:MaterialIcon Kind="FileDocumentOutline" Margin="0,0,16,0" />
+                                                <StackPanel>
+                                                    <TextBlock FontSize="20" Text="{Binding FileName}" />
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        IsVisible="{Binding LastOpenedDateText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                                        Opacity="0.6"
+                                                        Text="{Binding LastOpenedDateText, StringFormat={}Last opened {0}}" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                    <!-- </Border> -->
                 </Grid>
 
+                <Grid
+                    Background="{DynamicResource SurfaceBrush}"
+                    Grid.Column="1"
+                    Margin="0,22" />
+
                 <!--  right  -->
-                <StackPanel Grid.Column="1" Margin="0,8,0,0">
+                <StackPanel Grid.Column="2" Margin="16,22,0,0">
                     <StackPanel.Styles>
                         <Style Selector="Button">
-                            <Setter Property="Height" Value="60" />
+                            <Setter Property="Height" Value="80" />
                             <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            <Setter Property="Padding" Value="22" />
                             <Setter Property="CornerRadius" Value="2" />
-                            <Setter Property="Background" Value="{DynamicResource DarkSurfaceBrush}" />
+                            <Setter Property="Background" Value="#222" />
                         </Style>
                         <Style Selector="Button &gt; DockPanel">
                             <Setter Property="HorizontalAlignment" Value="Left" />
                         </Style>
                         <Style Selector="Button &gt; DockPanel &gt; avalonia|MaterialIcon">
-                            <Setter Property="Margin" Value="16 0 0 0" />
-                            <Setter Property="Width" Value="20" />
-                            <Setter Property="Height" Value="20" />
+                            <Setter Property="Margin" Value="4 0 8 0" />
+                            <Setter Property="Width" Value="26" />
+                            <Setter Property="Height" Value="26" />
                         </Style>
                         <Style Selector="Button &gt; DockPanel &gt; TextBlock">
                             <Setter Property="Margin" Value="12 0 0 0" />
-                            <Setter Property="FontSize" Value="18" />
+                            <Setter Property="FontSize" Value="16" />
                         </Style>
                         <Style Selector="StackPanel &gt; Border">
                             <Setter Property="Margin" Value="0 6" />
@@ -216,19 +234,6 @@
                         <DockPanel>
                             <avalonia:MaterialIcon Kind="FolderOutline" />
                             <TextBlock Text="Load Playlist" />
-                        </DockPanel>
-                    </Button>
-                    <Border Height="1" />
-                    <Button Click="SetUpClicked">
-                        <DockPanel>
-                            <avalonia:MaterialIcon Kind="Tools" />
-                            <TextBlock Text="Set Up" />
-                        </DockPanel>
-                    </Button>
-                    <Button Click="LibraryClicked">
-                        <DockPanel>
-                            <avalonia:MaterialIcon Kind="Bookshelf" />
-                            <TextBlock Text="Library" />
                         </DockPanel>
                     </Button>
                 </StackPanel>

@@ -1,5 +1,8 @@
 ﻿<Window
+    Height="500"
     Title="LibraryWindow"
+    Width="870"
+    WindowStartupLocation="CenterScreen"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"

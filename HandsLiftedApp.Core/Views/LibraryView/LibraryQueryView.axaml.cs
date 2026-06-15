@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.Library;
@@ -61,6 +62,10 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             {
                 SearchBox.Text = "";
             }
+        }
+        
+        private void AddItem_OnClick(object? sender, RoutedEventArgs e)
+        {
         }
     }
 }

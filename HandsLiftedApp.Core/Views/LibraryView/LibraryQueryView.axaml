@@ -66,31 +66,43 @@
             <Grid ColumnDefinitions="2*,1,3*" IsVisible="{Binding !IsMediaBin}">
 
                 <!--  listbox  -->
-                <ListBox
-                    BorderThickness="0"
-                    HorizontalAlignment="Stretch"
-                    ItemsSource="{Binding SearchResults}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    SelectedItem="{Binding SelectedLibraryItem}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border>
-                                <DockPanel PointerPressed="DockPanel_PointerPressed">
-                                    <DockPanel.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Add to playlist" />
-                                        </ContextMenu>
-                                    </DockPanel.ContextMenu>
-                                    <TextBlock
-                                        DockPanel.Dock="Bottom"
-                                        FontSize="14"
-                                        Padding="2"
-                                        Text="{Binding Title}" />
-                                </DockPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <Grid>
+
+                    <ListBox
+                        BorderThickness="0"
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding SearchResults}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        SelectedItem="{Binding SelectedLibraryItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border>
+                                    <DockPanel PointerPressed="DockPanel_PointerPressed">
+                                        <DockPanel.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Add to playlist" />
+                                            </ContextMenu>
+                                        </DockPanel.ContextMenu>
+                                        <TextBlock
+                                            DockPanel.Dock="Bottom"
+                                            FontSize="14"
+                                            Padding="2"
+                                            Text="{Binding Title}" />
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Button
+                        Click="AddItem_OnClick"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom">
+                        Add new song
+                    </Button>
+
+                </Grid>
+
                 <GridSplitter Grid.Column="1" />
 
                 <!--  preview pane  -->

@@ -98,6 +98,14 @@ namespace HandsLiftedApp.Core.Views
             w.ShowDialog(this);
         }
         
+        private void ExitClicked(object? sender, RoutedEventArgs e)
+        {
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+            {
+                App.ExitApplication(desktopLifetime, this);
+            }
+        }
+        
         private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args)
         {
             // Get top level from the current control. Alternatively, you can use Window reference instead.

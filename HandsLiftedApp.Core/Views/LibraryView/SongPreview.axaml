@@ -12,6 +12,7 @@
     <DockPanel>
         <StackPanel
             DockPanel.Dock="Bottom"
+            HorizontalAlignment="Right"
             Margin="1"
             Orientation="Horizontal">
             <Button
@@ -26,7 +27,8 @@
                 Content="Add to playlist"
                 HorizontalAlignment="Right"
                 Padding="16"
-                VerticalAlignment="Bottom" />
+                VerticalAlignment="Bottom"
+                x:Name="AddToPlaylistButton" />
         </StackPanel>
         <ScrollViewer>
 

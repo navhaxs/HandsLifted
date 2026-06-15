@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Avalonia.Controls;
 using ReactiveUI;
@@ -13,9 +14,9 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             if (Design.IsDesignMode)
             {
-                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Sunday Service.hlsx", FilePath = @"C:\Playlists\Sunday Service.hlsx" });
-                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Youth Night.hlsx", FilePath = @"C:\Playlists\Youth Night.hlsx" });
-                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Wedding.hlsx", FilePath = @"C:\Playlists\Wedding.hlsx" });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Sunday Service.hlsx", FilePath = @"C:\Playlists\Sunday Service.hlsx", LastOpenedDate = new DateTime(2026, 6, 8) });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Youth Night.hlsx", FilePath = @"C:\Playlists\Youth Night.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Wedding.hlsx", FilePath = @"C:\Playlists\Wedding.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
             }
         }
 
@@ -28,7 +29,8 @@ namespace HandsLiftedApp.Core.ViewModels
                 RecentPlaylists.Clear();
                 foreach (var se in parent.settings.RecentPlaylistFullPathsList)
                 {
-                    RecentPlaylists.Add(new RecentPlaylistEntry() { FilePath = se, FileName = Path.GetFileName(se) });
+                    DateTime? lastOpened = File.Exists(se) ? File.GetLastWriteTime(se) : null;
+                    RecentPlaylists.Add(new RecentPlaylistEntry() { FilePath = se, FileName = Path.GetFileName(se), LastOpenedDate = lastOpened });
                 }
             }
         }
@@ -44,9 +46,9 @@ namespace HandsLiftedApp.Core.ViewModels
         public class RecentPlaylistEntry
         {
             public string FilePath { get; set; }
-
             public string FileName { get; set; }
-            // date last modified
+            public DateTime? LastOpenedDate { get; set; }
+            public string LastOpenedDateText => LastOpenedDate?.ToString("d MMM yyyy") ?? string.Empty;
         }
     }
 }

@@ -1,18 +1,18 @@
 <UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
     x:Class="HandsLiftedApp.Core.Views.PlaylistSlidesView"
+    x:DataType="models:PlaylistInstance"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:controls="using:HandsLiftedApp.Controls"
+    xmlns:controls1="clr-namespace:HandsLiftedApp.Core.Controls"
     xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:HandsLiftedApp.Core.Models"
-    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-    xmlns:controls1="clr-namespace:HandsLiftedApp.Core.Controls"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:DataType="models:PlaylistInstance"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <UserControl.Resources>
         <converters:IntPlusOneConverter x:Key="IntPlusOneConverter" />
@@ -22,10 +22,10 @@
     <Grid Name="parentWrapper">
 
         <controls:CustomScrollViewer
-            x:Name="scrollViewer"
-            IsVisible="{Binding !IsPlaylistLoading}"
             HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Visible">
+            IsVisible="{Binding !IsPlaylistLoading}"
+            VerticalScrollBarVisibility="Visible"
+            x:Name="scrollViewer">
             <controls:CustomScrollViewer.Styles>
                 <Style Selector="ScrollBar">
                     <Setter Property="AllowAutoHide" Value="false" />
@@ -40,20 +40,26 @@
 
             <DockPanel>
 
-                <!-- first add item button -->
-                <controls1:AddItemButton Margin="14,12,0,0" DockPanel.Dock="Top" ItemInsertIndex="0" />
-                
-                <Border CornerRadius="6" Background="{DynamicResource SurfaceBrush}"
-                        DockPanel.Dock="Top"
-                        IsVisible="{Binding !Items.Count}"
-                        Margin="14">
+                <!--  first add item button  -->
+                <controls1:AddItemButton
+                    DockPanel.Dock="Top"
+                    ItemInsertIndex="0"
+                    Margin="14,12,0,0" />
 
-                    <TextBlock Text="Playlist is empty. Begin by adding a item." 
-                               Margin="14"
-                               FontSize="16" />
-                    
+                <Border
+                    Background="{DynamicResource SurfaceBrush}"
+                    CornerRadius="6"
+                    DockPanel.Dock="Top"
+                    IsVisible="{Binding !Items.Count}"
+                    Margin="14">
+
+                    <TextBlock
+                        FontSize="16"
+                        Margin="14"
+                        Text="Playlist is empty. Begin by adding a item." />
+
                 </Border>
-                
+
                 <!--  "fill" the height with the last item  -->
                 <Grid DockPanel.Dock="Bottom">
                     <!--  TODO this would be a good place to put a 'add item' button  -->
@@ -67,8 +73,9 @@
                     </Grid.Height>
                 </Grid>
                 <ItemsControl
-                    Name="List"
-                    ItemsSource="{Binding Items}" Margin="0 0 0 14">
+                    ItemsSource="{Binding Items}"
+                    Margin="0,0,0,14"
+                    Name="List">
                     <ItemsControl.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="0" />
@@ -87,7 +94,10 @@
                         <DataTemplate>
                             <StackPanel>
                                 <controls:ItemSlidesView />
-                                <controls1:AddItemButton Margin="14,0,0,0" DockPanel.Dock="Top" ItemInsertIndex="{Binding Index, Converter={StaticResource IntPlusOneConverter}}" />
+                                <controls1:AddItemButton
+                                    DockPanel.Dock="Top"
+                                    ItemInsertIndex="{Binding Index, Converter={StaticResource IntPlusOneConverter}}"
+                                    Margin="14,0,0,0" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -96,17 +106,21 @@
             </DockPanel>
         </controls:CustomScrollViewer>
 
-        <!-- Loading overlay shown during playlist load -->
-        <Border IsVisible="{Binding IsPlaylistLoading}"
-                Background="{DynamicResource SurfaceBrush}"
-                VerticalAlignment="Stretch"
-                HorizontalAlignment="Stretch">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
-                <ProgressBar IsIndeterminate="True" Width="200" />
-                <TextBlock Text="Loading playlist&#x2026;"
-                           HorizontalAlignment="Center"
-                           FontSize="14"
-                           Foreground="{DynamicResource SystemBaseMediumColor}" />
+        <!--  Loading overlay shown during playlist load  -->
+        <Border
+            Background="{DynamicResource SurfaceBrush}"
+            HorizontalAlignment="Stretch"
+            IsVisible="{Binding IsPlaylistLoading}"
+            VerticalAlignment="Stretch">
+            <StackPanel
+                HorizontalAlignment="Center"
+                Spacing="16"
+                VerticalAlignment="Center">
+                <TextBlock
+                    FontSize="14"
+                    Foreground="{DynamicResource SystemBaseMediumColor}"
+                    HorizontalAlignment="Center"
+                    Text="Loading playlist&#x2026;" />
             </StackPanel>
         </Border>
 

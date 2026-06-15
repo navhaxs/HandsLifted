@@ -5,12 +5,14 @@ using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.Render.Skia.Builders;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 using Serilog;
 using System;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -93,7 +95,32 @@ namespace HandsLiftedApp.Core.Views
             // Bail out if a newer slide change arrived while we were preloading.
             if (myGeneration != _transitionGeneration) return;
 
-            LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
+            // Yield so that ActiveItem bindings (MotionBackgroundLayer) have a chance to
+            // fire and arm the cross-fade gate before we check it.
+            await Task.Yield();
+            if (myGeneration != _transitionGeneration) return;
+
+            if (MotionBackgroundService.IsCurrentlyTransitioning)
+            {
+                // Phase 1: fade out old text in sync with the outgoing video.
+                LivePreviewCanvas.Transition(null, MotionBackgroundService.CrossFadeOutDuration);
+
+                // Wait until the new video begins its fade-in.
+                await MotionBackgroundService.IsTransitioning
+                    .Where(v => !v)
+                    .FirstAsync()
+                    .Timeout(TimeSpan.FromSeconds(10))
+                    .Catch(Observable.Return(false));
+                if (myGeneration != _transitionGeneration) return;
+
+                // Phase 2: fade in new text in sync with the incoming video.
+                LivePreviewCanvas.Transition(spec, MotionBackgroundService.CrossFadeInDuration);
+            }
+            else
+            {
+                // No video cross-fade — use the user's slide transition duration.
+                LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
+            }
         }
 
         /// <summary>
