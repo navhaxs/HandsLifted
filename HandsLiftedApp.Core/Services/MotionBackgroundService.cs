@@ -24,6 +24,41 @@ namespace HandsLiftedApp.Core.Services
 		/// </summary>
 		public static MpvContext? CurrentContext => _activeContextSubject.Value;
 
+		// True while a cross-fade between two different motion background videos is in progress.
+		// Slide canvases use this to synchronize text fades with the video fades.
+		private static readonly BehaviorSubject<bool> _isTransitioningSubject = new(false);
+
+		/// <summary>
+		/// Emits true when a motion-background cross-fade starts and false when the new video
+		/// begins fading in (first frame decoded). New subscribers receive the current value.
+		/// </summary>
+		public static IObservable<bool> IsTransitioning => _isTransitioningSubject;
+
+		/// <summary>Synchronous snapshot of the current transitioning state.</summary>
+		public static bool IsCurrentlyTransitioning => _isTransitioningSubject.Value;
+
+		/// <summary>
+		/// Duration of the outgoing video fade. Published by MotionBackgroundLayer when a
+		/// cross-fade starts so slide canvases can fade their text out in sync.
+		/// </summary>
+		public static TimeSpan CrossFadeOutDuration { get; internal set; } = TimeSpan.FromMilliseconds(500);
+
+		/// <summary>
+		/// Duration of the incoming video fade. Published by MotionBackgroundLayer when a
+		/// cross-fade starts so slide canvases can fade their text in in sync.
+		/// </summary>
+		public static TimeSpan CrossFadeInDuration { get; internal set; } = TimeSpan.FromMilliseconds(500);
+
+		internal static void SetTransitioning(bool value) =>
+			_isTransitioningSubject.OnNext(value);
+
+		// Fires when the new video's first frame is ready and it begins fading in.
+		// Separate from SetTransitioning(false) so the observer knows to fade IN only when
+		// a new video is actually starting — not on cancel/stop paths that also release the gate.
+		private static readonly System.Reactive.Subjects.Subject<System.Reactive.Unit> _fadeInSubject = new();
+		public static IObservable<System.Reactive.Unit> WhenNewVideoFadesIn => _fadeInSubject;
+		internal static void SignalFadeIn() => _fadeInSubject.OnNext(System.Reactive.Unit.Default);
+
 		/// <summary>
 		/// Called by MotionBackgroundLayer to broadcast the active context to all observers.
 		/// Pass null when playback stops.

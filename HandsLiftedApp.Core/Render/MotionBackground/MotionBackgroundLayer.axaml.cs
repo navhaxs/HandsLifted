@@ -182,6 +182,11 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			Dispatcher.UIThread.Post(() =>
 			{
 				Opacity = 1;
+				// Release the slide-transition gate so text fades in with the video.
+				Services.MotionBackgroundService.SetTransitioning(false);
+				// Separate signal so observers know a new video is actually starting —
+				// SetTransitioning(false) alone can also fire on cancel/stop paths.
+				Services.MotionBackgroundService.SignalFadeIn();
 			});
 		}
 
@@ -290,10 +295,15 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			if (Dispatcher.UIThread.CheckAccess())
 			{
 				Opacity = 0;
+				Services.MotionBackgroundService.SetTransitioning(false);
 			}
 			else
 			{
-				Dispatcher.UIThread.Post(() => Opacity = 0);
+				Dispatcher.UIThread.Post(() =>
+				{
+					Opacity = 0;
+					Services.MotionBackgroundService.SetTransitioning(false);
+				});
 			}
 		}
 
@@ -355,10 +365,13 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 				return;
 			}
 
-			// If a stop is pending and the new item has no motion background, let it proceed naturally.
+			// If a stop is pending and the new item has no motion background, the pending cross-fade
+			// will complete without starting a new video, so FadeIn() will never fire.
+			// Release the slide-transition gate now so text transitions are not blocked forever.
 			if (_isStopPending && newVideoPath == null)
 			{
-				Log.Debug("[MotionBg] Stop already pending and new item has no motion background — no action");
+				Log.Debug("[MotionBg] Stop already pending and new item has no motion background — releasing transition gate");
+				Services.MotionBackgroundService.SetTransitioning(false);
 				return;
 			}
 
@@ -377,6 +390,11 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 				{
 					Log.Debug("[MotionBg] Transitioning from {OldPath} to {NewPath}",
 						_currentVideoPath, newVideoPath);
+					// Publish fade durations so slide canvases can match the video timing,
+					// then arm the gate so they know to use the two-phase fade.
+					Services.MotionBackgroundService.CrossFadeOutDuration = FadeOutDuration;
+					Services.MotionBackgroundService.CrossFadeInDuration = FadeInDuration;
+					Services.MotionBackgroundService.SetTransitioning(true);
 					// Transition: fade out old → stop → start new → fade in
 					FadeOut(() =>
 					{
@@ -433,7 +451,43 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			_activeItemSubscription = null;
 			_activeItemPathSubscription?.Dispose();
 			_activeItemPathSubscription = null;
-			StopPlayback();
+
+			// Release the slide-transition gate immediately so no async slide callback
+			// waits on the 5-second timeout during shutdown.
+			Services.MotionBackgroundService.SetTransitioning(false);
+
+			// Unsubscribe events before disconnecting the video view.
+			if (_motionMpvContext != null)
+			{
+				_motionMpvContext.VideoReconfig -= OnFirstFrameDecoded;
+				_motionMpvContext.EndFile -= OnEndFile;
+			}
+
+			// Disconnect SoftwareVideoView on the UI thread (Avalonia property write).
+			try { VideoView.MpvContext = null; } catch { }
+
+			// Notify observers that the context is gone.
+			Services.MotionBackgroundService.PublishActiveContext(null);
+
+			// Command("stop") and Dispose() call blocking libmpv APIs that can take
+			// hundreds of milliseconds — run them off the UI thread so the Avalonia
+			// shutdown sequence is not blocked. Environment.Exit(0) in Program.cs will
+			// kill any remaining libmpv threads if they don't exit in time.
+			var ctx = _motionMpvContext;
+			_motionMpvContext = null;
+			_currentVideoPath = null;
+			_isFirstFrameReceived = false;
+
+			if (ctx != null)
+			{
+				System.Threading.Tasks.Task.Run(() =>
+				{
+					try { ctx.Command("stop"); }
+					catch (Exception ex) { Log.Warning(ex, "[MotionBg] Error issuing stop during dispose"); }
+					var c = ctx;
+					Services.MotionBackgroundService.DisposeContext(ref c);
+				});
+			}
 		}
 	}
 }

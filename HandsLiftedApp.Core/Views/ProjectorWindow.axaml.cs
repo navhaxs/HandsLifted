@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -88,6 +90,7 @@ namespace HandsLiftedApp.Core.Views
 
         private IDisposable? _slideSubscription;
         private MainViewModel? _vm;
+        private int _transitionGeneration;
 
         protected override void OnDataContextChanged(EventArgs e)
         {
@@ -108,12 +111,14 @@ namespace HandsLiftedApp.Core.Views
             _slideSubscription?.Dispose();
         }
 
-        private void OnActiveSlideChanged(Slide? slide)
+        private async void OnActiveSlideChanged(Slide? slide)
         {
             // Bitmap preload is intentionally omitted here — LivePane.OnActiveSlideChanged
             // already runs Task.Run(Preload) for image slides on the same ActiveSlide change,
             // and the bitmap cache is shared. A second preload call would race to find the
             // entry already cached (no-op) but wastes a thread-pool job.
+
+            int myGeneration = System.Threading.Interlocked.Increment(ref _transitionGeneration);
 
             var logoPath = NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
             Log.Debug("[ProjectorWindow] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
@@ -135,6 +140,11 @@ namespace HandsLiftedApp.Core.Views
                 _                        => null,
             };
 
+            // Yield so that ActiveItem bindings (MotionBackgroundLayer) have a chance to
+            // fire and arm the cross-fade gate before we check it.
+            await Task.Yield();
+            if (myGeneration != _transitionGeneration) return;
+
             // Skip animation when the projector window is hidden — avoids starting a
             // DispatcherTimer that fires InvalidateVisual() on an invisible window.
             if (!IsVisible)
@@ -143,7 +153,27 @@ namespace HandsLiftedApp.Core.Views
                 return;
             }
 
-            MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
+            if (MotionBackgroundService.IsCurrentlyTransitioning)
+            {
+                // Phase 1: fade out old text in sync with the outgoing video.
+                MainSlideCanvas.Transition(null, MotionBackgroundService.CrossFadeOutDuration);
+
+                // Wait until the new video begins its fade-in.
+                await MotionBackgroundService.IsTransitioning
+                    .Where(v => !v)
+                    .FirstAsync()
+                    .Timeout(TimeSpan.FromSeconds(10))
+                    .Catch(Observable.Return(false));
+                if (myGeneration != _transitionGeneration) return;
+
+                // Phase 2: fade in new text in sync with the incoming video.
+                MainSlideCanvas.Transition(spec, MotionBackgroundService.CrossFadeInDuration);
+            }
+            else
+            {
+                // No video cross-fade — use the user's slide transition duration.
+                MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
+            }
         }
 
         /// <summary>
