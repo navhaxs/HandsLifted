@@ -46,6 +46,7 @@ sealed class Program
         {
             Log.Information("Clean app shutdown. Bye!");
             Log.CloseAndFlush();
+            Environment.Exit(0);
         }
     }
 
