@@ -10,12 +10,40 @@
     <DockPanel>
         <TextBlock Padding="14"
                    FontSize="18"
-                   Background="{DynamicResource PrimaryActionBrush}" DockPanel.Dock="Top">Google Slides Presentation</TextBlock>
+                   Background="{DynamicResource PrimaryActionBrush}"
+                   DockPanel.Dock="Top">Google Slides Presentation</TextBlock>
 
-        <StackPanel Margin="14">
+        <Button DockPanel.Dock="Bottom"
+                HorizontalAlignment="Right"
+                Margin="14"
+                Click="Done_OnClick">Done</Button>
+
+        <StackPanel Margin="14" Spacing="10">
             <TextBlock>Google Slides Presentation ID:</TextBlock>
             <TextBox Text="{Binding SourceGooglePresentationId}" />
-            <Button Margin="0 14 0 0" HorizontalAlignment="Left" Click="Button_OnClick">
+
+            <StackPanel IsVisible="{Binding SourceGooglePresentationId, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        Spacing="6">
+                <Separator />
+                <TextBlock>
+                    <Run Text="Presentation: " FontWeight="SemiBold" />
+                    <Run Text="{Binding Title}" />
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Last Sync: " FontWeight="SemiBold" />
+                    <Run Text="{Binding LastSyncDateTime, StringFormat='{}{0:dd/MM/yyyy h:mm:ss tt}'}" />
+                </TextBlock>
+                <Button HorizontalAlignment="Left"
+                        IsEnabled="{Binding !IsBusy}"
+                        Click="SyncNow_OnClick">
+                    <DockPanel Margin="4">
+                        <avalonia:MaterialIcon Kind="Sync" DockPanel.Dock="Left" Margin="0 0 8 0" />
+                        <TextBlock Text="Sync now" VerticalAlignment="Center" />
+                    </DockPanel>
+                </Button>
+            </StackPanel>
+
+            <Button HorizontalAlignment="Left" Click="Button_OnClick">
                 <DockPanel Margin="8">
                     <avalonia:MaterialIcon Kind="OpenInNew" DockPanel.Dock="Left" Margin="0 0 8 0" />
                     <TextBlock Text="Edit presentation in Web Browser" VerticalAlignment="Center" />
