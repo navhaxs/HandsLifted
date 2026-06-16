@@ -6,7 +6,11 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.Library;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Core.ViewModels.Editor;
+using HandsLiftedApp.Core.Views.Editors;
 
 namespace HandsLiftedApp.Core.Views.LibraryView
 {
@@ -82,6 +86,18 @@ namespace HandsLiftedApp.Core.Views.LibraryView
         
         private void AddItem_OnClick(object? sender, RoutedEventArgs e)
         {
+            if (DataContext is not LibraryQueryViewModel vm) return;
+            var songLibrary = vm.ActiveSongLibrary;
+            if (songLibrary == null) return;
+
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var editorVm = new SongEditorViewModel(new SongItemInstance(null), playlist)
+            {
+                SongLibrary = songLibrary
+            };
+            var editor = new SongEditorWindow { DataContext = editorVm };
+            editor.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            editor.Show();
         }
     }
 }

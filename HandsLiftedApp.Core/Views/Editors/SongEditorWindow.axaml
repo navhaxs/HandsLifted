@@ -154,7 +154,7 @@
                         </TextBlock.ContextMenu>
                     </TextBlock>
 
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" IsVisible="{Binding IsNewSongMode}">
 
                         <!-- <Button Click="LoadFromText_OnClick"> -->
                         <!--     <DockPanel> -->
@@ -163,19 +163,19 @@
                         <!--     </DockPanel> -->
                         <!-- </Button> -->
 
-                        <!-- <Button> -->
-                        <!--     <DockPanel> -->
-                        <!--         <TextBlock DockPanel.Dock="Left" Text="Discard" /> -->
-                        <!--         <material:MaterialIcon Kind="CrossCircleOutline" /> -->
-                        <!--     </DockPanel> -->
-                        <!-- </Button> -->
+                        <Button Click="Discard_OnClick">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Discard" />
+                                <material:MaterialIcon Kind="CrossCircleOutline" />
+                            </DockPanel>
+                        </Button>
 
-                        <!-- <Button> -->
-                        <!--     <DockPanel> -->
-                        <!--         <TextBlock DockPanel.Dock="Left" Text="Save" /> -->
-                        <!--         <material:MaterialIcon Kind="TickCircleOutline" /> -->
-                        <!--     </DockPanel> -->
-                        <!-- </Button> -->
+                        <Button Click="Save_OnClick">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Save" />
+                                <material:MaterialIcon Kind="TickCircleOutline" />
+                            </DockPanel>
+                        </Button>
 
                     </StackPanel>
                     <Grid />

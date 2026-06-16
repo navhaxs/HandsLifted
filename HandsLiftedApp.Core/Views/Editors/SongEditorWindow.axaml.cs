@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Xml;
@@ -12,6 +13,7 @@ using Avalonia.Platform.Storage;
 using Gdk;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Importer.OnlineSongLyrics;
 using HandsLiftedApp.Models.UI;
@@ -182,6 +184,96 @@ namespace HandsLiftedApp.Core.Views.Editors
         private void ImportFromOnline_OnClick(object? sender, RoutedEventArgs e)
         {
             SongEditorControl.ImportFromOnline();
+        }
+
+        private bool _closeConfirmed = false;
+
+        private void Discard_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _closeConfirmed = true;
+            Close();
+        }
+
+        private void Save_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (DataContext is SongEditorViewModel vm)
+                DoSaveToLibrary(vm);
+        }
+
+        private void DoSaveToLibrary(SongEditorViewModel vm)
+        {
+            var dir = vm.SongLibrary?.Config.Directory;
+            if (dir == null) return;
+
+            var title = vm.Song.Title;
+            if (string.IsNullOrWhiteSpace(title)) title = "Untitled";
+
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var safeName = string.Concat(title.Select(c => invalidChars.Contains(c) ? '_' : c));
+            var path = Path.Combine(dir, safeName + ".xml");
+
+            using var memoryStream = new MemoryStream();
+            var writer = new StreamWriter(memoryStream);
+            var settings = new XmlWriterSettings
+            {
+                NewLineChars = "\n",
+                NewLineHandling = NewLineHandling.Replace,
+                Indent = true,
+            };
+            using (var xmlWriter = XmlWriter.Create(writer, settings))
+            {
+                var serializer = new XmlSerializer(typeof(SongItem));
+                SongItemInstance existing = vm.Song;
+                var x = new SongItem
+                {
+                    UUID = existing.UUID,
+                    Title = existing.Title,
+                    Arrangement = existing.Arrangement,
+                    Arrangements = existing.Arrangements,
+                    SelectedArrangementId = existing.SelectedArrangementId,
+                    Stanzas = existing.Stanzas,
+                    Copyright = existing.Copyright,
+                    Design = existing.Design,
+                    StartOnTitleSlide = existing.StartOnTitleSlide,
+                    EndOnBlankSlide = existing.EndOnBlankSlide
+                };
+                serializer.Serialize(xmlWriter, x);
+            }
+
+            File.WriteAllBytes(path, memoryStream.ToArray());
+            vm.SongLibrary!.TriggerRefresh();
+
+            _closeConfirmed = true;
+            Close();
+        }
+
+        protected override async void OnClosing(WindowClosingEventArgs e)
+        {
+            base.OnClosing(e);
+            if (_closeConfirmed) return;
+
+            if (DataContext is SongEditorViewModel { IsNewSongMode: true } vm)
+            {
+                bool hasEdits = !string.IsNullOrEmpty(vm.Song.Title) || vm.Song.Stanzas.Count > 0;
+                if (!hasEdits) return;
+
+                e.Cancel = true;
+
+                var dialog = new NewSongUnsavedConfirmationWindow();
+                await dialog.ShowDialog(this);
+
+                switch (dialog.Result)
+                {
+                    case NewSongUnsavedConfirmationWindow.DialogResult.Save:
+                        DoSaveToLibrary(vm);
+                        break;
+                    case NewSongUnsavedConfirmationWindow.DialogResult.Discard:
+                        _closeConfirmed = true;
+                        Close();
+                        break;
+                    // Cancel → window stays open
+                }
+            }
         }
     }
 }
