@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Avalonia.Controls;
 using ReactiveUI;
@@ -17,6 +18,11 @@ namespace HandsLiftedApp.Core.ViewModels
                 RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Sunday Service.hlsx", FilePath = @"C:\Playlists\Sunday Service.hlsx", LastOpenedDate = new DateTime(2026, 6, 8) });
                 RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Youth Night.hlsx", FilePath = @"C:\Playlists\Youth Night.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
                 RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Wedding.hlsx", FilePath = @"C:\Playlists\Wedding.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Something with a really, really, really, really, really, really long name", FilePath = @"C:\Playlists\Wedding.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Something with a really, really, really, really, really, really long name", FilePath = @"C:\Playlists\Wedding.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Something with a really, really, really, really, really, really long name", FilePath = @"C:\Playlists\Wedding.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Something with a really, really, really, really, really, really long name", FilePath = @"C:\Playlists\Wedding.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
+                RecentPlaylists.Add(new RecentPlaylistEntry() { FileName = "Something with a really, really, really, really, really, really long name", FilePath = @"C:\Playlists\Wedding.hlsx", LastOpenedDate = new DateTime(2026, 5, 25) });
             }
         }
 
@@ -35,9 +41,9 @@ namespace HandsLiftedApp.Core.ViewModels
             }
         }
 
-        private List<RecentPlaylistEntry> _recentPlaylists = new();
+        private ObservableCollection<RecentPlaylistEntry> _recentPlaylists = new();
 
-        public List<RecentPlaylistEntry> RecentPlaylists
+        public ObservableCollection<RecentPlaylistEntry> RecentPlaylists
         {
             get => _recentPlaylists;
             set => this.RaiseAndSetIfChanged(ref _recentPlaylists, value);
@@ -48,7 +54,22 @@ namespace HandsLiftedApp.Core.ViewModels
             public string FilePath { get; set; }
             public string FileName { get; set; }
             public DateTime? LastOpenedDate { get; set; }
-            public string LastOpenedDateText => LastOpenedDate?.ToString("d MMM yyyy") ?? string.Empty;
+            public string LastOpenedDateText
+            {
+                get
+                {
+                    if (LastOpenedDate is null) return string.Empty;
+                    var days = (DateTime.Now - LastOpenedDate.Value).TotalDays;
+                    if (days < 1) return "today";
+                    if (days < 2) return "yesterday";
+                    if (days < 7) return $"{(int)days} days ago";
+                    if (days < 14) return "1 week ago";
+                    if (days < 30) return $"{(int)(days / 7)} weeks ago";
+                    if (days < 60) return "1 month ago";
+                    if (days < 365) return $"{(int)(days / 30)} months ago";
+                    return $"{(int)(days / 365)} year{((int)(days / 365) > 1 ? "s" : "")} ago";
+                }
+            }
         }
     }
 }
