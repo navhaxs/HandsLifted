@@ -79,20 +79,66 @@ public static class SongTitleSlideSpecBuilder
 
     private static IEnumerable<RenderElement> BuildCopyrightElements(string copyright, BaseSlideTheme theme)
     {
-        var lines = copyright.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        var rawLines = copyright.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         float copyrightSize = theme.FontSize * CopyrightSizeRatio;
         float lineHeight = copyrightSize * 1.2f;
-        int n = lines.Length;
+        float maxWidth = CanvasWidth - 2 * HorizontalMargin;
 
-        var result = new List<RenderElement>(n);
         using var typeface = GetTypeface(theme);
         using var measureFont = new SKFont(typeface, copyrightSize);
         using var measurePaint = new SKPaint(measureFont);
+
+        // Word-wrap each input line into display lines that fit within maxWidth.
+        var displayLines = new List<string>();
+        foreach (var raw in rawLines)
+        {
+            if (string.IsNullOrEmpty(raw))
+            {
+                displayLines.Add(string.Empty);
+                continue;
+            }
+
+            if (measurePaint.MeasureText(raw) <= maxWidth)
+            {
+                displayLines.Add(raw);
+                continue;
+            }
+
+            var words = raw.Split(' ');
+            var current = new System.Text.StringBuilder();
+            foreach (var word in words)
+            {
+                if (current.Length == 0)
+                {
+                    current.Append(word);
+                }
+                else
+                {
+                    string candidate = current + " " + word;
+                    if (measurePaint.MeasureText(candidate) > maxWidth)
+                    {
+                        displayLines.Add(current.ToString());
+                        current.Clear();
+                        current.Append(word);
+                    }
+                    else
+                    {
+                        current.Clear();
+                        current.Append(candidate);
+                    }
+                }
+            }
+            if (current.Length > 0)
+                displayLines.Add(current.ToString());
+        }
+
+        int n = displayLines.Count;
+        var result = new List<RenderElement>(n);
         var color = ToSkColor(theme.TextAvaloniaColour);
 
         for (int i = 0; i < n; i++)
         {
-            string line = lines[i];
+            string line = displayLines[i];
             if (string.IsNullOrEmpty(line)) continue; // empty line = spacing gap only
 
             // Stack lines above the bottom margin; empty lines still consume vertical space.

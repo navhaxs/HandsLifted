@@ -51,21 +51,61 @@ public static class SongSlideSpecBuilder
 
     private static IReadOnlyList<RenderElement> BuildTextElements(string text, BaseSlideTheme theme)
     {
-        var nonEmptyLines = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        var rawLines = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         using var typeface = GetTypeface(theme);
         using var measureFont = new SKFont(typeface, theme.FontSize);
         using var measurePaint = new SKPaint(measureFont);
 
+        float maxWidth = CanvasWidth - 2 * HorizontalMargin;
+
+        // Word-wrap each input line into display lines that fit within maxWidth.
+        var displayLines = new List<string>(rawLines.Length);
+        foreach (var raw in rawLines)
+        {
+            if (measurePaint.MeasureText(raw) <= maxWidth)
+            {
+                displayLines.Add(raw);
+                continue;
+            }
+
+            var words = raw.Split(' ');
+            var current = new System.Text.StringBuilder();
+            foreach (var word in words)
+            {
+                if (current.Length == 0)
+                {
+                    current.Append(word);
+                }
+                else
+                {
+                    string candidate = current + " " + word;
+                    if (measurePaint.MeasureText(candidate) > maxWidth)
+                    {
+                        displayLines.Add(current.ToString());
+                        current.Clear();
+                        current.Append(word);
+                    }
+                    else
+                    {
+                        current.Clear();
+                        current.Append(candidate);
+                    }
+                }
+            }
+            if (current.Length > 0)
+                displayLines.Add(current.ToString());
+        }
+
         float lineHeight = theme.LineHeight;
-        float totalHeight = nonEmptyLines.Length * lineHeight;
+        float totalHeight = displayLines.Count * lineHeight;
         float startY = (CanvasHeight - totalHeight) / 2f;
         var color = ToSkColor(theme.TextAvaloniaColour);
 
-        var result = new List<RenderElement>(nonEmptyLines.Length);
-        for (int i = 0; i < nonEmptyLines.Length; i++)
+        var result = new List<RenderElement>(displayLines.Count);
+        for (int i = 0; i < displayLines.Count; i++)
         {
-            string line = nonEmptyLines[i];
+            string line = displayLines[i];
             float textWidth = measurePaint.MeasureText(line);
             float x = theme.TextAlignment switch
             {
