@@ -1,28 +1,35 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
-             xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
-             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
-             xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
-             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="editor:SongEditorViewModel"
-             x:Class="HandsLiftedApp.Core.Views.Editors.Song.SongEditorControl">
+﻿<UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.Editors.Song.SongEditorControl"
+    x:DataType="editor:SongEditorViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+    xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
 
         <Grid.Styles>
             <Style Selector="GridSplitter">
                 <Setter Property="Template">
                     <ControlTemplate>
-                        <Border BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="#282828"
-                                CornerRadius="{TemplateBinding CornerRadius}">
-                            <Border Background="{TemplateBinding Background}" MaxHeight="60" Width="1"
-                                    Margin="-6 0 0 0" />
+                        <Border
+                            Background="#282828"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                Margin="-6,0,0,0"
+                                MaxHeight="60"
+                                Width="1" />
                         </Border>
                     </ControlTemplate>
                 </Setter>
@@ -30,17 +37,18 @@
         </Grid.Styles>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="380" />
+            <ColumnDefinition MinWidth="380" Width="*" />
             <ColumnDefinition Width="1" />
-            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
 
-        <TabControl TabStripPlacement="Left" Margin="0 0 0 0" Padding="0" SelectedIndex="1" Name="TabControl">
+        <TabControl
+            Margin="0,0,0,0"
+            Name="TabControl"
+            Padding="0"
+            TabStripPlacement="Bottom">
 
             <TabControl.Styles>
-                <Style Selector="TabItem:nth-child(1)">
-                    <Setter Property="Margin" Value="4 30 0 0" />
-                </Style>
                 <Style Selector="TabItem:selected">
                     <Setter Property="Foreground" Value="White" />
                 </Style>
@@ -53,13 +61,8 @@
                     <Setter Property="CornerRadius" Value="2 0 0 2" />
                     <Setter Property="MinWidth" Value="60" />
                 </Style>
-                <Style Selector="TabControl /template/ ContentPresenter#PART_SelectedContentHost">
-                </Style>
+                <Style Selector="TabControl /template/ ContentPresenter#PART_SelectedContentHost" />
             </TabControl.Styles>
-
-            <TabItem Header="Text">
-                <editors:SongLyricFreeTextEditor />
-            </TabItem>
 
             <TabItem Header="Stanzas">
                 <ScrollViewer>
@@ -67,39 +70,50 @@
                 </ScrollViewer>
             </TabItem>
 
-            <TabItem Header="Motion Background">
-                <DockPanel Margin="8">
-                    <Button DockPanel.Dock="Right"
-                            Click="ClearMotionBackground_OnClick"
-                            Content="Clear"
-                            Margin="4,0,0,0" />
-                    <Button DockPanel.Dock="Right"
-                            Click="BrowseMotionBackground_OnClick"
-                            Content="..."
-                            Margin="4,0,0,0" />
-                    <TextBox IsReadOnly="True"
-                             Watermark="No video file selected"
-                             Text="{Binding Song.MotionBackgroundVideoPath}" />
-                </DockPanel>
+            <TabItem Header="Text">
+                <editors:SongLyricFreeTextEditor />
             </TabItem>
 
             <TabItem Header="Design">
                 <StackPanel Margin="12">
-                    <TextBlock Text="Slide Theme" Margin="0 0 0 6" />
-                    <ComboBox ItemsSource="{Binding Playlist.Designs}"
-                              SelectedItem="{Binding SelectedSlideTheme}"
-                              HorizontalAlignment="Stretch">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <TextBlock Margin="0 6 0 0"
-                               FontSize="11"
-                               Opacity="0.6"
-                               Text="(None selected — uses default theme)"
-                               IsVisible="{Binding SelectedSlideTheme, Converter={x:Static ObjectConverters.IsNull}}" />
+                    <StackPanel Margin="12">
+                        <TextBlock Margin="0,0,0,6" Text="Slide Theme" />
+                        <ComboBox
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{Binding Playlist.Designs}"
+                            SelectedItem="{Binding SelectedSlideTheme}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock
+                            FontSize="11"
+                            IsVisible="{Binding SelectedSlideTheme, Converter={x:Static ObjectConverters.IsNull}}"
+                            Margin="0,6,0,0"
+                            Opacity="0.6"
+                            Text="(None selected — uses default theme)" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <DockPanel Margin="8">
+                            <Button
+                                Click="ClearMotionBackground_OnClick"
+                                Content="Clear"
+                                DockPanel.Dock="Right"
+                                Margin="4,0,0,0" />
+                            <Button
+                                Click="BrowseMotionBackground_OnClick"
+                                Content="..."
+                                DockPanel.Dock="Right"
+                                Margin="4,0,0,0" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{Binding Song.MotionBackgroundVideoPath}"
+                                Watermark="No video file selected" />
+                        </DockPanel>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
 
@@ -109,48 +123,48 @@
 
         <Border Grid.Column="2">
             <Grid>
-                <DockPanel Margin="16,4, 16, 16">
+                <DockPanel Margin="16,4,16,16">
                     <controls:SongArrangementControl
-                        DockPanel.Dock="Top"
                         DataContext="{Binding Song}"
-                        Margin="0 8" />
+                        DockPanel.Dock="Top"
+                        Margin="0,8" />
                     <Border
-                        Padding="6"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
                         Background="#AAAAAA"
                         BoxShadow="inset 0 0 2 #c1c1c1"
-                        CornerRadius="6">
+                        CornerRadius="6"
+                        HorizontalAlignment="Stretch"
+                        Padding="6"
+                        VerticalAlignment="Stretch">
                         <ScrollViewer>
                             <ListBox
-                                Name="List"
                                 Background="Transparent"
                                 BorderThickness="0"
                                 ItemsSource="{Binding Song.Slides}"
+                                Name="List"
                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <ListBox.Styles>
-                                    <StyleInclude
-                                        Source="avares://HandsLiftedApp.Controls/ListBoxItem.axaml" />
+                                    <StyleInclude Source="avares://HandsLiftedApp.Controls/ListBoxItem.axaml" />
                                 </ListBox.Styles>
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <WrapPanel ItemHeight="160" ItemWidth="240" IsHitTestVisible="False" />
+                                        <WrapPanel
+                                            IsHitTestVisible="False"
+                                            ItemHeight="160"
+                                            ItemWidth="240" />
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                                 <ListBox.DataTemplates>
                                     <common:MyTemplateSelector>
-                                        <DataTemplate x:Key="SongTitleSlideInstance"
-                                                      x:DataType="slides:SongTitleSlideInstance">
+                                        <DataTemplate x:DataType="slides:SongTitleSlideInstance" x:Key="SongTitleSlideInstance">
                                             <Image
-                                                Source="{Binding Thumbnail}"
                                                 RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                Source="{Binding Thumbnail}"
                                                 Stretch="Uniform" />
                                         </DataTemplate>
-                                        <DataTemplate x:Key="SongSlideInstance"
-                                                      x:DataType="slides:SongSlideInstance">
+                                        <DataTemplate x:DataType="slides:SongSlideInstance" x:Key="SongSlideInstance">
                                             <Image
-                                                Source="{Binding Thumbnail}"
                                                 RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                Source="{Binding Thumbnail}"
                                                 Stretch="Uniform" />
                                         </DataTemplate>
                                         <DataTemplate x:Key="Fallback">
@@ -176,12 +190,12 @@
                 <Border IsVisible="{Binding Song.IsEmpty}">
                     <DockPanel Background="#282828">
                         <avalonia:MaterialIcon
-                            Width="40"
-                            Height="40"
-                            Margin="20"
-                            HorizontalAlignment="Left"
                             Foreground="White"
-                            Kind="ArrowLeft" />
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            Kind="ArrowLeft"
+                            Margin="20"
+                            Width="40" />
                         <StackPanel Margin="0,20,40,20" VerticalAlignment="Center">
                             <TextBlock
                                 FontSize="24"
@@ -193,37 +207,36 @@
                                         <Setter Property="Padding" Value="0" />
                                         <Setter Property="BorderThickness" Value="0" />
                                     </Style>
-                                    <Style Selector="Button > TextBlock > Span">
+                                    <Style Selector="Button &gt; TextBlock &gt; Span">
                                         <Setter Property="Foreground" Value="#2ECAFF" />
                                     </Style>
-                                    <Style Selector="Button:pointerover > TextBlock > Span">
+                                    <Style Selector="Button:pointerover &gt; TextBlock &gt; Span">
                                         <Setter Property="Foreground" Value="#72DBFF" />
                                     </Style>
                                 </TextBlock.Styles>
                                 <avalonia:MaterialIcon
-                                    Width="64"
                                     Height="64"
-                                    Margin="-4 -4"
                                     HorizontalAlignment="Left"
-                                    Kind="MusicNote" />
+                                    Kind="MusicNote"
+                                    Margin="-4,-4"
+                                    Width="64" />
                                 <LineBreak />
                                 <LineBreak />
-                                Create slides from lyrics
-                                <LineBreak />
+                                Create slides from lyrics<LineBreak />
                                 <LineBreak />
                                 <Button Click="ImportFromOnlineButton_OnClick" Cursor="Hand">
-                                
+
                                     <TextBlock>
                                         <Span TextDecorations="Underline">
                                             import from songselect
                                         </Span>
                                         <avalonia:MaterialIcon
-                                            Width="18"
-                                            Height="18"
-                                            Margin="-4"
-                                            HorizontalAlignment="Left"
                                             Foreground="#2ECAFF"
-                                            Kind="OpenInNew" />
+                                            Height="18"
+                                            HorizontalAlignment="Left"
+                                            Kind="OpenInNew"
+                                            Margin="-4"
+                                            Width="18" />
                                     </TextBlock>
                                 </Button>
 
@@ -236,12 +249,12 @@
                                             import from file
                                         </Span>
                                         <avalonia:MaterialIcon
-                                            Width="18"
-                                            Height="18"
-                                            Margin="-4"
-                                            HorizontalAlignment="Left"
                                             Foreground="#2ECAFF"
-                                            Kind="FolderOpen" />
+                                            Height="18"
+                                            HorizontalAlignment="Left"
+                                            Kind="FolderOpen"
+                                            Margin="-4"
+                                            Width="18" />
                                     </TextBlock>
                                 </Button>
                             </TextBlock>

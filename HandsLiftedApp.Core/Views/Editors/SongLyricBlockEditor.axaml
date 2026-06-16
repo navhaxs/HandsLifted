@@ -1,16 +1,19 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:material="using:Material.Icons.Avalonia"
-             xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
-             xmlns:converters="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="650"
-             x:DataType="editor:SongEditorViewModel"
-             Background="White"
-             x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricBlockEditor">
+<UserControl
+    Background="White"
+    d:DesignHeight="650"
+    d:DesignWidth="500"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.Editors.SongLyricBlockEditor"
+    x:DataType="editor:SongEditorViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
+    xmlns:converters="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
         <editor:ExampleSongEditorViewModel />
@@ -27,20 +30,23 @@
     </UserControl.Styles>
 
     <DockPanel>
-        <Border BorderBrush="#eee" BorderThickness="0 1 0 0"
-                DockPanel.Dock="Bottom"
-                Margin="0 6 0 0">
+        <Border
+            BorderBrush="#eee"
+            BorderThickness="0,1,0,0"
+            DockPanel.Dock="Bottom"
+            Margin="0,6,0,0">
             <TextBox
-                Margin="16,0,12,0"
-                Padding="0,6,0,5"
-                HorizontalAlignment="Stretch"
                 AcceptsReturn="True"
                 Background="Transparent"
                 FontSize="13"
                 Foreground="Black"
+                HorizontalAlignment="Stretch"
+                Margin="16,0,12,0"
+                Padding="0,6,0,5"
                 Text="{Binding Song.Copyright}"
                 TextWrapping="Wrap"
-                Watermark="Copyright">
+                Watermark="Copyright"
+                x:Name="CopyrightTextBox">
                 <i:Interaction.Behaviors>
                     <behaviours:StanzaTextBoxBehavior />
                 </i:Interaction.Behaviors>
@@ -49,14 +55,14 @@
 
         <Grid>
             <ScrollViewer>
-                <StackPanel x:Name="Wrapper" Margin="0 0 0 60">
+                <StackPanel Margin="0,0,0,60" x:Name="Wrapper">
                     <TextBox
-                        Margin="12,20, 12,0"
-                        Padding="0,0,0,0"
                         Background="White"
                         FontSize="30"
                         FontWeight="Bold"
                         Foreground="Black"
+                        Margin="12,0,12,0"
+                        Padding="0,20,0,0"
                         Text="{Binding Song.Title}"
                         TextWrapping="Wrap"
                         Watermark="Song Title">
@@ -64,21 +70,27 @@
                             <behaviours:StanzaTextBoxBehavior />
                         </i:Interaction.Behaviors>
                     </TextBox>
-                    
-                    <Button VerticalAlignment="Stretch" HorizontalAlignment="Right"
-                            BorderThickness="0" CornerRadius="0" Background="Transparent"
-                            Foreground="Black" Margin="0">
-                        <Button.Content><material:MaterialIcon Kind="MenuDown"/></Button.Content>
+
+                    <Button
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        Foreground="Black"
+                        HorizontalAlignment="Right"
+                        Margin="0"
+                        VerticalAlignment="Stretch">
+                        <Button.Content>
+                            <material:MaterialIcon Kind="MenuDown" />
+                        </Button.Content>
                         <Button.Flyout>
                             <Flyout>
                                 <DockPanel Height="120" MinWidth="200">
                                     <TextBlock DockPanel.Dock="Top">Rearrange Stanzas</TextBlock>
                                     <StackPanel DockPanel.Dock="Right">
-                                        <Button Content="Move up" Click="MoveUp_OnClick" />
-                                        <Button Content="Move down" Click="MoveDown_OnClick" />
+                                        <Button Click="MoveUp_OnClick" Content="Move up" />
+                                        <Button Click="MoveDown_OnClick" Content="Move down" />
                                     </StackPanel>
-                                    <ListBox ItemsSource="{Binding Song.Stanzas}"
-                                             x:Name="StanzaArrangementListBox">
+                                    <ListBox ItemsSource="{Binding Song.Stanzas}" x:Name="StanzaArrangementListBox">
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Name}" />
@@ -91,7 +103,7 @@
                         </Button.Flyout>
                     </Button>
 
-                    <ItemsControl Margin="0" ItemsSource="{Binding Song.Stanzas}">
+                    <ItemsControl ItemsSource="{Binding Song.Stanzas}" Margin="0">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" />
@@ -103,9 +115,9 @@
                                     <Border Background="{Binding Colour}">
                                         <DockPanel>
                                             <Button
-                                                Padding="0"
                                                 Background="Transparent"
-                                                DockPanel.Dock="Right">
+                                                DockPanel.Dock="Right"
+                                                Padding="0">
                                                 <Button.Styles>
                                                     <Style Selector="Button">
                                                         <Setter Property="BorderThickness" Value="0" />
@@ -117,52 +129,52 @@
                                                             <TextBlock>Delete this stanza?</TextBlock>
                                                             <TextBlock>This cannot be undone</TextBlock>
                                                             <Button
-                                                                HorizontalAlignment="Center"
                                                                 Click="DeleteThisPartClick"
-                                                                Content="Confirm" />
+                                                                Content="Confirm"
+                                                                HorizontalAlignment="Center" />
                                                         </StackPanel>
                                                     </Flyout>
                                                 </Button.Flyout>
                                                 <material:MaterialIcon
-                                                    Width="24"
-                                                    Height="24"
-                                                    Margin="8,0"
-                                                    VerticalAlignment="Stretch"
                                                     DockPanel.Dock="Right"
                                                     Foreground="#AAA"
-                                                    Kind="BinOutline" />
+                                                    Height="24"
+                                                    Kind="BinOutline"
+                                                    Margin="8,0"
+                                                    VerticalAlignment="Stretch"
+                                                    Width="24" />
                                             </Button>
-                                            <!--<ComboBox 
-                                     ItemsSource="{Binding Source={x:Static app:Globals.MainViewModel}, Path=Playlist.Designs}" 
-                                     SelectedItem="{Binding Design}"> 
-                                     <ComboBox.ItemTemplate> 
-                                         <DataTemplate> 
-                                             <DockPanel> 
-                                                 <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" 
-                                                            HorizontalAlignment="Center" Margin="0 6 0 0" /> 
-                                                 <Viewbox Height="30"> 
-                                                     <Grid 
-                                                         Height="130" 
-                                                         Width="130" 
-                                                         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}"> 
-                                                         <TextBlock Text="A" 
-                                                                    FontSize="80" 
-                                                                    Margin="20" 
-                                                                    FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}" 
-                                                                    FontWeight="SemiBold" /> 
-                                                     </Grid> 
-                                                 </Viewbox> 
-                                             </DockPanel> 
-                                         </DataTemplate> 
-                                     </ComboBox.ItemTemplate> 
+                                            <!--<ComboBox
+                                     ItemsSource="{Binding Source={x:Static app:Globals.MainViewModel}, Path=Playlist.Designs}"
+                                     SelectedItem="{Binding Design}">
+                                     <ComboBox.ItemTemplate>
+                                         <DataTemplate>
+                                             <DockPanel>
+                                                 <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom"
+                                                            HorizontalAlignment="Center" Margin="0 6 0 0" />
+                                                 <Viewbox Height="30">
+                                                     <Grid
+                                                         Height="130"
+                                                         Width="130"
+                                                         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}">
+                                                         <TextBlock Text="A"
+                                                                    FontSize="80"
+                                                                    Margin="20"
+                                                                    FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}"
+                                                                    FontWeight="SemiBold" />
+                                                     </Grid>
+                                                 </Viewbox>
+                                             </DockPanel>
+                                         </DataTemplate>
+                                     </ComboBox.ItemTemplate>
                                  </ComboBox>-->
                                             <TextBox
-                                                Padding="16,6,80,6"
                                                 AcceptsReturn="False"
                                                 Background="Transparent"
                                                 FontSize="14"
                                                 FontWeight="SemiBold"
                                                 Foreground="Black"
+                                                Padding="16,6,80,6"
                                                 Text="{Binding Path=Name}"
                                                 TextWrapping="Wrap"
                                                 Watermark="Stanza Name">
@@ -173,14 +185,14 @@
                                         </DockPanel>
                                     </Border>
 
-                                    <!-- Lyrics Text -->
+                                    <!--  Lyrics Text  -->
                                     <TextBox
-                                        Padding="16,6,16,6"
                                         AcceptsReturn="True"
                                         Background="Transparent"
                                         FontSize="14"
-                                        LineHeight="20"
                                         Foreground="Black"
+                                        LineHeight="20"
+                                        Padding="16,6,16,6"
                                         Text="{Binding Path=Lyrics}"
                                         TextWrapping="Wrap"
                                         Watermark="Stanza Lyrics">
@@ -198,21 +210,21 @@
             </ScrollViewer>
 
             <Button
-                Name="AddItemButton"
-                Margin="6,0,6,8"
-                Padding="12"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                HorizontalContentAlignment="Left"
                 Background="#4d347f"
                 BorderThickness="0"
+                Click="Button_OnClick"
                 ClickMode="Press"
                 CornerRadius="6"
                 Cursor="Hand"
-                Click="Button_OnClick"
                 DockPanel.Dock="Bottom"
                 FontSize="14"
-                Foreground="White">
+                Foreground="White"
+                HorizontalAlignment="Right"
+                HorizontalContentAlignment="Left"
+                Margin="6,0,6,8"
+                Name="AddItemButton"
+                Padding="12"
+                VerticalAlignment="Bottom">
                 <Button.Styles>
                     <Style Selector="ScrollViewer">
                         <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
@@ -232,20 +244,20 @@
                 <Button.Effect>
                     <DropShadowEffect
                         BlurRadius="6"
+                        Color="#55000000"
                         OffsetX="0"
-                        OffsetY="1"
-                        Color="#55000000" />
+                        OffsetY="1" />
                 </Button.Effect>
 
                 <DockPanel>
                     <material:MaterialIcon
-                        Width="20"
-                        Height="20"
                         DockPanel.Dock="Left"
-                        Kind="Plus" />
+                        Height="20"
+                        Kind="Plus"
+                        Width="20" />
                     <TextBlock
-                        Margin="8,0,8,0"
                         IsVisible="True"
+                        Margin="8,0,8,0"
                         Text="Add Stanza" />
                 </DockPanel>
             </Button>

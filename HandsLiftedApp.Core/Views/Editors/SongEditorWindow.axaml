@@ -1,24 +1,24 @@
 <Window
-    x:Class="HandsLiftedApp.Core.Views.Editors.SongEditorWindow"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:HandsLiftedApp.Converters"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:material="using:Material.Icons.Avalonia"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
-    xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
-    xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
-    xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
-    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
-    xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
-    xmlns:song="clr-namespace:HandsLiftedApp.Core.Views.Editors.Song"
+    Background="{DynamicResource BackgroundBrush}"
     Title="Song Editor"
     d:DesignHeight="400"
-    d:DesignWidth="800"
-    Background="{DynamicResource BackgroundBrush}"
+    d:DesignWidth="600"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.Editors.SongEditorWindow"
     x:DataType="editor:SongEditorViewModel"
-    mc:Ignorable="d">
+    xmlns="https://github.com/avaloniaui"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
+    xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+    xmlns:song="clr-namespace:HandsLiftedApp.Core.Views.Editors.Song"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
         <editor:ExampleSongEditorViewModel />
@@ -39,146 +39,189 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <DockPanel>
-        <Grid Background="{DynamicResource HeaderBackgroundBrush}" DockPanel.Dock="Top">
-            <DockPanel Margin="6">
+    <DockPanel Background="{DynamicResource HeaderBackgroundBrush}">
+        <Grid DockPanel.Dock="Top">
+            <StackPanel>
 
-                <DockPanel.Styles>
-                    <Style Selector="Button">
-                        <Setter Property="MinWidth" Value="86" />
-                        <Setter Property="CornerRadius" Value="0" />
-                        <Setter Property="Padding" Value="12 8" />
-                        <Setter Property="Margin" Value="0 0 1 0" />
-                    </Style>
-                    <Style Selector="Button:nth-child(1)">
-                        <Setter Property="CornerRadius" Value="6 0 0 6" />
-                    </Style>
-                    <Style Selector="Button:nth-last-child(1)">
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="CornerRadius" Value="0 6 6 0" />
-                    </Style>
-                    <Style Selector="Button:nth-last-child(1):nth-child(1)">
-                        <Setter Property="CornerRadius" Value="6" />
-                    </Style>
-                    <Style Selector="Button > DockPanel > material|MaterialIcon">
-                        <Setter Property="Margin" Value="0 0 6 0" />
-                    </Style>
-                </DockPanel.Styles>
+                <DockPanel Margin="6">
 
-                <!-- <Button DockPanel.Dock="Left" CornerRadius="0" Background="Transparent" BorderThickness="0" -->
-                <!--         MinWidth="40" Width="20"> -->
-                <!--     <material:MaterialIcon Kind="Menu" /> -->
-                <!--     <Button.Flyout> -->
-                <!--         <MenuFlyout> -->
-                <!--             <MenuItem Header="ResetArrangement" DockPanel.Dock="Left" -->
-                <!--                       Click="ResetArrangement_OnClick" -->
-                <!--                       Foreground="Red" /> -->
-                <!--             <MenuItem Header="GenerateSlides" DockPanel.Dock="Left" -->
-                <!--                       Click="GenerateSlides_OnClick" -->
-                <!--                       Foreground="Red" /> -->
-                <!--             <MenuItem Header="ReverseSync" DockPanel.Dock="Left" -->
-                <!--                       Click="ReverseSyncButton_OnClick" -->
-                <!--                       Foreground="Red" /> -->
-                <!--         </MenuFlyout> -->
-                <!--     </Button.Flyout> -->
-                <!-- </Button> -->
+                    <DockPanel.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="MinWidth" Value="86" />
+                            <Setter Property="CornerRadius" Value="0" />
+                            <Setter Property="Padding" Value="12 8" />
+                            <Setter Property="Margin" Value="0 0 1 0" />
+                        </Style>
+                        <Style Selector="Button:nth-child(1)">
+                            <Setter Property="CornerRadius" Value="6 0 0 6" />
+                        </Style>
+                        <Style Selector="Button:nth-last-child(1)">
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="CornerRadius" Value="0 6 6 0" />
+                        </Style>
+                        <Style Selector="Button:nth-last-child(1):nth-child(1)">
+                            <Setter Property="CornerRadius" Value="6" />
+                        </Style>
+                        <Style Selector="Button &gt; DockPanel &gt; material|MaterialIcon">
+                            <Setter Property="Margin" Value="6 0 0 0" />
+                        </Style>
+                    </DockPanel.Styles>
 
-                <TextBlock Text="{Binding SongEditorWindowTitle}" FontSize="17" VerticalAlignment="Center"
-                           Margin="6 0 0 0">
-                    <TextBlock.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="ResetArrangement" DockPanel.Dock="Left"
-                                      Click="ResetArrangement_OnClick" />
-                            <MenuItem Header="GenerateSlides" DockPanel.Dock="Left"
-                                      Click="GenerateSlides_OnClick" />
-                            <MenuItem Header="ReverseSync" DockPanel.Dock="Left"
-                                      Click="ReverseSyncButton_OnClick" />
-                        </ContextMenu>
-                    </TextBlock.ContextMenu>
-                </TextBlock>
-
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-
-                    <!-- <Button Click="LoadFromText_OnClick"> -->
-                    <!--     <DockPanel> -->
-                    <!--         <TextBlock Text="Save to Library" DockPanel.Dock="Right" /> -->
-                    <!--         <material:MaterialIcon Kind="Bookshelf" /> -->
-                    <!--     </DockPanel> -->
+                    <!--  <Button DockPanel.Dock="Left" CornerRadius="0" Background="Transparent" BorderThickness="0"  -->
+                    <!--  MinWidth="40" Width="20">  -->
+                    <!--     <material:MaterialIcon Kind="Menu" /> -->
+                    <!--     <Button.Flyout> -->
+                    <!--         <MenuFlyout> -->
+                    <!--  <MenuItem Header="ResetArrangement" DockPanel.Dock="Left"  -->
+                    <!--  Click="ResetArrangement_OnClick"  -->
+                    <!--  Foreground="Red" />  -->
+                    <!--  <MenuItem Header="GenerateSlides" DockPanel.Dock="Left"  -->
+                    <!--  Click="GenerateSlides_OnClick"  -->
+                    <!--  Foreground="Red" />  -->
+                    <!--  <MenuItem Header="ReverseSync" DockPanel.Dock="Left"  -->
+                    <!--  Click="ReverseSyncButton_OnClick"  -->
+                    <!--  Foreground="Red" />  -->
+                    <!--         </MenuFlyout> -->
+                    <!--     </Button.Flyout> -->
                     <!-- </Button> -->
 
-                    <Button Click="AddToPlaylist_OnClick">
-                        <Button.IsVisible>
-                            <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                <Binding Path="Song.Title" Converter="{x:Static StringConverters.IsNotNullOrEmpty}" />
-                                <Binding Path="ItemInsertIndex" Converter="{x:Static ObjectConverters.IsNotNull}" />
-                            </MultiBinding>
-                        </Button.IsVisible>
-                        <DockPanel>
-                            <TextBlock Text="Add to Playlist" DockPanel.Dock="Right" />
-                            <material:MaterialIcon Kind="AddCircleOutline" />
-                        </DockPanel>
-                    </Button>
+                    <TextBlock
+                        FontSize="17"
+                        Margin="6,6,0,6"
+                        Text="{Binding SongEditorWindowTitle}"
+                        VerticalAlignment="Center">
 
-                    <Button>
-                        <Button.IsVisible>
-                            <Binding Path="ItemInsertIndex" Converter="{x:Static ObjectConverters.IsNull}" />
-                        </Button.IsVisible>
-                        <Button.Flyout>
-                            <Flyout>
-                                <Button Click="New_OnClick" Content="This will clear all data" />
-                            </Flyout>
-                        </Button.Flyout>
-                        <DockPanel>
-                            <TextBlock Text="New" DockPanel.Dock="Right" />
-                            <material:MaterialIcon Kind="PencilOutline" />
-                        </DockPanel>
-                    </Button>
-                    <Button>
-                        <DockPanel>
-                            <TextBlock Text="Import" DockPanel.Dock="Right" />
-                            <material:MaterialIcon Kind="FolderOutline" />
-                        </DockPanel>
-                        <Button.Flyout>
-                            <MenuFlyout
-                                Placement="BottomEdgeAlignedLeft">
-                                <MenuItem Header="From File..."
-                                          Click="LoadFromText_OnClick">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="File" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                
-                                <MenuItem Header="From Online..."
-                                          Click="ImportFromOnline_OnClick">
-                                    <MenuItem.Icon>
-                                        <material:MaterialIcon Foreground="#888888" Kind="Internet" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
+                        <!--  debug menu  -->
+                        <TextBlock.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem
+                                    Click="ResetArrangement_OnClick"
+                                    DockPanel.Dock="Left"
+                                    Header="ResetArrangement" />
+                                <MenuItem
+                                    Click="GenerateSlides_OnClick"
+                                    DockPanel.Dock="Left"
+                                    Header="GenerateSlides" />
+                                <MenuItem
+                                    Click="ReverseSyncButton_OnClick"
+                                    DockPanel.Dock="Left"
+                                    Header="ReverseSync" />
 
                                 <Separator />
-                            </MenuFlyout>
-                        </Button.Flyout>
-                    </Button>
-                    <Button Click="SaveAsXml_OnClick">
-                        <Button.IsVisible>
-                            <Binding Path="ItemInsertIndex" Converter="{x:Static ObjectConverters.IsNull}" />
-                        </Button.IsVisible>
-                        <DockPanel>
-                            <TextBlock Text="Export" DockPanel.Dock="Right" />
-                            <material:MaterialIcon Kind="ContentSaveOutline" />
-                        </DockPanel>
-                    </Button>
-                </StackPanel>
-                <Grid />
-            </DockPanel>
-            <Grid.Effect>
-                <DropShadowEffect
-                    BlurRadius="6"
-                    OffsetX="0"
-                    OffsetY="1"
-                    Color="#55000000" />
-            </Grid.Effect>
+
+                                <MenuItem>
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Kind="FolderOutline" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        Import...
+                                    </MenuItem.Header>
+                                    <MenuItem Click="LoadFromText_OnClick" Header="From File">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="File" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+
+                                    <MenuItem Click="ImportFromOnline_OnClick" Header="From Online">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="Internet" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </MenuItem>
+
+                                <MenuItem Click="SaveAsXml_OnClick" Header="Export">
+                                    <MenuItem.IsVisible>
+                                        <Binding Converter="{x:Static ObjectConverters.IsNull}" Path="ItemInsertIndex" />
+                                    </MenuItem.IsVisible>
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Kind="ContentSaveOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <MenuItem Click="AddToPlaylist_OnClick" Header="Add to Playlist">
+                                    <MenuItem.IsVisible>
+                                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                            <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="Song.Title" />
+                                            <Binding Converter="{x:Static ObjectConverters.IsNotNull}" Path="ItemInsertIndex" />
+                                        </MultiBinding>
+                                    </MenuItem.IsVisible>
+                                    <MenuItem.Icon>
+                                        <material:MaterialIcon Kind="AddCircleOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                            </ContextMenu>
+                        </TextBlock.ContextMenu>
+                    </TextBlock>
+
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+
+                        <!-- <Button Click="LoadFromText_OnClick"> -->
+                        <!--     <DockPanel> -->
+                        <!--         <TextBlock Text="Save to Library" DockPanel.Dock="Right" /> -->
+                        <!--         <material:MaterialIcon Kind="Bookshelf" /> -->
+                        <!--     </DockPanel> -->
+                        <!-- </Button> -->
+
+                        <!-- <Button> -->
+                        <!--     <DockPanel> -->
+                        <!--         <TextBlock DockPanel.Dock="Left" Text="Discard" /> -->
+                        <!--         <material:MaterialIcon Kind="CrossCircleOutline" /> -->
+                        <!--     </DockPanel> -->
+                        <!-- </Button> -->
+
+                        <!-- <Button> -->
+                        <!--     <DockPanel> -->
+                        <!--         <TextBlock DockPanel.Dock="Left" Text="Save" /> -->
+                        <!--         <material:MaterialIcon Kind="TickCircleOutline" /> -->
+                        <!--     </DockPanel> -->
+                        <!-- </Button> -->
+
+                    </StackPanel>
+                    <Grid />
+                </DockPanel>
+
+                <!--  TODO Jeremy to remove standalone editor: it's hacky  -->
+                <DockPanel IsVisible="False">
+
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button>
+                            <Button.IsVisible>
+                                <Binding Converter="{x:Static ObjectConverters.IsNull}" Path="ItemInsertIndex" />
+                            </Button.IsVisible>
+                            <Button.Flyout>
+                                <Flyout>
+                                    <Button Click="New_OnClick" Content="This will clear all data" />
+                                </Flyout>
+                            </Button.Flyout>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Right" Text="New" />
+                                <material:MaterialIcon Kind="PencilOutline" />
+                            </DockPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock
+                        FontSize="18"
+                        Margin="10"
+                        Text="Standalone Editor Mode" />
+
+                </DockPanel>
+            </StackPanel>
+            <!-- <Grid.Effect> -->
+            <!--  <DropShadowEffect  -->
+            <!--  BlurRadius="6"  -->
+            <!--  Color="#55000000"  -->
+            <!--  OffsetX="0"  -->
+            <!--  OffsetY="1" />  -->
+            <!-- </Grid.Effect> -->
         </Grid>
-        <song:SongEditorControl Name="SongEditorControl" />
+
+        <Border
+            Background="{DynamicResource BackgroundBrush}"
+            CornerRadius="6"
+            Margin="0">
+            <song:SongEditorControl Name="SongEditorControl" />
+        </Border>
     </DockPanel>
 </Window>
