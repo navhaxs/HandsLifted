@@ -128,7 +128,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
                     {
-                        TextWriter writer = new StreamWriter(memoryStream);
+                        using var writer = new StreamWriter(memoryStream, leaveOpen: true);
 
                         var settings = new XmlWriterSettings
                         {
@@ -213,7 +213,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             var path = Path.Combine(dir, safeName + ".xml");
 
             using var memoryStream = new MemoryStream();
-            var writer = new StreamWriter(memoryStream);
+            using var writer = new StreamWriter(memoryStream, leaveOpen: true);
             var settings = new XmlWriterSettings
             {
                 NewLineChars = "\n",
