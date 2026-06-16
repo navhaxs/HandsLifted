@@ -163,7 +163,11 @@ public static class SlideRenderer
         }
         else
         {
-            DrawBackground(canvas, currBg ?? prevBg, 1f, width, height);
+            // Transition to blank (current = null): fade previous background out.
+            if (progress < 1f && currBg == null && prevBg != null)
+                DrawBackground(canvas, prevBg, 1f - progress, width, height);
+            else
+                DrawBackground(canvas, currBg ?? prevBg, 1f, width, height);
         }
 
         // Elements in current: unchanged lines stay at 1.0, new/moved lines fade in.

@@ -659,11 +659,14 @@ Description("Function to determine whether the content requires high resolution 
                     isBlank = IsLikelyBlankFrame(p, bufferSize);
                 }
 
-                if (isBlank && _hasLastGoodFrame && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize)
+                if (isBlank && _hasLastGoodFrame && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize
+                    && IsContentHighResCheckFunc != null && IsContentHighResCheckFunc(this))
                 {
-                    // This frame is blank (crossfade fully faded out, new content not yet visible).
-                    // Substitute the last known-good frame so NDI receivers see the previous slide
-                    // held rather than a black flash.
+                    // This frame is blank during an active transition (crossfade faded out, new content
+                    // not yet visible). Substitute the last known-good frame so NDI receivers see the
+                    // previous slide held rather than a black flash.
+                    // Guard on IsContentHighResCheckFunc so intentional blank state is NOT substituted —
+                    // otherwise NDI would show the last slide indefinitely when the user presses Blank.
                     unsafe
                     {
                         Buffer.MemoryCopy((void*)_lastGoodFramePtr, (void*)bufferPtr, bufferSize, bufferSize);
