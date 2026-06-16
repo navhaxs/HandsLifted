@@ -5,8 +5,6 @@ using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactivity;
 using HandsLiftedApp.Behaviours;
 using HandsLiftedApp.Common.Extensions;
-using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using HandsLiftedApp.Extensions;
@@ -42,90 +40,73 @@ namespace HandsLiftedApp.Controls.Behaviours
         {
         }
 
-        int lastCaretIndex;
-        int caretIndex;
-        int lastSeenCaretIndex;
         private int IndexOfStartOfLastLine(string? text)
         {
-            if (text == null)
-            {
-                return 0;
-            }
+            if (text == null) return 0;
             int lastNewline = text.LastIndexOf("\n");
-            if (lastNewline > 0)
-            {
-                return lastNewline + 1;
-            }
-            else
-            {
-                return 0;
-            }
+            return lastNewline >= 0 ? lastNewline + 1 : 0;
         }
 
         private List<TextBox> GetTextBoxTree(TextBox activeTextBox)
         {
             UserControl? window = activeTextBox.FindAncestorOfType<UserControl>();
             StackPanel? stackPanel = window.FindControl<StackPanel>("Wrapper");
-            return stackPanel.FindAllVisuals<TextBox>().Distinct().ToList();
+            var boxes = stackPanel.FindAllVisuals<TextBox>().Distinct().ToList();
+            // Copyright lives outside Wrapper; append as last in nav order
+            var copyright = window?.FindControl<TextBox>("CopyrightTextBox");
+            if (copyright != null && !boxes.Contains(copyright))
+                boxes.Add(copyright);
+            return boxes;
         }
 
-        /* NOTES: This does not work for text wrapping */
         protected override void OnAttached()
         {
             base.OnAttached();
 
-            var source = AssociatedObject;
-            if (source is { })
+            if (AssociatedObject is TextBox textBox)
             {
-                if (source is TextBox textBox)
+                textBox.KeyDown += (object? sender, KeyEventArgs e) =>
                 {
-                    textBox.WhenAnyValue(textBox => textBox.CaretIndex).Subscribe(idx =>
+                    try
                     {
-                        lastCaretIndex = caretIndex;
-                        caretIndex = idx;
-                    });
+                        var text = textBox.Text ?? string.Empty;
+                        int caret = textBox.CaretIndex;
 
-                    textBox.KeyDown += (object? sender, KeyEventArgs e) =>
-                    {
-                        try
+                        if (e.Key == Key.Up)
                         {
-                            if (e.Key == Key.Up)
+                            // on first line if no '\n' exists before the caret
+                            bool onFirstLine = text.IndexOf('\n') == -1 || caret <= text.IndexOf('\n');
+                            if (onFirstLine)
                             {
-                                var text = textBox.Text;
-                                int firstNewline = text.IndexOf("\n");
-
-                                if (lastCaretIndex <= firstNewline || caretIndex <= firstNewline && lastSeenCaretIndex == textBox.CaretIndex || firstNewline == -1)
+                                List<TextBox> boxes = GetTextBoxTree(textBox);
+                                int idx = boxes.IndexOf(textBox);
+                                if (idx > 0)
                                 {
-                                    List<TextBox> enumerable = GetTextBoxTree(textBox);
-                                    int idx = enumerable.IndexOf(textBox);
-                                    if (idx > 0)
-                                    {
-                                        enumerable[idx - 1].Focus();
-                                        enumerable[idx - 1].CaretIndex = IndexOfStartOfLastLine(enumerable[idx - 1].Text);
-                                    }
-                                }
-                            }
-                            else if (e.Key == Key.Down)
-                            {
-                                var text = textBox.Text;
-                                int lastNewline = text.LastIndexOf("\n");
-
-                                if (lastCaretIndex > lastNewline || caretIndex > lastCaretIndex && lastSeenCaretIndex == textBox.CaretIndex || lastNewline == -1)
-                                {
-                                    List<TextBox> enumerable = GetTextBoxTree(textBox);
-                                    int idx = enumerable.IndexOf(textBox);
-                                    if (idx + 1 < enumerable.Count)
-                                    {
-                                        enumerable[idx + 1].Focus();
-                                        enumerable[idx + 1].CaretIndex = 0;
-                                    }
+                                    e.Handled = true;
+                                    boxes[idx - 1].Focus();
+                                    boxes[idx - 1].CaretIndex = IndexOfStartOfLastLine(boxes[idx - 1].Text);
                                 }
                             }
                         }
-                        catch { }
-                        lastSeenCaretIndex = textBox.CaretIndex;
-                    };
-                }
+                        else if (e.Key == Key.Down)
+                        {
+                            // on last line if caret is after the last '\n' (or no '\n')
+                            bool onLastLine = text.LastIndexOf('\n') == -1 || caret > text.LastIndexOf('\n');
+                            if (onLastLine)
+                            {
+                                List<TextBox> boxes = GetTextBoxTree(textBox);
+                                int idx = boxes.IndexOf(textBox);
+                                if (idx + 1 < boxes.Count)
+                                {
+                                    e.Handled = true;
+                                    boxes[idx + 1].Focus();
+                                    boxes[idx + 1].CaretIndex = 0;
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                };
             }
         }
 
