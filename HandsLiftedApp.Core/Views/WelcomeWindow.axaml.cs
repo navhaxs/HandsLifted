@@ -30,14 +30,14 @@ namespace HandsLiftedApp.Core.Views
 
             this.KeyDown += (_, e) =>
             {
-                if (e.Key == Avalonia.Input.Key.N && e.KeyModifiers == Avalonia.Input.KeyModifiers.Control)
+                if (e.Key == Avalonia.Input.Key.N && e.KeyModifiers.HasFlag(Avalonia.Input.KeyModifiers.Control))
                 {
                     _openMainOnClose = true;
                     MessageBus.Current.SendMessage(new NewPlaylistAction());
                     Close();
                     e.Handled = true;
                 }
-                else if (e.Key == Avalonia.Input.Key.O && e.KeyModifiers == Avalonia.Input.KeyModifiers.Control)
+                else if (e.Key == Avalonia.Input.Key.O && e.KeyModifiers.HasFlag(Avalonia.Input.KeyModifiers.Control))
                 {
                     _ = OpenFileAsync();
                     e.Handled = true;
@@ -146,7 +146,11 @@ namespace HandsLiftedApp.Core.Views
         {
             var entry = GetEntryFromContextMenuSender(sender);
             if (entry is null) return;
-            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{entry.FilePath}\"");
+            try
+            {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{entry.FilePath}\"");
+            }
+            catch { /* explorer unavailable or path invalid */ }
         }
 
         private void RemoveFromRecents_Clicked(object? sender, RoutedEventArgs e)
