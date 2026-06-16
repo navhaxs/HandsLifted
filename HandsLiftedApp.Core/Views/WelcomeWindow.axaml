@@ -1,7 +1,7 @@
 ﻿<Window
     Height="500"
     Title="Welcome to VisionScreens"
-    Width="870"
+    Width="970"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d"
     x:Class="HandsLiftedApp.Core.Views.WelcomeWindow"
@@ -24,6 +24,8 @@
     </Window.Styles>
 
     <DockPanel>
+
+        <!--  footer  -->
         <Grid Background="#1F1F1F" DockPanel.Dock="Bottom">
             <Grid
                 ColumnDefinitions="*,6,*,6,*"
@@ -71,7 +73,7 @@
             </Grid>
         </Grid>
 
-        <Grid RowDefinitions="1*, 1, 4*">
+        <Grid RowDefinitions="1*, 4*">
 
             <!--  header  -->
             <Grid Background="#41285c">
@@ -88,17 +90,13 @@
                     VerticalAlignment="Top" />
 
                 <Grid ColumnDefinitions="2*,*" MaxWidth="700">
-                    <Grid
-                        Grid.Column="0"
-                        Margin="0,0,0,12"
-                        VerticalAlignment="Bottom">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,12">
+                        <Image Source="/Assets/app.png" Width="40" Height="40" Margin="0,0,14,0" VerticalAlignment="Bottom" />
                         <StackPanel VerticalAlignment="Bottom">
-                            <TextBlock
-                                FontSize="32"
-                                Text="Welcome"
-                                x:Name="GreetingText" />
+                            <TextBlock FontSize="11" Text="VISIONSCREENS" Opacity="0.7" Foreground="White" />
+                            <TextBlock FontSize="32" Text="Welcome" x:Name="GreetingText" Foreground="White" />
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
 
                     <Grid Grid.Column="1" Margin="16,0,0,12">
                         <StackPanel
@@ -121,19 +119,15 @@
             <!--  content  -->
             <Grid
                 ColumnDefinitions="2*,1,*"
-                Grid.Row="2"
-                Margin="0"
+                Grid.Row="1"
+                Margin="0,18,0,0"
                 MaxWidth="700">
 
-                <!--  left  -->
-                <Grid Margin="0,18,60,60">
-                    <!--  <Border  -->
-                    <!--  Background="{DynamicResource SurfaceBrush}"  -->
-                    <!--  CornerRadius="6"  -->
-                    <!--  MaxHeight="400"  -->
-                    <!--  VerticalAlignment="Top">  -->
-                    <StackPanel HorizontalAlignment="Stretch" Margin="0,10,0,12">
+                <!--  left: recent playlists  -->
+                <Grid Margin="0,0,80,0">
+                    <DockPanel HorizontalAlignment="Stretch" Margin="0,10,0,12">
                         <TextBlock
+                            DockPanel.Dock="Top"
                             FontSize="18"
                             Margin="0,0,0,12"
                             Text="Recent playlists" />
@@ -142,6 +136,7 @@
                             IsVisible="{Binding !RecentPlaylists.Count}"
                             Margin="0,14"
                             Text="No recent playlists" />
+
                         <ScrollViewer Margin="0,0,12,0">
                             <ItemsControl ItemsSource="{Binding RecentPlaylists}">
                                 <ItemsControl.Styles>
@@ -170,8 +165,14 @@
                                 </ItemsControl.Styles>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Button Click="LoadRecentPlaylistEntryCommand" ToolTip.Tip="{Binding FilePath}">
-                                            <StackPanel Orientation="Horizontal">
+                                        <Button Click="LoadRecentPlaylistEntryCommand" ToolTip.Tip="{Binding FilePath}" Tag="{Binding}">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Open file location" Click="OpenFileLocation_Clicked" />
+                                                    <MenuItem Header="Remove from recents" Click="RemoveFromRecents_Clicked" />
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                            <DockPanel>
                                                 <avalonia:MaterialIcon Kind="FileDocumentOutline" Margin="0,0,16,0" />
                                                 <StackPanel>
                                                     <TextBlock
@@ -182,26 +183,25 @@
                                                         FontSize="12"
                                                         IsVisible="{Binding LastOpenedDateText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                                         Opacity="0.6"
-                                                        Text="{Binding LastOpenedDateText, StringFormat={}Last opened {0}}" />
+                                                        Text="{Binding LastOpenedDateText}" />
                                                 </StackPanel>
-                                            </StackPanel>
+                                            </DockPanel>
                                         </Button>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </ScrollViewer>
-                    </StackPanel>
+
+                    </DockPanel>
                     <!-- </Border> -->
                 </Grid>
 
                 <Grid
                     Background="{DynamicResource SurfaceBrush}"
                     Grid.Column="1"
-                    Height="260"
-                    Margin="0,22"
-                    VerticalAlignment="Top" />
+                    Margin="0,22" />
 
-                <!--  right  -->
+                <!--  right: CTAs  -->
                 <StackPanel Grid.Column="2" Margin="16,22,0,0">
                     <StackPanel.Styles>
                         <Style Selector="Button">
@@ -228,10 +228,13 @@
                         </Style>
                     </StackPanel.Styles>
 
-                    <Button Click="NewClicked">
+                    <Button Click="NewClicked" Background="#7e4ab4">
                         <DockPanel>
                             <avalonia:MaterialIcon Kind="PencilOutline" />
-                            <TextBlock Text="New Playlist" />
+                            <StackPanel Margin="12,0,0,0">
+                                <TextBlock Text="New Playlist" FontSize="16" />
+                                <TextBlock Text="Ctrl+N" FontSize="11" Opacity="0.5" />
+                            </StackPanel>
                         </DockPanel>
                     </Button>
 
@@ -243,7 +246,10 @@
                     <Button Click="OpenFileButton_Clicked">
                         <DockPanel>
                             <avalonia:MaterialIcon Kind="FolderOutline" />
-                            <TextBlock Text="Load Playlist" />
+                            <StackPanel Margin="12,0,0,0">
+                                <TextBlock Text="Load Playlist" FontSize="16" />
+                                <TextBlock Text="Ctrl+O" FontSize="11" Opacity="0.5" />
+                            </StackPanel>
                         </DockPanel>
                     </Button>
                 </StackPanel>
@@ -251,5 +257,6 @@
             </Grid>
 
         </Grid>
+
     </DockPanel>
 </Window>

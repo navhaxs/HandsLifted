@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -20,12 +21,28 @@ namespace HandsLiftedApp.Core.Views
         public WelcomeWindow()
         {
             InitializeComponent();
-            
+
             DateTime date = DateTime.Now;
             DayOfWeekString.Text = date.ToString("dddd");
             DateString.Text = date.ToString("d MMMM yyyy");
-            GreetingText.Text = date.Hour < 12 ? "Good Morning" : 
+            GreetingText.Text = date.Hour < 12 ? "Good Morning" :
                                date.Hour < 18 ? "Good Afternoon" : "Good Evening";
+
+            this.KeyDown += (_, e) =>
+            {
+                if (e.Key == Avalonia.Input.Key.N && e.KeyModifiers == Avalonia.Input.KeyModifiers.Control)
+                {
+                    _openMainOnClose = true;
+                    MessageBus.Current.SendMessage(new NewPlaylistAction());
+                    Close();
+                    e.Handled = true;
+                }
+                else if (e.Key == Avalonia.Input.Key.O && e.KeyModifiers == Avalonia.Input.KeyModifiers.Control)
+                {
+                    _ = OpenFileAsync();
+                    e.Handled = true;
+                }
+            };
 
             this.Closed += (_, __) =>
             {
@@ -106,27 +123,55 @@ namespace HandsLiftedApp.Core.Views
             }
         }
         
-        private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args)
+        private async Task OpenFileAsync()
         {
-            // Get top level from the current control. Alternatively, you can use Window reference instead.
             var topLevel = GetTopLevel(this);
-
-            // Start async operation to open the dialog.
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Open Text File",
                 AllowMultiple = false
             });
-
             if (files.Count >= 1)
             {
-                // Open reading stream from the first file.
-                // await using var stream = await files[0].OpenReadAsync();
                 var filePath = files[0].Path.LocalPath;
                 _openMainOnClose = true;
-                MessageBus.Current.SendMessage(new LoadPlaylistAction() {FilePath = filePath});
+                MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = filePath });
                 Close();
             }
+        }
+
+        private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args) => await OpenFileAsync();
+
+        private void OpenFileLocation_Clicked(object? sender, RoutedEventArgs e)
+        {
+            var entry = GetEntryFromContextMenuSender(sender);
+            if (entry is null) return;
+            System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{entry.FilePath}\"");
+        }
+
+        private void RemoveFromRecents_Clicked(object? sender, RoutedEventArgs e)
+        {
+            var entry = GetEntryFromContextMenuSender(sender);
+            if (entry is null) return;
+            var vm = DataContext as WelcomeWindowViewModel;
+            vm?.RecentPlaylists.Remove(entry);
+            if (vm?._parent?.settings is { } s && s.RecentPlaylistFullPathsList is { } list)
+            {
+                s.RecentPlaylistFullPathsList = System.Array.FindAll(list, p => p != entry.FilePath);
+            }
+        }
+
+        private static WelcomeWindowViewModel.RecentPlaylistEntry? GetEntryFromContextMenuSender(object? sender)
+        {
+            // ContextMenu items don't inherit DataContext through popup boundary.
+            // We use Tag="{Binding}" on the Button as the workaround.
+            if (sender is MenuItem menuItem &&
+                menuItem.Parent is ContextMenu contextMenu &&
+                contextMenu.PlacementTarget is Button btn)
+            {
+                return btn.Tag as WelcomeWindowViewModel.RecentPlaylistEntry;
+            }
+            return null;
         }
     }
 }
