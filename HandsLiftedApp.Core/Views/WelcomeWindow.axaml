@@ -194,7 +194,9 @@
                 <Grid
                     Background="{DynamicResource SurfaceBrush}"
                     Grid.Column="1"
-                    Margin="0,22" />
+                    Height="260"
+                    Margin="0,22"
+                    VerticalAlignment="Top" />
 
                 <!--  right  -->
                 <StackPanel Grid.Column="2" Margin="16,22,0,0">
@@ -229,7 +231,12 @@
                             <TextBlock Text="New Playlist" />
                         </DockPanel>
                     </Button>
-                    <Border Height="1" />
+
+                    <Border
+                        Height="1"
+                        MaxHeight="400"
+                        VerticalAlignment="Top" />
+
                     <Button Click="OpenFileButton_Clicked">
                         <DockPanel>
                             <avalonia:MaterialIcon Kind="FolderOutline" />
