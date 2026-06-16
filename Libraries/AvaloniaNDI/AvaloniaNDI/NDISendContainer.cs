@@ -90,6 +90,10 @@ Description("Function to determine whether the content requires high resolution 
             AvaloniaProperty.RegisterDirect<NDISendContainer, Func<NDISendContainer, bool>>(nameof(IsContentHighResCheckFunc), o => o.IsContentHighResCheckFunc, (o, v) => { o.IsContentHighResCheckFunc = v; });
 
         [Category("NewTek NDI"),
+        Description("Function to determine whether a slide transition is actively in progress. When set and returning false, blank-frame substitution is suppressed so intentional blank/black states (e.g. pressing Blank) send real black frames to NDI rather than holding the last slide. Optional.")]
+        public Func<NDISendContainer, bool>? IsTransitioningCheckFunc { get; set; }
+
+        [Category("NewTek NDI"),
         Description("NDI groups this sender will belong to. Optional.")]
         public List<string> NdiGroups
         {
@@ -660,12 +664,12 @@ Description("Function to determine whether the content requires high resolution 
                 }
 
                 if (isBlank && _hasLastGoodFrame && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize
-                    && IsContentHighResCheckFunc != null && IsContentHighResCheckFunc(this))
+                    && (IsTransitioningCheckFunc == null || IsTransitioningCheckFunc(this)))
                 {
                     // This frame is blank during an active transition (crossfade faded out, new content
                     // not yet visible). Substitute the last known-good frame so NDI receivers see the
                     // previous slide held rather than a black flash.
-                    // Guard on IsContentHighResCheckFunc so intentional blank state is NOT substituted —
+                    // Guard on IsTransitioningCheckFunc so intentional blank state is NOT substituted —
                     // otherwise NDI would show the last slide indefinitely when the user presses Blank.
                     unsafe
                     {
