@@ -227,10 +227,13 @@
                         
                         <Grid Margin="0 4 0 0" />
                         
-                        <Button HorizontalAlignment="Left" Padding="16 6"
-                                Margin="0 6 0 0">
+                        <Button x:Name="SignInWithGoogleButton"
+                                HorizontalAlignment="Left" Padding="16 6"
+                                Margin="0 6 0 0"
+                                Click="SignInWithGoogle_OnClick">
                             Sign in with Google
                         </Button>
+                        <TextBlock x:Name="SignInStatusText" Margin="0 4 0 0" IsVisible="False" />
                     </StackPanel>
                 </TabItem>
 

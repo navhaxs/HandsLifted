@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Styling;
+using Avalonia.Threading;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Slides.v1;
+using Google.Apis.Util.Store;
 using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
@@ -80,6 +86,54 @@ namespace HandsLiftedApp.Core.Views.Setup
         private void ReloadLibraryButton_OnClick(object? sender, RoutedEventArgs e)
         {
             Globals.Instance.MainViewModel.LibraryViewModel.ReloadLibraries();
+        }
+
+        private void SignInWithGoogle_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var clientId = Globals.Instance.AppPreferences.GoogleClientId;
+            var clientSecret = Globals.Instance.AppPreferences.GoogleClientSecret;
+
+            var statusText = this.Get<TextBlock>("SignInStatusText");
+            var button = this.Get<Button>("SignInWithGoogleButton");
+
+            if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
+            {
+                statusText.Text = "Enter Client ID and Client Secret first.";
+                statusText.IsVisible = true;
+                return;
+            }
+
+            button.IsEnabled = false;
+            statusText.Text = "Opening browser...";
+            statusText.IsVisible = true;
+
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                try
+                {
+                    string[] scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
+                    GoogleWebAuthorizationBroker.AuthorizeAsync(
+                        new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
+                        scopes,
+                        "user",
+                        CancellationToken.None,
+                        new FileDataStore("token.json", true)).Wait();
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        statusText.Text = "Signed in successfully.";
+                        button.IsEnabled = true;
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        statusText.Text = $"Sign-in failed: {ex.Message}";
+                        button.IsEnabled = true;
+                    });
+                }
+            });
         }
 
         private void DoneButton_OnClick(object? sender, RoutedEventArgs e)
