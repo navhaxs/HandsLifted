@@ -1,18 +1,21 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="220"
-             xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:material="using:Material.Icons.Avalonia"
-             xmlns:converters="using:HandsLiftedApp.Converters"
-             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
-             xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
-             xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
-             x:Name="root"
-             x:DataType="items:SongItemInstance"
-             x:Class="HandsLiftedApp.Controls.SongArrangementControl">
+<UserControl
+    d:DesignHeight="220"
+    d:DesignWidth="600"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Controls.SongArrangementControl"
+    x:DataType="items:SongItemInstance"
+    x:Name="root"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours;assembly=HandsLiftedApp.Controls"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vme="using:HandsLiftedApp.ViewModels.Editor"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
         <vme:ExampleSongItemInstance />
@@ -24,8 +27,12 @@
             <converters:StanzaSortConverter x:Key="StanzaSortConverter" />
 
             <Flyout Placement="BottomEdgeAlignedLeft" x:Key="MySharedFlyout">
-                <ItemsControl ItemsSource="{Binding Stanzas, Converter={StaticResource StanzaSortConverter}}"
-                              MinHeight="20" Margin="4" VerticalAlignment="Center" MinWidth="150">
+                <ItemsControl
+                    ItemsSource="{Binding Stanzas, Converter={StaticResource StanzaSortConverter}}"
+                    Margin="4"
+                    MinHeight="20"
+                    MinWidth="150"
+                    VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel />
@@ -33,12 +40,14 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Content="{Binding Name}"
-                                    Background="{Binding Colour}"
-                                    Foreground="Black"
-                                    Click="OnAddPartClick"
-                                    ToolTip.Placement="Right"
-                                    ToolTip.ShowDelay="0" ToolTip.Tip="{Binding Lyrics}">
+                            <Button
+                                Background="{Binding Colour}"
+                                Click="OnAddPartClick"
+                                Content="{Binding Name}"
+                                Foreground="Black"
+                                ToolTip.Placement="Right"
+                                ToolTip.ShowDelay="0"
+                                ToolTip.Tip="{Binding Lyrics}">
                                 <Button.Styles>
                                     <Style Selector="ToolTip">
                                         <Setter Property="IsHitTestVisible" Value="False" />
@@ -68,58 +77,69 @@
             <Setter Property="FontSize" Value="11" />
         </Style>
     </UserControl.Styles>
-    
+
     <StackPanel>
         <DockPanel>
-            <TextBlock Text="Arrangement" DockPanel.Dock="Left" Padding="12 0 6 0" VerticalAlignment="Center"
-                    Background="Transparent">
+            <TextBlock
+                Background="Transparent"
+                DockPanel.Dock="Left"
+                Padding="12,0,6,0"
+                Text="Arrangement"
+                VerticalAlignment="Center">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Reset arrangement" Click="ResetArrangementButtonClick" />
+                        <MenuItem Click="ResetArrangementButtonClick" Header="Reset arrangement" />
                     </ContextMenu>
                 </TextBlock.ContextMenu>
             </TextBlock>
 
-            <Button x:Name="AddPartFlyoutToggleButton" IsVisible="False"
-                    VerticalContentAlignment="Center" DockPanel.Dock="Right" Padding="10"
-                    Cursor="Hand"
-                    Flyout="{StaticResource MySharedFlyout}">
-                <material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4"
-                                       VerticalAlignment="Center" />
+            <Button
+                Cursor="Hand"
+                DockPanel.Dock="Right"
+                Flyout="{StaticResource MySharedFlyout}"
+                IsVisible="False"
+                Padding="10"
+                VerticalContentAlignment="Center"
+                x:Name="AddPartFlyoutToggleButton">
+                <material:MaterialIcon
+                    Foreground="#888888"
+                    Kind="PlusCircleOutline"
+                    Margin="-4"
+                    VerticalAlignment="Center" />
             </Button>
 
-            <ItemsControl ItemsSource="{Binding ArrangementAsRefList}" MinHeight="20" Margin="4"
-                          VerticalAlignment="Center" Name="PART_ArrangementTokens">
+            <ItemsControl
+                ItemsSource="{Binding ArrangementAsRefList}"
+                Margin="4"
+                MinHeight="20"
+                Name="PART_ArrangementTokens"
+                VerticalAlignment="Center">
                 <ItemsControl.Styles>
-                    <Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter DockPanel#PART_Container">
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter DockPanel#PART_Container">
                         <Setter Property="Margin" Value="0 2 -5 2" />
                     </Style>
-                    <Style
-                        Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter DockPanel#PART_Container Border#PART_Content">
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter DockPanel#PART_Container Border#PART_Content">
                         <Setter Property="Padding" Value="12 0" />
                     </Style>
-                    <Style
-                        Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-child(1) DockPanel#PART_Container Path#PART_Before">
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-child(1) DockPanel#PART_Container Path#PART_Before">
                         <Setter Property="IsVisible" Value="True" />
                     </Style>
-                    <Style
-                        Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-child(1) DockPanel#PART_Container Border#PART_Content">
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-child(1) DockPanel#PART_Container Border#PART_Content">
                         <Setter Property="CornerRadius" Value="0" />
                         <Setter Property="Padding" Value="12 0" />
                     </Style>
-                    <Style
-                        Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-last-child(1) DockPanel#PART_Container">
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-last-child(1) DockPanel#PART_Container">
                         <Setter Property="Margin" Value="0 2 0 2" />
                     </Style>
-                    
-                    <!-- Hover Buttons visibility -->
-                    <Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter Button.HoverInsertButton.AfterButton">
+
+                    <!--  Hover Buttons visibility  -->
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter Button.HoverInsertButton.AfterButton">
                         <Setter Property="IsVisible" Value="False" />
                     </Style>
-                    <Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter:nth-last-child(1) Button.HoverInsertButton.AfterButton">
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-last-child(1) Button.HoverInsertButton.AfterButton">
                         <Setter Property="IsVisible" Value="True" />
                     </Style>
-                    <Style Selector="ItemsControl#PART_ArrangementTokens > ContentPresenter Button.HoverInsertButton.BeforeButton">
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter Button.HoverInsertButton.BeforeButton">
                         <Setter Property="IsVisible" Value="True" />
                     </Style>
                 </ItemsControl.Styles>
@@ -147,53 +167,80 @@
                                     <Setter Property="Background" Value="Yellow" />
                                 </Style>
                             </Grid.Styles>
-                            <DockPanel Name="PART_Container" Cursor="Hand" Background="Transparent">
+                            <DockPanel
+                                Background="Transparent"
+                                Cursor="Hand"
+                                Name="PART_Container">
                                 <DockPanel.ContextMenu>
-                                    <ContextMenu PlacementAnchor="Bottom" PlacementMode="Bottom"
-                                                 PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
-                                        <MenuItem Header="Repeat" Click="OnRepeatPartClick" />
-                                        <MenuItem Header="Remove" Click="OnRemovePartClick" />
+                                    <ContextMenu
+                                        PlacementAnchor="Bottom"
+                                        PlacementMode="Bottom"
+                                        PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
+                                        <MenuItem Click="OnRepeatPartClick" Header="Repeat" />
+                                        <MenuItem Click="OnRemovePartClick" Header="Remove" />
                                     </ContextMenu>
                                 </DockPanel.ContextMenu>
 
-                                <Path Name="PART_Before" Data="M0,0 10,0 10,20 0,20 10,10"
-                                      Fill="{Binding SongStanza.Colour}" />
-                                <Border Name="PART_Content" Background="{Binding SongStanza.Colour}"
-                                        BorderBrush="#aaaaaa"
-                                        Margin="-1 0 -0 0">
-                                    <TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="12"
-                                               Text="{Binding SongStanza.Name}" />
+                                <Path
+                                    Data="M0,0 10,0 10,20 0,20 10,10"
+                                    Fill="{Binding SongStanza.Colour}"
+                                    Name="PART_Before" />
+                                <Border
+                                    Background="{Binding SongStanza.Colour}"
+                                    BorderBrush="#aaaaaa"
+                                    Margin="-1,0,-0,0"
+                                    Name="PART_Content">
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="Black"
+                                        Text="{Binding SongStanza.Name}"
+                                        VerticalAlignment="Center" />
                                 </Border>
-                                <Path Name="PART_After" IsHitTestVisible="False" Data="M0,0 8,10 0,20" Fill="{Binding SongStanza.Colour}" />
+                                <Path
+                                    Data="M0,0 8,10 0,20"
+                                    Fill="{Binding SongStanza.Colour}"
+                                    IsHitTestVisible="False"
+                                    Name="PART_After" />
                                 <i:Interaction.Behaviors>
                                     <behaviours:StanzaDragControlBehavior />
                                 </i:Interaction.Behaviors>
                             </DockPanel>
-                            <Button Classes="HoverInsertButton BeforeButton"
-                                    HorizontalAlignment="Left"
-                                    BorderThickness="0"
-                                    Cursor="Hand"
-                                    DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
-                                    Flyout="{StaticResource MySharedFlyout}">
-                                <material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4"
-                                                       VerticalAlignment="Center" />
+                            <Button
+                                BorderThickness="0"
+                                Classes="HoverInsertButton BeforeButton"
+                                Cursor="Hand"
+                                DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
+                                Flyout="{StaticResource MySharedFlyout}"
+                                HorizontalAlignment="Left">
+                                <material:MaterialIcon
+                                    Foreground="#888888"
+                                    Kind="PlusCircleOutline"
+                                    Margin="-4"
+                                    VerticalAlignment="Center" />
                             </Button>
-                            <Button Classes="HoverInsertButton AfterButton"
-                                    Tag="After"
-                                    HorizontalAlignment="Right"
-                                    BorderThickness="0"
-                                    Cursor="Hand"
-                                    DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
-                                    Flyout="{StaticResource MySharedFlyout}">
-                                <material:MaterialIcon Kind="PlusCircleOutline" Foreground="#888888" Margin="-4"
-                                                       VerticalAlignment="Center" />
+                            <Button
+                                BorderThickness="0"
+                                Classes="HoverInsertButton AfterButton"
+                                Cursor="Hand"
+                                DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
+                                Flyout="{StaticResource MySharedFlyout}"
+                                HorizontalAlignment="Right"
+                                Tag="After">
+                                <material:MaterialIcon
+                                    Foreground="#888888"
+                                    Kind="PlusCircleOutline"
+                                    Margin="-4"
+                                    VerticalAlignment="Center" />
                             </Button>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Button IsVisible="False" Background="Transparent" BorderThickness="0" Flyout="{StaticResource MySharedFlyout}" />
+            <Button
+                Background="Transparent"
+                BorderThickness="0"
+                Flyout="{StaticResource MySharedFlyout}" />
 
         </DockPanel>
 
