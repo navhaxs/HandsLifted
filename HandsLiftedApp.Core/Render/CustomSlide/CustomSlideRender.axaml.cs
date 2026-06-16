@@ -45,6 +45,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
             if (DataContext is Data.Data.Models.Slides.CustomSlide customSlide)
             {
                 Render(customSlide);
+                LoadBackgroundAsync(customSlide);
 
                 customSlide.WhenAnyValue(x => x.SlideElements)
                     .ObserveOn(RxApp.MainThreadScheduler)
@@ -55,6 +56,30 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
                 customSlide.SlideElements.CollectionChanged += (sender, args) => Render(customSlide);
             }
+        }
+
+        private void LoadBackgroundAsync(Data.Data.Models.Slides.CustomSlide customSlide)
+        {
+            var path = customSlide.BackgroundGraphicFilePath;
+            if (string.IsNullOrEmpty(path))
+            {
+                BackgroundBorder.Background = null;
+                return;
+            }
+
+            _ = BitmapLoader.LoadBitmapAsync(path).ContinueWith(
+                t =>
+                {
+                    if (t.Result != null)
+                        Dispatcher.UIThread.Post(
+                            () =>
+                            {
+                                if (DataContext is Data.Data.Models.Slides.CustomSlide cs && cs.BackgroundGraphicFilePath == path)
+                                    BackgroundBorder.Background = new ImageBrush(t.Result) { Stretch = Stretch.UniformToFill };
+                            },
+                            DispatcherPriority.Background);
+                },
+                System.Threading.Tasks.TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
         public void Render(Data.Data.Models.Slides.CustomSlide customSlide)

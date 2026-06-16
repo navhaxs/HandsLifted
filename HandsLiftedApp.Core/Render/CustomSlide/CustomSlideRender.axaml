@@ -20,13 +20,8 @@
 
     <Grid
         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}">
-        <Border>
+        <Border x:Name="BackgroundBorder">
             <Canvas x:Name="Root" />
-            <Border.Background>
-                <ImageBrush
-                    Source="{Binding BackgroundGraphicFilePath, Converter={StaticResource VariableImage}}"
-                    Stretch="UniformToFill" />
-            </Border.Background>
         </Border>
     </Grid>
 </UserControl>
