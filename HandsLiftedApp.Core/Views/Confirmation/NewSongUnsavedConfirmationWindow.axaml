@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Width="400"
+        Height="160"
+        WindowStartupLocation="CenterOwner"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        SystemDecorations="None"
+        ShowInTaskbar="False"
+        CanResize="False"
+        x:Class="HandsLiftedApp.Core.Views.Confirmation.NewSongUnsavedConfirmationWindow"
+        Icon="/Assets/app.ico"
+        Title="Unsaved Song">
+    <Border CornerRadius="8"
+            Background="{DynamicResource BackgroundBrush}"
+            BorderBrush="{DynamicResource WindowBorderBrush}"
+            BorderThickness="1">
+        <DockPanel Margin="15">
+            <StackPanel Margin="0 10 0 0" DockPanel.Dock="Bottom" Classes="dialog-buttons"
+                        Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+                <Button Content="Save" IsDefault="True" Click="OnConfirmSave" />
+                <Button Content="Don't Save" Click="OnConfirmDiscard" />
+                <Button Content="Cancel" IsCancel="True" Click="OnCancel" />
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Save this new song?"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           FontWeight="SemiBold"
+                           Margin="10 10 0 0"
+                           FontSize="14" />
+                <TextBlock Text="This song has not been saved to the library yet."
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Margin="10 10 10 0"
+                           FontSize="14" />
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</Window>
