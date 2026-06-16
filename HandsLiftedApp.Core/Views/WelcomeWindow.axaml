@@ -174,7 +174,10 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <avalonia:MaterialIcon Kind="FileDocumentOutline" Margin="0,0,16,0" />
                                                 <StackPanel>
-                                                    <TextBlock FontSize="20" Text="{Binding FileName}" />
+                                                    <TextBlock
+                                                        FontSize="20"
+                                                        Text="{Binding FileName}"
+                                                        TextTrimming="CharacterEllipsis" />
                                                     <TextBlock
                                                         FontSize="12"
                                                         IsVisible="{Binding LastOpenedDateText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
