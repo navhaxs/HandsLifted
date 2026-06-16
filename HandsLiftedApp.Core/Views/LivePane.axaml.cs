@@ -50,7 +50,7 @@ namespace HandsLiftedApp.Core.Views
             _vm = vm;
 
             _slideSubscription = vm.Playlist
-                .WhenAnyValue(p => p.ActiveSlide)
+                .WhenAnyValue(p => p.ActiveSlide, p => p.LogoGraphicFile, (slide, _) => slide)
                 .Subscribe(OnActiveSlideChanged);
         }
 
