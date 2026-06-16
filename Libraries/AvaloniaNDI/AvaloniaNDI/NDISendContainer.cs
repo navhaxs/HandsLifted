@@ -543,10 +543,15 @@ Description("Function to determine whether the content requires high resolution 
         }
 
         private static readonly TimeSpan _staticThrottleInterval = TimeSpan.FromMilliseconds(500);
+        // After IsTransitioningCheckFunc goes false, continue substituting blank frames for this
+        // duration to cover rendering latency between the timer stopping and the last frame capture.
+        private static readonly TimeSpan _transitionGracePeriod = TimeSpan.FromMilliseconds(200);
         private static readonly NDIlib.FourCC_type_e _nativeFourCC =
             OperatingSystem.IsMacOS() ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA;
 
         private DateTime _lastFrameRenderTime = DateTime.MinValue;
+        private bool _prevIsTransitioning = false;
+        private DateTime _transitionGraceEnd = DateTime.MinValue;
         private IGetVideoBufferBitmap? _cachedVideoControl;
         private Visual? _lastChild;
         private bool _hadConnections = false;
@@ -663,13 +668,31 @@ Description("Function to determine whether the content requires high resolution 
                     isBlank = IsLikelyBlankFrame(p, bufferSize);
                 }
 
+                // Determine whether blank-frame substitution should apply.
+                // IsTransitioningCheckFunc gates this: substitution is active during transitions and
+                // for a short grace period after (covers rendering tail — frames captured after the
+                // timer stops but before the new content reaches NDI).
+                bool isTransitioningNow = IsTransitioningCheckFunc != null && IsTransitioningCheckFunc(this);
+                if (isTransitioningNow && !_prevIsTransitioning)
+                {
+                    _prevIsTransitioning = true;
+                }
+                else if (!isTransitioningNow && _prevIsTransitioning)
+                {
+                    _transitionGraceEnd = DateTime.UtcNow + _transitionGracePeriod;
+                    _prevIsTransitioning = false;
+                }
+                bool inTransitionWindow = IsTransitioningCheckFunc == null
+                    || isTransitioningNow
+                    || DateTime.UtcNow < _transitionGraceEnd;
+
                 if (isBlank && _hasLastGoodFrame && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize
-                    && (IsTransitioningCheckFunc == null || IsTransitioningCheckFunc(this)))
+                    && inTransitionWindow)
                 {
                     // This frame is blank during an active transition (crossfade faded out, new content
-                    // not yet visible). Substitute the last known-good frame so NDI receivers see the
-                    // previous slide held rather than a black flash.
-                    // Guard on IsTransitioningCheckFunc so intentional blank state is NOT substituted —
+                    // not yet visible) or within the grace period after. Substitute the last known-good
+                    // frame so NDI receivers see the previous slide held rather than a black flash.
+                    // Guard via inTransitionWindow so intentional stable blank state is NOT substituted —
                     // otherwise NDI would show the last slide indefinitely when the user presses Blank.
                     unsafe
                     {
