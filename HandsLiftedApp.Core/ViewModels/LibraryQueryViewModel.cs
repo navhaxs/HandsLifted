@@ -62,6 +62,9 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
         }
 
+        public SongLibrary? ActiveSongLibrary =>
+            _libraries.OfType<SongLibrary>().FirstOrDefault();
+
         private bool IsLyricFile(string fullFilePath)
         {
             string str = fullFilePath.ToLower();

@@ -98,6 +98,8 @@ namespace HandsLiftedApp.Core.Models.Library
                                                    Items.First().FullFilePath.ToLower().EndsWith("xml")));
             }
         }
+
+        public void TriggerRefresh() => Refresh();
         // private void watch()
         // {
         //     if (!Directory.Exists(rootDirectory))

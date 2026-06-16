@@ -1,4 +1,5 @@
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
@@ -52,6 +53,10 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         {
             get => _itemInserted; set => this.RaiseAndSetIfChanged(ref _itemInserted, value);
         }
+
+        public SongLibrary? SongLibrary { get; init; }
+
+        public bool IsNewSongMode => SongLibrary != null;
         #endregion        
 
         private void _song_PropertyChanged(object? sender, PropertyChangedEventArgs e)
