@@ -574,11 +574,14 @@ Description("Function to determine whether the content requires high resolution 
             if (_lastChild != this.Child)
             {
                 _lastChild = this.Child;
-                // Only use the video buffer shortcut when there's exactly one video control
-                // with an active bitmap. Multiple active controls (e.g., motion background +
-                // video slide) require full composited render to capture all layers correctly.
+                // Only use the video buffer shortcut when the video control IS the container's
+                // direct child (sole content, no overlay layers). If the video is nested inside
+                // a Grid with other controls (e.g. motion background + SlideCanvas lyrics), the
+                // shortcut would miss the overlays — require full composited render instead.
                 var videoControls = this.Child.FindAllVisuals<IGetVideoBufferBitmap>().ToList();
-                _cachedVideoControl = videoControls.Count == 1 ? videoControls[0] : null;
+                _cachedVideoControl = (videoControls.Count == 1 && ReferenceEquals(videoControls[0], this.Child))
+                    ? videoControls[0]
+                    : null;
                 _lastFrameRenderTime = DateTime.MinValue; // force immediate capture on content switch
             }
 
