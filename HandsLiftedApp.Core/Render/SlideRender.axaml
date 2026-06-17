@@ -62,7 +62,7 @@
                      <customSlide:CustomSlideRender />
                 </DataTemplate>
                 <DataTemplate x:Key="Fallback" x:DataType="slides1:Slide">
-                    <TextBlock Text="{Binding }" />
+                    <Grid Background="Black" />
                 </DataTemplate>
             </common:MyTemplateSelector>
         </ContentControl.ContentTemplate>
