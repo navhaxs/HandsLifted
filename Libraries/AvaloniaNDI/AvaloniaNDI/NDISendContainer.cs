@@ -90,10 +90,6 @@ Description("Function to determine whether the content requires high resolution 
             AvaloniaProperty.RegisterDirect<NDISendContainer, Func<NDISendContainer, bool>>(nameof(IsContentHighResCheckFunc), o => o.IsContentHighResCheckFunc, (o, v) => { o.IsContentHighResCheckFunc = v; });
 
         [Category("NewTek NDI"),
-        Description("Function to determine whether a slide transition is actively in progress. When set and returning false, blank-frame substitution is suppressed so intentional blank/black states (e.g. pressing Blank) send real black frames to NDI rather than holding the last slide. Optional.")]
-        public Func<NDISendContainer, bool>? IsTransitioningCheckFunc { get; set; }
-
-        [Category("NewTek NDI"),
         Description("NDI groups this sender will belong to. Optional.")]
         public List<string> NdiGroups
         {
@@ -459,13 +455,6 @@ Description("Function to determine whether the content requires high resolution 
         private readonly BlockingCollection<IntPtr> _freeBuffers = new();
         private RenderTargetBitmap rtb;
 
-        // Separate buffer (outside the send pool) that holds a copy of the last
-        // non-blank rendered frame. Used to substitute black frames produced by
-        // Avalonia crossfade transitions fading fully to transparent/black.
-        private IntPtr _lastGoodFramePtr = IntPtr.Zero;
-        private int _lastGoodFrameSize = 0;
-        private bool _hasLastGoodFrame = false;
-
         private void ReleaseBuffers()
         {
             lock (sendInstanceLock)
@@ -481,14 +470,6 @@ Description("Function to determine whether the content requires high resolution 
                 {
                     rtb.Dispose();
                     rtb = null;
-                }
-
-                if (_lastGoodFramePtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(_lastGoodFramePtr);
-                    _lastGoodFramePtr = IntPtr.Zero;
-                    _lastGoodFrameSize = 0;
-                    _hasLastGoodFrame = false;
                 }
             }
         }
@@ -515,31 +496,8 @@ Description("Function to determine whether the content requires high resolution 
                 _freeBuffers.Add(ptr);
             }
 
-            _lastGoodFramePtr = Marshal.AllocHGlobal(bufferSize);
-            _lastGoodFrameSize = bufferSize;
-            _hasLastGoodFrame = false;
-
             var scale = 1;
             rtb = new RenderTargetBitmap(new PixelSize(width, height), new Vector(96 * scale, 96 * scale));
-        }
-
-        // Sample every Nth pixel and check luma; returns true when the frame is
-        // almost entirely black (i.e. produced by a fully-faded crossfade).
-        private static unsafe bool IsLikelyBlankFrame(byte* pixels, int byteCount)
-        {
-            const int step = 32 * 4; // sample every 32nd pixel
-            const int lumaThreshold = 8;
-            int samples = 0, brightSamples = 0;
-
-            for (int i = 0; i <= byteCount - 4; i += step)
-            {
-                int luma = (pixels[i + 2] * 54 + pixels[i + 1] * 183 + pixels[i] * 19) >> 8; // R·54 + G·183 + B·19
-                if (luma > lumaThreshold) brightSamples++;
-                samples++;
-            }
-
-            // blank only when almost no sampled pixel has visible brightness
-            return samples > 0 && brightSamples <= Math.Max(1, samples / 100);
         }
 
         private static readonly TimeSpan _staticThrottleInterval = TimeSpan.FromMilliseconds(500);
@@ -672,44 +630,14 @@ Description("Function to determine whether the content requires high resolution 
                     return;
                 }
 
-                // Force all pixels to fully opaque. Avalonia crossfade/opacity transitions produce
-                // semi-transparent pixels (premultiplied BGRA alpha=0) that NDI receivers composite
-                // against their black background, causing brief black flashes during rapid changes.
-                // Compositing premultiplied alpha over black = keep RGB as-is, set A = 0xFF.
-                bool isBlank;
+                // Force all pixels to fully opaque. The NDI container's child has Background="Black",
+                // so premultiplied RGB values are already correctly composited against black.
+                // Setting A=0xFF makes every pixel fully opaque for NDI receivers.
                 unsafe
                 {
                     byte* p = (byte*)bufferPtr;
                     for (int i = 3; i < bufferSize; i += 4)
                         p[i] = 0xFF;
-
-                    isBlank = IsLikelyBlankFrame(p, bufferSize);
-                }
-
-                // Substitute blank frames only during active transitions.
-                // Prevents black flashes when a crossfade produces dark/transparent intermediate frames.
-                // When IsTransitioningCheckFunc is set and returns false, substitution is suppressed so
-                // intentional blank state (user pressed Blank) sends real black frames to NDI.
-                bool inTransitionWindow = IsTransitioningCheckFunc == null || IsTransitioningCheckFunc(this);
-
-                if (isBlank && _hasLastGoodFrame && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize
-                    && inTransitionWindow)
-                {
-                    // Blank frame during an active transition — substitute the last known-good frame
-                    // so NDI receivers see the previous slide held rather than a black flash.
-                    unsafe
-                    {
-                        Buffer.MemoryCopy((void*)_lastGoodFramePtr, (void*)bufferPtr, bufferSize, bufferSize);
-                    }
-                }
-                else if (!isBlank && _lastGoodFramePtr != IntPtr.Zero && _lastGoodFrameSize == bufferSize)
-                {
-                    // This is a valid frame — update the last-good-frame store.
-                    unsafe
-                    {
-                        Buffer.MemoryCopy((void*)bufferPtr, (void*)_lastGoodFramePtr, bufferSize, bufferSize);
-                    }
-                    _hasLastGoodFrame = true;
                 }
 
                 NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()

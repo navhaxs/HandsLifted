@@ -41,17 +41,10 @@ namespace HandsLiftedApp.Core.Views
             // high-res when a motion background is playing or a slide transition is active.
             NdiMainContainer.IsContentHighResCheckFunc = _ =>
                 MotionBackgroundService.CurrentContext != null || MainSlideCanvas.IsTransitioning;
-            // Substitute blank frames only when transitioning TO real content (not to blank/missing).
-            // When the target spec is null the canvas is intentionally black — let those frames through
-            // so NDI shows the actual fade rather than holding the last slide.
-            NdiMainContainer.IsTransitioningCheckFunc = _ =>
-                MainSlideCanvas.IsTransitioning && MainSlideCanvas.Spec != null;
 
             // Lyrics NDI output (AltSlideRenderer only): high-res during slide transitions.
             NdiLyricsContainer.IsContentHighResCheckFunc = _ =>
                 MainSlideCanvas.IsTransitioning;
-            NdiLyricsContainer.IsTransitioningCheckFunc = _ =>
-                MainSlideCanvas.IsTransitioning && MainSlideCanvas.Spec != null;
 
             Log.Information("Created ProjectorWindow");
 
