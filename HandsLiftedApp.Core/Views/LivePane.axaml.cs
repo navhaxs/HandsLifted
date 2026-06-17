@@ -77,12 +77,12 @@ namespace HandsLiftedApp.Core.Views
             {
                 SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
                 SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
-                ImageSlideInstance img   => string.IsNullOrWhiteSpace(img.SourceMediaFilePath)
-                    ? null
-                    : new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>()),
-                LogoSlide                => string.IsNullOrWhiteSpace(logoPath)
-                    ? null
-                    : new SlideRenderSpec(new ImageBackground(logoPath), Array.Empty<RenderElement>()),
+                ImageSlideInstance img   => IsValidMediaPath(img.SourceMediaFilePath)
+                    ? new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>())
+                    : null,
+                LogoSlide                => IsValidMediaPath(logoPath)
+                    ? new SlideRenderSpec(new ImageBackground(logoPath), Array.Empty<RenderElement>())
+                    : null,
                 HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs => CustomSlideSpecBuilder.Build(cs),
                 _                        => null,
             };
@@ -146,6 +146,18 @@ namespace HandsLiftedApp.Core.Views
             }
 
             return path;
+        }
+
+        // Returns true when a media path is expected to resolve to real content.
+        // avares:// URIs are always treated as valid (checked at render time).
+        // File system paths are only valid when the file actually exists, so that
+        // a missing file produces a null spec (smooth fade to black) rather than
+        // an ImageBackground spec whose bitmap silently fails to load mid-transition.
+        private static bool IsValidMediaPath(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+            if (path.StartsWith("avares://", StringComparison.OrdinalIgnoreCase)) return true;
+            return System.IO.File.Exists(path);
         }
 
         private void SetupDnd(string suffix, Func<DataObject, Task> factory, DragDropEffects effects)
