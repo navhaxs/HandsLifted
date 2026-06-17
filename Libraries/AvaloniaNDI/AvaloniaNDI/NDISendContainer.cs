@@ -543,6 +543,12 @@ Description("Function to determine whether the content requires high resolution 
         }
 
         private static readonly TimeSpan _staticThrottleInterval = TimeSpan.FromMilliseconds(500);
+        // After IsContentHighResCheckFunc goes false, continue sending at high rate for this duration
+        // to ensure the final transition frame(s) are captured before the throttle kicks in.
+        // The final DispatcherTimer tick sets IsTransitioning=false then calls InvalidateVisual();
+        // Avalonia composes the frame asynchronously, so NDI may see IsTransitioning=false before
+        // the last rendered frame arrives. Without this linger the throttle skips that frame.
+        private static readonly TimeSpan _highResLingerDuration = TimeSpan.FromMilliseconds(100);
         // After IsTransitioningCheckFunc goes false, continue substituting blank frames for this
         // duration to cover rendering latency between the timer stopping and the last frame capture.
         private static readonly TimeSpan _transitionGracePeriod = TimeSpan.FromMilliseconds(200);
@@ -550,6 +556,8 @@ Description("Function to determine whether the content requires high resolution 
             OperatingSystem.IsMacOS() ? NDIlib.FourCC_type_e.FourCC_type_RGBA : NDIlib.FourCC_type_e.FourCC_type_BGRA;
 
         private DateTime _lastFrameRenderTime = DateTime.MinValue;
+        private bool _prevIsHighRes = false;
+        private DateTime _highResLingerEnd = DateTime.MinValue;
         private bool _prevIsTransitioning = false;
         private DateTime _transitionGraceEnd = DateTime.MinValue;
         private IGetVideoBufferBitmap? _cachedVideoControl;
@@ -603,8 +611,23 @@ Description("Function to determine whether the content requires high resolution 
                 videoShortcutBitmap = _cachedVideoControl.GetVideoBufferBitmap();
             }
 
-            // Throttling for static content
-            if (IsContentHighResCheckFunc != null && !IsContentHighResCheckFunc(this))
+            // Throttling for static content — with a short high-res linger after transitions end.
+            // IsContentHighResCheckFunc goes false on the same tick that stops the transition timer,
+            // but Avalonia composes the final frame asynchronously. The linger keeps high-res mode
+            // active long enough to capture that last frame before the 500ms throttle kicks in.
+            bool isHighResNow = IsContentHighResCheckFunc == null || IsContentHighResCheckFunc(this);
+            if (!_prevIsHighRes && isHighResNow)
+            {
+                _prevIsHighRes = true;
+            }
+            else if (_prevIsHighRes && !isHighResNow)
+            {
+                _highResLingerEnd = DateTime.UtcNow + _highResLingerDuration;
+                _prevIsHighRes = false;
+            }
+            bool isHighRes = isHighResNow || DateTime.UtcNow < _highResLingerEnd;
+
+            if (!isHighRes)
             {
                 // Throttle static content to ~2fps (500ms)
                 if (DateTime.UtcNow - _lastFrameRenderTime < _staticThrottleInterval)
