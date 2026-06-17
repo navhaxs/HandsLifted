@@ -26,31 +26,6 @@
 		</common:MyTemplateSelector>
 	</UserControl.DataTemplates>
 
-	<!-- TODO need to use my custom control here to ensure no discontinous blanks whilst transitioning, even if we do not need the cross-fade effect -->
-	<ContentControl Content="{Binding}">
-		<!--<hla:XTransitioningContentControl.PageTransition>
-			<CrossFade Duration="1.00" />
-			-->
-		<!--<CompositePageTransition>
-				<CrossFade Duration="0:00:00.500" />
-				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
-				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
-				<ext:CustomTransition Duration="0:00:00.250" />
-			</CompositePageTransition>-->
-		<!--
-		</hla:XTransitioningContentControl.PageTransition>-->
-	</ContentControl>
-	<!--<TransitioningContentControl Name="root" Content="{Binding}" >
-		<TransitioningContentControl.PageTransition>
-			<CrossFade Duration="0.25" />
-			-->
-	<!--<CompositePageTransition>
-				<CrossFade Duration="0:00:00.500" />
-				<PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
-				<PageSlide Duration="0:00:00.500" Orientation="Vertical" />
-				<ext:CustomTransition Duration="0:00:00.250" />
-			</CompositePageTransition>-->
-	<!--
-		</TransitioningContentControl.PageTransition>
-	</TransitioningContentControl>-->
+	<ContentControl Content="{Binding}" />
+
 </UserControl>

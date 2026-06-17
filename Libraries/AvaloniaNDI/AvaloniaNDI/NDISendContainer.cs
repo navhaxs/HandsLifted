@@ -90,6 +90,17 @@ Description("Function to determine whether the content requires high resolution 
             AvaloniaProperty.RegisterDirect<NDISendContainer, Func<NDISendContainer, bool>>(nameof(IsContentHighResCheckFunc), o => o.IsContentHighResCheckFunc, (o, v) => { o.IsContentHighResCheckFunc = v; });
 
         [Category("NewTek NDI"),
+        Description("When true, alpha channel is preserved in the NDI output (e.g. for lower-third key outputs). When false (default), all pixels are forced to fully opaque.")]
+        public bool PreserveAlpha
+        {
+            get { return _preserveAlpha; }
+            set { SetAndRaise(PreserveAlphaProperty, ref _preserveAlpha, value); }
+        }
+        private bool _preserveAlpha = false;
+        public static readonly DirectProperty<NDISendContainer, bool> PreserveAlphaProperty =
+            AvaloniaProperty.RegisterDirect<NDISendContainer, bool>(nameof(PreserveAlpha), o => o.PreserveAlpha, (o, v) => o.PreserveAlpha = v);
+
+        [Category("NewTek NDI"),
         Description("NDI groups this sender will belong to. Optional.")]
         public List<string> NdiGroups
         {
@@ -630,14 +641,18 @@ Description("Function to determine whether the content requires high resolution 
                     return;
                 }
 
-                // Force all pixels to fully opaque. The NDI container's child has Background="Black",
-                // so premultiplied RGB values are already correctly composited against black.
-                // Setting A=0xFF makes every pixel fully opaque for NDI receivers.
-                unsafe
+                // Force all pixels to fully opaque unless PreserveAlpha is set.
+                // Default (PreserveAlpha=false): child has Background="Black" so premultiplied RGB
+                // is already composited against black; set A=0xFF for receivers that composite alpha.
+                // PreserveAlpha=true: send the real alpha (e.g. lower-third key outputs).
+                if (!PreserveAlpha)
                 {
-                    byte* p = (byte*)bufferPtr;
-                    for (int i = 3; i < bufferSize; i += 4)
-                        p[i] = 0xFF;
+                    unsafe
+                    {
+                        byte* p = (byte*)bufferPtr;
+                        for (int i = 3; i < bufferSize; i += 4)
+                            p[i] = 0xFF;
+                    }
                 }
 
                 NDIlib.video_frame_v2_t videoFrame = new NDIlib.video_frame_v2_t()

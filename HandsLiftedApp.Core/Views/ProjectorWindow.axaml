@@ -61,6 +61,7 @@
             NdiHeight="1080"
             NdiName="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}"
             NdiWidth="1920"
+            PreserveAlpha="True"
             Width="1920"
             x:Name="NdiLyricsContainer">
             <render1:AltSlideRenderer DataContext="{Binding Playlist.ActiveSlide}" />
