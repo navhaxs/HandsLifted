@@ -5,6 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
              xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+             xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
              xmlns:videoLayer="clr-namespace:HandsLiftedApp.Core.Render.VideoLayer"
              xmlns:motionBg="clr-namespace:HandsLiftedApp.Core.Render.MotionBackground"
              x:DataType="viewModels:MainViewModel"
@@ -35,10 +36,9 @@
                         </Grid.Background>
                         <Border>
                             <Viewbox>
-                                <Grid>
+                                <Grid Background="Black" Height="1080" Width="1920">
                                     <motionBg:MotionBackgroundObserver />
-                                    <render:SlideRender DataContext="{Binding  Playlist.ActiveSlide}" Height="1080"
-                                                        Width="1920" />
+                                    <skia:SlideCanvas x:Name="StageSlideCanvas" />
                                     <videoLayer:VideoLayerRenderer DataContext="{Binding Playlist.ActiveSlide}" />
                                 </Grid>
                             </Viewbox>
