@@ -1,0 +1,106 @@
+<Window
+    x:Class="HandsLiftedApp.Core.Views.ThirdPartyNoticesWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+    xmlns:data="clr-namespace:HandsLiftedApp.Core.Data"
+    Title="Open Source Notices"
+    Width="700"
+    Height="500"
+    CanResize="True"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <converters:LicenseKindToBrushConverter x:Key="LicenseConverter" />
+    </Window.Resources>
+
+    <DockPanel>
+        <!--  header  -->
+        <StackPanel DockPanel.Dock="Top" Margin="16,16,16,8">
+            <TextBlock FontSize="18" FontWeight="Bold" Text="Open Source Notices" />
+            <TextBlock
+                Margin="0,4,0,0"
+                FontSize="13"
+                Foreground="#6b7280"
+                Text="VisionScreens uses the following third-party software and assets." />
+        </StackPanel>
+
+        <!--  footer  -->
+        <Grid DockPanel.Dock="Bottom" Margin="0,8,12,12">
+            <Button
+                x:Name="buttonClose"
+                Width="120"
+                Height="36"
+                HorizontalAlignment="Right"
+                Content="Close"
+                IsCancel="True"
+                IsDefault="True" />
+        </Grid>
+
+        <!--  column header row  -->
+        <Grid
+            DockPanel.Dock="Top"
+            Margin="16,4,16,0"
+            ColumnDefinitions="220,140,*">
+            <TextBlock
+                Grid.Column="0"
+                Padding="4,0"
+                FontSize="12"
+                FontWeight="Bold"
+                Text="Library" />
+            <TextBlock
+                Grid.Column="1"
+                Padding="4,0"
+                FontSize="12"
+                FontWeight="Bold"
+                Text="License" />
+            <TextBlock
+                Grid.Column="2"
+                Padding="4,0"
+                FontSize="12"
+                FontWeight="Bold"
+                Text="Copyright" />
+        </Grid>
+
+        <!--  body  -->
+        <ScrollViewer Margin="16,2,16,8" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl x:Name="noticesGrid">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="data:NoticeEntry">
+                        <Grid
+                            Height="26"
+                            ColumnDefinitions="220,140,*">
+                            <TextBlock
+                                Grid.Column="0"
+                                Padding="4,0"
+                                VerticalAlignment="Center"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Text="{Binding Library}"
+                                ToolTip.Tip="{Binding Url}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Padding="4,0"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="{Binding License, Converter={StaticResource LicenseConverter}}"
+                                Text="{Binding License}" />
+                            <TextBlock
+                                Grid.Column="2"
+                                Padding="4,0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="#6b7280"
+                                Text="{Binding Copyright}"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
