@@ -72,7 +72,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="data:NoticeEntry">
                         <Grid
-                            Height="26"
+                            MinHeight="26"
                             ColumnDefinitions="220,140,*">
                             <TextBlock
                                 Grid.Column="0"
