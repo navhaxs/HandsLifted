@@ -31,7 +31,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
             PointerPressed += (sender, args) =>
             {
-                if (DataContext is Data.Data.Models.Slides.CustomSlide customSlide)
+                if (DataContext is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
                     Render(customSlide);
             };
 
@@ -42,7 +42,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
         private void RegisterDataContext()
         {
-            if (DataContext is Data.Data.Models.Slides.CustomSlide customSlide)
+            if (DataContext is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
             {
                 Render(customSlide);
                 LoadBackgroundAsync(customSlide);
@@ -58,7 +58,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
             }
         }
 
-        private void LoadBackgroundAsync(Data.Data.Models.Slides.CustomSlide customSlide)
+        private void LoadBackgroundAsync(global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
         {
             var path = customSlide.BackgroundGraphicFilePath;
             if (string.IsNullOrEmpty(path))
@@ -74,7 +74,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                         Dispatcher.UIThread.Post(
                             () =>
                             {
-                                if (DataContext is Data.Data.Models.Slides.CustomSlide cs && cs.BackgroundGraphicFilePath == path)
+                                if (DataContext is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs && cs.BackgroundGraphicFilePath == path)
                                     BackgroundBorder.Background = new ImageBrush(t.Result) { Stretch = Stretch.UniformToFill };
                             },
                             DispatcherPriority.Background);
@@ -82,7 +82,7 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                 System.Threading.Tasks.TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
-        public void Render(Data.Data.Models.Slides.CustomSlide customSlide)
+        public void Render(global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
         {
             Root.Children.Clear();
             int i = 0;
@@ -276,13 +276,13 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
         private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            if (DataContext is Data.Data.Models.Slides.CustomSlide customSlide)
+            if (DataContext is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
                 Render(customSlide);
         }
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (DataContext is Data.Data.Models.Slides.CustomSlide customSlide)
+            if (DataContext is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
                 Render(customSlide);
         }
     }
