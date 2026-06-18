@@ -82,6 +82,9 @@
                             <Setter Property="Height" Value="14" />
                         </Style>
                     </StackPanel.Styles>
+                    <Button x:Name="buttonNotices" HorizontalAlignment="Left" Classes="link">
+                        <TextBlock Text="Open Source Notices" />
+                    </Button>
                     <Button HorizontalAlignment="Left" Classes="link">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="View diagnostic logs" />

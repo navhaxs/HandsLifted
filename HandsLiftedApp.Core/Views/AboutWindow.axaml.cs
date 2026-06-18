@@ -17,6 +17,10 @@ namespace HandsLiftedApp.Core.Views
             var buttonDone = this.FindControl<Button>("buttonDone");
             buttonDone.Click += (o, e) => this.Close();
 
+            var buttonNotices = this.FindControl<Button>("buttonNotices");
+            buttonNotices!.Click += async (_, _) =>
+                await new ThirdPartyNoticesWindow().ShowDialog(this);
+
             this.DataContext = this;
         }
 
