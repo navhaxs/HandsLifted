@@ -6,6 +6,8 @@
 .idea/
 .kiro/
 .agents/
+.claude/skills/
+skills-lock.json
 
 /Demos/PowerPointConverterSampleApp/appsettings.json
 /HandsLiftedApp.Core/SyncfusionLicenseKey
