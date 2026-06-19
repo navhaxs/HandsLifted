@@ -684,12 +684,6 @@ public class MainViewModel : ViewModelBase
         // Apply OnStartup* AppPreferences:
         Playlist.IsLogo = Globals.Instance.AppPreferences.OnStartupShowLogo;
 
-        var lastOpened = settings.RecentPlaylistFullPathsList?.FirstOrDefault();
-        if (lastOpened != null && File.Exists(lastOpened))
-        {
-            MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = lastOpened, IsStartupLoad = true });
-        }
-
         // TODO broken 
         Dispatcher.UIThread.InvokeAsync(() =>
         {

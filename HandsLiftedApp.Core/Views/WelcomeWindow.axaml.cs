@@ -3,9 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.Views.Setup;
@@ -17,7 +19,7 @@ namespace HandsLiftedApp.Core.Views
     {
         // flag indicating whether the user has selected an action that should result in opening the MainWindow
         private bool _openMainOnClose = false;
-        
+
         public WelcomeWindow()
         {
             InitializeComponent();
@@ -26,21 +28,25 @@ namespace HandsLiftedApp.Core.Views
             DayOfWeekString.Text = date.ToString("dddd");
             DateString.Text = date.ToString("d MMMM yyyy");
             GreetingText.Text = date.Hour < 12 ? "Good Morning" :
-                               date.Hour < 18 ? "Good Afternoon" : "Good Evening";
+                date.Hour < 18 ? "Good Afternoon" : "Good Evening";
 
-            this.KeyDown += (_, e) =>
+            Opened += (_, __) =>
             {
-                if (e.Key == Avalonia.Input.Key.N && e.KeyModifiers.HasFlag(Avalonia.Input.KeyModifiers.Control))
+                if (RecentPlaylistsList.Items.Count > 0)
                 {
-                    _openMainOnClose = true;
-                    MessageBus.Current.SendMessage(new NewPlaylistAction());
-                    Close();
-                    e.Handled = true;
+                    void OnLayoutUpdated(object? s, EventArgs e)
+                    {
+                        if (RecentPlaylistsList.ContainerFromIndex(0) is ContentPresenter { Child: Control child })
+                        {
+                            RecentPlaylistsList.LayoutUpdated -= OnLayoutUpdated;
+                            child.Focus();
+                        }
+                    }
+                    RecentPlaylistsList.LayoutUpdated += OnLayoutUpdated;
                 }
-                else if (e.Key == Avalonia.Input.Key.O && e.KeyModifiers.HasFlag(Avalonia.Input.KeyModifiers.Control))
+                else
                 {
-                    _ = OpenFileAsync();
-                    e.Handled = true;
+                    Dispatcher.UIThread.InvokeAsync(() => NewPlaylistButton.Focus(), DispatcherPriority.Input);
                 }
             };
 
@@ -48,10 +54,12 @@ namespace HandsLiftedApp.Core.Views
             {
                 if (_openMainOnClose)
                 {
-                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                        desktopLifetime)
                     {
                         // check if MainWindow already exists
-                        if (desktopLifetime.Windows.FirstOrDefault(w => w is MainWindow) is MainWindow existingMainWindow)
+                        if (desktopLifetime.Windows.FirstOrDefault(w => w is MainWindow) is MainWindow
+                            existingMainWindow)
                         {
                             // bring existing MainWindow to front
                             existingMainWindow.Activate();
@@ -73,7 +81,8 @@ namespace HandsLiftedApp.Core.Views
                 else
                 {
                     // no action was selected
-                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                        desktopLifetime)
                     {
                         // terminate the application if the MainWindow is not already open
                         var mainIsOpen = desktopLifetime.MainWindow is MainWindow { IsVisible: true };
@@ -91,7 +100,7 @@ namespace HandsLiftedApp.Core.Views
             if (sender is Control { DataContext: WelcomeWindowViewModel.RecentPlaylistEntry recentPlaylistEntry })
             {
                 _openMainOnClose = true;
-                MessageBus.Current.SendMessage(new LoadPlaylistAction() {FilePath = recentPlaylistEntry.FilePath});
+                MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = recentPlaylistEntry.FilePath });
                 Close();
             }
         }
@@ -108,13 +117,13 @@ namespace HandsLiftedApp.Core.Views
             SetupWindow setupWindow = new SetupWindow();
             setupWindow.ShowDialog(this);
         }
-        
+
         private void LibraryClicked(object? sender, RoutedEventArgs e)
         {
             LibraryWindow w = new LibraryWindow() { DataContext = Globals.Instance.MainViewModel };
             w.ShowDialog(this);
         }
-        
+
         private void ExitClicked(object? sender, RoutedEventArgs e)
         {
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
@@ -122,7 +131,7 @@ namespace HandsLiftedApp.Core.Views
                 App.ExitApplication(desktopLifetime, this);
             }
         }
-        
+
         private async Task OpenFileAsync()
         {
             var topLevel = GetTopLevel(this);
@@ -150,7 +159,10 @@ namespace HandsLiftedApp.Core.Views
             {
                 System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{entry.FilePath}\"");
             }
-            catch { /* explorer unavailable or path invalid */ }
+            catch
+            {
+                /* explorer unavailable or path invalid */
+            }
         }
 
         private void RemoveFromRecents_Clicked(object? sender, RoutedEventArgs e)
@@ -175,6 +187,7 @@ namespace HandsLiftedApp.Core.Views
             {
                 return btn.Tag as WelcomeWindowViewModel.RecentPlaylistEntry;
             }
+
             return null;
         }
     }

@@ -28,6 +28,16 @@
         <AvaloniaResource Include="Assets\waves.png" />
         <None Remove="Assets\DefaultTheme\logo-default.png" />
         <AvaloniaResource Include="Assets\DefaultTheme\logo-default.png" />
+        <None Remove="Assets\Icons\folder-11F4C2.svg" />
+        <None Remove="Assets\Icons\memo-1F4DD.svg" />
+        <None Remove="Assets\Icons\folder-11F4C2.png" />
+        <AvaloniaResource Include="Assets\Icons\folder-11F4C2.png" />
+        <None Remove="Assets\Icons\memo-1F4DD.png" />
+        <AvaloniaResource Include="Assets\Icons\memo-1F4DD.png" />
+        <None Remove="Assets\Icons\page-facing-up-1F4C4.png" />
+        <AvaloniaResource Include="Assets\Icons\page-facing-up-1F4C4.png" />
+        <None Remove="Assets\Icons\home-E25E.png" />
+        <AvaloniaResource Include="Assets\Icons\home-E25E.png" />
     </ItemGroup>
 
 

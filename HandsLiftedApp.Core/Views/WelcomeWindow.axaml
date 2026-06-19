@@ -21,6 +21,26 @@
         <Style Selector="TextBlock">
             <Setter Property="FontSize" Value="26" />
         </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#7e4ab4" />
+        </Style>
+        <Style Selector="Button:focus /template/ ContentPresenter">
+            <Setter Property="Background" Value="#7940ac" />
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#41285c" />
+        </Style>
+        <Style Selector="AdornerLayer">
+            <Setter Property="DefaultFocusAdorner">
+                <FocusAdornerTemplate>
+                    <Rectangle
+                        Margin="2"
+                        Stroke="White"
+                        StrokeDashArray="1,2"
+                        StrokeThickness="1" />
+                </FocusAdornerTemplate>
+            </Setter>
+        </Style>
     </Window.Styles>
 
     <DockPanel>
@@ -90,26 +110,48 @@
                     VerticalAlignment="Top" />
 
                 <Grid ColumnDefinitions="2*,*" MaxWidth="700">
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,12">
-                        <Image Source="/Assets/app.png" Width="40" Height="40" Margin="0,0,14,0" VerticalAlignment="Bottom" />
-                        <StackPanel VerticalAlignment="Bottom">
-                            <TextBlock FontSize="11" Text="VISIONSCREENS" Opacity="0.7" Foreground="White" />
-                            <TextBlock FontSize="32" Text="Welcome" x:Name="GreetingText" Foreground="White" />
+                    <StackPanel
+                        Grid.Column="0"
+                        Margin="0,0,0,12"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Bottom">
+                        <StackPanel Orientation="Horizontal">
+                            <Border
+                                Background="#33ffffff"
+                                CornerRadius="8"
+                                Height="46"
+                                Margin="0,0,14,0"
+                                Width="46">
+                                <Image
+                                    Height="30"
+                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                    Source="/Assets/Icons/home-E25E.png"
+                                    Width="30" />
+                            </Border>
+                            <TextBlock
+                                FontSize="32"
+                                FontWeight="Light"
+                                Foreground="White"
+                                Text="Welcome"
+                                x:Name="GreetingText" />
                         </StackPanel>
                     </StackPanel>
 
                     <Grid Grid.Column="1" Margin="16,0,0,12">
                         <StackPanel
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Right"
                             Margin="0,0,16,0"
                             VerticalAlignment="Bottom">
                             <TextBlock
-                                FontSize="22"
+                                FontSize="20"
+                                FontWeight="Light"
                                 Text="Sunday"
+                                TextAlignment="Right"
                                 x:Name="DayOfWeekString" />
                             <TextBlock
-                                FontSize="22"
+                                FontSize="20"
                                 Text="11 April 2025"
+                                TextAlignment="Right"
                                 x:Name="DateString" />
                         </StackPanel>
                     </Grid>
@@ -120,38 +162,46 @@
             <Grid
                 ColumnDefinitions="2*,1,*"
                 Grid.Row="1"
-                Margin="0,18,0,0"
+                Margin="0,16,0,16"
                 MaxWidth="700">
 
                 <!--  left: recent playlists  -->
-                <Grid Margin="0,0,80,0">
-                    <DockPanel HorizontalAlignment="Stretch" Margin="0,10,0,12">
+                <Grid Margin="0,0,12,0">
+                    <DockPanel HorizontalAlignment="Stretch" Margin="0,0,20,12">
                         <TextBlock
                             DockPanel.Dock="Top"
-                            FontSize="18"
-                            Margin="0,0,0,12"
-                            Text="Recent playlists" />
+                            FontSize="12"
+                            Foreground="#686868"
+                            LetterSpacing="2"
+                            Margin="0,8,0,12"
+                            Text="RECENT PLAYLISTS" />
                         <TextBlock
                             FontSize="16"
                             IsVisible="{Binding !RecentPlaylists.Count}"
                             Margin="0,14"
                             Text="No recent playlists" />
 
-                        <ScrollViewer Margin="0,0,12,0">
-                            <ItemsControl ItemsSource="{Binding RecentPlaylists}">
+                        <ScrollViewer>
+                            <ItemsControl ItemsSource="{Binding RecentPlaylists}" x:Name="RecentPlaylistsList">
                                 <ItemsControl.Styles>
                                     <Style Selector="Button">
                                         <Setter Property="Padding" Value="16 12" />
                                         <Setter Property="FontSize" Value="16" />
                                         <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                        <Setter Property="Background" Value="{DynamicResource DarkSurfaceBrush}" />
-                                        <Setter Property="CornerRadius" Value="2" />
+                                        <Setter Property="Background" Value="#222" />
+                                        <Setter Property="CornerRadius" Value="0" />
+                                        <Setter Property="BorderThickness" Value="1 1 1 0" />
                                     </Style>
-                                    <Style Selector="Button:nth-child(1)">
+                                    <Style Selector="ContentPresenter:nth-child(1) Button">
                                         <Setter Property="CornerRadius" Value="6 6 0 0" />
                                     </Style>
-                                    <Style Selector="Button:nth-last-child(1)">
+                                    <Style Selector="ContentPresenter:nth-last-child(1) Button">
+                                        <Setter Property="BorderThickness" Value="1 1 1 1" />
                                         <Setter Property="CornerRadius" Value="0 0 6 6" />
+                                    </Style>
+                                    <Style Selector="ContentPresenter:nth-child(1):nth-last-child(1) Button">
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="CornerRadius" Value="6" />
                                     </Style>
                                     <!--  Wrap ToolTips  -->
                                     <Style Selector="ToolTip">
@@ -159,24 +209,32 @@
                                         <Setter Property="MaxWidth" Value="500" />
                                     </Style>
                                     <Style Selector="ToolTip TextBlock">
-                                        <Setter Property="FontSize" Value="16" />
+                                        <Setter Property="FontSize" Value="14" />
                                         <Setter Property="TextWrapping" Value="Wrap" />
                                     </Style>
                                 </ItemsControl.Styles>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Button Click="LoadRecentPlaylistEntryCommand" ToolTip.Tip="{Binding FilePath}" Tag="{Binding}">
+                                        <Button
+                                            Click="LoadRecentPlaylistEntryCommand"
+                                            Tag="{Binding}"
+                                            ToolTip.Tip="{Binding FilePath}">
                                             <Button.ContextMenu>
                                                 <ContextMenu>
-                                                    <MenuItem Header="Open file location" Click="OpenFileLocation_Clicked" />
-                                                    <MenuItem Header="Remove from recents" Click="RemoveFromRecents_Clicked" />
+                                                    <MenuItem Click="OpenFileLocation_Clicked" Header="Open file location" />
+                                                    <MenuItem Click="RemoveFromRecents_Clicked" Header="Remove from recents" />
                                                 </ContextMenu>
                                             </Button.ContextMenu>
                                             <DockPanel>
-                                                <avalonia:MaterialIcon Kind="FileDocumentOutline" Margin="0,0,16,0" />
+                                                <Image
+                                                    Height="28"
+                                                    Margin="0,0,12,0"
+                                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                    Source="/Assets/Icons/page-facing-up-1F4C4.png"
+                                                    Width="28" />
                                                 <StackPanel>
                                                     <TextBlock
-                                                        FontSize="20"
+                                                        FontSize="14"
                                                         Text="{Binding FileName}"
                                                         TextTrimming="CharacterEllipsis" />
                                                     <TextBlock
@@ -193,22 +251,21 @@
                         </ScrollViewer>
 
                     </DockPanel>
-                    <!-- </Border> -->
                 </Grid>
 
                 <Grid
                     Background="{DynamicResource SurfaceBrush}"
                     Grid.Column="1"
-                    Margin="0,22" />
+                    Margin="0,0" />
 
                 <!--  right: CTAs  -->
-                <StackPanel Grid.Column="2" Margin="16,22,0,0">
+                <StackPanel Grid.Column="2" Margin="16,0,0,0">
                     <StackPanel.Styles>
                         <Style Selector="Button">
                             <Setter Property="Height" Value="80" />
                             <Setter Property="HorizontalContentAlignment" Value="Left" />
                             <Setter Property="Padding" Value="22" />
-                            <Setter Property="CornerRadius" Value="2" />
+                            <Setter Property="CornerRadius" Value="6" />
                             <Setter Property="Background" Value="#222" />
                         </Style>
                         <Style Selector="Button &gt; DockPanel">
@@ -228,13 +285,19 @@
                         </Style>
                     </StackPanel.Styles>
 
-                    <Button Click="NewClicked" Background="#7e4ab4">
+                    <Button Click="NewClicked" x:Name="NewPlaylistButton">
                         <DockPanel>
-                            <avalonia:MaterialIcon Kind="PencilOutline" />
-                            <StackPanel Margin="12,0,0,0">
-                                <TextBlock Text="New Playlist" FontSize="16" />
-                                <TextBlock Text="Ctrl+N" FontSize="11" Opacity="0.5" />
-                            </StackPanel>
+                            <Image
+                                DockPanel.Dock="Left"
+                                Height="40"
+                                RenderOptions.BitmapInterpolationMode="HighQuality"
+                                Source="/Assets/Icons/memo-1F4DD.png"
+                                Width="40" />
+                            <TextBlock
+                                FontSize="16"
+                                Margin="12,0,0,0"
+                                Text="New Playlist"
+                                VerticalAlignment="Center" />
                         </DockPanel>
                     </Button>
 
@@ -245,11 +308,17 @@
 
                     <Button Click="OpenFileButton_Clicked">
                         <DockPanel>
-                            <avalonia:MaterialIcon Kind="FolderOutline" />
-                            <StackPanel Margin="12,0,0,0">
-                                <TextBlock Text="Load Playlist" FontSize="16" />
-                                <TextBlock Text="Ctrl+O" FontSize="11" Opacity="0.5" />
-                            </StackPanel>
+                            <Image
+                                DockPanel.Dock="Left"
+                                Height="40"
+                                RenderOptions.BitmapInterpolationMode="HighQuality"
+                                Source="/Assets/Icons/folder-11F4C2.png"
+                                Width="40" />
+                            <TextBlock
+                                FontSize="16"
+                                Margin="12,0,0,0"
+                                Text="Load Playlist"
+                                VerticalAlignment="Center" />
                         </DockPanel>
                     </Button>
                 </StackPanel>
