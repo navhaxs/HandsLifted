@@ -42,7 +42,7 @@ public static class ThirdPartyNotices
             new("Serilog",                   "Apache 2.0",      "© Serilog contributors",            "https://serilog.net"),
             new("SIL.Scripture",             "MIT",             "© SIL International"),
             new("SkiaSharp",                 "MIT",             "© Microsoft",                       "https://github.com/mono/SkiaSharp"),
-            new("Syncfusion",                "Commercial",      "© Syncfusion Inc.",                 "https://syncfusion.com"),
+            new("Syncfusion.Presentation.NET",                "Commercial",      "© Syncfusion Inc.",                 "https://syncfusion.com"),
             new("System.Reactive",           "MIT",             "© .NET Foundation"),
             new("YamlDotNet",                "MIT",             "© Antoine Aubry",                   "https://github.com/aaubry/YamlDotNet"),
         }
