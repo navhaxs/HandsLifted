@@ -79,6 +79,7 @@
         <ProjectReference Include="..\Libraries\AvaloniaNDI\AvaloniaNDI\AvaloniaNDI.csproj"/>
         <ProjectReference Include="..\Libraries\LibMpv\Avalonia.Controls.LibMpv\Avalonia.Controls.LibMpv.csproj"/>
         <ProjectReference Include="..\Libraries\LibMpv\samples\LibMpv.Context.MVVM\LibMpv.Context.MVVM.csproj"/>
+        <ProjectReference Include="..\Libraries\LibMpv\LibMpv.Thumbnailing\LibMpv.Thumbnailing.csproj"/>
     </ItemGroup>
 
 
