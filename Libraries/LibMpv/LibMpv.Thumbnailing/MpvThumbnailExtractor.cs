@@ -55,8 +55,8 @@ public static class MpvThumbnailExtractor
         int maxHeight,
         CancellationToken ct)
     {
-        var frameSignal = new SemaphoreSlim(0);
         var ctx = new MpvContext();
+        var frameSignal = new SemaphoreSlim(0);
         try
         {
             // Configure for headless thumbnail extraction.
@@ -106,6 +106,7 @@ public static class MpvThumbnailExtractor
                 return null;
 
             double scale = Math.Min((double)maxWidth / vidW, (double)maxHeight / vidH);
+            scale = Math.Min(1.0, scale);
             int outW = Math.Max(1, (int)Math.Round(vidW * scale));
             int outH = Math.Max(1, (int)Math.Round(vidH * scale));
 
