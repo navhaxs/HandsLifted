@@ -14,6 +14,7 @@ public static class SongSlideSpecBuilder
     private const int CanvasWidth = 1920;
     private const int CanvasHeight = 1080;
     private const float HorizontalMargin = 80f;
+    private const float VerticalMargin = 80f;
 
     private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
         theme.DropShadowEnabled
@@ -54,10 +55,19 @@ public static class SongSlideSpecBuilder
         var rawLines = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         using var typeface = GetTypeface(theme);
-        using var measureFont = new SKFont(typeface, theme.FontSize);
-        using var measurePaint = new SKPaint(measureFont);
-
         float maxWidth = CanvasWidth - 2 * HorizontalMargin;
+
+        float effectiveFontSize = theme.FontSize;
+        float effectiveLineHeight = theme.LineHeight;
+        if (theme.AutofitEnabled)
+        {
+            float maxHeight = CanvasHeight - 2 * VerticalMargin;
+            (effectiveFontSize, effectiveLineHeight) =
+                ComputeAutofitSize(rawLines, theme, typeface, maxWidth, maxHeight);
+        }
+
+        using var measureFont = new SKFont(typeface, effectiveFontSize);
+        using var measurePaint = new SKPaint(measureFont);
 
         // Word-wrap each input line into display lines that fit within maxWidth.
         var displayLines = new List<string>(rawLines.Length);
@@ -97,7 +107,7 @@ public static class SongSlideSpecBuilder
                 displayLines.Add(current.ToString());
         }
 
-        float lineHeight = theme.LineHeight;
+        float lineHeight = effectiveLineHeight;
         float totalHeight = displayLines.Count * lineHeight;
         float startY = (CanvasHeight - totalHeight) / 2f;
         var color = ToSkColor(theme.TextAvaloniaColour);
@@ -118,9 +128,40 @@ public static class SongSlideSpecBuilder
 
             // Create a fresh SKTypeface per element (the measurement typeface is disposed above)
             var elemTypeface = GetTypeface(theme);
-            result.Add(new TextLineElement(line, bounds, elemTypeface, theme.FontSize, color, GetShadow(theme)));
+            result.Add(new TextLineElement(line, bounds, elemTypeface, effectiveFontSize, color, GetShadow(theme)));
         }
         return result;
+    }
+
+    private static (float FontSize, float LineHeight) ComputeAutofitSize(
+        string[] rawLines, BaseSlideTheme theme, SKTypeface typeface, float maxWidth, float maxHeight)
+    {
+        float floor = theme.FontSize * (float)theme.AutofitMinFontSizeRatio;
+        const float step = 4f;
+
+        for (float candidate = theme.FontSize; candidate > floor; candidate -= step)
+        {
+            if (FitsAt(candidate))
+                return (candidate, candidate * (float)theme.LineHeightEm);
+        }
+
+        return (floor, floor * (float)theme.LineHeightEm);
+
+        bool FitsAt(float size)
+        {
+            float candidateLineHeight = size * (float)theme.LineHeightEm;
+            if (rawLines.Length * candidateLineHeight > maxHeight)
+                return false;
+
+            using var font = new SKFont(typeface, size);
+            using var paint = new SKPaint(font);
+            foreach (var line in rawLines)
+            {
+                if (paint.MeasureText(line) > maxWidth)
+                    return false;
+            }
+            return true;
+        }
     }
 
     private static SKTypeface GetTypeface(BaseSlideTheme theme)
