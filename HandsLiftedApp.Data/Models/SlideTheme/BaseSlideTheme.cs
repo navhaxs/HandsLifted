@@ -234,6 +234,24 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _lineHeightEm, Math.Round(value, 2, MidpointRounding.ToEven));
         }
 
+        private bool _autofitEnabled = true;
+
+        [DataMember]
+        public bool AutofitEnabled
+        {
+            get => _autofitEnabled;
+            set => this.RaiseAndSetIfChanged(ref _autofitEnabled, value);
+        }
+
+        private decimal _autofitMinFontSizeRatio = 0.5M;
+
+        [DataMember]
+        public decimal AutofitMinFontSizeRatio
+        {
+            get => _autofitMinFontSizeRatio;
+            set => this.RaiseAndSetIfChanged(ref _autofitMinFontSizeRatio, value);
+        }
+
         private string? _backgroundGraphicFilePath;
 
         [DataMember]
