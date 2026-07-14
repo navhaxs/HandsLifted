@@ -13,9 +13,24 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Avalonia.Skia" />
+    <PackageReference Include="Avalonia.Desktop" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LibMpv.Thumbnailing\LibMpv.Thumbnailing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestFixtures\test-video.mkv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\mpv\mpv-dev-x86_64\libmpv-2.dll">
+      <Link>libmpv-2.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
