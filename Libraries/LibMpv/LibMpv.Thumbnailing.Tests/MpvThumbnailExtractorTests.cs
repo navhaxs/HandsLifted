@@ -73,4 +73,14 @@ public class MpvThumbnailExtractorTests
 
         Assert.All(results, r => Assert.NotNull(r));
     }
+
+    [Fact]
+    public async Task ExtractAsync_ReturnsWriteableBitmap_AssignableToAvaloniaBitmap()
+    {
+        var result = await MpvThumbnailExtractor.ExtractAsync(TestVideoPath);
+
+        Assert.NotNull(result);
+        Avalonia.Media.Imaging.Bitmap bmp = result!;  // compile-time check: WriteableBitmap : Bitmap
+        Assert.True(bmp.PixelSize.Width > 0);
+    }
 }

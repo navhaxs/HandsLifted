@@ -23,7 +23,9 @@ namespace HandsLiftedApp.Core.Views.LibraryView
 
         public LibraryQueryView()
         {
-            AsyncImageLoader.ImageLoader.AsyncImageLoader = new WindowsThumbnailImageLoader();
+            AsyncImageLoader.ImageLoader.AsyncImageLoader = ThumbnailEngineSettings.UseMpvEngine
+                ? new MpvThumbnailImageLoader()
+                : new WindowsThumbnailImageLoader();
 
             InitializeComponent();
         }
