@@ -1,5 +1,6 @@
 ﻿using Google;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
@@ -35,25 +36,45 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                 try
                 {
                                        
-                    UserCredential credential;
                     string credPath = "token.json";
-                    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                        new ClientSecrets
-                        {
-                            ClientId = clientId,
-                            ClientSecret = clientSecret
-                        },
-                        Scopes,
-                        "user",
-                        CancellationToken.None,
-                        new FileDataStore(credPath, true)).Result;
+
+                    // NOTE: deliberately not GoogleWebAuthorizationBroker.AuthorizeAsync here — when the
+                    // stored token is missing/revoked, that call silently launches the interactive
+                    // browser sign-in itself (no exception thrown), which bypasses the
+                    // GoogleSlidesReauthWindow confirmation dialog entirely. Load/refresh the stored
+                    // token non-interactively instead, and surface TokenExpiredImportException so the
+                    // caller can show the dialog before any browser window opens.
+                    var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+                    {
+                        ClientSecrets = new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
+                        Scopes = Scopes,
+                        DataStore = new FileDataStore(credPath, true)
+                    });
+
+                    TokenResponse storedToken = flow.LoadTokenAsync("user", CancellationToken.None).GetAwaiter().GetResult();
+                    if (storedToken == null)
+                    {
+                        throw new TokenExpiredImportException();
+                    }
+
+                    UserCredential credential = new UserCredential(flow, "user", storedToken);
 
                     if (credential.Token.IsExpired(SystemClock.Default))
                     {
-                        var m = credential.GetAccessTokenForRequestAsync().Result;
-                        //If the token is expired recreate the token
-                        TokenResponse token = credential.Flow.RefreshTokenAsync(credential.UserId, credential.Token.RefreshToken, CancellationToken.None).Result;
-                        credential.Token = token;
+                        bool refreshed;
+                        try
+                        {
+                            refreshed = credential.RefreshTokenAsync(CancellationToken.None).GetAwaiter().GetResult();
+                        }
+                        catch (TokenResponseException)
+                        {
+                            refreshed = false;
+                        }
+
+                        if (!refreshed)
+                        {
+                            throw new TokenExpiredImportException();
+                        }
                     }
 
                     // Create Google Slides API service.
@@ -183,23 +204,28 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 
                     return stats;
                 }
+                catch (TokenExpiredImportException)
+                {
+                    throw;
+                }
                 catch (GoogleApiException e)
                 {
+                    Log.Warning(e, "[GoogleSlidesImport] GoogleApiException HttpStatusCode={HttpStatusCode}", e.HttpStatusCode);
+                    if (e.HttpStatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        throw new TokenExpiredImportException();
+                    }
                     // fails for pptx
-                    Console.WriteLine(e.Message);
                     throw new ImportFailureException();
                 }
                 catch (TokenResponseException e)
                 {
-                    // fails here if token is expired. solution: retry calling this method
-                    Console.WriteLine(e.Message);
-                    // TODO: prompt re-auth instead of aborting workflow
-                    //if (e.Error.Error == "invalid_grant" && e.Error.ErrorDescription == "Bad Request" && e.Error.ErrorUri == null)
-                    throw new ImportFailureException();
+                    Log.Warning(e, "[GoogleSlidesImport] TokenResponseException");
+                    throw new TokenExpiredImportException();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Log.Warning(e, "[GoogleSlidesImport] Unhandled exception type {ExceptionType}", e.GetType().FullName);
                     throw new ImportFailureException();
                 }
             }
@@ -209,6 +235,20 @@ namespace HandsLiftedApp.Importer.GoogleSlides
         {
             public string GoogleSlidesPresentationId { get; set; }
             public string OutputDirectory { get; set; }
+        }
+
+        public static void RevokeAndReauth(string clientId, string clientSecret)
+        {
+            string credPath = "token.json";
+            if (File.Exists(credPath))
+                File.Delete(credPath);
+
+            GoogleWebAuthorizationBroker.AuthorizeAsync(
+                new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
+                Scopes,
+                "user",
+                CancellationToken.None,
+                new FileDataStore(credPath, true)).GetAwaiter().GetResult();
         }
 
         public static string ReplaceInvalidChars(string filename)

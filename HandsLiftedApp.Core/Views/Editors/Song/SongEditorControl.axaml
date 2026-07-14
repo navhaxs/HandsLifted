@@ -119,7 +119,10 @@
 
         </TabControl>
 
-        <GridSplitter Grid.Column="1" />
+        <GridSplitter
+            Background="Transparent"
+            Grid.Column="1"
+            Margin="-4,12" />
 
         <Border Grid.Column="2">
             <Grid>

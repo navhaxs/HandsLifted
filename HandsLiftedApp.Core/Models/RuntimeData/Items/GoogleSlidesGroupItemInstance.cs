@@ -1,4 +1,8 @@
-﻿using HandsLiftedApp.Core.Services;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -12,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 using HandsLiftedApp.Importer.GoogleSlides;
 using HandsLiftedApp.Importer.PDF;
@@ -174,6 +179,38 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Log.Debug($"Import OK");
 
                             LastSyncDateTime = DateTime.Now;
+                        }
+                        catch (TokenExpiredImportException)
+                        {
+                            Log.Warning("Google Slides token expired — prompting reauth");
+                            var clientId = Globals.Instance.AppPreferences.GoogleClientId;
+                            var clientSecret = Globals.Instance.AppPreferences.GoogleClientSecret;
+                            var tcs = new TaskCompletionSource<bool>();
+                            Dispatcher.UIThread.Post(async () =>
+                            {
+                                try
+                                {
+                                    Log.Warning("[GoogleSlidesReauth] Post callback entered on UI thread");
+                                    var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                                    Log.Warning("[GoogleSlidesReauth] mainWindow={MainWindow}", mainWindow == null ? "NULL" : mainWindow.GetType().Name);
+                                    var dialog = new GoogleSlidesReauthWindow();
+                                    Log.Warning("[GoogleSlidesReauth] dialog constructed, calling ShowDialog");
+                                    await dialog.ShowDialog(mainWindow);
+                                    Log.Warning("[GoogleSlidesReauth] ShowDialog returned, Confirmed={Confirmed}", dialog.Confirmed);
+                                    tcs.SetResult(dialog.Confirmed);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(ex, "[GoogleSlidesReauth] exception in Post callback");
+                                    tcs.SetException(ex);
+                                }
+                            });
+                            bool confirmed = tcs.Task.GetAwaiter().GetResult();
+
+                            if (confirmed)
+                            {
+                                Task.Run(() => Main.RevokeAndReauth(clientId, clientSecret));
+                            }
                         }
                         catch (Exception e)
                         {

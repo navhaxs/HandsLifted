@@ -100,7 +100,7 @@ namespace HandsLiftedApp.Core.Views
             if (sender is Control { DataContext: WelcomeWindowViewModel.RecentPlaylistEntry recentPlaylistEntry })
             {
                 _openMainOnClose = true;
-                MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = recentPlaylistEntry.FilePath });
+                MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = recentPlaylistEntry.FilePath, IsStartupLoad = true });
                 Close();
             }
         }
@@ -144,7 +144,7 @@ namespace HandsLiftedApp.Core.Views
             {
                 var filePath = files[0].Path.LocalPath;
                 _openMainOnClose = true;
-                MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = filePath });
+                MessageBus.Current.SendMessage(new LoadPlaylistAction() { FilePath = filePath, IsStartupLoad = true });
                 Close();
             }
         }

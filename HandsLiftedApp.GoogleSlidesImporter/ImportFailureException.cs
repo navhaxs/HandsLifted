@@ -1,6 +1,10 @@
 ﻿namespace HandsLiftedApp.Importer.GoogleSlides
 {
-    internal class ImportFailureException : Exception
+    public class ImportFailureException : Exception
+    {
+    }
+
+    public class TokenExpiredImportException : ImportFailureException
     {
     }
 }
