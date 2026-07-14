@@ -29,9 +29,10 @@ public class MpvThumbnailImageLoader : IAsyncImageLoader
         MpvThumbnailExtractor.ExtractAsync(path, maxWidth: 1280, maxHeight: 720)
             .ContinueWith<Bitmap?>(t =>
             {
-                if (t.IsFaulted)
+                if (t.IsCanceled || t.IsFaulted)
                 {
-                    Log.Error(t.Exception, "[MpvThumbnailImageLoader] Failed to load thumbnail for {Path}", path);
+                    if (t.IsFaulted)
+                        Log.Error(t.Exception, "[MpvThumbnailImageLoader] Failed to load thumbnail for {Path}", path);
                     return null;
                 }
                 return t.Result;
