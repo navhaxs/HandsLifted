@@ -15,6 +15,8 @@ using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
+using HandsLiftedApp.Core.Utils;
+using LibMpv.Thumbnailing;
 using Serilog;
 using ShellThumbs;
 using SkiaSharp;
@@ -74,21 +76,31 @@ namespace HandsLiftedApp.Data.Slides
         public void Render()
         {
             SKBitmap? videoFrame = null;
-            if (HasMotionBackground && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (HasMotionBackground)
             {
                 var videoPath = ParentSongItem?.MotionBackgroundVideoPath;
                 if (!string.IsNullOrWhiteSpace(videoPath))
                 {
-                    try
+                    if (ThumbnailEngineSettings.UseMpvEngine)
                     {
-                        using var avaBmp = WindowsThumbnailProvider.GetThumbnail(
-                            videoPath, 1920, 1080, ThumbnailOptions.None);
+                        using var avaBmp = MpvThumbnailExtractor.ExtractAsync(videoPath, maxWidth: 1920, maxHeight: 1080)
+                            .GetAwaiter().GetResult();
                         if (avaBmp != null)
                             videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
                     }
-                    catch (Exception ex)
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        Log.Warning(ex, "[SongTitleSlideInstance] Failed to extract video thumbnail from {Path}", videoPath);
+                        try
+                        {
+                            using var avaBmp = WindowsThumbnailProvider.GetThumbnail(
+                                videoPath, 1920, 1080, ThumbnailOptions.None);
+                            if (avaBmp != null)
+                                videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning(ex, "[SongTitleSlideInstance] Failed to extract video thumbnail from {Path}", videoPath);
+                        }
                     }
                 }
             }
