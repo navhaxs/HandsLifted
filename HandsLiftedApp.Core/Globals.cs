@@ -5,9 +5,8 @@ using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
-using Avalonia.ReactiveUI;
-using HandsLiftedApp.Common;
 using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
 using LibMpv.Client;
 using Newtonsoft.Json;
@@ -90,6 +89,8 @@ namespace HandsLiftedApp.Core
                     AppPreferences = new AppPreferencesViewModel();
                 }
             }
+
+            ThumbnailEngineSettings.UseMpvEngine = true;
 
             MainViewModel = new();
 
