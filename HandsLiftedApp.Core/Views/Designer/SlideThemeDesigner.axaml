@@ -310,6 +310,20 @@
                                 Value="{Binding #LineHeightTextBox.Text, Converter={StaticResource RoundedDecimalConverter}}" />
                     </DockPanel>
 
+                    <TextBlock Text="Autofit" Margin="0 10 0 0" />
+                    <CheckBox Name="AutofitEnabledCheckBox"
+                              Content="Shrink font to fit stanza"
+                              IsChecked="{Binding AutofitEnabled}" />
+                    <DockPanel IsEnabled="{Binding #AutofitEnabledCheckBox.IsChecked}">
+                        <TextBox Name="AutofitMinRatioTextBox"
+                                 MinWidth="30"
+                                 Text="{Binding AutofitMinFontSizeRatio, FallbackValue=0.5}" />
+                        <Slider Name="AutofitMinRatioSlider" Minimum="0.1" Maximum="1.0"
+                                IsSnapToTickEnabled="True"
+                                TickFrequency="0.01"
+                                Value="{Binding #AutofitMinRatioTextBox.Text, Converter={StaticResource RoundedDecimalConverter}}" />
+                    </DockPanel>
+
                     <!-- <ComboBox Name="TextAlignmentComboBox" -->
                     <!--           SelectedItem="{Binding #designsListBox.SelectedItem.TextAlignment}" /> -->
                     <Border Height="1" Margin="0 10" Background="#808080" />
