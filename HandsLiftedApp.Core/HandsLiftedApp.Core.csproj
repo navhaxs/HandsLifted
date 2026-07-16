@@ -307,4 +307,36 @@
         <Exec Command="echo $(BuildDateTime) &gt; &quot;$(ProjectDir)/BuildInfo/BuildDateTime.txt&quot;"/>
         <Exec Command="echo $(SyncfusionLicenseKey) &gt; SyncfusionLicenseKey" />
     </Target>
+
+    <!-- Build ordering: InteropHost must compile before Core so hash target can read its exe -->
+    <ItemGroup>
+      <ProjectReference
+        Include="..\HandsLiftedApp.Importer.PowerPointInteropHost\HandsLiftedApp.Importer.PowerPointInteropHost.csproj"
+        ReferenceOutputAssembly="false"
+        SkipGetTargetFrameworkProperties="true" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_InteropHostExe>$(MSBuildThisFileDirectory)..\HandsLiftedApp.Importer.PowerPointInteropHost\bin\$(Configuration)\net8.0-windows\HandsLiftedApp.Importer.PowerPointInteropHost.exe</_InteropHostExe>
+      <_HashFile>$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)\HelperHash.g.cs</_HashFile>
+    </PropertyGroup>
+
+    <Target Name="EmbedHelperHash" BeforeTargets="CoreCompile">
+      <MakeDir Directories="$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)" />
+      <!-- GetFileHash is a built-in MSBuild task — no shell or escaping needed -->
+      <GetFileHash Files="$(_InteropHostExe)" Algorithm="SHA256" Condition="Exists('$(_InteropHostExe)')">
+        <Output TaskParameter="Hash" PropertyName="_HelperExeHash" />
+      </GetFileHash>
+      <PropertyGroup>
+        <_HelperExeHash Condition="'$(_HelperExeHash)' == ''">HELPER_NOT_BUILT</_HelperExeHash>
+      </PropertyGroup>
+      <!-- %22 = double-quote, %3B = semicolon (MSBuild percent-encoding in Lines) -->
+      <WriteLinesToFile
+        File="$(_HashFile)"
+        Lines="namespace HandsLiftedApp.Core { internal static class BuildConstants { public const string HelperExeHash=%22$(_HelperExeHash)%22%3B } }"
+        Overwrite="true" />
+      <ItemGroup>
+        <Compile Include="$(_HashFile)" />
+      </ItemGroup>
+    </Target>
 </Project>

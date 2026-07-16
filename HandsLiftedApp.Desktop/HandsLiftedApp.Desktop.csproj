@@ -48,4 +48,13 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
+
+    <PropertyGroup>
+      <_InteropHostSrc>$(MSBuildThisFileDirectory)..\HandsLiftedApp.Importer.PowerPointInteropHost\bin\$(Configuration)\net8.0-windows\HandsLiftedApp.Importer.PowerPointInteropHost.exe</_InteropHostSrc>
+    </PropertyGroup>
+
+    <Target Name="CopyInteropHost" AfterTargets="Build" Condition="Exists('$(_InteropHostSrc)')">
+      <Copy SourceFiles="$(_InteropHostSrc)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+      <Message Text="Copied InteropHost to $(OutputPath)" Importance="normal" />
+    </Target>
 </Project>

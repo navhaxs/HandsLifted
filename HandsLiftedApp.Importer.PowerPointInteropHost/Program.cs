@@ -17,7 +17,8 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        _pipe = new NamedPipeClientStream(".", "HandsLifted.PowerPointInterop", PipeDirection.InOut);
+        var pipeName = args.Length > 0 ? args[0] : "HandsLifted.PowerPointInterop";
+        _pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut);
         _pipe.Connect();
 
         _reader = new StreamReader(_pipe);
