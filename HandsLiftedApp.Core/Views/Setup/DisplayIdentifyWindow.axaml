@@ -1,72 +1,110 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="HandsLiftedApp.Core.Views.Setup.DisplayIdentifyWindow"
-		Background="Transparent"
-        CanResize="False"
-        TransparencyLevelHint="Transparent"
-        Topmost="True"
-		SystemDecorations="None"
-		ShowInTaskbar="False"
-        IsHitTestVisible="False"
-		Title="DisplayIdentifyWindow">
-	<Window.Resources>
-		<SolidColorBrush x:Key="FrameColor">#bfff6a00</SolidColorBrush>
-	</Window.Resources>
-	
-	<Grid>
-		<Border
-			BorderThickness="20"
-			BorderBrush="#bfff6a00">
-		</Border>
+﻿<Window
+    Background="Transparent"
+    CanResize="False"
+    IsHitTestVisible="False"
+    ShowInTaskbar="False"
+    SystemDecorations="None"
+    Title="DisplayIdentifyWindow"
+    Topmost="True"
+    TransparencyLevelHint="Transparent"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.Setup.DisplayIdentifyWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Window.Resources>
+        <SolidColorBrush x:Key="FrameColor">#bfff6a00</SolidColorBrush>
+    </Window.Resources>
 
-		<Border VerticalAlignment="Top" HorizontalAlignment="Left" Margin="70 70 0 0"
-	Background="{DynamicResource FrameColor}"
-	MinWidth="150"
-	Padding="20">
-			<TextBlock Name="ScreenNumber" Text="1" Foreground="#f3ebf9" FontSize="142"
-					   FontWeight="Bold"
-					   TextAlignment="Center"
-					   MinWidth="160"
-					   HorizontalAlignment="Center"
-						   />
-		</Border>
+    <Grid>
+        <Border BorderBrush="#bfff6a00" BorderThickness="20" />
 
-		<!-- TODO Monitor identification preview  -->
-		<Border IsVisible="False	" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 70 70 0"
-	Background="{DynamicResource FrameColor}"
-	MinWidth="150"
-	Padding="20">
-			<TextBlock Name="ScreenAssignment" Text="Main Output" Foreground="#f3ebf9" FontSize="62"
-					   FontWeight="Bold"
-					   TextAlignment="Center"
-					   MinWidth="160"
-					   HorizontalAlignment="Center"
-						   />
-		</Border>
+        <Border
+            Background="{DynamicResource FrameColor}"
+            HorizontalAlignment="Left"
+            Margin="70,70,0,0"
+            MinWidth="150"
+            Padding="20"
+            VerticalAlignment="Top">
+            <TextBlock
+                FontSize="142"
+                FontWeight="Bold"
+                Foreground="#f3ebf9"
+                HorizontalAlignment="Center"
+                MinWidth="160"
+                Name="ScreenNumber"
+                Text="1"
+                TextAlignment="Center" />
+        </Border>
+
+        <!--  TODO Monitor identification preview  -->
+        <Border
+            Background="{DynamicResource FrameColor}"
+            HorizontalAlignment="Right"
+            IsVisible="False "
+            Margin="0,70,70,0"
+            MinWidth="150"
+            Padding="20"
+            VerticalAlignment="Top">
+            <TextBlock
+                FontSize="62"
+                FontWeight="Bold"
+                Foreground="#f3ebf9"
+                HorizontalAlignment="Center"
+                MinWidth="160"
+                Name="ScreenAssignment"
+                Text="Main Output"
+                TextAlignment="Center" />
+        </Border>
 
 
-		<Border VerticalAlignment="Top" HorizontalAlignment="Left"
-	Background="{DynamicResource FrameColor}"
-				Margin="20 20 0 0"
-				Padding="0 0 8 8">
-			<TextBlock Name="ScreenLocation" Text="(0, 0)" Foreground="#f3ebf9" FontSize="22"
-					   FontWeight="Bold"
-					   HorizontalAlignment="Center"
-						   />
-		</Border>
+        <Border
+            Background="{DynamicResource FrameColor}"
+            HorizontalAlignment="Left"
+            Margin="20,20,0,0"
+            Padding="0,0,8,8"
+            VerticalAlignment="Top">
+            <TextBlock
+                FontSize="22"
+                FontWeight="Bold"
+                Foreground="#f3ebf9"
+                HorizontalAlignment="Center"
+                Name="ScreenLocation"
+                Text="(0, 0)" />
+        </Border>
 
-		<Border VerticalAlignment="Bottom" HorizontalAlignment="Right"
-				Margin="0 0 20 20"
-	Background="{DynamicResource FrameColor}"
-				Padding="8 8 0 0">
-			<TextBlock Name="ScreenBounds" Text="1920x1080" Foreground="#f3ebf9" FontSize="22"
-					   FontWeight="Bold"
-					   HorizontalAlignment="Center"
-						   />
-		</Border>
+        <Border
+            Background="{DynamicResource FrameColor}"
+            HorizontalAlignment="Right"
+            Margin="0,20,20,0"
+            Padding="8,0,0,8"
+            VerticalAlignment="Top">
+            <TextBlock
+                FontSize="22"
+                FontWeight="Bold"
+                Foreground="#f3ebf9"
+                HorizontalAlignment="Center"
+                Name="DisplayName"
+                Text="(generic display)" />
+        </Border>
 
-	</Grid>
+        <Border
+            Background="{DynamicResource FrameColor}"
+            HorizontalAlignment="Right"
+            Margin="0,0,20,20"
+            Padding="8,8,0,0"
+            VerticalAlignment="Bottom">
+            <TextBlock
+                FontSize="22"
+                FontWeight="Bold"
+                Foreground="#f3ebf9"
+                HorizontalAlignment="Center"
+                Name="ScreenBounds"
+                Text="1920x1080" />
+        </Border>
+
+    </Grid>
 </Window>

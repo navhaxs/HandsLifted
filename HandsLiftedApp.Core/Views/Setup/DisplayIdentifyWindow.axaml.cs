@@ -32,6 +32,10 @@ namespace HandsLiftedApp.Core.Views.Setup
 
             if (OperatingSystem.IsWindows())
             {
+                var friendlyNames = Win32DisplayHelper.GetMonitorFriendlyNames();
+                if (friendlyNames.TryGetValue(Screen.Bounds, out var name))
+                    DisplayName.Text = name;
+
                 IntPtr? handle = this.TryGetPlatformHandle()?.Handle;
                 if (handle == null)
                     return;
