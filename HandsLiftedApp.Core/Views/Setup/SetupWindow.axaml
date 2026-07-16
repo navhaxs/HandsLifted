@@ -230,6 +230,24 @@
                 <TabItem Header="Integrations">
                     <StackPanel Margin="12">
 
+                        <!-- Native PowerPoint Import (Windows only) -->
+                        <StackPanel IsVisible="{OnPlatform Default=False, Windows=True}">
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Margin="0,0,0,4"
+                                Text="PowerPoint Import" />
+                            <CheckBox
+                                Content="Use native PowerPoint import (requires Microsoft Office installed)"
+                                IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.UseNativePowerPointImport}" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                                Margin="22,2,0,0"
+                                TextWrapping="Wrap"
+                                Text="Uses COM automation via Microsoft PowerPoint for higher-fidelity slide export. Falls back to built-in converter when disabled." />
+                            <Grid Margin="0,8,0,0" />
+                        </StackPanel>
+
                         <TextBlock Text="Google Slides API Key" />
 
                         <Grid Margin="0,4,0,0" />
