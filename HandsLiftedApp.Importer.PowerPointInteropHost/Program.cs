@@ -17,18 +17,29 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var pipeName = args.Length > 0 ? args[0] : "HandsLifted.PowerPointInterop";
-        _pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut);
-        _pipe.Connect();
+        try
+        {
+            var pipeName = args.Length > 0 ? args[0] : "HandsLifted.PowerPointInterop";
+            Console.Error.WriteLine($"PowerPointInteropHost connecting to pipe '{pipeName}'...");
 
-        _reader = new StreamReader(_pipe);
-        _writer = new StreamWriter(_pipe) { AutoFlush = true };
+            _pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut);
+            _pipe.Connect(15_000);
 
-        // Start background listener
-        var listenerTask = Task.Run(ListenLoop);
+            Console.Error.WriteLine("Connected to pipe.");
 
-        // Block the main thread until the listener finishes
-        listenerTask.Wait();
+            _reader = new StreamReader(_pipe);
+            _writer = new StreamWriter(_pipe) { AutoFlush = true };
+
+            // Start background listener
+            var listenerTask = Task.Run(ListenLoop);
+
+            // Block the main thread until the listener finishes
+            listenerTask.Wait();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("PowerPointInteropHost crashed: " + ex);
+        }
     }
     
     public static void SendToServer(object message)
@@ -59,13 +70,32 @@ class Program
 
     private static void HandleMainAppCommand(string json)
     {
-        var cmd = JsonSerializer.Deserialize<ImportTask>(json);
+        ImportTask? cmd = null;
+        try
+        {
+            cmd = JsonSerializer.Deserialize<ImportTask>(json);
+            if (cmd == null)
+                throw new InvalidOperationException("Deserialized ImportTask was null.");
 
-        System.Diagnostics.Debug.Print(cmd.InputFile);
+            Console.Error.WriteLine($"Importing: {cmd.InputFile}");
 
-        Converter.RunPowerPointImportTask(cmd, new ProgressReporter());
-
-        // delay to allow IPC comms to flush???
-        Environment.Exit(0);
+            Converter.RunPowerPointImportTask(cmd, new ProgressReporter());
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("PowerPoint import task failed: " + ex);
+            SendToServer(new ImportStats
+            {
+                Task = cmd,
+                JobStatus = ImportStats.JobStatusEnum.CompletionFailure,
+                StatusMessage = ex.Message,
+                CompletionTime = DateTime.Now
+            });
+        }
+        finally
+        {
+            // delay to allow IPC comms to flush???
+            Environment.Exit(0);
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using NetOffice.OfficeApi.Enums;
 using NetOffice.PowerPointApi;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,11 +21,38 @@ namespace HandsLiftedApp.Importer.PowerPoint
             ImportStats stats = new ImportStats() { Task = task };
             lock (syncSlidesLock)
             {
-                Application thisApplication = new Application();
+                Application thisApplication;
+                try
+                {
+                    thisApplication = new Application();
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine("Failed to start PowerPoint COM Application: " + e);
+                    stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
+                    stats.StatusMessage = "Failed to start PowerPoint: " + e.Message;
+                    stats.CompletionTime = DateTime.Now;
+                    if (progress != null)
+                        progress.Report(stats);
+                    return stats;
+                }
 
-
-                Presentation thisPresentation = thisApplication.Presentations.Open(task.InputFile,
-                    MsoTriState.msoTrue, MsoTriState.msoFalse, MsoTriState.msoFalse);
+                Presentation thisPresentation;
+                try
+                {
+                    thisPresentation = thisApplication.Presentations.Open(task.InputFile,
+                        MsoTriState.msoTrue, MsoTriState.msoFalse, MsoTriState.msoFalse);
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine("Failed to open presentation '" + task.InputFile + "': " + e);
+                    stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
+                    stats.StatusMessage = "Failed to open presentation: " + e.Message;
+                    stats.CompletionTime = DateTime.Now;
+                    if (progress != null)
+                        progress.Report(stats);
+                    return stats;
+                }
 
                 Directory.CreateDirectory(task.OutputDirectory);
                 DirectoryInfo di = new DirectoryInfo(task.OutputDirectory);
@@ -64,7 +90,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
                     }
                     catch (Exception e)
                     {
-                        Debug.Print("Presentation SaveAs PDF failed. " + e.Message);
+                        Console.Error.WriteLine("Presentation SaveAs PDF failed. " + e);
 
                         stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
                         stats.CompletionTime = DateTime.Now;
@@ -103,7 +129,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
                     }
                     catch (NetOffice.Exceptions.PropertyGetCOMException e)
                     {
-                        Debug.Print("Slides sync failed. No active presentation/slides available " + e.Message);
+                        Console.Error.WriteLine("Slides sync failed. No active presentation/slides available " + e);
 
                         stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
                         stats.CompletionTime = DateTime.Now;
@@ -119,7 +145,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
 
                     if (thisPresentation == null || slides == null)
                     {
-                        Debug.Print("Slides sync failed. No active presentation/slides available");
+                        Console.Error.WriteLine("Slides sync failed. No active presentation/slides available");
 
                         stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
                         stats.CompletionTime = DateTime.Now;
@@ -160,8 +186,7 @@ namespace HandsLiftedApp.Importer.PowerPoint
                             catch (Exception e)
                             {
                                 // possible: out of disk space
-                                Debug.Print(e.ToString());
-                                Debugger.Break();
+                                Console.Error.WriteLine("Slide export failed: " + e);
                             }
 
                             double progressPercentage =
@@ -188,8 +213,9 @@ namespace HandsLiftedApp.Importer.PowerPoint
                     }
                     catch (Exception e)
                     {
-                        Debug.Print(e.Message);
+                        Console.Error.WriteLine("Slide export loop failed: " + e);
                         stats.JobStatus = ImportStats.JobStatusEnum.CompletionFailure;
+                        stats.StatusMessage = e.Message;
                         stats.JobPercentage = 100.0d;
                         stats.CompletionTime = DateTime.Now;
 
