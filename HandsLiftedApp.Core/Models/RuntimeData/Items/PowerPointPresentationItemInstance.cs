@@ -1,4 +1,5 @@
 ﻿using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -13,6 +14,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using HandsLiftedApp.Importer.PDF;
 using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 
@@ -108,75 +111,128 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public void Sync()
         {
-            if (IsBusy)
-            {
-                return;
-            }
-
+            if (IsBusy) return;
             IsBusy = true;
+
             ImportWorkerThread.priorityQueue.Add(new ImportWorkerThread.BackgroundWorkRequest()
             {
                 Callback = () =>
                 {
-                    lock (syncSlidesLock)
-                    {
-                        try
-                        {
-                            DateTime now = DateTime.Now;
-                            string fileName = Path.GetFileName(SourcePresentationFile);
-
-                            string targetDirectory = Path.Join(ParentPlaylist
-                                    .PlaylistWorkingDirectory,
-                                FilenameUtils.ReplaceInvalidChars(fileName) + "_" +
-                                now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                            Directory.CreateDirectory(targetDirectory);
-
-                            Log.Debug($"Importing PowerPoint file: {SourcePresentationFile}");
-                            PresentationFileFormatConverter.Run(new ImportTask
-                            {
-                                InputFile = SourcePresentationFile,
-                                OutputDirectory = targetDirectory,
-                                ExportFileFormat = ImportTask.ExportFileFormatType.PDF
-                            }, new ImportTaskReporter(stats =>
-                            {
-                                // OnProgressUpdate(stats.JobPercentage);
-                            }));
-
-                            Log.Debug($"Importing PDF file: {SourcePresentationFile}");
-                            ConvertPDF.Convert(new ImportTask
-                            {
-                                InputFile = SourcePresentationFile + ".pdf", // TODO use output of last task
-                                OutputDirectory = targetDirectory,
-                                ExportFileFormat = ImportTask.ExportFileFormatType.PDF
-                            }, new ImportTaskReporter(stats =>
-                            {
-                                // OnProgressUpdate(stats.JobPercentage);
-                            }));
-
-                            var newItems = new TrulyObservableCollection<GroupItem>();
-                            foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
-                                         .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
-                            {
-                                newItems.Add(new MediaItem()
-                                    { SourceMediaFilePath = convertedFilePath });
-                            }
-
-                            Items = newItems;
-
-                            Log.Debug($"Generating slides");
-                            GenerateSlides();
-
-                            Log.Debug($"Import OK");
-                            LastSyncDateTime = DateTime.Now;
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error(e, "Error importing PowerPoint file");
-                        }
-                        IsBusy = false;
-                    }
+                    if (PowerPointImportSettings.UseNativeInterop && OperatingSystem.IsWindows())
+                        SyncViaNativeInterop();
+                    else
+                        SyncViaSyncfusion();
                 }
             });
+        }
+
+        private void SyncViaSyncfusion()
+        {
+            lock (syncSlidesLock)
+            {
+                try
+                {
+                    DateTime now = DateTime.Now;
+                    string fileName = Path.GetFileName(SourcePresentationFile);
+
+                    string targetDirectory = Path.Join(ParentPlaylist.PlaylistWorkingDirectory,
+                        FilenameUtils.ReplaceInvalidChars(fileName) + "_" +
+                        now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    Directory.CreateDirectory(targetDirectory);
+
+                    Log.Debug($"Importing PowerPoint file (Syncfusion): {SourcePresentationFile}");
+                    PresentationFileFormatConverter.Run(new ImportTask
+                    {
+                        InputFile = SourcePresentationFile,
+                        OutputDirectory = targetDirectory,
+                        ExportFileFormat = ImportTask.ExportFileFormatType.PDF
+                    }, new ImportTaskReporter(stats => { }));
+
+                    Log.Debug($"Converting PDF to slides: {SourcePresentationFile}");
+                    ConvertPDF.Convert(new ImportTask
+                    {
+                        InputFile = SourcePresentationFile + ".pdf", // TODO: use output path from above step
+                        OutputDirectory = targetDirectory,
+                        ExportFileFormat = ImportTask.ExportFileFormatType.PDF
+                    }, new ImportTaskReporter(stats => { }));
+
+                    ApplySlidesFromDirectory(targetDirectory);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Error importing PowerPoint file via Syncfusion");
+                }
+                IsBusy = false;
+            }
+        }
+
+        [SupportedOSPlatform("windows")]
+        private void SyncViaNativeInterop()
+        {
+            lock (syncSlidesLock)
+            {
+                try
+                {
+                    DateTime now = DateTime.Now;
+                    string fileName = Path.GetFileName(SourcePresentationFile);
+
+                    string targetDirectory = Path.Join(ParentPlaylist.PlaylistWorkingDirectory,
+                        FilenameUtils.ReplaceInvalidChars(fileName) + "_" +
+                        now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    Directory.CreateDirectory(targetDirectory);
+
+                    Log.Debug($"Importing PowerPoint file (native COM): {SourcePresentationFile}");
+
+                    var result = NativePowerPointImportService.RunImport(
+                        new ImportTask
+                        {
+                            InputFile = SourcePresentationFile,
+                            OutputDirectory = targetDirectory,
+                            ExportFileFormat = ImportTask.ExportFileFormatType.PNG
+                        },
+                        new ImportTaskReporter(stats =>
+                        {
+                            Log.Debug("Native import progress: {Pct}% — {Status}",
+                                stats.JobPercentage, stats.StatusMessage);
+                        }));
+
+                    if (result.JobStatus != ImportStats.JobStatusEnum.CompletionSuccess)
+                    {
+                        Log.Error("Native PowerPoint import failed with status {Status}", result.JobStatus);
+                        IsBusy = false;
+                        return;
+                    }
+
+                    ApplySlidesFromDirectory(targetDirectory);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Error importing PowerPoint file via native interop");
+                }
+                IsBusy = false;
+            }
+        }
+
+        private void ApplySlidesFromDirectory(string targetDirectory)
+        {
+            var newItems = new TrulyObservableCollection<GroupItem>();
+            foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
+                         .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
+            {
+                // Skip non-image files (e.g. intermediate PDFs from Syncfusion path)
+                var ext = Path.GetExtension(convertedFilePath).ToLowerInvariant();
+                if (ext != ".png" && ext != ".jpg" && ext != ".jpeg") continue;
+
+                newItems.Add(new MediaItem { SourceMediaFilePath = convertedFilePath });
+            }
+
+            Items = newItems;
+
+            Log.Debug("Generating slides");
+            GenerateSlides();
+
+            Log.Debug("Import OK");
+            LastSyncDateTime = DateTime.Now;
         }
     }
 }
