@@ -35,6 +35,32 @@ namespace HandsLiftedApp.Core
             "Copyright"
         };
 
+        // Boilerplate SongSelect appends that carry no legally-required copyright info.
+        private static readonly Regex SongSelectTermsLineRegex = new(
+            @"^[ \t]*For use solely with (the )?SongSelect®?\s*Terms of Use\.?.*$\r?\n?",
+            RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+        private static readonly Regex CcliSongNumberLineRegex = new(
+            @"^[ \t]*CCLI Song\s*#\s*\d+[ \t]*\r?\n?",
+            RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+        /// <summary>
+        /// Strips non-required lines from a copyright block pasted straight out of SongSelect
+        /// (terms-of-use boilerplate, optionally the CCLI Song # line). Keeps writer names,
+        /// (c) copyright owners, and CCLI License # untouched — those stay legally required.
+        /// </summary>
+        public static string TrimSongSelectBoilerplate(string copyright, bool dropSongNumber = false)
+        {
+            if (string.IsNullOrWhiteSpace(copyright)) return copyright;
+
+            var result = SongSelectTermsLineRegex.Replace(copyright, "");
+            if (dropSongNumber)
+                result = CcliSongNumberLineRegex.Replace(result, "");
+
+            result = Regex.Replace(result, @"(\r?\n){3,}", "\r\n\r\n");
+            return result.Trim();
+        }
+
         public static bool isPartName(string input)
         {
             string processedInput = input.ToLower();

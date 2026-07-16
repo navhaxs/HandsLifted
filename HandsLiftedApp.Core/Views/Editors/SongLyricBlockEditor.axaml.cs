@@ -57,4 +57,20 @@ public partial class SongLyricBlockEditor : UserControl
         }
     }
 
+    private void TrimCopyrightBoilerplate_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (this.DataContext is SongEditorViewModel viewModel)
+        {
+            viewModel.Song.Copyright = SongImporter.TrimSongSelectBoilerplate(viewModel.Song.Copyright);
+        }
+    }
+
+    private void TrimCopyrightBoilerplateAndSongNumber_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (this.DataContext is SongEditorViewModel viewModel)
+        {
+            viewModel.Song.Copyright = SongImporter.TrimSongSelectBoilerplate(viewModel.Song.Copyright, dropSongNumber: true);
+        }
+    }
+
 }

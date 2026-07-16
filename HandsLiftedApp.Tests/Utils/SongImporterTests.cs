@@ -250,6 +250,38 @@ CCLI License #999999";
         }
 
         [TestMethod]
+        public void TestTrimSongSelectBoilerplate_RemovesTermsLine()
+        {
+            string input = "Brian Johnson, Chris Tomlin, Jason Ingram, Jenn Johnson, Phil Wickham\r\n" +
+                "CCLI Song # 7201044\r\n" +
+                "© 2022 Capitol CMG Paragon; S. D. G. Publishing; Phil Wickham Music\r\n" +
+                "For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccli.com\r\n" +
+                "CCLI License #317371";
+
+            string result = SongImporter.TrimSongSelectBoilerplate(input);
+
+            StringAssert.DoesNotMatch(result, new System.Text.RegularExpressions.Regex("SongSelect"));
+            StringAssert.Contains(result, "CCLI Song # 7201044");
+            StringAssert.Contains(result, "CCLI License #317371");
+        }
+
+        [TestMethod]
+        public void TestTrimSongSelectBoilerplate_CanAlsoDropSongNumber()
+        {
+            string input = "Writer Name\r\n" +
+                "CCLI Song # 123456\r\n" +
+                "© 2020 Some Publisher\r\n" +
+                "For use solely with the SongSelect® Terms of Use.  All rights reserved. www.ccli.com\r\n" +
+                "CCLI License #999999";
+
+            string result = SongImporter.TrimSongSelectBoilerplate(input, dropSongNumber: true);
+
+            StringAssert.DoesNotMatch(result, new System.Text.RegularExpressions.Regex("SongSelect"));
+            StringAssert.DoesNotMatch(result, new System.Text.RegularExpressions.Regex("CCLI Song"));
+            StringAssert.Contains(result, "CCLI License #999999");
+        }
+
+        [TestMethod]
         public void TestImportWithRepeatStanzaBlocks()
         {
             string input = @"This is the Song Title

@@ -50,6 +50,12 @@
                 <i:Interaction.Behaviors>
                     <behaviours:StanzaTextBoxBehavior />
                 </i:Interaction.Behaviors>
+                <TextBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Click="TrimCopyrightBoilerplate_OnClick" Header="Trim SongSelect boilerplate" />
+                        <MenuItem Click="TrimCopyrightBoilerplateAndSongNumber_OnClick" Header="Trim SongSelect boilerplate + CCLI Song #" />
+                    </ContextMenu>
+                </TextBox.ContextMenu>
             </TextBox>
         </Border>
 
