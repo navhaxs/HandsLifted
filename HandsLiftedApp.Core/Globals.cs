@@ -92,6 +92,15 @@ namespace HandsLiftedApp.Core
 
             ThumbnailEngineSettings.UseMpvEngine = true;
 
+            // Native PowerPoint import (Windows-only)
+            if (OperatingSystem.IsWindows())
+            {
+                PowerPointImportSettings.UseNativeInterop = AppPreferences.UseNativePowerPointImport;
+                NativePowerPointImportService.Initialize(BuildConstants.HelperExeHash);
+                AppPreferences.WhenAnyValue(p => p.UseNativePowerPointImport)
+                    .Subscribe(val => PowerPointImportSettings.UseNativeInterop = val);
+            }
+
             MainViewModel = new();
 
             // Create an observable that combines the changes to both LogoBitmap properties
@@ -104,6 +113,8 @@ namespace HandsLiftedApp.Core
         public void OnShutdown()
         {
             IsShuttingDown = true;
+
+            NativePowerPointImportService.Shutdown();
 
             if (MpvContextInstance != null)
             {
