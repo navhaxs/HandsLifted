@@ -75,6 +75,10 @@ namespace HandsLiftedApp.Core.Views.Designer
         private const string PreviewText =
             "Shine Jesus shine\nFill this land\nWith the Father's glory\nBlaze Spirit blaze\nSet our hearts on fire";
 
+        private const string PreviewTitleText = "Amazing Grace";
+        private const string PreviewCopyrightText =
+            "John Newton\nCCLI Song #22025\nPublic Domain\nCCLI License #317371";
+
         private void SyncEditorToSelection()
         {
             var item = designsListBox.SelectedItem as BaseSlideTheme;
@@ -88,11 +92,24 @@ namespace HandsLiftedApp.Core.Views.Designer
                     Text = PreviewText,
                     Theme = item,
                 });
+                themePreviewTitleSlideView.SetSlide(new SongTitleSlideInstance(null)
+                {
+                    Title = PreviewTitleText,
+                    Copyright = PreviewCopyrightText,
+                    Theme = item,
+                });
             }
             else
             {
                 themePreviewSlideView.SetSlide(null);
+                themePreviewTitleSlideView.SetSlide(null);
             }
+        }
+
+        private void PreviewModeToggle_OnChecked(object? sender, RoutedEventArgs e)
+        {
+            themePreviewSlideView.IsVisible = previewLyricToggle.IsChecked == true;
+            themePreviewTitleSlideView.IsVisible = previewTitleToggle.IsChecked == true;
         }
 
         private void RemoveItem_OnClick(object? sender, RoutedEventArgs e)

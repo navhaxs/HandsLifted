@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using AvaloniaVerticalAlignment = Avalonia.Layout.VerticalAlignment;
 using ReactiveUI;
 using System;
 using System.Linq;
@@ -42,7 +43,52 @@ namespace HandsLiftedApp.Data.SlideTheme
                     (textAlignment) => textAlignment == TextAlignment.Justify)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
-            
+
+            _calculatedTitleTextAlignmentLeft = this.WhenAnyValue(x => x.TitleTextAlignment,
+                    (textAlignment) => textAlignment == TextAlignment.Left)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTitleTextAlignmentLeft);
+
+            _calculatedTitleTextAlignmentCenter = this.WhenAnyValue(x => x.TitleTextAlignment,
+                    (textAlignment) => textAlignment == TextAlignment.Center)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTitleTextAlignmentCenter);
+
+            _calculatedTitleTextAlignmentRight = this.WhenAnyValue(x => x.TitleTextAlignment,
+                    (textAlignment) => textAlignment == TextAlignment.Right)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTitleTextAlignmentRight);
+
+            _calculatedCopyrightTextAlignmentLeft = this.WhenAnyValue(x => x.CopyrightTextAlignment,
+                    (textAlignment) => textAlignment == TextAlignment.Left)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedCopyrightTextAlignmentLeft);
+
+            _calculatedCopyrightTextAlignmentCenter = this.WhenAnyValue(x => x.CopyrightTextAlignment,
+                    (textAlignment) => textAlignment == TextAlignment.Center)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedCopyrightTextAlignmentCenter);
+
+            _calculatedCopyrightTextAlignmentRight = this.WhenAnyValue(x => x.CopyrightTextAlignment,
+                    (textAlignment) => textAlignment == TextAlignment.Right)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedCopyrightTextAlignmentRight);
+
+            _calculatedTitleVerticalAlignmentTop = this.WhenAnyValue(x => x.TitleVerticalAlignment,
+                    (verticalAlignment) => verticalAlignment == AvaloniaVerticalAlignment.Top)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTitleVerticalAlignmentTop);
+
+            _calculatedTitleVerticalAlignmentCenter = this.WhenAnyValue(x => x.TitleVerticalAlignment,
+                    (verticalAlignment) => verticalAlignment == AvaloniaVerticalAlignment.Center)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTitleVerticalAlignmentCenter);
+
+            _calculatedTitleVerticalAlignmentBottom = this.WhenAnyValue(x => x.TitleVerticalAlignment,
+                    (verticalAlignment) => verticalAlignment == AvaloniaVerticalAlignment.Bottom)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.CalculatedTitleVerticalAlignmentBottom);
+
             _calculatedTextFontBold = this.WhenAnyValue(x => x.FontWeight,
                 (fontWeight) => fontWeight == Avalonia.Media.FontWeight.Bold)
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -154,7 +200,100 @@ namespace HandsLiftedApp.Data.SlideTheme
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentCenter;
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentRight;
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextAlignmentJustify;
-        
+
+        private TextAlignment _titleTextAlignment = TextAlignment.Center;
+
+        [DataMember]
+        public TextAlignment TitleTextAlignment
+        {
+            get => _titleTextAlignment;
+            set => this.RaiseAndSetIfChanged(ref _titleTextAlignment, value);
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTitleTextAlignmentLeft;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTitleTextAlignmentCenter;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTitleTextAlignmentRight;
+
+        public bool CalculatedTitleTextAlignmentLeft
+        {
+            get => _calculatedTitleTextAlignmentLeft.Value;
+            set { if (value) TitleTextAlignment = TextAlignment.Left; }
+        }
+
+        public bool CalculatedTitleTextAlignmentCenter
+        {
+            get => _calculatedTitleTextAlignmentCenter.Value;
+            set { if (value) TitleTextAlignment = TextAlignment.Center; }
+        }
+
+        public bool CalculatedTitleTextAlignmentRight
+        {
+            get => _calculatedTitleTextAlignmentRight.Value;
+            set { if (value) TitleTextAlignment = TextAlignment.Right; }
+        }
+
+        private TextAlignment _copyrightTextAlignment = TextAlignment.Center;
+
+        [DataMember]
+        public TextAlignment CopyrightTextAlignment
+        {
+            get => _copyrightTextAlignment;
+            set => this.RaiseAndSetIfChanged(ref _copyrightTextAlignment, value);
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _calculatedCopyrightTextAlignmentLeft;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedCopyrightTextAlignmentCenter;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedCopyrightTextAlignmentRight;
+
+        public bool CalculatedCopyrightTextAlignmentLeft
+        {
+            get => _calculatedCopyrightTextAlignmentLeft.Value;
+            set { if (value) CopyrightTextAlignment = TextAlignment.Left; }
+        }
+
+        public bool CalculatedCopyrightTextAlignmentCenter
+        {
+            get => _calculatedCopyrightTextAlignmentCenter.Value;
+            set { if (value) CopyrightTextAlignment = TextAlignment.Center; }
+        }
+
+        public bool CalculatedCopyrightTextAlignmentRight
+        {
+            get => _calculatedCopyrightTextAlignmentRight.Value;
+            set { if (value) CopyrightTextAlignment = TextAlignment.Right; }
+        }
+
+        private AvaloniaVerticalAlignment _titleVerticalAlignment = AvaloniaVerticalAlignment.Center;
+
+        [DataMember]
+        public AvaloniaVerticalAlignment TitleVerticalAlignment
+        {
+            get => _titleVerticalAlignment;
+            set => this.RaiseAndSetIfChanged(ref _titleVerticalAlignment, value);
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTitleVerticalAlignmentTop;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTitleVerticalAlignmentCenter;
+        private readonly ObservableAsPropertyHelper<bool> _calculatedTitleVerticalAlignmentBottom;
+
+        public bool CalculatedTitleVerticalAlignmentTop
+        {
+            get => _calculatedTitleVerticalAlignmentTop.Value;
+            set { if (value) TitleVerticalAlignment = AvaloniaVerticalAlignment.Top; }
+        }
+
+        public bool CalculatedTitleVerticalAlignmentCenter
+        {
+            get => _calculatedTitleVerticalAlignmentCenter.Value;
+            set { if (value) TitleVerticalAlignment = AvaloniaVerticalAlignment.Center; }
+        }
+
+        public bool CalculatedTitleVerticalAlignmentBottom
+        {
+            get => _calculatedTitleVerticalAlignmentBottom.Value;
+            set { if (value) TitleVerticalAlignment = AvaloniaVerticalAlignment.Bottom; }
+        }
+
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextFontBold;
         private readonly ObservableAsPropertyHelper<bool> _calculatedTextFontItalic;
         // private readonly ObservableAsPropertyHelper<bool> _calculatedTextFontUnderline;
@@ -216,6 +355,24 @@ namespace HandsLiftedApp.Data.SlideTheme
         {
             get => _fontSize;
             set => this.RaiseAndSetIfChanged(ref _fontSize, value);
+        }
+
+        private int _titleFontSize = 100;
+
+        [DataMember]
+        public int TitleFontSize
+        {
+            get => _titleFontSize;
+            set => this.RaiseAndSetIfChanged(ref _titleFontSize, value);
+        }
+
+        private int _copyrightFontSize = 45;
+
+        [DataMember]
+        public int CopyrightFontSize
+        {
+            get => _copyrightFontSize;
+            set => this.RaiseAndSetIfChanged(ref _copyrightFontSize, value);
         }
 
         private readonly ObservableAsPropertyHelper<int> _calculatedLineHeight;

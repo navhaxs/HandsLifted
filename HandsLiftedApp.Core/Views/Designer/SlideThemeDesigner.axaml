@@ -100,13 +100,25 @@
         </DockPanel>
         <!-- Preview -->
         <Grid ColumnDefinitions="3*, *">
-            <Viewbox Grid.Column="0" StretchDirection="DownOnly"
-                                     VerticalAlignment="Stretch"
-                                     HorizontalAlignment="Stretch">
-                <!-- TODO use SongSlideView, refactor to use common properties -->
-                <!-- <render:SlideRender DataContext="{Binding #designsListBox.SelectedItem, Converter={StaticResource SlideThemeToPreviewConverter}}" Height="1080" Width="1920" /> -->
-                <designer:SongSlideView x:Name="themePreviewSlideView" Height="1080" Width="1920" />
-            </Viewbox>
+            <DockPanel Grid.Column="0">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8" Spacing="4">
+                    <RadioButton x:Name="previewLyricToggle" Content="Song Lyric"
+                                 GroupName="ThemePreviewMode" IsChecked="True"
+                                 Checked="PreviewModeToggle_OnChecked" />
+                    <RadioButton x:Name="previewTitleToggle" Content="Song Title"
+                                 GroupName="ThemePreviewMode"
+                                 Checked="PreviewModeToggle_OnChecked" />
+                </StackPanel>
+                <Viewbox StretchDirection="DownOnly"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch">
+                    <Grid Width="1920" Height="1080">
+                        <designer:SongSlideView x:Name="themePreviewSlideView" Height="1080" Width="1920" />
+                        <designer:SongTitleSlideView x:Name="themePreviewTitleSlideView" Height="1080" Width="1920"
+                                                      IsVisible="False" />
+                    </Grid>
+                </Viewbox>
+            </DockPanel>
 
             <!-- <ScrollViewer Grid.Column="1"> -->
             <!--     <TextBox Text="{Binding #designsListBox.SelectedItem}" /> -->
@@ -158,7 +170,19 @@
                             </DockPanel>
                         </StackPanel>
                     </Grid>
-                    
+
+                    <TextBlock Text="Title Font Size" Margin="0 6 0 0" />
+                    <TextBox Name="TitleFontSizeTextBox"
+                             HorizontalAlignment="Left"
+                             MinWidth="60"
+                             Text="{Binding TitleFontSize, FallbackValue=100}" />
+
+                    <TextBlock Text="Copyright Font Size" Margin="0 6 0 0" />
+                    <TextBox Name="CopyrightFontSizeTextBox"
+                             HorizontalAlignment="Left"
+                             MinWidth="60"
+                             Text="{Binding CopyrightFontSize, FallbackValue=45}" />
+
                              <Border
                         Margin="0,6"
                         Background="Transparent"
@@ -293,6 +317,210 @@
                             <RadioButton CornerRadius="6"
                                          IsChecked="{Binding CalculatedTextAlignmentJustify}">
                                 <avalonia:MaterialIcon Kind="AlignHorizontalDistribute" />
+                            </RadioButton>
+                        </UniformGrid>
+                    </Border>
+
+                    <TextBlock Text="Title Horizontal Alignment" Margin="0 6 0 0" />
+                    <Border
+                        Margin="0,6"
+                        Background="Transparent"
+                        DockPanel.Dock="Top">
+                        <UniformGrid Columns="3" Rows="1" HorizontalAlignment="Left" Height="35">
+                            <UniformGrid.Styles>
+                                <Style Selector="RadioButton">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ToggleButton
+                                                    Background="Transparent"
+                                                    Padding="8 0"
+                                                    BorderBrush="{DynamicResource OutlineBrush}"
+                                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                    IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style
+                                    Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource PrimaryActionBrush}" />
+                                </Style>
+                                <Style
+                                    Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background"
+                                            Value="#b7a6e7" />
+                                </Style>
+                                <Style
+                                    Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#9072EA" />
+                                </Style>
+                                <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
+                                    <Setter Property="CornerRadius" Value="2 0 0 2" />
+                                </Style>
+                                <Style Selector="RadioButton:nth-last-child(1) /template/ ToggleButton">
+                                    <Setter Property="CornerRadius" Value="0 2 2 0" />
+                                </Style>
+                                <Style Selector="avalonia|MaterialIcon">
+                                    <Setter Property="Height" Value="14" />
+                                    <Setter Property="Width" Value="14" />
+                                </Style>
+                            </UniformGrid.Styles>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedTitleTextAlignmentLeft}">
+                                <avalonia:MaterialIcon Kind="AlignHorizontalLeft" />
+                            </RadioButton>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedTitleTextAlignmentCenter}">
+                                <avalonia:MaterialIcon Kind="AlignHorizontalCentre" />
+                            </RadioButton>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedTitleTextAlignmentRight}">
+                                <avalonia:MaterialIcon Kind="AlignHorizontalRight" />
+                            </RadioButton>
+                        </UniformGrid>
+                    </Border>
+
+                    <TextBlock Text="Title Vertical Alignment" Margin="0 6 0 0" />
+                    <Border
+                        Margin="0,6"
+                        Background="Transparent"
+                        DockPanel.Dock="Top">
+                        <UniformGrid Columns="3" Rows="1" HorizontalAlignment="Left" Height="35">
+                            <UniformGrid.Styles>
+                                <Style Selector="RadioButton">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ToggleButton
+                                                    Background="Transparent"
+                                                    Padding="8 0"
+                                                    BorderBrush="{DynamicResource OutlineBrush}"
+                                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                    IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style
+                                    Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource PrimaryActionBrush}" />
+                                </Style>
+                                <Style
+                                    Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background"
+                                            Value="#b7a6e7" />
+                                </Style>
+                                <Style
+                                    Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#9072EA" />
+                                </Style>
+                                <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
+                                    <Setter Property="CornerRadius" Value="2 0 0 2" />
+                                </Style>
+                                <Style Selector="RadioButton:nth-last-child(1) /template/ ToggleButton">
+                                    <Setter Property="CornerRadius" Value="0 2 2 0" />
+                                </Style>
+                                <Style Selector="avalonia|MaterialIcon">
+                                    <Setter Property="Height" Value="14" />
+                                    <Setter Property="Width" Value="14" />
+                                </Style>
+                            </UniformGrid.Styles>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedTitleVerticalAlignmentTop}">
+                                <avalonia:MaterialIcon Kind="AlignVerticalTop" />
+                            </RadioButton>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedTitleVerticalAlignmentCenter}">
+                                <avalonia:MaterialIcon Kind="AlignVerticalCenter" />
+                            </RadioButton>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedTitleVerticalAlignmentBottom}">
+                                <avalonia:MaterialIcon Kind="AlignVerticalBottom" />
+                            </RadioButton>
+                        </UniformGrid>
+                    </Border>
+
+                    <TextBlock Text="Copyright Alignment" Margin="0 6 0 0" />
+                    <Border
+                        Margin="0,6"
+                        Background="Transparent"
+                        DockPanel.Dock="Top">
+                        <UniformGrid Columns="3" Rows="1" HorizontalAlignment="Left" Height="35">
+                            <UniformGrid.Styles>
+                                <Style Selector="RadioButton">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <ToggleButton
+                                                    Background="Transparent"
+                                                    Padding="8 0"
+                                                    BorderBrush="{DynamicResource OutlineBrush}"
+                                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                    IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style
+                                    Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource PrimaryActionBrush}" />
+                                </Style>
+                                <Style
+                                    Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background"
+                                            Value="#b7a6e7" />
+                                </Style>
+                                <Style
+                                    Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#9072EA" />
+                                </Style>
+                                <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
+                                    <Setter Property="CornerRadius" Value="2 0 0 2" />
+                                </Style>
+                                <Style Selector="RadioButton:nth-last-child(1) /template/ ToggleButton">
+                                    <Setter Property="CornerRadius" Value="0 2 2 0" />
+                                </Style>
+                                <Style Selector="avalonia|MaterialIcon">
+                                    <Setter Property="Height" Value="14" />
+                                    <Setter Property="Width" Value="14" />
+                                </Style>
+                            </UniformGrid.Styles>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedCopyrightTextAlignmentLeft}">
+                                <avalonia:MaterialIcon Kind="AlignHorizontalLeft" />
+                            </RadioButton>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedCopyrightTextAlignmentCenter}">
+                                <avalonia:MaterialIcon Kind="AlignHorizontalCentre" />
+                            </RadioButton>
+                            <RadioButton CornerRadius="6"
+                                         IsChecked="{Binding CalculatedCopyrightTextAlignmentRight}">
+                                <avalonia:MaterialIcon Kind="AlignHorizontalRight" />
                             </RadioButton>
                         </UniformGrid>
                     </Border>

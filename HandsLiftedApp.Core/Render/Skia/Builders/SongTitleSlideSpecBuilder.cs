@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Avalonia.Media;
+using VerticalAlignment = Avalonia.Layout.VerticalAlignment;
 using SkiaSharp;
 using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Data.Slides;
@@ -13,8 +14,9 @@ public static class SongTitleSlideSpecBuilder
     private const int CanvasWidth = 1920;
     private const int CanvasHeight = 1080;
     private const float HorizontalMargin = 80f;
-    private const float CopyrightSizeRatio = 0.45f;
+    private const float TitleVerticalMargin = 80f;
     private const float CopyrightBottomMargin = 60f;
+    private const float TitleCopyrightGap = 20f;
 
     private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
         theme.DropShadowEnabled
@@ -32,8 +34,12 @@ public static class SongTitleSlideSpecBuilder
 
         var elements = new List<RenderElement>();
 
+        float copyrightTop = !string.IsNullOrWhiteSpace(slide.Copyright)
+            ? ComputeCopyrightTop(slide.Copyright, slide.Theme)
+            : CanvasHeight;
+
         if (!string.IsNullOrWhiteSpace(slide.Title))
-            elements.Add(BuildTitleElement(slide.Title, slide.Theme));
+            elements.Add(BuildTitleElement(slide.Title, slide.Theme, copyrightTop));
 
         if (!string.IsNullOrWhiteSpace(slide.Copyright))
             elements.AddRange(BuildCopyrightElements(slide.Copyright, slide.Theme));
@@ -58,34 +64,47 @@ public static class SongTitleSlideSpecBuilder
         return new SolidBackground(bg);
     }
 
-    private static TextLineElement BuildTitleElement(string title, BaseSlideTheme theme)
+    private static TextLineElement BuildTitleElement(string title, BaseSlideTheme theme, float copyrightTop)
     {
         using var typeface = GetTypeface(theme);
-        using var measureFont = new SKFont(typeface, theme.FontSize);
+        using var measureFont = new SKFont(typeface, theme.TitleFontSize);
         using var measurePaint = new SKPaint(measureFont);
         float textWidth = measurePaint.MeasureText(title);
-        float x = theme.TextAlignment switch
+        float x = theme.TitleTextAlignment switch
         {
             TextAlignment.Right => CanvasWidth - textWidth - HorizontalMargin,
             TextAlignment.Left  => HorizontalMargin,
             _                   => (CanvasWidth - textWidth) / 2f, // Center / Justify
         };
-        float y = (CanvasHeight - theme.LineHeight) / 2f;
-        var bounds = new SKRect(x, y, x + textWidth, y + theme.LineHeight);
+        float titleLineHeight = theme.TitleFontSize * (float)theme.LineHeightEm;
+        // Bottom alignment must never dip into the copyright block; Center always centers on the whole slide.
+        float availableBottom = Math.Min(CanvasHeight, copyrightTop - TitleCopyrightGap);
+        float y = theme.TitleVerticalAlignment switch
+        {
+            VerticalAlignment.Top    => TitleVerticalMargin,
+            VerticalAlignment.Bottom => Math.Min(CanvasHeight - TitleVerticalMargin, availableBottom) - titleLineHeight,
+            _                        => (CanvasHeight - titleLineHeight) / 2f, // Center / Stretch
+        };
+        var bounds = new SKRect(x, y, x + textWidth, y + titleLineHeight);
         var elemTypeface = GetTypeface(theme);
-        return new TextLineElement(title, bounds, elemTypeface, theme.FontSize,
+        return new TextLineElement(title, bounds, elemTypeface, theme.TitleFontSize,
             ToSkColor(theme.TextAvaloniaColour), GetShadow(theme));
     }
 
-    private static IEnumerable<RenderElement> BuildCopyrightElements(string copyright, BaseSlideTheme theme)
+    private static float ComputeCopyrightTop(string copyright, BaseSlideTheme theme)
+    {
+        var displayLines = WrapCopyrightLines(copyright, theme);
+        float lineHeight = theme.CopyrightFontSize * 1.2f;
+        return CanvasHeight - CopyrightBottomMargin - displayLines.Count * lineHeight;
+    }
+
+    private static List<string> WrapCopyrightLines(string copyright, BaseSlideTheme theme)
     {
         var rawLines = copyright.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-        float copyrightSize = theme.FontSize * CopyrightSizeRatio;
-        float lineHeight = copyrightSize * 1.2f;
         float maxWidth = CanvasWidth - 2 * HorizontalMargin;
 
         using var typeface = GetTypeface(theme);
-        using var measureFont = new SKFont(typeface, copyrightSize);
+        using var measureFont = new SKFont(typeface, theme.CopyrightFontSize);
         using var measurePaint = new SKPaint(measureFont);
 
         // Word-wrap each input line into display lines that fit within maxWidth.
@@ -132,6 +151,20 @@ public static class SongTitleSlideSpecBuilder
                 displayLines.Add(current.ToString());
         }
 
+        return displayLines;
+    }
+
+    private static IEnumerable<RenderElement> BuildCopyrightElements(string copyright, BaseSlideTheme theme)
+    {
+        float copyrightSize = theme.CopyrightFontSize;
+        float lineHeight = copyrightSize * 1.2f;
+
+        using var typeface = GetTypeface(theme);
+        using var measureFont = new SKFont(typeface, copyrightSize);
+        using var measurePaint = new SKPaint(measureFont);
+
+        var displayLines = WrapCopyrightLines(copyright, theme);
+
         int n = displayLines.Count;
         var result = new List<RenderElement>(n);
         var color = ToSkColor(theme.TextAvaloniaColour);
@@ -144,7 +177,7 @@ public static class SongTitleSlideSpecBuilder
             // Stack lines above the bottom margin; empty lines still consume vertical space.
             float lineTop = CanvasHeight - CopyrightBottomMargin - (n - i) * lineHeight;
             float textWidth = measurePaint.MeasureText(line);
-            float x = theme.TextAlignment switch
+            float x = theme.CopyrightTextAlignment switch
             {
                 TextAlignment.Right => CanvasWidth - textWidth - HorizontalMargin,
                 TextAlignment.Left  => HorizontalMargin,
