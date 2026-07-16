@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using HandsLiftedApp.Core.Views.Setup;
 using HandsLiftedApp.Extensions;
+using HandsLiftedApp.Utils;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.ViewModels
@@ -17,11 +18,17 @@ namespace HandsLiftedApp.Core.ViewModels
         
         public SetupWindowViewModel(Screens screens)
         {
+            var friendlyNames = Win32DisplayHelper.GetMonitorFriendlyNames();
+
             AllAvailableScreens = screens.All.Select(i => new AppPreferencesViewModel.DisplayModel(i.Bounds)).ToList<AppPreferencesViewModel.DisplayModel?>();
             foreach (var (i, index) in AllAvailableScreens.WithIndex())
             {
-                if (i != null) i.Label = $"Display {index + 1}";
-            };
+                if (i == null) continue;
+                var bounds = new PixelRect(i.X, i.Y, i.Width, i.Height);
+                i.Label = friendlyNames.TryGetValue(bounds, out var name)
+                    ? $"Display {index + 1} - {name}"
+                    : $"Display {index + 1}";
+            }
             AllAvailableScreens.Add(null);
         }
 
