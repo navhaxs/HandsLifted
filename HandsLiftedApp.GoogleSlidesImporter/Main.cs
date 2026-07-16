@@ -8,7 +8,6 @@ using Google.Apis.Slides.v1;
 using Google.Apis.Slides.v1.Data;
 using Google.Apis.Util;
 using Google.Apis.Util.Store;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Diagnostics;
 using System.Net.Http.Json;
@@ -121,42 +120,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                         var slide = slides[i];
                         Debug.Print($"Slide {i}: ObjectId={slide.ObjectId}"); // TODO: store this slide.ObjectId so that subsequent 'syncs' can determine and maintain current active/relative slide selection
                         Console.WriteLine("- Slide #{0} contains {1} elements.", i + 1, slide.PageElements?.Count);
-
-                        //{
-                        //                        "width": 1600,
-                        //  "height": 900,
-                        //  "contentUrl": "https://lh4.googleusercontent.com/xRcaengA36WI6Oa8OKuAFpKq7ijKkI1ddv_FrJ4HsFDgaPmpa-TldIm_KmQbCMkrFfqkEVfSrfWayB42GrFhyF1nWn3g_StknLwJt0cGwgLPO35fFGYhw7BPBF3iAH8G1PMQtOjeTs-GpwC7Akxo0zymMe0aLcIb8TkWTjwbQPbVHXSlx2V5bsWMr49mvH2AcCN1M5dUYIlYZpIFKGLmH9WLhl1WKyo0Yfdfnr_IwOmwi3ko0oOQQ98PPq36KoZN4qLx7iSS54DcpKnBTwgr7BQ6WMV58A=s1600"
-                        //}
-
-                        service.HttpClient.GetAsync($"https://slides.googleapis.com/v1/presentations/{fileId}/pages/{slide.ObjectId}/thumbnail").ContinueWith(r =>
-
-                        {
-
-                            r.Result.Content.ReadFromJsonAsync<JObject>().ContinueWith(r =>
-                            {
-
-                            });
-                            //JObject joResponse = JObject.Parse();
-                            //JObject ojObject = (JObject)joResponse["contentUrl"];
-
-                            //using (var fs = new FileStream($"R:\\{slide.ObjectId}.png", FileMode.CreateNew))
-                            //    {
-                            //        r.Result.Content.CopyToAsync(fs);
-                            //    }
-                            //});
-
-                        });
                     }
-
-                    var x = service.HttpClient.GetAsync($"https://docs.google.com/presentation/d/{fileId}/export/png");
-
-                    x.ContinueWith(t =>
-                    {
-                        var c = t;
-                    });
-
-                    //https://docs.google.com/presentation/d/<FileID>/export/<format>
-
 
                     progressPercentage = 30.0d;
 
