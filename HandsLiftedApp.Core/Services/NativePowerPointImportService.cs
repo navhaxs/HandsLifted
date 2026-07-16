@@ -66,7 +66,9 @@ public static class NativePowerPointImportService
         process.Start();
 
         if (_jobHandle != IntPtr.Zero)
-            AssignProcessToJobObject(_jobHandle, process.Handle);
+            if (!AssignProcessToJobObject(_jobHandle, process.Handle))
+                Log.Warning("AssignProcessToJobObject failed (err={Err}); helper may survive main-app crash",
+                    Marshal.GetLastWin32Error());
 
         _currentHelperProcess = process;
 
