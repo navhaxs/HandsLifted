@@ -50,11 +50,24 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <_InteropHostSrc>$(MSBuildThisFileDirectory)..\HandsLiftedApp.Importer.PowerPointInteropHost\bin\$(Configuration)\net8.0-windows\HandsLiftedApp.Importer.PowerPointInteropHost.exe</_InteropHostSrc>
+      <_InteropHostSrcDir>$(MSBuildThisFileDirectory)..\HandsLiftedApp.Importer.PowerPointInteropHost\bin\$(Configuration)\net8.0-windows\</_InteropHostSrcDir>
+      <_InteropHostSrc>$(_InteropHostSrcDir)HandsLiftedApp.Importer.PowerPointInteropHost.exe</_InteropHostSrc>
+      <_InteropHostDestDir>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\PowerPointInteropHost\</_InteropHostDestDir>
     </PropertyGroup>
 
+    <!--
+      The helper exe is a framework-dependent apphost: it needs its companion .dll,
+      .deps.json, .runtimeconfig.json, and NetOffice/protobuf-net dependencies sitting
+      next to it, or it fails immediately with "The application to execute does not exist".
+      Copy the whole build output into a subfolder (not Desktop's own output root) to
+      avoid colliding with Desktop's own copies of shared dependencies.
+    -->
+    <ItemGroup>
+      <_InteropHostFiles Include="$(_InteropHostSrcDir)**\*.*" />
+    </ItemGroup>
+
     <Target Name="CopyInteropHost" AfterTargets="Build" Condition="Exists('$(_InteropHostSrc)')">
-      <Copy SourceFiles="$(_InteropHostSrc)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
-      <Message Text="Copied InteropHost to $(OutputPath)" Importance="normal" />
+      <Copy SourceFiles="@(_InteropHostFiles)" DestinationFolder="$(_InteropHostDestDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
+      <Message Text="Copied InteropHost (%(_InteropHostFiles.Identity)) to $(_InteropHostDestDir)" Importance="normal" />
     </Target>
 </Project>

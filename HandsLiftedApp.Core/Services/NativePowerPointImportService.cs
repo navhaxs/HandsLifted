@@ -33,7 +33,7 @@ public static class NativePowerPointImportService
     public static ImportStats RunImport(ImportTask task, IProgress<ImportStats>? progress = null)
     {
         var helperPath = Path.Combine(AppContext.BaseDirectory,
-            "HandsLiftedApp.Importer.PowerPointInteropHost.exe");
+            "PowerPointInteropHost", "HandsLiftedApp.Importer.PowerPointInteropHost.exe");
 
         Log.Information("Launching PowerPoint interop helper: {HelperPath}", helperPath);
 
