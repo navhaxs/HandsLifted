@@ -447,10 +447,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 {
                     if (ThumbnailEngineSettings.UseMpvEngine)
                     {
-                        using var avaBmp = MpvThumbnailExtractor.ExtractAsync(MotionBackgroundVideoPath, maxWidth: 1920, maxHeight: 1080)
-                            .GetAwaiter().GetResult();
-                        if (avaBmp != null)
-                            videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
+                        try
+                        {
+                            using var avaBmp = MpvThumbnailExtractor.ExtractAsync(MotionBackgroundVideoPath, maxWidth: 1920, maxHeight: 1080)
+                                .GetAwaiter().GetResult();
+                            if (avaBmp != null)
+                                videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", MotionBackgroundVideoPath);
+                        }
                     }
                     else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {

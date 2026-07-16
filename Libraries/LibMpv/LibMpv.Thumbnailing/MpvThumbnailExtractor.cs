@@ -23,14 +23,14 @@ public static class MpvThumbnailExtractor
         int maxHeight = 720,
         CancellationToken ct = default)
     {
-        if (!File.Exists(filePath))
-            return null;
-
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         cts.CancelAfter(TimeSpan.FromSeconds(15));
 
         try
         {
+            if (!File.Exists(filePath))
+                return null;
+
             return await Task.Run(
                     () => ExtractInternal(filePath, seekFraction, maxWidth, maxHeight, cts.Token),
                     cts.Token)

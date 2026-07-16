@@ -83,10 +83,17 @@ namespace HandsLiftedApp.Data.Slides
                 {
                     if (ThumbnailEngineSettings.UseMpvEngine)
                     {
-                        using var avaBmp = MpvThumbnailExtractor.ExtractAsync(videoPath, maxWidth: 1920, maxHeight: 1080)
-                            .GetAwaiter().GetResult();
-                        if (avaBmp != null)
-                            videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
+                        try
+                        {
+                            using var avaBmp = MpvThumbnailExtractor.ExtractAsync(videoPath, maxWidth: 1920, maxHeight: 1080)
+                                .GetAwaiter().GetResult();
+                            if (avaBmp != null)
+                                videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning(ex, "[SongTitleSlideInstance] Failed to extract video thumbnail from {Path}", videoPath);
+                        }
                     }
                     else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
