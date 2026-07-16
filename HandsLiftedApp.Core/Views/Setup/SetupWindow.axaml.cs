@@ -5,11 +5,15 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Drive.v3;
 using Google.Apis.Slides.v1;
+using Google.Apis.Util;
 using Google.Apis.Util.Store;
 using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.UI;
@@ -20,6 +24,9 @@ namespace HandsLiftedApp.Core.Views.Setup
 {
     public partial class SetupWindow : Window
     {
+        private static readonly string[] GoogleScopes =
+            { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
+
         SetupWindowViewModel _setupWindowViewModel;
  
         public SetupWindow()
@@ -38,7 +45,9 @@ namespace HandsLiftedApp.Core.Views.Setup
             };
             
             Win10DropshadowWorkaround.Register(this);
-            
+
+            RefreshGoogleSignInStatus();
+
             var themeVariants = this.Get<ComboBox>("ThemeVariants");
             themeVariants.SelectedItem = Application.Current!.RequestedThemeVariant;
             themeVariants.SelectionChanged += (sender, e) =>
@@ -98,41 +107,117 @@ namespace HandsLiftedApp.Core.Views.Setup
 
             if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
             {
-                statusText.Text = "Enter Client ID and Client Secret first.";
-                statusText.IsVisible = true;
+                SetGoogleSignInStatus("Enter Client ID and Client Secret first.", GoogleSignInStatus.Error);
                 return;
             }
 
             button.IsEnabled = false;
-            statusText.Text = "Opening browser...";
-            statusText.IsVisible = true;
+            SetGoogleSignInStatus("Opening browser...", GoogleSignInStatus.Neutral);
 
             System.Threading.Tasks.Task.Run(() =>
             {
                 try
                 {
-                    string[] scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
                     GoogleWebAuthorizationBroker.AuthorizeAsync(
                         new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
-                        scopes,
+                        GoogleScopes,
                         "user",
                         CancellationToken.None,
                         new FileDataStore("token.json", true)).Wait();
 
                     Dispatcher.UIThread.Post(() =>
                     {
-                        statusText.Text = "Signed in successfully.";
                         button.IsEnabled = true;
+                        RefreshGoogleSignInStatus();
                     });
                 }
                 catch (Exception ex)
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        statusText.Text = $"Sign-in failed: {ex.Message}";
+                        SetGoogleSignInStatus($"Sign-in failed: {ex.Message}", GoogleSignInStatus.Error);
                         button.IsEnabled = true;
                     });
                 }
+            });
+        }
+
+        private enum GoogleSignInStatus { Ok, Error, Neutral }
+
+        private void SetGoogleSignInStatus(string text, GoogleSignInStatus status)
+        {
+            var statusText = this.Get<TextBlock>("SignInStatusText");
+            statusText.Text = text;
+            statusText.IsVisible = true;
+            statusText.Foreground = status switch
+            {
+                GoogleSignInStatus.Ok => new SolidColorBrush(Colors.MediumSeaGreen),
+                GoogleSignInStatus.Error => new SolidColorBrush(Colors.OrangeRed),
+                _ => new SolidColorBrush(Colors.Gray)
+            };
+        }
+
+        // Checks the stored OAuth token non-interactively (no browser popup) so the panel can show
+        // whether the user is currently signed in, expired (silently refreshed if possible), or not
+        // signed in at all.
+        private void RefreshGoogleSignInStatus()
+        {
+            var clientId = Globals.Instance.AppPreferences.GoogleClientId;
+            var clientSecret = Globals.Instance.AppPreferences.GoogleClientSecret;
+
+            if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
+            {
+                SetGoogleSignInStatus("Not signed in.", GoogleSignInStatus.Neutral);
+                return;
+            }
+
+            SetGoogleSignInStatus("Checking sign-in status...", GoogleSignInStatus.Neutral);
+
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                string text;
+                GoogleSignInStatus status;
+                try
+                {
+                    var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+                    {
+                        ClientSecrets = new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
+                        Scopes = GoogleScopes,
+                        DataStore = new FileDataStore("token.json", true)
+                    });
+
+                    var storedToken = flow.LoadTokenAsync("user", CancellationToken.None).GetAwaiter().GetResult();
+                    if (storedToken == null)
+                    {
+                        text = "Not signed in.";
+                        status = GoogleSignInStatus.Neutral;
+                    }
+                    else
+                    {
+                        var credential = new UserCredential(flow, "user", storedToken);
+                        if (credential.Token.IsExpired(SystemClock.Default))
+                        {
+                            bool refreshed;
+                            try { refreshed = credential.RefreshTokenAsync(CancellationToken.None).GetAwaiter().GetResult(); }
+                            catch (TokenResponseException) { refreshed = false; }
+
+                            text = refreshed ? "Signed in." : "Sign-in expired — please sign in again.";
+                            status = refreshed ? GoogleSignInStatus.Ok : GoogleSignInStatus.Error;
+                        }
+                        else
+                        {
+                            text = "Signed in.";
+                            status = GoogleSignInStatus.Ok;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    text = $"Couldn't check sign-in status: {ex.Message}";
+                    status = GoogleSignInStatus.Error;
+                }
+
+                Dispatcher.UIThread.Post(() => SetGoogleSignInStatus(text, status));
             });
         }
 

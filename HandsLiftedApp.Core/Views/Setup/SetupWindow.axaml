@@ -1,20 +1,22 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:app="clr-namespace:HandsLiftedApp.Core"
-        xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-        mc:Ignorable="d"
-        Width="600" Height="400"
-        ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
-        ExtendClientAreaTitleBarHeightHint="90"
-        ExtendClientAreaToDecorationsHint="True"
-        WindowStartupLocation="CenterOwner"
-        x:Class="HandsLiftedApp.Core.Views.Setup.SetupWindow"
-        x:DataType="viewModels:SetupWindowViewModel"
-        Topmost="True"
-        Background="{DynamicResource SurfaceBrush}"
-        Title="SetupWindow">
+﻿<Window
+    Background="{DynamicResource SurfaceBrush}"
+    ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
+    ExtendClientAreaTitleBarHeightHint="90"
+    ExtendClientAreaToDecorationsHint="True"
+    Height="400"
+    Title="SetupWindow"
+    Topmost="True"
+    Width="600"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.Setup.SetupWindow"
+    x:DataType="viewModels:SetupWindowViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -25,20 +27,29 @@
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="ActiveTabForegroundBrush">White</SolidColorBrush>
                 </ResourceDictionary>
-                </ResourceDictionary.ThemeDictionaries>
+            </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <DockPanel>
         <Border DockPanel.Dock="Top">
-            <TextBlock FontSize="16" Margin="16 6 12 6"
-                       HorizontalAlignment="{OnPlatform Default=Left, macOS=Center}"
-                       Text="Setup" />
+            <TextBlock
+                FontSize="16"
+                HorizontalAlignment="{OnPlatform Default=Left,
+                                                 macOS=Center}"
+                Margin="16,6,12,6"
+                Text="Setup" />
         </Border>
 
         <DockPanel Background="{DynamicResource DarkSurfaceBrush}">
             <DockPanel DockPanel.Dock="Bottom">
-                <Button DockPanel.Dock="Right" Margin="8 6" Padding="24 12" Click="DoneButton_OnClick">Done</Button>
+                <Button
+                    Click="DoneButton_OnClick"
+                    DockPanel.Dock="Right"
+                    Margin="8,6"
+                    Padding="24,12">
+                    Done
+                </Button>
                 <Grid />
             </DockPanel>
             <TabControl TabStripPlacement="Left">
@@ -47,62 +58,64 @@
                         <Setter Property="Template">
                             <ControlTemplate>
                                 <Border
-                                    CornerRadius="6 0 0 6"
-                                    Padding="16 8 24 8"
-                                    Margin="8 0 0 0"
                                     Background="Transparent"
-                                    Name="PART_LayoutRoot">
+                                    CornerRadius="6 0 0 6"
+                                    Margin="8,0,0,0"
+                                    Name="PART_LayoutRoot"
+                                    Padding="16,8,24,8">
                                     <Panel>
                                         <ContentPresenter
-                                            Name="PART_ContentPresenter_Override"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
                                             Content="{TemplateBinding Header}"
                                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                            RecognizesAccessKey="True" />
-                                        <Border Name="PART_SelectedPipe"
-                                                Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
-                                                CornerRadius="{DynamicResource ControlCornerRadius}"
-                                                IsVisible="False" />
+                                            HorizontalAlignment="Stretch"
+                                            Name="PART_ContentPresenter_Override"
+                                            RecognizesAccessKey="True"
+                                            VerticalAlignment="Stretch" />
+                                        <Border
+                                            Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
+                                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                                            IsVisible="False"
+                                            Name="PART_SelectedPipe" />
                                     </Panel>
                                 </Border>
                             </ControlTemplate>
                         </Setter>
                     </Style>
-                    <Style Selector="TabItem:selected > Border#PART_LayoutRoot">
+                    <Style Selector="TabItem:selected &gt; Border#PART_LayoutRoot">
                         <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
                     </Style>
                     <Style Selector="TabItem:selected">
                         <Setter Property="Foreground" Value="{DynamicResource ActiveTabForegroundBrush}" />
                     </Style>
-                    <!-- <Style Selector="Tab" -->
+                    <!--  <Style Selector="Tab"  -->
                     <Style Selector="TabControl">
                         <Setter Property="Margin" Value="0" />
                         <Setter Property="Padding" Value="{DynamicResource TabItemMargin}" />
                         <Setter Property="Background" Value="{DynamicResource TabControlBackground}" />
                         <Setter Property="Template">
                             <ControlTemplate>
-                                <Border BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="{TemplateBinding CornerRadius}"
-                                        Background="{TemplateBinding Background}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                                <Border
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}">
                                     <DockPanel>
-                                        <ItemsPresenter Name="PART_ItemsPresenter"
-                                                        Margin="0 8 0 0"
-                                                        ItemsPanel="{TemplateBinding ItemsPanel}"
-                                                        DockPanel.Dock="{TemplateBinding TabStripPlacement}" />
-                                        <Border
-                                            CornerRadius="0 0 0 6"
-                                            Background="{DynamicResource BackgroundBrush}">
+                                        <ItemsPresenter
+                                            DockPanel.Dock="{TemplateBinding TabStripPlacement}"
+                                            ItemsPanel="{TemplateBinding ItemsPanel}"
+                                            Margin="0,8,0,0"
+                                            Name="PART_ItemsPresenter" />
+                                        <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="0 0 0 6">
 
-                                            <ContentPresenter Name="PART_SelectedContentHost"
-                                                              Padding="{TemplateBinding Padding}"
-                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                              Content="{TemplateBinding SelectedContent}"
-                                                              ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+                                            <ContentPresenter
+                                                Content="{TemplateBinding SelectedContent}"
+                                                ContentTemplate="{TemplateBinding SelectedContentTemplate}"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                Name="PART_SelectedContentHost"
+                                                Padding="{TemplateBinding Padding}"
+                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
 
                                         </Border>
 
@@ -118,10 +131,10 @@
                     <StackPanel>
                         <Label>Theme</Label>
                         <ComboBox
-                            x:Name="ThemeVariants"
-                            HorizontalAlignment="Stretch"
                             DisplayMemberBinding="{Binding Key, x:DataType=ThemeVariant}"
-                            SelectedIndex="0">
+                            HorizontalAlignment="Stretch"
+                            SelectedIndex="0"
+                            x:Name="ThemeVariants">
                             <ComboBox.Items>
                                 <ThemeVariant>Default</ThemeVariant>
                                 <ThemeVariant>Light</ThemeVariant>
@@ -135,27 +148,30 @@
                     <StackPanel Margin="8">
                         <Label>Output Display (Projector)</Label>
                         <ComboBox
-                            SelectionChanged="ProjectorOutput_OnSelectionChanged"
+                            ItemsSource="{Binding AllAvailableScreens}"
                             SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OutputDisplayBounds}"
-                            ItemsSource="{Binding AllAvailableScreens}">
+                            SelectionChanged="ProjectorOutput_OnSelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding TargetNullValue='(Unset)'}" />                                </DataTemplate>
+                                    <TextBlock Text="{Binding TargetNullValue='(Unset)'}" />
+                                </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                         <Grid Height="16" />
                         <Label>Stage Display</Label>
-                        <ComboBox Name="StageDisplayComboBox"
-                                  SelectionChanged="StageOutput_OnSelectionChanged"
-                                  SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.StageDisplayBounds}"
-                                  ItemsSource="{Binding AllAvailableScreens}">
+                        <ComboBox
+                            ItemsSource="{Binding AllAvailableScreens}"
+                            Name="StageDisplayComboBox"
+                            SelectedItem="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.StageDisplayBounds}"
+                            SelectionChanged="StageOutput_OnSelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding TargetNullValue='(Unset)'}" />                                </DataTemplate>
+                                    <TextBlock Text="{Binding TargetNullValue='(Unset)'}" />
+                                </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                         <Grid Height="16" />
-                        <ToggleButton x:Name="IdentifyToggleButton" Click="Button_OnClick">Identify</ToggleButton>
+                        <ToggleButton Click="Button_OnClick" x:Name="IdentifyToggleButton">Identify</ToggleButton>
                     </StackPanel>
 
                 </TabItem>
@@ -163,16 +179,13 @@
                 <TabItem Header="Startup">
                     <StackPanel>
                         <Label>Startup</Label>
-                        <CheckBox
-                            IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowOutput}">
+                        <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowOutput}">
                             Show output display on startup
                         </CheckBox>
-                        <CheckBox
-                            IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowStage}">
+                        <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowStage}">
                             Show stage display on startup
                         </CheckBox>
-                        <CheckBox
-                            IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowLogo}">
+                        <CheckBox IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.OnStartupShowLogo}">
                             Show logo on startup
                         </CheckBox>
                     </StackPanel>
@@ -183,11 +196,9 @@
                     <StackPanel>
                         <Label>NDI</Label>
                         <Label>Output Display (Projector)</Label>
-                        <TextBox
-                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}" />
+                        <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiMainOutputName}" />
                         <Label>Lyrics (Lower Thirds)</Label>
-                        <TextBox
-                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" />
+                        <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.NdiLyricsOutputName}" />
                         <Label>Stage Display</Label>
                         <Label>(TODO not yet implemented)</Label>
                     </StackPanel>
@@ -197,12 +208,20 @@
                 <TabItem Header="Library">
                     <StackPanel>
                         <TextBlock Text="TODO edit library.yml to configure libraries" />
-                        <Button Click="EditLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20"
-                                Margin="0 16 0 0" MinWidth="200">
+                        <Button
+                            Click="EditLibraryButton_OnClick"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0"
+                            MinWidth="200"
+                            Padding="20">
                             Edit library.yml
                         </Button>
-                        <Button Click="ReloadLibraryButton_OnClick" HorizontalAlignment="Center" Padding="20"
-                                Margin="0 16 0 0" MinWidth="200">
+                        <Button
+                            Click="ReloadLibraryButton_OnClick"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0"
+                            MinWidth="200"
+                            Padding="20">
                             Reload library.yml
                         </Button>
                     </StackPanel>
@@ -212,28 +231,29 @@
                     <StackPanel Margin="12">
 
                         <TextBlock Text="Google Slides API Key" />
-                        
-                        <Grid Margin="0 4 0 0" />
+
+                        <Grid Margin="0,4,0,0" />
                         <TextBlock Text="Client Id" />
-                        <TextBox
-                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.GoogleClientId}"
-                        />
-                        
-                        <Grid Margin="0 4 0 0" />
+                        <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.GoogleClientId}" />
+
+                        <Grid Margin="0,4,0,0" />
                         <TextBlock Text="Client Secret" />
-                        <TextBox
-                            Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.GoogleClientSecret}"
-                            />
-                        
-                        <Grid Margin="0 4 0 0" />
-                        
-                        <Button x:Name="SignInWithGoogleButton"
-                                HorizontalAlignment="Left" Padding="16 6"
-                                Margin="0 6 0 0"
-                                Click="SignInWithGoogle_OnClick">
+                        <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.GoogleClientSecret}" />
+
+                        <Grid Margin="0,4,0,0" />
+
+                        <Button
+                            Click="SignInWithGoogle_OnClick"
+                            HorizontalAlignment="Left"
+                            Margin="0,6,0,0"
+                            Padding="16,6"
+                            x:Name="SignInWithGoogleButton">
                             Sign in with Google
                         </Button>
-                        <TextBlock x:Name="SignInStatusText" Margin="0 4 0 0" IsVisible="False" />
+                        <TextBlock
+                            IsVisible="False"
+                            Margin="0,8,0,0"
+                            x:Name="SignInStatusText" />
                     </StackPanel>
                 </TabItem>
 
