@@ -77,6 +77,14 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _enableDebugStats, value);
         }
 
+        private bool _useNativePowerPointImport = false;
+        [DataMember]
+        public bool UseNativePowerPointImport
+        {
+            get => _useNativePowerPointImport;
+            set => this.RaiseAndSetIfChanged(ref _useNativePowerPointImport, value);
+        }
+
         private bool _enableOutputNDI;
         [DataMember]
         public bool EnableOutputNDI
