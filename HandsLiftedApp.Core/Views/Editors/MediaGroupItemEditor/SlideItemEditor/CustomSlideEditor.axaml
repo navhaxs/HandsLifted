@@ -211,16 +211,34 @@
                                             <TextBox Text="{Binding Text, Mode=TwoWay}" AcceptsReturn="True"
                                                      AcceptsTab="True" MinHeight="80" />
                                             <TextBlock>FontSize</TextBlock>
-                                            <TextBox Text="{Binding FontSize}" />
-                                            <Slider Value="{Binding FontSize}" Minimum="1" Maximum="600" />
-                                            <TextBlock>X</TextBlock>
-                                            <Slider Value="{Binding X}" Minimum="0" Maximum="1920" />
-                                            <TextBlock>Y</TextBlock>
-                                            <Slider Value="{Binding Y}" Minimum="0" Maximum="1080" />
-                                            <TextBlock>Height</TextBlock>
-                                            <Slider Value="{Binding Height}" Minimum="0" Maximum="1080" />
-                                            <TextBlock>Width</TextBlock>
-                                            <Slider Value="{Binding Width}" Minimum="0" Maximum="1920" />
+                                            <controls:NumericSliderBox Text="{Binding FontSize}"
+                                                                        Minimum="1" Maximum="600" TickFrequency="1" />
+
+                                            <Grid ColumnDefinitions="*, *" Margin="0 6 0 0">
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock>X</TextBlock>
+                                                    <controls:NumericSliderBox Text="{Binding X}"
+                                                                                Minimum="0" Maximum="1920" TickFrequency="1" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Margin="6 0 0 0">
+                                                    <TextBlock>Y</TextBlock>
+                                                    <controls:NumericSliderBox Text="{Binding Y}"
+                                                                                Minimum="0" Maximum="1080" TickFrequency="1" />
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <Grid ColumnDefinitions="*, *" Margin="0 6 0 0">
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock>Height</TextBlock>
+                                                    <controls:NumericSliderBox Text="{Binding Height}"
+                                                                                Minimum="0" Maximum="1080" TickFrequency="1" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Margin="6 0 0 0">
+                                                    <TextBlock>Width</TextBlock>
+                                                    <controls:NumericSliderBox Text="{Binding Width}"
+                                                                                Minimum="0" Maximum="1920" TickFrequency="1" />
+                                                </StackPanel>
+                                            </Grid>
 
                                             <!-- "Garamond, Playfair Display" -->
 
@@ -484,15 +502,9 @@
                                             <Border Height="1" Margin="0 10" Background="#808080" />
 
                                             <TextBlock Text="Line Height" />
-                                            <DockPanel>
-                                                <TextBox Name="LineHeightTextBox"
-                                                         MinWidth="30"
-                                                         Text="{Binding LineHeightEm, FallbackValue=1}" />
-                                                <Slider Name="LineHeightSlider" Minimum="0.1" Maximum="3"
-                                                        IsSnapToTickEnabled="True"
-                                                        TickFrequency="0.01"
-                                                        Value="{Binding #LineHeightTextBox.Text}" />
-                                            </DockPanel>
+                                            <controls:NumericSliderBox Text="{Binding LineHeightEm, FallbackValue=1}"
+                                                                        TextBoxMinWidth="30"
+                                                                        Minimum="0.1" Maximum="3" TickFrequency="0.01" />
                                             <!-- -->
                                             <!-- <ComboBox Name="TextAlignmentComboBox" -->
                                             <!--           SelectedItem="{Binding #designsListBox.SelectedItem.TextAlignment}" /> -->

@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+             xmlns:converters="clr-namespace:HandsLiftedApp.Controls.Converters"
+             mc:Ignorable="d" d:DesignWidth="140" d:DesignHeight="32"
+             HorizontalAlignment="Left"
+             x:Class="HandsLiftedApp.Controls.NumericSliderBox">
+
+    <UserControl.Resources>
+        <converters:RoundedDecimalConverter x:Key="RoundedDecimalConverter" />
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Button DockPanel.Dock="Right"
+                DataContext="{Binding $parent[controls:NumericSliderBox]}"
+                Padding="4"
+                Margin="4 0 0 0"
+                Background="Transparent"
+                BorderThickness="0"
+                CornerRadius="4"
+                Cursor="Hand">
+            <Button.Styles>
+                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#22ffffff" />
+                </Style>
+            </Button.Styles>
+            <Button.Flyout>
+                <Flyout Placement="Bottom">
+                    <Slider Width="200"
+                            IsSnapToTickEnabled="True"
+                            Minimum="{Binding Minimum}"
+                            Maximum="{Binding Maximum}"
+                            TickFrequency="{Binding TickFrequency}"
+                            Value="{Binding Text, Converter={StaticResource RoundedDecimalConverter}}" />
+                </Flyout>
+            </Button.Flyout>
+            <avalonia:MaterialIcon Kind="TuneVariant" Width="14" Height="14" />
+        </Button>
+        <TextBox MinWidth="{Binding $parent[controls:NumericSliderBox].TextBoxMinWidth}"
+                 Text="{Binding $parent[controls:NumericSliderBox].Text}" />
+    </DockPanel>
+</UserControl>
