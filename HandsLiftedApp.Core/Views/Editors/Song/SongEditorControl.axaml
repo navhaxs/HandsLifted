@@ -5,15 +5,22 @@
     x:Class="HandsLiftedApp.Core.Views.Editors.Song.SongEditorControl"
     x:DataType="editor:SongEditorViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
     xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:PercentageScaleConverter x:Key="PercentageScaleConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
 
         <Grid.Styles>
@@ -131,6 +138,9 @@
                         DataContext="{Binding Song}"
                         DockPanel.Dock="Top"
                         Margin="0,8" />
+                    <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Right" Margin="0,0,0,4">
+                        <controls:ThumbnailSizeSlider Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SongEditorThumbnailSizeMultiplier}" />
+                    </DockPanel>
                     <Border
                         Background="#AAAAAA"
                         BoxShadow="inset 0 0 2 #c1c1c1"
@@ -152,8 +162,8 @@
                                     <ItemsPanelTemplate>
                                         <WrapPanel
                                             IsHitTestVisible="False"
-                                            ItemHeight="160"
-                                            ItemWidth="240" />
+                                            ItemHeight="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SongEditorThumbnailSizeMultiplier, Converter={StaticResource PercentageScaleConverter}, ConverterParameter=160}"
+                                            ItemWidth="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SongEditorThumbnailSizeMultiplier, Converter={StaticResource PercentageScaleConverter}, ConverterParameter=240}" />
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                                 <ListBox.DataTemplates>

@@ -8,6 +8,7 @@
     xmlns:app="clr-namespace:HandsLiftedApp.Core"
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
+    xmlns:corecontrols="clr-namespace:HandsLiftedApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:designer="clr-namespace:HandsLiftedApp.Views.Designer"
     xmlns:library="clr-namespace:HandsLiftedApp.Views.Library"
@@ -284,29 +285,7 @@
                         Margin="0,0,-1,6">
                         <DockPanel>
                             <DockPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                                <DockPanel.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="BorderThickness" Value="0" />
-                                        <Setter Property="Background" Value="Transparent" />
-                                    </Style>
-                                </DockPanel.Styles>
-                                <Button Click="ZoomOutButton_OnClick" Padding="6,0,0,0">
-                                    <avalonia:MaterialIcon Foreground="#808080" Kind="Minus" />
-                                </Button>
-                                <Button
-                                    Click="ZoomInButton_OnClick"
-                                    DockPanel.Dock="Right"
-                                    Padding="0,0,6,0">
-                                    <avalonia:MaterialIcon Foreground="#808080" Kind="Plus" />
-                                </Button>
-                                <Slider
-                                    IsSnapToTickEnabled="True"
-                                    Maximum="150"
-                                    Minimum="50"
-                                    Name="BackgroundSlider"
-                                    TickFrequency="0.1"
-                                    Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlideThumbnailSizeMultiplier}"
-                                    Width="100" />
+                                <corecontrols:ThumbnailSizeSlider Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlideThumbnailSizeMultiplier}" />
                             </DockPanel>
                             <!--    -->
                             <!--  <Border  -->

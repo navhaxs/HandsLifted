@@ -218,6 +218,14 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _slideThumbnailSizeMultiplier, value);
         }
 
+        private double _songEditorThumbnailSizeMultiplier = 80;
+        [DataMember]
+        public double SongEditorThumbnailSizeMultiplier
+        {
+            get => _songEditorThumbnailSizeMultiplier;
+            set => this.RaiseAndSetIfChanged(ref _songEditorThumbnailSizeMultiplier, value);
+        }
+
         [DataContract]
         public class DisplayModel : ReactiveObject
         {

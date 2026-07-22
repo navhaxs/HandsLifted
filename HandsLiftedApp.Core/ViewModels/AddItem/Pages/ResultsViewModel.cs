@@ -99,7 +99,11 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
                 // MessageBus.Current.SendMessage(new AddItemByFilePathMessage(items, vm.AddItemViewModel.ItemInsertIndex));
 
                 MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
-                    new SongEditorViewModel(song, Globals.Instance.MainViewModel.Playlist) { ItemInsertIndex = addItemViewModel.ItemInsertIndex }));
+                    new SongEditorViewModel(song, Globals.Instance.MainViewModel.Playlist)
+                    {
+                        ItemInsertIndex = addItemViewModel.ItemInsertIndex,
+                        SongLibrary = _library as SongLibrary
+                    }));
 
                 window.Close();
             });

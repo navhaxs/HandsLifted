@@ -243,6 +243,13 @@ namespace HandsLiftedApp.Core.Views.Editors
             File.WriteAllBytes(path, memoryStream.ToArray());
             vm.SongLibrary!.TriggerRefresh();
 
+            if (vm.ItemInsertIndex.HasValue && !vm.ItemInserted)
+            {
+                Globals.Instance.MainViewModel.Playlist.Items.Insert(vm.ItemInsertIndex.Value, vm.Song);
+                vm.ItemInserted = true;
+                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = vm.ItemInsertIndex.Value });
+            }
+
             _closeConfirmed = true;
             Close();
         }

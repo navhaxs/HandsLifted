@@ -206,13 +206,4 @@ public partial class MainView : UserControl
         setupWindow.Show();
     }
 
-    private void ZoomInButton_OnClick(object? sender, RoutedEventArgs e)
-    {
-        Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier = Math.Min(150d, (double)((decimal)Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier + 10m));
-    }
-
-    private void ZoomOutButton_OnClick(object? sender, RoutedEventArgs e)
-    {
-        Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier = Math.Max(50d, (double)((decimal)Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier - 10m));
-    }
 }

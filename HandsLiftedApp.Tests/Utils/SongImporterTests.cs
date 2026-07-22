@@ -282,6 +282,20 @@ CCLI License #999999";
         }
 
         [TestMethod]
+        public void TestTrimSongSelectBoilerplate_RemovesRemainingPortionIsUnaffiliated()
+        {
+            string input = "Alexander Pappas, Ben Fielding, Hannah Hobbs, Tahisha Hunt\r\n" +
+                "(c) 2022 Integrity's Praise! Music; SHOUT! Music Publishing Australia; Remaining portion is unaffiliated\r\n" +
+                "CCLI License #317371";
+
+            string result = SongImporter.TrimSongSelectBoilerplate(input);
+
+            StringAssert.DoesNotMatch(result, new System.Text.RegularExpressions.Regex("Remaining portion is unaffiliated", System.Text.RegularExpressions.RegexOptions.IgnoreCase));
+            StringAssert.Contains(result, "Integrity's Praise! Music");
+            StringAssert.Contains(result, "CCLI License #317371");
+        }
+
+        [TestMethod]
         public void TestImportWithRepeatStanzaBlocks()
         {
             string input = @"This is the Song Title

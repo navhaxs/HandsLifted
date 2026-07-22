@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -10,7 +12,9 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.ViewModels.Editor;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Core.Views.Editors;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.LibraryView
 {
@@ -100,6 +104,112 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             var editor = new SongEditorWindow { DataContext = editorVm };
             editor.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             editor.Show();
+        }
+
+        private SongLibrary? GetSongLibrary() =>
+            (DataContext as LibraryQueryViewModel)?.ActiveSongLibrary;
+
+        private static LibraryItem? GetClickedItem(object? sender)
+        {
+            if (sender is MenuItem { Parent: ContextMenu { PlacementTarget: { DataContext: LibraryItem item } } })
+                return item;
+            return null;
+        }
+
+        private ContextMenu? _emptySpaceMenu;
+
+        private void SongListBox_ContextRequested(object? sender, ContextRequestedEventArgs e)
+        {
+            if (e.Handled) return;
+
+            // If source is inside a ListBoxItem, that item's ContextMenu handles it
+            var source = e.Source as StyledElement;
+            while (source != null && !ReferenceEquals(source, sender))
+            {
+                if (source is ListBoxItem) return;
+                source = source.Parent;
+            }
+
+            if (_emptySpaceMenu == null)
+            {
+                var refresh = new MenuItem { Header = "Refresh Library" };
+                refresh.Click += RefreshLibrary_OnClick;
+                _emptySpaceMenu = new ContextMenu();
+                _emptySpaceMenu.Items.Add(refresh);
+            }
+            _emptySpaceMenu.Open(sender as Control);
+            e.Handled = true;
+        }
+
+        private void RefreshLibrary_OnClick(object? sender, RoutedEventArgs e)
+        {
+            GetSongLibrary()?.TriggerRefresh();
+        }
+
+        private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var item = GetClickedItem(sender);
+            if (item == null || !File.Exists(item.FullFilePath)) return;
+            try
+            {
+                File.Delete(item.FullFilePath);
+                GetSongLibrary()?.TriggerRefresh();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to delete library item {Path}", item.FullFilePath);
+            }
+        }
+
+        private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var item = GetClickedItem(sender);
+            if (item == null || !File.Exists(item.FullFilePath)) return;
+            var dir = Path.GetDirectoryName(item.FullFilePath)!;
+            var nameNoExt = Path.GetFileNameWithoutExtension(item.FullFilePath);
+            var ext = Path.GetExtension(item.FullFilePath);
+            var dest = Path.Combine(dir, nameNoExt + " (Copy)" + ext);
+            int i = 2;
+            while (File.Exists(dest))
+                dest = Path.Combine(dir, $"{nameNoExt} (Copy {i++}){ext}");
+            try
+            {
+                File.Copy(item.FullFilePath, dest);
+                GetSongLibrary()?.TriggerRefresh();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to duplicate library item {Path}", item.FullFilePath);
+            }
+        }
+
+        private async void RenameItem_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var item = GetClickedItem(sender);
+            if (item == null || !File.Exists(item.FullFilePath)) return;
+            var parent = TopLevel.GetTopLevel(this) as Window;
+            if (parent == null) return;
+
+            var dialog = new RenameDialog(Path.GetFileNameWithoutExtension(item.FullFilePath));
+            await dialog.ShowDialog(parent);
+            if (dialog.ResultName == null) return;
+
+            var dir = Path.GetDirectoryName(item.FullFilePath)!;
+            var ext = Path.GetExtension(item.FullFilePath);
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var safeName = string.Concat(dialog.ResultName.Select(c => invalidChars.Contains(c) ? '_' : c));
+            var newPath = Path.Combine(dir, safeName + ext);
+            if (newPath == item.FullFilePath) return;
+
+            try
+            {
+                File.Move(item.FullFilePath, newPath);
+                GetSongLibrary()?.TriggerRefresh();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to rename library item {Path} → {NewPath}", item.FullFilePath, newPath);
+            }
         }
     }
 }

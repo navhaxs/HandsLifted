@@ -70,26 +70,32 @@
 
                     <ListBox
                         BorderThickness="0"
+                        ContextRequested="SongListBox_ContextRequested"
                         HorizontalAlignment="Stretch"
                         ItemsSource="{Binding SearchResults}"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         SelectedItem="{Binding SelectedLibraryItem}">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="ContextMenu">
+                                    <ContextMenu>
+                                        <MenuItem Header="Rename..." Click="RenameItem_OnClick" />
+                                        <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick" />
+                                        <Separator />
+                                        <MenuItem Header="Delete" Click="DeleteItem_OnClick" />
+                                    </ContextMenu>
+                                </Setter>
+                            </Style>
+                        </ListBox.Styles>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Border>
-                                    <DockPanel PointerPressed="DockPanel_PointerPressed">
-                                        <DockPanel.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Header="Add to playlist" />
-                                            </ContextMenu>
-                                        </DockPanel.ContextMenu>
-                                        <TextBlock
-                                            DockPanel.Dock="Bottom"
-                                            FontSize="14"
-                                            Padding="2"
-                                            Text="{Binding Title}" />
-                                    </DockPanel>
-                                </Border>
+                                <DockPanel PointerPressed="DockPanel_PointerPressed">
+                                    <TextBlock
+                                        DockPanel.Dock="Bottom"
+                                        FontSize="14"
+                                        Padding="2"
+                                        Text="{Binding Title}" />
+                                </DockPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

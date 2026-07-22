@@ -44,6 +44,10 @@ namespace HandsLiftedApp.Core
             @"^[ \t]*CCLI Song\s*#\s*\d+[ \t]*\r?\n?",
             RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
+        private static readonly Regex RemainingPortionUnaffiliatedRegex = new(
+            @";?\s*Remaining portion is unaffiliated\b[^;\r\n]*",
+            RegexOptions.IgnoreCase);
+
         /// <summary>
         /// Strips non-required lines from a copyright block pasted straight out of SongSelect
         /// (terms-of-use boilerplate, optionally the CCLI Song # line). Keeps writer names,
@@ -54,6 +58,7 @@ namespace HandsLiftedApp.Core
             if (string.IsNullOrWhiteSpace(copyright)) return copyright;
 
             var result = SongSelectTermsLineRegex.Replace(copyright, "");
+            result = RemainingPortionUnaffiliatedRegex.Replace(result, "");
             if (dropSongNumber)
                 result = CcliSongNumberLineRegex.Replace(result, "");
 
