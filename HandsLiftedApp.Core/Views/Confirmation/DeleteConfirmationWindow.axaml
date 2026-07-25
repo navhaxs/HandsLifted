@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Width="380"
+        Height="150"
+        WindowStartupLocation="CenterOwner"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        SystemDecorations="None"
+        ShowInTaskbar="False"
+        CanResize="False"
+        x:Class="HandsLiftedApp.Core.Views.Confirmation.DeleteConfirmationWindow"
+        Icon="/Assets/app.ico"
+        Title="Confirm Delete">
+    <Border CornerRadius="8"
+            Background="{DynamicResource BackgroundBrush}"
+            BorderBrush="{DynamicResource WindowBorderBrush}"
+            BorderThickness="1">
+        <DockPanel Margin="15">
+            <StackPanel Margin="0 10 0 0" DockPanel.Dock="Bottom"
+                        Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+                <Button Content="Delete" IsDefault="True" Click="OnConfirmDelete" />
+                <Button Content="Cancel" IsCancel="True" Click="OnCancel" />
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Confirm Delete"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           FontWeight="SemiBold"
+                           Margin="10 10 0 0"
+                           FontSize="14" />
+                <TextBlock x:Name="MessageText"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Margin="10 10 10 0"
+                           FontSize="14" />
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</Window>

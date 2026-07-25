@@ -111,9 +111,7 @@ namespace HandsLiftedApp.Core.Views.LibraryView
 
         private static LibraryItem? GetClickedItem(object? sender)
         {
-            if (sender is MenuItem { Parent: ContextMenu { PlacementTarget: { DataContext: LibraryItem item } } })
-                return item;
-            return null;
+            return sender is Control { DataContext: LibraryItem item } ? item : null;
         }
 
         private ContextMenu? _emptySpaceMenu;
@@ -146,10 +144,17 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             GetSongLibrary()?.TriggerRefresh();
         }
 
-        private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
+        private async void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
             var item = GetClickedItem(sender);
             if (item == null || !File.Exists(item.FullFilePath)) return;
+            var parent = TopLevel.GetTopLevel(this) as Window;
+            if (parent == null) return;
+
+            var dialog = new DeleteConfirmationWindow(item.Title);
+            await dialog.ShowDialog(parent);
+            if (!dialog.Confirmed) return;
+
             try
             {
                 File.Delete(item.FullFilePath);
