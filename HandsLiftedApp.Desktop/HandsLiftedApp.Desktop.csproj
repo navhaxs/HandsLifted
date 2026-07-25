@@ -70,4 +70,17 @@
       <Copy SourceFiles="@(_InteropHostFiles)" DestinationFolder="$(_InteropHostDestDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
       <Message Text="Copied InteropHost (%(_InteropHostFiles.Identity)) to $(_InteropHostDestDir)" Importance="normal" />
     </Target>
+
+    <!--
+      Publish the PowerPoint interop host alongside Desktop's own publish output whenever
+      Desktop is published for a Windows RID (Rider "Publish to folder" or `dotnet publish`).
+      Skipped for non-win RIDs (or framework-dependent publish with no RID) since the helper
+      is Windows-only (WinForms/COM interop) and can't be built for those targets at all.
+    -->
+    <Target Name="PublishInteropHost" AfterTargets="Publish" Condition="$(RuntimeIdentifier.StartsWith('win'))">
+      <MSBuild Projects="$(MSBuildThisFileDirectory)..\HandsLiftedApp.Importer.PowerPointInteropHost\HandsLiftedApp.Importer.PowerPointInteropHost.csproj"
+                Targets="Publish"
+                Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishDir=$(PublishDir)PowerPointInteropHost\;PublishSingleFile=false" />
+      <Message Text="Published InteropHost to $(PublishDir)PowerPointInteropHost\" Importance="normal" />
+    </Target>
 </Project>
