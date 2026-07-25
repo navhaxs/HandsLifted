@@ -46,7 +46,10 @@ namespace HandsLiftedApp.Core.Views.Setup
             
             Win10DropshadowWorkaround.Register(this);
 
-            RefreshGoogleSignInStatus();
+            if (!Design.IsDesignMode)
+            {
+                RefreshGoogleSignInStatus();
+            }
 
             var themeVariants = this.Get<ComboBox>("ThemeVariants");
             themeVariants.SelectedItem = Application.Current!.RequestedThemeVariant;
