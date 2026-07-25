@@ -56,7 +56,7 @@
         </ResourceDictionary>
 
 
-		<ControlTheme x:Key="{x:Type controls:ComboBoxWithoutWheelScroll}"
+		<ControlTheme x:Key="{x:Type ComboBox}"
 		  TargetType="ComboBox">
 			<Setter Property="Background" Value="Transparent" />
 			<Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
@@ -114,9 +114,12 @@
 								   IsOpen="{TemplateBinding IsDropDownOpen,
                                             Mode=TwoWay}"
 								   PlacementTarget="{TemplateBinding}">
-								<Border Background="{DynamicResource ThemeBackgroundBrush}"
+								<Border Name="PopupBorder"
+										Background="{DynamicResource ThemeBackgroundBrush}"
 										BorderBrush="{DynamicResource ThemeBorderMidBrush}"
-										BorderThickness="1">
+										BorderThickness="1"
+										CornerRadius="0,0,6,6"
+										ClipToBounds="True">
 									<ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
 												  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
 												  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}">
@@ -135,6 +138,9 @@
 			<Style Selector="^:disabled /template/ Border#border">
 				<Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
 			</Style>
+			<Style Selector="^[IsDropDownOpen=True] /template/ Border#border">
+				<Setter Property="CornerRadius" Value="6,6,0,0" />
+			</Style>
 		</ControlTheme>
 
 	</Styles.Resources>
@@ -144,6 +150,20 @@
     </Style>
 
     <Style Selector="Button">
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+    <Style Selector="ComboBox">
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="10 8" />
+    </Style>
+
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Padding" Value="10 8" />
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+    <Style Selector="TextBox">
         <Setter Property="CornerRadius" Value="4" />
     </Style>
 
