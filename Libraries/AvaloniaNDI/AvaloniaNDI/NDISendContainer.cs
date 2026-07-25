@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using NAudio.Wave;
 using NewTek;
 using NewTek.NDI;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,8 +15,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
 
 namespace AvaloniaNDI
 {
