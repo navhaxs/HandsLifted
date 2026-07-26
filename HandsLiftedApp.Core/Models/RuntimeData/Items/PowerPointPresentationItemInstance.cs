@@ -141,7 +141,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     Directory.CreateDirectory(targetDirectory);
 
                     Log.Debug($"Importing PowerPoint file (Syncfusion): {SourcePresentationFile}");
-                    PresentationFileFormatConverter.Run(new ImportTask
+                    string convertedPdfPath = PresentationFileFormatConverter.Run(new ImportTask
                     {
                         InputFile = SourcePresentationFile,
                         OutputDirectory = targetDirectory,
@@ -151,7 +151,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     Log.Debug($"Converting PDF to slides: {SourcePresentationFile}");
                     ConvertPDF.Convert(new ImportTask
                     {
-                        InputFile = SourcePresentationFile + ".pdf", // TODO: use output path from above step
+                        InputFile = convertedPdfPath,
                         OutputDirectory = targetDirectory,
                         ExportFileFormat = ImportTask.ExportFileFormatType.PDF
                     }, new ImportTaskReporter(stats => { }));

@@ -7,9 +7,22 @@ namespace HandsLiftedApp.Importer.PowerPointLib;
 
 public static class PresentationFileFormatConverter
 {
-    public static void Run(ImportTask task, IProgress<ImportStats>? progress = null)
+    public static string Run(ImportTask task, IProgress<ImportStats>? progress = null)
     {
         using var presentation = Presentation.Open(task.InputFile);
+
+        var embeddedFonts = EmbeddedFontExtractor.ExtractRegularFonts(task.InputFile);
+        if (embeddedFonts.Count > 0)
+        {
+            presentation.FontSettings.SubstituteFont += (_, e) =>
+            {
+                if (embeddedFonts.TryGetValue(e.OriginalFontName, out var fontBytes))
+                {
+                    e.AlternateFontStream = new MemoryStream(fontBytes);
+                }
+            };
+        }
+
         string outputFilePath;
         if (task.ExportFileFormat == ImportTask.ExportFileFormatType.PNG)
         {
@@ -60,5 +73,7 @@ public static class PresentationFileFormatConverter
             OutputFilePath = outputFilePath,
             JobPercentage = 100d
         });
+
+        return outputFilePath;
     }
 }
