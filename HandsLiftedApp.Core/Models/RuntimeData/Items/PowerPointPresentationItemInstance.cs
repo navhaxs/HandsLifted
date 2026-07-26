@@ -183,12 +183,15 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     Log.Debug($"Importing PowerPoint file (native COM): {SourcePresentationFile}");
 
+                    // Route through PDF (PowerPoint's SaveAs exporter) rather than Slide.Export("PNG"),
+                    // which does not reliably use embedded fonts even when they render correctly on
+                    // screen. ConvertPDF.Convert then rasterizes the same way the Syncfusion path does.
                     var result = NativePowerPointImportService.RunImport(
                         new ImportTask
                         {
                             InputFile = SourcePresentationFile,
                             OutputDirectory = targetDirectory,
-                            ExportFileFormat = ImportTask.ExportFileFormatType.PNG
+                            ExportFileFormat = ImportTask.ExportFileFormatType.PDF
                         },
                         new ImportTaskReporter(stats =>
                         {
@@ -202,6 +205,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         IsBusy = false;
                         return;
                     }
+
+                    Log.Debug($"Converting PDF to slides: {SourcePresentationFile}");
+                    ConvertPDF.Convert(new ImportTask
+                    {
+                        InputFile = result.OutputFilePath,
+                        OutputDirectory = targetDirectory,
+                        ExportFileFormat = ImportTask.ExportFileFormatType.PDF
+                    }, new ImportTaskReporter(stats => { }));
 
                     ApplySlidesFromDirectory(targetDirectory);
                 }

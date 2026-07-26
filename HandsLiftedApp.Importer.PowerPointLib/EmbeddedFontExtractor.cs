@@ -4,10 +4,11 @@ using System.Xml.Linq;
 namespace HandsLiftedApp.Importer.PowerPointLib;
 
 /// <summary>
-/// Pulls "regular" style embedded fonts (Insert &gt; Text &gt; ... &gt; Embed Fonts) straight out of a
-/// .pptx package so they can be handed to Syncfusion's FontSettings.SubstituteFont event.
-/// Without this, Syncfusion falls back to whatever font is installed on the machine doing the
-/// conversion, which often looks wrong (wrong glyphs/metrics) for slides authored elsewhere.
+/// Pulls "regular" style embedded fonts (File &gt; Options &gt; Save &gt; Embed fonts in the file)
+/// straight out of a .pptx package so they can be handed to Syncfusion's
+/// FontSettings.SubstituteFont event. Without this, Syncfusion falls back to whatever font is
+/// installed on the machine doing the conversion, which often looks wrong (wrong glyphs/metrics)
+/// for slides authored elsewhere.
 /// </summary>
 public static class EmbeddedFontExtractor
 {
@@ -18,56 +19,73 @@ public static class EmbeddedFontExtractor
     /// <summary>
     /// Returns typeface name -> raw font file bytes, for every embedded font this pptx carries
     /// whose regular-style part could be read and looks like a real sfnt font.
+    /// Never throws: this is a rendering-quality nice-to-have, not core to the conversion, so any
+    /// failure (corrupt pptx, file locked by another process, unexpected part layout) just means
+    /// no fonts get substituted rather than aborting the whole import.
     /// </summary>
     public static Dictionary<string, byte[]> ExtractRegularFonts(string pptxPath)
     {
         var result = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 
-        using var archive = ZipFile.OpenRead(pptxPath);
-
-        var presentationEntry = archive.GetEntry("ppt/presentation.xml");
-        var relsEntry = archive.GetEntry("ppt/_rels/presentation.xml.rels");
-        if (presentationEntry == null || relsEntry == null) return result;
-
-        XDocument presentationDoc;
-        using (var stream = presentationEntry.Open())
-            presentationDoc = XDocument.Load(stream);
-
-        XDocument relsDoc;
-        using (var stream = relsEntry.Open())
-            relsDoc = XDocument.Load(stream);
-
-        var relationshipTargets = relsDoc.Root?
-            .Elements(Rel + "Relationship")
-            .Where(e => e.Attribute("Id") != null && e.Attribute("Target") != null)
-            .ToDictionary(e => e.Attribute("Id")!.Value, e => e.Attribute("Target")!.Value);
-        if (relationshipTargets == null) return result;
-
-        var embeddedFontLst = presentationDoc.Root?.Element(P + "embeddedFontLst");
-        if (embeddedFontLst == null) return result;
-
-        foreach (var embeddedFont in embeddedFontLst.Elements(P + "embeddedFont"))
+        try
         {
-            var typeface = embeddedFont.Element(P + "font")?.Attribute("typeface")?.Value;
-            var regularRid = embeddedFont.Element(P + "regular")?.Attribute(R + "id")?.Value;
-            if (string.IsNullOrEmpty(typeface) || string.IsNullOrEmpty(regularRid)) continue;
-            if (!relationshipTargets.TryGetValue(regularRid, out var target)) continue;
+            using var archive = ZipFile.OpenRead(pptxPath);
 
-            var fontEntry = archive.GetEntry(ResolvePartPath(target));
-            if (fontEntry == null) continue;
+            var presentationEntry = archive.GetEntry("ppt/presentation.xml");
+            var relsEntry = archive.GetEntry("ppt/_rels/presentation.xml.rels");
+            if (presentationEntry == null || relsEntry == null) return result;
 
-            byte[] eotBytes;
-            using (var fontStream = fontEntry.Open())
-            using (var buffer = new MemoryStream())
+            XDocument presentationDoc;
+            using (var stream = presentationEntry.Open())
+                presentationDoc = XDocument.Load(stream);
+
+            XDocument relsDoc;
+            using (var stream = relsEntry.Open())
+                relsDoc = XDocument.Load(stream);
+
+            var relationshipTargets = relsDoc.Root?
+                .Elements(Rel + "Relationship")
+                .Where(e => e.Attribute("Id") != null && e.Attribute("Target") != null)
+                .ToDictionary(e => e.Attribute("Id")!.Value, e => e.Attribute("Target")!.Value);
+            if (relationshipTargets == null) return result;
+
+            var embeddedFontLst = presentationDoc.Root?.Element(P + "embeddedFontLst");
+            if (embeddedFontLst == null) return result;
+
+            foreach (var embeddedFont in embeddedFontLst.Elements(P + "embeddedFont"))
             {
-                fontStream.CopyTo(buffer);
-                eotBytes = buffer.ToArray();
+                try
+                {
+                    var typeface = embeddedFont.Element(P + "font")?.Attribute("typeface")?.Value;
+                    var regularRid = embeddedFont.Element(P + "regular")?.Attribute(R + "id")?.Value;
+                    if (string.IsNullOrEmpty(typeface) || string.IsNullOrEmpty(regularRid)) continue;
+                    if (!relationshipTargets.TryGetValue(regularRid, out var target)) continue;
+
+                    var fontEntry = archive.GetEntry(ResolvePartPath(target));
+                    if (fontEntry == null) continue;
+
+                    byte[] eotBytes;
+                    using (var fontStream = fontEntry.Open())
+                    using (var buffer = new MemoryStream())
+                    {
+                        fontStream.CopyTo(buffer);
+                        eotBytes = buffer.ToArray();
+                    }
+
+                    var fontBytes = UnwrapEot(eotBytes);
+                    if (fontBytes == null) continue;
+
+                    result[typeface] = fontBytes;
+                }
+                catch (Exception)
+                {
+                    // Skip this one font, keep going with the rest.
+                }
             }
-
-            var fontBytes = UnwrapEot(eotBytes);
-            if (fontBytes == null) continue;
-
-            result[typeface] = fontBytes;
+        }
+        catch (Exception)
+        {
+            return new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
         }
 
         return result;
