@@ -8,6 +8,7 @@
 .agents/
 .claude/skills/
 skills-lock.json
+.worktrees/
 
 /Demos/PowerPointConverterSampleApp/appsettings.json
 /HandsLiftedApp.Core/SyncfusionLicenseKey
