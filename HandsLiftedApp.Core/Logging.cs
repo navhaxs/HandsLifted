@@ -31,7 +31,7 @@ namespace HandsLiftedApp.Core
                 LevelSwitch.MinimumLevel = level;
             }
 
-            if (OperatingSystem.IsWindows() && !Debugger.IsAttached)
+            if (OperatingSystem.IsWindows())
             {
                 ConsoleUtils.AllocConsole();
             }
@@ -45,7 +45,7 @@ namespace HandsLiftedApp.Core
                 .Enrich.FromLogContext()
                 .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
                 .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
-                .WriteTo.Console()
+                .WriteTo.Console(formatter: OUTPUT_TEMPLATE)
                 .CreateLogger();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
