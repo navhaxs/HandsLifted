@@ -57,15 +57,12 @@ namespace HandsLiftedApp.Data.Models
         public ObservableCollection<BaseSlideTheme> Designs { get => _designs; set => this.RaiseAndSetIfChanged(ref _designs, value); }
 
         private Guid? _defaultSongThemeId;
-        [XmlElement("DefaultSongThemeId", IsNullable = true)]
         public Guid? DefaultSongThemeId { get => _defaultSongThemeId; set => this.RaiseAndSetIfChanged(ref _defaultSongThemeId, value); }
 
         private Guid? _defaultSongMotionThemeId;
-        [XmlElement("DefaultSongMotionThemeId", IsNullable = true)]
         public Guid? DefaultSongMotionThemeId { get => _defaultSongMotionThemeId; set => this.RaiseAndSetIfChanged(ref _defaultSongMotionThemeId, value); }
 
         private Guid? _defaultScriptureThemeId;
-        [XmlElement("DefaultScriptureThemeId", IsNullable = true)]
         public Guid? DefaultScriptureThemeId { get => _defaultScriptureThemeId; set => this.RaiseAndSetIfChanged(ref _defaultScriptureThemeId, value); }
 
         // // TODO move into Dictionary
