@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Tests;
@@ -19,6 +20,10 @@ public class HandsLiftedDocXmlSerializerTests
     {
         _tempDir = Path.Combine(Path.GetTempPath(), "HandsLiftedDocXmlSerializerTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_tempDir);
+        // ScriptureItemInstance's default-store fallback (Step 3 of Task 3) reads
+        // Globals.Instance.AppPreferences.ScriptureDataPath, which is null unless Globals.OnStartup()
+        // has run. Matches the same fix already used by SongImporterTests.Init().
+        Globals.Instance.AppPreferences = new AppPreferencesViewModel();
     }
 
     [TestCleanup]

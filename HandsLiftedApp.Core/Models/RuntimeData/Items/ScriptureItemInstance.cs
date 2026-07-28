@@ -11,6 +11,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.Scripture;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
@@ -20,12 +21,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public event EventHandler? ItemDataModified;
 
-        private readonly ScriptureSourceLoader _loader;
+        private readonly ScriptureLocalUsxStore _store;
 
-        public ScriptureItemInstance(PlaylistInstance? parentPlaylist, ScriptureSourceLoader? loader = null) : base()
+        public ScriptureItemInstance(PlaylistInstance? parentPlaylist, ScriptureLocalUsxStore? store = null) : base()
         {
             ParentPlaylist = parentPlaylist;
-            _loader = loader ?? new ScriptureSourceLoader();
+            _store = store ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
 
             // Deliberately no .ObserveOn(RxApp.MainThreadScheduler) here (unlike SongItemInstance's
             // equivalent chain): that scheduler depends on Avalonia.ReactiveUI's dispatcher registration,
@@ -67,9 +68,25 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public async Task GenerateSlidesAsync()
         {
-            var book = await _loader.LoadBookAsync(Translation, Book).ConfigureAwait(false);
-            var verses = ScriptureVerseRangeExtractor.Extract(book, StartChapter, StartVerse, EndChapter, EndVerse);
-            UpdateVerseSlides(book.Title, verses);
+            try
+            {
+                var book = await _store.LoadBookAsync(Book).ConfigureAwait(false);
+                var verses = ScriptureVerseRangeExtractor.Extract(book, StartChapter, StartVerse, EndChapter, EndVerse);
+                UpdateVerseSlides(book.Title, verses);
+            }
+            catch (ScriptureBookNotFoundException ex)
+            {
+                Log.Error(ex, "Scripture data not found for {Book} ({Translation})", Book, Translation);
+                UpdateVerseSlides(Book, MakeMissingDataPlaceholder());
+            }
+        }
+
+        private System.Collections.Generic.List<ScriptureVerseRef> MakeMissingDataPlaceholder()
+        {
+            var text =
+                $"Scripture data not found: {Book} {StartChapter}:{StartVerse}-{EndChapter}:{EndVerse} ({Translation})\n" +
+                "Check Setup > Library > Scripture Data Path";
+            return new System.Collections.Generic.List<ScriptureVerseRef> { new ScriptureVerseRef(StartChapter, StartVerse, text) };
         }
 
         private void UpdateVerseSlides(string bookTitle, System.Collections.Generic.List<ScriptureVerseRef> verses)

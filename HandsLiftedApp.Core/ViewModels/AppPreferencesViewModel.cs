@@ -156,7 +156,16 @@ namespace HandsLiftedApp.Core.ViewModels
             get => _libraryPath;
             set => this.RaiseAndSetIfChanged(ref _libraryPath, value);
         }
-        
+
+        private string _scriptureDataPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HandsLifted", "ScriptureData");
+        [DataMember]
+        public string ScriptureDataPath
+        {
+            get => _scriptureDataPath;
+            set => this.RaiseAndSetIfChanged(ref _scriptureDataPath, value);
+        }
+
         private string _ndiMainOutputName = "VisionScreens Main Output";
         [DataMember]
         public string NdiMainOutputName

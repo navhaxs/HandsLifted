@@ -1,12 +1,11 @@
-using System.Net;
-using System.Net.Http;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.Scripture;
-using HandsLiftedApp.Tests.Importer.Scripture;
 
 namespace HandsLiftedApp.Tests.Models.RuntimeData.Items;
 
@@ -28,20 +27,24 @@ public class ScriptureItemInstanceTests
         </usx>
         """;
 
-    private static ScriptureSourceLoader MakeFakeLoader(string xml)
+    private static ScriptureLocalUsxStore MakeFakeStore(string xml)
     {
-        // Reuses Phase 1's internal FakeHttpMessageHandler (HandsLiftedApp.Tests/Importer/Scripture/FakeHttpMessageHandler.cs) —
-        // `internal` is assembly-scoped, so it's visible here without changing its accessibility.
-        var handler = new FakeHttpMessageHandler(_ =>
-            new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(xml) });
-        return new ScriptureSourceLoader(new HttpClient(handler), System.IO.Path.Combine(
-            System.IO.Path.GetTempPath(), "HandsLiftedScriptureItemInstanceTests_" + System.Guid.NewGuid().ToString("N")));
+        var tempDir = Path.Combine(Path.GetTempPath(), "HandsLiftedScriptureItemInstanceTests_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+        File.WriteAllText(Path.Combine(tempDir, "gen.usx"), xml);
+        return new ScriptureLocalUsxStore(tempDir);
+    }
+
+    private static ScriptureLocalUsxStore MakeEmptyStore()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), "HandsLiftedScriptureItemInstanceTests_" + Guid.NewGuid().ToString("N"));
+        return new ScriptureLocalUsxStore(tempDir);
     }
 
     [TestMethod]
     public async Task GenerateSlidesAsync_ProducesOneSlidePerVerseInRange()
     {
-        var instance = new ScriptureItemInstance(null, MakeFakeLoader(GenesisChapterOneUsx))
+        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
         {
             Translation = "eng_bsb",
             Book = "gen",
@@ -64,7 +67,7 @@ public class ScriptureItemInstanceTests
     [TestMethod]
     public async Task GenerateSlidesAsync_SlideLabel_UsesParsedBookTitle_NotBookCode()
     {
-        var instance = new ScriptureItemInstance(null, MakeFakeLoader(GenesisChapterOneUsx))
+        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
         {
             Translation = "eng_bsb",
             Book = "gen",
@@ -84,7 +87,7 @@ public class ScriptureItemInstanceTests
     [TestMethod]
     public async Task GenerateSlidesAsync_SecondCallWithSameRange_PreservesSlideIdentity()
     {
-        var instance = new ScriptureItemInstance(null, MakeFakeLoader(GenesisChapterOneUsx))
+        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
         {
             Translation = "eng_bsb",
             Book = "gen",
@@ -108,7 +111,7 @@ public class ScriptureItemInstanceTests
     [TestMethod]
     public async Task GenerateSlidesAsync_NarrowerRangeOnRegenerate_ShrinksSlideList()
     {
-        var instance = new ScriptureItemInstance(null, MakeFakeLoader(GenesisChapterOneUsx))
+        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
         {
             Translation = "eng_bsb",
             Book = "gen",
@@ -131,7 +134,7 @@ public class ScriptureItemInstanceTests
     [TestMethod]
     public async Task ActiveSlide_TracksSelectedSlideIndex()
     {
-        var instance = new ScriptureItemInstance(null, MakeFakeLoader(GenesisChapterOneUsx))
+        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
         {
             Translation = "eng_bsb",
             Book = "gen",
@@ -146,5 +149,27 @@ public class ScriptureItemInstanceTests
         instance.SelectedSlideIndex = 1;
 
         Assert.AreSame(instance.Slides[1], instance.ActiveSlide);
+    }
+
+    [TestMethod]
+    public async Task GenerateSlidesAsync_BookFileMissing_ProducesPlaceholderSlide()
+    {
+        var instance = new ScriptureItemInstance(null, MakeEmptyStore())
+        {
+            Translation = "eng_bsb",
+            Book = "gen",
+            StartChapter = 1,
+            StartVerse = 1,
+            EndChapter = 1,
+            EndVerse = 2
+        };
+
+        await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.AreEqual(1, instance.Slides.Count);
+        var slide = (ScriptureSlideInstance)instance.Slides[0];
+        StringAssert.Contains(slide.Text, "Scripture data not found");
+        StringAssert.Contains(slide.Text, "gen");
     }
 }
