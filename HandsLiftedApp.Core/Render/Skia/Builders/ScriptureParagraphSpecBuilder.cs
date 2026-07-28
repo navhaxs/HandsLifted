@@ -57,7 +57,6 @@ public static class ScriptureParagraphSpecBuilder
         float superscriptBaselineOffset = -(bodyFontSize * ScriptureParagraphLayoutEngine.SuperscriptBaselineOffsetRatio);
         float lineHeight = bodyFontSize * (float)theme.LineHeightEm;
         float headerLineHeight = headerFontSize * (float)theme.LineHeightEm;
-        float maxWidth = CanvasWidth - 2 * HorizontalMargin;
         var color = ToSkColor(theme.TextAvaloniaColour);
         var shadow = GetShadow(theme);
 
@@ -105,7 +104,10 @@ public static class ScriptureParagraphSpecBuilder
             };
 
             var bounds = new SKRect(x, y, x + lineWidth, y + thisLineHeight);
-            result.Add(new MultiRunTextLineElement(runs, bounds, typeface, color, shadow));
+
+            // Create a fresh SKTypeface per element (the measurement typeface is disposed above)
+            var elemTypeface = GetTypeface(theme);
+            result.Add(new MultiRunTextLineElement(runs, bounds, elemTypeface, color, shadow));
 
             y += thisLineHeight;
             bool isLastHeaderLineBeforeBody = line.IsHeader && (i + 1 >= lines.Count || !lines[i + 1].IsHeader);

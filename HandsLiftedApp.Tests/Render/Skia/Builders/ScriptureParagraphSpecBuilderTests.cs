@@ -95,4 +95,33 @@ public class ScriptureParagraphSpecBuilderTests
         var bodyElement = (MultiRunTextLineElement)spec.Elements[1];
         Assert.IsTrue(headerElement.Runs[0].FontSize > bodyElement.Runs[0].FontSize);
     }
+
+    // Exercises the full Build -> SlideRenderer.RenderToSKBitmap path, which the structural
+    // assertions above never touch: they only inspect the returned SlideRenderSpec, never render
+    // it. This is the path where a stale/disposed SKTypeface stored on a RenderElement (the bug
+    // this builder was fixed for -- see git history) would actually surface, since
+    // SlideRenderer.DrawMultiRunTextElement constructs a new SKFont from element.Typeface at draw
+    // time. Confirmed real coverage: this test was written and run against the pre-fix builder
+    // (single `using`-scoped measurement typeface shared across every element) before being run
+    // against the fix.
+    [TestMethod]
+    public void Build_ThenRenderToSKBitmap_DoesNotThrowAndProducesBitmap()
+    {
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = MakeTheme() };
+        slide.Lines = new[]
+        {
+            HeaderLine("Genesis 1:1"),
+            BodyLine(
+                new ScriptureParagraphRun("1", IsSuperscript: true),
+                new ScriptureParagraphRun("In the beginning God created the heaven and the earth.", IsSuperscript: false))
+        };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(spec);
+
+        Assert.IsNotNull(bitmap);
+        Assert.AreEqual(1920, bitmap.Width);
+        Assert.AreEqual(1080, bitmap.Height);
+    }
 }
