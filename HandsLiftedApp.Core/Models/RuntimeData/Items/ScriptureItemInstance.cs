@@ -3,7 +3,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.Scripture;
@@ -94,6 +96,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             _slides = newSlides;
             this.RaisePropertyChanged(nameof(Slides));
+
+            // Enqueue newly created slides (and any reused slide that never got a first
+            // render) for background thumbnail generation. Cached == null covers both:
+            // brand-new slides from this call, and slides that were new on a prior call
+            // but never got enqueued (which would otherwise stay permanently blank).
+            var toRender = newSlides.OfType<ScriptureSlideInstance>()
+                .Where(s => s.Cached == null)
+                .Cast<IRenderable>()
+                .ToList();
+            if (toRender.Count > 0)
+                Globals.Instance.SlideRenderQueue.EnqueueBatch(toRender);
         }
     }
 }
