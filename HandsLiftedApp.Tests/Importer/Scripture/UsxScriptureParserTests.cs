@@ -61,10 +61,13 @@ public class UsxScriptureParserTests
         Assert.AreEqual(1, book.Paragraphs.Count);
         var paragraph = book.Paragraphs[0];
         Assert.AreEqual(1, paragraph.StartChapter);
+        Assert.IsFalse(paragraph.IsVerseContinuation);
         Assert.IsFalse(paragraph.IsPoetry);
         Assert.AreEqual(2, paragraph.Verses.Count);
+        Assert.AreEqual(1, paragraph.Verses[0].Chapter);
         Assert.AreEqual(1, paragraph.Verses[0].VerseNumber);
         Assert.AreEqual("In the beginning God created the heaven and the earth.", paragraph.Verses[0].Text);
+        Assert.AreEqual(1, paragraph.Verses[1].Chapter);
         Assert.AreEqual(2, paragraph.Verses[1].VerseNumber);
         Assert.AreEqual("And the earth was without form, and void.", paragraph.Verses[1].Text);
     }
@@ -98,6 +101,7 @@ public class UsxScriptureParserTests
         var book = UsxScriptureParser.Parse(XDocument.Parse(BsbShapedUsx));
 
         var firstParagraph = book.Paragraphs[0];
+        Assert.AreEqual(1, firstParagraph.Verses[0].Chapter);
         Assert.AreEqual(3, firstParagraph.Verses[0].VerseNumber);
         Assert.AreEqual(1, firstParagraph.Verses[0].Footnotes.Count);
         Assert.AreEqual("Cited in 2 Corinthians 4:6", firstParagraph.Verses[0].Footnotes[0].Text);
@@ -109,11 +113,15 @@ public class UsxScriptureParserTests
         var book = UsxScriptureParser.Parse(XDocument.Parse(BsbShapedUsx));
 
         var firstParagraph = book.Paragraphs[0];
+        Assert.IsFalse(firstParagraph.IsVerseContinuation);
+        Assert.AreEqual(1, firstParagraph.Verses[2].Chapter);
         Assert.AreEqual(5, firstParagraph.Verses[2].VerseNumber);
         Assert.AreEqual("God called the light “day,” and the darkness He called “night.”", firstParagraph.Verses[2].Text);
 
         var continuationParagraph = book.Paragraphs[1];
+        Assert.IsTrue(continuationParagraph.IsVerseContinuation);
         Assert.AreEqual(1, continuationParagraph.Verses.Count);
+        Assert.AreEqual(1, continuationParagraph.Verses[0].Chapter);
         Assert.AreEqual(5, continuationParagraph.Verses[0].VerseNumber);
         Assert.AreEqual("And there was evening, and there was morning — the first day.", continuationParagraph.Verses[0].Text);
     }
@@ -124,17 +132,23 @@ public class UsxScriptureParserTests
         var book = UsxScriptureParser.Parse(XDocument.Parse(BsbShapedUsx));
 
         var q1Paragraph = book.Paragraphs[2];
+        Assert.IsFalse(q1Paragraph.IsVerseContinuation);
         Assert.IsTrue(q1Paragraph.IsPoetry);
         Assert.AreEqual(1, q1Paragraph.PoetryIndentLevel);
+        Assert.AreEqual(1, q1Paragraph.Verses[0].Chapter);
         Assert.AreEqual(27, q1Paragraph.Verses[0].VerseNumber);
         Assert.AreEqual("So God created man in His own image;", q1Paragraph.Verses[0].Text);
 
         var q2ParagraphA = book.Paragraphs[3];
+        Assert.IsTrue(q2ParagraphA.IsVerseContinuation);
         Assert.AreEqual(2, q2ParagraphA.PoetryIndentLevel);
+        Assert.AreEqual(1, q2ParagraphA.Verses[0].Chapter);
         Assert.AreEqual(27, q2ParagraphA.Verses[0].VerseNumber);
         Assert.AreEqual("in the image of God He created him;", q2ParagraphA.Verses[0].Text);
 
         var q2ParagraphB = book.Paragraphs[4];
+        Assert.IsTrue(q2ParagraphB.IsVerseContinuation);
+        Assert.AreEqual(1, q2ParagraphB.Verses[0].Chapter);
         Assert.AreEqual(27, q2ParagraphB.Verses[0].VerseNumber);
         Assert.AreEqual("male and female He created them.", q2ParagraphB.Verses[0].Text);
     }
@@ -160,6 +174,7 @@ public class UsxScriptureParserTests
 
         Assert.AreEqual(1, book.Paragraphs.Count);
         Assert.AreEqual(1, book.Paragraphs[0].Verses.Count);
+        Assert.AreEqual(1, book.Paragraphs[0].Verses[0].Chapter);
         Assert.AreEqual(4, book.Paragraphs[0].Verses[0].VerseNumber);
         Assert.AreEqual(0, book.Paragraphs[0].Verses[0].Footnotes.Count);
     }
@@ -185,6 +200,7 @@ public class UsxScriptureParserTests
         Assert.AreEqual(1, book.Paragraphs.Count);
         Assert.AreEqual(1, book.Paragraphs[0].Verses.Count);
         var verse = book.Paragraphs[0].Verses[0];
+        Assert.AreEqual(1, verse.Chapter);
         Assert.AreEqual(5, verse.VerseNumber);
         Assert.AreEqual(1, verse.Footnotes.Count);
         Assert.AreEqual("A real footnote", verse.Footnotes[0].Text);

@@ -50,9 +50,11 @@ public static class UsxScriptureParser
                 continue;
             }
 
+            accumulator.BeginParagraph();
+
             foreach (var node in element.Nodes())
             {
-                AppendNode(node, accumulator);
+                AppendNode(node, accumulator, currentChapter);
             }
 
             accumulator.Flush();
@@ -61,6 +63,7 @@ public static class UsxScriptureParser
             {
                 paragraphs.Add(new ScriptureParagraph(
                     currentChapter,
+                    accumulator.FirstSegmentIsContinuation,
                     IsPoetryStyle(style),
                     GetPoetryIndentLevel(style),
                     accumulator.Verses.ToList()));
@@ -98,7 +101,7 @@ public static class UsxScriptureParser
         _ => 0
     };
 
-    private static void AppendNode(XNode node, ParagraphAccumulator accumulator)
+    private static void AppendNode(XNode node, ParagraphAccumulator accumulator, int chapter)
     {
         if (node is XText textNode)
         {
@@ -124,7 +127,7 @@ public static class UsxScriptureParser
                 return;
             }
 
-            accumulator.StartVerse(parsedVerse);
+            accumulator.StartVerse(chapter, parsedVerse);
             return;
         }
 
@@ -148,7 +151,7 @@ public static class UsxScriptureParser
 
         foreach (var child in element.Nodes())
         {
-            AppendNode(child, accumulator);
+            AppendNode(child, accumulator, chapter);
         }
     }
 
@@ -177,16 +180,33 @@ public static class UsxScriptureParser
     private static bool IsClosingPunctuation(char value) =>
         value is '.' or ',' or ';' or ':' or '!' or '?' or ')' or ']' or '}' or '"' or '\'';
 
-    // Carries verse-number state across paragraph boundaries (a verse's text can span
-    // multiple <para> elements — see Parse_BsbShapedUsx_SplitsVerseFiveTextAcrossTwoParagraphs)
+    // Carries verse-number (and chapter) state across paragraph boundaries (a verse's text can
+    // span multiple <para> elements — see Parse_BsbShapedUsx_SplitsVerseFiveTextAcrossTwoParagraphs)
     // while collecting only the current paragraph's segments in Verses.
     private sealed class ParagraphAccumulator
     {
         private readonly StringBuilder _text = new();
         private List<ScriptureFootnote> _footnotes = new();
         private int _currentVerse;
+        private int _currentChapter;
+        private bool _verseStartedInCurrentParagraph;
+        private bool _hasFlushedInCurrentParagraph;
 
         public List<ScriptureVerseSegment> Verses { get; } = new();
+
+        // True when this paragraph's first flushed segment carried over a verse number that
+        // was already open before this paragraph began (i.e. no <verse number="..."> start
+        // element occurred in this paragraph before that segment was flushed).
+        public bool FirstSegmentIsContinuation { get; private set; }
+
+        // Resets the per-paragraph tracking (not the carried-over verse/chapter/text state,
+        // which must survive across paragraph boundaries for split verses).
+        public void BeginParagraph()
+        {
+            _verseStartedInCurrentParagraph = false;
+            _hasFlushedInCurrentParagraph = false;
+            FirstSegmentIsContinuation = false;
+        }
 
         public void AppendText(string text)
         {
@@ -203,10 +223,12 @@ public static class UsxScriptureParser
             _text.Append(text);
         }
 
-        public void StartVerse(int verseNumber)
+        public void StartVerse(int chapter, int verseNumber)
         {
             Flush();
+            _currentChapter = chapter;
             _currentVerse = verseNumber;
+            _verseStartedInCurrentParagraph = true;
         }
 
         public void AddFootnote(string text)
@@ -218,7 +240,13 @@ public static class UsxScriptureParser
         {
             if (_currentVerse > 0 && _text.Length > 0)
             {
-                Verses.Add(new ScriptureVerseSegment(_currentVerse, _text.ToString().Trim(), _footnotes));
+                if (!_hasFlushedInCurrentParagraph)
+                {
+                    _hasFlushedInCurrentParagraph = true;
+                    FirstSegmentIsContinuation = !_verseStartedInCurrentParagraph;
+                }
+
+                Verses.Add(new ScriptureVerseSegment(_currentChapter, _currentVerse, _text.ToString().Trim(), _footnotes));
             }
 
             _footnotes = new List<ScriptureFootnote>();
