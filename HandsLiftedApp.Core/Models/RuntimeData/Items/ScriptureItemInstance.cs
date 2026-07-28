@@ -30,6 +30,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private readonly DebounceDispatcher _themeChangeDebounce = new(200);
 
+        // Last verses + reference label successfully extracted by GenerateSlidesAsync, kept so
+        // theme-triggered repagination (below) can re-run ScriptureParagraphLayoutEngine.Paginate
+        // without re-reading and re-parsing the book from disk when only the theme (not the
+        // verse range) changed.
+        private List<ScriptureVerseRef>? _cachedVerses;
+        private string? _cachedReferenceLabel;
+
         public ScriptureItemInstance(PlaylistInstance? parentPlaylist, ScriptureLocalUsxStore? store = null) : base()
         {
             ParentPlaylist = parentPlaylist;
@@ -56,13 +63,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             // pointing at that Design already shares). Pagination is font-size/line-height
             // dependent, so a plain re-render (what ScriptureSlideInstance's own Theme-change
             // subscription does) isn't enough here — the slide count itself may need to change.
+            // This repaginates from the last successfully-extracted verses rather than calling
+            // GenerateSlidesAsync directly, since only the theme changed here, not the verse
+            // range — no need to re-read and re-parse the book from disk.
             this.WhenAnyValue(x => x.ResolvedDesignTheme)
                 .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
                 .Switch()
-                .Subscribe(_2 => _themeChangeDebounce.Debounce(() =>
-                    _ = GenerateSlidesAsync(forceInvalidateCache: true).ContinueWith(
-                        t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", Title),
-                        TaskContinuationOptions.OnlyOnFaulted)));
+                .Subscribe(_2 => _themeChangeDebounce.Debounce(() => RepaginateFromCache(true)));
 
             // ReactiveUI's no-selector WhenAnyValue only goes up to 7 properties; an 8th property
             // (Design) requires the selector-taking overload instead, so this passes a no-op
@@ -128,7 +135,31 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
 
             var referenceLabel = FormatReferenceLabel(bookTitle);
+
+            // Cache regardless of whether verses came from the real book or
+            // MakeMissingDataPlaceholder() — both are valid "current content" to repaginate
+            // from, matching UpdatePages's own uniform treatment of the two.
+            _cachedVerses = verses;
+            _cachedReferenceLabel = referenceLabel;
+
             UpdatePages(referenceLabel, verses, forceInvalidateCache);
+        }
+
+        // Repaginates from the last extraction cached by GenerateSlidesAsync, avoiding a disk
+        // re-read + re-parse when only the theme (not the verse range) changed. Falls back to
+        // the full GenerateSlidesAsync path if nothing has been cached yet (e.g. the theme was
+        // edited before this item ever successfully generated slides once).
+        private void RepaginateFromCache(bool forceInvalidateCache)
+        {
+            if (_cachedVerses == null || _cachedReferenceLabel == null)
+            {
+                _ = GenerateSlidesAsync(forceInvalidateCache).ContinueWith(
+                    t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", Title),
+                    TaskContinuationOptions.OnlyOnFaulted);
+                return;
+            }
+
+            UpdatePages(_cachedReferenceLabel, _cachedVerses, forceInvalidateCache);
         }
 
         private string FormatReferenceLabel(string bookTitle)

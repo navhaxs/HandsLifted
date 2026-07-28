@@ -1,6 +1,5 @@
 using Avalonia.Media.Imaging;
 using DebounceThrottle;
-using DynamicData.Binding;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -33,9 +32,15 @@ namespace HandsLiftedApp.Data.Slides
             // ResolvedDesignTheme after constructing or reusing this slide instance.
             Theme = Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
 
+            // Only react to the Theme *reference* changing here (e.g. a Design switch swapping
+            // in a different BaseSlideTheme object). Property-edit-triggered re-rendering on the
+            // currently-assigned theme is now ScriptureItemInstance's job (see its own
+            // ResolvedDesignTheme-property subscription), which repaginates rather than just
+            // re-rendering stale Lines at a new font size. A slide instance can still exist
+            // without an owning, paginating ScriptureItemInstance (e.g. constructed directly in a
+            // test), so this reference-change path stays as the fallback trigger for those cases.
             this.WhenAnyValue(x => x.Theme)
-                .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
-                .Switch()
+                .Skip(1)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
 
