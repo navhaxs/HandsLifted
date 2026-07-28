@@ -130,6 +130,13 @@ public static class UsxScriptureParser
 
         if (element.Name.LocalName == "note")
         {
+            if (element.Attribute("style")?.Value != "f")
+            {
+                // Not a footnote (e.g. style="x" is a cross-reference) — skip entirely;
+                // its contents are not scripture text.
+                return;
+            }
+
             var footnoteText = ExtractFootnoteText(element);
             if (!string.IsNullOrWhiteSpace(footnoteText))
             {
@@ -212,9 +219,9 @@ public static class UsxScriptureParser
             if (_currentVerse > 0 && _text.Length > 0)
             {
                 Verses.Add(new ScriptureVerseSegment(_currentVerse, _text.ToString().Trim(), _footnotes));
-                _footnotes = new List<ScriptureFootnote>();
             }
 
+            _footnotes = new List<ScriptureFootnote>();
             _text.Clear();
         }
     }

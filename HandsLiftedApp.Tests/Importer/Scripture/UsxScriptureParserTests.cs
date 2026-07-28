@@ -138,4 +138,55 @@ public class UsxScriptureParserTests
         Assert.AreEqual(27, q2ParagraphB.Verses[0].VerseNumber);
         Assert.AreEqual("male and female He created them.", q2ParagraphB.Verses[0].Text);
     }
+
+    // Regression fixture: verse 3 has a footnote but zero text (a verse-marker immediately
+    // followed by a note and then the eid, before any text arrives) so it must NOT produce a
+    // segment. Verse 4 has text and must not inherit verse 3's orphaned footnote.
+    private const string FootnoteLeakUsx = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <usx version="3.0">
+          <book code="GEN" style="id">Genesis</book>
+          <chapter number="1" style="c" sid="GEN 1" />
+          <para style="p">
+            <verse number="3" style="v" sid="GEN 1:3" /><note caller="+" style="f"><char style="ft" closed="false">orphaned footnote</char></note><verse eid="GEN 1:3" /><verse number="4" style="v" sid="GEN 1:4" />Verse four text.<verse eid="GEN 1:4" /></para>
+          <chapter eid="GEN 1" />
+        </usx>
+        """;
+
+    [TestMethod]
+    public void Parse_FootnoteOnTextlessVerse_DoesNotLeakIntoNextVerse()
+    {
+        var book = UsxScriptureParser.Parse(XDocument.Parse(FootnoteLeakUsx));
+
+        Assert.AreEqual(1, book.Paragraphs.Count);
+        Assert.AreEqual(1, book.Paragraphs[0].Verses.Count);
+        Assert.AreEqual(4, book.Paragraphs[0].Verses[0].VerseNumber);
+        Assert.AreEqual(0, book.Paragraphs[0].Verses[0].Footnotes.Count);
+    }
+
+    // Regression fixture: verse 5 has both a cross-reference note (style="x") and a real
+    // footnote (style="f"). Only the real footnote should be captured.
+    private const string CrossReferenceUsx = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <usx version="3.0">
+          <book code="GEN" style="id">Genesis</book>
+          <chapter number="1" style="c" sid="GEN 1" />
+          <para style="p">
+            <verse number="5" style="v" sid="GEN 1:5" />Verse five text.<note caller="+" style="x"><char style="xt" closed="false">See also Exodus 1:1</char></note><note caller="+" style="f"><char style="ft" closed="false">A real footnote</char></note><verse eid="GEN 1:5" /></para>
+          <chapter eid="GEN 1" />
+        </usx>
+        """;
+
+    [TestMethod]
+    public void Parse_CrossReferenceNote_IsNotCapturedAsFootnote()
+    {
+        var book = UsxScriptureParser.Parse(XDocument.Parse(CrossReferenceUsx));
+
+        Assert.AreEqual(1, book.Paragraphs.Count);
+        Assert.AreEqual(1, book.Paragraphs[0].Verses.Count);
+        var verse = book.Paragraphs[0].Verses[0];
+        Assert.AreEqual(5, verse.VerseNumber);
+        Assert.AreEqual(1, verse.Footnotes.Count);
+        Assert.AreEqual("A real footnote", verse.Footnotes[0].Text);
+    }
 }
