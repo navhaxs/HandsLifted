@@ -2,6 +2,8 @@
 
 **Status: DONE and merged to `master`.** Builds clean (0 errors), launches successfully, and both remaining interactive-risk items (ReactiveUI 5-major-version jump, libmpv video/motion-background playback) have been manually tested with no issues found. This upgrade is considered complete.
 
+**Follow-up (2026-07-28): bumped 12.0.5 → 12.1.0.** Checked NuGet dependency floors before bumping: `Xaml.Behaviors.Avalonia`/`.Interactions`/`.Interactivity` 12.0.5 depend on `Avalonia [12.0.5, )` (open floor, not an exact pin — the "don't casually bump" warning below turned out to be over-cautious for a same-major patch bump), `PanAndZoom` 12.0.0.1 depends on `Avalonia [12.0.0, )`, `ReactiveUI.Avalonia` 12.0.3 (kept at this version, not bumped to the newer 12.1.0 which requires ReactiveUI >= 24.0.0 and new `ReactiveUI.Primitives(.Avalonia)` packages) depends on `Avalonia [12.0.4, )`, and `Avalonia.Skia` 12.1.0 still pins the same `SkiaSharp [3.119.4, )` floor already in use. All satisfied. `dotnet restore` + `dotnet build -c Release` on `HandsLiftedApp.Desktop` were clean (0 errors), and the app launched successfully (`dotnet run`, confirmed `Avalonia 12.1.0.0` in the startup log, no crash). Only `Directory.Build.props`'s `AvaloniaVersion` changed — no other package versions needed to move.
+
 ## Where this lives
 
 - This work is merged into local `master` (commit `a6e70e9`, merge commit `216fa33`). It is **local only** — not pushed to `origin` (`origin/master` is ~83 commits behind local `master` at the time of merge).
