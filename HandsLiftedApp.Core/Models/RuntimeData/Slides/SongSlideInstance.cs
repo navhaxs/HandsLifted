@@ -24,15 +24,11 @@ namespace HandsLiftedApp.Data.Slides
     {
         private DebounceDispatcher debounceDispatcher = new(200);
 
-        private static BaseSlideTheme ResolveTheme(Guid designId)
+        private static BaseSlideTheme ResolveTheme(Guid designId, bool hasMotionBackground)
         {
-            if (designId != Guid.Empty)
-            {
-                var theme = Globals.Instance.MainViewModel?.Playlist?.Designs
-                    .FirstOrDefault(d => d.Id == designId);
-                if (theme != null) return theme;
-            }
-            return Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
+            return Globals.Instance.MainViewModel?.Playlist?.ResolveSongTheme(designId, hasMotionBackground)
+                   ?? Globals.Instance.AppPreferences?.DefaultTheme
+                   ?? new BaseSlideTheme();
         }
 
         public SongSlideInstance(SongItemInstance? parentSongItem, SongStanza? parentSongStanza, string id,
@@ -44,15 +40,39 @@ namespace HandsLiftedApp.Data.Slides
             if (text != null) Text = text;
             if (label != null) Label = label;
 
-            Theme = ResolveTheme(parentSongItem?.Design ?? Guid.Empty);
+            Theme = ResolveTheme(parentSongItem?.Design ?? Guid.Empty, parentSongItem?.HasMotionBackground ?? false);
 
             parentSongItem?.WhenAnyValue(x => x.Design)
                 .Skip(1)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(designId =>
                 {
-                    Theme = ResolveTheme(designId);
+                    Theme = ResolveTheme(designId, parentSongItem?.HasMotionBackground ?? false);
                     RequestRender();
+                });
+
+            // Motion background presence flips which playlist default applies when Design is
+            // unset (Guid.Empty), so this must re-resolve Theme, not just re-render.
+            parentSongItem?.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+                .Skip(1)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ =>
+                {
+                    Theme = ResolveTheme(parentSongItem?.Design ?? Guid.Empty, parentSongItem?.HasMotionBackground ?? false);
+                    RequestRender();
+                });
+
+            // If Design is unset, this slide is riding whichever playlist default applies -
+            // re-resolve whenever the user repoints one of the three playlist defaults.
+            Globals.Instance.MainViewModel?.Playlist?.DefaultThemeAssignmentsChanged
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ =>
+                {
+                    if ((parentSongItem?.Design ?? Guid.Empty) == Guid.Empty)
+                    {
+                        Theme = ResolveTheme(Guid.Empty, parentSongItem?.HasMotionBackground ?? false);
+                        RequestRender();
+                    }
                 });
 
             this.WhenAnyValue(x => x.Theme)
