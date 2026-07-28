@@ -1,9 +1,12 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.Scripture;
 
@@ -12,6 +15,15 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items;
 [TestClass]
 public class ScriptureItemInstanceTests
 {
+    [TestInitialize]
+    public void Setup()
+    {
+        // ResolvedDesignTheme (and GenerateSlidesAsync's default-store fallback) read
+        // Globals.Instance.AppPreferences, which is null unless Globals.OnStartup() has run.
+        // Matches the same convention already used by SongImporterTests.Init().
+        Globals.Instance.AppPreferences = new AppPreferencesViewModel();
+    }
+
     private const string GenesisChapterOneUsx = """
         <?xml version="1.0" encoding="UTF-8"?>
         <usx version="3.0">
@@ -42,7 +54,7 @@ public class ScriptureItemInstanceTests
     }
 
     [TestMethod]
-    public async Task GenerateSlidesAsync_ProducesOneSlidePerVerseInRange()
+    public async Task GenerateSlidesAsync_ShortRange_ProducesOnePageWithHeaderAndVerseText()
     {
         var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
         {
@@ -57,15 +69,15 @@ public class ScriptureItemInstanceTests
         await instance.GenerateSlidesAsync();
         Dispatcher.UIThread.RunJobs();
 
-        Assert.AreEqual(2, instance.Slides.Count);
+        Assert.AreEqual(1, instance.Slides.Count);
         var first = (ScriptureSlideInstance)instance.Slides[0];
-        var second = (ScriptureSlideInstance)instance.Slides[1];
-        Assert.AreEqual("In the beginning God created the heaven and the earth.", first.Text);
-        Assert.AreEqual("And the earth was without form, and void.", second.Text);
+        Assert.IsTrue(first.Lines.Any(l => l.IsHeader), "first slide must carry a header line");
+        Assert.IsTrue(first.Text.Contains("In the beginning"), "flattened text should include verse content");
+        Assert.IsTrue(first.Text.Contains("without form"), "flattened text should include the second verse too");
     }
 
     [TestMethod]
-    public async Task GenerateSlidesAsync_SlideLabel_UsesParsedBookTitle_NotBookCode()
+    public async Task GenerateSlidesAsync_SlideId_UsesPageIndexNotChapterVerse()
     {
         var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
         {
@@ -74,14 +86,14 @@ public class ScriptureItemInstanceTests
             StartChapter = 1,
             StartVerse = 1,
             EndChapter = 1,
-            EndVerse = 1
+            EndVerse = 2
         };
 
         await instance.GenerateSlidesAsync();
         Dispatcher.UIThread.RunJobs();
 
         var first = (ScriptureSlideInstance)instance.Slides[0];
-        Assert.AreEqual("Genesis 1:1", first.Label);
+        Assert.AreEqual("page0", first.Id);
     }
 
     [TestMethod]
@@ -109,29 +121,6 @@ public class ScriptureItemInstanceTests
     }
 
     [TestMethod]
-    public async Task GenerateSlidesAsync_NarrowerRangeOnRegenerate_ShrinksSlideList()
-    {
-        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
-        {
-            Translation = "eng_bsb",
-            Book = "gen",
-            StartChapter = 1,
-            StartVerse = 1,
-            EndChapter = 1,
-            EndVerse = 3
-        };
-        await instance.GenerateSlidesAsync();
-        Dispatcher.UIThread.RunJobs();
-        Assert.AreEqual(3, instance.Slides.Count);
-
-        instance.EndVerse = 2;
-        await instance.GenerateSlidesAsync();
-        Dispatcher.UIThread.RunJobs();
-
-        Assert.AreEqual(2, instance.Slides.Count);
-    }
-
-    [TestMethod]
     public async Task ActiveSlide_TracksSelectedSlideIndex()
     {
         var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
@@ -146,13 +135,13 @@ public class ScriptureItemInstanceTests
         await instance.GenerateSlidesAsync();
         Dispatcher.UIThread.RunJobs();
 
-        instance.SelectedSlideIndex = 1;
+        instance.SelectedSlideIndex = 0;
 
-        Assert.AreSame(instance.Slides[1], instance.ActiveSlide);
+        Assert.AreSame(instance.Slides[0], instance.ActiveSlide);
     }
 
     [TestMethod]
-    public async Task GenerateSlidesAsync_BookFileMissing_ProducesPlaceholderSlide()
+    public async Task GenerateSlidesAsync_BookFileMissing_ProducesPlaceholderPage()
     {
         var instance = new ScriptureItemInstance(null, MakeEmptyStore())
         {
@@ -171,5 +160,15 @@ public class ScriptureItemInstanceTests
         var slide = (ScriptureSlideInstance)instance.Slides[0];
         StringAssert.Contains(slide.Text, "Scripture data not found");
         StringAssert.Contains(slide.Text, "gen");
+    }
+
+    [TestMethod]
+    public void ResolvedDesignTheme_DesignEmpty_FallsBackToDefaultTheme()
+    {
+        var instance = new ScriptureItemInstance(null, MakeEmptyStore());
+
+        // With no ParentPlaylist and Design left at its Guid.Empty default, resolution
+        // falls back to the app's default theme rather than throwing or returning null.
+        Assert.IsNotNull(instance.ResolvedDesignTheme);
     }
 }

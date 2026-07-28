@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
@@ -9,6 +10,7 @@ using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Importer.Scripture;
 using ReactiveUI;
 using Serilog;
@@ -39,6 +41,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     (selectedSlideIndex, slides) => slides.ElementAtOrDefault(selectedSlideIndex))
                 .ToProperty(this, x => x.ActiveSlide);
 
+            this.WhenAnyValue(x => x.Design)
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
+
             this.WhenAnyValue(
                 i => i.Title,
                 i => i.Translation,
@@ -51,6 +56,19 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 ItemDataModified?.Invoke(this, EventArgs.Empty);
             });
+        }
+
+        public BaseSlideTheme? ResolvedDesignTheme
+        {
+            get => ParentPlaylist?.Designs.FirstOrDefault(d => d.Id == Design)
+                   ?? Globals.Instance.AppPreferences?.DefaultTheme;
+            set
+            {
+                Design = value?.Id ?? Guid.Empty;
+                _ = GenerateSlidesAsync().ContinueWith(
+                    t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", Title),
+                    TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         private ObservableCollection<Slide> _slides = new ObservableCollection<Slide>();
@@ -69,29 +87,46 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public async Task GenerateSlidesAsync()
         {
             var store = _injectedStore ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
+            List<ScriptureVerseRef> verses;
+            string bookTitle;
             try
             {
                 var book = await store.LoadBookAsync(Book).ConfigureAwait(false);
-                var verses = ScriptureVerseRangeExtractor.Extract(book, StartChapter, StartVerse, EndChapter, EndVerse);
-                UpdateVerseSlides(book.Title, verses);
+                verses = ScriptureVerseRangeExtractor.Extract(book, StartChapter, StartVerse, EndChapter, EndVerse);
+                bookTitle = book.Title;
             }
             catch (ScriptureBookNotFoundException ex)
             {
                 Log.Error(ex, "Scripture data not found for {Book} ({Translation})", Book, Translation);
-                UpdateVerseSlides(Book, MakeMissingDataPlaceholder());
+                verses = MakeMissingDataPlaceholder();
+                bookTitle = Book;
             }
+
+            var referenceLabel = FormatReferenceLabel(bookTitle);
+            UpdatePages(referenceLabel, verses);
         }
 
-        private System.Collections.Generic.List<ScriptureVerseRef> MakeMissingDataPlaceholder()
+        private string FormatReferenceLabel(string bookTitle)
+        {
+            var title = string.IsNullOrEmpty(bookTitle) ? Book : bookTitle;
+            return StartChapter == EndChapter && StartVerse == EndVerse
+                ? $"{title} {StartChapter}:{StartVerse}"
+                : $"{title} {StartChapter}:{StartVerse}-{EndChapter}:{EndVerse}";
+        }
+
+        private List<ScriptureVerseRef> MakeMissingDataPlaceholder()
         {
             var text =
                 $"Scripture data not found: {Book} {StartChapter}:{StartVerse}-{EndChapter}:{EndVerse} ({Translation})\n" +
                 "Check Setup > Library > Scripture Data Path";
-            return new System.Collections.Generic.List<ScriptureVerseRef> { new ScriptureVerseRef(StartChapter, StartVerse, text) };
+            return new List<ScriptureVerseRef> { new ScriptureVerseRef(StartChapter, StartVerse, text) };
         }
 
-        private void UpdateVerseSlides(string bookTitle, System.Collections.Generic.List<ScriptureVerseRef> verses)
+        private void UpdatePages(string referenceLabel, List<ScriptureVerseRef> verses)
         {
+            var theme = ResolvedDesignTheme ?? new BaseSlideTheme();
+            var pages = ScriptureParagraphLayoutEngine.Paginate(verses, referenceLabel, theme);
+
             // GenerateSlidesAsync awaits the local disk read with .ConfigureAwait(false), so this
             // continuation still runs on a thread-pool thread (File I/O, not UI-thread work), not
             // the UI thread. Slides is bound live in ItemSlidesView once a scripture item sits in a
@@ -101,10 +136,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 var newSlides = new ObservableCollection<Slide>();
 
-                foreach (var v in verses)
+                for (int i = 0; i < pages.Count; i++)
                 {
-                    var slideId = $"{v.Chapter}:{v.Verse}";
-                    var label = string.IsNullOrEmpty(bookTitle) ? $"{Book} {v.Chapter}:{v.Verse}" : $"{bookTitle} {v.Chapter}:{v.Verse}";
+                    var page = pages[i];
+                    var slideId = $"page{i}";
+                    // Each ScriptureParagraphLine's Runs already reconstruct that line's text exactly
+                    // when concatenated with no separator (inter-word spacing is itself a standalone
+                    // run — see ScriptureParagraphLayoutEngine.PrependSpace — and a run that starts a
+                    // wrapped line never carries a leading space). The single line break introduced by
+                    // wrapping stands in for the original space between words, so lines are rejoined
+                    // with a single space to restore that spacing (also separating the header line(s)
+                    // from the verse text by exactly one space).
+                    var flatText = string.Join(" ", page.Lines.Select(l => string.Concat(l.Runs.Select(r => r.Text)))).Trim();
 
                     var existing = Slides
                         .OfType<ScriptureSlideInstance>()
@@ -112,13 +155,20 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     if (existing != null)
                     {
-                        if (existing.Text != v.Text) existing.Text = v.Text;
-                        if (existing.Label != label) existing.Label = label;
+                        existing.Lines = page.Lines;
+                        if (existing.Text != flatText) existing.Text = flatText;
+                        if (existing.Label != referenceLabel) existing.Label = referenceLabel;
+                        existing.Theme = theme;
                         newSlides.Add(existing);
                     }
                     else
                     {
-                        newSlides.Add(new ScriptureSlideInstance(this, slideId, text: v.Text, label: label));
+                        var slide = new ScriptureSlideInstance(this, slideId, text: flatText, label: referenceLabel)
+                        {
+                            Lines = page.Lines,
+                            Theme = theme
+                        };
+                        newSlides.Add(slide);
                     }
                 }
 

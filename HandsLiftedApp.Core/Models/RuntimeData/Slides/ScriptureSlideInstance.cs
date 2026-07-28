@@ -3,6 +3,7 @@ using DebounceThrottle;
 using DynamicData.Binding;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.Thumbnail;
 using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.Render.Skia.Builders;
@@ -12,6 +13,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 
 namespace HandsLiftedApp.Data.Slides
@@ -26,8 +28,9 @@ namespace HandsLiftedApp.Data.Slides
             if (text != null) Text = text;
             if (label != null) Label = label;
 
-            // No per-item Design/theme-selection concept exists yet for scripture items
-            // (unlike SongItem.Design) — every scripture slide uses the app's default theme.
+            // Default theme here is just the constructor's own initial value — the caller
+            // (ScriptureItemInstance) immediately overwrites Theme with the item's
+            // ResolvedDesignTheme after constructing or reusing this slide instance.
             Theme = Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
 
             this.WhenAnyValue(x => x.Theme)
@@ -40,6 +43,13 @@ namespace HandsLiftedApp.Data.Slides
                 .Skip(1)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
+        }
+
+        private IReadOnlyList<ScriptureParagraphLine> _lines = Array.Empty<ScriptureParagraphLine>();
+        public IReadOnlyList<ScriptureParagraphLine> Lines
+        {
+            get => _lines;
+            set => this.RaiseAndSetIfChanged(ref _lines, value);
         }
 
         private void RequestRender()
