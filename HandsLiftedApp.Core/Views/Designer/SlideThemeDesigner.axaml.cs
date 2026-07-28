@@ -109,14 +109,15 @@ namespace HandsLiftedApp.Core.Views.Designer
 
         private void PreviewModeToggle_OnChecked(object? sender, RoutedEventArgs e)
         {
-            // Avalonia 12's ToggleButton only exposes IsCheckedChanged (fires for both the
-            // radio button becoming checked AND the sibling in the group becoming unchecked),
-            // unlike WPF-style Checked/Unchecked. Guard so this only runs on the "became
-            // checked" transition, matching the old Checked-only semantics (fires once per
-            // group toggle, on the button that became checked).
-            if (sender is ToggleButton { IsChecked: not true })
-                return;
-
+            // Avalonia 12's ToggleButton only exposes IsCheckedChanged, which fires twice per
+            // group toggle: once when the clicked radio button becomes checked (while the
+            // sibling is still stale-checked), and again when the group manager unchecks the
+            // sibling. The handler body below is a pure function of both toggles' current
+            // IsChecked state, so it's safe - and necessary - to let it run on both
+            // transitions: the first pass may briefly show both panels, but the second pass
+            // (after the sibling settles) recomputes from the final state and corrects it.
+            // Guarding to only the first transition (as the old WPF-style Checked-only
+            // semantics would) would leave the transient "both visible" result uncorrected.
             themePreviewSlideView.IsVisible = previewLyricToggle.IsChecked == true;
             themePreviewTitleSlideView.IsVisible = previewTitleToggle.IsChecked == true;
         }

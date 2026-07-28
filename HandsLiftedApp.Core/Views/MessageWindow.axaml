@@ -10,7 +10,7 @@
         ExtendClientAreaToDecorationsHint="True"
         Background="Transparent"
         TransparencyLevelHint="Transparent"
-        SystemDecorations="None"
+        WindowDecorations="None"
         ShowInTaskbar="False"
         CanResize="False"
         x:Class="HandsLiftedApp.Views.App.MessageWindow"

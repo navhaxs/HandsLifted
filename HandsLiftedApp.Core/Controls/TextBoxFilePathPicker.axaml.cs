@@ -76,7 +76,11 @@ namespace HandsLiftedApp.Core.Controls
             try
             {
                 var topLevel = TopLevel.GetTopLevel(this);
-                if (topLevel == null) return;
+                if (topLevel == null)
+                {
+                    Log.Error("Error picking file: could not resolve TopLevel");
+                    return;
+                }
 
                 var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {

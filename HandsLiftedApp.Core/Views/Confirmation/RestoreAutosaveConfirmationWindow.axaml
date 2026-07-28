@@ -9,7 +9,7 @@
         ExtendClientAreaToDecorationsHint="True"
         Background="Transparent"
         TransparencyLevelHint="Transparent"
-        SystemDecorations="None"
+        WindowDecorations="None"
         ShowInTaskbar="False"
         CanResize="False"
         x:Class="HandsLiftedApp.Core.Views.Confirmation.RestoreAutosaveConfirmationWindow"
