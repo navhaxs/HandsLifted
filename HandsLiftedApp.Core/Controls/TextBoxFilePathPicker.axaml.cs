@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Controls
@@ -73,11 +75,19 @@ namespace HandsLiftedApp.Core.Controls
         {
             try
             {
-                var dialog = new OpenFileDialog() { AllowMultiple = false };
-                var window = TopLevel.GetTopLevel(this) as Window;
-                var filePaths = await dialog.ShowAsync(window);
+                var topLevel = TopLevel.GetTopLevel(this);
+                if (topLevel == null) return;
 
-                if (filePaths == null || filePaths.Length == 0) return;
+                var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    AllowMultiple = false
+                });
+
+                var filePaths = files.Select(f => f.TryGetLocalPath())
+                    .Where(p => !string.IsNullOrEmpty(p))
+                    .ToArray();
+
+                if (filePaths.Length == 0) return;
                 FilePath = filePaths[0];
             }
             catch (Exception ex)

@@ -170,8 +170,16 @@ namespace HandsLiftedApp.Core.Views.Editors
         {
             try
             {
-                var dialog = new OpenFileDialog() { AllowMultiple = true };
-                var fileNames = await dialog.ShowAsync(this);
+                var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    AllowMultiple = true
+                });
+
+                var fileNames = files.Select(f => f.TryGetLocalPath())
+                    .Where(p => !string.IsNullOrEmpty(p))
+                    .Select(p => p!)
+                    .ToArray();
+
                 interaction.SetOutput(fileNames);
             }
             catch (Exception e)

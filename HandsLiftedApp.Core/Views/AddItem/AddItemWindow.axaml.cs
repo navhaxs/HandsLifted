@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using ReactiveUI.Avalonia;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using ReactiveUI;
@@ -35,8 +37,16 @@ namespace HandsLiftedApp.Core.Views
         {
             try
             {
-                var dialog = new OpenFileDialog() { AllowMultiple = true };
-                var fileNames = await dialog.ShowAsync(this);
+                var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    AllowMultiple = true
+                });
+
+                var fileNames = files.Select(f => f.TryGetLocalPath())
+                    .Where(p => !string.IsNullOrEmpty(p))
+                    .Select(p => p!)
+                    .ToArray();
+
                 interaction.SetOutput(fileNames);
             }
             catch (Exception e)
