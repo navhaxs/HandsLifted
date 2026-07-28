@@ -27,4 +27,15 @@ public class ScriptureBookCatalogTests
         var names = ScriptureBookCatalog.AllBooks.Select(b => b.Name).ToList();
         Assert.AreEqual(names.Count, names.Distinct().Count());
     }
+
+    [TestMethod]
+    public void AllBooks_NamesMatchExpectedCodes_AtKeyPositions()
+    {
+        Assert.AreEqual("Genesis", ScriptureBookCatalog.AllBooks.Single(b => b.Code == "gen").Name);
+        Assert.AreEqual("Malachi", ScriptureBookCatalog.AllBooks.Single(b => b.Code == "mal").Name);
+        Assert.AreEqual("Matthew", ScriptureBookCatalog.AllBooks.Single(b => b.Code == "mat").Name);
+        Assert.AreEqual("Revelation", ScriptureBookCatalog.AllBooks.Single(b => b.Code == "rev").Name);
+        Assert.AreEqual("Song of Solomon", ScriptureBookCatalog.AllBooks.Single(b => b.Code == "sng").Name);
+        Assert.AreEqual("Ecclesiastes", ScriptureBookCatalog.AllBooks.Single(b => b.Code == "ecc").Name);
+    }
 }
