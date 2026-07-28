@@ -33,6 +33,7 @@ public class HandsLiftedDocXmlSerializerTests
     [TestMethod]
     public void SerializePlaylist_ThenDeserialize_RoundTripsScriptureItem()
     {
+        var someDesignId = Guid.NewGuid();
         var playlist = new PlaylistInstance();
         var scriptureInstance = new ScriptureItemInstance(playlist)
         {
@@ -42,7 +43,8 @@ public class HandsLiftedDocXmlSerializerTests
             StartChapter = 3,
             StartVerse = 16,
             EndChapter = 3,
-            EndVerse = 21
+            EndVerse = 21,
+            Design = someDesignId
         };
         playlist.Items.Add(scriptureInstance);
 
@@ -66,5 +68,6 @@ public class HandsLiftedDocXmlSerializerTests
         Assert.AreEqual(16, scriptureItem.StartVerse);
         Assert.AreEqual(3, scriptureItem.EndChapter);
         Assert.AreEqual(21, scriptureItem.EndVerse);
+        Assert.AreEqual(someDesignId, scriptureItem.Design);
     }
 }

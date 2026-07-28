@@ -57,7 +57,8 @@ namespace HandsLiftedApp.Core
                     StartChapter = scriptureItem.StartChapter,
                     StartVerse = scriptureItem.StartVerse,
                     EndChapter = scriptureItem.EndChapter,
-                    EndVerse = scriptureItem.EndVerse
+                    EndVerse = scriptureItem.EndVerse,
+                    Design = scriptureItem.Design
                 };
                 // Fire-and-forget: GenerateSlidesAsync reads USX from local disk and
                 // this factory method is synchronous. Slides populate reactively

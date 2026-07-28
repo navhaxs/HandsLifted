@@ -29,5 +29,8 @@ namespace HandsLiftedApp.Data.Models.Items
 
         private int _endVerse = 1;
         public int EndVerse { get => _endVerse; set => this.RaiseAndSetIfChanged(ref _endVerse, value); }
+
+        private Guid _design = Guid.Empty;
+        public Guid Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
     }
 }

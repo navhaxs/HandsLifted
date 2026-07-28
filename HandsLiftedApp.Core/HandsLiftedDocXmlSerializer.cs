@@ -127,7 +127,8 @@ namespace HandsLiftedApp.Core
                     StartChapter = scriptureItemInstance.StartChapter,
                     StartVerse = scriptureItemInstance.StartVerse,
                     EndChapter = scriptureItemInstance.EndChapter,
-                    EndVerse = scriptureItemInstance.EndVerse
+                    EndVerse = scriptureItemInstance.EndVerse,
+                    Design = scriptureItemInstance.Design
                 };
             }
             else if (item is SlidesGroupItemInstance slidesGroupItemInstance)

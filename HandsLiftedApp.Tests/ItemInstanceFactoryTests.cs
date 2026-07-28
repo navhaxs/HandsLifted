@@ -32,6 +32,7 @@ public class ItemInstanceFactoryTests
     [TestMethod]
     public void ToItemInstance_ScriptureItem_RoundTripsThroughDiskAndFactory()
     {
+        var someDesignId = Guid.NewGuid();
         var original = new ScriptureItem
         {
             Title = "John 3:16-21",
@@ -40,7 +41,8 @@ public class ItemInstanceFactoryTests
             StartChapter = 3,
             StartVerse = 16,
             EndChapter = 3,
-            EndVerse = 21
+            EndVerse = 21,
+            Design = someDesignId
         };
 
         var path = Path.Combine(_tempDir, "john-3-16.xml");
@@ -64,5 +66,6 @@ public class ItemInstanceFactoryTests
         Assert.AreEqual(16, scriptureInstance.StartVerse);
         Assert.AreEqual(3, scriptureInstance.EndChapter);
         Assert.AreEqual(21, scriptureInstance.EndVerse);
+        Assert.AreEqual(someDesignId, scriptureInstance.Design);
     }
 }
