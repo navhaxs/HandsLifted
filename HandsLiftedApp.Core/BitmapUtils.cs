@@ -39,26 +39,50 @@ namespace HandsLiftedApp.Core
                 OperatingSystem.IsMacOS() ? SKColorType.Bgra8888 : SKImageInfo.PlatformColorType,
                 SKAlphaType.Opaque);
             
-            using (SKCanvas canvas = new SKCanvas(bitmap))
+            IntPtr bufferPtr = IntPtr.Zero;
+            try
             {
-                canvas.DrawRect(0, 0, (int)source.Size.Width, (int)source.Size.Height,
-                    new SKPaint() { Style = SKPaintStyle.Fill, Color = SKColors.Black });
+                using (SKCanvas canvas = new SKCanvas(bitmap))
+                {
+                    canvas.DrawRect(0, 0, (int)source.Size.Width, (int)source.Size.Height,
+                        new SKPaint() { Style = SKPaintStyle.Fill, Color = SKColors.Black });
 
-                int xres = (int)source.Size.Width;
-                int yres = (int)source.Size.Height;
-                int stride = (xres * 32 /*BGRA bpp*/ + 7) / 8;
-                int bufferSize = yres * stride;
-                IntPtr bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
+                    int xres = (int)source.Size.Width;
+                    int yres = (int)source.Size.Height;
+                    int stride = (xres * 32 /*BGRA bpp*/ + 7) / 8;
+                    int bufferSize = yres * stride;
+                    bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
 
-                using IDrawingContextImpl contextImpl =
-                    DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
+                    using IDrawingContextImpl contextImpl =
+                        DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
 
-                source.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
-                bitmap.SetPixels(bufferPtr);
+                    source.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
+                    bitmap.SetPixels(bufferPtr);
+                }
+
+                // bitmap.SetPixels only points at bufferPtr, it does not copy - Resize below
+                // reads through that pointer into a fresh independent buffer, so bufferPtr
+                // must stay alive until after Resize completes.
+                using SKBitmap? resizedBitmapSource = bitmap.Resize(
+                    new SKImageInfo(500, (int)(source.Size.Height / source.Size.Width * 500)),
+                    SKFilterQuality.High);
+                return EncodeToAvaloniaBitmap(resizedBitmapSource);
             }
+            finally
+            {
+                if (bufferPtr != IntPtr.Zero)
+                {
+                    Marshal.FreeCoTaskMem(bufferPtr);
+                }
+            }
+        }
 
-            SKBitmap? resizedBitmap = bitmap.Resize(new SKImageInfo(500, (int)(source.Size.Height / source.Size.Width * 500)),
-                SKFilterQuality.High);
+        private static Bitmap? EncodeToAvaloniaBitmap(SKBitmap? resizedBitmap)
+        {
+            if (resizedBitmap == null)
+            {
+                return null;
+            }
 
             // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
             // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563
