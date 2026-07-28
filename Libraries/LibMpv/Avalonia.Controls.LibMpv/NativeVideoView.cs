@@ -136,7 +136,7 @@ public class NativeVideoView : NativeControlHost
                 _floatingContent.Bind(Window.ContentProperty, this.GetObservable(ContentProperty)),
                 this.GetObservable(ContentProperty).Skip(1).Subscribe(_=> UpdateOverlayPosition()),
                 this.GetObservable(BoundsProperty).Skip(1).Subscribe(_ => UpdateOverlayPosition()),
-                Observable.FromEventPattern(VisualRoot, nameof(Window.PositionChanged))
+                Observable.FromEventPattern(TopLevel.GetTopLevel(this), nameof(Window.PositionChanged))
                 .Subscribe(_ => UpdateOverlayPosition())
             };
         }
@@ -150,7 +150,7 @@ public class NativeVideoView : NativeControlHost
             return;
 
         if (show && _attached)
-            _floatingContent.Show(VisualRoot as Window);
+            _floatingContent.Show(TopLevel.GetTopLevel(this) as Window);
         else
             _floatingContent.Hide();
     }

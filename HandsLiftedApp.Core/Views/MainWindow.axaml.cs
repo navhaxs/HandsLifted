@@ -187,37 +187,32 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         }
     }
 
-    private async void SubscribeToWindowState()
+    private void SubscribeToWindowState()
     {
         if (!OperatingSystem.IsWindows())
             return;
 
-        Window hostWindow = (Window)this.VisualRoot;
-
-        while (hostWindow == null)
-        {
-            // TODO stupid hack
-            hostWindow = (Window)this.VisualRoot;
-            await Task.Delay(50);
-        }
-
-        hostWindow.GetObservable(WindowStateProperty).Subscribe(s =>
+        // `this` (MainWindow) is itself the host window, so no VisualRoot lookup is
+        // needed. Avalonia 12's compositor rework made `VisualRoot` resolve to an
+        // internal TopLevelHost wrapper rather than the Window subclass, which broke
+        // the previous `(Window)this.VisualRoot` cast with an InvalidCastException.
+        this.GetObservable(WindowStateProperty).Subscribe(s =>
         {
             if (s != WindowState.Maximized)
             {
-                hostWindow.Padding = new Thickness(0, 0, 0, 0);
+                this.Padding = new Thickness(0, 0, 0, 0);
             }
 
             if (s == WindowState.Maximized)
             {
-                hostWindow.Padding = new Thickness(7, 7, 7, 7);
+                this.Padding = new Thickness(7, 7, 7, 7);
 
                 // This should be a more universal approach in both cases, but I found it to be less reliable, when for example double-clicking the title bar.
-                /*hostWindow.Padding = new Thickness(
-                        hostWindow.OffScreenMargin.Left,
-                        hostWindow.OffScreenMargin.Top,
-                        hostWindow.OffScreenMargin.Right,
-                        hostWindow.OffScreenMargin.Bottom);*/
+                /*this.Padding = new Thickness(
+                        this.OffScreenMargin.Left,
+                        this.OffScreenMargin.Top,
+                        this.OffScreenMargin.Right,
+                        this.OffScreenMargin.Bottom);*/
             }
         });
     }
