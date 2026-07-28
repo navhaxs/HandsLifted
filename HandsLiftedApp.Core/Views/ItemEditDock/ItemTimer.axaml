@@ -28,7 +28,8 @@
                         <CheckBox Margin="6 0"
                                   IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" />
                         <TextBox Margin="6 0"
-                                   Text="{Binding IntervalMs}" VerticalAlignment="Center" />
+                                   Text="{Binding IntervalSeconds}" VerticalAlignment="Center" />
+                        <TextBlock Text="sec" VerticalAlignment="Center" Margin="4 0 0 0" />
                     </DockPanel>
                 </StackPanel>
             </Flyout>

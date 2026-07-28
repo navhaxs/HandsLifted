@@ -28,6 +28,24 @@ namespace HandsLiftedApp.Data.Data.Models.Items
         /// <summary>
         /// Interval (miliseconds)
         /// </summary>
-        public int IntervalMs { get => _intervalMs; set => this.RaiseAndSetIfChanged(ref _intervalMs, value); }
+        public int IntervalMs
+        {
+            get => _intervalMs;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _intervalMs, value);
+                this.RaisePropertyChanged(nameof(IntervalSeconds));
+            }
+        }
+
+        /// <summary>
+        /// Interval (seconds), accepts millisecond-precision decimals; mirrors IntervalMs
+        /// </summary>
+        [XmlIgnore]
+        public double IntervalSeconds
+        {
+            get => _intervalMs / 1000.0;
+            set => IntervalMs = (int)System.Math.Round(value * 1000.0);
+        }
     }
 }
