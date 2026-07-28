@@ -174,7 +174,7 @@
                                 <DockPanel.ContextMenu>
                                     <ContextMenu
                                         PlacementAnchor="Bottom"
-                                        PlacementMode="Bottom"
+                                        Placement="Bottom"
                                         PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
                                         <MenuItem Click="OnRepeatPartClick" Header="Repeat" />
                                         <MenuItem Click="OnRemovePartClick" Header="Remove" />
