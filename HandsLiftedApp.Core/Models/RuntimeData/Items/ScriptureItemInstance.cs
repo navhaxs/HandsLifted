@@ -21,12 +21,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public event EventHandler? ItemDataModified;
 
-        private readonly ScriptureLocalUsxStore _store;
+        private readonly ScriptureLocalUsxStore? _injectedStore;
 
         public ScriptureItemInstance(PlaylistInstance? parentPlaylist, ScriptureLocalUsxStore? store = null) : base()
         {
             ParentPlaylist = parentPlaylist;
-            _store = store ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
+            _injectedStore = store;
 
             // Deliberately no .ObserveOn(RxApp.MainThreadScheduler) here (unlike SongItemInstance's
             // equivalent chain): that scheduler depends on Avalonia.ReactiveUI's dispatcher registration,
@@ -34,7 +34,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             // update deterministically and immediately when SelectedSlideIndex or Slides changes.
             // (UpdateVerseSlides below, which mutates Slides itself, does explicitly marshal to the UI
             // thread via Dispatcher.UIThread.Post since it's reachable from a background-thread
-            // continuation of GenerateSlidesAsync's network fetch — this ActiveSlide chain is not.)
+            // continuation of GenerateSlidesAsync's disk read — this ActiveSlide chain is not.)
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides,
                     (selectedSlideIndex, slides) => slides.ElementAtOrDefault(selectedSlideIndex))
                 .ToProperty(this, x => x.ActiveSlide);
@@ -68,9 +68,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public async Task GenerateSlidesAsync()
         {
+            var store = _injectedStore ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
             try
             {
-                var book = await _store.LoadBookAsync(Book).ConfigureAwait(false);
+                var book = await store.LoadBookAsync(Book).ConfigureAwait(false);
                 var verses = ScriptureVerseRangeExtractor.Extract(book, StartChapter, StartVerse, EndChapter, EndVerse);
                 UpdateVerseSlides(book.Title, verses);
             }
@@ -91,11 +92,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private void UpdateVerseSlides(string bookTitle, System.Collections.Generic.List<ScriptureVerseRef> verses)
         {
-            // GenerateSlidesAsync awaits the network fetch with .ConfigureAwait(false), so this
-            // continuation runs on a thread-pool thread, not the UI thread. Slides is bound live
-            // in ItemSlidesView once a scripture item sits in a playlist, so the mutation below
-            // (and the RaisePropertyChanged(nameof(Slides)) it triggers) must be marshaled back
-            // to the UI thread rather than running here.
+            // GenerateSlidesAsync awaits the local disk read with .ConfigureAwait(false), so this
+            // continuation still runs on a thread-pool thread (File I/O, not UI-thread work), not
+            // the UI thread. Slides is bound live in ItemSlidesView once a scripture item sits in a
+            // playlist, so the mutation below (and the RaisePropertyChanged(nameof(Slides)) it
+            // triggers) must be marshaled back to the UI thread rather than running here.
             Dispatcher.UIThread.Post(() =>
             {
                 var newSlides = new ObservableCollection<Slide>();

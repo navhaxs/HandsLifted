@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -85,10 +86,27 @@ public class ScriptureUsxDownloaderTests
                 : new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(MinimalUsx) });
         var downloader = new ScriptureUsxDownloader(new HttpClient(handler));
 
-        await downloader.DownloadAllBooksAsync(_tempRoot);
+        var failedCount = await downloader.DownloadAllBooksAsync(_tempRoot);
 
         Assert.IsFalse(File.Exists(Path.Combine(_tempRoot, "gen.usx")));
         Assert.IsTrue(File.Exists(Path.Combine(_tempRoot, "exo.usx")));
         Assert.AreEqual(ScriptureUsxDownloader.AllBookCodes.Count - 1, Directory.GetFiles(_tempRoot, "*.usx").Length);
+        Assert.AreEqual(1, failedCount);
+    }
+
+    [TestMethod]
+    public async Task DownloadAllBooksAsync_MultipleBooksFail_ReturnsMatchingFailedCount()
+    {
+        var failingCodes = new[] { "gen", "exo", "lev" };
+        var handler = new FakeHttpMessageHandler(request =>
+            failingCodes.Any(code => request.RequestUri!.ToString().Contains($"/{code}.usx"))
+                ? new HttpResponseMessage(HttpStatusCode.NotFound)
+                : new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(MinimalUsx) });
+        var downloader = new ScriptureUsxDownloader(new HttpClient(handler));
+
+        var failedCount = await downloader.DownloadAllBooksAsync(_tempRoot);
+
+        Assert.AreEqual(failingCodes.Length, failedCount);
+        Assert.AreEqual(ScriptureUsxDownloader.AllBookCodes.Count - failingCodes.Length, Directory.GetFiles(_tempRoot, "*.usx").Length);
     }
 }

@@ -59,9 +59,9 @@ namespace HandsLiftedApp.Core
                     EndChapter = scriptureItem.EndChapter,
                     EndVerse = scriptureItem.EndVerse
                 };
-                // Fire-and-forget: GenerateSlidesAsync fetches over the network and
+                // Fire-and-forget: GenerateSlidesAsync reads USX from local disk and
                 // this factory method is synchronous. Slides populate reactively
-                // once the fetch completes; ToItemInstance's other branches are
+                // once the read completes; ToItemInstance's other branches are
                 // similarly inconsistent about invoking their own GenerateSlides
                 // (e.g. SongItem's is commented out at the time of writing).
                 _ = scripture.GenerateSlidesAsync().ContinueWith(

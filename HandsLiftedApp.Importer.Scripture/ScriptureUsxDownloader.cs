@@ -32,11 +32,12 @@ public sealed class ScriptureUsxDownloader
         _httpClient = httpClient ?? new HttpClient();
     }
 
-    public async Task DownloadAllBooksAsync(string rootPath, IProgress<(int done, int total)>? progress = null, CancellationToken ct = default)
+    public async Task<int> DownloadAllBooksAsync(string rootPath, IProgress<(int done, int total)>? progress = null, CancellationToken ct = default)
     {
         Directory.CreateDirectory(rootPath);
         var total = AllBookCodes.Count;
         var done = 0;
+        var failed = 0;
 
         foreach (var bookCode in AllBookCodes)
         {
@@ -51,6 +52,7 @@ public sealed class ScriptureUsxDownloader
                 }
                 catch (Exception ex)
                 {
+                    failed++;
                     Log.Error(ex, "Failed to download scripture book {BookCode}", bookCode);
                 }
             }
@@ -58,6 +60,8 @@ public sealed class ScriptureUsxDownloader
             done++;
             progress?.Report((done, total));
         }
+
+        return failed;
     }
 
     private async Task DownloadOneBookAsync(string bookCode, string destPath, CancellationToken ct)

@@ -122,11 +122,13 @@ namespace HandsLiftedApp.Core.Views.Setup
                 try
                 {
                     var downloader = new ScriptureUsxDownloader();
-                    await downloader.DownloadAllBooksAsync(rootPath, progress);
+                    var failedCount = await downloader.DownloadAllBooksAsync(rootPath, progress);
 
                     Dispatcher.UIThread.Post(() =>
                     {
-                        statusText.Text = "Download complete.";
+                        statusText.Text = failedCount == 0
+                            ? "Download complete."
+                            : $"Downloaded {totalBooks - failedCount} of {totalBooks} books; {failedCount} failed (see log).";
                         button.IsEnabled = true;
                     });
                 }
