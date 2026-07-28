@@ -42,7 +42,20 @@ dotnet publish $desktopProj `
     -o $desktopOut
 if ($LASTEXITCODE -ne 0) { throw "Publish failed: HandsLiftedApp.Desktop" }
 
+$buildDate = Get-Date -Format "yyyyMMdd"
+$gitHash = (git rev-parse --short HEAD).Trim()
+$zipName = "publish VisionScreens Build $buildDate $gitHash.zip"
+$zipPath = Join-Path (Get-Location) $zipName
+
+if (Test-Path $zipPath) {
+    Remove-Item -Force $zipPath
+}
+
+Write-Host "Zipping publish output to $zipName ..."
+Compress-Archive -Path "$desktopOut/*" -DestinationPath $zipPath
+
 Write-Host ""
 Write-Host "Done. Deployable app folder: $desktopOut"
 Write-Host "  Main app:   $desktopOut/HandsLiftedApp.Desktop.exe"
 Write-Host "  PPT helper: $interopOut/HandsLiftedApp.Importer.PowerPointInteropHost.exe"
+Write-Host "  Zip:        $zipPath"
