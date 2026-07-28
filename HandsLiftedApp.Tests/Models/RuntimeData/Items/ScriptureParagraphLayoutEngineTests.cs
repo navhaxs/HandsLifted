@@ -101,6 +101,23 @@ public class ScriptureParagraphLayoutEngineTests
         Assert.IsTrue(allRuns.Any(r => r.IsSuperscript && r.Text == "1"), "the very first verse must still show its number");
     }
 
+    // The header renders bold per the design spec (measured with a bold typeface so wrapping
+    // decisions match what's drawn). ScriptureParagraphLine/Run don't carry font-weight info, so
+    // there's no way to assert "is bold" directly from the pagination output -- the meaningful
+    // thing to verify here is that Paginate still runs correctly and produces the expected header
+    // content now that the header is measured with a different (bold) typeface.
+    [TestMethod]
+    public void Paginate_HeaderMeasuredWithBoldTypeface_StillProducesExpectedHeaderContent()
+    {
+        var verses = MakeVerses((1, 1, "In the beginning God created the heaven and the earth."));
+
+        var pages = ScriptureParagraphLayoutEngine.Paginate(verses, "Genesis 1:1", MakeTheme());
+
+        var headerLine = pages[0].Lines.First(l => l.IsHeader);
+        var headerText = string.Concat(headerLine.Runs.Select(r => r.Text));
+        Assert.AreEqual("Genesis 1:1", headerText);
+    }
+
     [TestMethod]
     public void Paginate_PathologicalSingleTooWideToken_PlacedAloneOnItsOwnLine()
     {

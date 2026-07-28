@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -44,6 +45,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.WhenAnyValue(x => x.Design)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
 
+            // ReactiveUI's no-selector WhenAnyValue only goes up to 7 properties; an 8th property
+            // (Design) requires the selector-taking overload instead, so this passes a no-op
+            // selector purely to combine all 8 change streams into one Subscribe.
             this.WhenAnyValue(
                 i => i.Title,
                 i => i.Translation,
@@ -51,7 +55,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 i => i.StartChapter,
                 i => i.StartVerse,
                 i => i.EndChapter,
-                i => i.EndVerse
+                i => i.EndVerse,
+                i => i.Design,
+                (_1, _2, _3, _4, _5, _6, _7, _8) => Unit.Default
             ).Subscribe(_ =>
             {
                 ItemDataModified?.Invoke(this, EventArgs.Empty);
@@ -158,7 +164,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         existing.Lines = page.Lines;
                         if (existing.Text != flatText) existing.Text = flatText;
                         if (existing.Label != referenceLabel) existing.Label = referenceLabel;
-                        existing.Theme = theme;
+                        if (!ReferenceEquals(existing.Theme, theme))
+                        {
+                            existing.Theme = theme;
+                            existing.Cached = null;
+                        }
                         newSlides.Add(existing);
                     }
                     else

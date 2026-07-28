@@ -14,7 +14,6 @@ public static class ScriptureParagraphSpecBuilder
     private const int CanvasWidth = ScriptureParagraphLayoutEngine.CanvasWidth;
     private const int CanvasHeight = ScriptureParagraphLayoutEngine.CanvasHeight;
     private const float HorizontalMargin = ScriptureParagraphLayoutEngine.HorizontalMargin;
-    private const float HeaderSpacingBelow = 20f;
 
     private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
         theme.DropShadowEnabled
@@ -64,13 +63,14 @@ public static class ScriptureParagraphSpecBuilder
         using var bodyPaint = new SKPaint(bodyFont);
         using var superscriptFont = new SKFont(typeface, superscriptFontSize);
         using var superscriptPaint = new SKPaint(superscriptFont);
-        using var headerFont = new SKFont(typeface, headerFontSize);
+        using var headerTypeface = GetBoldTypeface(theme);
+        using var headerFont = new SKFont(headerTypeface, headerFontSize);
         using var headerPaint = new SKPaint(headerFont);
 
         bool hasHeader = lines.Any(l => l.IsHeader);
         float totalHeight = lines.Sum(l => l.IsHeader ? headerLineHeight : lineHeight);
         if (hasHeader && lines.Any(l => !l.IsHeader))
-            totalHeight += HeaderSpacingBelow;
+            totalHeight += ScriptureParagraphLayoutEngine.HeaderSpacingBelow;
 
         float startY = (CanvasHeight - totalHeight) / 2f;
         var result = new List<RenderElement>(lines.Count);
@@ -105,14 +105,15 @@ public static class ScriptureParagraphSpecBuilder
 
             var bounds = new SKRect(x, y, x + lineWidth, y + thisLineHeight);
 
-            // Create a fresh SKTypeface per element (the measurement typeface is disposed above)
-            var elemTypeface = GetTypeface(theme);
+            // Create a fresh SKTypeface per element (the measurement typeface is disposed above).
+            // Header lines render bold per the design spec; body lines use the theme's plain weight.
+            var elemTypeface = line.IsHeader ? GetBoldTypeface(theme) : GetTypeface(theme);
             result.Add(new MultiRunTextLineElement(runs, bounds, elemTypeface, color, shadow));
 
             y += thisLineHeight;
             bool isLastHeaderLineBeforeBody = line.IsHeader && (i + 1 >= lines.Count || !lines[i + 1].IsHeader);
             if (isLastHeaderLineBeforeBody)
-                y += HeaderSpacingBelow;
+                y += ScriptureParagraphLayoutEngine.HeaderSpacingBelow;
         }
 
         return result;
@@ -123,6 +124,13 @@ public static class ScriptureParagraphSpecBuilder
         var weight = theme.CalculatedTextFontBold ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal;
         var slant = theme.CalculatedTextFontItalic ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;
         return SKTypeface.FromFamilyName(theme.FontFamilyAsText, weight, SKFontStyleWidth.Normal, slant)
+               ?? SKTypeface.Default;
+    }
+
+    private static SKTypeface GetBoldTypeface(BaseSlideTheme theme)
+    {
+        var slant = theme.CalculatedTextFontItalic ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;
+        return SKTypeface.FromFamilyName(theme.FontFamilyAsText, SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, slant)
                ?? SKTypeface.Default;
     }
 

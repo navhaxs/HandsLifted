@@ -21,7 +21,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public const float HeaderFontSizeRatio = 1.3f;
         public const float SuperscriptFontSizeRatio = 0.6f;
         public const float SuperscriptBaselineOffsetRatio = 0.35f;
-        private const float HeaderSpacingBelow = 20f;
+        public const float HeaderSpacingBelow = 20f;
 
         public static List<ScriptureParagraphPage> Paginate(
             IReadOnlyList<ScriptureVerseRef> verses, string headerText, BaseSlideTheme theme)
@@ -38,7 +38,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             using var bodyPaint = new SKPaint(bodyFont);
             using var superscriptFont = new SKFont(typeface, bodyFontSize * SuperscriptFontSizeRatio);
             using var superscriptPaint = new SKPaint(superscriptFont);
-            using var headerFont = new SKFont(typeface, headerFontSize);
+            using var headerTypeface = GetBoldTypeface(theme);
+            using var headerFont = new SKFont(headerTypeface, headerFontSize);
             using var headerPaint = new SKPaint(headerFont);
 
             var headerUnits = TokenizeHeader(headerText);
@@ -104,7 +105,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     : $"{v.Verse}";
                 previousChapter = v.Chapter;
 
-                var words = v.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var words = v.Text.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 if (words.Length == 0)
                 {
                     units.Add(new WrapUnit(new[] { new ScriptureParagraphRun(marker, IsSuperscript: true) }));
@@ -186,6 +187,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             var weight = theme.CalculatedTextFontBold ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal;
             var slant = theme.CalculatedTextFontItalic ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;
             return SKTypeface.FromFamilyName(theme.FontFamilyAsText, weight, SKFontStyleWidth.Normal, slant)
+                   ?? SKTypeface.Default;
+        }
+
+        private static SKTypeface GetBoldTypeface(BaseSlideTheme theme)
+        {
+            var slant = theme.CalculatedTextFontItalic ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;
+            return SKTypeface.FromFamilyName(theme.FontFamilyAsText, SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, slant)
                    ?? SKTypeface.Default;
         }
     }

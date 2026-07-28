@@ -96,6 +96,30 @@ public class ScriptureParagraphSpecBuilderTests
         Assert.IsTrue(headerElement.Runs[0].FontSize > bodyElement.Runs[0].FontSize);
     }
 
+    // The design spec calls for the header to render bold while body text uses the theme's
+    // plain weight. SKTypeface doesn't expose an easy way to assert "is bold" back out, so the
+    // closest structurally-checkable proxy is: the header element's typeface must be a distinct
+    // instance from the body element's typeface, proving they came from separate GetBoldTypeface
+    // / GetTypeface construction calls rather than sharing one (which would mean both got the
+    // same weight).
+    [TestMethod]
+    public void Build_HeaderLine_UsesDistinctTypefaceInstanceFromBodyLine()
+    {
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = MakeTheme() };
+        slide.Lines = new[]
+        {
+            HeaderLine("Genesis 1:1"),
+            BodyLine(new ScriptureParagraphRun("Body text", IsSuperscript: false))
+        };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        var headerElement = (MultiRunTextLineElement)spec.Elements[0];
+        var bodyElement = (MultiRunTextLineElement)spec.Elements[1];
+        Assert.AreNotSame(headerElement.Typeface, bodyElement.Typeface,
+            "header should get a separately-constructed (bold) typeface, not the body's typeface instance");
+    }
+
     // Exercises the full Build -> SlideRenderer.RenderToSKBitmap path, which the structural
     // assertions above never touch: they only inspect the returned SlideRenderSpec, never render
     // it. This is the path where a stale/disposed SKTypeface stored on a RenderElement (the bug
