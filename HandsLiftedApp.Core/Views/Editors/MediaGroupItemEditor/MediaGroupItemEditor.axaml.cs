@@ -21,6 +21,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             DataFormat.CreateInProcessFormat<MediaGroupItem.GroupItem>("MediaGroupItemDrag");
         private MediaGroupItem.GroupItem? _dragSourceItem;
         private Point _pointerPressedPoint;
+        private PointerPressedEventArgs? _pointerPressedEventArgs;
         private bool _isDragging;
         private int _lastHoveredIndex = -1;
         private bool _dropBefore;
@@ -61,24 +62,27 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             {
                 _pointerPressedPoint = e.GetPosition(Thumbstrip);
                 _dragSourceItem = item;
+                _pointerPressedEventArgs = e;
                 _isDragging = false;
             }
         }
 
         private async void Thumbstrip_PointerMoved(object? sender, PointerEventArgs e)
         {
-            if (_dragSourceItem == null || _isDragging) return;
+            if (_dragSourceItem == null || _isDragging || _pointerPressedEventArgs == null) return;
 
             var pos = e.GetPosition(Thumbstrip);
             if (Math.Abs(pos.X - _pointerPressedPoint.X) > 6 || Math.Abs(pos.Y - _pointerPressedPoint.Y) > 6)
             {
                 var item = _dragSourceItem;
+                var pressedArgs = _pointerPressedEventArgs;
                 _isDragging = true;
                 _dragSourceItem = null;
+                _pointerPressedEventArgs = null;
 
                 var data = new DataTransfer();
                 data.Add(DataTransferItem.Create(DragDataFormat, item));
-                await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move);
+                await DragDrop.DoDragDropAsync(pressedArgs, data, DragDropEffects.Move);
 
                 _isDragging = false;
             }
@@ -87,6 +91,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
         private void Thumbstrip_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             _dragSourceItem = null;
+            _pointerPressedEventArgs = null;
         }
 
         private void CalculateDropTarget(DragEventArgs e)

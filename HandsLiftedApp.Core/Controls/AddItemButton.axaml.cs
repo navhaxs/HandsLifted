@@ -17,7 +17,8 @@ namespace HandsLiftedApp.Core.Controls
 {
     public partial class AddItemButton : UserControl
     {
-        private const string CustomFormat = "application/xxx-avalonia-controlcatalog-custom";
+        private static readonly DataFormat<object> CustomFormat =
+            DataFormat.CreateInProcessFormat<object>("application/xxx-avalonia-controlcatalog-custom");
 
         public static readonly StyledProperty<int?> ItemInsertIndexProperty =
             AvaloniaProperty.Register<AddItemButton, int?>(nameof(ItemInsertIndex));
@@ -126,9 +127,9 @@ namespace HandsLiftedApp.Core.Controls
                 this.Background = SolidColorBrush.Parse("Red");
 
                 // Only allow if the dragged data contains text or filenames.
-                if (!e.Data.Contains(DataFormats.Text)
-                    && !e.Data.Contains(DataFormats.Files)
-                    && !e.Data.Contains(CustomFormat))
+                if (!e.DataTransfer.Contains(DataFormat.Text)
+                    && !e.DataTransfer.Contains(DataFormat.File)
+                    && !e.DataTransfer.Contains(CustomFormat))
                     e.DragEffects = DragDropEffects.None;
             }
 
@@ -148,13 +149,13 @@ namespace HandsLiftedApp.Core.Controls
                     e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
                 }
 
-                if (e.Data.Contains(DataFormats.Text))
+                if (e.DataTransfer.Contains(DataFormat.Text))
                 {
-                    _dropState.Text = e.Data.GetText();
+                    _dropState.Text = e.DataTransfer.TryGetText();
                 }
-                else if (e.Data.Contains(DataFormats.Files))
+                else if (e.DataTransfer.Contains(DataFormat.File))
                 {
-                    var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
+                    var files = e.DataTransfer.TryGetFiles() ?? Array.Empty<IStorageItem>();
                     var contentStr = "";
 
                     var listOfFilePaths = new List<string>();
@@ -187,16 +188,9 @@ namespace HandsLiftedApp.Core.Controls
 
                     _dropState.Text = contentStr;
                 }
-#pragma warning disable CS0618 // Type or member is obsolete
-                else if (e.Data.Contains(DataFormats.FileNames))
-                {
-                    var files = e.Data.GetFileNames();
-                    _dropState.Text = string.Join(Environment.NewLine, files ?? Array.Empty<string>());
-                }
-#pragma warning restore CS0618 // Type or member is obsolete
-                //else if (e.Data.Contains(CustomFormat))
+                //else if (e.DataTransfer.Contains(CustomFormat))
                 //{
-                //    _dropState.Text = "Custom: " + e.Data.Get(CustomFormat);
+                //    _dropState.Text = "Custom: " + e.DataTransfer.TryGetValue(CustomFormat);
                 //}
 
                 this.Background = SolidColorBrush.Parse("Transparent");

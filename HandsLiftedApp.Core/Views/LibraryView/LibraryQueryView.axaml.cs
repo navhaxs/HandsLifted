@@ -24,6 +24,7 @@ namespace HandsLiftedApp.Core.Views.LibraryView
         private Point? _dragStart;
         private LibraryItem? _pendingDragItem;
         private Control? _pendingDragControl;
+        private PointerPressedEventArgs? _pendingDragPressedArgs;
 
         public LibraryQueryView()
         {
@@ -41,6 +42,7 @@ namespace HandsLiftedApp.Core.Views.LibraryView
                 _dragStart = e.GetPosition(null);
                 _pendingDragItem = libraryItem;
                 _pendingDragControl = control;
+                _pendingDragPressedArgs = e;
                 control.PointerMoved += DockPanel_PointerMoved;
                 control.PointerReleased += DockPanel_PointerReleased;
                 e.Pointer.Capture(control);
@@ -62,16 +64,18 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             _dragStart = null;
             _pendingDragItem = null;
             _pendingDragControl = null;
+            _pendingDragPressedArgs = null;
         }
 
         private async void DockPanel_PointerMoved(object? sender, PointerEventArgs e)
         {
-            if (_dragStart == null || _pendingDragItem == null) return;
+            if (_dragStart == null || _pendingDragItem == null || _pendingDragPressedArgs == null) return;
 
             var delta = e.GetPosition(null) - _dragStart.Value;
             if (Math.Abs(delta.X) < DragThreshold && Math.Abs(delta.Y) < DragThreshold) return;
 
             var item = _pendingDragItem;
+            var pressedArgs = _pendingDragPressedArgs;
             CancelPendingDrag();
 
             var dragData = new DataTransfer();
@@ -79,7 +83,7 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             IStorageFile file = await topLevel.StorageProvider.TryGetFileFromPathAsync(new Uri(item.FullFilePath));
             dragData.Add(DataTransferItem.Create(DataFormat.File, file));
 
-            await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Copy);
+            await DragDrop.DoDragDropAsync(pressedArgs, dragData, DragDropEffects.Copy);
         }
 
         private void InputElement_OnKeyDown(object? sender, KeyEventArgs e)
