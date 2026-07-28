@@ -45,4 +45,23 @@ public class ScriptureSlideInstanceTests
 
         Assert.AreSame(item, slide.ParentScriptureItem);
     }
+
+    [TestMethod]
+    public void Theme_DefaultsToNonNullAfterConstruction()
+    {
+        var slide = new ScriptureSlideInstance(null, "1:1");
+
+        Assert.IsNotNull(slide.Theme);
+    }
+
+    [TestMethod]
+    public void Theme_IsSettable()
+    {
+        var slide = new ScriptureSlideInstance(null, "1:1");
+        var customTheme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme { FontSize = 42 };
+
+        slide.Theme = customTheme;
+
+        Assert.AreSame(customTheme, slide.Theme);
+    }
 }
