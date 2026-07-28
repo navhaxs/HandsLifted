@@ -226,6 +226,29 @@
                             Padding="20">
                             Reload library.yml
                         </Button>
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Margin="0,24,0,4"
+                            Text="Scripture Data" />
+                        <TextBlock
+                            Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                            Margin="0,0,0,4"
+                            Text="Local folder where scripture (Bible) data is stored. Scripture slides render from this folder only — download must complete before scripture slides can render."
+                            TextWrapping="Wrap" />
+                        <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.ScriptureDataPath}" />
+                        <Button
+                            Click="DownloadScriptureDataButton_OnClick"
+                            HorizontalAlignment="Center"
+                            Margin="0,12,0,0"
+                            MinWidth="200"
+                            Padding="20"
+                            x:Name="DownloadScriptureDataButton">
+                            Download Bible Data
+                        </Button>
+                        <TextBlock
+                            IsVisible="False"
+                            Margin="0,8,0,0"
+                            x:Name="ScriptureDownloadStatusText" />
                     </StackPanel>
                 </TabItem>
 

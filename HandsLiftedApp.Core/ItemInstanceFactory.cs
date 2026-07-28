@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -24,10 +25,10 @@ namespace HandsLiftedApp.Core
                 var resolvedMotionBgPath = !string.IsNullOrEmpty(songItem.MotionBackgroundVideoPath)
                     ? RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, songItem.MotionBackgroundVideoPath)
                     : null;
-                
+
                 Log.Debug("ItemInstanceFactory: SongItem '{Title}' MotionBg raw='{RawPath}', resolved='{ResolvedPath}', base='{BasePath}'",
                     songItem.Title, songItem.MotionBackgroundVideoPath, resolvedMotionBgPath, playlistDirectoryPath);
-                
+
                 var song = new SongItemInstance(playlist)
                 {
                     UUID = songItem.UUID,
@@ -44,6 +45,30 @@ namespace HandsLiftedApp.Core
                 };
                 // song.GenerateSlides();
                 return song;
+            }
+            else if (deserializedItem is ScriptureItem scriptureItem)
+            {
+                var scripture = new ScriptureItemInstance(playlist)
+                {
+                    UUID = scriptureItem.UUID,
+                    Title = scriptureItem.Title,
+                    Translation = scriptureItem.Translation,
+                    Book = scriptureItem.Book,
+                    StartChapter = scriptureItem.StartChapter,
+                    StartVerse = scriptureItem.StartVerse,
+                    EndChapter = scriptureItem.EndChapter,
+                    EndVerse = scriptureItem.EndVerse,
+                    Design = scriptureItem.Design
+                };
+                // Fire-and-forget: GenerateSlidesAsync reads USX from local disk and
+                // this factory method is synchronous. Slides populate reactively
+                // once the read completes; ToItemInstance's other branches are
+                // similarly inconsistent about invoking their own GenerateSlides
+                // (e.g. SongItem's is commented out at the time of writing).
+                _ = scripture.GenerateSlidesAsync().ContinueWith(
+                    t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", scripture.Title),
+                    TaskContinuationOptions.OnlyOnFaulted);
+                return scripture;
             }
             else if (deserializedItem is PowerPointPresentationItem powerPointPresentationItem)
             {

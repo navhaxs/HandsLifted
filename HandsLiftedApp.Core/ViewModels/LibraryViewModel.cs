@@ -110,9 +110,12 @@ namespace HandsLiftedApp.Core.ViewModels
 
             foreach (var libDef in LibraryConfig.LibraryItems)
             {
-                Library lib = libDef.Type == LibraryType.Song
-                    ? new SongLibrary(libDef, new FileSystemSongLibrarySource(libDef.Directory))
-                    : new Library(libDef);
+                Library lib = libDef.Type switch
+                {
+                    LibraryType.Song => new SongLibrary(libDef, new FileSystemSongLibrarySource(libDef.Directory)),
+                    LibraryType.Scripture => new ScriptureLibrary(libDef),
+                    _ => new Library(libDef)
+                };
                 Libraries.Add(lib);
             }
         }

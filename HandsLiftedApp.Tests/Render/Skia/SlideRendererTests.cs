@@ -85,6 +85,55 @@ public class SlideRendererTests
     }
 
     [TestMethod]
+    public void RenderToSKBitmap_MultiRunTextLineElement_DrawsBothRuns()
+    {
+        // A superscript marker run and a regular-size text run on the same line —
+        // both should paint white pixels somewhere in the bounds.
+        var runs = new[]
+        {
+            new TextRun("13", 48f, -20f),
+            new TextRun("Be sober-minded", 80f, 0f)
+        };
+        var element = new MultiRunTextLineElement(runs, new SKRect(0, 0, 600, 120), SKTypeface.Default, SKColors.White, null);
+        var spec = new SlideRenderSpec(new SolidBackground(SKColors.Black), new[] { element });
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(spec, 600, 120);
+
+        bool hasWhitePixel = false;
+        for (int x = 0; x < bitmap.Width && !hasWhitePixel; x++)
+            for (int y = 0; y < bitmap.Height && !hasWhitePixel; y++)
+            {
+                var px = bitmap.GetPixel(x, y);
+                if (px.Red > 200 && px.Green > 200 && px.Blue > 200)
+                    hasWhitePixel = true;
+            }
+        Assert.IsTrue(hasWhitePixel, "multi-run element should paint visible white text");
+    }
+
+    [TestMethod]
+    public void Draw_UnchangedMultiRunLine_StaysAtFullAlpha()
+    {
+        var sharedElement = new MultiRunTextLineElement(
+            new[] { new TextRun("Same line", 80f, 0f) },
+            new SKRect(0, 0, 400, 120), SKTypeface.Default, SKColors.White, null);
+
+        var prev = new SlideRenderSpec(new SolidBackground(SKColors.Black), new[] { sharedElement });
+        var curr = new SlideRenderSpec(new SolidBackground(SKColors.Black), new[] { sharedElement });
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 400, 120, prev, 0.5f);
+
+        bool hasWhitePixel = false;
+        for (int x = 0; x < bitmap.Width && !hasWhitePixel; x++)
+            for (int y = 0; y < bitmap.Height && !hasWhitePixel; y++)
+            {
+                var px = bitmap.GetPixel(x, y);
+                if (px.Red > 200 && px.Green > 200 && px.Blue > 200)
+                    hasWhitePixel = true;
+            }
+        Assert.IsTrue(hasWhitePixel, "unchanged multi-run line should render at full opacity at mid-transition");
+    }
+
+    [TestMethod]
     public void Draw_NewLine_InvisibleAtProgressZero()
     {
         // A line only in current (not in previous) should be invisible when progress=0

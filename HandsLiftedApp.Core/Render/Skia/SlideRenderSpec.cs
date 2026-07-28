@@ -31,4 +31,20 @@ public record TextLineElement(
     DropShadowSpec? Shadow
 ) : RenderElement(Bounds);
 
+public record TextRun(string Text, float FontSize, float BaselineOffsetY);
+
+/// <remarks>
+/// Like <see cref="TextLineElement"/>, structural equality is intentionally incomplete
+/// (<see cref="SKTypeface"/> uses reference equality). Transition diffing uses the
+/// concatenation of all <see cref="TextRun.Text"/> values plus <see cref="Bounds"/>.Top —
+/// do not rely on record equality for semantic comparison.
+/// </remarks>
+public record MultiRunTextLineElement(
+    IReadOnlyList<TextRun> Runs,
+    SKRect Bounds,
+    SKTypeface Typeface,
+    SKColor Color,
+    DropShadowSpec? Shadow
+) : RenderElement(Bounds);
+
 public record DropShadowSpec(float OffsetX, float OffsetY, float BlurRadius, SKColor Color);

@@ -2,7 +2,7 @@
 
 namespace HandsLiftedApp.Core.Models.Library.Config
 {
-    public enum LibraryType { Song, Media }
+    public enum LibraryType { Song, Media, Scripture }
 
     public class LibraryConfig
     {

@@ -171,13 +171,14 @@ public static class SlideRenderer
         }
 
         // Elements in current: unchanged lines stay at 1.0, new/moved lines fade in.
-        // Identity = (Text, Bounds.Top): same text at a different Y means the block
-        // shifted (e.g. 3-line → 4-line), so the line must cross-fade.
+        // Identity = (combined text, Bounds.Top): same text at a different Y means the
+        // block shifted (e.g. 3-line → 4-line), so the line must cross-fade.
         if (current != null)
         {
             var previousKeys = previous?.Elements
-                .OfType<TextLineElement>()
-                .Select(e => (e.Text, e.Bounds.Top))
+                .Select(GetTextIdentityKey)
+                .Where(k => k.HasValue)
+                .Select(k => k!.Value)
                 .ToHashSet()
                 ?? new HashSet<(string, float)>();
 
@@ -188,6 +189,12 @@ public static class SlideRenderer
                     float alpha = previousKeys.Contains((textEl.Text, textEl.Bounds.Top)) ? 1f : progress;
                     DrawTextElement(canvas, textEl, alpha);
                 }
+                else if (element is MultiRunTextLineElement multiEl)
+                {
+                    var key = GetTextIdentityKey(multiEl)!.Value;
+                    float alpha = previousKeys.Contains(key) ? 1f : progress;
+                    DrawMultiRunTextElement(canvas, multiEl, alpha);
+                }
             }
         }
 
@@ -195,8 +202,9 @@ public static class SlideRenderer
         if (previous != null && progress < 1f)
         {
             var currentKeys = current?.Elements
-                .OfType<TextLineElement>()
-                .Select(e => (e.Text, e.Bounds.Top))
+                .Select(GetTextIdentityKey)
+                .Where(k => k.HasValue)
+                .Select(k => k!.Value)
                 .ToHashSet()
                 ?? new HashSet<(string, float)>();
 
@@ -204,6 +212,8 @@ public static class SlideRenderer
             {
                 if (element is TextLineElement textEl && !currentKeys.Contains((textEl.Text, textEl.Bounds.Top)))
                     DrawTextElement(canvas, textEl, 1f - progress);
+                else if (element is MultiRunTextLineElement multiEl && !currentKeys.Contains(GetTextIdentityKey(multiEl)!.Value))
+                    DrawMultiRunTextElement(canvas, multiEl, 1f - progress);
             }
         }
     }
@@ -304,5 +314,49 @@ public static class SlideRenderer
         }
 
         canvas.DrawText(element.Text, element.Bounds.Left, baselineY, font, paint);
+    }
+
+    private static (string, float)? GetTextIdentityKey(RenderElement element) => element switch
+    {
+        TextLineElement t => (t.Text, t.Bounds.Top),
+        MultiRunTextLineElement m => (string.Concat(m.Runs.Select(r => r.Text)), m.Bounds.Top),
+        _ => null
+    };
+
+    private static void DrawMultiRunTextElement(SKCanvas canvas, MultiRunTextLineElement element, float alpha)
+    {
+        if (alpha <= 0f) return;
+
+        float maxFontSize = 0f;
+        foreach (var run in element.Runs)
+            if (run.FontSize > maxFontSize) maxFontSize = run.FontSize;
+
+        using var refFont = new SKFont(element.Typeface, maxFontSize);
+        refFont.GetFontMetrics(out var metrics);
+        float baselineY = element.Bounds.Top - metrics.Ascent;
+
+        using var paint = new SKPaint { IsAntialias = true };
+        paint.Color = element.Color.WithAlpha((byte)(element.Color.Alpha * alpha));
+
+        if (element.Shadow is { } shadow)
+        {
+            float sigma = shadow.BlurRadius / 2f;
+            paint.ImageFilter = SKImageFilter.CreateDropShadow(
+                shadow.OffsetX, shadow.OffsetY, sigma, sigma,
+                shadow.Color.WithAlpha((byte)(shadow.Color.Alpha * alpha)));
+        }
+
+        float x = element.Bounds.Left;
+        foreach (var run in element.Runs)
+        {
+            using var runFont = new SKFont(element.Typeface, run.FontSize)
+            {
+                Edging = SKFontEdging.SubpixelAntialias,
+                Subpixel = true,
+            };
+            using var measurePaint = new SKPaint(runFont);
+            canvas.DrawText(run.Text, x, baselineY + run.BaselineOffsetY, runFont, paint);
+            x += measurePaint.MeasureText(run.Text);
+        }
     }
 }

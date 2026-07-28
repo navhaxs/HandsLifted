@@ -108,6 +108,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpv.Thumbnailing", "Libr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpv.Thumbnailing.Tests", "Libraries\LibMpv\LibMpv.Thumbnailing.Tests\LibMpv.Thumbnailing.Tests.csproj", "{D5E6F7A8-B9C0-1D2E-3F4A-5B6C7D8E9F0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandsLiftedApp.Importer.Scripture", "HandsLiftedApp.Importer.Scripture\HandsLiftedApp.Importer.Scripture.csproj", "{DC438C29-6B54-494A-A117-58CE7C581FAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -540,6 +542,18 @@ Global
 		{D5E6F7A8-B9C0-1D2E-3F4A-5B6C7D8E9F0A}.Release|x64.Build.0 = Release|Any CPU
 		{D5E6F7A8-B9C0-1D2E-3F4A-5B6C7D8E9F0A}.Release|x86.ActiveCfg = Release|Any CPU
 		{D5E6F7A8-B9C0-1D2E-3F4A-5B6C7D8E9F0A}.Release|x86.Build.0 = Release|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Debug|x64.Build.0 = Debug|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Debug|x86.Build.0 = Debug|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Release|x64.ActiveCfg = Release|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Release|x64.Build.0 = Release|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Release|x86.ActiveCfg = Release|Any CPU
+		{DC438C29-6B54-494A-A117-58CE7C581FAC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

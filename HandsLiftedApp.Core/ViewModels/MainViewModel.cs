@@ -29,6 +29,7 @@ using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
+using HandsLiftedApp.Importer.Scripture;
 using ReactiveUI;
 using Serilog;
 using Item = HandsLiftedApp.Data.Models.Items.Item;
@@ -365,6 +366,27 @@ public class MainViewModel : ViewModelBase
                         break;
                     case AddItemMessage.AddItemType.Comment:
                         itemToInsert = new CommentItem();
+                        break;
+                    case AddItemMessage.AddItemType.Scripture:
+                        var scriptureTitle = addItemMessage.ScriptureStartChapter == addItemMessage.ScriptureEndChapter &&
+                                              addItemMessage.ScriptureStartVerse == addItemMessage.ScriptureEndVerse
+                            ? $"{addItemMessage.ScriptureBookName} {addItemMessage.ScriptureStartChapter}:{addItemMessage.ScriptureStartVerse}"
+                            : $"{addItemMessage.ScriptureBookName} {addItemMessage.ScriptureStartChapter}:{addItemMessage.ScriptureStartVerse}-{addItemMessage.ScriptureEndChapter}:{addItemMessage.ScriptureEndVerse}";
+
+                        var scripture = new ScriptureItemInstance(Playlist)
+                        {
+                            Translation = ScriptureUsxDownloader.FixedTranslation,
+                            Book = addItemMessage.ScriptureBookCode!,
+                            StartChapter = addItemMessage.ScriptureStartChapter!.Value,
+                            StartVerse = addItemMessage.ScriptureStartVerse!.Value,
+                            EndChapter = addItemMessage.ScriptureEndChapter!.Value,
+                            EndVerse = addItemMessage.ScriptureEndVerse!.Value,
+                            Title = scriptureTitle
+                        };
+                        _ = scripture.GenerateSlidesAsync().ContinueWith(
+                            t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", scripture.Title),
+                            TaskContinuationOptions.OnlyOnFaulted);
+                        itemToInsert = scripture;
                         break;
                     // case AddItemMessage.AddItemType.BibleReadingSlideGroup:
                     //     filePaths = await ShowOpenFileDialog.Handle(Unit.Default); // TODO pass accepted file types list

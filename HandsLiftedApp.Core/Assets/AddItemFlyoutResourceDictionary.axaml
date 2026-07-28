@@ -27,6 +27,11 @@
                 <material:MaterialIcon Kind="Music" />
             </MenuItem.Icon>
         </MenuItem>
+        <MenuItem Click="OnMenuItemClick" CommandParameter="Scripture" Header="_Scripture">
+            <MenuItem.Icon>
+                <material:MaterialIcon Kind="Bible" />
+            </MenuItem.Icon>
+        </MenuItem>
         <MenuItem
             Click="OnMenuItemClick" CommandParameter="MediaGroup"
             Header="_Media">

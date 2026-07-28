@@ -373,6 +373,9 @@
                                             <DataTemplate x:DataType="slides:SongSlideInstance" x:Key="SongSlideInstance">
                                                 <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
                                             </DataTemplate>
+                                            <DataTemplate x:DataType="slides:ScriptureSlideInstance" x:Key="ScriptureSlideInstance">
+                                                <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                            </DataTemplate>
                                             <DataTemplate x:Key="ImageSlideInstance">
                                                 <views1:SlideThumbnail>
                                                     <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
