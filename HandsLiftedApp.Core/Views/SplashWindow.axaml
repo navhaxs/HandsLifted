@@ -1,17 +1,20 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" Width="660" Height="360"
-        x:Class="HandsLiftedApp.Core.Views.SplashWindow"
-        WindowStartupLocation="CenterScreen"
-        TransparencyLevelHint="Transparent"
-        WindowDecorations="None"
-        ShowInTaskbar="False"
-        Title="SplashWindow"
-        Background="Transparent"
-        BorderBrush="Transparent"
-        BorderThickness="0">
+﻿<Window
+    Background="Transparent"
+    BorderBrush="Transparent"
+    BorderThickness="0"
+    Height="360"
+    ShowInTaskbar="False"
+    Title="SplashWindow"
+    TransparencyLevelHint="Transparent"
+    Width="660"
+    WindowDecorations="None"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.SplashWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Window.Styles>
         <Style Selector="TextBlock">
             <Setter Property="Foreground" Value="White" />
@@ -31,66 +34,73 @@
             </Style.Animations>
         </Style>
     </Window.Styles>
-    <Border CornerRadius="2" BoxShadow="0 0 25 #991E132B" Margin="15" Background="#41285c">
+    <Border
+        Background="#41285c"
+        BoxShadow="0 0 25 #991E132B"
+        CornerRadius="2"
+        Margin="15">
 
         <DockPanel>
-            <!-- <ProgressBar -->
-            <!--     Background="White" -->
-            <!--     Foreground="#ffc000" -->
-            <!--     DockPanel.Dock="Bottom" -->
-            <!--     IsIndeterminate="True" -->
-            <!--     MinHeight="4" -->
-            <!--     Height="4" -->
-            <!--     Margin="0 0 0 0" /> -->
+            <!--  <ProgressBar  -->
+            <!--  Background="White"  -->
+            <!--  Foreground="#ffc000"  -->
+            <!--  DockPanel.Dock="Bottom"  -->
+            <!--  IsIndeterminate="True"  -->
+            <!--  MinHeight="4"  -->
+            <!--  Height="4"  -->
+            <!--  Margin="0 0 0 0" />  -->
 
-            <DockPanel Classes="red" HorizontalAlignment="Left" DockPanel.Dock="Bottom" Margin="0 0 0 36">
-                <Border
-                    DockPanel.Dock="Left"
-                    Margin="30 0 22 0">
-                    <Image Source="/Assets/app.png" Width="86"
-                           VerticalAlignment="Center"
-                           RenderOptions.BitmapInterpolationMode="HighQuality" />
+            <DockPanel
+                Classes="red"
+                DockPanel.Dock="Bottom"
+                HorizontalAlignment="Left"
+                Margin="0,0,0,36">
+                <Border DockPanel.Dock="Left" Margin="30,0,22,0">
+                    <Image
+                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                        Source="/Assets/app.png"
+                        VerticalAlignment="Center"
+                        Width="86" />
                 </Border>
 
                 <StackPanel VerticalAlignment="Bottom">
                     <TextBlock
-                        Foreground="White"
                         FontSize="42"
                         FontWeight="SemiBold"
-                        Margin="0 -4"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Left">
+                        Foreground="White"
+                        HorizontalAlignment="Left"
+                        Margin="0,-4"
+                        VerticalAlignment="Bottom">
                         <TextBlock.Effect>
                             <DropShadowEffect
                                 BlurRadius="32"
+                                Color="#66000000"
                                 OffsetX="3"
-                                OffsetY="3"
-                                Color="#66000000" />
+                                OffsetY="3" />
                         </TextBlock.Effect>
                         VisionScreens
                     </TextBlock>
                     <TextBlock
                         FontSize="22"
-                        Padding="2 0 0 0"
                         FontWeight="Light"
-                        HorizontalAlignment="Left">
+                        HorizontalAlignment="Left"
+                        Padding="2,0,0,0">
                         Church Presentation Software
                     </TextBlock>
                 </StackPanel>
             </DockPanel>
 
             <TextBlock
-                FontSize="22"
-                Padding="0 16 20 0"
-                LineHeight="20"
-                FontWeight="SemiBold"
                 DockPanel.Dock="Top"
-                TextAlignment="Right"
-                HorizontalAlignment="Right">
+                FontSize="22"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Right"
+                LineHeight="20"
+                Padding="0,16,20,20"
+                TextAlignment="Right">
                 two<LineBreak />
                 hands<LineBreak />
-                lifted
-            </TextBlock>
+                lifted</TextBlock>
 
             <Grid />
 

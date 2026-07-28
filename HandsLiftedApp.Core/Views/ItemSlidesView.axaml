@@ -336,9 +336,8 @@
                                     </controls:ListBoxWithoutKey.Styles>
                                     <controls:ListBoxWithoutKey.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <!--<WrapPanel ItemHeight="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemHeight, FallbackValue=200}" ItemWidth="{Binding Source={x:Static app:Globals.Preferences}, Path=ItemWidth, FallbackValue=290}" />-->
-                                            <WrapPanel>
-                                                <WrapPanel.ItemHeight>
+                                            <controls:JustifiedWrapPanel Margin="8,0" Spacing="8">
+                                                <controls:JustifiedWrapPanel.ItemHeight>
                                                     <MultiBinding Converter="{StaticResource MultiplicationConverter}">
                                                         <Binding
                                                             FallbackValue="200"
@@ -349,8 +348,8 @@
                                                             Path="AppPreferences.SlideThumbnailSizeMultiplier"
                                                             Source="{x:Static app:Globals.Instance}" />
                                                     </MultiBinding>
-                                                </WrapPanel.ItemHeight>
-                                                <WrapPanel.ItemWidth>
+                                                </controls:JustifiedWrapPanel.ItemHeight>
+                                                <controls:JustifiedWrapPanel.ItemWidth>
                                                     <MultiBinding Converter="{StaticResource MultiplicationConverter}">
                                                         <Binding
                                                             FallbackValue="290"
@@ -361,8 +360,8 @@
                                                             Path="AppPreferences.SlideThumbnailSizeMultiplier"
                                                             Source="{x:Static app:Globals.Instance}" />
                                                     </MultiBinding>
-                                                </WrapPanel.ItemWidth>
-                                            </WrapPanel>
+                                                </controls:JustifiedWrapPanel.ItemWidth>
+                                            </controls:JustifiedWrapPanel>
                                         </ItemsPanelTemplate>
                                     </controls:ListBoxWithoutKey.ItemsPanel>
                                     <controls:ListBoxWithoutKey.ItemTemplate>

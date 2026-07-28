@@ -165,9 +165,6 @@ namespace HandsLiftedApp.Controls
                 return 0;
             }
 
-            var rowHeight = (listBox.ItemsPanelRoot as WrapPanel).ItemHeight;
-            var colWidth = (listBox.ItemsPanelRoot as WrapPanel).ItemWidth;
-
             for (var idx = 0; idx < listBox.Items.Count; idx++)
             {
                 var listBoxItem = listBox.ContainerFromIndex(idx);
