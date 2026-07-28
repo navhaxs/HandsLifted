@@ -6,6 +6,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using DebounceThrottle;
+using DynamicData.Binding;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Services;
@@ -26,6 +28,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private readonly ScriptureLocalUsxStore? _injectedStore;
 
+        private readonly DebounceDispatcher _themeChangeDebounce = new(200);
+
         public ScriptureItemInstance(PlaylistInstance? parentPlaylist, ScriptureLocalUsxStore? store = null) : base()
         {
             ParentPlaylist = parentPlaylist;
@@ -44,6 +48,21 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             this.WhenAnyValue(x => x.Design)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
+
+            // Repaginate (debounced) whenever any property of the currently-resolved theme
+            // changes — not just when Design switches to a different theme object, but also
+            // when an already-selected theme is edited in place (e.g. a live font-size slider
+            // in the theme editor, which mutates the same BaseSlideTheme object every item
+            // pointing at that Design already shares). Pagination is font-size/line-height
+            // dependent, so a plain re-render (what ScriptureSlideInstance's own Theme-change
+            // subscription does) isn't enough here — the slide count itself may need to change.
+            this.WhenAnyValue(x => x.ResolvedDesignTheme)
+                .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
+                .Switch()
+                .Subscribe(_2 => _themeChangeDebounce.Debounce(() =>
+                    _ = GenerateSlidesAsync(forceInvalidateCache: true).ContinueWith(
+                        t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", Title),
+                        TaskContinuationOptions.OnlyOnFaulted)));
 
             // ReactiveUI's no-selector WhenAnyValue only goes up to 7 properties; an 8th property
             // (Design) requires the selector-taking overload instead, so this passes a no-op
@@ -90,7 +109,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         private readonly ObservableAsPropertyHelper<Slide> _activeSlide;
         public Slide ActiveSlide => _activeSlide.Value;
 
-        public async Task GenerateSlidesAsync()
+        public async Task GenerateSlidesAsync(bool forceInvalidateCache = false)
         {
             var store = _injectedStore ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
             List<ScriptureVerseRef> verses;
@@ -109,7 +128,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
 
             var referenceLabel = FormatReferenceLabel(bookTitle);
-            UpdatePages(referenceLabel, verses);
+            UpdatePages(referenceLabel, verses, forceInvalidateCache);
         }
 
         private string FormatReferenceLabel(string bookTitle)
@@ -128,7 +147,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             return new List<ScriptureVerseRef> { new ScriptureVerseRef(StartChapter, StartVerse, text) };
         }
 
-        private void UpdatePages(string referenceLabel, List<ScriptureVerseRef> verses)
+        private void UpdatePages(string referenceLabel, List<ScriptureVerseRef> verses, bool forceInvalidateCache = false)
         {
             var theme = ResolvedDesignTheme ?? new BaseSlideTheme();
             var pages = ScriptureParagraphLayoutEngine.Paginate(verses, referenceLabel, theme);
@@ -164,11 +183,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         existing.Lines = page.Lines;
                         if (existing.Text != flatText) existing.Text = flatText;
                         if (existing.Label != referenceLabel) existing.Label = referenceLabel;
-                        if (!ReferenceEquals(existing.Theme, theme))
-                        {
-                            existing.Theme = theme;
-                            existing.Cached = null;
-                        }
+                        bool themeChanged = !ReferenceEquals(existing.Theme, theme);
+                        if (themeChanged) existing.Theme = theme;
+                        if (themeChanged || forceInvalidateCache) existing.Cached = null;
                         newSlides.Add(existing);
                     }
                     else

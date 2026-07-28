@@ -6,15 +6,29 @@ using Avalonia.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.Thumbnail;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Importer.Scripture;
+using SkiaSharp;
 
 namespace HandsLiftedApp.Tests.Models.RuntimeData.Items;
 
 [TestClass]
 public class ScriptureItemInstanceTests
 {
+    // BitmapUtils.SKBitmapToAvalonia (used by GenerateSlidesAsync_ForceInvalidateCache_ResetsCachedOnReusedSlide
+    // below) constructs an Avalonia.Media.Imaging.Bitmap, which requires a registered
+    // IPlatformRenderInterface. Nothing else in this test host process sets that up. Registering just
+    // the Skia render interface directly (rather than a full AppBuilder.UsePlatformDetect(), which also
+    // brings up a Win32 windowing subsystem) is enough for Bitmap construction and avoids any dependency
+    // on an interactive window station.
+    [AssemblyInitialize]
+    public static void AssemblyInit(TestContext context)
+    {
+        Avalonia.Skia.SkiaPlatform.Initialize();
+    }
+
     [TestInitialize]
     public void Setup()
     {
@@ -170,5 +184,32 @@ public class ScriptureItemInstanceTests
         // With no ParentPlaylist and Design left at its Guid.Empty default, resolution
         // falls back to the app's default theme rather than throwing or returning null.
         Assert.IsNotNull(instance.ResolvedDesignTheme);
+    }
+
+    [TestMethod]
+    public async Task GenerateSlidesAsync_ForceInvalidateCache_ResetsCachedOnReusedSlide()
+    {
+        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
+        {
+            Translation = "eng_bsb",
+            Book = "gen",
+            StartChapter = 1,
+            StartVerse = 1,
+            EndChapter = 1,
+            EndVerse = 2
+        };
+
+        await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
+        var slide = (ScriptureSlideInstance)instance.Slides[0];
+
+        using var skBitmap = new SKBitmap(1, 1);
+        slide.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
+        Assert.IsNotNull(slide.Cached);
+
+        await instance.GenerateSlidesAsync(forceInvalidateCache: true);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.IsNull(slide.Cached, "forceInvalidateCache must reset Cached even when content didn't change");
     }
 }
