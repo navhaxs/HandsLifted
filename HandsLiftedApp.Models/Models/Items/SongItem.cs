@@ -36,8 +36,8 @@ namespace HandsLiftedApp.Data.Models.Items
                     titleSlide.Copyright = copyright;
                     return titleSlide;
                 })
-                            .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .Throttle(TimeSpan.FromMilliseconds(200), RxSchedulers.TaskpoolScheduler)
+                            .ObserveOn(RxApp.MainThreadScheduler)
+            .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
                 .ToProperty(this, c => c.TitleSlide)
             ;
 
