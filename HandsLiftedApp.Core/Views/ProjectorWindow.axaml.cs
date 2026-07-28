@@ -130,6 +130,7 @@ namespace HandsLiftedApp.Core.Views
             {
                 SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
                 SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
+                ScriptureSlideInstance sc => ScriptureSlideSpecBuilder.Build(sc),
                 ImageSlideInstance img   => IsValidMediaPath(img.SourceMediaFilePath)
                     ? new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>())
                     : null,
