@@ -324,7 +324,12 @@ namespace HandsLiftedApp.Data.SlideTheme
         public bool CalculatedTextFontBold
         {
             get => _calculatedTextFontBold.Value;
-            set { if (value) FontWeight = (XmlFontWeight)Avalonia.Media.FontWeight.Bold; }
+            set
+            {
+                FontWeight = value
+                    ? (XmlFontWeight)Avalonia.Media.FontWeight.Bold
+                    : (XmlFontWeight)Avalonia.Media.FontWeight.Normal;
+            }
         }
         
         public bool CalculatedTextFontItalic

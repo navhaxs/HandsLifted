@@ -151,6 +151,7 @@
                             <TextBlock Text="Font" />
                             <controls:ComboBoxWithoutWheelScroll x:Name="fontComboBox"
                                                                  HorizontalAlignment="Stretch"
+                                                                 SelectionChanged="FontComboBox_OnSelectionChanged"
                                                                  SelectedItem="{Binding FontFamilyAsText}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>

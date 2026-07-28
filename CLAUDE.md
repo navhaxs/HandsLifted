@@ -212,6 +212,12 @@ This codebase does not enforce folder-equals-namespace or namespace-equals-proje
 
 **Why this matters:** the actual dependency-direction rule (e.g. "`HandsLiftedApp.Data` must never depend on `HandsLiftedApp.Core`") is governed by which **.csproj** a file is physically compiled into, not by its `namespace` line. Before adding a new property/type to an existing class, check the file's actual path (and that project's `.csproj` references) — don't infer safety from the namespace alone. This also means an existing `using` statement already covering a namespace may already cover a *new* file you're about to add in that same namespace, even if the new file lives in a different folder than files you'd expect that namespace to be in — check before adding a namespace you assume is missing.
 
+---
+
+## Tooling rule — no `find`/`grep` shellouts
+
+Never run `find` or `grep` via Bash/PowerShell in this repo — Git-Bash `find.exe` over `.git`/`packages`/`bin`/`obj` runs long, stacks up, and eats CPU (multiple orphaned `find.exe` seen at 6%+ CPU each). Use Glob (file search) and Grep (content search) tools instead, always. Always scope `path` to project dir (or narrower subfolder) — never search unscoped from drive root or default cwd.
+
 ## Key file locations
 
 | File | Purpose |

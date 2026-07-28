@@ -18,6 +18,7 @@ using System.Reactive.Linq;
 using DryIoc.ImTools;
 using HandsLiftedApp.Data.Data.Models.Types;
 using Serilog;
+using SkiaSharp;
 
 namespace HandsLiftedApp.Core.Views.Designer
 {
@@ -29,6 +30,8 @@ namespace HandsLiftedApp.Core.Views.Designer
             public FontWeight FontWeight;
             public String Label;
         }
+
+        private readonly Dictionary<string, HashSet<int>> _fontWeightCache = new();
 
         public List<XmlFontWeight> FontWeightOptions = new()
         {
@@ -43,7 +46,6 @@ namespace HandsLiftedApp.Core.Views.Designer
             (XmlFontWeight)FontWeight.ExtraBold,
             (XmlFontWeight)FontWeight.Black,
             (XmlFontWeight)FontWeight.ExtraBlack,
-            (XmlFontWeight)FontWeight.Black,
         };
         
         public SlideThemeDesigner()
@@ -86,6 +88,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             if (item != null)
             {
                 fontComboBox.SelectedValue = item.FontFamilyAsText;
+                UpdateFontWeightOptions(item.FontFamilyAsText, item.FontWeight);
                 FontWeightComboBox.SelectedValue = item.FontWeight;
                 themePreviewSlideView.SetSlide(new SongSlideInstance(null, null, null)
                 {
@@ -104,6 +107,64 @@ namespace HandsLiftedApp.Core.Views.Designer
                 themePreviewSlideView.SetSlide(null);
                 themePreviewTitleSlideView.SetSlide(null);
             }
+        }
+
+        private void FontComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (themeEditorPanel.DataContext is BaseSlideTheme item)
+            {
+                // read the ComboBox's own SelectedItem rather than item.FontFamilyAsText - the two-way
+                // binding that updates the latter runs off the same event, so its ordering relative to
+                // this handler isn't guaranteed.
+                var selectedFontFamily = fontComboBox.SelectedItem as string ?? item.FontFamilyAsText;
+                UpdateFontWeightOptions(selectedFontFamily, item.FontWeight);
+                FontWeightComboBox.SelectedValue = item.FontWeight;
+            }
+        }
+
+        // Not every family ships every named weight (Arial only has Regular/Bold/Black, say) - offering
+        // a weight the family doesn't have just falls back to the nearest match and looks like a no-op.
+        private void UpdateFontWeightOptions(string? fontFamilyName, XmlFontWeight currentWeight)
+        {
+            var available = GetAvailableWeightInts(fontFamilyName);
+
+            List<XmlFontWeight> options;
+            if (available.Count == 0)
+            {
+                // unknown/unmatched family - don't guess, offer the full list
+                options = FontWeightOptions;
+            }
+            else
+            {
+                options = FontWeightOptions.Where(w => available.Contains((int)w)).ToList();
+                if (!available.Contains((int)currentWeight))
+                {
+                    // keep the theme's existing (now-unavailable) weight visible/selected rather than
+                    // silently swapping it out for something else the user didn't choose
+                    options.Insert(0, currentWeight);
+                }
+            }
+
+            FontWeightComboBox.ItemsSource = options;
+        }
+
+        private HashSet<int> GetAvailableWeightInts(string? fontFamilyName)
+        {
+            if (string.IsNullOrWhiteSpace(fontFamilyName))
+                return new HashSet<int>();
+
+            if (_fontWeightCache.TryGetValue(fontFamilyName, out var cached))
+                return cached;
+
+            var weights = new HashSet<int>();
+            using (var styleSet = SKFontManager.Default.GetFontStyles(fontFamilyName))
+            {
+                for (var i = 0; i < (styleSet?.Count ?? 0); i++)
+                    weights.Add(styleSet![i].Weight);
+            }
+
+            _fontWeightCache[fontFamilyName] = weights;
+            return weights;
         }
 
         private void PreviewModeToggle_OnChecked(object? sender, RoutedEventArgs e)

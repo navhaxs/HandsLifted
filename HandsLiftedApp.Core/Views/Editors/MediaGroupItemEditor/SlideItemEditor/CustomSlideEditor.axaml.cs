@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -165,6 +167,22 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         private void UpdateXmlButton_OnClick(object? sender, RoutedEventArgs e)
         {
             UpdateXml();
+        }
+
+        private static System.Collections.Generic.List<string>? _systemFontFamilies;
+
+        // Font block lives inside a DataTemplate re-instantiated per selected element, so it can't be
+        // wired up once in the constructor like SlideThemeDesigner does - populate on each realization instead.
+        private void FontComboBox_OnLoaded(object? sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {
+                _systemFontFamilies ??= FontManager.Current.SystemFonts
+                    .Select(x => x.Name)
+                    .OrderBy(x => x)
+                    .ToList();
+                comboBox.ItemsSource = _systemFontFamilies;
+            }
         }
 
         private bool _enableXMLParse = true;

@@ -245,6 +245,7 @@
                                             <TextBlock Text="Font" />
 
                                             <controls:ComboBoxWithoutWheelScroll x:Name="fontComboBox"
+                                                    Loaded="FontComboBox_OnLoaded"
                                                     SelectedItem="{Binding FontFamilyAsText}">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>

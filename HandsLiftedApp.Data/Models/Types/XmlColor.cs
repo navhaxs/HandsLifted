@@ -3,9 +3,15 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using Avalonia.Media;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace HandsLiftedApp.Data.Data.Models.Types
 {
+    // Newtonsoft can't see m_value (private, no public props), so without this converter
+    // JsonConvert.SerializeObject writes "{}" for any XmlColor field and the color is lost
+    // on the next JsonConvert.DeserializeObject (used for appstate.json / AppPreferencesViewModel).
+    [JsonConverter(typeof(XmlColorJsonConverter))]
     public class XmlColor : IXmlSerializable
     {
         private Color m_value = Colors.Black;
@@ -70,6 +76,36 @@ namespace HandsLiftedApp.Data.Data.Models.Types
         public XmlSchema GetSchema()
         {
             return null;
+        }
+    }
+
+    public class XmlColorJsonConverter : JsonConverter<XmlColor>
+    {
+        public override void WriteJson(JsonWriter writer, XmlColor value, JsonSerializer serializer)
+        {
+            writer.WriteValue(((Color)value).ToString());
+        }
+
+        public override XmlColor ReadJson(JsonReader reader, Type objectType, XmlColor existingValue,
+            bool hasExistingValue, JsonSerializer serializer)
+        {
+            // JToken.Load fully consumes whatever shape is at the reader's current position (string,
+            // object, null...) so the reader stays in sync afterwards. Needed because old appstate.json
+            // files written before this converter existed have "{}" here instead of a color string.
+            var token = JToken.Load(reader);
+            var colorAsString = token.Type == JTokenType.String ? token.Value<string>() : null;
+
+            if (string.IsNullOrEmpty(colorAsString))
+                return new XmlColor(Colors.Transparent);
+
+            try
+            {
+                return new XmlColor(Color.Parse(colorAsString));
+            }
+            catch (Exception)
+            {
+                return new XmlColor(Colors.Transparent);
+            }
         }
     }
 }

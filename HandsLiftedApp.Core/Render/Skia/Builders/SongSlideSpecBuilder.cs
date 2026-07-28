@@ -166,7 +166,7 @@ public static class SongSlideSpecBuilder
 
     private static SKTypeface GetTypeface(BaseSlideTheme theme)
     {
-        var weight = theme.CalculatedTextFontBold ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal;
+        var weight = (SKFontStyleWeight)(int)theme.FontWeight;
         var slant  = theme.CalculatedTextFontItalic ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;
         return SKTypeface.FromFamilyName(theme.FontFamilyAsText, weight, SKFontStyleWidth.Normal, slant)
                ?? SKTypeface.Default;
