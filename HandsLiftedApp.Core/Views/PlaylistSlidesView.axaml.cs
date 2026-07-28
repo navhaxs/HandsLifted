@@ -62,7 +62,7 @@ namespace HandsLiftedApp.Core.Views
                     if (listBoxWithoutKey.SelectedIndex > -1)
                     {
                         Control control =
-                            listBoxWithoutKey.ItemContainerGenerator.ContainerFromIndex(listBoxWithoutKey
+                            listBoxWithoutKey.ContainerFromIndex(listBoxWithoutKey
                                 .SelectedIndex);
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -81,7 +81,7 @@ namespace HandsLiftedApp.Core.Views
 
                         // and now we can jump to view
                         // TODO: IF THE VIEW IS NOT ALREADY WITHIN VIEWPORT
-                        var control = listBox.ItemContainerGenerator.ContainerFromIndex(x.Index);
+                        var control = listBox.ContainerFromIndex(x.Index);
                         if (control is not null)
                         {
                             Dispatcher.UIThread.InvokeAsync(() =>
@@ -113,7 +113,7 @@ namespace HandsLiftedApp.Core.Views
                     {
                         for (int i = 0; i < listBox.ItemCount; i++)
                         {
-                            var c = listBox.ItemContainerGenerator.ContainerFromIndex(i);
+                            var c = listBox.ContainerFromIndex(i);
 
                             if (c is null)
                                 break;
@@ -139,7 +139,7 @@ namespace HandsLiftedApp.Core.Views
             //
             // // todo dispose old one
             // ctx.WhenAnyValue(x => x.State.SelectedItemIndex)
-            //     .ObserveOn(RxApp.MainThreadScheduler)
+            //     .ObserveOn(RxSchedulers.MainThreadScheduler)
             //     .Select(x => { return x == -1; })
             //     .Subscribe(x =>
             //     {

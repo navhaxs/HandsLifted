@@ -3,7 +3,7 @@ using System.IO;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using ReactiveUI;
 using Avalonia.Threading;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;

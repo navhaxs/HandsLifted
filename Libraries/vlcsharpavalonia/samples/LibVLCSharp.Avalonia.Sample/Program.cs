@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 
 namespace LibVLCSharp.Avalonia.Sample
 {
@@ -16,7 +16,7 @@ namespace LibVLCSharp.Avalonia.Sample
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 //.UseDirect2D1()
-                .UseReactiveUI()
+                .UseReactiveUI(_ => { })
                 //.With(new AvaloniaNativePlatformOptions() { UseDeferredRendering = false })
                 //.With(new Win32PlatformOptions() { UseDeferredRendering = false }) //with defered rendering false look like it's working slightly better
                 //.UseVLCSharp() //by default vlc rendering

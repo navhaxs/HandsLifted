@@ -6,7 +6,6 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" Width="760" Height="460"
         x:Class="HandsLiftedApp.Core.Views.AddItemWindow"
-        ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="90"
         ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterOwner"

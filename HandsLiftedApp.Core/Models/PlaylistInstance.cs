@@ -51,7 +51,7 @@ namespace HandsLiftedApp.Core.Models
 
                         return new BlankItem();
                     })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItem);
 
             this.WhenAnyValue(x => x.SelectedItem).Subscribe((item) =>
@@ -74,7 +74,7 @@ namespace HandsLiftedApp.Core.Models
 
                         return new BlankItemInstance(this);
                     })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItemAsIItemInstance);
 
             _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide, x => x.PresentationState, x => x.QuickShowItem,
@@ -94,7 +94,7 @@ namespace HandsLiftedApp.Core.Models
 
                         return activeSlide;
                     })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
             // TODO: what if the next item changes, without the active slide changing this will never get retriggered...!!
@@ -104,7 +104,7 @@ namespace HandsLiftedApp.Core.Models
                         SlideReference slideReference = GetNextSlide();
                         return slideReference.Slide;
                     })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.NextSlide);
             
             if (Design.IsDesignMode)
@@ -133,7 +133,7 @@ namespace HandsLiftedApp.Core.Models
                 });
 
             this.WhenAnyValue(p => p.LogoGraphicFile)
-                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxSchedulers.TaskpoolScheduler)
                 .Subscribe(_ =>
                 {
                     if (LogoGraphicFile == "" || LogoGraphicFile == null)
@@ -194,7 +194,7 @@ namespace HandsLiftedApp.Core.Models
                 }));
 
             _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
-                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxSchedulers.TaskpoolScheduler)
                 .SelectMany(async x =>
                 {
                     if (string.IsNullOrEmpty(x))
@@ -216,12 +216,12 @@ namespace HandsLiftedApp.Core.Models
 
                     return null;
                 })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.LogoBitmap);
 
             _stageDisplaySlideCountText = this.WhenAnyValue(s => s.SelectedItemAsIItemInstance.SelectedSlideIndex,
                     s => s.SelectedItemAsIItemInstance.Slides.Count, ((i, i1) => $"Slide {i + 1}/{i1}"))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.StageDisplaySlideCountText);
 
             _disposables.Add(MessageBus.Current.Listen<NavigateToSlideReferenceAction>()

@@ -1,6 +1,5 @@
 <Window
     Background="{DynamicResource SurfaceBrush}"
-    ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome"
     ExtendClientAreaTitleBarHeightHint="90"
     ExtendClientAreaToDecorationsHint="True"
     Icon="/Assets/app.ico"

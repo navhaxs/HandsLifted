@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Diagnostics" />
-    <PackageReference Include="Avalonia.ReactiveUI" />
+    <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="LibVLCSharp" />
     <PackageReference Include="Serilog" />
   </ItemGroup>
@@ -19,7 +19,7 @@
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Avalonia.ReactiveUI">
+    <Reference Include="ReactiveUI.Avalonia">
       <HintPath>..\..\..\..\global-packages\avalonia.reactiveui\11.0.0-preview5\lib\net6.0\Avalonia.ReactiveUI.dll</HintPath>
     </Reference>
   </ItemGroup>

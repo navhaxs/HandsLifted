@@ -11,7 +11,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
             this.parentMediaItem = parentMediaItem;
             this.SourceMediaFilePath = parentMediaItem.SourceMediaFilePath;
             // this.WhenAnyValue(s => s.SourceMediaFilePath) // todo dirty bit?
-            //     .ObserveOn(RxApp.MainThreadScheduler)
+            //     .ObserveOn(RxSchedulers.MainThreadScheduler)
             //     .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
         }
 

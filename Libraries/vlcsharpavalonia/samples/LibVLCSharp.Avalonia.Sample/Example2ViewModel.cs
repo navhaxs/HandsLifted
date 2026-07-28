@@ -1,6 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using Avalonia.Threading;
 using LibVLCSharp.Shared;
 using ReactiveUI;

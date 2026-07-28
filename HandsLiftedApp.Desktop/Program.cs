@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Avalonia;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using Avalonia.Rendering.Composition;
 using Avalonia.WebView.Desktop;
 using HandsLiftedApp.Core;
@@ -66,5 +66,5 @@ sealed class Program
                      // UseWindowsUIComposition = false
                 })
             .LogToTrace()
-            .UseReactiveUI();
+            .UseReactiveUI(_ => { });
 }

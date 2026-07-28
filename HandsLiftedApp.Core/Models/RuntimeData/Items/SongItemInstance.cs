@@ -75,8 +75,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             titleSlide.Copyright = copyright;
                             return titleSlide;
                         })
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Throttle(TimeSpan.FromMilliseconds(100), RxApp.TaskpoolScheduler)
+                    .ObserveOn(RxSchedulers.MainThreadScheduler)
+                    .Throttle(TimeSpan.FromMilliseconds(100), RxSchedulers.TaskpoolScheduler)
                     .ToProperty(this, c => c.TitleSlide)
                 ;
 
@@ -137,7 +137,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides,
                     (selectedSlideIndex, slides) => { return slides.ElementAtOrDefault(selectedSlideIndex); })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
             this.WhenAnyValue(

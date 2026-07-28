@@ -2,9 +2,6 @@
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using Avalonia.Skia;
-using Avalonia.Skia.Helpers;
 using SkiaSharp;
 
 namespace HandsLiftedApp.Core
@@ -52,9 +49,6 @@ namespace HandsLiftedApp.Core
                     int stride = (xres * 32 /*BGRA bpp*/ + 7) / 8;
                     int bufferSize = yres * stride;
                     bufferPtr = Marshal.AllocCoTaskMem(bufferSize);
-
-                    using IDrawingContextImpl contextImpl =
-                        DrawingContextHelper.WrapSkiaCanvas(canvas, SkiaPlatform.DefaultDpi);
 
                     source.CopyPixels(new PixelRect(0, 0, xres, yres), bufferPtr, bufferSize, stride);
                     bitmap.SetPixels(bufferPtr);

@@ -70,7 +70,7 @@
                 <Popup
                     IsLightDismissEnabled="True"
                     Name="liveFlyout"
-                    PlacementMode="BottomEdgeAlignedLeft"
+                    Placement="BottomEdgeAlignedLeft"
                     PlacementTarget="{Binding #LiveButton}">
                     <controls:LiveOutputsFlyoutContent Margin="0" />
                 </Popup>

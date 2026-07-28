@@ -14,7 +14,7 @@ namespace HandsLiftedApp.Core.Controls
             Window? window = null;
             if (sender is Control control)
             {
-                window = control.GetVisualRoot() as Window;
+                window = TopLevel.GetTopLevel(control) as Window;
             }
 
             AddItemWindow aiw = new AddItemWindow() { DataContext = Globals.Instance.MainViewModel.AddItemViewModel };

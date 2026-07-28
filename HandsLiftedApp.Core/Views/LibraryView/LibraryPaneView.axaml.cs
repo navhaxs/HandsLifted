@@ -15,6 +15,7 @@ namespace HandsLiftedApp.Views.Library
         private Point? _dragStart;
         private LibraryItem? _pendingDragItem;
         private Control? _pendingDragControl;
+        private PointerPressedEventArgs? _pendingDragPressedArgs;
 
         public LibraryPaneView()
         {
@@ -28,6 +29,7 @@ namespace HandsLiftedApp.Views.Library
                 _dragStart = e.GetPosition(null);
                 _pendingDragItem = libraryItem;
                 _pendingDragControl = control;
+                _pendingDragPressedArgs = e;
                 control.PointerMoved += DockPanel_PointerMoved;
                 control.PointerReleased += DockPanel_PointerReleased;
                 e.Pointer.Capture(control);
@@ -49,24 +51,26 @@ namespace HandsLiftedApp.Views.Library
             _dragStart = null;
             _pendingDragItem = null;
             _pendingDragControl = null;
+            _pendingDragPressedArgs = null;
         }
 
         private async void DockPanel_PointerMoved(object? sender, PointerEventArgs e)
         {
-            if (_dragStart == null || _pendingDragItem == null) return;
+            if (_dragStart == null || _pendingDragItem == null || _pendingDragPressedArgs == null) return;
 
             var delta = e.GetPosition(null) - _dragStart.Value;
             if (Math.Abs(delta.X) < DragThreshold && Math.Abs(delta.Y) < DragThreshold) return;
 
             var item = _pendingDragItem;
+            var pressedArgs = _pendingDragPressedArgs;
             CancelPendingDrag();
 
-            var dragData = new DataObject();
+            var dragData = new DataTransfer();
             var topLevel = TopLevel.GetTopLevel(this);
             IStorageFile file = await topLevel.StorageProvider.TryGetFileFromPathAsync(new Uri(item.FullFilePath));
-            dragData.Set(DataFormats.Files, new[] { file });
+            dragData.Add(DataTransferItem.Create(DataFormat.File, file));
 
-            await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Copy);
+            await DragDrop.DoDragDropAsync(pressedArgs, dragData, DragDropEffects.Copy);
         }
 
         private void MenuItem_OnClick(object? sender, RoutedEventArgs e)

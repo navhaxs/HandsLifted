@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using System;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 
 namespace SlideEditorStandalone;
 
@@ -18,6 +18,6 @@ class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .UseReactiveUI()
+            .UseReactiveUI(_ => { })
             .LogToTrace();
 }

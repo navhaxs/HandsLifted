@@ -16,6 +16,10 @@ namespace HandsLiftedApp.Core.Views
 
             var buttonDone = this.FindControl<Button>("buttonDone");
             buttonDone.Click += (o, e) => this.Close();
+            // IsDefault only wires up Enter (see Avalonia's Button.ListenForDefault) — Space only
+            // activates whichever control has keyboard focus, so give Done focus on open to make
+            // Space work too, matching the expected "primary button" dialog behavior.
+            this.Opened += (_, _) => buttonDone.Focus();
 
             var buttonNotices = this.FindControl<Button>("buttonNotices");
             buttonNotices!.Click += async (_, _) =>

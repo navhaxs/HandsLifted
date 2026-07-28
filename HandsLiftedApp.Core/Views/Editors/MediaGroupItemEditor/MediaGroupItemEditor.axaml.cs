@@ -17,9 +17,11 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 {
     public partial class MediaGroupItemEditor : UserControl
     {
-        private const string DragDataFormat = "MediaGroupItemDrag";
+        private static readonly DataFormat<MediaGroupItem.GroupItem> DragDataFormat =
+            DataFormat.CreateInProcessFormat<MediaGroupItem.GroupItem>("MediaGroupItemDrag");
         private MediaGroupItem.GroupItem? _dragSourceItem;
         private Point _pointerPressedPoint;
+        private PointerPressedEventArgs? _pointerPressedEventArgs;
         private bool _isDragging;
         private int _lastHoveredIndex = -1;
         private bool _dropBefore;
@@ -60,24 +62,27 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             {
                 _pointerPressedPoint = e.GetPosition(Thumbstrip);
                 _dragSourceItem = item;
+                _pointerPressedEventArgs = e;
                 _isDragging = false;
             }
         }
 
         private async void Thumbstrip_PointerMoved(object? sender, PointerEventArgs e)
         {
-            if (_dragSourceItem == null || _isDragging) return;
+            if (_dragSourceItem == null || _isDragging || _pointerPressedEventArgs == null) return;
 
             var pos = e.GetPosition(Thumbstrip);
             if (Math.Abs(pos.X - _pointerPressedPoint.X) > 6 || Math.Abs(pos.Y - _pointerPressedPoint.Y) > 6)
             {
                 var item = _dragSourceItem;
+                var pressedArgs = _pointerPressedEventArgs;
                 _isDragging = true;
                 _dragSourceItem = null;
+                _pointerPressedEventArgs = null;
 
-                var data = new DataObject();
-                data.Set(DragDataFormat, item);
-                await DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
+                var data = new DataTransfer();
+                data.Add(DataTransferItem.Create(DragDataFormat, item));
+                await DragDrop.DoDragDropAsync(pressedArgs, data, DragDropEffects.Move);
 
                 _isDragging = false;
             }
@@ -86,6 +91,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
         private void Thumbstrip_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             _dragSourceItem = null;
+            _pointerPressedEventArgs = null;
         }
 
         private void CalculateDropTarget(DragEventArgs e)
@@ -111,7 +117,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             }
             found ??= point.X <= 0 ? containers.First() : containers.Last();
 
-            int foundIndex = Thumbstrip.ItemContainerGenerator.IndexFromContainer(found);
+            int foundIndex = Thumbstrip.IndexFromContainer(found);
             var itemPos = found.TranslatePoint(new Point(0, 0), Thumbstrip);
             double midX = itemPos.HasValue ? itemPos.Value.X + found.Bounds.Width / 2 : 0;
             _dropBefore = point.X < midX;
@@ -149,7 +155,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 
         private void OnThumbstripDragOver(object? sender, DragEventArgs e)
         {
-            if (!e.Data.Contains(DragDataFormat))
+            if (!e.DataTransfer.Contains(DragDataFormat))
             {
                 e.DragEffects = DragDropEffects.None;
                 return;
@@ -161,9 +167,9 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 
         private void OnThumbstripDrop(object? sender, DragEventArgs e)
         {
-            if (!e.Data.Contains(DragDataFormat)) return;
+            if (!e.DataTransfer.Contains(DragDataFormat)) return;
 
-            var draggedItem = e.Data.Get(DragDataFormat) as MediaGroupItem.GroupItem;
+            var draggedItem = e.DataTransfer.TryGetValue(DragDataFormat);
             if (draggedItem == null) return;
 
             CalculateDropTarget(e);

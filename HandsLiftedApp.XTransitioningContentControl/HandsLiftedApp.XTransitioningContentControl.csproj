@@ -8,8 +8,7 @@
 	
   <ItemGroup>
     <PackageReference Include="Avalonia" />
-    <PackageReference Include="Avalonia.Controls.Skia" />
-    <PackageReference Include="Avalonia.ReactiveUI" />
+    <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="Avalonia.Skia" />
     <PackageReference Include="BmpSharp" />
   </ItemGroup>

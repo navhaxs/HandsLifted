@@ -35,7 +35,7 @@ namespace HandsLiftedApp.Core.Views
                         TopLevel.GetTopLevel(this) is { } topLevel &&
                         await topLevel.StorageProvider.TryGetFileFromPathAsync(name) is { } storageFile)
                     {
-                        d.Set(DataFormats.Files, new[] { storageFile });
+                        d.Add(DataTransferItem.Create(DataFormat.File, storageFile));
                     }
                 },
                 DragDropEffects.Copy);
@@ -161,7 +161,7 @@ namespace HandsLiftedApp.Core.Views
             return System.IO.File.Exists(path);
         }
 
-        private void SetupDnd(string suffix, Func<DataObject, Task> factory, DragDropEffects effects)
+        private void SetupDnd(string suffix, Func<DataTransfer, Task> factory, DragDropEffects effects)
         {
             void DragOver(object? sender, DragEventArgs e)
             {
@@ -175,8 +175,8 @@ namespace HandsLiftedApp.Core.Views
                 }
 
                 // Only allow if the dragged data contains text or filenames.
-                if (!e.Data.Contains(DataFormats.Text)
-                    && !e.Data.Contains(DataFormats.Files))
+                if (!e.DataTransfer.Contains(DataFormat.Text)
+                    && !e.DataTransfer.Contains(DataFormat.File))
                     e.DragEffects = DragDropEffects.None;
             }
 
@@ -192,13 +192,13 @@ namespace HandsLiftedApp.Core.Views
                     e.DragEffects = e.DragEffects & (DragDropEffects.Copy);
                 }
 
-                if (e.Data.Contains(DataFormats.Text))
+                if (e.DataTransfer.Contains(DataFormat.Text))
                 {
-                    _dropState.Text = e.Data.GetText();
+                    _dropState.Text = e.DataTransfer.TryGetText();
                 }
-                else if (e.Data.Contains(DataFormats.Files))
+                else if (e.DataTransfer.Contains(DataFormat.File))
                 {
-                    var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
+                    var files = e.DataTransfer.TryGetFiles() ?? Array.Empty<IStorageItem>();
                     var contentStr = "";
 
                     foreach (var item in files)
@@ -228,13 +228,6 @@ namespace HandsLiftedApp.Core.Views
 
                     _dropState.Text = contentStr;
                 }
-#pragma warning disable CS0618 // Type or member is obsolete
-                else if (e.Data.Contains(DataFormats.FileNames))
-                {
-                    var files = e.Data.GetFileNames();
-                    _dropState.Text = string.Join(Environment.NewLine, files ?? Array.Empty<string>());
-                }
-#pragma warning restore CS0618 // Type or member is obsolete
 
 
                 Globals.Instance.MainViewModel.Playlist.PresentationState =

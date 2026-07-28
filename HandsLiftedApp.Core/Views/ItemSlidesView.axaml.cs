@@ -262,15 +262,15 @@ namespace HandsLiftedApp.Controls
                 else
                     e.DragEffects = e.DragEffects & DragDropEffects.Copy;
 
-                if (!e.Data.Contains(DataFormats.Text)
-                    && !e.Data.Contains(DataFormats.Files)
-                    && !e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
+                if (!e.DataTransfer.Contains(DataFormat.Text)
+                    && !e.DataTransfer.Contains(DataFormat.File)
+                    && !e.DataTransfer.Contains(SlideDragDropCustomDataFormat.Format))
                 {
                     e.DragEffects = DragDropEffects.None;
                     return;
                 }
 
-                if (e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
+                if (e.DataTransfer.Contains(SlideDragDropCustomDataFormat.Format))
                 {
                     var insertIndex = FindItemIndexOf(dropContainer, e);
                     ShowInsertAdorner(insertIndex);
@@ -295,10 +295,10 @@ namespace HandsLiftedApp.Controls
 
                 if (destSlideIndex > -1 && sender is Control { DataContext: Item destItem })
                 {
-                    if (e.Data.Contains(SlideDragDropCustomDataFormat.CustomFormat))
+                    if (e.DataTransfer.Contains(SlideDragDropCustomDataFormat.Format))
                     {
                         var sourceSlideReference =
-                            (SlideDragDropCustomDataFormat)e.Data.Get(SlideDragDropCustomDataFormat.CustomFormat);
+                            e.DataTransfer.TryGetValue(SlideDragDropCustomDataFormat.Format)!;
 
                         MessageBus.Current.SendMessage(new MoveSlideCommand()
                         {
@@ -308,9 +308,9 @@ namespace HandsLiftedApp.Controls
                             DestSlideIndex = destSlideIndex
                         });
                     }
-                    else if (e.Data.Contains(DataFormats.Files))
+                    else if (e.DataTransfer.Contains(DataFormat.File))
                     {
-                        var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
+                        var files = e.DataTransfer.TryGetFiles() ?? Array.Empty<IStorageItem>();
                         MessageBus.Current.SendMessage(new AddFilesToGroupItemCommand()
                         {
                             SourceFiles = files,
@@ -318,12 +318,6 @@ namespace HandsLiftedApp.Controls
                             DestSlideIndex = destSlideIndex
                         });
                     }
-#pragma warning disable CS0618
-                    else if (e.Data.Contains(DataFormats.FileNames))
-                    {
-                        _ = e.Data.GetFileNames();
-                    }
-#pragma warning restore CS0618
                 }
             }
 

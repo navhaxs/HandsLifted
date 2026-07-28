@@ -20,7 +20,7 @@ namespace HandsLiftedApp.Core.ViewModels
         public AppPreferencesViewModel()
         {
             // this.WhenAnyValue(p => p.LogoGraphicFile)
-            //     .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+            //     .Throttle(TimeSpan.FromMilliseconds(200), RxSchedulers.TaskpoolScheduler)
             //     .Subscribe(_ =>
             //     {
             //         if (LogoGraphicFile == "")
@@ -42,7 +42,7 @@ namespace HandsLiftedApp.Core.ViewModels
             //     });
             
             _logoBitmap = this.WhenAnyValue(p => p.LogoGraphicFile)
-                .Throttle(TimeSpan.FromMilliseconds(200), RxApp.TaskpoolScheduler)
+                .Throttle(TimeSpan.FromMilliseconds(200), RxSchedulers.TaskpoolScheduler)
                 .SelectMany(async x =>
                 {
                     if (string.IsNullOrEmpty(x))
@@ -64,7 +64,7 @@ namespace HandsLiftedApp.Core.ViewModels
 
                     return null;
                 })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.LogoBitmap);
 
         }

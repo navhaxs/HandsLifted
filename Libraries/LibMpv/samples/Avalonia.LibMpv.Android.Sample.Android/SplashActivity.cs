@@ -3,7 +3,7 @@ using Android.Content;
 using Android.OS;
 using AndroidApplication = Android.App.Application;
 using Avalonia.Android;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 
 namespace Avalonia.LibMpv.Android.Sample.Android;
 
@@ -13,7 +13,7 @@ public class SplashActivity : AvaloniaSplashActivity<App>
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
         return base.CustomizeAppBuilder(builder)
-            .UseReactiveUI();
+            .UseReactiveUI(_ => { });
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)

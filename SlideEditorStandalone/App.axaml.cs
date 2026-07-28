@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views;

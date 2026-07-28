@@ -6,7 +6,7 @@
         x:Class="HandsLiftedApp.Core.Views.SplashWindow"
         WindowStartupLocation="CenterScreen"
         TransparencyLevelHint="Transparent"
-        SystemDecorations="None"
+        WindowDecorations="None"
         ShowInTaskbar="False"
         Title="SplashWindow"
         Background="Transparent"

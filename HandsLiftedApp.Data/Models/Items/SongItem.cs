@@ -19,7 +19,7 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             _isEmpty = this.WhenAnyValue(x => x.Stanzas, x => x.Title,
                     (stanzas, title) => stanzas.Count == 0 && title.Length == 0)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.IsEmpty);
         }
 

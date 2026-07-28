@@ -113,7 +113,7 @@ namespace HandsLiftedApp.Behaviours
 
                 if (listBoxItem != null)
                 {
-                    //var SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                    //var SourceIndex = parentItemsControls.IndexFromContainer(listBoxItem);
                     listBoxItem.ZIndex = 999;
                     listBoxItem.Opacity = 0.8;
                 }
@@ -227,7 +227,7 @@ namespace HandsLiftedApp.Behaviours
                 if (hoveredItem is null)
                     return;
                 
-                int foundIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                int foundIndex = parentItemsControls.IndexFromContainer(hoveredItem);
                 var relativePoint = args.GetPosition(hoveredItem);
                 var isUpper = relativePoint.Y < hoveredItem.Bounds.Height / 2;
                 int calculatedTargetIndex = isUpper ? foundIndex : foundIndex + 1;
@@ -292,9 +292,9 @@ namespace HandsLiftedApp.Behaviours
                 ListBoxItem? lastItem = (ListBoxItem)parentItemsControls.GetLogicalChildren().MaxBy(listBoxItem => ((ListBoxItem)listBoxItem).Bounds.Bottom);
                 bool isPastLastItem = (lastItem != null) && (isPastLastItem = pos.Y > lastItem.Bounds.Bottom);
 
-                int SourceIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                int SourceIndex = parentItemsControls.IndexFromContainer(listBoxItem);
                 int DestinationIndex = -1;
-                int foundIndex = parentItemsControls.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                int foundIndex = parentItemsControls.IndexFromContainer(hoveredItem);
                 if (hoveredItem != null)
                 {
                     
@@ -353,7 +353,7 @@ namespace HandsLiftedApp.Behaviours
         {
             if (_parent is { })
             {
-                Window? window = _parent.GetVisualRoot() as Window;
+                Window? window = TopLevel.GetTopLevel(_parent) as Window;
                 if (window != null)
                 {
                     window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;

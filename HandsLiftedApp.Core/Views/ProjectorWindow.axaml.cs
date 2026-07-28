@@ -262,7 +262,7 @@ namespace HandsLiftedApp.Core.Views
 
             if (OperatingSystem.IsMacOS())
             {
-                this.SystemDecorations = isRequestingFullscreen ? SystemDecorations.None : SystemDecorations.Full;
+                this.WindowDecorations = isRequestingFullscreen ? WindowDecorations.None : WindowDecorations.Full;
             }
             
             if (isRequestingFullscreen)

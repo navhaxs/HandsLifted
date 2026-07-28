@@ -1,27 +1,40 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="HandsLiftedApp.Core.App"
-             xmlns:local="using:HandsLiftedApp.Core"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             Name="VisionScreens"
-             RequestedThemeVariant="Dark">
-    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application
+    Name="VisionScreens"
+    RequestedThemeVariant="Dark"
+    x:Class="HandsLiftedApp.Core.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:local="using:HandsLiftedApp.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
-    
+
     <!-- <NativeMenu.Menu> -->
     <!--     <NativeMenu> -->
     <!--         <NativeMenuItem Header="About This Application…" /> -->
     <!--         <NativeMenuItem Header="Preferences…" /> -->
     <!--     </NativeMenu> -->
     <!-- </NativeMenu.Menu> -->
-    
+
     <Application.Styles>
         <SimpleTheme />
         <avalonia:MaterialIconStyles />
         <StyleInclude Source="avares://HandsLiftedApp.Controls/Styles/AppStyles.axaml" />
         <StyleInclude Source="avares://HandsLiftedApp.Controls/ScrollViewer.axaml" />
         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
+
+        <!--  Align controls to top  -->
+        <Style Selector="WindowDrawnDecorations /template/ StackPanel#PART_OverlayPanel &gt; Button">
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <!--  Hide unneccessary elements  -->
+        <Style Selector="WindowDrawnDecorations /template/ Button#PART_FullScreenButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel &gt; TextBlock">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
     </Application.Styles>
 </Application>

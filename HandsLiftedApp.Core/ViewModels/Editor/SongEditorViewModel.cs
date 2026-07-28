@@ -94,7 +94,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             
             _songEditorWindowTitle = this.WhenAnyValue(x => x.ItemInsertIndex,
                 (int? idx) => idx == null ? "Song Editor" : "Add new song")
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SongEditorWindowTitle);
         }
 

@@ -3,7 +3,7 @@
     CanResize="False"
     IsHitTestVisible="False"
     ShowInTaskbar="False"
-    SystemDecorations="None"
+    WindowDecorations="None"
     Title="DisplayIdentifyWindow"
     Topmost="True"
     TransparencyLevelHint="Transparent"
