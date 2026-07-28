@@ -383,7 +383,9 @@ public class MainViewModel : ViewModelBase
                             EndVerse = addItemMessage.ScriptureEndVerse!.Value,
                             Title = scriptureTitle
                         };
-                        _ = scripture.GenerateSlidesAsync();
+                        _ = scripture.GenerateSlidesAsync().ContinueWith(
+                            t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", scripture.Title),
+                            TaskContinuationOptions.OnlyOnFaulted);
                         itemToInsert = scripture;
                         break;
                     // case AddItemMessage.AddItemType.BibleReadingSlideGroup:

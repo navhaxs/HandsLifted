@@ -67,11 +67,27 @@ namespace HandsLiftedApp.Core.Assets
 
                     if (type == AddItemMessage.AddItemType.Scripture)
                     {
-                        var parentWindow = TopLevel.GetTopLevel(menuItem) as Window;
-                        if (parentWindow == null) return;
+                        Window? parentWindow = null;
+                        Control? ancestor = menuItem;
+                        while (ancestor != null)
+                        {
+                            if (ancestor is Window w)
+                            {
+                                parentWindow = w;
+                                break;
+                            }
+                            ancestor = ancestor.Parent as Control;
+                        }
 
                         var dialog = new ScriptureAddDialog();
-                        await dialog.ShowDialog(parentWindow);
+                        if (parentWindow != null)
+                        {
+                            await dialog.ShowDialog(parentWindow);
+                        }
+                        else
+                        {
+                            dialog.Show();
+                        }
 
                         if (dialog.Result == null) return;
 
