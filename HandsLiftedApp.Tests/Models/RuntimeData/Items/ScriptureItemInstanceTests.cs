@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.Thumbnail;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
+using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Importer.Scripture;
 using SkiaSharp;
 
@@ -185,6 +187,66 @@ public class ScriptureItemInstanceTests
         // With no ParentPlaylist and Design left at its Guid.Empty default, resolution
         // falls back to the app's default theme rather than throwing or returning null.
         Assert.IsNotNull(instance.ResolvedDesignTheme);
+    }
+
+    [TestMethod]
+    public void ResolvedDesignTheme_PlaylistScriptureDefaultSet_UsesPlaylistDefault()
+    {
+        var playlist = new PlaylistInstance();
+        var scriptureTheme = new BaseSlideTheme { Name = "Scripture Theme" };
+        playlist.Designs.Add(scriptureTheme);
+        playlist.DefaultScriptureThemeId = scriptureTheme.Id;
+
+        var instance = new ScriptureItemInstance(playlist, MakeEmptyStore());
+
+        Assert.AreSame(scriptureTheme, instance.ResolvedDesignTheme);
+    }
+
+    [TestMethod]
+    public void ResolvedDesignTheme_ExplicitDesignOverridesPlaylistScriptureDefault()
+    {
+        var playlist = new PlaylistInstance();
+        var scriptureDefaultTheme = new BaseSlideTheme { Name = "Scripture Default" };
+        var explicitTheme = new BaseSlideTheme { Name = "Explicit" };
+        playlist.Designs.Add(scriptureDefaultTheme);
+        playlist.Designs.Add(explicitTheme);
+        playlist.DefaultScriptureThemeId = scriptureDefaultTheme.Id;
+
+        var instance = new ScriptureItemInstance(playlist, MakeEmptyStore())
+        {
+            Design = explicitTheme.Id
+        };
+
+        Assert.AreSame(explicitTheme, instance.ResolvedDesignTheme);
+    }
+
+    [TestMethod]
+    public void ResolvedDesignTheme_PlaylistScriptureDefaultUnset_FallsBackToAppDefault()
+    {
+        var playlist = new PlaylistInstance();
+        var instance = new ScriptureItemInstance(playlist, MakeEmptyStore());
+
+        Assert.AreSame(Globals.Instance.AppPreferences.DefaultTheme, instance.ResolvedDesignTheme);
+    }
+
+    [TestMethod]
+    public void ResolvedDesignTheme_RaisesPropertyChanged_WhenPlaylistScriptureDefaultChanges()
+    {
+        var playlist = new PlaylistInstance();
+        var scriptureTheme = new BaseSlideTheme { Name = "Scripture Theme" };
+        playlist.Designs.Add(scriptureTheme);
+
+        var instance = new ScriptureItemInstance(playlist, MakeEmptyStore());
+        var raised = false;
+        instance.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ScriptureItemInstance.ResolvedDesignTheme)) raised = true;
+        };
+
+        playlist.DefaultScriptureThemeId = scriptureTheme.Id;
+
+        Assert.IsTrue(raised);
+        Assert.AreSame(scriptureTheme, instance.ResolvedDesignTheme);
     }
 
     [TestMethod]

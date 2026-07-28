@@ -54,6 +54,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ToProperty(this, x => x.ActiveSlide);
 
             this.WhenAnyValue(x => x.Design)
+                .Select(_ => Unit.Default)
+                .Merge(ParentPlaylist?.DefaultThemeAssignmentsChanged ?? Observable.Never<Unit>())
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
 
             // Repaginate (debounced) whenever any property of the currently-resolved theme
@@ -92,7 +94,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public BaseSlideTheme? ResolvedDesignTheme
         {
-            get => ParentPlaylist?.Designs.FirstOrDefault(d => d.Id == Design)
+            get => ParentPlaylist?.ResolveScriptureTheme(Design)
                    ?? Globals.Instance.AppPreferences?.DefaultTheme;
             set
             {
