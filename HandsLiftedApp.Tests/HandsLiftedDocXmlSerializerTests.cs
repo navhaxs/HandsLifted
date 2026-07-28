@@ -70,4 +70,42 @@ public class HandsLiftedDocXmlSerializerTests
         Assert.AreEqual(21, scriptureItem.EndVerse);
         Assert.AreEqual(someDesignId, scriptureItem.Design);
     }
+
+    [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsDefaultThemeIds()
+    {
+        var songThemeId = Guid.NewGuid();
+        var songMotionThemeId = Guid.NewGuid();
+        var scriptureThemeId = Guid.NewGuid();
+        var playlist = new PlaylistInstance
+        {
+            DefaultSongThemeId = songThemeId,
+            DefaultSongMotionThemeId = songMotionThemeId,
+            DefaultScriptureThemeId = scriptureThemeId
+        };
+
+        var path = Path.Combine(_tempDir, "playlist-defaults.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+
+        Assert.AreEqual(songThemeId, deserialized.DefaultSongThemeId);
+        Assert.AreEqual(songMotionThemeId, deserialized.DefaultSongMotionThemeId);
+        Assert.AreEqual(scriptureThemeId, deserialized.DefaultScriptureThemeId);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_DefaultThemeIdsUnset_RoundTripAsNull()
+    {
+        var playlist = new PlaylistInstance();
+
+        var path = Path.Combine(_tempDir, "playlist-no-defaults.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+
+        Assert.IsNull(deserialized.DefaultSongThemeId);
+        Assert.IsNull(deserialized.DefaultSongMotionThemeId);
+        Assert.IsNull(deserialized.DefaultScriptureThemeId);
+    }
 }

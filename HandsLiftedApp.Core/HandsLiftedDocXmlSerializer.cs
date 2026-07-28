@@ -37,6 +37,9 @@ namespace HandsLiftedApp.Core
                 LogoGraphicFile =
                     RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, playlist.LogoGraphicFile),
                 SlideTransitionDurationMs = playlist.SlideTransitionDurationMs,
+                DefaultSongThemeId = playlist.DefaultSongThemeId,
+                DefaultSongMotionThemeId = playlist.DefaultSongMotionThemeId,
+                DefaultScriptureThemeId = playlist.DefaultScriptureThemeId,
                 Designs = new ObservableCollection<BaseSlideTheme>(playlist.Designs
                     .Where(d => d.Id != Globals.Instance.AppPreferences?.DefaultTheme?.Id)
                     .Select(design =>
