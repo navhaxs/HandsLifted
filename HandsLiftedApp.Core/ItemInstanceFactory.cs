@@ -24,10 +24,10 @@ namespace HandsLiftedApp.Core
                 var resolvedMotionBgPath = !string.IsNullOrEmpty(songItem.MotionBackgroundVideoPath)
                     ? RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, songItem.MotionBackgroundVideoPath)
                     : null;
-                
+
                 Log.Debug("ItemInstanceFactory: SongItem '{Title}' MotionBg raw='{RawPath}', resolved='{ResolvedPath}', base='{BasePath}'",
                     songItem.Title, songItem.MotionBackgroundVideoPath, resolvedMotionBgPath, playlistDirectoryPath);
-                
+
                 var song = new SongItemInstance(playlist)
                 {
                     UUID = songItem.UUID,
@@ -44,6 +44,27 @@ namespace HandsLiftedApp.Core
                 };
                 // song.GenerateSlides();
                 return song;
+            }
+            else if (deserializedItem is ScriptureItem scriptureItem)
+            {
+                var scripture = new ScriptureItemInstance(playlist)
+                {
+                    UUID = scriptureItem.UUID,
+                    Title = scriptureItem.Title,
+                    Translation = scriptureItem.Translation,
+                    Book = scriptureItem.Book,
+                    StartChapter = scriptureItem.StartChapter,
+                    StartVerse = scriptureItem.StartVerse,
+                    EndChapter = scriptureItem.EndChapter,
+                    EndVerse = scriptureItem.EndVerse
+                };
+                // Fire-and-forget: GenerateSlidesAsync fetches over the network and
+                // this factory method is synchronous. Slides populate reactively
+                // once the fetch completes; ToItemInstance's other branches are
+                // similarly inconsistent about invoking their own GenerateSlides
+                // (e.g. SongItem's is commented out at the time of writing).
+                _ = scripture.GenerateSlidesAsync();
+                return scripture;
             }
             else if (deserializedItem is PowerPointPresentationItem powerPointPresentationItem)
             {
