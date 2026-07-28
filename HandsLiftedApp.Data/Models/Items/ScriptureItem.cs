@@ -1,0 +1,29 @@
+using System;
+using System.Xml.Serialization;
+using ReactiveUI;
+
+namespace HandsLiftedApp.Data.Models.Items
+{
+    [XmlRoot("Scripture", Namespace = Constants.Namespace, IsNullable = false)]
+    [Serializable]
+    public class ScriptureItem : Item
+    {
+        private string _translation = "";
+        public string Translation { get => _translation; set => this.RaiseAndSetIfChanged(ref _translation, value); }
+
+        private string _book = "";
+        public string Book { get => _book; set => this.RaiseAndSetIfChanged(ref _book, value); }
+
+        private int _startChapter = 1;
+        public int StartChapter { get => _startChapter; set => this.RaiseAndSetIfChanged(ref _startChapter, value); }
+
+        private int _startVerse = 1;
+        public int StartVerse { get => _startVerse; set => this.RaiseAndSetIfChanged(ref _startVerse, value); }
+
+        private int _endChapter = 1;
+        public int EndChapter { get => _endChapter; set => this.RaiseAndSetIfChanged(ref _endChapter, value); }
+
+        private int _endVerse = 1;
+        public int EndVerse { get => _endVerse; set => this.RaiseAndSetIfChanged(ref _endVerse, value); }
+    }
+}
