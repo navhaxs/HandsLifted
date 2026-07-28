@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.XTransitioningContentControl;
 using LibMpv.Client;
+using LibMpv.Context;
 using LibMpv.Context.MVVM;
 using ReactiveUI;
 using System.Threading;
@@ -38,6 +39,18 @@ Read MPV documentation:
 
                 // Register router LibMpv => MVVM
                 Context.PropertyChanged += MpvContextPropertyChanged;
+
+                // Log decode/open failures (e.g. stalled cloud-synced file) instead of failing silently
+                Context.EndFile += OnEndFile;
+            }
+        }
+
+        private void OnEndFile(object? sender, MpvEndFileEventArgs e)
+        {
+            if (e.Reason == mpv_end_file_reason.MPV_END_FILE_REASON_ERROR)
+            {
+                var errorMessage = libmpv.mpv_error_string(e.Error);
+                Log.Error("[VideoSlide] Decode failure for {FilePath}: {Reason}", SourceMediaFilePath, errorMessage);
             }
         }
 
