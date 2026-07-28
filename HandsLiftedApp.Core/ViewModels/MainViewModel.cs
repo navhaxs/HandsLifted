@@ -173,7 +173,10 @@ public class MainViewModel : ViewModelBase
                 Playlist.Title = x.Title;
                 Playlist.SlideTransitionDurationMs = x.SlideTransitionDurationMs;
                 Playlist.Meta = x.Meta;
-                
+                Playlist.DefaultSongThemeId = x.DefaultSongThemeId;
+                Playlist.DefaultSongMotionThemeId = x.DefaultSongMotionThemeId;
+                Playlist.DefaultScriptureThemeId = x.DefaultScriptureThemeId;
+
                 Playlist.LogoGraphicFile =
                     RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         x.LogoGraphicFile);
