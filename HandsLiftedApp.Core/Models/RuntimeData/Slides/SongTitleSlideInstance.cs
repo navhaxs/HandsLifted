@@ -63,14 +63,25 @@ namespace HandsLiftedApp.Data.Slides
 
             // If Design is unset, this slide is riding whichever playlist default applies -
             // re-resolve whenever the user repoints one of the three playlist defaults.
+            //
+            // Subscribing directly here would capture `this` and `parentSongItem` strongly, and
+            // Playlist.DefaultThemeAssignmentsChanged (an app-lifetime observable whose subscriber
+            // list is never cleared) would then hold both alive for the life of the process - unlike
+            // this class's other subscriptions, which are rooted in parentSongItem and die together
+            // with it. Capturing only weak references lets the slide and its parent be garbage
+            // collected normally; the subscription becomes a silent no-op once they're gone.
+            var weakSelf = new WeakReference<SongTitleSlideInstance>(this);
+            var weakParentSongItem = parentSongItem != null ? new WeakReference<SongItemInstance>(parentSongItem) : null;
             Globals.Instance.MainViewModel?.Playlist?.DefaultThemeAssignmentsChanged
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ =>
                 {
-                    if ((parentSongItem?.Design ?? Guid.Empty) == Guid.Empty)
+                    if (!weakSelf.TryGetTarget(out var self)) return;
+                    var parent = weakParentSongItem != null && weakParentSongItem.TryGetTarget(out var p) ? p : null;
+                    if ((parent?.Design ?? Guid.Empty) == Guid.Empty)
                     {
-                        Theme = ResolveTheme(Guid.Empty, parentSongItem?.HasMotionBackground ?? false);
-                        RequestRender();
+                        self.Theme = ResolveTheme(Guid.Empty, parent?.HasMotionBackground ?? false);
+                        self.RequestRender();
                     }
                 });
 

@@ -165,4 +165,43 @@ public class PlaylistInstanceTests
 
         Assert.AreEqual(0, fireCount);
     }
+
+    [TestMethod]
+    public void SettingDefaultSongThemeId_MarksPlaylistDirtyAndRaisesChanged()
+    {
+        var playlist = new PlaylistInstance { IsDirty = false };
+        var changedRaised = false;
+        playlist.Changed += (_, _) => changedRaised = true;
+
+        playlist.DefaultSongThemeId = Guid.NewGuid();
+
+        Assert.IsTrue(playlist.IsDirty, "setting DefaultSongThemeId must mark the playlist dirty so it gets autosaved");
+        Assert.IsTrue(changedRaised, "setting DefaultSongThemeId must raise Changed");
+    }
+
+    [TestMethod]
+    public void SettingDefaultSongMotionThemeId_MarksPlaylistDirtyAndRaisesChanged()
+    {
+        var playlist = new PlaylistInstance { IsDirty = false };
+        var changedRaised = false;
+        playlist.Changed += (_, _) => changedRaised = true;
+
+        playlist.DefaultSongMotionThemeId = Guid.NewGuid();
+
+        Assert.IsTrue(playlist.IsDirty, "setting DefaultSongMotionThemeId must mark the playlist dirty so it gets autosaved");
+        Assert.IsTrue(changedRaised, "setting DefaultSongMotionThemeId must raise Changed");
+    }
+
+    [TestMethod]
+    public void SettingDefaultScriptureThemeId_MarksPlaylistDirtyAndRaisesChanged()
+    {
+        var playlist = new PlaylistInstance { IsDirty = false };
+        var changedRaised = false;
+        playlist.Changed += (_, _) => changedRaised = true;
+
+        playlist.DefaultScriptureThemeId = Guid.NewGuid();
+
+        Assert.IsTrue(playlist.IsDirty, "setting DefaultScriptureThemeId must mark the playlist dirty so it gets autosaved");
+        Assert.IsTrue(changedRaised, "setting DefaultScriptureThemeId must raise Changed");
+    }
 }

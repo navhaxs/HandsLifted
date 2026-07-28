@@ -256,7 +256,10 @@ namespace HandsLiftedApp.Core.Models
                     p => p.Title,
                     p => p.LogoGraphicFile,
                     p => p.Designs,
-                    p => p.Items)
+                    p => p.Items,
+                    p => p.DefaultSongThemeId,
+                    p => p.DefaultSongMotionThemeId,
+                    p => p.DefaultScriptureThemeId)
                 .Subscribe(_ =>
                 {
                     IsDirty = true;

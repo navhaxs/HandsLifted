@@ -250,6 +250,47 @@ public class ScriptureItemInstanceTests
     }
 
     [TestMethod]
+    public async Task PlaylistScriptureDefaultChanges_RepaginatesAndUpdatesGeneratedSlideTheme()
+    {
+        var playlist = new PlaylistInstance();
+        var initialTheme = new BaseSlideTheme { Name = "Initial Scripture Theme" };
+        var newTheme = new BaseSlideTheme { Name = "New Scripture Theme" };
+        playlist.Designs.Add(initialTheme);
+        playlist.Designs.Add(newTheme);
+        playlist.DefaultScriptureThemeId = initialTheme.Id;
+
+        var instance = new ScriptureItemInstance(playlist, MakeFakeStore(GenesisChapterOneUsx))
+        {
+            Translation = "eng_bsb",
+            Book = "gen",
+            StartChapter = 1,
+            StartVerse = 1,
+            EndChapter = 1,
+            EndVerse = 2
+            // Design intentionally left at Guid.Empty - this item rides the playlist default.
+        };
+
+        await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.AreEqual(1, instance.Slides.Count);
+        Assert.AreSame(initialTheme, ((ScriptureSlideInstance)instance.Slides[0]).Theme,
+            "sanity check: generated slide should start out on the initial playlist default theme");
+
+        playlist.DefaultScriptureThemeId = newTheme.Id;
+
+        // The repagination subscription debounces via a real DebounceDispatcher(200ms) timer
+        // (not the Avalonia Dispatcher), so give it time to fire before pumping the UI-thread
+        // jobs its continuation posts (RepaginateFromCache -> UpdatePages -> Dispatcher.UIThread.Post).
+        await Task.Delay(400);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.AreSame(newTheme, instance.ResolvedDesignTheme);
+        Assert.AreSame(newTheme, ((ScriptureSlideInstance)instance.Slides[0]).Theme,
+            "changing the playlist scripture default must actually re-theme the generated slide, not just ResolvedDesignTheme");
+    }
+
+    [TestMethod]
     public async Task GenerateSlidesAsync_ForceInvalidateCache_ResetsCachedOnReusedSlide()
     {
         var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))

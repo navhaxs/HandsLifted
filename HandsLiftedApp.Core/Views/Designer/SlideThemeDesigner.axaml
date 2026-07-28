@@ -102,20 +102,38 @@
                                        DockPanel.Dock="Bottom"
                                        HorizontalAlignment="Center"
                                        FontSize="10"
-                                       Foreground="#888888"
-                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultSongThemeConverter}}" />
+                                       Foreground="#888888">
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{StaticResource IsDefaultSongThemeConverter}">
+                                        <Binding Path="." />
+                                        <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongThemeId" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible>
+                            </TextBlock>
                             <TextBlock Text="default (songs, motion)"
                                        DockPanel.Dock="Bottom"
                                        HorizontalAlignment="Center"
                                        FontSize="10"
-                                       Foreground="#888888"
-                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultSongMotionThemeConverter}}" />
+                                       Foreground="#888888">
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{StaticResource IsDefaultSongMotionThemeConverter}">
+                                        <Binding Path="." />
+                                        <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongMotionThemeId" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible>
+                            </TextBlock>
                             <TextBlock Text="default (scripture)"
                                        DockPanel.Dock="Bottom"
                                        HorizontalAlignment="Center"
                                        FontSize="10"
-                                       Foreground="#888888"
-                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultScriptureThemeConverter}}" />
+                                       Foreground="#888888">
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{StaticResource IsDefaultScriptureThemeConverter}">
+                                        <Binding Path="." />
+                                        <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultScriptureThemeId" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible>
+                            </TextBlock>
                             <!-- <Viewbox Height="60"> -->
                             <!--     <Grid -->
                             <!--         Height="130" -->

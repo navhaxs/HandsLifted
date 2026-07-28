@@ -53,10 +53,39 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     (selectedSlideIndex, slides) => slides.ElementAtOrDefault(selectedSlideIndex))
                 .ToProperty(this, x => x.ActiveSlide);
 
+            // Subscribing directly here would capture `this` strongly, and
+            // ParentPlaylist.DefaultThemeAssignmentsChanged (an app-lifetime observable whose
+            // subscriber list is never cleared) would then hold this item alive for the life of
+            // the process - unlike this class's other subscriptions, which die together with
+            // this instance. Capturing only a weak reference lets the item be garbage collected
+            // normally; the subscription becomes a silent no-op once it's gone.
+            var weakSelf = new WeakReference<ScriptureItemInstance>(this);
+
             this.WhenAnyValue(x => x.Design)
                 .Select(_ => Unit.Default)
                 .Merge(ParentPlaylist?.DefaultThemeAssignmentsChanged ?? Observable.Never<Unit>())
-                .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
+                .Subscribe(_ =>
+                {
+                    if (weakSelf.TryGetTarget(out var self))
+                        self.RaisePropertyChanged(nameof(ResolvedDesignTheme));
+                });
+
+            // Playlist scripture default changed - if this item's own Design is unset (i.e. it's
+            // actually riding the playlist default rather than an explicit override), repaginate
+            // so the new theme actually takes effect on the generated ScriptureSlideInstances (the
+            // subscription above only raises PropertyChanged on ResolvedDesignTheme for
+            // data-binding; DynamicData's WhenAnyPropertyChanged() below does not emit on
+            // subscribe, so switching to a brand-new theme object via the playlist default would
+            // otherwise never trigger a repagination).
+            (ParentPlaylist?.DefaultThemeAssignmentsChanged ?? Observable.Never<Unit>())
+                .Subscribe(_ =>
+                {
+                    if (!weakSelf.TryGetTarget(out var self)) return;
+                    if (self.Design == Guid.Empty)
+                    {
+                        self._themeChangeDebounce.Debounce(() => self.RepaginateFromCache(true));
+                    }
+                });
 
             // Repaginate (debounced) whenever any property of the currently-resolved theme
             // changes — not just when Design switches to a different theme object, but also
