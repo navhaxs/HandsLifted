@@ -27,6 +27,7 @@ public class ScriptureItemInstanceTests
     public static void AssemblyInit(TestContext context)
     {
         Avalonia.Skia.SkiaPlatform.Initialize();
+        ReactiveUI.Builder.RxAppBuilder.CreateReactiveUIBuilder().WithPlatformServices().BuildApp();
     }
 
     [TestInitialize]
