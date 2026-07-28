@@ -34,7 +34,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         if (OperatingSystem.IsMacOS())
         {
-            ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.Default;
             ExtendClientAreaTitleBarHeightHint = 0;
             ExtendClientAreaToDecorationsHint = false;
         }

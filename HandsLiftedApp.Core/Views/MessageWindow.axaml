@@ -8,7 +8,6 @@
         Height="140"
         WindowStartupLocation="CenterOwner"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
         Background="Transparent"
         TransparencyLevelHint="Transparent"
         SystemDecorations="None"

@@ -7,7 +7,6 @@
                                  Height="140"
                                  WindowStartupLocation="CenterOwner"
                                  ExtendClientAreaToDecorationsHint="True"
-                                 ExtendClientAreaChromeHints="NoChrome"
                                  SystemDecorations="None"
                                  ShowInTaskbar="False"
                                  CanResize="False"
