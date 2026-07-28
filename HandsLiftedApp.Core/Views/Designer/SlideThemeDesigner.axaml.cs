@@ -183,6 +183,33 @@ namespace HandsLiftedApp.Core.Views.Designer
             themePreviewTitleSlideView.IsVisible = previewTitleToggle.IsChecked == true;
         }
 
+        private void SetDefaultSongTheme_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
+                control.DataContext is BaseSlideTheme item)
+            {
+                mainViewModel.Playlist.DefaultSongThemeId = item.Id;
+            }
+        }
+
+        private void SetDefaultSongMotionTheme_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
+                control.DataContext is BaseSlideTheme item)
+            {
+                mainViewModel.Playlist.DefaultSongMotionThemeId = item.Id;
+            }
+        }
+
+        private void SetDefaultScriptureTheme_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
+                control.DataContext is BaseSlideTheme item)
+            {
+                mainViewModel.Playlist.DefaultScriptureThemeId = item.Id;
+            }
+        }
+
         private void RemoveItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is MainViewModel mainViewModel)
@@ -191,10 +218,13 @@ namespace HandsLiftedApp.Core.Views.Designer
                 {
                     if (control.DataContext is BaseSlideTheme item)
                     {
-                        if (item.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id)
+                        if (item.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id
+                            || item.Id == mainViewModel.Playlist.DefaultSongThemeId
+                            || item.Id == mainViewModel.Playlist.DefaultSongMotionThemeId
+                            || item.Id == mainViewModel.Playlist.DefaultScriptureThemeId)
                         {
                             MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                                { Title = "Cannot remove the global default theme" });
+                                { Title = "Cannot remove a theme that is set as a default" });
                         }
                         else if (mainViewModel.Playlist.Designs.Count > 1)
                         {

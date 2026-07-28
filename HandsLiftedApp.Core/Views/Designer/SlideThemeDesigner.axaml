@@ -22,6 +22,9 @@
         <converters1:SafeFontWeightConverter x:Key="SafeFontWeightConverter" />
         <converters2:SlideThemeToPreviewConverter x:Key="SlideThemeToPreviewConverter" />
         <converters2:IsDefaultThemeConverter x:Key="IsDefaultThemeConverter" />
+        <converters2:IsDefaultSongThemeConverter x:Key="IsDefaultSongThemeConverter" />
+        <converters2:IsDefaultSongMotionThemeConverter x:Key="IsDefaultSongMotionThemeConverter" />
+        <converters2:IsDefaultScriptureThemeConverter x:Key="IsDefaultScriptureThemeConverter" />
     </UserControl.Resources>
 
     <Design.DataContext>
@@ -65,6 +68,21 @@
                                         <avalonia:MaterialIcon Foreground="#888888" Kind="Times" />
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem Header="Set as default for Songs" Click="SetDefaultSongTheme_OnClick">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Set as default for Songs (motion bg)" Click="SetDefaultSongMotionTheme_OnClick">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Set as default for Scripture" Click="SetDefaultScriptureTheme_OnClick">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Setter>
                     </Style>
@@ -80,6 +98,24 @@
                                        FontSize="10"
                                        Foreground="#888888"
                                        IsVisible="{Binding ., Converter={StaticResource IsDefaultThemeConverter}}" />
+                            <TextBlock Text="default (songs)"
+                                       DockPanel.Dock="Bottom"
+                                       HorizontalAlignment="Center"
+                                       FontSize="10"
+                                       Foreground="#888888"
+                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultSongThemeConverter}}" />
+                            <TextBlock Text="default (songs, motion)"
+                                       DockPanel.Dock="Bottom"
+                                       HorizontalAlignment="Center"
+                                       FontSize="10"
+                                       Foreground="#888888"
+                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultSongMotionThemeConverter}}" />
+                            <TextBlock Text="default (scripture)"
+                                       DockPanel.Dock="Bottom"
+                                       HorizontalAlignment="Center"
+                                       FontSize="10"
+                                       Foreground="#888888"
+                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultScriptureThemeConverter}}" />
                             <!-- <Viewbox Height="60"> -->
                             <!--     <Grid -->
                             <!--         Height="130" -->
