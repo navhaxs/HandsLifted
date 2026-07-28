@@ -254,31 +254,76 @@
                 Background="Transparent"
                 CornerRadius="6"
                 DockPanel.Dock="Top"
-                Height="35"
+                Height="24"
                 Margin="6,0,6,6"
                 MaxWidth="300">
-                <DockPanel>
-                    <TextBlock
-                        FontSize="13"
-                        Margin="8,0,6,0"
-                        Text="Fade:"
-                        VerticalAlignment="Center" />
-                    <TextBlock
-                        DockPanel.Dock="Right"
-                        FontSize="13"
-                        Margin="4,0,8,0"
-                        Text="{Binding Playlist.SlideTransitionDurationMs, StringFormat='{}{0:0}ms'}"
-                        VerticalAlignment="Center" />
-                    <Slider
-                        LargeChange="200"
-                        Maximum="2000"
-                        Minimum="0"
-                        SmallChange="50"
-                        TickFrequency="100"
-                        Value="{Binding Playlist.SlideTransitionDurationMs, Mode=TwoWay}"
-                        VerticalAlignment="Center" />
-                </DockPanel>
+                <ToggleButton
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ClickMode="Press"
+                    HorizontalAlignment="Right"
+                    HorizontalContentAlignment="Right"
+                    IsChecked="{Binding #fadeFlyout.IsOpen, Mode=TwoWay}"
+                    Name="FadeButton"
+                    Padding="0">
+                    <ToggleButton.Styles>
+                        <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                        <Style Selector="ToggleButton:pointerover &gt; Border">
+                            <Setter Property="Background" Value="{DynamicResource HoverBackgroundBrush}" />
+                        </Style>
+                        <Style Selector="ToggleButton:checked &gt; Border">
+                            <Setter Property="Background" Value="#5C3AB6" />
+                        </Style>
+                        <Style Selector="ToggleButton:checked &gt; Border &gt; TextBlock">
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </ToggleButton.Styles>
+                    <Border CornerRadius="4" Padding="8,2">
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                            Text="{Binding Playlist.SlideTransitionDurationMs, StringFormat='Fade {0:0}ms'}" />
+                    </Border>
+                </ToggleButton>
             </Border>
+
+            <Popup
+                IsLightDismissEnabled="True"
+                Name="fadeFlyout"
+                PlacementMode="BottomEdgeAlignedRight"
+                PlacementTarget="{Binding #FadeButton}">
+                <Border
+                    Background="{DynamicResource WindowBackgroundBrush}"
+                    BorderBrush="#9a93cd"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="8,6"
+                    Width="220">
+                    <DockPanel>
+                        <TextBlock
+                            DockPanel.Dock="Right"
+                            FontSize="13"
+                            Margin="6,0,0,0"
+                            Text="{Binding Playlist.SlideTransitionDurationMs, StringFormat='{}{0:0}ms'}"
+                            VerticalAlignment="Center" />
+                        <TextBlock
+                            FontSize="13"
+                            Margin="0,0,6,0"
+                            Text="Fade:"
+                            VerticalAlignment="Center" />
+                        <Slider
+                            LargeChange="200"
+                            Maximum="2000"
+                            Minimum="0"
+                            SmallChange="50"
+                            TickFrequency="100"
+                            Value="{Binding Playlist.SlideTransitionDurationMs, Mode=TwoWay}"
+                            VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+            </Popup>
 
             <!-- <views:DebugInfoView HorizontalAlignment="Stretch" /> -->
             <!--<Image DockPanel.Dock="Top" Stretch="Uniform" Source="{Binding Playlist.State.LogoBitmap}" RenderOptions.BitmapInterpolationMode="HighQuality" MinWidth="200" />-->
