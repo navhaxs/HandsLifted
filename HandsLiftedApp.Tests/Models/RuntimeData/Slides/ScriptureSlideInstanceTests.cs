@@ -64,4 +64,12 @@ public class ScriptureSlideInstanceTests
 
         Assert.AreSame(customTheme, slide.Theme);
     }
+
+    [TestMethod]
+    public void ScriptureSlideInstance_ImplementsIRenderable()
+    {
+        var slide = new ScriptureSlideInstance(null, "1:1");
+
+        Assert.IsInstanceOfType(slide, typeof(HandsLiftedApp.Core.Services.IRenderable));
+    }
 }
