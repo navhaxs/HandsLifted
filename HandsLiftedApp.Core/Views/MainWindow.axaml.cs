@@ -196,25 +196,12 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         // needed. Avalonia 12's compositor rework made `VisualRoot` resolve to an
         // internal TopLevelHost wrapper rather than the Window subclass, which broke
         // the previous `(Window)this.VisualRoot` cast with an InvalidCastException.
-        this.GetObservable(WindowStateProperty).Subscribe(s =>
-        {
-            if (s != WindowState.Maximized)
-            {
-                this.Padding = new Thickness(0, 0, 0, 0);
-            }
-
-            if (s == WindowState.Maximized)
-            {
-                this.Padding = new Thickness(7, 7, 7, 7);
-
-                // This should be a more universal approach in both cases, but I found it to be less reliable, when for example double-clicking the title bar.
-                /*this.Padding = new Thickness(
-                        this.OffScreenMargin.Left,
-                        this.OffScreenMargin.Top,
-                        this.OffScreenMargin.Right,
-                        this.OffScreenMargin.Bottom);*/
-            }
-        });
+        // The Maximized-state 7px padding this used to apply compensated for a Win32-native-chrome
+        // quirk where a maximized window overflowed slightly past the monitor edges. Avalonia 12's
+        // drawn decorations (WindowDrawnDecorations) already inset maximized content correctly, so
+        // the compensation is no longer needed — it was showing as an unwanted thick border around
+        // the content only while maximized.
+        this.Padding = new Thickness(0, 0, 0, 0);
     }
 
     bool _isConfirmedExiting = false;

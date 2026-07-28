@@ -7,6 +7,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:app="clr-namespace:HandsLiftedApp.Core"
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:chrome="clr-namespace:Avalonia.Controls.Chrome;assembly=Avalonia.Controls"
     xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
     xmlns:corecontrols="clr-namespace:HandsLiftedApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -90,7 +91,8 @@
                 <DockPanel
                     DockPanel.Dock="Top"
                     Height="62"
-                    Margin="0,8,0,0">
+                    Margin="0,8,0,0"
+                    chrome:WindowDecorationProperties.ElementRole="User">
 
                     <DockPanel>
                         <Button

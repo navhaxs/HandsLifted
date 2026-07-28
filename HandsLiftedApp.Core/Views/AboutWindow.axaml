@@ -1,21 +1,22 @@
 <Window
+    Background="{DynamicResource BackgroundFrameBrush}"
+    CanResize="False"
+    ExtendClientAreaToDecorationsHint="True"
+    Height="370"
+    ShowInTaskbar="False"
+    Title="AboutWindow"
+    Width="740"
+    WindowDecorations="BorderOnly"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d"
     x:Class="HandsLiftedApp.Core.Views.AboutWindow"
+    x:DataType="views:AboutWindow"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
-    Title="AboutWindow"
-    Width="740"
-    Height="370"
-    CanResize="False"
-    ExtendClientAreaToDecorationsHint="True"
-    ShowInTaskbar="False"
-    WindowStartupLocation="CenterOwner"
-    Background="{DynamicResource BackgroundFrameBrush}"
-    x:DataType="views:AboutWindow"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -33,15 +34,15 @@
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <DockPanel>
         <!--  header  -->
         <!-- <Grid Background="#6033ab" DockPanel.Dock="Top"> -->
-        <!--     <TextBlock -->
-        <!--         Margin="14,14" -->
-        <!--         FontSize="18" -->
-        <!--         Foreground="White"> -->
-        <!--         About -->
+        <!--  <TextBlock  -->
+        <!--  Margin="14,14"  -->
+        <!--  FontSize="18"  -->
+        <!--  Foreground="White">  -->
+        <!--  About  -->
         <!--     </TextBlock> -->
         <!-- </Grid> -->
         <!--  footer  -->
@@ -59,8 +60,8 @@
                 </StackPanel.Styles>
                 <WrapPanel>
                     <TextBlock
-                        Padding="0,0,4,0"
                         FontWeight="Bold"
+                        Padding="0,0,4,0"
                         Text="VisionScreens" />
                     <TextBlock Text="© Jeremy Wong 2015-2026" />
                 </WrapPanel>
@@ -81,16 +82,19 @@
                             <Setter Property="Height" Value="14" />
                         </Style>
                     </StackPanel.Styles>
-                    <Button x:Name="buttonNotices" HorizontalAlignment="Left" Classes="link">
+                    <Button
+                        Classes="link"
+                        HorizontalAlignment="Left"
+                        x:Name="buttonNotices">
                         <TextBlock Text="Open Source Notices" />
                     </Button>
-                    <Button HorizontalAlignment="Left" Classes="link">
+                    <Button Classes="link" HorizontalAlignment="Left">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="View diagnostic logs" />
                             <material:MaterialIcon Kind="ExternalLink" />
                         </StackPanel>
                     </Button>
-                    <Button HorizontalAlignment="Left" Classes="link">
+                    <Button Classes="link" HorizontalAlignment="Left">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Generate support info" />
                             <material:MaterialIcon Kind="ExternalLink" />
@@ -99,25 +103,25 @@
                 </StackPanel>
             </StackPanel>
             <Button
-                x:Name="buttonDone"
-                Width="160"
-                Height="40"
-                Margin="0,0,10,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
                 Content="Done"
+                Height="40"
+                HorizontalAlignment="Right"
+                HorizontalContentAlignment="Center"
                 IsCancel="True"
-                IsDefault="True" />
+                IsDefault="True"
+                Margin="0,0,10,0"
+                VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
+                Width="160"
+                x:Name="buttonDone" />
         </Grid>
         <!--  main content  -->
         <Border
-            Margin="10,10,10,0"
-            Padding="10"
             Background="{DynamicResource ContentBackgroundBrush}"
             BorderThickness="1"
-            CornerRadius="6">
+            CornerRadius="6"
+            Margin="10,10,10,0"
+            Padding="10">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -125,13 +129,13 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Image
-                    Width="100"
                     Height="76"
-                    Margin="0,26,0,0"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
+                    Margin="0,26,0,0"
                     RenderOptions.BitmapInterpolationMode="HighQuality"
-                    Source="avares://HandsLiftedApp.Core/Assets/app.png" />
+                    Source="avares://HandsLiftedApp.Core/Assets/app.png"
+                    VerticalAlignment="Top"
+                    Width="100" />
                 <Border Grid.Column="1" Margin="0,5">
                     <Border.Styles>
                         <Style Selector="TextBlock">
@@ -142,17 +146,17 @@
                     <DockPanel>
                         <StackPanel Margin="15,18,35,0">
                             <TextBlock
-                                Margin="0,0,0,0"
                                 FontSize="36"
-                                LineHeight="40"
                                 FontWeight="Bold"
+                                LineHeight="40"
+                                Margin="0,0,0,0"
                                 TextWrapping="Wrap">
                                 VisionScreens
                             </TextBlock>
                             <TextBlock
-                                Margin="0,4,0,0"
                                 FontSize="22"
                                 FontWeight="SemiBold"
+                                Margin="0,4,0,0"
                                 TextWrapping="Wrap">
                                 Church Presentation Software
                             </TextBlock>
@@ -163,28 +167,29 @@
                                 VisionScreens brings your lyrics and content together for easy slides preparation and operation.
                             </TextBlock>
                             <TextBlock
-                                Margin="0,8,0,8"
                                 FontWeight="SemiBold"
                                 Foreground="Red"
+                                Margin="0,8,0,8"
                                 Text="Internal development build. Expect bugs."
                                 TextWrapping="Wrap" />
-                            <StackPanel
-                                DockPanel.Dock="Bottom"
-                                Orientation="Horizontal">
+                            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                                 <TextBlock
-                                    VerticalAlignment="Center"
                                     FontWeight="SemiBold"
-                                    Text="Powered by " />
-                                <DockPanel ToolTip.ShowDelay="0"
-                                           ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS."
-                                           Background="Transparent">
-                                    <Image Height="32" Source="avares://HandsLiftedApp.Core/Assets/avalonia-logo.ico"
-                                           RenderOptions.BitmapInterpolationMode="HighQuality"
-                                           Margin="0 0 4 0" />
+                                    Text="Powered by "
+                                    VerticalAlignment="Center" />
+                                <DockPanel
+                                    Background="Transparent"
+                                    ToolTip.ShowDelay="0"
+                                    ToolTip.Tip="A cross platform XAML UI Framework for .NET providing a flexible styling system and supporting Windows, Linux and macOS.">
+                                    <Image
+                                        Height="32"
+                                        Margin="0,0,4,0"
+                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                        Source="avares://HandsLiftedApp.Core/Assets/avalonia-logo.ico" />
                                     <TextBlock
-                                        VerticalAlignment="Center"
                                         FontWeight="Bold"
-                                        Text="Avalonia" />
+                                        Text="Avalonia"
+                                        VerticalAlignment="Center" />
                                 </DockPanel>
                             </StackPanel>
                         </StackPanel>
