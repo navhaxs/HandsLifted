@@ -21,10 +21,18 @@ namespace HandsLiftedApp.Controls.Messages
             MediaGroup,
             BlankGroup,
             BibleReadingSlideGroup,
-            Comment
+            Comment,
+            Scripture
         }
-        
+
         // TODO make this an interface?
         public string? CreateInfo { get; init; } = null;
+
+        public string? ScriptureBookCode { get; init; }
+        public string? ScriptureBookName { get; init; }
+        public int? ScriptureStartChapter { get; init; }
+        public int? ScriptureStartVerse { get; init; }
+        public int? ScriptureEndChapter { get; init; }
+        public int? ScriptureEndVerse { get; init; }
     }
 }
