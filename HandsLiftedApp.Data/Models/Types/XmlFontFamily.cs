@@ -3,9 +3,11 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using Avalonia.Media;
+using Newtonsoft.Json;
 
 namespace HandsLiftedApp.Data.Data.Models.Types
 {
+    [JsonConverter(typeof(XmlFontFamilyJsonConverter))]
     public class XmlFontFamily : IXmlSerializable
     {
         private FontFamily m_value = FontFamily.Parse("Arial");
