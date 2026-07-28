@@ -27,6 +27,10 @@
         <Style Selector="TextBox">
             <Setter Property="BorderThickness" Value="0" />
         </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="CaretBrush" Value="Black" />
+        </Style>
     </UserControl.Styles>
 
     <DockPanel>
