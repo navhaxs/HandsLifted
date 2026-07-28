@@ -73,7 +73,7 @@
         </Grid.RowDefinitions>
 
         <!--  root grid: content and right panel  -->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" x:Name="RootContentGrid">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -252,7 +252,7 @@
 
                 </DockPanel>
 
-                <Grid>
+                <Grid x:Name="NavAreaGrid">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="6" Width="260" />
                         <ColumnDefinition Width="0" />

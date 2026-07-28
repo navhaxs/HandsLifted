@@ -235,6 +235,22 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _songEditorThumbnailSizeMultiplier, value);
         }
 
+        private double _mainNavPaneWidth = 260;
+        [DataMember]
+        public double MainNavPaneWidth
+        {
+            get => _mainNavPaneWidth;
+            set => this.RaiseAndSetIfChanged(ref _mainNavPaneWidth, value);
+        }
+
+        private double _mainLivePaneWidthStar = 0.24;
+        [DataMember]
+        public double MainLivePaneWidthStar
+        {
+            get => _mainLivePaneWidthStar;
+            set => this.RaiseAndSetIfChanged(ref _mainLivePaneWidthStar, value);
+        }
+
         [DataContract]
         public class DisplayModel : ReactiveObject
         {

@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -19,6 +20,9 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
+
+        RestorePaneWidths();
+        WirePaneWidthPersistence();
 
         this.AttachedToVisualTree += (sender, args) =>
         {
@@ -53,6 +57,45 @@ public partial class MainView : UserControl
     bool isLibraryVisible = false;
     GridLength lastLibraryContentGridLength = new GridLength(260);
     GridLength lastLibrarySplitterGridLength = new GridLength(0);
+
+    private ColumnDefinition NavPaneColumnDefinition => NavAreaGrid.ColumnDefinitions[0];
+    private ColumnDefinition LivePaneColumnDefinition => RootContentGrid.ColumnDefinitions[2];
+
+    private void RestorePaneWidths()
+    {
+        if (Design.IsDesignMode || Globals.Instance.AppPreferences == null)
+        {
+            return;
+        }
+
+        var prefs = Globals.Instance.AppPreferences;
+        NavPaneColumnDefinition.Width = new GridLength(prefs.MainNavPaneWidth);
+        LivePaneColumnDefinition.Width = new GridLength(prefs.MainLivePaneWidthStar, GridUnitType.Star);
+    }
+
+    private void WirePaneWidthPersistence()
+    {
+        if (Design.IsDesignMode)
+        {
+            return;
+        }
+
+        NavPaneColumnDefinition.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == ColumnDefinition.WidthProperty && Globals.Instance.AppPreferences != null)
+            {
+                Globals.Instance.AppPreferences.MainNavPaneWidth = NavPaneColumnDefinition.Width.Value;
+            }
+        };
+
+        LivePaneColumnDefinition.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == ColumnDefinition.WidthProperty && Globals.Instance.AppPreferences != null)
+            {
+                Globals.Instance.AppPreferences.MainLivePaneWidthStar = LivePaneColumnDefinition.Width.Value;
+            }
+        };
+    }
 
 
     private void ToggleBottomPanel(bool forceVisible = false)
