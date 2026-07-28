@@ -1,12 +1,12 @@
 # Avalonia 11.3.18 → 12.0.5 upgrade — handoff notes
 
-**Status: builds clean (0 errors).** `HandsLiftedApp.Desktop` and its full dependency chain compile with `dotnet build ... -c Release` for the first time in this upgrade. Code migration is done; **interactive/runtime testing is NOT done** — see "What's still open" at the bottom before considering this upgrade shippable.
+**Status: builds clean (0 errors) AND launches successfully.** `HandsLiftedApp.Desktop` compiles and now runs — a launch-blocking crash found during interactive smoke-testing (see below) is fixed. Interactive testing is still only partial — see "What's still open" at the bottom before considering this upgrade shippable.
 
 ## Where this lives
 
 - Worktree: `C:\Users\Jeremy\RiderProjects\HandsLifted\.claude\worktrees\avalonia-12-upgrade`
 - Branch: `worktree-avalonia-12-upgrade`
-- Latest commit: `aee4fb9` — final-review fix wave, closing out an 11-task build-fix pass (Subagent-Driven Development) that took the branch from 71 build errors to 0.
+- Latest commit: `fb8b20e` — fixed a 100%-reproducible startup crash found by actually launching the app (see "Found by interactive testing" below), on top of `aee4fb9`'s final-review fix wave that closed out an 11-task build-fix pass (Subagent-Driven Development) taking the branch from 71 build errors to 0.
 - Base: branched from local `master` (which was already at Avalonia 11.3.18 — see commit `f7c695c` "build: bump Avalonia to 11.3.18, patch vulnerable transitive deps" for unrelated prior security-patch context).
 
 ## How to verify progress
@@ -100,11 +100,28 @@ A second session picked this branch up at 71 build errors and drove it to **0 bu
 
 **Notable finding for future upgrades**: after any task lets a previously-failing project's C# compile succeed, expect the Avalonia XAML compiler to reach files it never touched before and surface a fresh batch of errors — this happened once already at a much bigger scale (120 errors, ~40 files) than any single earlier round. Don't declare an upgrade's build-fix phase done on a partial/incremental build; always confirm with a full `dotnet build ... -c Release` from a clean state.
 
+## Found by interactive testing (2026-07-28): a launch-blocking crash the build-fix pass could never have caught
+
+`dotnet run` on the actual app crashed on every launch with:
+
+```
+System.InvalidCastException: Unable to cast object of type 'Avalonia.Controls.TopLevelHost' to type 'Avalonia.Controls.Window'.
+   at HandsLiftedApp.Core.Views.MainWindow.SubscribeToWindowState() ...
+```
+
+Root cause: `MainWindow.axaml.cs`'s `SubscribeToWindowState()` cast `this.VisualRoot` to `Window` (with a polling loop waiting for it to become non-null, since it's null before the window attaches — an old, self-acknowledged "stupid hack"). In Avalonia 11, once attached, a Window's `VisualRoot` resolved to the `Window` itself. **Avalonia 12's compositor rework changed this: `VisualRoot` now resolves to an internal `TopLevelHost` wrapper instead**, so the cast throws the instant the window attaches — 100% reproducible, every launch. This is a *runtime* behavior change with no compile-time signal at all (the property still exists, still type-checks, still returns non-null) — nothing in the entire 11-task build-fix pass could have caught it; only running the app did.
+
+Fix (`fb8b20e`): `MainWindow` already IS the host window (`this`), so the VisualRoot lookup was unnecessary — replaced with direct use of `this`, no cast, no polling.
+
+**The same `VisualRoot`-as-`Window` pattern also existed in `Libraries/LibMpv/Avalonia.Controls.LibMpv/NativeVideoView.cs`** (2 sites: an `Observable.FromEventPattern(VisualRoot, ...)` reflection-based event subscription, and a `_floatingContent.Show(VisualRoot as Window)` call) — this is exactly the libmpv render path this file's own notes flagged as "confirmed untouched, needs an explicit smoke test." Fixed the same way, but using `TopLevel.GetTopLevel(this)` instead of raw `VisualRoot` — `TopLevel.GetTopLevel()` is the documented, Avalonia-12-correct way to resolve the owning top-level from a `Visual`, and is already the established pattern elsewhere in this codebase (e.g. `GoogleSlidesItemEditView.axaml.cs`). **This half of the fix is unverified by an actual video-rendering run** — the smoke test only confirmed the app launches and loads a real playlist library (with images) without crashing; it did not exercise a motion background or NDI/video output. See "What's still open" below.
+
+**Takeaway for anyone auditing other Avalonia 12 upgrades**: grep for `(Window)` casts (hard or `as`) on `VisualRoot`/`this.VisualRoot` repo-wide — the "docs/CLAUDE-notes said this compiles fine, don't touch it" guidance from earlier in this upgrade was correct about compilation and wrong about runtime behavior. `grep -rn "VisualRoot" --include="*.cs" . | grep -v obj/` and manually check every hit that casts to a concrete type rather than using `TopLevel.GetTopLevel(...)`.
+
 ## What's still open (build succeeding is necessary, not sufficient)
 
-**ReactiveUI 18.3.1 → 23.2.28, a 5-major-version jump, still needs real interactive testing.** `WhenAnyValue` chains, `ReactiveCommand` usage, `ObservableAsPropertyHelper`/`ToProperty` patterns, and DynamicData operators (7.9.1 → 9.4.31, 2 majors) used throughout the ViewModels are all candidates for subtle behavioral changes that won't show up as compile errors. One partial data point from the final review: `HandsLiftedApp.Desktop/Program.cs` does call `.UseReactiveUI(_ => { })`, so the Avalonia scheduler registration path is at least wired up — but whether `RxSchedulers.MainThreadScheduler` actually resolves to the Avalonia UI-thread scheduler under ReactiveUI 23's reorganized registration internals is the real open question; if it silently falls back to a different scheduler, the failure mode is cross-thread UI exceptions scattered across the ~21 files that use it. Budget real interactive test time before shipping — don't rely on a clean build alone for anything touching this.
+**ReactiveUI 18.3.1 → 23.2.28, a 5-major-version jump.** `WhenAnyValue` chains, `ReactiveCommand` usage, `ObservableAsPropertyHelper`/`ToProperty` patterns, and DynamicData operators (7.9.1 → 9.4.31, 2 majors) used throughout the ViewModels are all candidates for subtle behavioral changes that won't show up as compile errors. **Partially de-risked by the 2026-07-28 interactive smoke test**: the app launched, refreshed 3 real libraries from a Google-Drive-synced folder, built a song-library index, bound "Untitled Playlist" text to the UI, and loaded real images (a Bible Reading library's logo/background) — all through the normal ReactiveUI/DynamicData pipeline, with no cross-thread exceptions, before a clean shutdown. This is a meaningful positive signal that `RxSchedulers.MainThreadScheduler` IS resolving correctly under ReactiveUI 23's registration internals. **Not yet exercised**: `ReactiveCommand` execution (no button clicks attempted), editors, and anything requiring real user interaction beyond app launch + library load. Budget real click-through testing before shipping.
 
-**libmpv `SoftwareVideoView`/`NativeVideoView` NativeControlHost-based rendering path** (per this file's `CLAUDE.md`-level "MotionBackground/MpvContext ownership" architecture) was confirmed **completely untouched** by the entire 11-task build-fix pass — no file under `Render/MotionBackground/`, `SoftwareVideoView.cs`, `NativeVideoView.cs`, or `MpvContext.*` appears in any of the fix commits. It compiles clean, but Avalonia 12's compositor/render-target rework (part of what forced the SkiaSharp 2.88→3.0 bump) means it still needs an explicit smoke test before shipping.
+**libmpv `SoftwareVideoView`/`NativeVideoView` NativeControlHost-based rendering path** (per this file's `CLAUDE.md`-level "MotionBackground/MpvContext ownership" architecture): the 11-task build-fix pass left it completely untouched, but the 2026-07-28 interactive smoke test found (via the same root cause as the MainWindow crash below) a latent `VisualRoot`-cast bug in `NativeVideoView.cs` and fixed it (commit `fb8b20e`) — **but that fix is unverified by an actual video-rendering run**; the smoke test only exercised app launch and image loading, not motion background/video playback. Still needs an explicit smoke test with a real video-backed slide or motion background before shipping.
 
 **Small follow-ups flagged by the final review, not blocking, worth doing soon:**
 - `BitmapUtils.CreateThumbnail` has a pre-existing, unrelated-to-this-upgrade native memory leak (unfreed `Marshal.AllocCoTaskMem` buffer, ~8MB/call) on the hot slide-render path (`SongSlideInstance.Render`, `SongTitleSlideInstance.Render`, `ImageSlideInstance` ctor, etc.) plus an unchecked-null `SKBitmap.Resize()` result — both predate this upgrade, correctly left alone as out of scope for the Skia-canvas fix, but worth a tracked issue given the app runs for hours at a time.
