@@ -4,6 +4,9 @@ using ReactiveUI;
 
 namespace HandsLiftedApp.Data.Models.Items
 {
+    // Deliberately stores only the passage reference, not cached parsed content:
+    // HandsLiftedApp.Data has no dependency on HandsLiftedApp.Importer.Scripture (and shouldn't gain
+    // one), and ScriptureSourceLoader already caches fetched USX in memory + on disk.
     [XmlRoot("Scripture", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
     public class ScriptureItem : Item

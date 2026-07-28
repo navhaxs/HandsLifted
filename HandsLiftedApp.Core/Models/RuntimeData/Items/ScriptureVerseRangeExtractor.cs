@@ -31,6 +31,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     if (isContinuationOfPrevious)
                     {
+                        // Joining with a single space flattens poetry line structure (e.g. a verse
+                        // split across three poetry lines becomes one flat sentence). This is an
+                        // accepted tradeoff of the one-verse-per-slide rule, not an oversight — Phase 3
+                        // (rendering) won't be able to recover the original line breaks from here.
                         var previous = result[^1];
                         result[^1] = previous with { Text = previous.Text + " " + segment.Text };
                     }

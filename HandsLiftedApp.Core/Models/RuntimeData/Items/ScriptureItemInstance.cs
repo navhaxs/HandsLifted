@@ -64,17 +64,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             var book = await _loader.LoadBookAsync(Translation, Book).ConfigureAwait(false);
             var verses = ScriptureVerseRangeExtractor.Extract(book, StartChapter, StartVerse, EndChapter, EndVerse);
-            UpdateVerseSlides(verses);
+            UpdateVerseSlides(book.Title, verses);
         }
 
-        private void UpdateVerseSlides(System.Collections.Generic.List<ScriptureVerseRef> verses)
+        private void UpdateVerseSlides(string bookTitle, System.Collections.Generic.List<ScriptureVerseRef> verses)
         {
             var newSlides = new ObservableCollection<Slide>();
 
             foreach (var v in verses)
             {
                 var slideId = $"{v.Chapter}:{v.Verse}";
-                var label = $"{Book} {v.Chapter}:{v.Verse}";
+                var label = string.IsNullOrEmpty(bookTitle) ? $"{Book} {v.Chapter}:{v.Verse}" : $"{bookTitle} {v.Chapter}:{v.Verse}";
 
                 var existing = Slides
                     .OfType<ScriptureSlideInstance>()

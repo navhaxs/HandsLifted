@@ -60,6 +60,25 @@ public class ScriptureItemInstanceTests
     }
 
     [TestMethod]
+    public async Task GenerateSlidesAsync_SlideLabel_UsesParsedBookTitle_NotBookCode()
+    {
+        var instance = new ScriptureItemInstance(null, MakeFakeLoader(GenesisChapterOneUsx))
+        {
+            Translation = "eng_bsb",
+            Book = "gen",
+            StartChapter = 1,
+            StartVerse = 1,
+            EndChapter = 1,
+            EndVerse = 1
+        };
+
+        await instance.GenerateSlidesAsync();
+
+        var first = (ScriptureSlideInstance)instance.Slides[0];
+        Assert.AreEqual("Genesis 1:1", first.Label);
+    }
+
+    [TestMethod]
     public async Task GenerateSlidesAsync_SecondCallWithSameRange_PreservesSlideIdentity()
     {
         var instance = new ScriptureItemInstance(null, MakeFakeLoader(GenesisChapterOneUsx))
