@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Slides;
@@ -51,6 +52,7 @@ public class ScriptureItemInstanceTests
         };
 
         await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.AreEqual(2, instance.Slides.Count);
         var first = (ScriptureSlideInstance)instance.Slides[0];
@@ -73,6 +75,7 @@ public class ScriptureItemInstanceTests
         };
 
         await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
 
         var first = (ScriptureSlideInstance)instance.Slides[0];
         Assert.AreEqual("Genesis 1:1", first.Label);
@@ -92,9 +95,11 @@ public class ScriptureItemInstanceTests
         };
 
         await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
         var firstCallSlide = instance.Slides[0];
 
         await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
         var secondCallSlide = instance.Slides[0];
 
         Assert.AreSame(firstCallSlide, secondCallSlide);
@@ -113,10 +118,12 @@ public class ScriptureItemInstanceTests
             EndVerse = 3
         };
         await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
         Assert.AreEqual(3, instance.Slides.Count);
 
         instance.EndVerse = 2;
         await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.AreEqual(2, instance.Slides.Count);
     }
@@ -134,6 +141,7 @@ public class ScriptureItemInstanceTests
             EndVerse = 2
         };
         await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
 
         instance.SelectedSlideIndex = 1;
 

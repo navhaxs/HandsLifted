@@ -116,6 +116,20 @@ namespace HandsLiftedApp.Core
 
                 return songSerialized;
             }
+            else if (item is ScriptureItemInstance scriptureItemInstance)
+            {
+                return new ScriptureItem()
+                {
+                    UUID = scriptureItemInstance.UUID,
+                    Title = scriptureItemInstance.Title,
+                    Translation = scriptureItemInstance.Translation,
+                    Book = scriptureItemInstance.Book,
+                    StartChapter = scriptureItemInstance.StartChapter,
+                    StartVerse = scriptureItemInstance.StartVerse,
+                    EndChapter = scriptureItemInstance.EndChapter,
+                    EndVerse = scriptureItemInstance.EndVerse
+                };
+            }
             else if (item is SlidesGroupItemInstance slidesGroupItemInstance)
             {
                 return new SlidesGroupItem()

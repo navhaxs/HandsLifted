@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Services;
@@ -28,9 +29,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             // Deliberately no .ObserveOn(RxApp.MainThreadScheduler) here (unlike SongItemInstance's
             // equivalent chain): that scheduler depends on Avalonia.ReactiveUI's dispatcher registration,
-            // which isn't guaranteed to run in a unit-test host, and this phase does nothing that
-            // requires cross-thread marshaling. Keeping it synchronous makes ActiveSlide update
-            // deterministically and immediately when SelectedSlideIndex or Slides changes.
+            // which isn't guaranteed to run in a unit-test host. Keeping it synchronous makes ActiveSlide
+            // update deterministically and immediately when SelectedSlideIndex or Slides changes.
+            // (UpdateVerseSlides below, which mutates Slides itself, does explicitly marshal to the UI
+            // thread via Dispatcher.UIThread.Post since it's reachable from a background-thread
+            // continuation of GenerateSlidesAsync's network fetch — this ActiveSlide chain is not.)
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides,
                     (selectedSlideIndex, slides) => slides.ElementAtOrDefault(selectedSlideIndex))
                 .ToProperty(this, x => x.ActiveSlide);
@@ -71,42 +74,50 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private void UpdateVerseSlides(string bookTitle, System.Collections.Generic.List<ScriptureVerseRef> verses)
         {
-            var newSlides = new ObservableCollection<Slide>();
-
-            foreach (var v in verses)
+            // GenerateSlidesAsync awaits the network fetch with .ConfigureAwait(false), so this
+            // continuation runs on a thread-pool thread, not the UI thread. Slides is bound live
+            // in ItemSlidesView once a scripture item sits in a playlist, so the mutation below
+            // (and the RaisePropertyChanged(nameof(Slides)) it triggers) must be marshaled back
+            // to the UI thread rather than running here.
+            Dispatcher.UIThread.Post(() =>
             {
-                var slideId = $"{v.Chapter}:{v.Verse}";
-                var label = string.IsNullOrEmpty(bookTitle) ? $"{Book} {v.Chapter}:{v.Verse}" : $"{bookTitle} {v.Chapter}:{v.Verse}";
+                var newSlides = new ObservableCollection<Slide>();
 
-                var existing = Slides
-                    .OfType<ScriptureSlideInstance>()
-                    .FirstOrDefault(s => s.Id == slideId);
-
-                if (existing != null)
+                foreach (var v in verses)
                 {
-                    if (existing.Text != v.Text) existing.Text = v.Text;
-                    if (existing.Label != label) existing.Label = label;
-                    newSlides.Add(existing);
-                }
-                else
-                {
-                    newSlides.Add(new ScriptureSlideInstance(this, slideId, text: v.Text, label: label));
-                }
-            }
+                    var slideId = $"{v.Chapter}:{v.Verse}";
+                    var label = string.IsNullOrEmpty(bookTitle) ? $"{Book} {v.Chapter}:{v.Verse}" : $"{bookTitle} {v.Chapter}:{v.Verse}";
 
-            _slides = newSlides;
-            this.RaisePropertyChanged(nameof(Slides));
+                    var existing = Slides
+                        .OfType<ScriptureSlideInstance>()
+                        .FirstOrDefault(s => s.Id == slideId);
 
-            // Enqueue newly created slides (and any reused slide that never got a first
-            // render) for background thumbnail generation. Cached == null covers both:
-            // brand-new slides from this call, and slides that were new on a prior call
-            // but never got enqueued (which would otherwise stay permanently blank).
-            var toRender = newSlides.OfType<ScriptureSlideInstance>()
-                .Where(s => s.Cached == null)
-                .Cast<IRenderable>()
-                .ToList();
-            if (toRender.Count > 0)
-                Globals.Instance.SlideRenderQueue.EnqueueBatch(toRender);
+                    if (existing != null)
+                    {
+                        if (existing.Text != v.Text) existing.Text = v.Text;
+                        if (existing.Label != label) existing.Label = label;
+                        newSlides.Add(existing);
+                    }
+                    else
+                    {
+                        newSlides.Add(new ScriptureSlideInstance(this, slideId, text: v.Text, label: label));
+                    }
+                }
+
+                _slides = newSlides;
+                this.RaisePropertyChanged(nameof(Slides));
+
+                // Enqueue newly created slides (and any reused slide that never got a first
+                // render) for background thumbnail generation. Cached == null covers both:
+                // brand-new slides from this call, and slides that were new on a prior call
+                // but never got enqueued (which would otherwise stay permanently blank).
+                var toRender = newSlides.OfType<ScriptureSlideInstance>()
+                    .Where(s => s.Cached == null)
+                    .Cast<IRenderable>()
+                    .ToList();
+                if (toRender.Count > 0)
+                    Globals.Instance.SlideRenderQueue.EnqueueBatch(toRender);
+            });
         }
     }
 }

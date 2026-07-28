@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -63,7 +64,9 @@ namespace HandsLiftedApp.Core
                 // once the fetch completes; ToItemInstance's other branches are
                 // similarly inconsistent about invoking their own GenerateSlides
                 // (e.g. SongItem's is commented out at the time of writing).
-                _ = scripture.GenerateSlidesAsync();
+                _ = scripture.GenerateSlidesAsync().ContinueWith(
+                    t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", scripture.Title),
+                    TaskContinuationOptions.OnlyOnFaulted);
                 return scripture;
             }
             else if (deserializedItem is PowerPointPresentationItem powerPointPresentationItem)

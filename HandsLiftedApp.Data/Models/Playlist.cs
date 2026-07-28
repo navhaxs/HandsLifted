@@ -15,6 +15,7 @@ namespace HandsLiftedApp.Data.Models
     [XmlInclude(typeof(LogoItem))]
     [XmlInclude(typeof(SectionHeadingItem))]
     [XmlInclude(typeof(SongItem))]
+    [XmlInclude(typeof(ScriptureItem))]
     [XmlInclude(typeof(MediaGroupItem))]
     [XmlInclude(typeof(SlidesGroupItem))]
     [XmlInclude(typeof(GoogleSlidesGroupItem))]
