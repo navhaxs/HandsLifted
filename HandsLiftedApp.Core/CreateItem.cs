@@ -4,6 +4,7 @@ using HandsLiftedApp.Data.Models.Items;
 using Serilog;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Serialization;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
@@ -121,15 +122,29 @@ namespace HandsLiftedApp.Core
             {
                 try
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(SongItem));
+                    var rootElementName = PeekRootElementName(filePath);
+                    Type? itemType = rootElementName switch
+                    {
+                        "Song" => typeof(SongItem),
+                        "Scripture" => typeof(ScriptureItem),
+                        _ => null
+                    };
+
+                    if (itemType == null)
+                    {
+                        Log.Error("Unrecognized XML root element '{RootElementName}' in {FilePath}", rootElementName, filePath);
+                        return null;
+                    }
+
+                    XmlSerializer serializer = new XmlSerializer(itemType);
                     using (FileStream stream = new FileStream(filePath, FileMode.Open))
                     {
-                        return (SongItem)serializer.Deserialize(stream);
+                        return (Item)serializer.Deserialize(stream);
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, "Failed to parse XML as Song");
+                    Log.Error(e, "Failed to parse XML as Item");
                     return null;
                 }
             }
@@ -165,6 +180,19 @@ namespace HandsLiftedApp.Core
                 return CreatePresentationItem(filename);
             }
 
+            return null;
+        }
+
+        private static string? PeekRootElementName(string filePath)
+        {
+            using var reader = XmlReader.Create(filePath);
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    return reader.LocalName;
+                }
+            }
             return null;
         }
     }
