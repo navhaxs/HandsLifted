@@ -97,6 +97,28 @@ public class ScriptureSourceLoaderTests
     }
 
     [TestMethod]
+    public async Task LoadBookAsync_BookCodeContainsPathTraversal_ThrowsArgumentException()
+    {
+        var handler = new FakeHttpMessageHandler(_ => throw new InvalidOperationException("HTTP should not be called for an invalid book code."));
+        var loader = new ScriptureSourceLoader(new HttpClient(handler), _tempCacheRoot);
+
+        await Assert.ThrowsExceptionAsync<ArgumentException>(() => loader.LoadBookAsync("eng_bsb", "../../etc"));
+
+        Assert.AreEqual(0, handler.CallCount);
+    }
+
+    [TestMethod]
+    public async Task LoadBookAsync_TranslationContainsPathSeparator_ThrowsArgumentException()
+    {
+        var handler = new FakeHttpMessageHandler(_ => throw new InvalidOperationException("HTTP should not be called for an invalid translation."));
+        var loader = new ScriptureSourceLoader(new HttpClient(handler), _tempCacheRoot);
+
+        await Assert.ThrowsExceptionAsync<ArgumentException>(() => loader.LoadBookAsync("eng/bsb", "gen"));
+
+        Assert.AreEqual(0, handler.CallCount);
+    }
+
+    [TestMethod]
     public async Task LoadBookAsync_SuccessfulFetch_WritesDiskCache()
     {
         var handler = new FakeHttpMessageHandler(_ =>

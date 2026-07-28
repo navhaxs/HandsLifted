@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using HandsLiftedApp.Importer.Scripture.Models;
@@ -11,6 +12,7 @@ namespace HandsLiftedApp.Importer.Scripture;
 public sealed class ScriptureSourceLoader
 {
     private const string BaseUrl = "https://v1.fetch.bible/bibles/";
+    private static readonly Regex ValidIdentifierPattern = new("^[a-z0-9_]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private readonly HttpClient _httpClient;
     private readonly string _cacheRoot;
@@ -34,6 +36,20 @@ public sealed class ScriptureSourceLoader
         if (string.IsNullOrWhiteSpace(bookCode))
         {
             throw new ArgumentException("Book code is required.", nameof(bookCode));
+        }
+
+        if (!ValidIdentifierPattern.IsMatch(translation))
+        {
+            throw new ArgumentException(
+                $"Translation '{translation}' is invalid; only letters, digits, and underscores are allowed.",
+                nameof(translation));
+        }
+
+        if (!ValidIdentifierPattern.IsMatch(bookCode))
+        {
+            throw new ArgumentException(
+                $"Book code '{bookCode}' is invalid; only letters, digits, and underscores are allowed.",
+                nameof(bookCode));
         }
 
         var xml = await GetXmlAsync(translation, bookCode).ConfigureAwait(false);
