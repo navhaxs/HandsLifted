@@ -82,7 +82,7 @@
                 <ColumnDefinition
                     MaxWidth="800"
                     MinWidth="200"
-                    Width="0.24*" />
+                    Width="300" />
             </Grid.ColumnDefinitions>
 
             <!--  inner grid: left panel and content  -->

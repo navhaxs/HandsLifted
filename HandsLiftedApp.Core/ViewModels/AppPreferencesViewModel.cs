@@ -243,12 +243,12 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _mainNavPaneWidth, value);
         }
 
-        private double _mainLivePaneWidthStar = 0.24;
+        private double _mainLivePaneWidth = 300;
         [DataMember]
-        public double MainLivePaneWidthStar
+        public double MainLivePaneWidth
         {
-            get => _mainLivePaneWidthStar;
-            set => this.RaiseAndSetIfChanged(ref _mainLivePaneWidthStar, value);
+            get => _mainLivePaneWidth;
+            set => this.RaiseAndSetIfChanged(ref _mainLivePaneWidth, value);
         }
 
         [DataContract]

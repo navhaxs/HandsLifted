@@ -70,7 +70,7 @@ public partial class MainView : UserControl
 
         var prefs = Globals.Instance.AppPreferences;
         NavPaneColumnDefinition.Width = new GridLength(prefs.MainNavPaneWidth);
-        LivePaneColumnDefinition.Width = new GridLength(prefs.MainLivePaneWidthStar, GridUnitType.Star);
+        LivePaneColumnDefinition.Width = new GridLength(prefs.MainLivePaneWidth);
     }
 
     private void WirePaneWidthPersistence()
@@ -92,7 +92,7 @@ public partial class MainView : UserControl
         {
             if (e.Property == ColumnDefinition.WidthProperty && Globals.Instance.AppPreferences != null)
             {
-                Globals.Instance.AppPreferences.MainLivePaneWidthStar = LivePaneColumnDefinition.Width.Value;
+                Globals.Instance.AppPreferences.MainLivePaneWidth = LivePaneColumnDefinition.Width.Value;
             }
         };
     }
