@@ -128,7 +128,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                     var draggedContainer = GetItem(draggedItem);
                     draggedContainer.ZIndex = 1000;  // Bring dragged item container to front
 
-                    var visualRoot = _parent.GetVisualRoot();
+                    var visualRoot = TopLevel.GetTopLevel(_parent);
                     if (visualRoot is Window window)
                     {
                         window.LostFocus += StanzaDragControlBehavior_LostFocus;
@@ -407,7 +407,7 @@ namespace HandsLiftedApp.Controls.Behaviours
             if (p == null)
                 p = _parent;
 
-            Window? window = p?.GetVisualRoot() as Window;
+            Window? window = TopLevel.GetTopLevel(p) as Window;
             if (window != null)
             {
                 window.Cursor = (cursor == null) ? Cursor.Default : cursor;

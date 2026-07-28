@@ -257,7 +257,7 @@ namespace HandsLiftedApp.Controls.Behaviours
         {
             if (_parent is { })
             {
-                Window? window = _parent.GetVisualRoot() as Window;
+                Window? window = TopLevel.GetTopLevel(_parent) as Window;
                 window.Cursor = show ? new Cursor(StandardCursorType.DragMove) : Cursor.Default;
             }
         }
@@ -299,7 +299,7 @@ namespace HandsLiftedApp.Controls.Behaviours
 
                 targetItem.Opacity = 1;
 
-                int SourceIndex = parentItemsControl.ItemContainerGenerator.IndexFromContainer(targetItem);
+                int SourceIndex = parentItemsControl.IndexFromContainer(targetItem);
                 int DestinationIndex;
                 if (isPastLastItem)
                 {
@@ -311,7 +311,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                 }
                 else
                 {
-                    DestinationIndex = parentItemsControl.ItemContainerGenerator.IndexFromContainer(hoveredItem);
+                    DestinationIndex = parentItemsControl.IndexFromContainer(hoveredItem);
                 }
 
                 for (int i = 0; i < parentItemsControl.ItemCount; i++)

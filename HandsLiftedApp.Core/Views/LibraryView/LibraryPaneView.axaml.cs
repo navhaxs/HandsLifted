@@ -61,12 +61,12 @@ namespace HandsLiftedApp.Views.Library
             var item = _pendingDragItem;
             CancelPendingDrag();
 
-            var dragData = new DataObject();
+            var dragData = new DataTransfer();
             var topLevel = TopLevel.GetTopLevel(this);
             IStorageFile file = await topLevel.StorageProvider.TryGetFileFromPathAsync(new Uri(item.FullFilePath));
-            dragData.Set(DataFormats.Files, new[] { file });
+            dragData.Add(DataTransferItem.Create(DataFormat.File, file));
 
-            await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Copy);
+            await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Copy);
         }
 
         private void MenuItem_OnClick(object? sender, RoutedEventArgs e)

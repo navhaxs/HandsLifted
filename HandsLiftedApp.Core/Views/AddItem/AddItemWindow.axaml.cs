@@ -4,7 +4,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using ReactiveUI;
 using Serilog;

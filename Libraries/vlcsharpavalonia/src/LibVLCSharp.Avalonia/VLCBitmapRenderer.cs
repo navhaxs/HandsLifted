@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using Avalonia.Rendering.SceneGraph;
 using System;
 using System.Collections.Generic;

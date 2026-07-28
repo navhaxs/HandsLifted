@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices.JavaScript;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using HandsLiftedApp.Importer.OnlineSongLyrics.Clipboard;
@@ -117,7 +118,7 @@ CCLI License #317371";
         private void ClipboardChanged(object sender, EventArgs e)
         {
             // Create a new task that represents the asynchronous operation
-            Clipboard.GetTextAsync()
+            Clipboard.TryGetTextAsync()
                 .ContinueWith(t =>
                 {
                     string result = t.Result;

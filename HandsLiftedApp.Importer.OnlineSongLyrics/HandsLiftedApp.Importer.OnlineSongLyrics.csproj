@@ -9,7 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Avalonia" />
       <PackageReference Include="Avalonia.Desktop" />
-      <PackageReference Include="Avalonia.ReactiveUI" />
+      <PackageReference Include="ReactiveUI.Avalonia" />
       <PackageReference Include="Material.Icons.Avalonia" />
       <PackageReference Include="WebView.Avalonia" />
       <PackageReference Include="WebView.Avalonia.Desktop" />

@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using HandsLiftedApp.Core.Services;
 using LibMpv.Client;
 

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Core.Controls
 {
@@ -51,12 +52,13 @@ namespace HandsLiftedApp.Core.Controls
                 });
 
             SetupDnd("Files",
-                async d => d.Set(DataFormats.Files,
-                    new[]
-                    {
-                        await (VisualRoot as TopLevel)!.StorageProvider.TryGetFileFromPathAsync(
-                            Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName)
-                    }), DragDropEffects.Copy);
+                async d =>
+                {
+                    var file = await (VisualRoot as TopLevel)!.StorageProvider.TryGetFileFromPathAsync(
+                        Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName);
+                    if (file != null)
+                        d.Add(DataTransferItem.Create(DataFormat.File, file));
+                }, DragDropEffects.Copy);
         }
 
         private void AddContentButton_OnClick(object? sender, RoutedEventArgs e)
@@ -79,7 +81,7 @@ namespace HandsLiftedApp.Core.Controls
             // HandleAddItemButtonClick.ShowAddWindow(itemInsertIndex, sender);
         }
 
-        void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)
+        void SetupDnd(string suffix, Func<DataTransfer, Task> factory, DragDropEffects effects)
         {
             //var dragMe = this.Get<Border>("DragMe" + suffix);
             //var dragState = this.Get<TextBlock>("DragState" + suffix);

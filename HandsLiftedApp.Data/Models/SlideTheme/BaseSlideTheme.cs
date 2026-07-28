@@ -21,87 +21,87 @@ namespace HandsLiftedApp.Data.SlideTheme
         {
             _calculatedLineHeight = this.WhenAnyValue(x => x.FontSize, x => x.LineHeightEm,
                     (fontSize, lineHeightEm) => (int)(fontSize * lineHeightEm))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.LineHeight);
             
             _calculatedTextAlignmentLeft = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Left)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
             
             _calculatedTextAlignmentCenter = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Center)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
             
             _calculatedTextAlignmentRight = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Right)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentRight);
             
             _calculatedTextAlignmentJustify = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Justify)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
 
             _calculatedTitleTextAlignmentLeft = this.WhenAnyValue(x => x.TitleTextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Left)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTitleTextAlignmentLeft);
 
             _calculatedTitleTextAlignmentCenter = this.WhenAnyValue(x => x.TitleTextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Center)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTitleTextAlignmentCenter);
 
             _calculatedTitleTextAlignmentRight = this.WhenAnyValue(x => x.TitleTextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Right)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTitleTextAlignmentRight);
 
             _calculatedCopyrightTextAlignmentLeft = this.WhenAnyValue(x => x.CopyrightTextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Left)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedCopyrightTextAlignmentLeft);
 
             _calculatedCopyrightTextAlignmentCenter = this.WhenAnyValue(x => x.CopyrightTextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Center)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedCopyrightTextAlignmentCenter);
 
             _calculatedCopyrightTextAlignmentRight = this.WhenAnyValue(x => x.CopyrightTextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Right)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedCopyrightTextAlignmentRight);
 
             _calculatedTitleVerticalAlignmentTop = this.WhenAnyValue(x => x.TitleVerticalAlignment,
                     (verticalAlignment) => verticalAlignment == AvaloniaVerticalAlignment.Top)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTitleVerticalAlignmentTop);
 
             _calculatedTitleVerticalAlignmentCenter = this.WhenAnyValue(x => x.TitleVerticalAlignment,
                     (verticalAlignment) => verticalAlignment == AvaloniaVerticalAlignment.Center)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTitleVerticalAlignmentCenter);
 
             _calculatedTitleVerticalAlignmentBottom = this.WhenAnyValue(x => x.TitleVerticalAlignment,
                     (verticalAlignment) => verticalAlignment == AvaloniaVerticalAlignment.Bottom)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTitleVerticalAlignmentBottom);
 
             _calculatedTextFontBold = this.WhenAnyValue(x => x.FontWeight,
                 (fontWeight) => fontWeight == Avalonia.Media.FontWeight.Bold)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextFontBold);
             
             _calculatedTextFontItalic = this.WhenAnyValue(x => x.FontStyle,
                 (fontStyle) => fontStyle == FontStyle.Italic)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextFontItalic);
             
             // _calculatedTextFontUnderline = this.WhenAnyValue(x => x.TextDecorations,
             //     (textDecorations) => textDecorations.Any(decoration => decoration.Location == TextDecorationLocation.Underline))
-            //     .ObserveOn(RxApp.MainThreadScheduler)
+            //     .ObserveOn(RxSchedulers.MainThreadScheduler)
             //     .ToProperty(this, x => x.CalculatedTextFontUnderline);
         }
 

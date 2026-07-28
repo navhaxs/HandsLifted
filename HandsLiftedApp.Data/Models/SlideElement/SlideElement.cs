@@ -39,47 +39,47 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         {
             _calculatedLineHeight = this.WhenAnyValue(x => x.FontSize, x => x.LineHeightEm,
                     (fontSize, lineHeightEm) => { return (int)(fontSize * lineHeightEm); })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.LineHeight);
             
             _calculatedTextAlignmentLeft = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Left)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
             
             _calculatedTextAlignmentCenter = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Center)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
             
             _calculatedTextAlignmentRight = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Right)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentRight);
             
             _calculatedTextAlignmentJustify = this.WhenAnyValue(x => x.TextAlignment,
                     (textAlignment) => textAlignment == TextAlignment.Justify)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentJustify); 
             
             _calculatedVerticalAlignmentTop = this.WhenAnyValue(x => x.VerticalAlignment,
                     (a) => a == VerticalAlignment.Top)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
             
             _calculatedVerticalAlignmentCenter = this.WhenAnyValue(x => x.VerticalAlignment,
                     (a) => a == VerticalAlignment.Center)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
             
             _calculatedVerticalAlignmentBottom = this.WhenAnyValue(x => x.VerticalAlignment,
                     (textAlignment) => textAlignment == VerticalAlignment.Bottom)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentRight);
 
             _calculatedVerticalAlignmentStretch = this.WhenAnyValue(x => x.VerticalAlignment,
                     (textAlignment) => textAlignment == VerticalAlignment.Stretch)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
         }
 

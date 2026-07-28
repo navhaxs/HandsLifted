@@ -22,7 +22,7 @@ namespace HandsLiftedApp.Importer.OnlineSongLyrics
             _selectedClipboardDataTitle = this.WhenAnyValue(
                     x => x.SelectedClipboardData,
                     text => text.Split('\n')[0].Trim())
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedClipboardDataTitle);
         }
     }

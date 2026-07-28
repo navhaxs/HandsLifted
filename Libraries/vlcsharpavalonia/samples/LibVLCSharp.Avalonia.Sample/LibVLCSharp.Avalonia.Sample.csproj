@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.ReactiveUI" />
+    <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="Avalonia.Themes.Simple" />
     <PackageReference Include="VideoLAN.LibVLC.Mac" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" />

@@ -27,6 +27,7 @@ namespace HandsLiftedApp.Controls.Behaviours
 
         private Control? _parent;
         private Point? _pointerPressedInitialPoint;
+        private PointerPressedEventArgs? _pointerPressedEventArgs;
         private int _insertIndex;
 
         /// <summary>
@@ -84,7 +85,8 @@ namespace HandsLiftedApp.Controls.Behaviours
             if (target is { })
             {
                 _pointerPressedInitialPoint = e.GetPosition(_parent);
-                
+                _pointerPressedEventArgs = e;
+
                 // prevent default ListBox behaviour which would update the SelectedItemIndex (due to data binding) on click event, we want to control slide navigation ourselves - and NOT do anything if this becomes a drag event
                 e.Handled = true;
             }
@@ -96,7 +98,8 @@ namespace HandsLiftedApp.Controls.Behaviours
             if (target is { } && sender is Control parent)
             {
                 _pointerPressedInitialPoint = null;
-                
+                _pointerPressedEventArgs = null;
+
                 var parentListBox = ControlExtension.FindAncestor<ListBoxWithoutKey>(parent);
                 var parentListBoxItem = ControlExtension.FindAncestor<ListBoxItem>(parent);
                 var sourceListBoxIndex = -1;
@@ -135,17 +138,18 @@ namespace HandsLiftedApp.Controls.Behaviours
                     Point pos = e.GetPosition(_parent);
                     if (Math.Abs(pos.Y - _pointerPressedInitialPoint.Value.Y) > 6 || Math.Abs(pos.X - _pointerPressedInitialPoint.Value.X) > 6) // deadzone
                     {
-                        StartDrag(target, e);
+                        if (_pointerPressedEventArgs != null)
+                            StartDrag(target, _pointerPressedEventArgs);
                     }
                 }
             }
         }
 
-        private async void StartDrag(Control parent, PointerEventArgs e)
+        private async void StartDrag(Control parent, PointerPressedEventArgs e)
         {
             _isDragging = true;
 
-            var dragData = new DataObject();
+            var dragData = new DataTransfer();
             var topLevel = TopLevel.GetTopLevel(parent);
             
             var parentListBox = ControlExtension.FindAncestor<ListBoxWithoutKey>(parent);
@@ -164,10 +168,10 @@ namespace HandsLiftedApp.Controls.Behaviours
             {
                 if (parentListBox.DataContext is Item sourceItem)
                 {
-                    dragData.Set(SlideDragDropCustomDataFormat.CustomFormat,
-                        new SlideDragDropCustomDataFormat() { SourceItemUUID = sourceItem.UUID, SourceSlideIndex = sourceListBoxIndex });
-                    
-                    var result = await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Copy);
+                    dragData.Add(DataTransferItem.Create(SlideDragDropCustomDataFormat.Format,
+                        new SlideDragDropCustomDataFormat() { SourceItemUUID = sourceItem.UUID, SourceSlideIndex = sourceListBoxIndex }));
+
+                    var result = await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Copy);
                 }
             }
             

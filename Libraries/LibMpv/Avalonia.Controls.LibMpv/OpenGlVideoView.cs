@@ -59,7 +59,7 @@ public class OpenGlVideoView : OpenGlControlBase
 
     private PixelSize GetPixelSize()
     {
-        var scaling = VisualRoot!.RenderScaling;
+        var scaling = TopLevel.GetTopLevel(this)!.RenderScaling;
         return new PixelSize(Math.Max(1, (int)(Bounds.Width * scaling)), Math.Max(1, (int)(Bounds.Height * scaling)));
     }
 

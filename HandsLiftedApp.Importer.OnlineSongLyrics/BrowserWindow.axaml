@@ -11,8 +11,7 @@
         RequestedThemeVariant="Light"
         x:Class="HandsLiftedApp.Importer.OnlineSongLyrics.BrowserWindow"
         ExtendClientAreaToDecorationsHint="True"
-        x:DataType="onlineSongLyrics:BrowserWindowViewModel"
-        ExtendClientAreaChromeHints="SystemChrome,PreferSystemChrome">
+        x:DataType="onlineSongLyrics:BrowserWindowViewModel">
     <DockPanel>
         <TextBlock DockPanel.Dock="Top"
                    FontSize="14"

@@ -57,8 +57,8 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 });
 
             SetupDnd("Files",
-                d => d.Set(DataFormats.FileNames,
-                    new[] { Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName }),
+                d => d.Add(DataTransferItem.Create(DataFormat.Text,
+                    Assembly.GetEntryAssembly()?.GetModules().FirstOrDefault()?.FullyQualifiedName ?? string.Empty)),
                 DragDropEffects.Copy);
         }
 
@@ -73,7 +73,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
         private bool isUpper;
         Control lastAdornerElement;
 
-        void SetupDnd(string suffix, Action<DataObject> factory, DragDropEffects effects)
+        void SetupDnd(string suffix, Action<DataTransfer> factory, DragDropEffects effects)
         {
             void Calculate(object? sender, DragEventArgs e)
             {
@@ -90,7 +90,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                     {
                         return point.Y >= container.Bounds.Top && point.Y <= container.Bounds.Bottom;
                     }), listBox.GetRealizedContainers().Last());
-                int foundIndex = listBox.ItemContainerGenerator.IndexFromContainer(found);
+                int foundIndex = listBox.IndexFromContainer(found);
 
                 var relativePoint = e.GetPosition(found);
                 isUpper = relativePoint.Y < found.Bounds.Height / 2;
@@ -117,8 +117,8 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 }
 
                 // Only allow if the dragged data contains text or filenames.
-                if (!e.Data.Contains(DataFormats.Text)
-                    && !e.Data.Contains(DataFormats.Files)) {
+                if (!e.DataTransfer.Contains(DataFormat.Text)
+                    && !e.DataTransfer.Contains(DataFormat.File)) {
                     //&& !e.Data.Contains(CustomFormat))
                     e.DragEffects = DragDropEffects.None;
                 }
@@ -153,9 +153,10 @@ namespace HandsLiftedApp.Core.Controls.Navigation
 
                 Calculate(sender, e);
                 
-                if (e.Data.Contains(DataFormats.Files))
+                if (e.DataTransfer.Contains(DataFormat.File))
                 {
-                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(e.Data.GetFileNames().ToList(), lastHoveredIndex != -1 ? lastHoveredIndex : null));
+                    var paths = e.DataTransfer.TryGetFiles()?.Select(f => f.Path.LocalPath).ToList() ?? new List<string>();
+                    MessageBus.Current.SendMessage(new AddItemByFilePathMessage(paths, lastHoveredIndex != -1 ? lastHoveredIndex : null));
                 }
 
                 clearLastAdornerLayer();

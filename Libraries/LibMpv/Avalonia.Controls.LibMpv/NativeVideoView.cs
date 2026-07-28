@@ -124,7 +124,7 @@ public class NativeVideoView : NativeControlHost
         {
             _floatingContent = new Window()
             {
-                SystemDecorations = SystemDecorations.None,
+                WindowDecorations = WindowDecorations.None,
                 //TransparencyLevelHint = WindowTransparencyLevel.Transparent,
                 Background = Brushes.Transparent,
                 SizeToContent = SizeToContent.WidthAndHeight,

@@ -17,7 +17,8 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 {
     public partial class MediaGroupItemEditor : UserControl
     {
-        private const string DragDataFormat = "MediaGroupItemDrag";
+        private static readonly DataFormat<MediaGroupItem.GroupItem> DragDataFormat =
+            DataFormat.CreateInProcessFormat<MediaGroupItem.GroupItem>("MediaGroupItemDrag");
         private MediaGroupItem.GroupItem? _dragSourceItem;
         private Point _pointerPressedPoint;
         private bool _isDragging;
@@ -75,9 +76,9 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
                 _isDragging = true;
                 _dragSourceItem = null;
 
-                var data = new DataObject();
-                data.Set(DragDataFormat, item);
-                await DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
+                var data = new DataTransfer();
+                data.Add(DataTransferItem.Create(DragDataFormat, item));
+                await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move);
 
                 _isDragging = false;
             }
@@ -111,7 +112,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             }
             found ??= point.X <= 0 ? containers.First() : containers.Last();
 
-            int foundIndex = Thumbstrip.ItemContainerGenerator.IndexFromContainer(found);
+            int foundIndex = Thumbstrip.IndexFromContainer(found);
             var itemPos = found.TranslatePoint(new Point(0, 0), Thumbstrip);
             double midX = itemPos.HasValue ? itemPos.Value.X + found.Bounds.Width / 2 : 0;
             _dropBefore = point.X < midX;
@@ -149,7 +150,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 
         private void OnThumbstripDragOver(object? sender, DragEventArgs e)
         {
-            if (!e.Data.Contains(DragDataFormat))
+            if (!e.DataTransfer.Contains(DragDataFormat))
             {
                 e.DragEffects = DragDropEffects.None;
                 return;
@@ -161,9 +162,9 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 
         private void OnThumbstripDrop(object? sender, DragEventArgs e)
         {
-            if (!e.Data.Contains(DragDataFormat)) return;
+            if (!e.DataTransfer.Contains(DragDataFormat)) return;
 
-            var draggedItem = e.Data.Get(DragDataFormat) as MediaGroupItem.GroupItem;
+            var draggedItem = e.DataTransfer.TryGetValue(DragDataFormat);
             if (draggedItem == null) return;
 
             CalculateDropTarget(e);

@@ -124,7 +124,7 @@ namespace HandsLiftedApp.Controls
             UnregisterEvents();
         }
 
-        private void EntryTextBox_OnGotFocus(object? sender, GotFocusEventArgs e)
+        private void EntryTextBox_OnGotFocus(object? sender, FocusChangedEventArgs e)
         {
             RegisterEvents();
         }

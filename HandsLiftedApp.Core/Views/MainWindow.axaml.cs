@@ -8,7 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.UI;
