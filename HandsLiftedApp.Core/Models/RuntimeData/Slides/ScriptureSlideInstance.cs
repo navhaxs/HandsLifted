@@ -57,7 +57,7 @@ namespace HandsLiftedApp.Data.Slides
 
         public void Render()
         {
-            var spec = ScriptureSlideSpecBuilder.Build(this);
+            var spec = ScriptureParagraphSpecBuilder.Build(this);
             using var skBitmap = SlideRenderer.RenderToSKBitmap(spec);
             var cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
             var thumb = BitmapUtils.CreateThumbnail(cached);

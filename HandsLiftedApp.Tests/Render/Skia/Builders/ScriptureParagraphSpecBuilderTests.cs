@@ -1,0 +1,98 @@
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Avalonia.Media;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Render.Skia;
+using HandsLiftedApp.Core.Render.Skia.Builders;
+using HandsLiftedApp.Data.SlideTheme;
+using HandsLiftedApp.Data.Slides;
+
+namespace HandsLiftedApp.Tests.Render.Skia.Builders;
+
+[TestClass]
+public class ScriptureParagraphSpecBuilderTests
+{
+    private static BaseSlideTheme MakeTheme() => new BaseSlideTheme
+    {
+        FontSize = 60,
+        TextColour = Colors.White,
+        BackgroundColour = Colors.Black,
+    };
+
+    private static ScriptureParagraphLine HeaderLine(string text) =>
+        new ScriptureParagraphLine(new[] { new ScriptureParagraphRun(text, IsSuperscript: false) }, IsHeader: true);
+
+    private static ScriptureParagraphLine BodyLine(params ScriptureParagraphRun[] runs) =>
+        new ScriptureParagraphLine(runs, IsHeader: false);
+
+    [TestMethod]
+    public void Build_WithTheme_ReturnsSolidBackground()
+    {
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = MakeTheme() };
+        slide.Lines = new[] { HeaderLine("Genesis 1:1") };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        Assert.IsInstanceOfType(spec.Background, typeof(SolidBackground));
+    }
+
+    [TestMethod]
+    public void Build_NoTheme_ReturnsEmptyElements()
+    {
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = null };
+        slide.Lines = new[] { HeaderLine("Genesis 1:1") };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        Assert.AreEqual(0, spec.Elements.Count);
+    }
+
+    [TestMethod]
+    public void Build_NoLines_ReturnsEmptyElements()
+    {
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = MakeTheme() };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        Assert.AreEqual(0, spec.Elements.Count);
+    }
+
+    [TestMethod]
+    public void Build_OneLineWithMarkerAndText_ReturnsOneMultiRunElementWithTwoRuns()
+    {
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = MakeTheme() };
+        slide.Lines = new[]
+        {
+            HeaderLine("Genesis 1:1"),
+            BodyLine(
+                new ScriptureParagraphRun("1", IsSuperscript: true),
+                new ScriptureParagraphRun("In the beginning God created the heaven and the earth.", IsSuperscript: false))
+        };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        Assert.AreEqual(2, spec.Elements.Count, "one element for the header line, one for the body line");
+        var bodyElement = (MultiRunTextLineElement)spec.Elements[1];
+        Assert.AreEqual(2, bodyElement.Runs.Count);
+        Assert.AreEqual("1", bodyElement.Runs[0].Text);
+        Assert.IsTrue(bodyElement.Runs[0].FontSize < bodyElement.Runs[1].FontSize, "superscript run must be smaller than body run");
+        Assert.IsTrue(bodyElement.Runs[0].BaselineOffsetY < 0f, "superscript run must be raised (negative offset)");
+    }
+
+    [TestMethod]
+    public void Build_HeaderLine_UsesLargerFontThanBodyLine()
+    {
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = MakeTheme() };
+        slide.Lines = new[]
+        {
+            HeaderLine("Genesis 1:1"),
+            BodyLine(new ScriptureParagraphRun("Body text", IsSuperscript: false))
+        };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        var headerElement = (MultiRunTextLineElement)spec.Elements[0];
+        var bodyElement = (MultiRunTextLineElement)spec.Elements[1];
+        Assert.IsTrue(headerElement.Runs[0].FontSize > bodyElement.Runs[0].FontSize);
+    }
+}
