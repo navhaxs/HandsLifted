@@ -16,6 +16,13 @@ public class XmlFontFamilyJsonConverter : JsonConverter<XmlFontFamily>
             return fontFamilyAsString;
         }
 
+        if (reader.TokenType == JsonToken.StartObject)
+        {
+            // Old appstate.json files (pre-converter) serialized this as "{}". Skip and fall back to default.
+            reader.Skip();
+            return new XmlFontFamily();
+        }
+
         throw new JsonSerializationException($"Unexpected token {reader.TokenType} when parsing XmlFontFamily");
     }
 

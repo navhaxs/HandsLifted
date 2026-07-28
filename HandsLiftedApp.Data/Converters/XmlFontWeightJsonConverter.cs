@@ -25,6 +25,13 @@ public class XmlFontWeightJsonConverter : JsonConverter<XmlFontWeight>
             }
         }
 
+        if (reader.TokenType == JsonToken.StartObject)
+        {
+            // Old appstate.json files (pre-converter) serialized this as "{}". Skip and fall back to default.
+            reader.Skip();
+            return new XmlFontWeight();
+        }
+
         throw new JsonSerializationException($"Unexpected token {reader.TokenType} when parsing XmlFontWeight");
     }
 
