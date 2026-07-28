@@ -1,5 +1,6 @@
 ﻿using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Windows.Input;
 using HandsLiftedApp.Core.ViewModels.AddItem.Pages;
 using ReactiveUI;
