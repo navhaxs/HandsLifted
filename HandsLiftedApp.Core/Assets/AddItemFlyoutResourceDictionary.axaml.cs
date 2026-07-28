@@ -19,7 +19,7 @@ namespace HandsLiftedApp.Core.Assets
 {
     class AddItemFlyoutResourceDictionary : ResourceDictionary
     {
-        public void OnMenuItemClick(object? sender, RoutedEventArgs args)
+        public async void OnMenuItemClick(object? sender, RoutedEventArgs args)
         {
             if (sender is MenuItem menuItem)
             {
@@ -65,6 +65,32 @@ namespace HandsLiftedApp.Core.Assets
                         return;
                     }
 
+                    if (type == AddItemMessage.AddItemType.Scripture)
+                    {
+                        var parentWindow = TopLevel.GetTopLevel(menuItem) as Window;
+                        if (parentWindow == null) return;
+
+                        var dialog = new ScriptureAddDialog();
+                        await dialog.ShowDialog(parentWindow);
+
+                        if (dialog.Result == null) return;
+
+                        var result = dialog.Result.Value;
+                        MessageBus.Current.SendMessage(new AddItemMessage
+                        {
+                            Type = type,
+                            ItemToInsertAfter = nearestItem,
+                            InsertIndex = itemInsertIndex,
+                            ScriptureBookCode = result.BookCode,
+                            ScriptureBookName = result.BookName,
+                            ScriptureStartChapter = result.StartChapter,
+                            ScriptureStartVerse = result.StartVerse,
+                            ScriptureEndChapter = result.EndChapter,
+                            ScriptureEndVerse = result.EndVerse
+                        });
+
+                        return;
+                    }
 
                     MessageBus.Current.SendMessage(new AddItemMessage
                         { Type = type, ItemToInsertAfter = nearestItem, InsertIndex = itemInsertIndex });
