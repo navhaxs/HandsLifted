@@ -41,12 +41,12 @@ namespace HandsLiftedApp.Data.Slides
             // test), so this reference-change path stays as the fallback trigger for those cases.
             this.WhenAnyValue(x => x.Theme)
                 .Skip(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
 
             this.WhenAnyValue(x => x.Text)
                 .Skip(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
         }
 

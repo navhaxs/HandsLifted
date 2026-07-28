@@ -292,7 +292,7 @@
             <Popup
                 IsLightDismissEnabled="True"
                 Name="fadeFlyout"
-                PlacementMode="BottomEdgeAlignedRight"
+                Placement="BottomEdgeAlignedRight"
                 PlacementTarget="{Binding #FadeButton}">
                 <Border
                     Background="{DynamicResource WindowBackgroundBrush}"
