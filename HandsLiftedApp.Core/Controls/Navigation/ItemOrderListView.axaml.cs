@@ -36,7 +36,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
             }
 
             this.WhenAnyValue(x => x.Bounds)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(bounds =>
                 {
                     Root.IsVisible = bounds.Width >= 70;

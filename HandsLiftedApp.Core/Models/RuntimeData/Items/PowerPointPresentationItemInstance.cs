@@ -65,7 +65,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     return _blankSlide;
                 })
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
             this.WhenAnyValue(

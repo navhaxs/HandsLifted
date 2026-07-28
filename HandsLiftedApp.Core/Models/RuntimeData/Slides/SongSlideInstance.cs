@@ -48,7 +48,7 @@ namespace HandsLiftedApp.Data.Slides
 
             parentSongItem?.WhenAnyValue(x => x.Design)
                 .Skip(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(designId =>
                 {
                     Theme = ResolveTheme(designId);
@@ -58,12 +58,12 @@ namespace HandsLiftedApp.Data.Slides
             this.WhenAnyValue(x => x.Theme)
                 .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
                 .Switch()
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
 
             this.WhenAnyValue(x => x.Text)
                 .Skip(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
             
             _calculatedSlideThumbnailBadge = this.WhenAnyValue(x => x.Label, x => x.ParentSongStanza,
@@ -76,7 +76,7 @@ namespace HandsLiftedApp.Data.Slides
 
                         return null;
                     })
-                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .ObserveOn(RxSchedulers.MainThreadScheduler)
                     .ToProperty(this, x => x.SlideThumbnailBadge);
         }
 

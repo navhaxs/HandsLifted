@@ -46,7 +46,7 @@ namespace HandsLiftedApp.Data.Slides
 
             parentSongItem?.WhenAnyValue(x => x.Design)
                 .Skip(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(designId =>
                 {
                     Theme = ResolveTheme(designId);
@@ -55,18 +55,18 @@ namespace HandsLiftedApp.Data.Slides
 
             parentSongItem?.WhenAnyValue(x => x.MotionBackgroundVideoPath)
                 .Skip(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
 
             this.WhenAnyValue(x => x.Theme)
                 .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
                 .Switch()
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
 
             this.WhenAnyValue(s => s.Title, s => s.Copyright) // todo dirty bit?
                 .Skip(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ => RequestRender());
         }
 

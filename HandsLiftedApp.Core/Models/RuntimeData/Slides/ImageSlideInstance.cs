@@ -20,7 +20,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
         public ImageSlideInstance(string imagePath, MediaGroupItem? parentMediaGroupItem) : base(imagePath)
         {
             this.WhenAnyValue(s => s.SourceMediaFilePath) // todo dirty bit?
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
 
             SlideTimerConfig = parentMediaGroupItem?.AutoAdvanceTimer;

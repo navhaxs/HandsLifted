@@ -42,7 +42,7 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
                 .DistinctUntilChanged()
                 // .Where(term => !string.IsNullOrWhiteSpace(term))
                 .SelectMany(SearchLibrary)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
 
             _isSearchResultsEmpty = this

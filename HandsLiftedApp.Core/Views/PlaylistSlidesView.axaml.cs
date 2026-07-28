@@ -139,7 +139,7 @@ namespace HandsLiftedApp.Core.Views
             //
             // // todo dispose old one
             // ctx.WhenAnyValue(x => x.State.SelectedItemIndex)
-            //     .ObserveOn(RxApp.MainThreadScheduler)
+            //     .ObserveOn(RxSchedulers.MainThreadScheduler)
             //     .Select(x => { return x == -1; })
             //     .Subscribe(x =>
             //     {

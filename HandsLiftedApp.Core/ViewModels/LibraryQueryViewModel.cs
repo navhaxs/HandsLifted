@@ -112,26 +112,26 @@ namespace HandsLiftedApp.Core.ViewModels
                     _reSearchTrigger
                 )
                 .SelectMany(SearchLibrary)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
 
             _isMediaBin = this
                 .WhenAnyValue(x => x.SearchResults)
                 .Select(x => x?.All(result => !IsLyricFile(result.FullFilePath)) ?? false)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.IsMediaBin);
 
             _selectedItemPreview = this
                 .WhenAnyValue(x => x.SelectedLibraryItem)
                 .Select(x => new LibraryItemPreviewViewModel(x))
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedLibraryItemPreview);
 
             this.WhenAnyValue(x => x.SelectedLibraryItem)
                 .Where(item => item != null)
-                .ObserveOn(RxApp.TaskpoolScheduler)
+                .ObserveOn(RxSchedulers.TaskpoolScheduler)
                 .Select(item => CreateItem.GenerateItem(item.FullFilePath) as SongItem)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(song => SelectedSongItem = song);
 
             foreach (var lib in this._libraries.OfType<SongLibrary>())

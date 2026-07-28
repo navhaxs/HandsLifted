@@ -27,7 +27,7 @@ namespace HandsLiftedApp.Core.Views
                 {
                     mainViewModel
                         .WhenAnyValue(x => x.Playlist.ActiveSlide)
-                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .Subscribe(x =>
                         {
                             TabControl.SelectedIndex = (x is SongTitleSlideInstance ||

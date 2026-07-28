@@ -107,7 +107,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                 Render(customSlide);
 
                 customSlide.WhenAnyValue(x => x.SlideElements)
-                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .ObserveOn(RxSchedulers.MainThreadScheduler)
                     .Subscribe((ObservableCollection<SlideElement> SlideElements) =>
                     {
                         Dispatcher.UIThread.InvokeAsync(() => Render(customSlide));
