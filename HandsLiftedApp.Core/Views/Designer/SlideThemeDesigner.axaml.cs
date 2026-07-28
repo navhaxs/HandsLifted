@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
@@ -108,6 +109,14 @@ namespace HandsLiftedApp.Core.Views.Designer
 
         private void PreviewModeToggle_OnChecked(object? sender, RoutedEventArgs e)
         {
+            // Avalonia 12's ToggleButton only exposes IsCheckedChanged (fires for both the
+            // radio button becoming checked AND the sibling in the group becoming unchecked),
+            // unlike WPF-style Checked/Unchecked. Guard so this only runs on the "became
+            // checked" transition, matching the old Checked-only semantics (fires once per
+            // group toggle, on the button that became checked).
+            if (sender is ToggleButton { IsChecked: not true })
+                return;
+
             themePreviewSlideView.IsVisible = previewLyricToggle.IsChecked == true;
             themePreviewTitleSlideView.IsVisible = previewTitleToggle.IsChecked == true;
         }

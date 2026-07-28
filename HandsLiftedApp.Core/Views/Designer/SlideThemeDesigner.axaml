@@ -103,10 +103,10 @@
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8" Spacing="4">
                     <RadioButton x:Name="previewLyricToggle" Content="Song Lyric"
                                  GroupName="ThemePreviewMode" IsChecked="True"
-                                 Checked="PreviewModeToggle_OnChecked" />
+                                 IsCheckedChanged="PreviewModeToggle_OnChecked" />
                     <RadioButton x:Name="previewTitleToggle" Content="Song Title"
                                  GroupName="ThemePreviewMode"
-                                 Checked="PreviewModeToggle_OnChecked" />
+                                 IsCheckedChanged="PreviewModeToggle_OnChecked" />
                 </StackPanel>
                 <Viewbox StretchDirection="DownOnly"
                          VerticalAlignment="Stretch"
