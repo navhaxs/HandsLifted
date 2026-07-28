@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -106,7 +107,14 @@ namespace HandsLiftedApp.Core.Models
                     })
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.NextSlide);
-            
+
+            DefaultThemeAssignmentsChanged = this.WhenAnyValue(
+                    p => p.DefaultSongThemeId,
+                    p => p.DefaultSongMotionThemeId,
+                    p => p.DefaultScriptureThemeId)
+                .Skip(1)
+                .Select(_ => Unit.Default);
+
             if (Design.IsDesignMode)
             {
                 return;
@@ -272,6 +280,35 @@ namespace HandsLiftedApp.Core.Models
                     Dispatcher.UIThread.InvokeAsync(() => AutoAdvanceTimer.OnSlideNavigation(selectedItem));
                 }
             });
+        }
+
+        public IObservable<Unit> DefaultThemeAssignmentsChanged { get; }
+
+        public BaseSlideTheme ResolveSongTheme(Guid explicitDesignId, bool hasMotionBackground)
+        {
+            if (explicitDesignId != Guid.Empty)
+            {
+                var explicitTheme = Designs.FirstOrDefault(d => d.Id == explicitDesignId);
+                if (explicitTheme != null) return explicitTheme;
+            }
+
+            var defaultId = hasMotionBackground ? DefaultSongMotionThemeId : DefaultSongThemeId;
+            var byDefault = defaultId.HasValue ? Designs.FirstOrDefault(d => d.Id == defaultId.Value) : null;
+            return byDefault ?? Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
+        }
+
+        public BaseSlideTheme ResolveScriptureTheme(Guid explicitDesignId)
+        {
+            if (explicitDesignId != Guid.Empty)
+            {
+                var explicitTheme = Designs.FirstOrDefault(d => d.Id == explicitDesignId);
+                if (explicitTheme != null) return explicitTheme;
+            }
+
+            var byDefault = DefaultScriptureThemeId.HasValue
+                ? Designs.FirstOrDefault(d => d.Id == DefaultScriptureThemeId.Value)
+                : null;
+            return byDefault ?? Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
         }
 
         public void UpdateIndexes()
