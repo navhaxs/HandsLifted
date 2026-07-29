@@ -32,6 +32,14 @@ namespace HandsLiftedApp.Data.Models.Items
             }
         }
 
+        private double? _slideTransitionDurationMs;
+        [DataField]
+        public double? SlideTransitionDurationMs
+        {
+            get => _slideTransitionDurationMs;
+            set => this.RaiseAndSetIfChanged(ref _slideTransitionDurationMs, value);
+        }
+
         public virtual Item Clone()
         {
             XmlSerializer serializer = new XmlSerializer(this.GetType());
