@@ -102,6 +102,33 @@ public class ScriptureBookAliasCatalogTests
     }
 
     [TestMethod]
+    public void TryMatchBookPrefix_AbbreviationPositionalParallelism_SpotChecks()
+    {
+        // ScriptureBookAliasCatalog.Abbreviations is manually kept parallel (by array position)
+        // to ScriptureBookCatalog.AllBooks. NoTwoDistinctBookCodesShareTheSameAliasText only
+        // round-trips full NAMES, never abbreviations, so a silent positional shift in the
+        // Abbreviations array would pass that test while resolving abbreviations to the wrong
+        // book. Spot-check a handful of representative positions: early OT, the tricky
+        // Ps/Song/Phil/Phlm region, a numeric-prefixed book, and the last NT book.
+        AssertAbbreviationResolves("Gen", "gen", "Genesis");   // early OT
+        AssertAbbreviationResolves("Ps", "psa", "Psalms");
+        AssertAbbreviationResolves("Song", "sng", "Song of Solomon");
+        AssertAbbreviationResolves("Phil", "php", "Philippians");
+        AssertAbbreviationResolves("Phlm", "phm", "Philemon");
+        AssertAbbreviationResolves("1 Sam", "1sa", "1 Samuel"); // numeric-prefixed book
+        AssertAbbreviationResolves("Rev", "rev", "Revelation"); // last NT book
+
+        static void AssertAbbreviationResolves(string abbreviation, string expectedCode, string expectedName)
+        {
+            var ok = ScriptureBookAliasCatalog.TryMatchBookPrefix($"{abbreviation} 1:1", out var code, out var name, out var len);
+            Assert.IsTrue(ok, $"Abbreviation '{abbreviation}' should match a book.");
+            Assert.AreEqual(expectedCode, code, $"Abbreviation '{abbreviation}' resolved to the wrong book code.");
+            Assert.AreEqual(expectedName, name, $"Abbreviation '{abbreviation}' resolved to the wrong book name.");
+            Assert.AreEqual(abbreviation.Length, len);
+        }
+    }
+
+    [TestMethod]
     public void NoTwoDistinctBookCodesShareTheSameAliasText()
     {
         // Build the same alias set the catalog builds internally, by probing every book's

@@ -85,6 +85,14 @@ namespace HandsLiftedApp.Core.Views
             }
             else if (ReferenceEquals(sender, PickModeRadio) && PickModeRadio.IsChecked == true)
             {
+                // Cancel any in-flight Type-mode validation before leaving Type mode. Without
+                // this, a still-pending ValidateTypedReferenceAsync call (e.g. mid-debounce or
+                // mid-LoadBookAsync) can land SetInvalid(...) ~300ms+ later, unconditionally
+                // disabling InsertButton and writing error text into ReferenceHintText — which
+                // lives inside the now-hidden TypeModePanel, invisible to the user — with nothing
+                // in Pick mode left to re-enable Insert afterward.
+                _validationCts?.Cancel();
+
                 TypeModePanel.IsVisible = false;
                 PickModePanel.IsVisible = true;
 
@@ -152,6 +160,14 @@ namespace HandsLiftedApp.Core.Views
 
         private void OnReferenceTextChanged(object? sender, TextChangedEventArgs e)
         {
+            // Invalidate synchronously, before the debounce delay even starts: IsDefault on
+            // InsertButton means Enter can submit _state at any moment, and _state must never
+            // describe text other than what's currently in the box. Without this, editing valid
+            // text and hitting Enter within the 300ms debounce window would submit the OLD
+            // (still-valid) _state while the box shows NEW, unvalidated text.
+            _state.IsValid = false;
+            InsertButton.IsEnabled = false;
+
             _validationCts?.Cancel();
             var cts = new CancellationTokenSource();
             _validationCts = cts;
@@ -169,69 +185,86 @@ namespace HandsLiftedApp.Core.Views
                 return;
             }
 
-            if (!ScriptureReferenceParser.TryParse(text, out var parsed, out var parseError))
-            {
-                SetInvalid(parseError!);
-                return;
-            }
-
-            ScriptureBook book;
-            try
-            {
-                SetChecking(parsed.BookName);
-                book = await _store.LoadBookAsync(parsed.BookCode);
-            }
-            catch (Exception)
-            {
-                if (token.IsCancellationRequested) return;
-                SetInvalid($"Couldn't load {parsed.BookName} — check scripture data path.");
-                return;
-            }
-
+            // The delay is the only pre-LoadBookAsync await point; everything from here through
+            // the LoadBookAsync call is synchronous on the UI thread, so a single check here
+            // covers the parse-failure SetInvalid below and the SetChecking call before
+            // LoadBookAsync — nothing can flip the token between now and then.
             if (token.IsCancellationRequested) return;
 
-            var verses = book.Paragraphs.SelectMany(p => p.Verses).ToList();
-            var chapters = verses.Select(v => v.Chapter).ToHashSet();
-
-            if (!chapters.Contains(parsed.StartChapter) || (parsed.EndVerse is not null && !chapters.Contains(parsed.EndChapter)))
+            try
             {
-                SetInvalid($"{parsed.BookName} has {chapters.Max()} chapters.");
-                return;
-            }
-
-            var startChapterVerses = verses.Where(v => v.Chapter == parsed.StartChapter).Select(v => v.VerseNumber).ToList();
-            var maxStartVerse = startChapterVerses.Max();
-
-            if (parsed.StartVerse is not null && !startChapterVerses.Contains(parsed.StartVerse.Value))
-            {
-                SetInvalid($"{parsed.BookName} {parsed.StartChapter} has {maxStartVerse} verses.");
-                return;
-            }
-
-            int resolvedStartVerse = parsed.StartVerse ?? 1;
-            int resolvedEndVerse;
-
-            if (parsed.EndVerse is null)
-            {
-                resolvedEndVerse = maxStartVerse;
-            }
-            else
-            {
-                var endChapterVerses = parsed.EndChapter == parsed.StartChapter
-                    ? startChapterVerses
-                    : verses.Where(v => v.Chapter == parsed.EndChapter).Select(v => v.VerseNumber).ToList();
-                var maxEndVerse = endChapterVerses.Max();
-
-                if (!endChapterVerses.Contains(parsed.EndVerse.Value))
+                if (!ScriptureReferenceParser.TryParse(text, out var parsed, out var parseError))
                 {
-                    SetInvalid($"{parsed.BookName} {parsed.EndChapter} has {maxEndVerse} verses.");
+                    SetInvalid(parseError!);
                     return;
                 }
 
-                resolvedEndVerse = parsed.EndVerse.Value;
-            }
+                ScriptureBook book;
+                try
+                {
+                    SetChecking(parsed.BookName);
+                    book = await _store.LoadBookAsync(parsed.BookCode);
+                }
+                catch (Exception)
+                {
+                    if (token.IsCancellationRequested) return;
+                    SetInvalid($"Couldn't load {parsed.BookName} — check scripture data path.");
+                    return;
+                }
 
-            SetValid(parsed.BookCode, parsed.BookName, parsed.StartChapter, resolvedStartVerse, parsed.EndChapter, resolvedEndVerse);
+                if (token.IsCancellationRequested) return;
+
+                var verses = book.Paragraphs.SelectMany(p => p.Verses).ToList();
+                var chapters = verses.Select(v => v.Chapter).ToHashSet();
+
+                if (!chapters.Contains(parsed.StartChapter) || (parsed.EndVerse is not null && !chapters.Contains(parsed.EndChapter)))
+                {
+                    SetInvalid($"{parsed.BookName} has {chapters.Max()} chapters.");
+                    return;
+                }
+
+                var startChapterVerses = verses.Where(v => v.Chapter == parsed.StartChapter).Select(v => v.VerseNumber).ToList();
+                var maxStartVerse = startChapterVerses.Max();
+
+                if (parsed.StartVerse is not null && !startChapterVerses.Contains(parsed.StartVerse.Value))
+                {
+                    SetInvalid($"{parsed.BookName} {parsed.StartChapter} has {maxStartVerse} verses.");
+                    return;
+                }
+
+                int resolvedStartVerse = parsed.StartVerse ?? 1;
+                int resolvedEndVerse;
+
+                if (parsed.EndVerse is null)
+                {
+                    resolvedEndVerse = maxStartVerse;
+                }
+                else
+                {
+                    var endChapterVerses = parsed.EndChapter == parsed.StartChapter
+                        ? startChapterVerses
+                        : verses.Where(v => v.Chapter == parsed.EndChapter).Select(v => v.VerseNumber).ToList();
+                    var maxEndVerse = endChapterVerses.Max();
+
+                    if (!endChapterVerses.Contains(parsed.EndVerse.Value))
+                    {
+                        SetInvalid($"{parsed.BookName} {parsed.EndChapter} has {maxEndVerse} verses.");
+                        return;
+                    }
+
+                    resolvedEndVerse = parsed.EndVerse.Value;
+                }
+
+                SetValid(parsed.BookCode, parsed.BookName, parsed.StartChapter, resolvedStartVerse, parsed.EndChapter, resolvedEndVerse);
+            }
+            catch (Exception)
+            {
+                // Last-resort catch-all: anything that throws after LoadBookAsync (e.g. Max() on
+                // an empty sequence) must not escape into this fire-and-forget task, or the
+                // dialog silently freezes on "Checking…" forever with no recovery.
+                if (token.IsCancellationRequested) return;
+                SetInvalid("Something went wrong — try a different reference.");
+            }
         }
 
         private void SetChecking(string bookName)

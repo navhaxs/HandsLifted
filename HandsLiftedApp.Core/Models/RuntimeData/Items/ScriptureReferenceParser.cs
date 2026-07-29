@@ -48,8 +48,23 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 return false;
             }
 
-            var startChapter = int.Parse(match.Groups["startChapter"].Value);
-            int? startVerse = match.Groups["startVerse"].Success ? int.Parse(match.Groups["startVerse"].Value) : null;
+            if (!int.TryParse(match.Groups["startChapter"].Value, out var startChapter))
+            {
+                error = GrammarHint;
+                return false;
+            }
+
+            int? startVerse = null;
+            if (match.Groups["startVerse"].Success)
+            {
+                if (!int.TryParse(match.Groups["startVerse"].Value, out var parsedStartVerse))
+                {
+                    error = GrammarHint;
+                    return false;
+                }
+
+                startVerse = parsedStartVerse;
+            }
 
             int endChapter;
             int? endVerse;
@@ -62,13 +77,25 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
             else if (match.Groups["endChapter"].Success)
             {
-                endChapter = int.Parse(match.Groups["endChapter"].Value);
-                endVerse = int.Parse(match.Groups["endVerse"].Value);
+                if (!int.TryParse(match.Groups["endChapter"].Value, out endChapter) ||
+                    !int.TryParse(match.Groups["endVerse"].Value, out var parsedEndVerse))
+                {
+                    error = GrammarHint;
+                    return false;
+                }
+
+                endVerse = parsedEndVerse;
             }
             else if (match.Groups["endVerseOnly"].Success)
             {
+                if (!int.TryParse(match.Groups["endVerseOnly"].Value, out var parsedEndVerseOnly))
+                {
+                    error = GrammarHint;
+                    return false;
+                }
+
                 endChapter = startChapter;
-                endVerse = int.Parse(match.Groups["endVerseOnly"].Value);
+                endVerse = parsedEndVerseOnly;
             }
             else
             {

@@ -114,4 +114,12 @@ public class ScriptureReferenceParserTests
         Assert.IsFalse(ok);
         Assert.IsNotNull(error);
     }
+
+    [TestMethod]
+    public void TryParse_ChapterNumberOverflowsInt_FailsWithoutThrowing()
+    {
+        var ok = ScriptureReferenceParser.TryParse("John 99999999999999", out _, out var error);
+        Assert.IsFalse(ok);
+        Assert.IsNotNull(error);
+    }
 }
