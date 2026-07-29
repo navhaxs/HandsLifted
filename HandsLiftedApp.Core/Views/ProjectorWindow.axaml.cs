@@ -173,7 +173,7 @@ namespace HandsLiftedApp.Core.Views
             else
             {
                 // No video cross-fade — use the user's slide transition duration.
-                MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
+                MainSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.GetEffectiveTransitionDurationMs(_vm.Playlist.SelectedItem) ?? 120));
             }
         }
 
