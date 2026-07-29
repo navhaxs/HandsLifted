@@ -61,7 +61,12 @@ namespace HandsLiftedApp.Core.Views
             HeadingText.Text = "Edit Scripture";
             InsertButton.Content = "Save";
 
-            var idx = ScriptureBookCatalog.AllBooks.ToList().FindIndex(b => b.Code == bookCode);
+            // Case-insensitive: ScriptureLocalUsxStore.LoadBookAsync normalizes codes via
+            // .Trim().ToLowerInvariant() before use, and this codebase's own fixtures mix
+            // uppercase (e.g. "JHN") and lowercase catalog codes interchangeably — an ordinal
+            // comparison here would silently fail to resolve a validly-cased-elsewhere code.
+            var idx = ScriptureBookCatalog.AllBooks.ToList()
+                .FindIndex(b => string.Equals(b.Code, bookCode, StringComparison.OrdinalIgnoreCase));
             var bookName = idx >= 0 ? ScriptureBookCatalog.AllBooks[idx].Name : bookCode;
 
             if (idx >= 0)
@@ -74,23 +79,43 @@ namespace HandsLiftedApp.Core.Views
             EndChapterUpDown.Value = endChapter;
             EndVerseUpDown.Value = endVerse;
 
-            // Setting Text fires OnReferenceTextChanged synchronously, which unconditionally
-            // disables InsertButton while the debounced re-validation runs (correct in Type mode:
-            // Insert should stay disabled until the freshly-seeded reference re-validates against
-            // real book data, since that data could have changed on disk since this item was
-            // created). But if the remembered mode is Pick, Pick mode's invariant is "always
-            // enabled" — restore that explicitly, since nothing else will after this point.
-            ReferenceTextBox.Text = FormatReference(bookName, startChapter, startVerse, endChapter, endVerse);
+            // A genuinely-unresolvable book code (idx < 0 even case-insensitively — should be
+            // rare/impossible for real data) must never leave the dialog in Pick mode: Pick mode
+            // has no way to represent it, and would otherwise silently show the base
+            // constructor's default (Genesis, index 0) with Save enabled — letting the user
+            // unknowingly overwrite this item with a different reference than the one they
+            // opened. Force Type mode instead; the ReferenceTextBox.Text assignment below (which
+            // this forces into the "else" branch) will then kick off real validation against the
+            // raw, unresolved bookCode text and surface a visible error hint instead of resolving
+            // silently. Deliberately done before the Pick/Type branch below, so that branch's
+            // decision reflects this forced mode, not the remembered one.
+            if (idx < 0)
+            {
+                TypeModeRadio.IsChecked = true;
+            }
 
             if (PickModeRadio.IsChecked == true)
             {
-                // Cancel the detached validation the Text assignment above just started — same
-                // guard OnModeChanged's Pick branch already applies when leaving Type mode, needed
-                // here for the same reason: an uncancelled validation could land SetInvalid(...)
-                // ~300ms later, silently re-disabling Save with the error hidden in the
-                // now-invisible TypeModePanel.
-                _validationCts?.Cancel();
+                // Don't seed the (invisible) Type-mode textbox here — doing so starts a
+                // validation this branch would just cancel, but leaves _state.IsValid
+                // permanently false. If the user later switches to Type mode, OnModeChanged
+                // reformats these same Pick values back into the textbox — but since nothing
+                // changed the text in between, TextChanged won't fire and no revalidation would
+                // ever run, permanently disabling Save with no visible explanation. Not seeding
+                // the text here means that later Type-switch is a genuine change (empty ->
+                // formatted text), so it correctly triggers real validation, matching the Add
+                // flow's behavior.
                 InsertButton.IsEnabled = true;
+            }
+            else
+            {
+                // Setting Text fires OnReferenceTextChanged synchronously, which unconditionally
+                // disables InsertButton while the debounced re-validation runs — correct here:
+                // Insert should stay disabled until the freshly-seeded (or, for an unresolved
+                // book code, forced-into-Type-mode) reference re-validates against real book
+                // data, since that data could have changed on disk since this item was created,
+                // or (unresolved case) never matched a cataloged book at all.
+                ReferenceTextBox.Text = FormatReference(bookName, startChapter, startVerse, endChapter, endVerse);
             }
         }
 

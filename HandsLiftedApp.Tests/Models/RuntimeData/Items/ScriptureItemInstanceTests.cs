@@ -258,6 +258,33 @@ public class ScriptureItemInstanceTests
     });
 
     [TestMethod]
+    public Task GenerateSlidesAsync_SameChapterDifferentVerses_LabelUsesShortFormNotRepeatedChapter() => DispatcherTestThread.Run(async () =>
+    {
+        // StartChapter == EndChapter but StartVerse != EndVerse - the shape that FormatReferenceLabel's
+        // old, unmigrated 2-branch logic mis-rendered as "Genesis 1:1-1:2" (repeating the chapter number).
+        // ScriptureTitleFormatter.Format (already used elsewhere for the same case) produces the short
+        // form "Genesis 1:1-2" instead - assert the slide's projected Label matches that short form, not
+        // the old repeated-chapter form.
+        var instance = new ScriptureItemInstance(null, MakeFakeStore(GenesisChapterOneUsx))
+        {
+            Translation = "eng_bsb",
+            Book = "gen",
+            StartChapter = 1,
+            StartVerse = 1,
+            EndChapter = 1,
+            EndVerse = 2
+        };
+
+        await instance.GenerateSlidesAsync();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.AreEqual(1, instance.Slides.Count);
+        var slide = (ScriptureSlideInstance)instance.Slides[0];
+        StringAssert.Contains(slide.Label, "1:1-2");
+        Assert.IsFalse(slide.Label.Contains("1:1-1:2"), $"label should not repeat the chapter number, was: {slide.Label}");
+    });
+
+    [TestMethod]
     public Task GenerateSlidesAsync_BookFileMissing_ProducesPlaceholderPage() => DispatcherTestThread.Run(async () =>
     {
         var instance = new ScriptureItemInstance(null, MakeEmptyStore())

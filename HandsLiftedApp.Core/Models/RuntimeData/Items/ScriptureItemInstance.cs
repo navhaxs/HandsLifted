@@ -196,9 +196,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         private string FormatReferenceLabel(string bookTitle)
         {
             var title = string.IsNullOrEmpty(bookTitle) ? Book : bookTitle;
-            return StartChapter == EndChapter && StartVerse == EndVerse
-                ? $"{title} {StartChapter}:{StartVerse}"
-                : $"{title} {StartChapter}:{StartVerse}-{EndChapter}:{EndVerse}";
+            return ScriptureTitleFormatter.Format(title, StartChapter, StartVerse, EndChapter, EndVerse);
         }
 
         private List<ScriptureVerseRef> MakeMissingDataPlaceholder()
