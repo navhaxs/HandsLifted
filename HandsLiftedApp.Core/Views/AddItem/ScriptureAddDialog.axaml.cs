@@ -54,6 +54,46 @@ namespace HandsLiftedApp.Core.Views
             _initializing = false;
         }
 
+        public ScriptureAddDialog(string bookCode, int startChapter, int startVerse, int endChapter, int endVerse, ScriptureLocalUsxStore? store = null)
+            : this(store)
+        {
+            Title = "Edit Scripture";
+            HeadingText.Text = "Edit Scripture";
+            InsertButton.Content = "Save";
+
+            var idx = ScriptureBookCatalog.AllBooks.ToList().FindIndex(b => b.Code == bookCode);
+            var bookName = idx >= 0 ? ScriptureBookCatalog.AllBooks[idx].Name : bookCode;
+
+            if (idx >= 0)
+            {
+                BookComboBox.SelectedIndex = idx;
+            }
+
+            StartChapterUpDown.Value = startChapter;
+            StartVerseUpDown.Value = startVerse;
+            EndChapterUpDown.Value = endChapter;
+            EndVerseUpDown.Value = endVerse;
+
+            // Setting Text fires OnReferenceTextChanged synchronously, which unconditionally
+            // disables InsertButton while the debounced re-validation runs (correct in Type mode:
+            // Insert should stay disabled until the freshly-seeded reference re-validates against
+            // real book data, since that data could have changed on disk since this item was
+            // created). But if the remembered mode is Pick, Pick mode's invariant is "always
+            // enabled" — restore that explicitly, since nothing else will after this point.
+            ReferenceTextBox.Text = FormatReference(bookName, startChapter, startVerse, endChapter, endVerse);
+
+            if (PickModeRadio.IsChecked == true)
+            {
+                // Cancel the detached validation the Text assignment above just started — same
+                // guard OnModeChanged's Pick branch already applies when leaving Type mode, needed
+                // here for the same reason: an uncancelled validation could land SetInvalid(...)
+                // ~300ms later, silently re-disabling Save with the error hidden in the
+                // now-invisible TypeModePanel.
+                _validationCts?.Cancel();
+                InsertButton.IsEnabled = true;
+            }
+        }
+
         // Avalonia 12's RadioButton/ToggleButton only exposes IsCheckedChanged (no WPF-style
         // Checked/Unchecked events), and it fires twice per group toggle: once when the clicked
         // radio becomes checked while the sibling is still stale-checked, and again when the
