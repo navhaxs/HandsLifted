@@ -16,7 +16,7 @@ $ErrorActionPreference = "Stop"
 $desktopProj = "HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj"
 $interopProj = "HandsLiftedApp.Importer.PowerPointInteropHost/HandsLiftedApp.Importer.PowerPointInteropHost.csproj"
 
-$desktopOut = "HandsLiftedApp.Desktop/bin/$Configuration/net8.0/publish"
+$desktopOut = "HandsLiftedApp.Desktop/bin/$Configuration/net10.0/publish"
 $interopOut = "$desktopOut/PowerPointInteropHost"
 
 if (Test-Path $desktopOut) {

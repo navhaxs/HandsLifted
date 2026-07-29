@@ -5,4 +5,4 @@ dotnet publish HandsLiftedApp.Desktop/HandsLiftedApp.Desktop.csproj `
     -r win-x64 `
     --self-contained true `
     -p:PublishSingleFile=true `
-    -o HandsLiftedApp.Desktop/bin/Release/net8.0/publish
+    -o HandsLiftedApp.Desktop/bin/Release/net10.0/publish

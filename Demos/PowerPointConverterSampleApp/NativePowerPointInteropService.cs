@@ -24,7 +24,7 @@ namespace PowerPointConverterSampleApp
             else
             {
                 var debugPath = (Debugger.IsAttached)
-                    ? "..\\..\\..\\..\\..\\HandsLiftedApp.Importer.PowerPointInteropHost\\bin\\Debug\\net8.0-windows"
+                    ? "..\\..\\..\\..\\..\\HandsLiftedApp.Importer.PowerPointInteropHost\\bin\\Debug\\net10.0-windows"
                     : "";
                 
                 var helperPath = Path.Combine(
