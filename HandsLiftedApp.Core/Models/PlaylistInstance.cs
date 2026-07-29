@@ -465,6 +465,9 @@ namespace HandsLiftedApp.Core.Models
             get => _selectedItemAsIItemInstance.Value;
         }
 
+        public double GetEffectiveTransitionDurationMs(Item? item) =>
+            item?.SlideTransitionDurationMs ?? SlideTransitionDurationMs;
+
         private Slide? _quickShowItem;
         public Slide? QuickShowItem
         {

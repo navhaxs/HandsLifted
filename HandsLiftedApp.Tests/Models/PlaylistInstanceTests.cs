@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 
 namespace HandsLiftedApp.Tests.Models;
@@ -203,5 +204,37 @@ public class PlaylistInstanceTests
 
         Assert.IsTrue(playlist.IsDirty, "setting DefaultScriptureThemeId must mark the playlist dirty so it gets autosaved");
         Assert.IsTrue(changedRaised, "setting DefaultScriptureThemeId must raise Changed");
+    }
+
+    [TestMethod]
+    public void GetEffectiveTransitionDurationMs_NullItem_ReturnsPlaylistDefault()
+    {
+        var playlist = new PlaylistInstance { SlideTransitionDurationMs = 250 };
+
+        var result = playlist.GetEffectiveTransitionDurationMs(null);
+
+        Assert.AreEqual(250.0, result);
+    }
+
+    [TestMethod]
+    public void GetEffectiveTransitionDurationMs_ItemWithNoOverride_ReturnsPlaylistDefault()
+    {
+        var playlist = new PlaylistInstance { SlideTransitionDurationMs = 250 };
+        var item = new BlankItem();
+
+        var result = playlist.GetEffectiveTransitionDurationMs(item);
+
+        Assert.AreEqual(250.0, result);
+    }
+
+    [TestMethod]
+    public void GetEffectiveTransitionDurationMs_ItemWithOverride_ReturnsOverride()
+    {
+        var playlist = new PlaylistInstance { SlideTransitionDurationMs = 250 };
+        var item = new BlankItem { SlideTransitionDurationMs = 900 };
+
+        var result = playlist.GetEffectiveTransitionDurationMs(item);
+
+        Assert.AreEqual(900.0, result);
     }
 }

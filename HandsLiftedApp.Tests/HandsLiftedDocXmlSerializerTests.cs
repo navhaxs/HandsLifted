@@ -108,4 +108,81 @@ public class HandsLiftedDocXmlSerializerTests
         Assert.IsNull(deserialized.DefaultSongMotionThemeId);
         Assert.IsNull(deserialized.DefaultScriptureThemeId);
     }
+
+    [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsScriptureItemTransitionOverride()
+    {
+        var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };
+        var scriptureInstance = new ScriptureItemInstance(playlist)
+        {
+            Title = "John 3:16-21",
+            Book = "JHN",
+            SlideTransitionDurationMs = 750
+        };
+        playlist.Items.Add(scriptureInstance);
+
+        var path = Path.Combine(_tempDir, "playlist-scripture-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+
+        var scriptureItem = (ScriptureItem)deserialized.Items.Single();
+        Assert.AreEqual(750.0, scriptureItem.SlideTransitionDurationMs);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsSongItemTransitionOverride()
+    {
+        var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };
+        var songInstance = new SongItemInstance(playlist)
+        {
+            Title = "Amazing Grace",
+            SlideTransitionDurationMs = 300
+        };
+        playlist.Items.Add(songInstance);
+
+        var path = Path.Combine(_tempDir, "playlist-song-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+
+        var songItem = (SongItem)deserialized.Items.Single();
+        Assert.AreEqual(300.0, songItem.SlideTransitionDurationMs);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsMediaGroupItemTransitionOverride()
+    {
+        var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };
+        var mediaGroupInstance = new MediaGroupItemInstance(playlist)
+        {
+            Title = "Photos",
+            SlideTransitionDurationMs = 1000
+        };
+        playlist.Items.Add(mediaGroupInstance);
+
+        var path = Path.Combine(_tempDir, "playlist-mediagroup-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+
+        var mediaGroupItem = (MediaGroupItem)deserialized.Items.Single();
+        Assert.AreEqual(1000.0, mediaGroupItem.SlideTransitionDurationMs);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_ItemWithNoOverride_StaysNull()
+    {
+        var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };
+        var scriptureInstance = new ScriptureItemInstance(playlist) { Title = "No override" };
+        playlist.Items.Add(scriptureInstance);
+
+        var path = Path.Combine(_tempDir, "playlist-no-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+
+        var scriptureItem = (ScriptureItem)deserialized.Items.Single();
+        Assert.IsNull(scriptureItem.SlideTransitionDurationMs);
+    }
 }

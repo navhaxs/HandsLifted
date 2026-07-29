@@ -291,6 +291,52 @@
                                         Background="{DynamicResource EditButtonBackgroundBrush}"
                                         BorderBrush="#b3aed9"
                                         BorderThickness="1"
+                                        CornerRadius="4"
+                                        Margin="6,6,0,6"
+                                        Padding="10,6"
+                                        x:Name="FadeOverrideButton">
+                                        <DockPanel>
+                                            <avalonia:MaterialIcon Kind="Blur" VerticalAlignment="Center" />
+                                            <TextBlock
+                                                Margin="4,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsVisible="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                                Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms'}" />
+                                        </DockPanel>
+                                        <Button.Flyout>
+                                            <Flyout Placement="Bottom">
+                                                <StackPanel Margin="8" MinWidth="220">
+                                                    <DockPanel Margin="0,0,0,6">
+                                                        <CheckBox
+                                                            DockPanel.Dock="Right"
+                                                            HorizontalAlignment="Right"
+                                                            IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                                            IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
+                                                        <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
+                                                    </DockPanel>
+                                                    <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                        <TextBlock
+                                                            DockPanel.Dock="Right"
+                                                            Margin="6,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}" />
+                                                        <Slider
+                                                            LargeChange="200"
+                                                            Maximum="2000"
+                                                            Minimum="0"
+                                                            SmallChange="50"
+                                                            TickFrequency="100"
+                                                            VerticalAlignment="Center"
+                                                            Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}" />
+                                                    </DockPanel>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                    <Button
+                                        Background="{DynamicResource EditButtonBackgroundBrush}"
+                                        BorderBrush="#b3aed9"
+                                        BorderThickness="1"
                                         Click="EditButton_OnClick"
                                         CornerRadius="4"
                                         Margin="6,6,0,6"

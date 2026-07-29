@@ -82,7 +82,7 @@ namespace HandsLiftedApp.Views.StageDisplayLayout
             }
             else
             {
-                StageSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.SlideTransitionDurationMs ?? 120));
+                StageSlideCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.GetEffectiveTransitionDurationMs(_vm.Playlist.SelectedItem) ?? 120));
             }
         }
 
