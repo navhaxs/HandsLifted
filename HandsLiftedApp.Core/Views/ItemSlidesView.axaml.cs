@@ -108,6 +108,35 @@ namespace HandsLiftedApp.Controls
             }
         }
 
+        // NOTE: The brief specified separate Checked/Unchecked handlers, matching the
+        // ToggleButton API surface from before this codebase's Avalonia 12 upgrade.
+        // In Avalonia 12.1.0 (the version pinned in this repo), ToggleButton/CheckBox
+        // no longer exposes Checked/Unchecked events - only IsCheckedChanged remains
+        // (confirmed via Avalonia.Controls.xml doc comments: only
+        // E:Avalonia.Controls.Primitives.ToggleButton.IsCheckedChanged is documented,
+        // no Checked/Unchecked members exist). This single handler reproduces the same
+        // seed-from-playlist-default / clear-to-null semantics the brief's two handlers
+        // described.
+        private void FadeOverrideCheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not CheckBox { DataContext: Item item } checkBox)
+            {
+                return;
+            }
+
+            if (checkBox.IsChecked == true)
+            {
+                if (item.SlideTransitionDurationMs is null)
+                {
+                    item.SlideTransitionDurationMs = Globals.Instance.MainViewModel.Playlist.SlideTransitionDurationMs;
+                }
+            }
+            else
+            {
+                item.SlideTransitionDurationMs = null;
+            }
+        }
+
         private void MoveUpItem_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)
