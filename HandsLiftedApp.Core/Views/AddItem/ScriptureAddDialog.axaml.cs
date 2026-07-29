@@ -58,12 +58,20 @@ namespace HandsLiftedApp.Core.Views
         // Checked/Unchecked events), and it fires twice per group toggle: once when the clicked
         // radio becomes checked while the sibling is still stale-checked, and again when the
         // group manager unchecks the sibling (see SlideThemeDesigner.axaml.cs's
-        // PreviewModeToggle_OnChecked for the same pattern). This handler is written as a pure
-        // function of both radios' current IsChecked state, so re-running it on both firings is
-        // safe: the second, final firing always recomputes and settles on the correct state.
+        // PreviewModeToggle_OnChecked for the same pattern).
+        //
+        // Unlike SlideThemeDesigner's idempotent visibility toggles, this handler's side effects
+        // are NOT safe to re-run on both firings: TryReadPickModeValues/ReferenceTextBox.Text
+        // assignment kicks off a real async validation (_store.LoadBookAsync) via
+        // OnReferenceTextChanged, and the Pick-branch resync reads/writes _state. Re-entering a
+        // branch on the "wrong" (unchecking) firing — where the OTHER radio's IsChecked is still
+        // momentarily stale-true — would run that branch's side effects for a reference/state the
+        // user never actually selected. So this handler is gated on sender identity: it only runs
+        // a branch's body when the event's own sender is the radio that just became checked. The
+        // sibling's "becomes unchecked" firing always fails both conditions below and is a no-op.
         private void OnModeChanged(object? sender, RoutedEventArgs e)
         {
-            if (TypeModeRadio.IsChecked == true)
+            if (ReferenceEquals(sender, TypeModeRadio) && TypeModeRadio.IsChecked == true)
             {
                 TypeModePanel.IsVisible = true;
                 PickModePanel.IsVisible = false;
@@ -75,7 +83,7 @@ namespace HandsLiftedApp.Core.Views
 
                 InsertButton.IsEnabled = !_initializing && _state.IsValid;
             }
-            else
+            else if (ReferenceEquals(sender, PickModeRadio) && PickModeRadio.IsChecked == true)
             {
                 TypeModePanel.IsVisible = false;
                 PickModePanel.IsVisible = true;
@@ -94,6 +102,14 @@ namespace HandsLiftedApp.Core.Views
                 }
 
                 InsertButton.IsEnabled = true;
+            }
+            else
+            {
+                // The "wrong" firing: this event's sender is the radio that just became
+                // unchecked (its IsChecked is now false), so neither condition above matched.
+                // Intentionally a no-op — only the radio that just became checked should drive
+                // the mode switch.
+                return;
             }
 
             if (!_initializing)
