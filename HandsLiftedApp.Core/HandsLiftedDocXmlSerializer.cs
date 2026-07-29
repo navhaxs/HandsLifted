@@ -83,7 +83,7 @@ namespace HandsLiftedApp.Core
         {
             if (item is LogoItemInstance i)
             {
-                return new LogoItem() { Title = i.Title };
+                return new LogoItem() { Title = i.Title, SlideTransitionDurationMs = i.SlideTransitionDurationMs };
             }
             else if (item is SongItemInstance songItemInstance)
             {
@@ -98,7 +98,8 @@ namespace HandsLiftedApp.Core
                     Copyright = songItemInstance.Copyright,
                     Design = songItemInstance.Design,
                     StartOnTitleSlide = songItemInstance.StartOnTitleSlide,
-                    EndOnBlankSlide = songItemInstance.EndOnBlankSlide
+                    EndOnBlankSlide = songItemInstance.EndOnBlankSlide,
+                    SlideTransitionDurationMs = songItemInstance.SlideTransitionDurationMs
                 };
 
                 if (!string.IsNullOrEmpty(songItemInstance.MotionBackgroundVideoPath))
@@ -131,7 +132,8 @@ namespace HandsLiftedApp.Core
                     StartVerse = scriptureItemInstance.StartVerse,
                     EndChapter = scriptureItemInstance.EndChapter,
                     EndVerse = scriptureItemInstance.EndVerse,
-                    Design = scriptureItemInstance.Design
+                    Design = scriptureItemInstance.Design,
+                    SlideTransitionDurationMs = scriptureItemInstance.SlideTransitionDurationMs
                 };
             }
             else if (item is SlidesGroupItemInstance slidesGroupItemInstance)
@@ -140,6 +142,7 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = slidesGroupItemInstance.UUID,
                     Title = slidesGroupItemInstance.Title,
+                    SlideTransitionDurationMs = slidesGroupItemInstance.SlideTransitionDurationMs
                 };
             }
             else if (item is MediaGroupItemInstance mediaGroupItemInstance)
@@ -168,7 +171,8 @@ namespace HandsLiftedApp.Core
 
                             return item;
                         }).ToList()),
-                    AutoAdvanceTimer = mediaGroupItemInstance.AutoAdvanceTimer
+                    AutoAdvanceTimer = mediaGroupItemInstance.AutoAdvanceTimer,
+                    SlideTransitionDurationMs = mediaGroupItemInstance.SlideTransitionDurationMs
                 };
             }
             else if (item is PowerPointPresentationItemInstance powerPointPresentationItemInstance)
@@ -202,7 +206,8 @@ namespace HandsLiftedApp.Core
                     SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         powerPointPresentationItemInstance.SourcePresentationFile),
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        powerPointPresentationItemInstance.SourceSlidesExportDirectory)
+                        powerPointPresentationItemInstance.SourceSlidesExportDirectory),
+                    SlideTransitionDurationMs = powerPointPresentationItemInstance.SlideTransitionDurationMs
                 };
             }
             else if (item is GoogleSlidesGroupItemInstance googleSlidesGroupItemInstance)
@@ -234,7 +239,8 @@ namespace HandsLiftedApp.Core
                     AutoAdvanceTimer = googleSlidesGroupItemInstance.AutoAdvanceTimer,
                     SourceGooglePresentationId = googleSlidesGroupItemInstance.SourceGooglePresentationId,
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        googleSlidesGroupItemInstance.SourceSlidesExportDirectory)
+                        googleSlidesGroupItemInstance.SourceSlidesExportDirectory),
+                    SlideTransitionDurationMs = googleSlidesGroupItemInstance.SlideTransitionDurationMs
                 };
             }
             else if (item is PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance)
@@ -267,7 +273,8 @@ namespace HandsLiftedApp.Core
                     SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         pdfSlidesGroupItemInstance.SourcePresentationFile),
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        pdfSlidesGroupItemInstance.SourceSlidesExportDirectory)
+                        pdfSlidesGroupItemInstance.SourceSlidesExportDirectory),
+                    SlideTransitionDurationMs = pdfSlidesGroupItemInstance.SlideTransitionDurationMs
                 };
             }
 
