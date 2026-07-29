@@ -17,6 +17,8 @@
 - No automated UI test for the dialog — consistent with this dialog's own prior plan (no Avalonia UI test harness exists in this codebase). Verified by build + full suite staying green, plus a manual click-through in Task 3.
 - Current baseline: `dotnet test HandsLiftedApp.Tests/HandsLiftedApp.Tests.csproj --nologo` passes 170 tests before this plan starts.
 
+**Deviation from the design spec (final review, 2026-07-29):** the design spec's Pick→Type `FormatReference` example asks for whole-chapter ranges to collapse to `{Book} {Ch}` shorthand. This plan's own `FormatReference` never implemented that collapse (it only collapses same-verse and same-chapter cases) since doing so would require the formatter to consult real book data (the last verse number) that it doesn't have at that point. Accepted as a deliberate narrowing, not a bug — Pick mode round-trips a whole chapter as an explicit `John 3:1-36`-style range instead, which is arguably more explicit anyway.
+
 ---
 
 ### Task 1: `ScriptureBookAliasCatalog`
