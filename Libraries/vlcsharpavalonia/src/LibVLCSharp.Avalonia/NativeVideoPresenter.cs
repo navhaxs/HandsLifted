@@ -101,7 +101,7 @@ namespace LibVLCSharp.Avalonia
             {
                 _floatingContent = new Window()
                 {
-                    SystemDecorations = SystemDecorations.None,
+                    WindowDecorations = WindowDecorations.None,
                     //TransparencyLevelHint = WindowTransparencyLevel.Transparent,
                     Background = Brushes.Transparent,
                     SizeToContent = SizeToContent.WidthAndHeight,

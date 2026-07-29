@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="AvaloniaNDI.Sample"
+             xmlns:local="using:AvaloniaNDI.Sample"
              xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Avalonia.Svg"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="AvaloniaNDI.Sample.AnimationPage">
+             x:Class="AvaloniaNDI.Sample.AnimationPage"
+             x:DataType="local:AnimationsPageViewModel">
   <UserControl.Styles>
       <Styles>
         <Styles.Resources>
@@ -268,7 +269,7 @@
                        PlaybackDirection="Normal">
               <KeyFrame Cue="0%">
                 <Setter Property="Background">
-                  <RadialGradientBrush Center="0%,100%" Radius="0.8">
+                  <RadialGradientBrush Center="0%,100%" RadiusX="0.8" RadiusY="0.8">
                     <GradientStop Offset="0" Color="Red"/>
                     <GradientStop Offset="1" Color="Blue"/>
                   </RadialGradientBrush>
@@ -276,7 +277,7 @@
               </KeyFrame>
               <KeyFrame Cue="25%">
                 <Setter Property="Background">
-                  <RadialGradientBrush Center="0%,0%" Radius="1">
+                  <RadialGradientBrush Center="0%,0%" RadiusX="1" RadiusY="1">
                     <GradientStop Offset="0" Color="Red"/>
                     <GradientStop Offset="1" Color="Blue"/>
                   </RadialGradientBrush>
@@ -284,7 +285,7 @@
               </KeyFrame>
               <KeyFrame Cue="50%">
                 <Setter Property="Background">
-                  <RadialGradientBrush Center="100%,0%" Radius="0.8">
+                  <RadialGradientBrush Center="100%,0%" RadiusX="0.8" RadiusY="0.8">
                     <GradientStop Offset="0" Color="Red"/>
                     <GradientStop Offset="1" Color="Blue"/>
                   </RadialGradientBrush>
@@ -292,7 +293,7 @@
               </KeyFrame>
               <KeyFrame Cue="75%">
                 <Setter Property="Background">
-                  <RadialGradientBrush Center="100%,100%" Radius="1">
+                  <RadialGradientBrush Center="100%,100%" RadiusX="1" RadiusY="1">
                     <GradientStop Offset="0" Color="Red"/>
                     <GradientStop Offset="1" Color="Blue"/>
                   </RadialGradientBrush>
@@ -300,7 +301,7 @@
               </KeyFrame>
               <KeyFrame Cue="100%">
                 <Setter Property="Background">
-                  <RadialGradientBrush Center="0%,100%" Radius="0.8">
+                  <RadialGradientBrush Center="0%,100%" RadiusX="0.8" RadiusY="0.8">
                     <GradientStop Offset="0" Color="Red"/>
                     <GradientStop Offset="1" Color="Blue"/>
                   </RadialGradientBrush>

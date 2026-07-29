@@ -25,14 +25,12 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var suspension = new AutoSuspendHelper(desktop);
-            RxApp.SuspensionHost.CreateNewAppState = () => new CustomSlide();
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(
+            RxSuspension.SuspensionHost.CreateNewAppState = () => new CustomSlide();
+            RxSuspension.SuspensionHost.SetupDefaultSuspendResume(
                 new XmlSuspensionDriver<CustomSlide>(APP_STATE_FILEPATH));
-            suspension.OnFrameworkInitializationCompleted();
 
             // Load the saved view model state.
-            CustomSlide data = RxApp.SuspensionHost.GetAppState<CustomSlide>();
+            CustomSlide data = RxSuspension.SuspensionHost.GetAppState<CustomSlide>();
 
             // PlaylistInstance x = Globals.Instance.MainViewModel.Playlist;
             // var window = new SongEditorWindow() { DataContext = new SongEditorViewModel(new SongItemInstance(x), x) };

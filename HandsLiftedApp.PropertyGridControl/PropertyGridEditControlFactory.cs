@@ -46,8 +46,8 @@ namespace HandsLiftedApp.PropertyGridControl
         {
             var ctrlCheckBox = new CheckBox();
             ctrlCheckBox[!ToggleButton.IsCheckedProperty] = new Binding(
-                nameof(property.ValueAccessor),
-                BindingMode.TwoWay);
+                nameof(property.ValueAccessor))
+            { Mode = BindingMode.TwoWay };
             ctrlCheckBox.HorizontalAlignment = HorizontalAlignment.Left;
             ctrlCheckBox.IsEnabled = !property.IsReadOnly;
             return ctrlCheckBox;
@@ -59,8 +59,8 @@ namespace HandsLiftedApp.PropertyGridControl
         {
             var ctrlTextBox = new TextBox();
             ctrlTextBox[!TextBox.TextProperty] = new Binding(
-                nameof(property.ValueAccessor),
-                BindingMode.TwoWay);
+                nameof(property.ValueAccessor))
+            { Mode = BindingMode.TwoWay };
             ctrlTextBox.Width = double.NaN;
             ctrlTextBox.IsReadOnly = property.IsReadOnly;
 
@@ -86,8 +86,8 @@ namespace HandsLiftedApp.PropertyGridControl
 
             var ctrlTextBox = new TextBox();
             ctrlTextBox[!TextBox.TextProperty] = new Binding(
-                nameof(property.ValueAccessor),
-                BindingMode.TwoWay);
+                nameof(property.ValueAccessor))
+            { Mode = BindingMode.TwoWay };
             ctrlTextBox.Width = double.NaN;
             ctrlTextBox.IsReadOnly = true;
 
@@ -126,8 +126,8 @@ namespace HandsLiftedApp.PropertyGridControl
 
             var ctrlTextBox = new TextBox();
             ctrlTextBox[!TextBox.TextProperty] = new Binding(
-                nameof(property.ValueAccessor),
-                BindingMode.TwoWay);
+                nameof(property.ValueAccessor))
+            { Mode = BindingMode.TwoWay };
             ctrlTextBox.Width = double.NaN;
             ctrlTextBox.IsReadOnly = true;
 
@@ -166,8 +166,8 @@ namespace HandsLiftedApp.PropertyGridControl
             var ctrlComboBox = new ComboBox();
             ctrlComboBox.ItemsSource = property.GetEnumMembers();
             ctrlComboBox[!SelectingItemsControl.SelectedItemProperty] = new Binding(
-                nameof(property.ValueAccessor),
-                BindingMode.TwoWay);
+                nameof(property.ValueAccessor))
+            { Mode = BindingMode.TwoWay };
             ctrlComboBox.Width = double.NaN;
             ctrlComboBox.IsEnabled = !property.IsReadOnly;
             return ctrlComboBox;

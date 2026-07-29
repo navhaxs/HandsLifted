@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text.Json.Serialization.Metadata;
 using System.Xml.Serialization;
 using HandsLiftedApp.Common.JsonConverter;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -68,5 +69,15 @@ namespace HandsLiftedApp.Core
             Log.Information("Saved appstate");
             return Observable.Return(Unit.Default);
         }
+
+        public IObservable<Unit> SaveState<TState>(TState state) => SaveState((object)state!);
+
+        public IObservable<TState?> LoadState<TState>(JsonTypeInfo<TState> typeInfo) =>
+            throw new NotSupportedException(
+                "XmlSuspensionDriver persists via XmlSerializer; JsonTypeInfo-based (AOT source-gen) persistence is not supported.");
+
+        public IObservable<Unit> SaveState<TState>(TState state, JsonTypeInfo<TState> typeInfo) =>
+            throw new NotSupportedException(
+                "XmlSuspensionDriver persists via XmlSerializer; JsonTypeInfo-based (AOT source-gen) persistence is not supported.");
     }
 }

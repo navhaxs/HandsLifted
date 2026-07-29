@@ -130,11 +130,11 @@ namespace LibVLCSharp.Avalonia.Sample
 
             OpenCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                var fd = new OpenFileDialog() { AllowMultiple = false };
-                var res = await fd.ShowAsync(window);
-                if (res.Any())
+                var files = await window.StorageProvider.OpenFilePickerAsync(
+                    new global::Avalonia.Platform.Storage.FilePickerOpenOptions { AllowMultiple = false });
+                if (files.Any())
                 {
-                    MediaUrl = res.FirstOrDefault();
+                    MediaUrl = files[0].Path.LocalPath;
                     Dispatcher.UIThread.InvokeAsync(() => PlayCommand.Execute(null));
                 }
             });
