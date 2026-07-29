@@ -68,4 +68,49 @@ public class ItemInstanceFactoryTests
         Assert.AreEqual(21, scriptureInstance.EndVerse);
         Assert.AreEqual(someDesignId, scriptureInstance.Design);
     }
+
+    [TestMethod]
+    public void ToItemInstance_ScriptureItem_RoundTripsTransitionOverride()
+    {
+        var original = new ScriptureItem
+        {
+            Title = "John 3:16-21",
+            Book = "JHN",
+            SlideTransitionDurationMs = 750
+        };
+
+        var path = Path.Combine(_tempDir, "scripture-override.xml");
+        var serializer = new XmlSerializer(typeof(ScriptureItem));
+        using (var stream = new FileStream(path, FileMode.Create))
+        {
+            serializer.Serialize(stream, original);
+        }
+
+        var deserialized = CreateItem.GenerateItem(path);
+        var instance = (ScriptureItemInstance)ItemInstanceFactory.ToItemInstance(deserialized!, null);
+
+        Assert.AreEqual(750.0, instance.SlideTransitionDurationMs);
+    }
+
+    [TestMethod]
+    public void ToItemInstance_SongItem_RoundTripsTransitionOverride()
+    {
+        var original = new SongItem
+        {
+            Title = "Amazing Grace",
+            SlideTransitionDurationMs = 300
+        };
+
+        var path = Path.Combine(_tempDir, "song-override.xml");
+        var serializer = new XmlSerializer(typeof(SongItem));
+        using (var stream = new FileStream(path, FileMode.Create))
+        {
+            serializer.Serialize(stream, original);
+        }
+
+        var deserialized = CreateItem.GenerateItem(path);
+        var instance = (SongItemInstance)ItemInstanceFactory.ToItemInstance(deserialized!, null);
+
+        Assert.AreEqual(300.0, instance.SlideTransitionDurationMs);
+    }
 }

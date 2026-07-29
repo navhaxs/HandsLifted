@@ -18,7 +18,7 @@ namespace HandsLiftedApp.Core
             var playlistDirectoryPath = playlist?.PlaylistWorkingDirectory;
             if (deserializedItem is LogoItem i)
             {
-                return new LogoItemInstance(playlist) { Title = i.Title };
+                return new LogoItemInstance(playlist) { Title = i.Title, SlideTransitionDurationMs = i.SlideTransitionDurationMs };
             }
             else if (deserializedItem is SongItem songItem)
             {
@@ -41,7 +41,8 @@ namespace HandsLiftedApp.Core
                     Design = songItem.Design,
                     StartOnTitleSlide = songItem.StartOnTitleSlide,
                     EndOnBlankSlide = songItem.EndOnBlankSlide,
-                    MotionBackgroundVideoPath = resolvedMotionBgPath
+                    MotionBackgroundVideoPath = resolvedMotionBgPath,
+                    SlideTransitionDurationMs = songItem.SlideTransitionDurationMs
                 };
                 // song.GenerateSlides();
                 return song;
@@ -58,7 +59,8 @@ namespace HandsLiftedApp.Core
                     StartVerse = scriptureItem.StartVerse,
                     EndChapter = scriptureItem.EndChapter,
                     EndVerse = scriptureItem.EndVerse,
-                    Design = scriptureItem.Design
+                    Design = scriptureItem.Design,
+                    SlideTransitionDurationMs = scriptureItem.SlideTransitionDurationMs
                 };
                 // Fire-and-forget: GenerateSlidesAsync reads USX from local disk and
                 // this factory method is synchronous. Slides populate reactively
@@ -100,7 +102,8 @@ namespace HandsLiftedApp.Core
                     SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         powerPointPresentationItem.SourcePresentationFile),
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        powerPointPresentationItem.SourceSlidesExportDirectory)
+                        powerPointPresentationItem.SourceSlidesExportDirectory),
+                    SlideTransitionDurationMs = powerPointPresentationItem.SlideTransitionDurationMs
                 };
                 g.GenerateSlides();
                 return g;
@@ -135,7 +138,8 @@ namespace HandsLiftedApp.Core
                     SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         pdfSlidesGroupItem.SourcePresentationFile),
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        pdfSlidesGroupItem.SourceSlidesExportDirectory)
+                        pdfSlidesGroupItem.SourceSlidesExportDirectory),
+                    SlideTransitionDurationMs = pdfSlidesGroupItem.SlideTransitionDurationMs
                 };
                 g.GenerateSlides();
                 return g;
@@ -169,7 +173,8 @@ namespace HandsLiftedApp.Core
                     AutoAdvanceTimer = googleSlidesGroupItem.AutoAdvanceTimer,
                     SourceGooglePresentationId = googleSlidesGroupItem.SourceGooglePresentationId,
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        googleSlidesGroupItem.SourceSlidesExportDirectory)
+                        googleSlidesGroupItem.SourceSlidesExportDirectory),
+                    SlideTransitionDurationMs = googleSlidesGroupItem.SlideTransitionDurationMs
                 };
                 g.GenerateSlides();
                 return g;
@@ -199,7 +204,8 @@ namespace HandsLiftedApp.Core
 
                         return item;
                     }).ToList()),
-                    AutoAdvanceTimer = mediaGroupItem.AutoAdvanceTimer
+                    AutoAdvanceTimer = mediaGroupItem.AutoAdvanceTimer,
+                    SlideTransitionDurationMs = mediaGroupItem.SlideTransitionDurationMs
                 };
                 g.GenerateSlides();
                 return g;
