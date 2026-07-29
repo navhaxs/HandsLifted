@@ -1,36 +1,55 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:songslide="using:HandsLiftedApp.Views.Render.SongSlide"
-             mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
-             x:Class="HandsLiftedApp.Views.Render.SongSlide.LowerThirdSlideTemplate">
-	<Grid Width="1920" Height="1080">
+<UserControl
+    d:DesignHeight="1080"
+    d:DesignWidth="1920"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Views.Render.SongSlide.LowerThirdSlideTemplate"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
+    xmlns:songslide="using:HandsLiftedApp.Views.Render.SongSlide"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.DataContext>
+        <slides:SongTitleSlideInstance Copyright="Brian Johnson, Chris Tomlin, Jason Ingram, Jenn Johnson, Phil Wickham  © 2022 Capitol CMG Paragon; S. D. G. Publishing; Phil Wickham Music; Simply Global Songs; Be Essential Songs; My Magnolia Music; Bethel Music Publishing; Brian and Jenn Publishing  CCLI License #317371" Title="Amazing Grace">
+            <x:Arguments>
+                <x:Null />
+            </x:Arguments>
+        </slides:SongTitleSlideInstance>
+    </Design.DataContext>
+    <Grid Height="1080" Width="1920">
 
-		<Grid Width="1920" Height="1080"
-			RowDefinitions="5*,2*">
-			<Image Grid.Row="1" Source="avares://HandsLiftedApp.Core/Assets/DefaultTheme/default-bg.png"
-			       VerticalAlignment="Top"
-			       RenderOptions.BitmapInterpolationMode="HighQuality"
-			       Width="1920" Height="1080"/>
-			<!-- <Rectangle Grid.Row="1" Opacity="0.92"> -->
-			<!-- 	<Rectangle.Fill> -->
-			<!-- 		<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%"> -->
-			<!-- 			<LinearGradientBrush.GradientStops> -->
-			<!-- 				<GradientStop Offset="0" Color="#6ebadd"/> -->
-			<!-- 				<GradientStop Offset="1" Color="#3c7dab"/> -->
-			<!-- 			</LinearGradientBrush.GradientStops> -->
-			<!-- 		</LinearGradientBrush> -->
-			<!-- 	</Rectangle.Fill> -->
-			<!-- </Rectangle> -->
+        <Grid
+            Height="1080"
+            RowDefinitions="5*,2*"
+            Width="1920">
+            <Image
+                Grid.Row="1"
+                Height="1080"
+                RenderOptions.BitmapInterpolationMode="HighQuality"
+                Source="avares://HandsLiftedApp.Core/Assets/DefaultTheme/default-bg.png"
+                VerticalAlignment="Top"
+                Width="1920" />
+            <!-- <Rectangle Grid.Row="1" Opacity="0.92"> -->
+            <!-- 	<Rectangle.Fill> -->
+            <!-- 		<LinearGradientBrush StartPoint="10%,0%" EndPoint="100%,100%"> -->
+            <!-- 			<LinearGradientBrush.GradientStops> -->
+            <!-- 				<GradientStop Offset="0" Color="#6ebadd"/> -->
+            <!-- 				<GradientStop Offset="1" Color="#3c7dab"/> -->
+            <!-- 			</LinearGradientBrush.GradientStops> -->
+            <!-- 		</LinearGradientBrush> -->
+            <!-- 	</Rectangle.Fill> -->
+            <!-- </Rectangle> -->
 
-			<!-- TODO title and copyright-->
-			<Grid Grid.Row="1" HorizontalAlignment="Stretch" Margin="0 38 0 0">
-				<Viewbox StretchDirection="DownOnly">
-					<songslide:LowerThirdSlideContent />
-				</Viewbox>
-			</Grid>
+            <!--  TODO title and copyright  -->
+            <Grid
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                Margin="0,38,0,0">
+                <Viewbox StretchDirection="DownOnly">
+                    <songslide:LowerThirdSlideContent />
+                </Viewbox>
+            </Grid>
 
-		</Grid>
-	</Grid>
+        </Grid>
+    </Grid>
 </UserControl>
