@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Width="360"
-        Height="320"
+        Height="360"
         WindowStartupLocation="CenterOwner"
         ExtendClientAreaToDecorationsHint="True"
         Background="Transparent"
@@ -29,26 +29,38 @@
             <StackPanel Spacing="8">
                 <TextBlock Text="Add Scripture" FontWeight="SemiBold" FontSize="14" Margin="0 4 0 0" />
 
-                <TextBlock Text="Book" />
-                <ComboBox x:Name="BookComboBox" HorizontalAlignment="Stretch" />
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <RadioButton x:Name="TypeModeRadio" GroupName="ScriptureEntryMode" Content="Type" IsCheckedChanged="OnModeChanged" />
+                    <RadioButton x:Name="PickModeRadio" GroupName="ScriptureEntryMode" Content="Pick" IsCheckedChanged="OnModeChanged" />
+                </StackPanel>
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0 8 0 0">
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Start Chapter" />
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Start Verse" Margin="8 0 0 0" />
-                    <NumericUpDown Grid.Row="1" Grid.Column="0" x:Name="StartChapterUpDown"
-                                    Minimum="1" Value="1" FormatString="0" />
-                    <NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="StartVerseUpDown"
-                                    Minimum="1" Value="1" FormatString="0" Margin="8 0 0 0" />
-                </Grid>
+                <StackPanel x:Name="TypeModePanel" Spacing="4">
+                    <TextBox x:Name="ReferenceTextBox" Watermark="e.g. 1 Peter 1:10-12" TextChanged="OnReferenceTextChanged" />
+                    <TextBlock x:Name="ReferenceHintText" FontSize="11" TextWrapping="Wrap" MinHeight="28" />
+                </StackPanel>
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0 8 0 0">
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="End Chapter" />
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="End Verse" Margin="8 0 0 0" />
-                    <NumericUpDown Grid.Row="1" Grid.Column="0" x:Name="EndChapterUpDown"
-                                    Minimum="1" Value="1" FormatString="0" />
-                    <NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="EndVerseUpDown"
-                                    Minimum="1" Value="1" FormatString="0" Margin="8 0 0 0" />
-                </Grid>
+                <StackPanel x:Name="PickModePanel" Spacing="8">
+                    <TextBlock Text="Book" />
+                    <ComboBox x:Name="BookComboBox" HorizontalAlignment="Stretch" />
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0 8 0 0">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Start Chapter" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Start Verse" Margin="8 0 0 0" />
+                        <NumericUpDown Grid.Row="1" Grid.Column="0" x:Name="StartChapterUpDown"
+                                        Minimum="1" Value="1" FormatString="0" />
+                        <NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="StartVerseUpDown"
+                                        Minimum="1" Value="1" FormatString="0" Margin="8 0 0 0" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0 8 0 0">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="End Chapter" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="End Verse" Margin="8 0 0 0" />
+                        <NumericUpDown Grid.Row="1" Grid.Column="0" x:Name="EndChapterUpDown"
+                                        Minimum="1" Value="1" FormatString="0" />
+                        <NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="EndVerseUpDown"
+                                        Minimum="1" Value="1" FormatString="0" Margin="8 0 0 0" />
+                    </Grid>
+                </StackPanel>
             </StackPanel>
         </DockPanel>
     </Border>
