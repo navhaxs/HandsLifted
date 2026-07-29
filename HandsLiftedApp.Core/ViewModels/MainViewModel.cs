@@ -371,10 +371,12 @@ public class MainViewModel : ViewModelBase
                         itemToInsert = new CommentItem();
                         break;
                     case AddItemMessage.AddItemType.Scripture:
-                        var scriptureTitle = addItemMessage.ScriptureStartChapter == addItemMessage.ScriptureEndChapter &&
-                                              addItemMessage.ScriptureStartVerse == addItemMessage.ScriptureEndVerse
-                            ? $"{addItemMessage.ScriptureBookName} {addItemMessage.ScriptureStartChapter}:{addItemMessage.ScriptureStartVerse}"
-                            : $"{addItemMessage.ScriptureBookName} {addItemMessage.ScriptureStartChapter}:{addItemMessage.ScriptureStartVerse}-{addItemMessage.ScriptureEndChapter}:{addItemMessage.ScriptureEndVerse}";
+                        var scriptureTitle = ScriptureTitleFormatter.Format(
+                            addItemMessage.ScriptureBookName!,
+                            addItemMessage.ScriptureStartChapter!.Value,
+                            addItemMessage.ScriptureStartVerse!.Value,
+                            addItemMessage.ScriptureEndChapter!.Value,
+                            addItemMessage.ScriptureEndVerse!.Value);
 
                         var scripture = new ScriptureItemInstance(Playlist)
                         {
