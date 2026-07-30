@@ -844,13 +844,19 @@ namespace HandsLiftedApp.Core.Models
 
                 foreach (var slide in itemInstance.Slides)
                 {
-                    // ImageSlideInstance's Cached/Thumbnail come from the shared, path-keyed
-                    // BitmapLoader.Cache and may still be referenced by other slides (this
-                    // playlist or the next one) using the same image file - disposing them here
-                    // would risk an ObjectDisposedException elsewhere, so they're left alone.
-                    if (slide is ISlideInstance { } si && slide is not ImageSlideInstance)
+                    if (slide is ISlideInstance { } si)
                     {
-                        si.Cached?.Dispose();
+                        // ImageSlideInstance.Cached comes from the shared, path-keyed, refcounted
+                        // BitmapLoader.Cache (see ImageSlideInstance.Dispose(), invoked via the
+                        // IDisposable branch below) - disposing it directly here, instead of
+                        // releasing its tracked lease, would defeat that refcounting and risk an
+                        // ObjectDisposedException for any other slide still referencing the same
+                        // image. Thumbnail is always this slide's own private, non-shared bitmap
+                        // regardless of slide type, so it's always safe to dispose directly.
+                        if (slide is not ImageSlideInstance)
+                        {
+                            si.Cached?.Dispose();
+                        }
                         si.Thumbnail?.Dispose();
                     }
 

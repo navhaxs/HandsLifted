@@ -51,9 +51,7 @@ namespace HandsLiftedApp.Utils
                             return cached;
                         }
 
-                        Log.Verbose($"Loading image {pathOrUri} - fresh load");
-                        using Stream imageStream = File.OpenRead(pathOrUri);
-                        var loaded = Bitmap.DecodeToWidth(imageStream, 1920);
+                        var loaded = DecodeFromDisk(pathOrUri);
                         Cache.AddBitmap(pathOrUri, loaded);
                         return loaded;
                     }
@@ -72,6 +70,57 @@ namespace HandsLiftedApp.Utils
                 Log.Error($"Failed to load image {pathOrUri}");
                 return null;
             }
+        }
+
+        // For long-lived, explicitly-torn-down consumers (currently: ImageSlideInstance) that need
+        // eviction to actually free native memory. The returned lease MUST be released once the
+        // caller no longer needs the bitmap (e.g. when its owning slide instance is torn down) -
+        // see PlaylistInstance.DisposeSlideRenderResources.
+        public static Task<BitmapCacheLease?> AcquireBitmapAsync(string pathOrUri)
+        {
+            return Task.Run(() => AcquireBitmap(pathOrUri));
+        }
+
+        public static BitmapCacheLease? AcquireBitmap(string pathOrUri)
+        {
+            try
+            {
+                if (pathOrUri.StartsWith("avares://"))
+                {
+                    // Never cached/shared - a fresh decode here is exclusively owned by the
+                    // caller, so releasing the lease can just dispose it directly.
+                    var bitmap = LoadBitmap(pathOrUri);
+                    return bitmap == null ? null : new BitmapCacheLease(bitmap, bitmap.Dispose);
+                }
+
+                if (!File.Exists(pathOrUri))
+                    return null;
+
+                var pathLock = PathLocks.GetOrAdd(pathOrUri, _ => new object());
+                lock (pathLock)
+                {
+                    var leased = Cache.Acquire(pathOrUri);
+                    if (leased != null)
+                    {
+                        return leased;
+                    }
+
+                    var loaded = DecodeFromDisk(pathOrUri);
+                    return Cache.AddAndAcquire(pathOrUri, loaded);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to load image {pathOrUri}");
+                return null;
+            }
+        }
+
+        private static Bitmap DecodeFromDisk(string path)
+        {
+            Log.Verbose($"Loading image {path} - fresh load");
+            using Stream imageStream = File.OpenRead(path);
+            return Bitmap.DecodeToWidth(imageStream, 1920);
         }
     }
 }

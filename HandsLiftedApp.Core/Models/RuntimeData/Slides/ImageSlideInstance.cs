@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using DebounceThrottle;
+using HandsLiftedApp.Common;
 using HandsLiftedApp.Data.Data.Models.Items;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -12,10 +13,15 @@ using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
-    public class ImageSlideInstance : ImageSlide, ISlideInstance
+    public class ImageSlideInstance : ImageSlide, ISlideInstance, IDisposable
     {
         private DebounceDispatcher debounceDispatcher = new(200);
         private static readonly object loadDataLock = new object();
+
+        // Cached comes from the shared, path-keyed BitmapLoader.Cache - this lease is what makes
+        // it safe to eventually dispose that shared bitmap once nothing still references it (see
+        // Dispose() below and PlaylistInstance.DisposeSlideRenderResources).
+        private BitmapCacheLease? _cachedLease;
 
         public ImageSlideInstance(string imagePath, MediaGroupItem? parentMediaGroupItem) : base(imagePath)
         {
@@ -42,9 +48,19 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
                 return;
             }
 
-            var obitmap = await BitmapLoader.LoadBitmapAsync(SourceMediaFilePath);
-            Cached = obitmap;
-            Thumbnail = BitmapUtils.CreateThumbnail(obitmap);
+            var lease = await BitmapLoader.AcquireBitmapAsync(SourceMediaFilePath);
+            _cachedLease = lease;
+            Cached = lease?.Bitmap;
+            Thumbnail = BitmapUtils.CreateThumbnail(Cached);
+        }
+
+        // Releases this slide's lease on the shared, cached background bitmap so it can finally
+        // be disposed once nothing else references it. Called generically by
+        // PlaylistInstance.DisposeSlideRenderResources when the owning item/playlist is torn down.
+        public void Dispose()
+        {
+            _cachedLease?.Release();
+            _cachedLease = null;
         }
 
         Bitmap _cached;
