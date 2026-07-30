@@ -67,7 +67,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .Subscribe(_ =>
                 {
                     if (weakSelf.TryGetTarget(out var self))
+                    {
                         self.RaisePropertyChanged(nameof(ResolvedDesignTheme));
+                        self.RaisePropertyChanged(nameof(ExplicitDesignTheme));
+                    }
                 });
 
             // Playlist scripture default changed - if this item's own Design is unset (i.e. it's
@@ -132,6 +135,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", Title),
                     TaskContinuationOptions.OnlyOnFaulted);
             }
+        }
+
+        // Unlike ResolvedDesignTheme (which always resolves to a concrete theme via the
+        // playlist/app-default fallback chain, for use by rendering code), this reflects only
+        // this item's own explicit override - null when Design is unset. The theme-picker
+        // ComboBox binds SelectedItem here rather than to ResolvedDesignTheme so that clearing
+        // the selection (Design = Guid.Empty) actually shows as unselected, instead of the
+        // ComboBox re-highlighting whichever Designs entry the fallback chain resolved to.
+        public BaseSlideTheme? ExplicitDesignTheme
+        {
+            get => ParentPlaylist?.Designs.FirstOrDefault(d => d.Id == Design);
+            set => ResolvedDesignTheme = value;
         }
 
         private ObservableCollection<Slide> _slides = new ObservableCollection<Slide>();

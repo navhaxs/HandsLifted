@@ -17,6 +17,19 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
             InitializeComponent();
         }
 
+        private void ClearThemeButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            switch (DataContext)
+            {
+                case SongItemInstance song:
+                    song.ResolvedDesignTheme = null;
+                    break;
+                case ScriptureItemInstance scripture:
+                    scripture.ExplicitDesignTheme = null;
+                    break;
+            }
+        }
+
         private void Button_OnClick(object? sender, RoutedEventArgs e)
         {
             if (DataContext is IItemSyncable instance)
