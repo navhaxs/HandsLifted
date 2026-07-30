@@ -1,65 +1,69 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="50"
- 			 xmlns:utils="using:HandsLiftedApp.Utils"
-	 		 xmlns:material="using:Material.Icons.Avalonia"
-	 		 xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
-	 		 xmlns:converters="clr-namespace:HandsLiftedApp.Converters"
-	 		 x:Class="HandsLiftedApp.Controls.Items.ItemIcon"
-             x:CompileBindings="False">
-	
-	<UserControl.Resources>
-		<converters:IsGreaterThanConverter x:Key="IsGreaterThanConverter" />
-	</UserControl.Resources>
-	
-	<UserControl.Styles>
-		<Style Selector="ContentControl material|MaterialIcon">
-			<Setter Property="Foreground" Value="{Binding Foreground, FallbackValue='#888888'}" />
-		</Style>
-		<Style Selector="ContentControl.isSelectedItem material|MaterialIcon">
-			<Setter Property="Foreground" Value="#FF3400" />
-		</Style>
-	</UserControl.Styles>
-	
-	<ContentControl Content="{Binding}" 
-	                Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}">
-		<ContentControl.ContentTemplate>
-			<common:MyTemplateSelector>
-				<DataTemplate x:Key="SongItemInstance">
-					<material:MaterialIcon Kind="MusicNote" />
-			   	</DataTemplate>
-				<DataTemplate x:Key="MediaGroupItemInstance">
-					<material:MaterialIcon Kind="ImageMultiple" />
-				</DataTemplate>
-				<DataTemplate x:Key="SlidesGroupItemInstance">
-					<material:MaterialIcon Kind="ImageMultiple" />
-				</DataTemplate>
-				<DataTemplate x:Key="LogoItemInstance">
-					<material:MaterialIcon Kind="Star" />
-				</DataTemplate>
-				<DataTemplate x:Key="GoogleSlidesGroupItemInstance">
-					<material:MaterialIcon Kind="Slideshow" />
-				</DataTemplate>
-				<DataTemplate x:Key="PowerPointPresentationItemInstance">
-					<material:MaterialIcon Kind="MicrosoftPowerpoint" />
-				</DataTemplate>
-				<DataTemplate x:Key="PDFSlidesGroupItemInstance">
-					<material:MaterialIcon Kind="FilePdfBox" />
-				</DataTemplate>
-				<DataTemplate x:Key="CommentItem">
-					<material:MaterialIcon Kind="AlertCircle" />
-				</DataTemplate>
-				<DataTemplate x:Key="SectionHeadingItem">
-				</DataTemplate>
-				<DataTemplate x:Key="Fallback">
-					<material:MaterialIcon Kind="CheckboxBlankOutline" />
-				</DataTemplate>
-			</common:MyTemplateSelector>
-		</ContentControl.ContentTemplate>
-		<!-- NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down -->
-		<!--<ContentControl.DataTemplates>
+<UserControl
+    d:DesignHeight="50"
+    d:DesignWidth="200"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Controls.Items.ItemIcon"
+    x:CompileBindings="False"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+    xmlns:converters="clr-namespace:HandsLiftedApp.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="using:HandsLiftedApp.Utils"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <converters:IsGreaterThanConverter x:Key="IsGreaterThanConverter" />
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="ContentControl material|MaterialIcon">
+            <Setter Property="Foreground" Value="{Binding Foreground, FallbackValue='#888888'}" />
+        </Style>
+        <Style Selector="ContentControl.isSelectedItem material|MaterialIcon">
+            <Setter Property="Foreground" Value="#FF3400" />
+        </Style>
+    </UserControl.Styles>
+
+    <ContentControl Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}" Content="{Binding}">
+        <ContentControl.ContentTemplate>
+            <common:MyTemplateSelector>
+                <DataTemplate x:Key="SongItemInstance">
+                    <material:MaterialIcon Kind="MusicNote" />
+                </DataTemplate>
+                <DataTemplate x:Key="MediaGroupItemInstance">
+                    <material:MaterialIcon Kind="ImageMultiple" />
+                </DataTemplate>
+                <DataTemplate x:Key="SlidesGroupItemInstance">
+                    <material:MaterialIcon Kind="ImageMultiple" />
+                </DataTemplate>
+                <DataTemplate x:Key="LogoItemInstance">
+                    <material:MaterialIcon Kind="Star" />
+                </DataTemplate>
+                <DataTemplate x:Key="GoogleSlidesGroupItemInstance">
+                    <material:MaterialIcon Kind="Slideshow" />
+                </DataTemplate>
+                <DataTemplate x:Key="PowerPointPresentationItemInstance">
+                    <material:MaterialIcon Kind="MicrosoftPowerpoint" />
+                </DataTemplate>
+                <DataTemplate x:Key="PDFSlidesGroupItemInstance">
+                    <material:MaterialIcon Kind="FilePdfBox" />
+                </DataTemplate>
+                <DataTemplate x:Key="ScriptureItemInstance">
+                    <material:MaterialIcon Kind="Bible" />
+                </DataTemplate>
+                <DataTemplate x:Key="CommentItem">
+                    <material:MaterialIcon Kind="AlertCircle" />
+                </DataTemplate>
+                <DataTemplate x:Key="SectionHeadingItem" />
+                <DataTemplate x:Key="Fallback">
+                    <material:MaterialIcon Kind="CheckboxBlankOutline" />
+                </DataTemplate>
+            </common:MyTemplateSelector>
+        </ContentControl.ContentTemplate>
+        <!--  NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down  -->
+        <!--<ContentControl.DataTemplates>
 		</ContentControl.DataTemplates>-->
-	</ContentControl>
+    </ContentControl>
 </UserControl>
