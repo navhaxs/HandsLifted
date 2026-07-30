@@ -260,7 +260,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         if (existing.Label != referenceLabel) existing.Label = referenceLabel;
                         bool themeChanged = !ReferenceEquals(existing.Theme, theme);
                         if (themeChanged) existing.Theme = theme;
-                        if (themeChanged || forceInvalidateCache) existing.Cached = null;
+                        if (themeChanged || forceInvalidateCache)
+                        {
+                            existing.Cached?.Dispose();
+                            existing.Cached = null;
+                        }
                         newSlides.Add(existing);
                     }
                     else

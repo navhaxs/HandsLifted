@@ -144,9 +144,15 @@ namespace HandsLiftedApp.Data.Slides
             videoFrame?.Dispose();
             var cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
             var thumb = BitmapUtils.CreateThumbnail(cached);
-            Avalonia.Threading.Dispatcher.UIThread.Post(
-                () => { Cached = cached; Thumbnail = thumb; },
-                Avalonia.Threading.DispatcherPriority.Background);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                var oldCached = Cached;
+                var oldThumbnail = Thumbnail;
+                Cached = cached;
+                Thumbnail = thumb;
+                oldCached?.Dispose();
+                oldThumbnail?.Dispose();
+            }, Avalonia.Threading.DispatcherPriority.Background);
         }
 
         private BaseSlideTheme? _theme;

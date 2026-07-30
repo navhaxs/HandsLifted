@@ -24,8 +24,14 @@ Read MPV documentation:
 - https://mpv.io/manual/master/#list-of-input-commands
 
  */
-    public class VideoSlideInstance : VideoSlide, ISlideRender
+    public class VideoSlideInstance : VideoSlide, ISlideRender, IDisposable
     {
+        // Globals.Instance.MpvContextInstance is an app-lifetime singleton (see CLAUDE.md) -
+        // subscribing to it without ever unsubscribing pins this instance (and everything it
+        // references) alive for the rest of the process. Capture the exact context subscribed
+        // to here so Dispose() can unhook from that same instance later.
+        private readonly MpvContext? _subscribedContext;
+
         public VideoSlideInstance(string videoPath = "C:\\VisionScreens\\TestImages\\WA22 Speaker Interview.mp4") :
             base(videoPath)
         {
@@ -42,6 +48,21 @@ Read MPV documentation:
 
                 // Log decode/open failures (e.g. stalled cloud-synced file) instead of failing silently
                 Context.EndFile += OnEndFile;
+
+                _subscribedContext = Context;
+            }
+        }
+
+        public void Dispose()
+        {
+            _enterSlideCts?.Cancel();
+            _enterSlideCts?.Dispose();
+            _enterSlideCts = null;
+
+            if (_subscribedContext != null)
+            {
+                _subscribedContext.PropertyChanged -= MpvContextPropertyChanged;
+                _subscribedContext.EndFile -= OnEndFile;
             }
         }
 

@@ -809,6 +809,8 @@ namespace HandsLiftedApp.Core.Models
 
         public void Dispose()
         {
+            DisposeSlideRenderResources(Items);
+
             AutoAdvanceTimer.Dispose();
             _selectedItem.Dispose();
             _selectedItemAsIItemInstance.Dispose();
@@ -823,6 +825,41 @@ namespace HandsLiftedApp.Core.Models
                 sub.Dispose();
             }
             _designSubscriptions.Clear();
+        }
+
+        /// <summary>
+        /// Releases the native-backed render resources (rendered slide bitmaps, mpv event
+        /// subscriptions) held by a set of items before the items themselves are dropped -
+        /// e.g. before replacing Playlist.Items with a fresh collection, or before discarding
+        /// the whole PlaylistInstance. Without this, those resources only get reclaimed when
+        /// their finalizers eventually run, so native memory lags well behind managed GC across
+        /// playlist loads/switches.
+        /// </summary>
+        public static void DisposeSlideRenderResources(IEnumerable<Item> items)
+        {
+            foreach (var item in items)
+            {
+                var itemInstance = item.GetAsIItemInstance();
+                if (itemInstance == null) continue;
+
+                foreach (var slide in itemInstance.Slides)
+                {
+                    // ImageSlideInstance's Cached/Thumbnail come from the shared, path-keyed
+                    // BitmapLoader.Cache and may still be referenced by other slides (this
+                    // playlist or the next one) using the same image file - disposing them here
+                    // would risk an ObjectDisposedException elsewhere, so they're left alone.
+                    if (slide is ISlideInstance { } si && slide is not ImageSlideInstance)
+                    {
+                        si.Cached?.Dispose();
+                        si.Thumbnail?.Dispose();
+                    }
+
+                    if (slide is IDisposable disposableSlide)
+                    {
+                        disposableSlide.Dispose();
+                    }
+                }
+            }
         }
     }
 }

@@ -358,6 +358,10 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 }
 
                 // create a new empty playlist
+                // Dispose the outgoing playlist so its subscriptions and its items' render
+                // resources (bitmaps, mpv event subscriptions) are released now rather than
+                // whenever finalizers happen to run.
+                vm.Playlist.Dispose();
                 vm.Playlist = new PlaylistInstance();
                 vm.Playlist.IsDirty = false;
             }

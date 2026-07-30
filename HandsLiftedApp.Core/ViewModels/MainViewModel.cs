@@ -212,6 +212,11 @@ public class MainViewModel : ViewModelBase
                 // Assign empty collection first so ItemsControl starts with zero items,
                 // then add each item at Background priority. Template creation spreads
                 // across N dispatcher yields instead of one synchronous batch.
+                //
+                // Release the outgoing items' render resources (rendered bitmaps, mpv event
+                // subscriptions) before dropping them - otherwise native memory from the old
+                // playlist lingers until finalizers happen to run.
+                PlaylistInstance.DisposeSlideRenderResources(Playlist.Items);
                 Playlist.Items = new PlaylistItemInstanceCollection<Item>();
                 foreach (var item in builtItems)
                 {
