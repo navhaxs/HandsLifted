@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using SkiaSharp;
 
 namespace HandsLiftedApp.Core
@@ -10,9 +11,8 @@ namespace HandsLiftedApp.Core
     {
         public static Bitmap SKBitmapToAvalonia(SKBitmap skBitmap)
         {
-            using var data = skBitmap.Encode(SKEncodedImageFormat.Png, 100);
-            using var stream = new System.IO.MemoryStream(data.ToArray());
-            return new Bitmap(stream);
+            return CopySkBitmapPixels(skBitmap,
+                skBitmap.AlphaType == SKAlphaType.Opaque ? AlphaFormat.Opaque : AlphaFormat.Premul);
         }
 
         public static SKBitmap? AvaloniaToSKBitmap(Bitmap avaBitmap)
@@ -60,7 +60,7 @@ namespace HandsLiftedApp.Core
                 using SKBitmap? resizedBitmapSource = bitmap.Resize(
                     new SKImageInfo(500, (int)(source.Size.Height / source.Size.Width * 500)),
                     SKFilterQuality.High);
-                return EncodeToAvaloniaBitmap(resizedBitmapSource);
+                return resizedBitmapSource == null ? null : CopySkBitmapPixels(resizedBitmapSource, AlphaFormat.Opaque);
             }
             finally
             {
@@ -71,23 +71,33 @@ namespace HandsLiftedApp.Core
             }
         }
 
-        private static Bitmap? EncodeToAvaloniaBitmap(SKBitmap? resizedBitmap)
+        // Copies an SKBitmap's pixel buffer directly into a new Avalonia WriteableBitmap. Replaces
+        // what used to be a PNG/BMP encode-then-decode round trip (SKBitmapToAvalonia previously
+        // encoded to PNG and re-decoded via `new Bitmap(stream)`; CreateThumbnail previously
+        // BMP-encoded via BmpSharp and re-decoded the same way) - both ran on every slide render,
+        // briefly spiking memory 2-3x for pure transient encode/decode buffers.
+        private static unsafe WriteableBitmap CopySkBitmapPixels(SKBitmap skBitmap, AlphaFormat alphaFormat)
         {
-            if (resizedBitmap == null)
+            var writeableBitmap = new WriteableBitmap(
+                new PixelSize(skBitmap.Width, skBitmap.Height),
+                new Vector(96, 96),
+                PixelFormat.Bgra8888,
+                alphaFormat);
+
+            using var framebuffer = writeableBitmap.Lock();
+
+            var srcPtr = (byte*)skBitmap.GetPixels().ToPointer();
+            var dstPtr = (byte*)framebuffer.Address.ToPointer();
+            int srcStride = skBitmap.RowBytes;
+            int dstStride = framebuffer.RowBytes;
+            int rowBytes = Math.Min(srcStride, dstStride);
+
+            for (int y = 0; y < skBitmap.Height; y++)
             {
-                return null;
+                Buffer.MemoryCopy(srcPtr + (long)y * srcStride, dstPtr + (long)y * dstStride, dstStride, rowBytes);
             }
 
-            // BmpSharp as workaround to encode to BMP. This is MUCH faster than using SkiaSharp to encode to PNG.
-            // https://github.com/mono/SkiaSharp/issues/320#issuecomment-582132563
-            BmpSharp.BitsPerPixelEnum bitsPerPixel = resizedBitmap.BytesPerPixel == 4
-                ? BmpSharp.BitsPerPixelEnum.RGBA32
-                : BmpSharp.BitsPerPixelEnum.RGB24;
-            BmpSharp.Bitmap bmp =
-                new BmpSharp.Bitmap(resizedBitmap.Width, resizedBitmap.Height, resizedBitmap.Bytes, bitsPerPixel);
-                
-            // return as Avalonia bitmap
-            return new Bitmap(bmp.GetBmpStream(fliped: true));
+            return writeableBitmap;
         }
     }
 }
