@@ -64,7 +64,9 @@ public partial class App : Application
             SplashWindow splashScreen = new();
             desktop.MainWindow = splashScreen;
             try {
-                await Task.Delay(2_000);
+                // Brief minimum splash display so it doesn't just flash - not meant to pad out
+                // startup (OnStartup below already takes noticeably longer than this on its own).
+                await Task.Delay(300);
                 Globals.Instance.OnStartup(ApplicationLifetime);
                 
                 var welcome = new WelcomeWindow

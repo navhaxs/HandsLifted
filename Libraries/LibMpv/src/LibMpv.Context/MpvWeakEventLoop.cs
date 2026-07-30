@@ -39,7 +39,6 @@ public unsafe class MpvWeakEventLoop : IEventLoop
 
     private void WakeupCallback(void* _)
     {
-        Console.WriteLine("WakeupCallback");
         if (isEventLoopRunning)
             Task.Run(async () => WakeupHandleEvent());
     }

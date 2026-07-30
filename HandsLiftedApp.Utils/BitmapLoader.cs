@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using System.Collections.Concurrent;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using HandsLiftedApp.Common;
 using Serilog;
@@ -8,6 +9,12 @@ namespace HandsLiftedApp.Utils
     public static class BitmapLoader
     {
         public static BitmapCache Cache = new(20);
+
+        // Serializes concurrent loads of the same file path so two near-simultaneous callers
+        // (e.g. multiple slides sharing one background image) can't both miss Cache and decode
+        // the same file independently - the check-cache/decode/add-to-cache sequence below isn't
+        // atomic on its own.
+        private static readonly ConcurrentDictionary<string, object> PathLocks = new();
 
         public static Task<Bitmap?> LoadBitmapAsync(string pathOrUri, int? decodeToWidth = null)
         {
@@ -35,7 +42,8 @@ namespace HandsLiftedApp.Utils
                     if (!File.Exists(pathOrUri))
                         return null;
 
-                    using (Stream imageStream = File.OpenRead(pathOrUri))
+                    var pathLock = PathLocks.GetOrAdd(pathOrUri, _ => new object());
+                    lock (pathLock)
                     {
                         var cached = Cache.GetBitmap(pathOrUri);
                         if (cached != null)
@@ -44,6 +52,7 @@ namespace HandsLiftedApp.Utils
                         }
 
                         Log.Verbose($"Loading image {pathOrUri} - fresh load");
+                        using Stream imageStream = File.OpenRead(pathOrUri);
                         var loaded = Bitmap.DecodeToWidth(imageStream, 1920);
                         Cache.AddBitmap(pathOrUri, loaded);
                         return loaded;

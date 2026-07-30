@@ -108,14 +108,28 @@ namespace HandsLiftedApp.Core.ViewModels
             // runtime...
             Libraries = new ObservableCollection<Library>();
 
-            foreach (var libDef in LibraryConfig.LibraryItems)
+            // Each Library's constructor does its own synchronous directory listing (often over
+            // a network/cloud-synced path - see H:\...\Service Docs\* in LibraryConfig above),
+            // so building them one at a time serializes N round-trips of I/O latency. Build them
+            // concurrently instead. This only touches each Library's own private, not-yet-exposed
+            // Items collection during construction - the shared, UI-bound Libraries collection is
+            // only mutated afterward, sequentially, on this (UI) thread, so there's no cross-thread
+            // binding contention.
+            var libDefs = LibraryConfig.LibraryItems;
+            var built = new Library[libDefs.Count];
+            Parallel.For(0, libDefs.Count, i =>
             {
-                Library lib = libDef.Type switch
+                var libDef = libDefs[i];
+                built[i] = libDef.Type switch
                 {
                     LibraryType.Song => new SongLibrary(libDef, new FileSystemSongLibrarySource(libDef.Directory)),
                     LibraryType.Scripture => new ScriptureLibrary(libDef),
                     _ => new Library(libDef)
                 };
+            });
+
+            foreach (var lib in built)
+            {
                 Libraries.Add(lib);
             }
         }
