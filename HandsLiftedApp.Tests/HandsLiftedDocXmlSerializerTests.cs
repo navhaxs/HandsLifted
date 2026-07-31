@@ -216,4 +216,31 @@ public class HandsLiftedDocXmlSerializerTests
         var pdfItem = (PDFSlidesGroupItem)deserialized.Items.Single();
         Assert.AreEqual(0, pdfItem.Items.Count);
     }
+
+    [TestMethod]
+    public void SerializePlaylist_MediaGroupItem_SourceMediaFilePathIsRelative()
+    {
+        var playlist = new PlaylistInstance();
+        var imagesDir = Path.Combine(_tempDir, "Media", "Images");
+        Directory.CreateDirectory(imagesDir);
+        var mediaFile = Path.Combine(imagesDir, "photo.jpg");
+        File.WriteAllText(mediaFile, "jpg-bytes");
+
+        var mediaGroupInstance = new MediaGroupItemInstance(playlist) { Title = "Photos" };
+        mediaGroupInstance.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = mediaFile });
+        playlist.Items.Add(mediaGroupInstance);
+
+        var path = Path.Combine(_tempDir, "playlist-mediagroup-relative.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, @"Media\Images\photo.jpg");
+        Assert.IsFalse(rawXml.Contains(_tempDir),
+            "Absolute path must not be written; SourceMediaFilePath should be relative to the playlist directory.");
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var mediaGroupItem = (MediaGroupItem)deserialized.Items.Single();
+        var roundTrippedMediaItem = (MediaGroupItem.MediaItem)mediaGroupItem.Items.Single();
+        Assert.AreEqual(@"Media\Images\photo.jpg", roundTrippedMediaItem.SourceMediaFilePath);
+    }
 }

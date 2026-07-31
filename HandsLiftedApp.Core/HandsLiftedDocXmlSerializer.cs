@@ -166,7 +166,7 @@ namespace HandsLiftedApp.Core
                                             mediaItem.SourceMediaFilePath);
                                 }
 
-                                return mediaItem;
+                                return newMediaItem;
                             }
 
                             return item;
