@@ -58,7 +58,10 @@ namespace ShellThumbs
             }
             catch (COMException ex)
             {
-                if (ex.ErrorCode == -2147175936 && options.HasFlag(ThumbnailOptions.ThumbnailOnly))
+                // WTS_E_FAILEDEXTRACTION: the shell says this file type genuinely has no
+                // extractable thumbnail (e.g. unsupported format). This is a permanent result,
+                // not a transient "not ready yet" failure - don't let callers retry on it.
+                if (ex.ErrorCode == -2147175936)
                 {
                     return null;
                 }

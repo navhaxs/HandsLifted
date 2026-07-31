@@ -12,6 +12,19 @@ namespace HandsLiftedApp.Core.Views.Confirmation
             InitializeComponent();
         }
 
+        // Error-only mode: single "OK" button, no Google sign-in triggered.
+        public GoogleSlidesReauthWindow(string title, string message, bool isError)
+        {
+            InitializeComponent();
+            TitleText.Text = title;
+            MessageText.Text = message;
+            if (isError)
+            {
+                SignInButton.IsVisible = false;
+                CancelButton.Content = "OK";
+            }
+        }
+
         private void OnConfirm(object? sender, RoutedEventArgs e)
         {
             Confirmed = true;

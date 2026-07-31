@@ -180,31 +180,62 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Log.Warning("Google Slides token expired — prompting reauth");
                             var clientId = Globals.Instance.AppPreferences.GoogleClientId;
                             var clientSecret = Globals.Instance.AppPreferences.GoogleClientSecret;
-                            var tcs = new TaskCompletionSource<bool>();
-                            Dispatcher.UIThread.Post(async () =>
-                            {
-                                try
-                                {
-                                    Log.Warning("[GoogleSlidesReauth] Post callback entered on UI thread");
-                                    var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-                                    Log.Warning("[GoogleSlidesReauth] mainWindow={MainWindow}", mainWindow == null ? "NULL" : mainWindow.GetType().Name);
-                                    var dialog = new GoogleSlidesReauthWindow();
-                                    Log.Warning("[GoogleSlidesReauth] dialog constructed, calling ShowDialog");
-                                    await dialog.ShowDialog(mainWindow);
-                                    Log.Warning("[GoogleSlidesReauth] ShowDialog returned, Confirmed={Confirmed}", dialog.Confirmed);
-                                    tcs.SetResult(dialog.Confirmed);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.Error(ex, "[GoogleSlidesReauth] exception in Post callback");
-                                    tcs.SetException(ex);
-                                }
-                            });
-                            bool confirmed = tcs.Task.GetAwaiter().GetResult();
 
-                            if (confirmed)
+                            if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
                             {
-                                Task.Run(() => Main.RevokeAndReauth(clientId, clientSecret));
+                                Log.Warning("Google Slides reauth requested but Client ID/Secret is not configured");
+                                Dispatcher.UIThread.Post(() =>
+                                {
+                                    var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                                    new GoogleSlidesReauthWindow(
+                                        "Google Sign-In Not Configured",
+                                        "Google Client ID and Client Secret are not set. Open Setup and enter them before syncing Google Slides.",
+                                        isError: true).ShowDialog(mainWindow);
+                                });
+                            }
+                            else
+                            {
+                                var tcs = new TaskCompletionSource<bool>();
+                                Dispatcher.UIThread.Post(async () =>
+                                {
+                                    try
+                                    {
+                                        Log.Warning("[GoogleSlidesReauth] Post callback entered on UI thread");
+                                        var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                                        Log.Warning("[GoogleSlidesReauth] mainWindow={MainWindow}", mainWindow == null ? "NULL" : mainWindow.GetType().Name);
+                                        var dialog = new GoogleSlidesReauthWindow();
+                                        Log.Warning("[GoogleSlidesReauth] dialog constructed, calling ShowDialog");
+                                        await dialog.ShowDialog(mainWindow);
+                                        Log.Warning("[GoogleSlidesReauth] ShowDialog returned, Confirmed={Confirmed}", dialog.Confirmed);
+                                        tcs.SetResult(dialog.Confirmed);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Error(ex, "[GoogleSlidesReauth] exception in Post callback");
+                                        tcs.SetException(ex);
+                                    }
+                                });
+                                bool confirmed = tcs.Task.GetAwaiter().GetResult();
+
+                                if (confirmed)
+                                {
+                                    try
+                                    {
+                                        Main.RevokeAndReauth(clientId, clientSecret);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Error(ex, "[GoogleSlidesReauth] RevokeAndReauth failed");
+                                        Dispatcher.UIThread.Post(() =>
+                                        {
+                                            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                                            new GoogleSlidesReauthWindow(
+                                                "Google Sign-In Failed",
+                                                $"Could not complete Google sign-in: {ex.Message}",
+                                                isError: true).ShowDialog(mainWindow);
+                                        });
+                                    }
+                                }
                             }
                         }
                         catch (Exception e)

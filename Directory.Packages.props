@@ -79,9 +79,9 @@
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.1-dev-00968" />
     <PackageVersion Include="SIL.Scripture" Version="11.0.1" />
     <PackageVersion Include="SkiaSharp" Version="3.119.4" />
-    <PackageVersion Include="Syncfusion.Licensing" Version="25.1.37" />
-    <PackageVersion Include="Syncfusion.Presentation.NET" Version="25.1.35" />
-    <PackageVersion Include="Syncfusion.PresentationRenderer.NET" Version="25.1.35" />
+    <PackageVersion Include="Syncfusion.Licensing" Version="34.1.33" />
+    <PackageVersion Include="Syncfusion.Presentation.NET" Version="34.1.33" />
+    <PackageVersion Include="Syncfusion.PresentationRenderer.NET" Version="34.1.33" />
     <PackageVersion Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageVersion Include="System.Net.Http.Json" Version="7.0.0" />
     <PackageVersion Include="System.Reactive" Version="6.1.0" />
