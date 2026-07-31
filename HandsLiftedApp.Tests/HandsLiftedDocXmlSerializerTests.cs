@@ -243,4 +243,64 @@ public class HandsLiftedDocXmlSerializerTests
         var roundTrippedMediaItem = (MediaGroupItem.MediaItem)mediaGroupItem.Items.Single();
         Assert.AreEqual(@"Media\Images\photo.jpg", roundTrippedMediaItem.SourceMediaFilePath);
     }
+
+    [TestMethod]
+    public void SerializePlaylist_PdfItem_SourceOutsidePlaylistFolder_KeepsAbsolutePath()
+    {
+        // A legacy playlist (or one whose PDF was added before copy-on-add covered that path)
+        // references a source that does not live under the playlist folder. Relativizing it
+        // would emit "..\Outside\sermon.pdf" — portable-looking, but not portable.
+        var playlistDir = Path.Combine(_tempDir, "PlaylistFolder");
+        var outsideDir = Path.Combine(_tempDir, "Outside");
+        Directory.CreateDirectory(playlistDir);
+        Directory.CreateDirectory(outsideDir);
+        var sourceFile = Path.Combine(outsideDir, "sermon.pdf");
+        File.WriteAllText(sourceFile, "pdf-bytes");
+
+        var playlist = new PlaylistInstance();
+        playlist.Items.Add(new PDFSlidesGroupItemInstance(playlist)
+        {
+            Title = "Sermon Slides",
+            SourcePresentationFile = sourceFile
+        });
+
+        var path = Path.Combine(playlistDir, "playlist-pdf-outside.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, sourceFile);
+        // NOTE: not asserting the absence of ".." across the whole document — the default
+        // avares:// LogoGraphicFile is separately (and pre-existingly) mangled into a ".." path
+        // by this serializer. Assert specifically that THIS source was not relativized.
+        Assert.IsFalse(rawXml.Contains(Path.GetRelativePath(playlistDir, sourceFile)),
+            "A source outside the playlist folder must stay absolute, not become a '..' relative path.");
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var pdfItem = (PDFSlidesGroupItem)deserialized.Items.Single();
+        Assert.AreEqual(sourceFile, pdfItem.SourcePresentationFile);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_MediaGroupItem_SourceOutsidePlaylistFolder_KeepsAbsolutePath()
+    {
+        var playlistDir = Path.Combine(_tempDir, "PlaylistFolder");
+        var outsideDir = Path.Combine(_tempDir, "Outside");
+        Directory.CreateDirectory(playlistDir);
+        Directory.CreateDirectory(outsideDir);
+        var mediaFile = Path.Combine(outsideDir, "photo.jpg");
+        File.WriteAllText(mediaFile, "jpg-bytes");
+
+        var playlist = new PlaylistInstance();
+        var mediaGroupInstance = new MediaGroupItemInstance(playlist) { Title = "Photos" };
+        mediaGroupInstance.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = mediaFile });
+        playlist.Items.Add(mediaGroupInstance);
+
+        var path = Path.Combine(playlistDir, "playlist-mediagroup-outside.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, mediaFile);
+        Assert.IsFalse(rawXml.Contains(Path.GetRelativePath(playlistDir, mediaFile)),
+            "A media file outside the playlist folder must stay absolute, not become a '..' relative path.");
+    }
 }

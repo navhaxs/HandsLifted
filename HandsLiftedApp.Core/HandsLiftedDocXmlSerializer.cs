@@ -79,6 +79,46 @@ namespace HandsLiftedApp.Core
             }
         }
 
+        /// <summary>
+        /// Relativizes <paramref name="path"/> against the playlist folder, but only when it
+        /// actually lives under that folder. A source outside the folder — a legacy playlist, or a
+        /// file added through an add path that predates copy-on-add — would otherwise be written as
+        /// <c>..\..\Users\someone\sermon.pdf</c>, which looks portable but is not.
+        /// </summary>
+        private static string? ToRelativePathIfUnderPlaylistDirectory(string playlistDirectoryPath, string? path)
+        {
+            if (path == null || !Path.IsPathFullyQualified(path))
+            {
+                return path;
+            }
+
+            if (!IsUnderDirectory(playlistDirectoryPath, path))
+            {
+                Log.Warning(
+                    "Keeping absolute path for source outside the playlist folder (not portable): {Path}",
+                    path);
+                return path;
+            }
+
+            return RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath, path);
+        }
+
+        private static bool IsUnderDirectory(string directoryPath, string path)
+        {
+            if (!Path.IsPathFullyQualified(directoryPath))
+            {
+                return false;
+            }
+
+            // GetRelativePath returns `path` unchanged (still rooted) when the two are on
+            // different volumes, and a leading ".." when `path` sits above `directoryPath`.
+            var relative = Path.GetRelativePath(directoryPath, path);
+            return !Path.IsPathRooted(relative)
+                   && relative != ".."
+                   && !relative.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                   && !relative.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal);
+        }
+
         public static Item SerializeItem(Item item, string playlistDirectoryPath)
         {
             if (item is LogoItemInstance i)
@@ -162,7 +202,7 @@ namespace HandsLiftedApp.Core
                                 if (newMediaItem.SourceMediaFilePath != null)
                                 {
                                     newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                                        ToRelativePathIfUnderPlaylistDirectory(playlistDirectoryPath,
                                             mediaItem.SourceMediaFilePath);
                                 }
 
@@ -182,7 +222,7 @@ namespace HandsLiftedApp.Core
                     UUID = powerPointPresentationItemInstance.UUID,
                     Title = powerPointPresentationItemInstance.Title,
                     AutoAdvanceTimer = powerPointPresentationItemInstance.AutoAdvanceTimer,
-                    SourcePresentationFile = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                    SourcePresentationFile = ToRelativePathIfUnderPlaylistDirectory(playlistDirectoryPath,
                         powerPointPresentationItemInstance.SourcePresentationFile),
                     SlideTransitionDurationMs = powerPointPresentationItemInstance.SlideTransitionDurationMs
                 };
@@ -205,7 +245,7 @@ namespace HandsLiftedApp.Core
                     UUID = pdfSlidesGroupItemInstance.UUID,
                     Title = pdfSlidesGroupItemInstance.Title,
                     AutoAdvanceTimer = pdfSlidesGroupItemInstance.AutoAdvanceTimer,
-                    SourcePresentationFile = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                    SourcePresentationFile = ToRelativePathIfUnderPlaylistDirectory(playlistDirectoryPath,
                         pdfSlidesGroupItemInstance.SourcePresentationFile),
                     SlideTransitionDurationMs = pdfSlidesGroupItemInstance.SlideTransitionDurationMs
                 };
