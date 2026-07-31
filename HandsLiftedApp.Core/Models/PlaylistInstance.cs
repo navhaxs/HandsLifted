@@ -177,7 +177,9 @@ namespace HandsLiftedApp.Core.Models
                     // and insert at INDEX
                     foreach (var filePath in itemsToInsert)
                     {
-                        var newItem = CreateItem.GenerateItem(filePath);
+                        var localizedFilePath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
+                            filePath, PlaylistWorkingDirectory);
+                        var newItem = CreateItem.GenerateItem(localizedFilePath);
                         if (newItem != null)
                         {
                             var newItemInstance = ItemInstanceFactory.ToItemInstance(newItem, this);

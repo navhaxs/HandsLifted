@@ -302,7 +302,9 @@ public class MainViewModel : ViewModelBase
                         });
                         if (filePaths.Count > 0)
                         {
-                            itemToInsert = CreateItem.OpenPresentationFile(filePaths[0].TryGetLocalPath(), Playlist);
+                            var localizedPresentationPath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
+                                filePaths[0].TryGetLocalPath(), Playlist.PlaylistWorkingDirectory);
+                            itemToInsert = CreateItem.OpenPresentationFile(localizedPresentationPath, Playlist);
                         }
 
                         break;
