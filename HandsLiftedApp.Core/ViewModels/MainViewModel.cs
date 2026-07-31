@@ -224,6 +224,14 @@ public class MainViewModel : ViewModelBase
                         () => Playlist.Items.Add(item),
                         DispatcherPriority.Background);
                 }
+                foreach (var item in builtItems)
+                {
+                    if (item is IItemSyncable syncable && item is MediaGroupItem group
+                        && SlideRegenerationCheck.NeedsSlideRegeneration(group))
+                    {
+                        syncable.Sync();
+                    }
+                }
                 Playlist.IsPlaylistLoading = false;
 
                 Playlist.LastSaved = new DateTime();
