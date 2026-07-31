@@ -142,4 +142,48 @@ public class PortableAssetCopierTests
         Assert.AreEqual(source, result);
         Assert.IsFalse(Directory.Exists(Path.Combine(_playlistDir, "Media")));
     }
+
+    // A playlist that has never been saved still has PlaylistInstance's class-default
+    // relative working directory (@"VisionScreensUserData\"), which would otherwise resolve
+    // against Environment.CurrentDirectory.
+    [TestMethod]
+    public void CopyIntoSubfolder_WorkingDirectoryNotFullyQualified_ReturnsSourceUnchangedAndCreatesNothing()
+    {
+        var source = WriteSourceFile("photo.jpg", "photo-bytes");
+        var relativeWorkingDirectory = @"VisionScreensUserData\";
+
+        var result = PortableAssetCopier.CopyIntoSubfolder(source, relativeWorkingDirectory,
+            Path.Combine("Media", "Images"));
+
+        Assert.AreEqual(source, result);
+        Assert.IsFalse(
+            Directory.Exists(Path.Combine(Environment.CurrentDirectory, relativeWorkingDirectory)),
+            "No directory may be created relative to the current working directory.");
+    }
+
+    [TestMethod]
+    public void CopyIntoSubfolder_WorkingDirectoryNullOrEmpty_ReturnsSourceUnchanged()
+    {
+        var source = WriteSourceFile("photo.jpg", "photo-bytes");
+
+        Assert.AreEqual(source,
+            PortableAssetCopier.CopyIntoSubfolder(source, null!, Path.Combine("Media", "Images")));
+        Assert.AreEqual(source,
+            PortableAssetCopier.CopyIntoSubfolder(source, "", Path.Combine("Media", "Images")));
+    }
+
+    [TestMethod]
+    public void CopyMediaOrPresentationIntoPlaylist_WorkingDirectoryNotFullyQualified_ReturnsSourceUnchanged()
+    {
+        var image = WriteSourceFile("photo.jpg", "photo-bytes");
+        var video = WriteSourceFile("clip.mp4", "mp4-bytes");
+        var pdf = WriteSourceFile("sermon.pdf", "pdf-bytes");
+
+        Assert.AreEqual(image,
+            PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(image, @"VisionScreensUserData\"));
+        Assert.AreEqual(video,
+            PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(video, @"VisionScreensUserData\"));
+        Assert.AreEqual(pdf,
+            PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(pdf, @"VisionScreensUserData\"));
+    }
 }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Utils
 {
@@ -9,6 +10,21 @@ namespace HandsLiftedApp.Core.Utils
     {
         public static string CopyIntoSubfolder(string sourceFilePath, string playlistWorkingDirectory, string relativeSubfolder)
         {
+            // A playlist that has never been saved still carries the class-default relative
+            // working directory, which would resolve against Environment.CurrentDirectory —
+            // writing copies somewhere arbitrary in a dev run, or throwing
+            // UnauthorizedAccessException under Program Files in an installed build. Leave the
+            // source path alone instead; the next save (which sets a real working directory)
+            // is when copying can safely happen.
+            if (string.IsNullOrWhiteSpace(playlistWorkingDirectory)
+                || !Path.IsPathFullyQualified(playlistWorkingDirectory))
+            {
+                Log.Warning(
+                    "Skipping copy of {SourceFilePath} into playlist folder: PlaylistWorkingDirectory {PlaylistWorkingDirectory} is not a fully-qualified path (playlist not saved yet?)",
+                    sourceFilePath, playlistWorkingDirectory);
+                return sourceFilePath;
+            }
+
             var destDir = Path.Combine(playlistWorkingDirectory, relativeSubfolder);
             Directory.CreateDirectory(destDir);
 
