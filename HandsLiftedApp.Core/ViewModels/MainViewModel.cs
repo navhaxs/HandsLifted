@@ -367,14 +367,19 @@ public class MainViewModel : ViewModelBase
 
                         foreach (var filePath in filePaths)
                         {
-                            if (filePath != null && filePath is string)
+                            // NOTE: this used to be guarded by `filePath is string`, which is always
+                            // false for IStorageFile — the loop body never ran, so this add path
+                            // produced an empty media group.
+                            var localPath = filePath?.TryGetLocalPath();
+                            if (string.IsNullOrEmpty(localPath))
                             {
-                                DateTime now = DateTime.Now;
-                                string fileName = Path.GetFileName(filePath.TryGetLocalPath());
-                                string folderName = Path.GetDirectoryName(filePath.TryGetLocalPath());
-                                mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = filePath.TryGetLocalPath() });
+                                continue;
                             }
+
+                            var localizedMediaPath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
+                                localPath, Playlist.PlaylistWorkingDirectory);
+                            mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
+                                { SourceMediaFilePath = localizedMediaPath });
                         }
 
                         mediaGroupItem.GenerateSlides();
@@ -591,8 +596,10 @@ public class MainViewModel : ViewModelBase
                     {
                         if (item is IStorageFile file)
                         {
+                            var localizedMediaPath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
+                                file.Path.LocalPath, Playlist.PlaylistWorkingDirectory);
                             destItemInstance.Items.Insert(command.DestSlideIndex, new MediaGroupItem.MediaItem()
-                                { SourceMediaFilePath = file.Path.LocalPath });
+                                { SourceMediaFilePath = localizedMediaPath });
                         }
                         // else if (item is IStorageFolder folder)
                         // {

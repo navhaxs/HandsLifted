@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Utils;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Views.ItemEditDock
@@ -57,8 +58,10 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
                         await Globals.Instance.MainViewModel.ShowOpenFileDialog.Handle(new FilePickerOpenOptions() { SuggestedStartLocation = TopLevel.GetTopLevel(this).StorageProvider.TryGetFolderFromPathAsync(instance.SourcePresentationFile).Result });
                     if (filePaths == null || filePaths.Count == 0) return;
 
-                    instance.SourcePresentationFile = filePaths[0].Path.LocalPath;
-                    
+                    instance.SourcePresentationFile = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
+                        filePaths[0].Path.LocalPath,
+                        instance.ParentPlaylist.PlaylistWorkingDirectory);
+
                     instance.Sync();
                 }
                 catch (Exception ex)
