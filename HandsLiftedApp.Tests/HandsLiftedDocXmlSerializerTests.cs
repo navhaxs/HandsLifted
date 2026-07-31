@@ -209,6 +209,7 @@ public class HandsLiftedDocXmlSerializerTests
 
         var rawXml = File.ReadAllText(path);
         StringAssert.Contains(rawXml, @"Sources\sermon.pdf");
+        Assert.IsFalse(rawXml.Contains(_tempDir), "Absolute path must not be written; SourcePresentationFile should be relative.");
         Assert.IsFalse(rawXml.Contains("SomeOldExportDir"), "Stale export directory/baked slide paths must not be written.");
 
         var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
