@@ -5,6 +5,7 @@ using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Data.Slides;
@@ -385,9 +386,25 @@ namespace HandsLiftedApp.Core.Views.Designer
                     });
                 if (filePaths == null || filePaths.Count == 0) return;
 
-                if (AssetLoader.Exists(filePaths[0].Path) || File.Exists(filePaths[0].TryGetLocalPath()))
+                var localPath = filePaths[0].TryGetLocalPath();
+                if (AssetLoader.Exists(filePaths[0].Path) || File.Exists(localPath))
                 {
-                    bgGraphicFilePath.Text = filePaths[0].TryGetLocalPath();
+                    if (localPath != null && File.Exists(localPath))
+                    {
+                        var selectedTheme = designsListBox.SelectedItem as BaseSlideTheme;
+                        var isSharedDefaultTheme = selectedTheme != null
+                            && selectedTheme.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id;
+
+                        if (!isSharedDefaultTheme)
+                        {
+                            localPath = PortableAssetCopier.CopyIntoSubfolder(
+                                localPath,
+                                Globals.Instance.MainViewModel.Playlist.PlaylistWorkingDirectory,
+                                Path.Combine("Themes", "Backgrounds"));
+                        }
+                    }
+
+                    bgGraphicFilePath.Text = localPath;
                 }
             }
             catch (Exception ex)

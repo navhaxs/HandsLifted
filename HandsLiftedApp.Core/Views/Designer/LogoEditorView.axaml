@@ -55,7 +55,7 @@
                 <controls:TextBoxFilePathPicker FilePath="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.LogoGraphicFile}" />
                 
                 <TextBlock>Playlist:</TextBlock>
-                <controls:TextBoxFilePathPicker FilePath="{Binding Playlist.LogoGraphicFile}" />
+                <controls:TextBoxFilePathPicker x:Name="playlistLogoPicker" FilePath="{Binding Playlist.LogoGraphicFile}" />
             </StackPanel>
             <Grid DockPanel.Dock="Left">
                 <Viewbox VerticalAlignment="Center">
