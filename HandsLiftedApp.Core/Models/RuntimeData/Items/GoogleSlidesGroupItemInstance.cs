@@ -137,26 +137,35 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         {
                             string targetDirectory = ImportCacheService.GetKeyedCacheDirectory(
                                 "GoogleSlidesPresentationId", SourceGooglePresentationId);
-
-                            Log.Debug($"Importing Google Slides Presentation: {SourceGooglePresentationId}");
-
-                            var importStats = Main.RunGoogleSlidesImportTask(null,
-                                new Main.GoogleSlidesPresentationImporter()
-                                {
-                                    GoogleSlidesPresentationId = SourceGooglePresentationId,
-                                    OutputDirectory = targetDirectory,
-                                },
-                                Globals.Instance.AppPreferences.GoogleClientId,
-                                Globals.Instance.AppPreferences.GoogleClientSecret
-                            );
-
-                            this.Title = importStats.Title;
-
                             string exportDirectory = Path.Join(targetDirectory, "_export");
-                            Directory.CreateDirectory(exportDirectory);
 
-                            Log.Debug($"Importing PDF file: {importStats.OutputFullFilePath}");
-                            ConvertPDF.Convert(new ImportTask() { InputFile = importStats.OutputFullFilePath, OutputDirectory = exportDirectory, ExportFileFormat = ImportTask.ExportFileFormatType.PNG});
+                            if (ImportCacheService.HasUsableCachedExports(exportDirectory))
+                            {
+                                Log.Debug(
+                                    "Reusing cached Google Slides exports for {PresentationId} from {ExportDirectory}",
+                                    SourceGooglePresentationId, exportDirectory);
+                            }
+                            else
+                            {
+                                Log.Debug($"Importing Google Slides Presentation: {SourceGooglePresentationId}");
+
+                                var importStats = Main.RunGoogleSlidesImportTask(null,
+                                    new Main.GoogleSlidesPresentationImporter()
+                                    {
+                                        GoogleSlidesPresentationId = SourceGooglePresentationId,
+                                        OutputDirectory = targetDirectory,
+                                    },
+                                    Globals.Instance.AppPreferences.GoogleClientId,
+                                    Globals.Instance.AppPreferences.GoogleClientSecret
+                                );
+
+                                this.Title = importStats.Title;
+
+                                Directory.CreateDirectory(exportDirectory);
+
+                                Log.Debug($"Importing PDF file: {importStats.OutputFullFilePath}");
+                                ConvertPDF.Convert(new ImportTask() { InputFile = importStats.OutputFullFilePath, OutputDirectory = exportDirectory, ExportFileFormat = ImportTask.ExportFileFormatType.PNG});
+                            }
 
                             var newItems = new TrulyObservableCollection<GroupItem>();
                             foreach (var convertedFilePath in Directory.GetFiles(exportDirectory)

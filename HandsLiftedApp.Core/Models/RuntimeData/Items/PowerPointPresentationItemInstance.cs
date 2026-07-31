@@ -134,6 +134,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 {
                     string targetDirectory = ImportCacheService.GetFileImportCacheDirectory(SourcePresentationFile);
 
+                    if (ImportCacheService.HasUsableCachedExports(targetDirectory))
+                    {
+                        // The cache directory is keyed by the presentation's content hash, so an
+                        // already-populated directory can only hold this exact file's slides.
+                        Log.Debug("Reusing cached PowerPoint exports for {SourceFile} from {TargetDirectory}",
+                            SourcePresentationFile, targetDirectory);
+                        ApplySlidesFromDirectory(targetDirectory);
+                        IsBusy = false;
+                        return;
+                    }
+
                     Log.Debug($"Importing PowerPoint file (Syncfusion): {SourcePresentationFile}");
                     string convertedPdfPath = PresentationFileFormatConverter.Run(new ImportTask
                     {
@@ -168,6 +179,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 try
                 {
                     string targetDirectory = ImportCacheService.GetFileImportCacheDirectory(SourcePresentationFile);
+
+                    if (ImportCacheService.HasUsableCachedExports(targetDirectory))
+                    {
+                        // The cache directory is keyed by the presentation's content hash, so an
+                        // already-populated directory can only hold this exact file's slides.
+                        Log.Debug("Reusing cached PowerPoint exports for {SourceFile} from {TargetDirectory}",
+                            SourcePresentationFile, targetDirectory);
+                        ApplySlidesFromDirectory(targetDirectory);
+                        IsBusy = false;
+                        return;
+                    }
 
                     Log.Debug($"Importing PowerPoint file (native COM): {SourcePresentationFile}");
 

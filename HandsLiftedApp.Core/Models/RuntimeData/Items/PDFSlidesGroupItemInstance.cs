@@ -131,37 +131,30 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         {
                             string targetDirectory = ImportCacheService.GetFileImportCacheDirectory(SourcePresentationFile);
 
-                            Log.Debug($"Importing PDF file: {SourcePresentationFile}");
-                            
-     
-
-                            ConvertPDF.Convert(new ImportTask()
-                                {
-                                    InputFile = SourcePresentationFile,
-                                    OutputDirectory = targetDirectory,
-                                    ExportFileFormat = ImportTask.ExportFileFormatType.PNG
-                                }, new ImportTaskReporter(stats =>
-                                {
-                                    OnProgressUpdate(stats.JobPercentage);
-                                }));
-
-                            var newItems = new TrulyObservableCollection<GroupItem>();
-                            foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
-                                         .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
+                            if (ImportCacheService.HasUsableCachedExports(targetDirectory))
                             {
-                                newItems.Add(new MediaItem()
-                                    { SourceMediaFilePath = convertedFilePath });
+                                // The cache directory is keyed by the PDF's content hash, so an
+                                // already-populated directory can only hold this exact PDF's pages.
+                                Log.Debug(
+                                    "Reusing cached PDF exports for {SourceFile} from {TargetDirectory}",
+                                    SourcePresentationFile, targetDirectory);
+                            }
+                            else
+                            {
+                                Log.Debug($"Importing PDF file: {SourcePresentationFile}");
+
+                                ConvertPDF.Convert(new ImportTask()
+                                    {
+                                        InputFile = SourcePresentationFile,
+                                        OutputDirectory = targetDirectory,
+                                        ExportFileFormat = ImportTask.ExportFileFormatType.PNG
+                                    }, new ImportTaskReporter(stats =>
+                                    {
+                                        OnProgressUpdate(stats.JobPercentage);
+                                    }));
                             }
 
-                            Items = newItems;
-
-                            Log.Debug($"Generating slides");
-                            GenerateSlides();
-
-                            Log.Debug($"Import OK");
-
-                            LastSyncDateTime = DateTime.Now;
-
+                            ApplySlidesFromDirectory(targetDirectory);
                         }
                         catch (Exception e)
                         {
@@ -171,6 +164,29 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }
                 }
             });
+        }
+
+        private void ApplySlidesFromDirectory(string targetDirectory)
+        {
+            var newItems = new TrulyObservableCollection<GroupItem>();
+            foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
+                         .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
+            {
+                // Skip non-image files (e.g. intermediate PDFs left in the cache directory)
+                var ext = Path.GetExtension(convertedFilePath).ToLowerInvariant();
+                if (ext != ".png" && ext != ".jpg" && ext != ".jpeg") continue;
+
+                newItems.Add(new MediaItem() { SourceMediaFilePath = convertedFilePath });
+            }
+
+            Items = newItems;
+
+            Log.Debug($"Generating slides");
+            GenerateSlides();
+
+            Log.Debug($"Import OK");
+
+            LastSyncDateTime = DateTime.Now;
         }
 
         private void OnProgressUpdate(double obj)
