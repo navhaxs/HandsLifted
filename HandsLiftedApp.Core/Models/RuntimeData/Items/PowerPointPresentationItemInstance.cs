@@ -132,13 +132,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 try
                 {
-                    DateTime now = DateTime.Now;
-                    string fileName = Path.GetFileName(SourcePresentationFile);
-
-                    string targetDirectory = Path.Join(ParentPlaylist.PlaylistWorkingDirectory,
-                        FilenameUtils.ReplaceInvalidChars(fileName) + "_" +
-                        now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                    Directory.CreateDirectory(targetDirectory);
+                    string targetDirectory = ImportCacheService.GetFileImportCacheDirectory(SourcePresentationFile);
 
                     Log.Debug($"Importing PowerPoint file (Syncfusion): {SourcePresentationFile}");
                     string convertedPdfPath = PresentationFileFormatConverter.Run(new ImportTask
@@ -173,13 +167,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 try
                 {
-                    DateTime now = DateTime.Now;
-                    string fileName = Path.GetFileName(SourcePresentationFile);
-
-                    string targetDirectory = Path.Join(ParentPlaylist.PlaylistWorkingDirectory,
-                        FilenameUtils.ReplaceInvalidChars(fileName) + "_" +
-                        now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                    Directory.CreateDirectory(targetDirectory);
+                    string targetDirectory = ImportCacheService.GetFileImportCacheDirectory(SourcePresentationFile);
 
                     Log.Debug($"Importing PowerPoint file (native COM): {SourcePresentationFile}");
 

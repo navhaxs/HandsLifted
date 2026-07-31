@@ -135,13 +135,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     {
                         try
                         {
-                            DateTime now = DateTime.Now;
-
-                            string targetDirectory = Path.Join(ParentPlaylist
-                                    .PlaylistWorkingDirectory,
-                                FilenameUtils.ReplaceInvalidChars(SourceGooglePresentationId) + "_" +
-                                now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                            Directory.CreateDirectory(targetDirectory);
+                            string targetDirectory = ImportCacheService.GetKeyedCacheDirectory(
+                                "GoogleSlidesPresentationId", SourceGooglePresentationId);
 
                             Log.Debug($"Importing Google Slides Presentation: {SourceGooglePresentationId}");
 
