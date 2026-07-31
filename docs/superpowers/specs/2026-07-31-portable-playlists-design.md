@@ -44,7 +44,13 @@ Rendered PDF/PPTX/Google-Slides PNG exports do **not** live under this folder �
 
 ## Copy-on-add for media, theme graphics, logo
 
-Every file picker for an image/video/audio media item, a theme background graphic, or the playlist logo copies the selected file into the appropriate subfolder immediately (`Media/Images`, `Media/Video`, `Media/Audio`, `Themes/Backgrounds`, `Themes/Logo`), and the item/theme is updated to reference the copy from then on. Original picked-from location is never referenced again.
+**Media (images/video/audio) and PDF/PPTX sources — one central hook.** Every route for adding a media/presentation item (the "Add Item" browse dialog, drag-and-drop, and picking a result from a Library — including a media-bin `Library`, see [Library.cs:34](../../../HandsLiftedApp.Core/Models/Library/Library.cs:34)) already funnels through the single `AddItemByFilePathMessage` handler in [PlaylistInstance.cs:168](../../../HandsLiftedApp.Core/Models/PlaylistInstance.cs:168), which calls `CreateItem.GenerateItem(filePath)` ([CreateItem.cs:114](../../../HandsLiftedApp.Core/CreateItem.cs:114)). That function currently sets `SourceMediaFilePath`/`SourcePresentationFile` directly to whatever `filePath` it's given — a library folder path and a raw disk path are indistinguishable to it. The copy-into-playlist-folder step belongs here, in this one place, not scattered across individual pickers — it then automatically covers Library-sourced media too, with no separate design needed for that case.
+
+Song and Scripture library items need no such change: [CreateItem.cs:151](../../../HandsLiftedApp.Core/CreateItem.cs:151) already parses `.txt`/`.xml` library files straight into fully-embedded `SongItem`/`ScriptureItem` data (lyrics, stanzas, arrangements inline) — no file reference is kept at runtime, so they're already portable/decoupled today. Confirmed no changes needed there.
+
+**Theme background graphic and logo pickers** are separate, dedicated code paths (not part of the media-add flow above), so they each get their own copy-on-add call into `Themes/Backgrounds` / `Themes/Logo` respectively.
+
+All copies land in the appropriate subfolder (`Media/Images`, `Media/Video`, `Media/Audio`, `Themes/Backgrounds`, `Themes/Logo`, `Sources/`), and the item/theme is updated to reference the copy from then on. The original picked-from location (library folder or arbitrary disk path) is never referenced again.
 
 **Naming/collision rule:** the copy keeps the original filename. Only if a *different* file already exists at that name is a short content-hash suffix appended (`IMG_0001_a3f9.jpg`). Re-adding the exact same file a second time just creates a duplicate with the same name (harmless, simplest behavior — no dedup logic).
 
@@ -79,6 +85,7 @@ Playlists saved before this change have `Items` baked into `playlist.xml`, point
 ## Testing
 
 - Round-trip test: save a playlist with each asset type (image, video, audio, theme background, logo, PDF, PPTX) from one simulated "playlist directory", copy the folder to a different path, reload, assert every reference resolves.
+- Adding media via a Library (media-bin) selection copies the file into the playlist folder identically to a raw disk drag-drop, using the same `CreateItem.GenerateItem` code path.
 - `ImportCacheService` content-hash key: same bytes at two different absolute paths → same cache directory.
 - Legacy-format playlist (pre-existing baked-in `Items`) still loads and plays correctly without forcing a re-sync.
 - `Sync()` no longer creates any files under `PlaylistWorkingDirectory` for PDF/PPTX/GoogleSlides items.
