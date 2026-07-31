@@ -185,4 +185,34 @@ public class HandsLiftedDocXmlSerializerTests
         var scriptureItem = (ScriptureItem)deserialized.Items.Single();
         Assert.IsNull(scriptureItem.SlideTransitionDurationMs);
     }
+
+    [TestMethod]
+    public void SerializePlaylist_PdfItem_SourcePresentationFileIsRelative_ItemsAndExportDirNotWritten()
+    {
+        var playlist = new PlaylistInstance();
+        var sourcesDir = Path.Combine(_tempDir, "Sources");
+        Directory.CreateDirectory(sourcesDir);
+        var sourceFile = Path.Combine(sourcesDir, "sermon.pdf");
+        File.WriteAllText(sourceFile, "pdf-bytes");
+
+        var pdfInstance = new PDFSlidesGroupItemInstance(playlist)
+        {
+            Title = "Sermon Slides",
+            SourcePresentationFile = sourceFile,
+            SourceSlidesExportDirectory = Path.Combine(_tempDir, "SomeOldExportDir")
+        };
+        pdfInstance.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = Path.Combine(_tempDir, "SomeOldExportDir", "slide1.png") });
+        playlist.Items.Add(pdfInstance);
+
+        var path = Path.Combine(_tempDir, "playlist-pdf.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, @"Sources\sermon.pdf");
+        Assert.IsFalse(rawXml.Contains("SomeOldExportDir"), "Stale export directory/baked slide paths must not be written.");
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var pdfItem = (PDFSlidesGroupItem)deserialized.Items.Single();
+        Assert.AreEqual(0, pdfItem.Items.Count);
+    }
 }

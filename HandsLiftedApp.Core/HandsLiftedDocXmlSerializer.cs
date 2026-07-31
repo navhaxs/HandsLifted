@@ -181,32 +181,9 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = powerPointPresentationItemInstance.UUID,
                     Title = powerPointPresentationItemInstance.Title,
-                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(powerPointPresentationItemInstance
-                        .Items
-                        .Select(item =>
-                        {
-                            if (item is MediaGroupItem.MediaItem mediaItem)
-                            {
-                                // TODO deep copy
-                                var newMediaItem = new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
-                                if (newMediaItem.SourceMediaFilePath != null)
-                                {
-                                    newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
-                                            mediaItem.SourceMediaFilePath);
-                                }
-
-                                return mediaItem;
-                            }
-
-                            return item;
-                        }).ToList()),
                     AutoAdvanceTimer = powerPointPresentationItemInstance.AutoAdvanceTimer,
-                    SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                    SourcePresentationFile = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
                         powerPointPresentationItemInstance.SourcePresentationFile),
-                    SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        powerPointPresentationItemInstance.SourceSlidesExportDirectory),
                     SlideTransitionDurationMs = powerPointPresentationItemInstance.SlideTransitionDurationMs
                 };
             }
@@ -216,30 +193,8 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = googleSlidesGroupItemInstance.UUID,
                     Title = googleSlidesGroupItemInstance.Title,
-                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(googleSlidesGroupItemInstance.Items
-                        .Select(item =>
-                        {
-                            if (item is MediaGroupItem.MediaItem mediaItem)
-                            {
-                                // TODO deep copy
-                                var newMediaItem = new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
-                                if (newMediaItem.SourceMediaFilePath != null)
-                                {
-                                    newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
-                                            mediaItem.SourceMediaFilePath);
-                                }
-
-                                return mediaItem;
-                            }
-
-                            return item;
-                        }).ToList()),
                     AutoAdvanceTimer = googleSlidesGroupItemInstance.AutoAdvanceTimer,
                     SourceGooglePresentationId = googleSlidesGroupItemInstance.SourceGooglePresentationId,
-                    SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        googleSlidesGroupItemInstance.SourceSlidesExportDirectory),
                     SlideTransitionDurationMs = googleSlidesGroupItemInstance.SlideTransitionDurationMs
                 };
             }
@@ -249,31 +204,9 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = pdfSlidesGroupItemInstance.UUID,
                     Title = pdfSlidesGroupItemInstance.Title,
-                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(pdfSlidesGroupItemInstance.Items
-                        .Select(item =>
-                        {
-                            if (item is MediaGroupItem.MediaItem mediaItem)
-                            {
-                                // TODO deep copy
-                                var newMediaItem = new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
-                                if (newMediaItem.SourceMediaFilePath != null)
-                                {
-                                    newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
-                                            mediaItem.SourceMediaFilePath);
-                                }
-
-                                return mediaItem;
-                            }
-
-                            return item;
-                        }).ToList()),
                     AutoAdvanceTimer = pdfSlidesGroupItemInstance.AutoAdvanceTimer,
-                    SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                    SourcePresentationFile = RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
                         pdfSlidesGroupItemInstance.SourcePresentationFile),
-                    SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        pdfSlidesGroupItemInstance.SourceSlidesExportDirectory),
                     SlideTransitionDurationMs = pdfSlidesGroupItemInstance.SlideTransitionDurationMs
                 };
             }
