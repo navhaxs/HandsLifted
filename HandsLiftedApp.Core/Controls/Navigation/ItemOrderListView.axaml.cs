@@ -124,7 +124,12 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 }
 
                 Calculate(sender, e);
-      
+
+                if (lastAdornerElement == null)
+                {
+                    return;
+                }
+
                 var adornerLayer = AdornerLayer.GetAdornerLayer(lastAdornerElement);
                 if (adornerLayer != null)
                 {
