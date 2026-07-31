@@ -11,11 +11,12 @@ public static class ImportCacheService
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "VisionScreens", "ImportCache");
 
-    /// <summary>Cache dir for a local file. Stable per absolute path.</summary>
+    /// <summary>Cache dir for a local file. Stable per file content, so it survives the source file moving to a different absolute path (e.g. a different machine).</summary>
     public static string GetFileImportCacheDirectory(string sourceFilePath)
     {
-        var key = Path.GetFullPath(sourceFilePath);
-        return GetOrCreateDir(HashKey(key));
+        using var stream = File.OpenRead(sourceFilePath);
+        var hash = SHA256.HashData(stream);
+        return GetOrCreateDir(Convert.ToHexString(hash)[..16]);
     }
 
     /// <summary>Cache dir for a non-file source (e.g. Google Slides presentation ID).</summary>
