@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using HandsLiftedApp.Comparer;
+using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Models.PlaylistActions;
 using ReactiveUI;
@@ -71,6 +72,11 @@ namespace HandsLiftedApp.Core.Models.Library
                 .OrderBy(i => i.Title);
         }
 
+        private static readonly HashSet<string> SupportedMediaExtensions = new(
+            Constants.SUPPORTED_IMAGE.Concat(Constants.SUPPORTED_VIDEO)
+                .Concat(Constants.SUPPORTED_PDF).Concat(Constants.SUPPORTED_POWERPOINT),
+            StringComparer.OrdinalIgnoreCase);
+
         protected virtual void Refresh()
         {
             if (!Directory.Exists(Config.Directory))
@@ -81,6 +87,7 @@ namespace HandsLiftedApp.Core.Models.Library
             {
                 var files = new DirectoryInfo(Config.Directory).GetFiles("*.*", SearchOption.TopDirectoryOnly)
                     .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
+                    .Where(f => SupportedMediaExtensions.Contains(f.Extension.TrimStart('.')))
                     .Select(f => f.FullName)
                     // .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.OrdinalIgnoreCase))
                     .OrderBy(x => x, new NaturalSortStringComparer(StringComparison.Ordinal));
