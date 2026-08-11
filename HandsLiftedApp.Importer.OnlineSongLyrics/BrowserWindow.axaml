@@ -1,42 +1,72 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:avaloniaWebView="clr-namespace:AvaloniaWebView;assembly=Avalonia.WebView"
-        xmlns:onlineSongLyrics="clr-namespace:HandsLiftedApp.Importer.OnlineSongLyrics"
-        mc:Ignorable="d" 
-        Width="900" Height="650"
-        WindowStartupLocation="CenterScreen"
-        RequestedThemeVariant="Light"
-        x:Class="HandsLiftedApp.Importer.OnlineSongLyrics.BrowserWindow"
-        ExtendClientAreaToDecorationsHint="True"
-        x:DataType="onlineSongLyrics:BrowserWindowViewModel">
+﻿<Window
+    ExtendClientAreaToDecorationsHint="True"
+    Height="650"
+    RequestedThemeVariant="Light"
+    Width="900"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Importer.OnlineSongLyrics.BrowserWindow"
+    x:DataType="onlineSongLyrics:BrowserWindowViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:onlineSongLyrics="clr-namespace:HandsLiftedApp.Importer.OnlineSongLyrics"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.DataContext>
+        <onlineSongLyrics:BrowserWindowViewModel />
+    </Design.DataContext>
+
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top"
-                   FontSize="14"
-                   Padding="20 10 20 8">
+        <TextBlock
+            DockPanel.Dock="Top"
+            FontSize="14"
+            Padding="20,10,20,8">
             Import Song
         </TextBlock>
-        <Border DockPanel.Dock="Top" MinHeight="60" MaxHeight="40" Background="ForestGreen" BorderThickness="0 0 0 0"
-                IsVisible="{Binding SelectedClipboardData, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+        <Border
+            Background="ForestGreen"
+            BorderThickness="0,0,0,0"
+            DockPanel.Dock="Top"
+            IsVisible="{Binding SelectedClipboardData, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+            MaxHeight="40"
+            MinHeight="60">
             <DockPanel>
 
-                <avalonia:MaterialIcon Kind="About" Foreground="White" Width="30" Height="30" Margin="16 8 8 8" />
+                <avalonia:MaterialIcon
+                    Foreground="White"
+                    Height="30"
+                    Kind="About"
+                    Margin="16,8,8,8"
+                    Width="30" />
 
-                <Button DockPanel.Dock="Right" CornerRadius="0" VerticalAlignment="Stretch" Click="ImportSongButton_OnClick">
-                    <DockPanel Margin="3 2">
-                        <avalonia:MaterialIcon Kind="ArrowRightCircleOutline" Width="30" Height="30"
-                                               Foreground="White"
-                                               Margin="0 0 8 0" />
-                        <TextBlock VerticalAlignment="Center" FontSize="16" Foreground="White">Import song</TextBlock>
+                <Button
+                    Background="#145414"
+                    BorderThickness="0"
+                    Click="ImportSongButton_OnClick"
+                    CornerRadius="0"
+                    DockPanel.Dock="Right"
+                    VerticalAlignment="Stretch">
+                    <DockPanel Margin="3,2">
+                        <avalonia:MaterialIcon
+                            Foreground="White"
+                            Height="30"
+                            Kind="ArrowRightCircleOutline"
+                            Margin="0,0,8,0"
+                            Width="30" />
+                        <TextBlock
+                            FontSize="16"
+                            Foreground="White"
+                            VerticalAlignment="Center">
+                            Import song
+                        </TextBlock>
                     </DockPanel>
                 </Button>
                 <TextBlock
-                    x:Name="PART_SelectionText"
-                    VerticalAlignment="Center"
+                    Foreground="White"
                     HorizontalAlignment="Left"
-                    Foreground="White">
+                    VerticalAlignment="Center"
+                    x:Name="PART_SelectionText">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{} Selected song: '{0}'">
                             <Binding Path="SelectedClipboardDataTitle" />
@@ -45,16 +75,27 @@
                 </TextBlock>
             </DockPanel>
         </Border>
-        <Border BorderThickness="1" CornerRadius="6" Padding="2" Margin="4"
-                HorizontalAlignment="Stretch" Background="LightGray">
-            <Carousel SelectedIndex="0" Name="Carousel">
+        <Border
+            Background="LightGray"
+            BorderThickness="1"
+            CornerRadius="6"
+            HorizontalAlignment="Stretch"
+            Margin="4"
+            Padding="2">
+            <Carousel Name="Carousel" SelectedIndex="0">
                 <ScrollViewer>
 
-                    <Border BorderBrush="#2ECAFF" BorderThickness="2" Padding="20" CornerRadius="6"
-                            HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                    <Border
+                        Background="White"
+                        BorderBrush="#2ECAFF"
+                        BorderThickness="2"
+                        CornerRadius="6"
+                        HorizontalAlignment="Center"
+                        Padding="20"
+                        VerticalAlignment="Center">
 
                         <DockPanel HorizontalAlignment="Center">
-                       
+
                             <Grid>
                                 <Grid.Styles>
                                     <Style Selector="Ellipse">
@@ -62,7 +103,7 @@
                                         <Setter Property="Height" Value="40" />
                                         <Setter Property="Fill" Value="DarkSlateBlue" />
                                     </Style>
-                                    <Style Selector="StackPanel > Grid:not(:last-child)">
+                                    <Style Selector="StackPanel &gt; Grid:not(:last-child)">
                                         <Setter Property="Margin" Value="0 0 0 18" />
                                     </Style>
                                     <Style Selector="TextBlock.Number">
@@ -80,7 +121,12 @@
 
                                 <StackPanel>
                                     <Grid>
-                                        <TextBlock Classes="Main" HorizontalAlignment="Center" Margin="10">How to import lyrics from online:</TextBlock>
+                                        <TextBlock
+                                            Classes="Main"
+                                            HorizontalAlignment="Center"
+                                            Margin="10">
+                                            How to import lyrics from online:
+                                        </TextBlock>
                                     </Grid>
 
                                     <Grid ColumnDefinitions="64,*">
@@ -88,7 +134,7 @@
                                             <Ellipse />
                                             <TextBlock Classes="Number">1</TextBlock>
                                         </Grid>
-                                        <TextBlock Grid.Column="1" Classes="Main">Search for the song</TextBlock>
+                                        <TextBlock Classes="Main" Grid.Column="1">Search for the song</TextBlock>
                                     </Grid>
 
                                     <Grid ColumnDefinitions="64,*">
@@ -96,7 +142,7 @@
                                             <Ellipse />
                                             <TextBlock Classes="Number">2</TextBlock>
                                         </Grid>
-                                        <TextBlock Grid.Column="1" Classes="Main">Copy lyrics to the clipboard</TextBlock>
+                                        <TextBlock Classes="Main" Grid.Column="1">Copy lyrics to the clipboard</TextBlock>
                                     </Grid>
 
                                     <Grid ColumnDefinitions="64,*">
@@ -104,14 +150,20 @@
                                             <Ellipse />
                                             <TextBlock Classes="Number">3</TextBlock>
                                         </Grid>
-                                        <TextBlock Grid.Column="1" Classes="Main">Click the import button</TextBlock>
+                                        <TextBlock Classes="Main" Grid.Column="1">Click the import button</TextBlock>
                                     </Grid>
-                                    
-                                    <Button DockPanel.Dock="Bottom" HorizontalAlignment="Center" Click="Button_OnClick">
-                                        <DockPanel Margin="3 2">
-                                            <avalonia:MaterialIcon Kind="ArrowRightCircleOutline" Width="30" Height="30"
-                                                                   Margin="0 0 8 0" />
-                                            <TextBlock VerticalAlignment="Center" FontSize="16">Continue</TextBlock>
+
+                                    <Button
+                                        Click="Button_OnClick"
+                                        DockPanel.Dock="Bottom"
+                                        HorizontalAlignment="Center">
+                                        <DockPanel Margin="3,2">
+                                            <avalonia:MaterialIcon
+                                                Height="30"
+                                                Kind="ArrowRightCircleOutline"
+                                                Margin="0,0,8,0"
+                                                Width="30" />
+                                            <TextBlock FontSize="16" VerticalAlignment="Center">Continue</TextBlock>
                                         </DockPanel>
                                     </Button>
                                 </StackPanel>
@@ -124,14 +176,18 @@
 
                 <DockPanel>
                     <Grid DockPanel.Dock="Top">
-                        <ProgressBar x:Name="PART_ProgressBar" IsIndeterminate="True" VerticalAlignment="Bottom"
-                                     IsVisible="False" IsHitTestVisible="False" />
+                        <ProgressBar
+                            IsHitTestVisible="False"
+                            IsIndeterminate="True"
+                            IsVisible="False"
+                            VerticalAlignment="Bottom"
+                            x:Name="PART_ProgressBar" />
                         <DockPanel>
                             <DockPanel.Styles>
                                 <Style Selector="Button">
                                     <Setter Property="Background" Value="Transparent" />
                                 </Style>
-                                <Style Selector="Button > avalonia|MaterialIcon">
+                                <Style Selector="Button &gt; avalonia|MaterialIcon">
                                     <Setter Property="Foreground" Value="#444" />
                                     <Setter Property="MinWidth" Value="26" />
                                     <Setter Property="MinHeight" Value="26" />
@@ -156,12 +212,20 @@
                             <Button Click="ReloadButton_OnClick" DockPanel.Dock="Right">
                                 <avalonia:MaterialIcon Kind="DotsVertical" />
                             </Button>
-                            <TextBox Text="{Binding #PART_WebView.Url}" VerticalContentAlignment="Center" IsReadOnly="True" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{Binding #PART_WebView.Source}"
+                                VerticalContentAlignment="Center" />
                         </DockPanel>
                     </Grid>
                     <Border
-                        BorderThickness="1" CornerRadius="0" BorderBrush="DimGray" Padding="2" Margin="1" Background="White">
-                        <avaloniaWebView:WebView x:Name="PART_WebView" />
+                        Background="White"
+                        BorderBrush="DimGray"
+                        BorderThickness="1"
+                        CornerRadius="0"
+                        Margin="1"
+                        Padding="2">
+                        <NativeWebView x:Name="PART_WebView" />
                     </Border>
                 </DockPanel>
             </Carousel>

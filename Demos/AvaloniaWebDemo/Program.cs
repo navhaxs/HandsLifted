@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using System;
-using Avalonia.WebView.Desktop;
+using ReactiveUI.Avalonia;
 
 namespace AvaloniaWebDemo;
 
@@ -18,6 +18,6 @@ class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .UseDesktopWebView()
-            .LogToTrace();
+            .LogToTrace()
+            .UseReactiveUI(_ => { });
 }

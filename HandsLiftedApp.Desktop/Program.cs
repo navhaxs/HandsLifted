@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using Avalonia;
-using ReactiveUI.Avalonia;
 using Avalonia.Rendering.Composition;
-using Avalonia.WebView.Desktop;
 using HandsLiftedApp.Core;
+using ReactiveUI.Avalonia;
 using Serilog;
 
 namespace HandsLiftedApp.Desktop;
@@ -54,7 +53,6 @@ sealed class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             // .WithInterFont() this font is gross
-            .UseDesktopWebView()
             .With(new CompositionOptions()
             {
                 // https://github.com/AvaloniaUI/Avalonia/discussions/17808

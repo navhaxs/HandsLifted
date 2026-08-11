@@ -96,7 +96,7 @@ CCLI License #317371";
                     windowClipboardManager.ClipboardChanged += ClipboardChanged;
                 }
 
-                PART_WebView.Url = new Uri("https://songselect.com");
+                PART_WebView.Source = new Uri("https://songselect.com");
             });
 
             Closing += ((sender, args) => { });
@@ -162,7 +162,7 @@ Who ever lives and pleads for me";
 
         private void ReloadButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            PART_WebView.Reload();
+            PART_WebView.Refresh();
         }
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)
