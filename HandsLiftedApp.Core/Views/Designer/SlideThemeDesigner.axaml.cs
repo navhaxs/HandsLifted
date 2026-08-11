@@ -17,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using DryIoc.ImTools;
 using HandsLiftedApp.Data.Data.Models.Types;
 using Serilog;
 using SkiaSharp;
@@ -55,7 +54,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             InitializeComponent();
 
             var fontComboBox = this.Find<ComboBox>("fontComboBox");
-            var fontFamilies = FontManager.Current.SystemFonts.Map(x => x.Name).ToList();
+            var fontFamilies = FontManager.Current.SystemFonts.Select(x => x.Name).ToList();
             fontFamilies.Sort();
             fontComboBox.ItemsSource = fontFamilies;
 
