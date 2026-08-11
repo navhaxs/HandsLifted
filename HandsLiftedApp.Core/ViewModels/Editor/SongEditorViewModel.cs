@@ -5,6 +5,7 @@ using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
@@ -122,5 +123,67 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         }
 
         public PlaylistInstance Playlist { get; init; }
+
+        public void ParseAndLoadFromFreeText()
+        {
+            var songItemFromStringData = SongImporter.CreateSongItemFromStringData(FreeTextEntryField);
+            List<string> matchingStanzas = new();
+            foreach (var newStanza in songItemFromStringData.Stanzas)
+            {
+                matchingStanzas.Add(newStanza.Name);
+                var firstOrDefault =
+                    Song.Stanzas.FirstOrDefault(existingStanza =>
+                        existingStanza.Name == newStanza.Name);
+
+                if (firstOrDefault != null)
+                {
+                    firstOrDefault.Lyrics = newStanza.Lyrics;
+                }
+                else
+                {
+                    Song.Stanzas.Add(newStanza);
+                }
+            }
+
+            var removedSongStanzas =
+                Song.Stanzas.Where(existingStanza =>
+                    !matchingStanzas.Contains(existingStanza.Name)).ToList();
+            foreach (var removedSongStanza in removedSongStanzas)
+            {
+                Song.Stanzas.Remove(removedSongStanza);
+                while (Song.Arrangement.Contains(removedSongStanza.Id))
+                {
+                    Song.Arrangement.Remove(removedSongStanza.Id);
+                }
+            }
+
+            Song.Title = songItemFromStringData.Title;
+            Song.Copyright = songItemFromStringData.Copyright;
+
+            Song.Arrangement.Clear();
+            foreach (var sourceStanzaId in songItemFromStringData.Arrangement)
+            {
+                var sourceStanza =
+                    songItemFromStringData.Stanzas.First(sourceStanza => sourceStanza.Id == sourceStanzaId);
+                if (sourceStanza == null)
+                {
+                    continue;
+                }
+
+                var targetStanza =
+                    Song.Stanzas.First(targetStanza => targetStanza.Name == sourceStanza.Name);
+                if (targetStanza == null)
+                {
+                    continue;
+                }
+
+                Song.Arrangement.Add(targetStanza.Id);
+            }
+
+            if (Song.Arrangement.Count == 0)
+            {
+                Song.ResetArrangement();
+            }
+        }
     }
 }

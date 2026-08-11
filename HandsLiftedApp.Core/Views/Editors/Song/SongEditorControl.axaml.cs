@@ -28,6 +28,7 @@ namespace HandsLiftedApp.Core.Views.Editors.Song
                 if (this.DataContext is SongEditorViewModel songEditorViewModel)
                 {
                     songEditorViewModel.FreeTextEntryField = text;
+                    songEditorViewModel.ParseAndLoadFromFreeText();
                 }
             };
             window.Show();
