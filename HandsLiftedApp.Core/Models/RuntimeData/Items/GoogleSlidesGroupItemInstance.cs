@@ -238,9 +238,29 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                                 }
                             }
                         }
+                        catch (ImportFailureException e)
+                        {
+                            Log.Error(e, "Error importing Google Slides presentation file");
+                            Dispatcher.UIThread.Post(() =>
+                            {
+                                var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                                new GoogleSlidesReauthWindow(
+                                    "Google Slides Import Failed",
+                                    string.IsNullOrWhiteSpace(e.Message) ? "Could not import this Google Slides presentation." : e.Message,
+                                    isError: true).ShowDialog(mainWindow);
+                            });
+                        }
                         catch (Exception e)
                         {
                             Log.Error(e, "Error importing Google Slides presentation file");
+                            Dispatcher.UIThread.Post(() =>
+                            {
+                                var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+                                new GoogleSlidesReauthWindow(
+                                    "Google Slides Import Failed",
+                                    "Could not import this Google Slides presentation. Check the log for details.",
+                                    isError: true).ShowDialog(mainWindow);
+                            });
                         }
 
                         IsBusy = false;

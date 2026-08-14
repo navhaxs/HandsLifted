@@ -10,6 +10,7 @@ using Google.Apis.Util;
 using Google.Apis.Util.Store;
 using Serilog;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using static Google.Apis.Drive.v3.FilesResource;
@@ -179,8 +180,11 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                     {
                         throw new TokenExpiredImportException();
                     }
-                    // fails for pptx
-                    throw new ImportFailureException();
+                    // fails for pptx / non-native Slides files, among other precondition failures
+                    string? apiMessage = e.Error?.Errors?.FirstOrDefault()?.Message ?? e.Error?.Message;
+                    throw new ImportFailureException(string.IsNullOrWhiteSpace(apiMessage)
+                        ? "Google Slides import failed."
+                        : apiMessage);
                 }
                 catch (TokenResponseException e)
                 {
