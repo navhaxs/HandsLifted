@@ -16,7 +16,6 @@
 
     <UserControl.Resources>
         <converters:IntPlusOneConverter x:Key="IntPlusOneConverter" />
-        <converters:LastItemHeightConverter x:Key="lastItemHeightConverter" />
     </UserControl.Resources>
 
     <Grid Name="parentWrapper">
@@ -60,18 +59,6 @@
 
                 </Border>
 
-                <!--  "fill" the height with the last item  -->
-                <Grid DockPanel.Dock="Bottom">
-                    <!--  TODO this would be a good place to put a 'add item' button  -->
-                    <Grid.Height>
-                        <MultiBinding Converter="{StaticResource lastItemHeightConverter}">
-                            <Binding ElementName="parentWrapper" Path="Bounds.Height" />
-                            <!--  TODO this below binding does not update when items changes. Fix this.  -->
-                            <Binding ElementName="List" />
-                            <Binding ElementName="List" Path="Items" />
-                        </MultiBinding>
-                    </Grid.Height>
-                </Grid>
                 <ItemsControl
                     ItemsSource="{Binding Items}"
                     Margin="0,0,0,14"
