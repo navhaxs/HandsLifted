@@ -107,7 +107,41 @@ public class MainViewModel : ViewModelBase
                 }
             }
         });
-        
+
+        DeleteSlideCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
+        {
+            if (x is ReadOnlyCollection<object> parameters)
+            {
+                try
+                {
+                    Slide slide = (Slide)parameters.ElementAt(0);
+                    object groupItem = parameters.ElementAt(1);
+
+                    if (groupItem is MediaGroupItem group and IItemInstance groupInstance)
+                    {
+                        int index = groupInstance.Slides.IndexOf(slide);
+                        if (index >= 0 && index < group.Items.Count)
+                        {
+                            var lastSelectedSlide =
+                                groupInstance.Slides.ElementAtOrDefault(groupInstance.SelectedSlideIndex);
+
+                            group.Items.RemoveAt(index);
+                            RegerenateSlides(groupItem);
+
+                            if (lastSelectedSlide != null && !ReferenceEquals(lastSelectedSlide, slide))
+                            {
+                                groupInstance.SelectedSlideIndex = groupInstance.Slides.IndexOf(lastSelectedSlide);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                }
+            }
+        });
+
         // AutoSave trigger
         Observable.FromEventPattern(
                 handler => Playlist.Changed += handler,
@@ -649,6 +683,7 @@ public class MainViewModel : ViewModelBase
     public Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> ShowOpenFileDialog { get; }
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
+    public ReactiveCommand<object, Unit> DeleteSlideCommand { get; }
 
     private PlaylistInstance _playlist = new();
 

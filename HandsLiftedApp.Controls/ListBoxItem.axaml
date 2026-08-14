@@ -183,10 +183,6 @@
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
-                    <MenuItem
-                        Command="{Binding $parent[Window].DataContext.EditSlideInfoCommand}"
-                        CommandParameter="{Binding}"
-                        Header="Edit / Slide / Info" />
                     <!-- <MenuItem -->
                     <!--     Command="{Binding $parent[Window].DataContext.MoveUpItemCommand}" -->
                     <!--     CommandParameter="{Binding}" -->
@@ -195,12 +191,8 @@
                     <!--     Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" -->
                     <!--     CommandParameter="{Binding}" -->
                     <!--     Header="Move Down" /> -->
-                    <!-- <MenuItem -->
-                    <!--     Command="{Binding $parent[Window].DataContext.RemoveItemCommand}" -->
-                    <!--     CommandParameter="{Binding}" -->
-                    <!--     Header="Remove Item" /> -->
-                    <MenuItem Command="{Binding $parent[Window].DataContext.SlideSplitFromHere}"
-                              Header="Split group from here">
+                    <MenuItem Command="{Binding $parent[Window].DataContext.DeleteSlideCommand}"
+                              Header="Delete item">
                         <MenuItem.CommandParameter>
                             <MultiBinding>
                                 <Binding />
