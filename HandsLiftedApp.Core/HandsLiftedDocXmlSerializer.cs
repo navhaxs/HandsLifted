@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -257,6 +257,11 @@ namespace HandsLiftedApp.Core
         // Deserialize Playlist from XML
         public static Playlist DeserializePlaylist(string filePath)
         {
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException($"Playlist file not found: {filePath}", filePath);
+            }
+
             string? playlistDirectoryPath = Path.GetDirectoryName(filePath);
 
             if (playlistDirectoryPath == null)

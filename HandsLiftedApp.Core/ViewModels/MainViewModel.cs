@@ -148,7 +148,17 @@ public class MainViewModel : ViewModelBase
                 handler => Playlist.Changed -= handler)
             .Throttle(TimeSpan.FromSeconds(30))
             .Where(_ => Playlist.IsDirty)
-            .Subscribe(_ => PlaylistDocumentService.AutoSaveDocument(Playlist));
+            .Subscribe(_ =>
+            {
+                try
+                {
+                    PlaylistDocumentService.AutoSaveDocument(Playlist);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[DOC] Autosave failed");
+                }
+            });
         
         MessageBus.Current.Listen<LoadPlaylistAction>().Subscribe(async (msg) =>
         {
