@@ -41,6 +41,7 @@ namespace HandsLiftedApp.Core
 
         public ImportWorkerThread ImportWorkerThread { get; } = new();
         public SlideRenderQueue SlideRenderQueue { get; } = new SlideRenderQueue();
+        public HandsLiftedApp.Core.Models.Library.SongLibraryIndex SongLibraryIndex { get; } = new();
 
         public void OnStartup(IApplicationLifetime applicationLifetime)
         {
