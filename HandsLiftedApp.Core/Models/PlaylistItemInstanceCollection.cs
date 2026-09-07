@@ -42,6 +42,8 @@ namespace HandsLiftedApp.Core.Models
             {
                 i.ItemDataModified -= OnIOnItemDataModified;
             }
+
+            (item as IDisposable)?.Dispose();
         }
 
         private void OnIOnItemDataModified(object? sender, EventArgs args)
