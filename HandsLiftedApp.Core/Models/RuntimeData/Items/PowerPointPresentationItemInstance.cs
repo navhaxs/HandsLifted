@@ -169,6 +169,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         ExportFileFormat = ImportTask.ExportFileFormatType.PDF
                     }, new ImportTaskReporter(stats => { }));
 
+                    ExtractEmbeddedVideos(targetDirectory);
+
                     ApplySlidesFromDirectory(targetDirectory);
                 }
                 catch (Exception e)
@@ -232,6 +234,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         ExportFileFormat = ImportTask.ExportFileFormatType.PDF
                     }, new ImportTaskReporter(stats => { }));
 
+                    ExtractEmbeddedVideos(targetDirectory);
+
                     ApplySlidesFromDirectory(targetDirectory);
                 }
                 catch (Exception e)
@@ -262,6 +266,21 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             return File.Exists(warningsFile)
                 ? string.Join(Environment.NewLine, File.ReadAllLines(warningsFile))
                 : null;
+        }
+
+        private void ExtractEmbeddedVideos(string targetDirectory)
+        {
+            var result = EmbeddedVideoExtractor.ExtractVideos(SourcePresentationFile, targetDirectory);
+            var warningsFile = Path.Combine(targetDirectory, EmbeddedVideoExtractor.WarningsFileName);
+
+            if (result.Warnings.Count > 0)
+            {
+                File.WriteAllLines(warningsFile, result.Warnings);
+            }
+            else if (File.Exists(warningsFile))
+            {
+                File.Delete(warningsFile);
+            }
         }
 
         private void ApplySlidesFromDirectory(string targetDirectory)
