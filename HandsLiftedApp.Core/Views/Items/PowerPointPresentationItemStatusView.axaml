@@ -5,14 +5,19 @@
              xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="150"
              x:DataType="items:PowerPointPresentationItemInstance"
-             IsVisible="{Binding IsBusy}"
              x:Class="HandsLiftedApp.Core.Views.Items.PowerPointPresentationItemStatusView">
     <StackPanel>
-        <Border MinHeight="2">
+        <Border MinHeight="2" IsVisible="{Binding IsBusy}">
             <StackPanel>
                 <ProgressBar IsIndeterminate="True" MinHeight="2" />
                 <TextBlock Margin="10 6 10 0">Importing <Run Text="{Binding SourcePresentationFile}" />...</TextBlock>
             </StackPanel>
+        </Border>
+        <Border IsVisible="{Binding LastSyncWarning, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+            <TextBlock Margin="10 6 10 0"
+                       Foreground="#FFA500"
+                       TextWrapping="Wrap"
+                       Text="{Binding LastSyncWarning}" />
         </Border>
         <!-- <Button Click="Button_OnClick" IsEnabled="{Binding !IsBusy}">Sync</Button> -->
     </StackPanel>
