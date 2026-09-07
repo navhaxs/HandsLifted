@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.Library.Config;
@@ -30,7 +29,7 @@ namespace HandsLiftedApp.Tests.Models.Library
         }
 
         [TestMethod]
-        public void Scan_RegistersEachSongInto_GlobalSongLibraryIndex()
+        public async Task Scan_RegistersEachSongInto_GlobalSongLibraryIndex()
         {
             var song = new SongItem { Title = "Amazing Grace" };
             var filePath = Path.Combine(_libraryDir, "Amazing Grace.xml");
@@ -41,11 +40,15 @@ namespace HandsLiftedApp.Tests.Models.Library
             }
 
             var config = new LibraryConfig.LibraryDefinition { Label = "Test", Directory = _libraryDir };
+            var library = new SongLibrary(config, new FileSystemSongLibrarySource(_libraryDir));
 
-            // Directly test that BuildIndexAsync's internal call to Register works by calling it manually
-            // (integrating how SongLibrary invokes it during its refresh cycle)
-            Globals.Instance.SongLibraryIndex.Register(song, filePath, _libraryDir);
+            // BuildIndexAsync runs fire-and-forget from the constructor; poll briefly.
+            for (var i = 0; i < 50 && !library.IsIndexReady; i++)
+            {
+                await Task.Delay(20);
+            }
 
+            Assert.IsTrue(library.IsIndexReady, "Library index did not become ready in time");
             var resolved = Globals.Instance.SongLibraryIndex.Resolve(song.UUID);
             Assert.IsNotNull(resolved);
             Assert.AreEqual("Amazing Grace", resolved!.Title);
