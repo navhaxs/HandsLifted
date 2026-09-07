@@ -9,7 +9,6 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public abstract class Item : ReactiveObject
     {
-        [XmlIgnore]
         public Guid UUID { get; set; }
 
         private int _index;
