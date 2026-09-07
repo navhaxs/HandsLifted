@@ -43,6 +43,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             set => this.RaiseAndSetIfChanged(ref _lastSyncDateTime, value);
         }
 
+        private string? _lastSyncWarning;
+
+        public string? LastSyncWarning
+        {
+            get => _lastSyncWarning;
+            set => this.RaiseAndSetIfChanged(ref _lastSyncWarning, value);
+        }
+
         private BlankSlide _blankSlide = new();
 
         private static readonly object syncSlidesLock = new object();
@@ -234,20 +242,38 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
         }
 
+        internal static List<string> CollectSlideFilesInOrder(string targetDirectory)
+        {
+            var acceptedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".png", ".jpg", ".jpeg" };
+            foreach (var videoExt in Constants.SUPPORTED_VIDEO)
+            {
+                acceptedExtensions.Add("." + videoExt);
+            }
+
+            return Directory.GetFiles(targetDirectory)
+                .Where(f => acceptedExtensions.Contains(Path.GetExtension(f)))
+                .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort())
+                .ToList();
+        }
+
+        internal static string? ReadSyncWarnings(string targetDirectory)
+        {
+            var warningsFile = Path.Combine(targetDirectory, EmbeddedVideoExtractor.WarningsFileName);
+            return File.Exists(warningsFile)
+                ? string.Join(Environment.NewLine, File.ReadAllLines(warningsFile))
+                : null;
+        }
+
         private void ApplySlidesFromDirectory(string targetDirectory)
         {
             var newItems = new TrulyObservableCollection<GroupItem>();
-            foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
-                         .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
+            foreach (var filePath in CollectSlideFilesInOrder(targetDirectory))
             {
-                // Skip non-image files (e.g. intermediate PDFs from Syncfusion path)
-                var ext = Path.GetExtension(convertedFilePath).ToLowerInvariant();
-                if (ext != ".png" && ext != ".jpg" && ext != ".jpeg") continue;
-
-                newItems.Add(new MediaItem { SourceMediaFilePath = convertedFilePath });
+                newItems.Add(new MediaItem { SourceMediaFilePath = filePath });
             }
 
             Items = newItems;
+            LastSyncWarning = ReadSyncWarnings(targetDirectory);
 
             Log.Debug("Generating slides");
             GenerateSlides();
