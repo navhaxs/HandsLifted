@@ -69,7 +69,13 @@ public static class EmbeddedVideoExtractor
 
                 var slidePartPath = ResolvePresentationRelTarget(target);
                 var slideEntry = archive.GetEntry(slidePartPath);
-                if (slideEntry == null) continue;
+                if (slideEntry == null)
+                {
+                    // Can't read this part to check whether it's hidden - fail open (assume shown)
+                    // rather than silently shifting every subsequent slide's number.
+                    shownSlideParts.Add(slidePartPath);
+                    continue;
+                }
 
                 XDocument slideDoc;
                 try
@@ -79,11 +85,13 @@ public static class EmbeddedVideoExtractor
                 }
                 catch (Exception)
                 {
+                    // Same fail-open reasoning as above.
+                    shownSlideParts.Add(slidePartPath);
                     continue;
                 }
 
                 var show = slideDoc.Root?.Attribute("show")?.Value;
-                if (show == "0") continue; // hidden slide - excluded from PDF page count too
+                if (show is "0" or "false") continue; // hidden slide - excluded from PDF page count too
 
                 shownSlideParts.Add(slidePartPath);
             }

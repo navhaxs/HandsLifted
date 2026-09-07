@@ -14,11 +14,23 @@ public static class ImportCacheService
         "VisionScreens", "ImportCache");
 
     /// <summary>
-    /// Image extensions a completed conversion leaves in a cache directory. Matches the filter
-    /// the group-item instances apply when turning a cache directory back into slides.
+    /// File extensions a completed conversion leaves in a cache directory: images from the
+    /// PDF/PNG rasterization step, plus any embedded videos extracted out of a .pptx in place of a
+    /// slide's PNG (see EmbeddedVideoExtractor). Matches the filter the group-item instances apply
+    /// when turning a cache directory back into slides
+    /// (PowerPointPresentationItemInstance.CollectSlideFilesInOrder).
     /// </summary>
-    private static readonly HashSet<string> ExportImageExtensions =
-        new(StringComparer.OrdinalIgnoreCase) { ".png", ".jpg", ".jpeg" };
+    private static readonly HashSet<string> ExportImageExtensions = BuildExportExtensions();
+
+    private static HashSet<string> BuildExportExtensions()
+    {
+        var extensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".png", ".jpg", ".jpeg" };
+        foreach (var videoExt in Constants.SUPPORTED_VIDEO)
+        {
+            extensions.Add("." + videoExt);
+        }
+        return extensions;
+    }
 
     /// <summary>
     /// True when <paramref name="targetDirectory"/> already holds rasterized slide exports from a

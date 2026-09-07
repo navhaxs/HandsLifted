@@ -121,6 +121,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             if (IsBusy) return;
             IsBusy = true;
+            LastSyncWarning = null;
 
             ImportWorkerThread.priorityQueue.Add(new ImportWorkerThread.BackgroundWorkRequest()
             {
@@ -148,6 +149,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         // already-populated directory can only hold this exact file's slides.
                         Log.Debug("Reusing cached PowerPoint exports for {SourceFile} from {TargetDirectory}",
                             SourcePresentationFile, targetDirectory);
+                        ExtractEmbeddedVideos(targetDirectory);
                         ApplySlidesFromDirectory(targetDirectory);
                         IsBusy = false;
                         return;
@@ -196,6 +198,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         // already-populated directory can only hold this exact file's slides.
                         Log.Debug("Reusing cached PowerPoint exports for {SourceFile} from {TargetDirectory}",
                             SourcePresentationFile, targetDirectory);
+                        ExtractEmbeddedVideos(targetDirectory);
                         ApplySlidesFromDirectory(targetDirectory);
                         IsBusy = false;
                         return;
@@ -270,16 +273,28 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private void ExtractEmbeddedVideos(string targetDirectory)
         {
-            var result = EmbeddedVideoExtractor.ExtractVideos(SourcePresentationFile, targetDirectory);
-            var warningsFile = Path.Combine(targetDirectory, EmbeddedVideoExtractor.WarningsFileName);
+            try
+            {
+                var result = EmbeddedVideoExtractor.ExtractVideos(SourcePresentationFile, targetDirectory);
+                var warningsFile = Path.Combine(targetDirectory, EmbeddedVideoExtractor.WarningsFileName);
 
-            if (result.Warnings.Count > 0)
-            {
-                File.WriteAllLines(warningsFile, result.Warnings);
+                if (result.Warnings.Count > 0)
+                {
+                    File.WriteAllLines(warningsFile, result.Warnings);
+                }
+                else if (File.Exists(warningsFile))
+                {
+                    File.Delete(warningsFile);
+                }
+
+                Log.Debug("Embedded video extraction for {SourceFile}: {VideoCount} video(s), {WarningCount} warning(s)",
+                    SourcePresentationFile, result.SlideIndexToVideoFile.Count, result.Warnings.Count);
             }
-            else if (File.Exists(warningsFile))
+            catch (Exception e)
             {
-                File.Delete(warningsFile);
+                Log.Warning(e,
+                    "Embedded video extraction failed for {SourceFile}; slides will keep their static images",
+                    SourcePresentationFile);
             }
         }
 

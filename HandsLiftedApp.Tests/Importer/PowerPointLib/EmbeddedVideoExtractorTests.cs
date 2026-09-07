@@ -28,7 +28,7 @@ public class EmbeddedVideoExtractorTests
         }
     }
 
-    private sealed record TestSlide(bool Hidden, string? VideoTarget, string? VideoTargetMode);
+    private sealed record TestSlide(bool Hidden, string? VideoTarget, string? VideoTargetMode, string? ShowValue = null);
 
     private string CreateTestPptx(TestSlide[] slides)
     {
@@ -44,7 +44,7 @@ public class EmbeddedVideoExtractorTests
                 var slide = slides[i];
 
                 WriteEntry(archive, $"ppt/slides/slide{slideNum}.xml",
-                    BuildSlideXml(slide.Hidden, hasVideo: slide.VideoTarget != null));
+                    BuildSlideXml(slide.Hidden, hasVideo: slide.VideoTarget != null, showValue: slide.ShowValue));
 
                 if (slide.VideoTarget != null)
                 {
@@ -92,9 +92,9 @@ public class EmbeddedVideoExtractorTests
             """;
     }
 
-    private static string BuildSlideXml(bool hidden, bool hasVideo)
+    private static string BuildSlideXml(bool hidden, bool hasVideo, string? showValue = null)
     {
-        var showAttr = hidden ? " show=\"0\"" : "";
+        var showAttr = showValue != null ? $" show=\"{showValue}\"" : (hidden ? " show=\"0\"" : "");
         var videoElement = hasVideo
             ? """<p:pic><p:nvPicPr><p:nvPr><a:videoFile r:link="rId1"/></p:nvPr></p:nvPicPr></p:pic>"""
             : "";
@@ -163,6 +163,26 @@ public class EmbeddedVideoExtractorTests
             new TestSlide(Hidden: false, VideoTarget: null, VideoTargetMode: null),                    // shown #1
             new TestSlide(Hidden: true, VideoTarget: null, VideoTargetMode: null),                     // hidden, not numbered
             new TestSlide(Hidden: false, VideoTarget: "../media/media1.mp4", VideoTargetMode: null),   // shown #2
+        });
+
+        var result = EmbeddedVideoExtractor.ExtractVideos(pptxPath, _tempDir);
+
+        Assert.AreEqual(0, result.Warnings.Count);
+        Assert.IsTrue(result.SlideIndexToVideoFile.ContainsKey(2));
+        Assert.IsFalse(result.SlideIndexToVideoFile.ContainsKey(3));
+        Assert.AreEqual(Path.Combine(_tempDir, "Slide.2.mp4"), result.SlideIndexToVideoFile[2]);
+    }
+
+    [TestMethod]
+    public void ExtractVideos_HiddenSlideWithShowFalse_ExcludedFromNumbering()
+    {
+        // OOXML's @show is xsd:boolean, whose valid lexical forms include "false" as well as "0".
+        // PowerPoint itself always writes "0", but other producers (e.g. LibreOffice) may write "false".
+        var pptxPath = CreateTestPptx(new[]
+        {
+            new TestSlide(Hidden: false, VideoTarget: null, VideoTargetMode: null),                                 // shown #1
+            new TestSlide(Hidden: false, VideoTarget: null, VideoTargetMode: null, ShowValue: "false"),             // hidden via show="false", not numbered
+            new TestSlide(Hidden: false, VideoTarget: "../media/media1.mp4", VideoTargetMode: null),                // shown #2
         });
 
         var result = EmbeddedVideoExtractor.ExtractVideos(pptxPath, _tempDir);

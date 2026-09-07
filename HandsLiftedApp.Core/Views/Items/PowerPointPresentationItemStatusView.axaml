@@ -13,7 +13,7 @@
                 <TextBlock Margin="10 6 10 0">Importing <Run Text="{Binding SourcePresentationFile}" />...</TextBlock>
             </StackPanel>
         </Border>
-        <Border IsVisible="{Binding LastSyncWarning, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <Border IsVisible="{Binding LastSyncWarning, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
             <TextBlock Margin="10 6 10 0"
                        Foreground="#FFA500"
                        TextWrapping="Wrap"

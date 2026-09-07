@@ -116,4 +116,16 @@ public class ImportCacheServiceTests
 
         Assert.IsTrue(ImportCacheService.HasUsableCachedExports(dir));
     }
+
+    [TestMethod]
+    public void HasUsableCachedExports_ContainsOnlyExtractedVideoFile_ReturnsTrue()
+    {
+        // A deck whose every shown slide has embedded video has all its PNGs deleted by
+        // EmbeddedVideoExtractor, leaving only video files in the cache directory.
+        var dir = Path.Combine(_tempDir, "warm-cache-video-only");
+        Directory.CreateDirectory(dir);
+        File.WriteAllText(Path.Combine(dir, "Slide.1.mp4"), "mp4-bytes");
+
+        Assert.IsTrue(ImportCacheService.HasUsableCachedExports(dir));
+    }
 }
