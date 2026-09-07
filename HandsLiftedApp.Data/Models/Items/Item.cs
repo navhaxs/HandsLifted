@@ -22,7 +22,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         private string _title = "";
         [DataField]
-        public string Title
+        public virtual string Title
         {
             get => _title; set
             {
