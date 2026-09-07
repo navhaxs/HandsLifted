@@ -119,10 +119,13 @@ namespace HandsLiftedApp.Core
             string text = NormalizeLineEndingsToCRLF(raw);
             List<string> parsedBlocks = new List<string>(text.Split("\r\n\r\n").Select(str => str.Trim()));
 
-            SongItemInstance song = new SongItemInstance(Globals.Instance.MainViewModel?.Playlist)
-            {
-                Title = parsedBlocks.First().Trim(),
-            };
+            // NewDraft (not a plain constructor call): this song has no library file yet, so
+            // SongItemInstance needs its local-draft fallback in place before any of the
+            // property writes below (Title, Stanzas.Add, Copyright, Arrangement) can actually
+            // stick anywhere — a bare `new SongItemInstance(...)` resolves to nothing until a
+            // UUID is registered in SongLibraryIndex, and every write below would silently no-op.
+            SongItemInstance song = SongItemInstance.NewDraft(Globals.Instance.MainViewModel?.Playlist);
+            song.Title = parsedBlocks.First().Trim();
 
             // todo: stanza builder
             string? lastStanzaBody = null;

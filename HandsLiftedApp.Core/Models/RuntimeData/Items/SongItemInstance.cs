@@ -35,9 +35,132 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             set => Design = value?.Id ?? Guid.Empty;
         }
 
+        // A brand-new song authored in the editor that has no library file yet. Non-null only
+        // between NewDraft() and AttachToLibrary(); once attached, resolution goes through
+        // Globals.Instance.SongLibraryIndex like every other SongItemInstance.
+        private SongItem? _localDraft;
+
+        public SongItem? ResolvedSong => Globals.Instance.SongLibraryIndex.Resolve(UUID) ?? _localDraft;
+
+        public bool IsMissing => ResolvedSong == null;
+
+        public static SongItemInstance NewDraft(PlaylistInstance? parentPlaylist)
+        {
+            var draftSong = new SongItem();
+            var instance = new SongItemInstance(parentPlaylist) { UUID = draftSong.UUID };
+            instance._localDraft = draftSong;
+            return instance;
+        }
+
+        /// <summary>
+        /// Called once a draft's library file has been written (SongEditorWindow's
+        /// save/add-to-playlist flow). Registers the draft's content into the shared index
+        /// under this instance's UUID and clears local-draft state — from this point on,
+        /// resolution goes through SongLibraryIndex like any other reference.
+        /// </summary>
+        public void AttachToLibrary(string filePath, string libraryDirectory)
+        {
+            if (_localDraft == null)
+                return; // already attached, or was never a draft — no-op
+
+            Globals.Instance.SongLibraryIndex.Register(_localDraft, filePath, libraryDirectory);
+            _localDraft = null;
+            this.RaisePropertyChanged(nameof(IsMissing));
+        }
+
+        public override string Title
+        {
+            get => ResolvedSong?.Title ?? "(Missing Song)";
+            set { if (ResolvedSong is { } s) { s.Title = value; NotifySharedSongChanged(); } }
+        }
+
+        public override Guid Design
+        {
+            get => ResolvedSong?.Design ?? Guid.Empty;
+            set { if (ResolvedSong is { } s) { s.Design = value; NotifySharedSongChanged(); } }
+        }
+
+        public override string Copyright
+        {
+            get => ResolvedSong?.Copyright ?? "";
+            set { if (ResolvedSong is { } s) { s.Copyright = value; NotifySharedSongChanged(); } }
+        }
+
+        public override TrulyObservableCollection<SongStanza> Stanzas
+        {
+            get => ResolvedSong?.Stanzas ?? new TrulyObservableCollection<SongStanza>();
+            set { if (ResolvedSong is { } s) { s.Stanzas = value; NotifySharedSongChanged(); } }
+        }
+
+        public override SerializableDictionary<string, List<Guid>> Arrangements
+        {
+            get => ResolvedSong?.Arrangements ?? new SerializableDictionary<string, List<Guid>>();
+            set { if (ResolvedSong is { } s) { s.Arrangements = value; NotifySharedSongChanged(); } }
+        }
+
+        public override string? SelectedArrangementId
+        {
+            get => ResolvedSong?.SelectedArrangementId;
+            set { if (ResolvedSong is { } s) { s.SelectedArrangementId = value; NotifySharedSongChanged(); } }
+        }
+
+        public override string? MotionBackgroundVideoPath
+        {
+            get => ResolvedSong?.MotionBackgroundVideoPath;
+            set { if (ResolvedSong is { } s) { s.MotionBackgroundVideoPath = value; NotifySharedSongChanged(); } }
+        }
+
+        public override ObservableCollection<Guid> Arrangement
+        {
+            get => ResolvedSong?.Arrangement ?? new ObservableCollection<Guid>();
+            set { if (ResolvedSong is { } s) { s.Arrangement = value; NotifySharedSongChanged(); } }
+        }
+
+        public override Boolean EndOnBlankSlide
+        {
+            get => ResolvedSong?.EndOnBlankSlide ?? true;
+            set { if (ResolvedSong is { } s) { s.EndOnBlankSlide = value; NotifySharedSongChanged(); } }
+        }
+
+        public override Boolean StartOnTitleSlide
+        {
+            get => ResolvedSong?.StartOnTitleSlide ?? true;
+            set { if (ResolvedSong is { } s) { s.StartOnTitleSlide = value; NotifySharedSongChanged(); } }
+        }
+
+        private void NotifySharedSongChanged()
+        {
+            if (_localDraft != null)
+            {
+                // Not yet attached to the library — nothing else can be watching this UUID yet,
+                // just re-render this instance's own slides.
+                RaiseForwardedPropertiesChanged();
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+                return;
+            }
+
+            Globals.Instance.SongLibraryIndex.NotifyChanged(UUID);
+        }
+
+        private void RaiseForwardedPropertiesChanged()
+        {
+            this.RaisePropertyChanged(nameof(Title));
+            this.RaisePropertyChanged(nameof(Design));
+            this.RaisePropertyChanged(nameof(ResolvedDesignTheme));
+            this.RaisePropertyChanged(nameof(Copyright));
+            this.RaisePropertyChanged(nameof(Stanzas));
+            this.RaisePropertyChanged(nameof(Arrangements));
+            this.RaisePropertyChanged(nameof(SelectedArrangementId));
+            this.RaisePropertyChanged(nameof(MotionBackgroundVideoPath));
+            this.RaisePropertyChanged(nameof(Arrangement));
+            this.RaisePropertyChanged(nameof(EndOnBlankSlide));
+            this.RaisePropertyChanged(nameof(StartOnTitleSlide));
+            this.RaisePropertyChanged(nameof(IsMissing));
+        }
+
         private SongTitleSlide titleSlide;
         private DebounceDispatcher debounceDispatcher = new(200);
-        
+
         public event EventHandler ItemDataModified;
 
         public void GenerateArrangementViews()
@@ -61,6 +184,22 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
         {
             ParentPlaylist = parentPlaylist;
+
+            Globals.Instance.SongLibraryIndex.SongChanged
+                .Where(changedId => changedId == UUID)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ =>
+                {
+                    RaiseForwardedPropertiesChanged();
+                    // Content changed on the shared song — force the Cached == null re-render sweep
+                    // (existing gotcha: reassigning a watched property alone doesn't guarantee a
+                    // re-render if the subscription chain doesn't happen to fire for it).
+                    foreach (var slide in Slides.OfType<SongSlideInstance>())
+                        slide.Cached = null;
+                    if (TitleSlide is SongTitleSlideInstance titleInst)
+                        titleInst.Cached = null;
+                    debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+                });
 
             this.WhenAnyValue(x => x.Design)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
@@ -359,14 +498,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public Slide TitleSlide
         {
             get => _titleSlide.Value;
-        }
-
-        [XmlIgnore] private Boolean _endOnBlankSlide = true;
-
-        public Boolean EndOnBlankSlide
-        {
-            get => _endOnBlankSlide;
-            set => this.RaiseAndSetIfChanged(ref _endOnBlankSlide, value);
         }
 
         // Stanzas + Arrangement = _stanzaSlides
