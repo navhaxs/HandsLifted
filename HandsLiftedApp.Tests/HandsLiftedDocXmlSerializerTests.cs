@@ -134,7 +134,7 @@ public class HandsLiftedDocXmlSerializerTests
     public void SerializePlaylist_ThenDeserialize_RoundTripsSongItemTransitionOverride()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };
-        // No UUID registered in SongLibraryIndex and no local draft, so under the
+        // No SongId registered in SongLibraryIndex and no local draft, so under the
         // SongItemInstance facade (Task 6) this Title write is a no-op — Title isn't
         // asserted below, only SlideTransitionDurationMs, which is a real local field
         // on Item unaffected by the facade.
@@ -160,13 +160,14 @@ public class HandsLiftedDocXmlSerializerTests
     {
         var song = new SongItem { Title = "Amazing Grace", Copyright = "PD" };
         Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
-        var instance = new SongItemInstance(null) { UUID = song.UUID };
+        var instance = new SongItemInstance(null) { SongId = song.UUID };
 
         var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance, "irrelevant-playlist-dir");
 
         Assert.IsInstanceOfType(serialized, typeof(SongItemReference));
         var reference = (SongItemReference)serialized;
-        Assert.AreEqual(song.UUID, reference.UUID);
+        Assert.AreEqual(song.UUID, reference.SongId, "The reference must carry which song it points at");
+        Assert.AreEqual(instance.UUID, reference.UUID, "The reference must carry the playlist item's own identity");
     }
 
     [TestMethod]
@@ -175,7 +176,8 @@ public class HandsLiftedDocXmlSerializerTests
         var song = new SongItem { Title = "Amazing Grace" };
         Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
         var playlist = new PlaylistInstance { Title = "Test Playlist" };
-        playlist.Items.Add(new SongItemInstance(playlist) { UUID = song.UUID });
+        var instance = new SongItemInstance(playlist) { SongId = song.UUID };
+        playlist.Items.Add(instance);
 
         var path = Path.Combine(_tempDir, "playlist-song-reference.xml");
         HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
@@ -183,30 +185,44 @@ public class HandsLiftedDocXmlSerializerTests
 
         Assert.IsInstanceOfType(deserialized.Items.Single(), typeof(SongItemReference));
         var reference = (SongItemReference)deserialized.Items.Single();
-        Assert.AreEqual(song.UUID, reference.UUID);
+        Assert.AreEqual(song.UUID, reference.SongId, "SongId must round-trip through the playlist XML");
+        Assert.AreEqual(instance.UUID, reference.UUID, "UUID (playlist-item identity) must round-trip too");
     }
 
     [TestMethod]
-    public void SongItemReference_Clone_PreservesUUID_SoDuplicateStillResolvesInLibrary()
+    public void SongItemReference_Clone_PreservesSongId_GetsOwnUUID()
     {
         // Regression test for MainViewModel's "duplicate item" command:
         // SerializeItem -> Item.Clone() -> ItemInstanceFactory.ToItemInstance.
-        // Item.Clone() (base) reassigns a fresh UUID, which is correct for content-owning
-        // item types but was silently orphaning a duplicated song reference from the
-        // library song it points at (UUID means "which song", not "this item's identity").
+        //
+        // A duplicated song reference must keep pointing at the same library song (SongId
+        // preserved by the base Clone()'s XML round-trip) while getting its OWN fresh
+        // playlist-item identity (UUID reassigned by the base Clone()). The UUID half is
+        // load-bearing: PlaylistInstance.NavigateToReference and SlideThumbnailBehavior both
+        // look items up by UUID, so two references sharing a UUID make a slide-thumbnail
+        // click on the second occurrence navigate to the first one's slide instead.
         var song = new SongItem { Title = "Amazing Grace", Copyright = "PD" };
         Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
-        var instance = new SongItemInstance(null) { UUID = song.UUID, SlideTransitionDurationMs = 300 };
+        var instance = new SongItemInstance(null) { SongId = song.UUID, SlideTransitionDurationMs = 300 };
 
         var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance, "irrelevant-playlist-dir");
+        var originalReference = (SongItemReference)serialized;
         var cloned = serialized.Clone();
 
         Assert.IsInstanceOfType(cloned, typeof(SongItemReference));
         var clonedReference = (SongItemReference)cloned;
-        Assert.AreEqual(song.UUID, clonedReference.UUID);
-        Assert.AreEqual(300.0, clonedReference.SlideTransitionDurationMs);
-        Assert.AreSame(song, Globals.Instance.SongLibraryIndex.Resolve(clonedReference.UUID),
+
+        // Still points at the same library song.
+        Assert.AreEqual(song.UUID, clonedReference.SongId);
+        Assert.AreSame(song, Globals.Instance.SongLibraryIndex.Resolve(clonedReference.SongId),
             "Duplicated song reference must still resolve to the original library song.");
+
+        // ...but is a distinct playlist item.
+        Assert.AreNotEqual(originalReference.UUID, clonedReference.UUID,
+            "A duplicated song reference must get its own playlist-item identity (UUID), otherwise " +
+            "slide navigation and drag-reorder cannot tell the two playlist items apart.");
+
+        Assert.AreEqual(300.0, clonedReference.SlideTransitionDurationMs);
     }
 
     [TestMethod]

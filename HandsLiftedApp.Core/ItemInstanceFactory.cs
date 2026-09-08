@@ -26,6 +26,7 @@ namespace HandsLiftedApp.Core
                 var instance = new SongItemInstance(playlist)
                 {
                     UUID = songReference.UUID,
+                    SongId = songReference.SongId,
                     SlideTransitionDurationMs = songReference.SlideTransitionDurationMs
                 };
                 instance.RaiseForwardedPropertiesChanged();
@@ -46,9 +47,13 @@ namespace HandsLiftedApp.Core
                     Globals.Instance.SongLibraryIndex.ImportAndCache(songItem, libraryDirectory);
                 }
 
+                // A fresh playlist item — gets its own Item-constructor-assigned UUID (playlist-item
+                // identity), distinct from SongId (which song it points at). Do NOT copy songItem.UUID
+                // onto this instance's UUID: that would make this playlist item's own identity equal to
+                // the song's identity, reintroducing UUID/SongId ambiguity for slide navigation.
                 var instance = new SongItemInstance(playlist)
                 {
-                    UUID = songItem.UUID,
+                    SongId = songItem.UUID,
                     SlideTransitionDurationMs = songItem.SlideTransitionDurationMs
                 };
                 instance.RaiseForwardedPropertiesChanged();

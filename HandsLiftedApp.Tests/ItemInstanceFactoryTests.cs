@@ -119,14 +119,16 @@ public class ItemInstanceFactoryTests
     {
         var song = new SongItem { Title = "Amazing Grace" };
         Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
-        var reference = new SongItemReference { UUID = song.UUID };
+        var reference = new SongItemReference { SongId = song.UUID };
 
         var result = ItemInstanceFactory.ToItemInstance(reference, null);
 
         Assert.IsInstanceOfType(result, typeof(SongItemInstance));
         var instance = (SongItemInstance)result;
         Assert.AreEqual("Amazing Grace", instance.Title);
-        Assert.AreEqual(song.UUID, instance.UUID);
+        Assert.AreEqual(song.UUID, instance.SongId, "SongId must carry over from the reference");
+        Assert.AreEqual(reference.UUID, instance.UUID,
+            "The reference's own playlist-item identity must carry over unchanged");
     }
 
     [TestMethod]
@@ -139,6 +141,10 @@ public class ItemInstanceFactoryTests
         Assert.IsInstanceOfType(result, typeof(SongItemInstance));
         var instance = (SongItemInstance)result;
         Assert.AreEqual("Legacy Inline Song", instance.Title);
+        Assert.AreEqual(inlineSong.UUID, instance.SongId,
+            "The new playlist item must point at the imported song via SongId");
+        Assert.AreNotEqual(inlineSong.UUID, instance.UUID,
+            "The new playlist item must keep its own identity, distinct from the song's");
         var resolved = Globals.Instance.SongLibraryIndex.Resolve(inlineSong.UUID);
         Assert.IsNotNull(resolved, "Legacy inline song content should have been imported into the shared index");
         Assert.AreEqual("PD", resolved!.Copyright);

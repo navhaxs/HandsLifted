@@ -13,21 +13,21 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
     public class SongItemInstanceTests
     {
         [TestMethod]
-        public void UUID_NotYetRegistered_ResolvesAsMissing()
+        public void SongId_NotYetRegistered_ResolvesAsMissing()
         {
-            var instance = new SongItemInstance(null) { UUID = Guid.NewGuid() };
+            var instance = new SongItemInstance(null) { SongId = Guid.NewGuid() };
 
             Assert.IsTrue(instance.IsMissing);
             Assert.AreEqual("(Missing Song)", instance.Title);
         }
 
         [TestMethod]
-        public void UUID_Registered_ForwardsPropertiesFromSharedSong()
+        public void SongId_Registered_ForwardsPropertiesFromSharedSong()
         {
             var song = new HandsLiftedApp.Data.Models.Items.SongItem { Title = "Amazing Grace", Copyright = "PD" };
             Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
 
-            var instance = new SongItemInstance(null) { UUID = song.UUID };
+            var instance = new SongItemInstance(null) { SongId = song.UUID };
 
             Assert.IsFalse(instance.IsMissing);
             Assert.AreEqual("Amazing Grace", instance.Title);
@@ -39,7 +39,7 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
         {
             var song = new HandsLiftedApp.Data.Models.Items.SongItem { Title = "Original" };
             Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
-            var instance = new SongItemInstance(null) { UUID = song.UUID };
+            var instance = new SongItemInstance(null) { SongId = song.UUID };
 
             instance.Title = "Edited";
 
@@ -47,12 +47,18 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
         }
 
         [TestMethod]
-        public void EditingFromOneInstance_IsVisibleFromAnotherInstance_SameUUID()
+        public void EditingFromOneInstance_IsVisibleFromAnotherInstance_SameSongId()
         {
             var song = new HandsLiftedApp.Data.Models.Items.SongItem { Title = "Original" };
             Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
-            var a = new SongItemInstance(null) { UUID = song.UUID };
-            var b = new SongItemInstance(null) { UUID = song.UUID };
+            var a = new SongItemInstance(null) { SongId = song.UUID };
+            var b = new SongItemInstance(null) { SongId = song.UUID };
+
+            // Two playlist items referencing the same song share a SongId but must keep
+            // distinct playlist-item identities (UUID) — slide navigation and drag-reorder
+            // both key off UUID and would resolve to the wrong item if they collided.
+            Assert.AreNotEqual(a.UUID, b.UUID,
+                "Two SongItemInstances referencing the same song must each have their own UUID");
 
             a.Title = "Edited By A";
 
@@ -67,8 +73,11 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
 
             Assert.IsFalse(draft.IsMissing);
             Assert.AreEqual("Draft Title", draft.Title);
-            Assert.IsNull(Globals.Instance.SongLibraryIndex.Resolve(draft.UUID),
+            Assert.IsNull(Globals.Instance.SongLibraryIndex.Resolve(draft.SongId),
                 "A draft must not be registered in the shared index until AttachToLibrary is called");
+            Assert.AreNotEqual(Guid.Empty, draft.SongId, "NewDraft must assign a SongId");
+            Assert.AreNotEqual(draft.UUID, draft.SongId,
+                "A draft's playlist-item identity (UUID) must stay independent of the song it points at (SongId)");
         }
 
         // Regression test for a bug in NewDraft's construction order: the SongItemInstance
@@ -114,8 +123,8 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
             var song = new HandsLiftedApp.Data.Models.Items.SongItem { Title = "Original" };
             Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
 
-            var a = new SongItemInstance(null) { UUID = song.UUID };
-            var b = new SongItemInstance(null) { UUID = song.UUID };
+            var a = new SongItemInstance(null) { SongId = song.UUID };
+            var b = new SongItemInstance(null) { SongId = song.UUID };
 
             var raisedAfterDispose = false;
             a.PropertyChanged += (_, args) =>
@@ -126,7 +135,7 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
 
             a.Dispose();
 
-            // Write through a second, still-live instance referencing the same UUID.
+            // Write through a second, still-live instance referencing the same SongId.
             // Before the fix, `a`'s SongChanged subscription would still be alive and would
             // re-raise its own Title PropertyChanged in response once the dispatcher drains.
             b.Title = "Edited By B";
@@ -138,13 +147,49 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
             }
 
             Assert.IsFalse(raisedAfterDispose,
-                "A disposed SongItemInstance must not react to SongChanged notifications for its UUID");
+                "A disposed SongItemInstance must not react to SongChanged notifications for its SongId");
         });
+
+        // Dispose() used to only dispose _songChangedSubscription. The constructor also attaches
+        // CollectionChanged / CollectionItemChanged handlers to whatever Arrangement/Stanzas
+        // resolve to — under the library facade, the *shared* library song's collections, held
+        // for the app's lifetime by SongLibraryIndex. Without detaching them, a disposed instance
+        // stayed rooted and kept running GenerateArrangementViews() (+ a debounced
+        // UpdateStanzaSlides()) on every future edit of that song.
+        [TestMethod]
+        public void Disposing_DetachesFromSharedSongCollections()
+        {
+            var song = new HandsLiftedApp.Data.Models.Items.SongItem { Title = "Shared" };
+            var firstStanza = new HandsLiftedApp.Data.Models.Items.SongStanza { Name = "Verse 1", Lyrics = "one" };
+            song.Stanzas.Add(firstStanza);
+            song.Arrangement.Add(firstStanza.Id);
+            Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+
+            var instance = new SongItemInstance(null) { SongId = song.UUID };
+            // ItemInstanceFactory does exactly this after the object initializer — it re-fires the
+            // constructor's WhenAnyValue(Arrangement)/WhenAnyValue(Stanzas) subscriptions so their
+            // handlers attach to the real shared collections rather than the throwaway empty ones
+            // the facade getters returned while SongId was still Guid.Empty during construction.
+            instance.RaiseForwardedPropertiesChanged();
+
+            Assert.AreEqual(1, instance.ArrangementAsRefList.Count,
+                "Precondition: the instance must be wired to the shared song's collections");
+
+            instance.Dispose();
+
+            var secondStanza = new HandsLiftedApp.Data.Models.Items.SongStanza { Name = "Verse 2", Lyrics = "two" };
+            song.Stanzas.Add(secondStanza);
+            song.Arrangement.Add(secondStanza.Id);
+
+            Assert.AreEqual(1, instance.ArrangementAsRefList.Count,
+                "A disposed SongItemInstance must not keep regenerating its arrangement views in " +
+                "response to edits of the shared library song's collections");
+        }
 
         [TestMethod]
         public void MissingSong_GeneratesSinglePlaceholderSlide()
         {
-            var instance = new SongItemInstance(null) { UUID = Guid.NewGuid() };
+            var instance = new SongItemInstance(null) { SongId = Guid.NewGuid() };
 
             instance.GenerateSlides();
 

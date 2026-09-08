@@ -29,6 +29,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public bool HasThemeSelection => true;
 
+        /// <summary>
+        /// Which library song this instance resolves against — independent of UUID (this
+        /// playlist item's own identity, used by slide navigation/drag-reorder elsewhere in
+        /// this codebase). Two playlist items can share a SongId (both reference the same song)
+        /// while each keeping their own distinct UUID.
+        /// </summary>
+        public Guid SongId { get; set; }
+
         public BaseSlideTheme? ResolvedDesignTheme
         {
             get => ParentPlaylist?.Designs.FirstOrDefault(d => d.Id == Design);
@@ -47,14 +55,24 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         // no longer represents anywhere in the UI.
         private readonly IDisposable _songChangedSubscription;
 
-        public SongItem? ResolvedSong => Globals.Instance.SongLibraryIndex.Resolve(UUID) ?? _localDraft;
+        // The Arrangement/Stanzas collections this instance's CollectionChanged /
+        // CollectionItemChanged handlers are currently attached to. Under the library facade
+        // these are the *shared* library song's collections, held for the app's lifetime by
+        // SongLibraryIndex — so Dispose() must detach from them, or a disposed instance stays
+        // rooted and keeps re-running its slide-regeneration logic on every future edit.
+        private ObservableCollection<Guid>? _lastSubscribedArrangement;
+        private TrulyObservableCollection<SongStanza>? _lastSubscribedStanzas;
+
+        public SongItem? ResolvedSong => Globals.Instance.SongLibraryIndex.Resolve(SongId) ?? _localDraft;
 
         public bool IsMissing => ResolvedSong == null;
 
         public static SongItemInstance NewDraft(PlaylistInstance? parentPlaylist)
         {
             var draftSong = new SongItem();
-            var instance = new SongItemInstance(parentPlaylist) { UUID = draftSong.UUID };
+            // SongId points at the draft song; UUID keeps the fresh playlist-item identity the
+            // base Item() constructor already assigned — do not overwrite it.
+            var instance = new SongItemInstance(parentPlaylist) { SongId = draftSong.UUID };
             instance._localDraft = draftSong;
             // The constructor's WhenAnyValue(Stanzas)/WhenAnyValue(Arrangement) subscriptions ran
             // before _localDraft was assigned above, so they wired up against the throwaway empty
@@ -68,7 +86,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         /// <summary>
         /// Called once a draft's library file has been written (SongEditorWindow's
         /// save/add-to-playlist flow). Registers the draft's content into the shared index
-        /// under this instance's UUID and clears local-draft state — from this point on,
+        /// under this instance's SongId and clears local-draft state — from this point on,
         /// resolution goes through SongLibraryIndex like any other reference.
         /// </summary>
         public void AttachToLibrary(string filePath, string libraryDirectory)
@@ -76,9 +94,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             if (_localDraft == null)
                 return; // already attached, or was never a draft — no-op
 
-            // Ensure the draft registers under whatever UUID this instance currently carries —
-            // something may have reassigned this instance's UUID after NewDraft() ran.
-            _localDraft.UUID = UUID;
+            // Ensure the draft registers under whatever SongId this instance currently carries —
+            // something may have reassigned this instance's SongId after NewDraft() ran.
+            _localDraft.UUID = SongId;
             Globals.Instance.SongLibraryIndex.Register(_localDraft, filePath, libraryDirectory);
             _localDraft = null;
             this.RaisePropertyChanged(nameof(IsMissing));
@@ -146,16 +164,16 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private void NotifySharedSongChanged()
         {
-            if (Globals.Instance.SongLibraryIndex.Resolve(UUID) == null)
+            if (Globals.Instance.SongLibraryIndex.Resolve(SongId) == null)
             {
-                // Not yet attached to the library — nothing else can be watching this UUID yet,
+                // Not yet attached to the library — nothing else can be watching this SongId yet,
                 // just re-render this instance's own slides.
                 RaiseForwardedPropertiesChanged();
                 debounceDispatcher.Debounce(() => UpdateStanzaSlides());
                 return;
             }
 
-            Globals.Instance.SongLibraryIndex.NotifyChanged(UUID);
+            Globals.Instance.SongLibraryIndex.NotifyChanged(SongId);
         }
 
         public void RaiseForwardedPropertiesChanged()
@@ -202,7 +220,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             ParentPlaylist = parentPlaylist;
 
             _songChangedSubscription = Globals.Instance.SongLibraryIndex.SongChanged
-                .Where(changedId => changedId == UUID)
+                .Where(changedId => changedId == SongId)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ =>
                 {
@@ -242,6 +260,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     a.CollectionChanged -= OnArrangementCollectionChanged;
                     GenerateArrangementViews();
                     a.CollectionChanged += OnArrangementCollectionChanged;
+                    _lastSubscribedArrangement = a;
                 });
             // TODO: reorder...
             this.WhenAnyValue(x => x.Stanzas)
@@ -252,6 +271,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     GenerateArrangementViews();
                     a.CollectionChanged += OnArrangementCollectionChanged;
                     a.CollectionItemChanged += _stanzas_CollectionItemChanged;
+                    _lastSubscribedStanzas = a;
                 });
             GenerateArrangementViews();
 
@@ -314,6 +334,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public void Dispose()
         {
             _songChangedSubscription.Dispose();
+            if (_lastSubscribedArrangement != null)
+                _lastSubscribedArrangement.CollectionChanged -= OnArrangementCollectionChanged;
+            if (_lastSubscribedStanzas != null)
+            {
+                _lastSubscribedStanzas.CollectionItemChanged -= _stanzas_CollectionItemChanged;
+                _lastSubscribedStanzas.CollectionChanged -= OnArrangementCollectionChanged;
+            }
         }
 
         private void OnArrangementCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

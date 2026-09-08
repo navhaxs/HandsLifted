@@ -50,7 +50,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             if (DataContext is SongEditorViewModel { ItemInsertIndex: not null, ItemInserted: false } songEditorViewModel)
             {
                 if (songEditorViewModel.Song is SongItemInstance instance
-                    && Globals.Instance.SongLibraryIndex.Resolve(instance.UUID) == null)
+                    && Globals.Instance.SongLibraryIndex.Resolve(instance.SongId) == null)
                 {
                     DoSaveToLibrary(songEditorViewModel);
                     return;
@@ -145,7 +145,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                             // TODO: for *Instance classes implement an interface to convert to base class
                             SongItem x = new SongItem()
                             {
-                                UUID = existing.UUID,
+                                // Same reasoning as DoSaveToLibrary: the exported SongItem's own
+                                // identity is the *song's* id (SongId), not the playlist item's UUID.
+                                UUID = existing.SongId,
                                 Title = existing.Title,
                                 Arrangement = existing.Arrangement,
                                 Arrangements = existing.Arrangements,
@@ -213,7 +215,16 @@ namespace HandsLiftedApp.Core.Views.Editors
         private void DoSaveToLibrary(SongEditorViewModel vm)
         {
             var dir = vm.SongLibrary?.Config.Directory;
-            if (dir == null) return;
+            if (dir == null)
+            {
+                // vm.SongLibrary is null whenever the Add-Item dialog's active library isn't a
+                // song library (not only when no song library is configured at all), so this
+                // early return can silently swallow a user's explicit Save. Log it.
+                Log.Warning(
+                    "SongEditorWindow.DoSaveToLibrary: no song library directory available (vm.SongLibrary is null) — save aborted for song '{Title}'",
+                    vm.Song?.Title);
+                return;
+            }
 
             var title = vm.Song.Title;
             if (string.IsNullOrWhiteSpace(title)) title = "Untitled";
@@ -236,7 +247,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                 SongItemInstance existing = vm.Song;
                 var x = new SongItem
                 {
-                    UUID = existing.UUID,
+                    // The library song file's own identity is the *song's* id (SongId), not the
+                    // playlist item's UUID.
+                    UUID = existing.SongId,
                     Title = existing.Title,
                     Arrangement = existing.Arrangement,
                     Arrangements = existing.Arrangements,

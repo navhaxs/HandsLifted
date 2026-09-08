@@ -133,6 +133,7 @@ namespace HandsLiftedApp.Core
                 return new SongItemReference
                 {
                     UUID = songItemInstance.UUID,
+                    SongId = songItemInstance.SongId,
                     SlideTransitionDurationMs = songItemInstance.SlideTransitionDurationMs
                 };
             }
