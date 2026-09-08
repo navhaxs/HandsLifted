@@ -113,4 +113,52 @@ public class ItemInstanceFactoryTests
 
         Assert.AreEqual(300.0, instance.SlideTransitionDurationMs);
     }
+
+    [TestMethod]
+    public void ToItemInstance_SongItemReference_ResolvesAgainstLibraryIndex()
+    {
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var reference = new SongItemReference { SongId = song.UUID };
+
+        var result = ItemInstanceFactory.ToItemInstance(reference, null);
+
+        Assert.IsInstanceOfType(result, typeof(SongItemInstance));
+        var instance = (SongItemInstance)result;
+        Assert.AreEqual("Amazing Grace", instance.Title);
+        Assert.AreEqual(song.UUID, instance.SongId, "SongId must carry over from the reference");
+        Assert.AreEqual(reference.UUID, instance.UUID,
+            "The reference's own playlist-item identity must carry over unchanged");
+    }
+
+    [TestMethod]
+    public void ToItemInstance_LegacyInlineSongItem_ImportsIntoLibraryIndex_WhenNotAlreadyKnown()
+    {
+        var inlineSong = new SongItem { Title = "Legacy Inline Song", Copyright = "PD" };
+
+        var result = ItemInstanceFactory.ToItemInstance(inlineSong, null);
+
+        Assert.IsInstanceOfType(result, typeof(SongItemInstance));
+        var instance = (SongItemInstance)result;
+        Assert.AreEqual("Legacy Inline Song", instance.Title);
+        Assert.AreEqual(inlineSong.UUID, instance.SongId,
+            "The new playlist item must point at the imported song via SongId");
+        Assert.AreNotEqual(inlineSong.UUID, instance.UUID,
+            "The new playlist item must keep its own identity, distinct from the song's");
+        var resolved = Globals.Instance.SongLibraryIndex.Resolve(inlineSong.UUID);
+        Assert.IsNotNull(resolved, "Legacy inline song content should have been imported into the shared index");
+        Assert.AreEqual("PD", resolved!.Copyright);
+    }
+
+    [TestMethod]
+    public void ToItemInstance_SongItem_AlreadyKnownToIndex_DoesNotOverwriteExistingEntry()
+    {
+        var libraryVersion = new SongItem { Title = "Already In Library", Copyright = "Current" };
+        Globals.Instance.SongLibraryIndex.Register(libraryVersion, "song.xml", "libdir");
+        var staleParsedCopy = new SongItem { UUID = libraryVersion.UUID, Title = "Already In Library", Copyright = "Stale" };
+
+        ItemInstanceFactory.ToItemInstance(staleParsedCopy, null);
+
+        Assert.AreEqual("Current", Globals.Instance.SongLibraryIndex.Resolve(libraryVersion.UUID)!.Copyright);
+    }
 }

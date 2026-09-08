@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,6 +12,7 @@ using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
 using HandsLiftedApp.Importer.Scripture;
+using HandsLiftedApp.Tests.TestSupport;
 using SkiaSharp;
 
 namespace HandsLiftedApp.Tests.Models.RuntimeData.Items;
@@ -61,85 +60,23 @@ public class ScriptureItemInstanceTests
     // scheduling, hence the non-determinism (worse under full-suite contention, but possible even in a
     // single sequential run).
     //
-    // The fix has two parts, both required: (1) DispatcherTestThread.EnsureStarted() forces the first-ever
-    // touch of Dispatcher.UIThread to happen on one dedicated background thread, before any test or
-    // production code gets a chance to touch it first from elsewhere - so Dispatcher.UIThread is
-    // permanently bound to a thread the tests actually control. (2) DispatcherTestThread.Run() then runs
-    // every Dispatcher-touching test body on that same thread, via a SynchronizationContext installed on
-    // it, so any `await` without ConfigureAwait(false) posts its continuation back onto that thread instead
-    // of resuming on whatever thread completed the antecedent task - meaning `RunJobs()` always ends up
-    // called from the one thread Dispatcher.UIThread is bound to. The dedicated thread runs a simple
-    // perpetual pump loop, so posted continuations are always eventually run - unlike Dispatcher.UIThread's
-    // own queue, which only drains when a test explicitly calls RunJobs().
-    private static class DispatcherTestThread
-    {
-        private sealed class QueueSynchronizationContext(BlockingCollection<(SendOrPostCallback Callback, object? State)> queue) : SynchronizationContext
-        {
-            public override void Post(SendOrPostCallback d, object? state) => queue.Add((d, state));
-
-            public override void Send(SendOrPostCallback d, object? state) => d(state);
-        }
-
-        private static readonly BlockingCollection<(SendOrPostCallback Callback, object? State)> Queue = new();
-        private static readonly object InitLock = new();
-        private static bool _started;
-
-        public static void EnsureStarted()
-        {
-            lock (InitLock)
-            {
-                if (_started) return;
-                _started = true;
-
-                using var ready = new ManualResetEventSlim();
-                var thread = new Thread(() =>
-                {
-                    SynchronizationContext.SetSynchronizationContext(new QueueSynchronizationContext(Queue));
-                    Avalonia.Skia.SkiaPlatform.Initialize();
-                    ReactiveUI.Builder.RxAppBuilder.CreateReactiveUIBuilder().WithPlatformServices().BuildApp();
-
-                    // Dispatcher.UIThread is lazily constructed on whichever thread first accesses it -
-                    // SkiaPlatform.Initialize() only registers render services, it does not itself touch
-                    // the dispatcher. Force that first touch here, on this thread, before returning control
-                    // to AssemblyInit - otherwise production code's own Dispatcher.UIThread.Post(...) call
-                    // (reached via a ConfigureAwait(false) continuation, so on an arbitrary ThreadPool
-                    // thread) would win the race and bind the dispatcher to the wrong thread instead.
-                    Dispatcher.UIThread.VerifyAccess();
-                    ready.Set();
-
-                    foreach (var (callback, state) in Queue.GetConsumingEnumerable())
-                    {
-                        callback(state);
-                    }
-                })
-                {
-                    IsBackground = true,
-                    Name = "ScriptureItemInstanceTests.DispatcherTestThread"
-                };
-                thread.Start();
-                ready.Wait();
-            }
-        }
-
-        public static Task Run(Func<Task> body)
-        {
-            EnsureStarted();
-            var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            Queue.Add((async _ =>
-            {
-                try
-                {
-                    await body();
-                    tcs.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            }, null));
-            return tcs.Task;
-        }
-    }
+    // The fix (DispatcherTestThread, extracted to HandsLiftedApp.Tests/TestSupport so other test classes -
+    // e.g. SongLibraryTests - can reuse it instead of re-solving the same problem) has two parts, both
+    // required: (1) DispatcherTestThread.EnsureStarted() forces the first-ever touch of Dispatcher.UIThread
+    // to happen on one dedicated background thread, before any test or production code gets a chance to
+    // touch it first from elsewhere - so Dispatcher.UIThread is permanently bound to a thread the tests
+    // actually control. (2) DispatcherTestThread.Run() then runs every Dispatcher-touching test body on
+    // that same thread, via a SynchronizationContext installed on it, so any `await` without
+    // ConfigureAwait(false) posts its continuation back onto that thread instead of resuming on whatever
+    // thread completed the antecedent task - meaning `RunJobs()` always ends up called from the one thread
+    // Dispatcher.UIThread is bound to. The dedicated thread runs a simple perpetual pump loop, so posted
+    // continuations are always eventually run - unlike Dispatcher.UIThread's own queue, which only drains
+    // when a test explicitly calls RunJobs().
+    //
+    // AssemblyInit above is the sole [AssemblyInitialize] for this whole test assembly (MSTest allows only
+    // one, and guarantees it runs before any test class's tests) - so any other test class in this assembly
+    // can safely call DispatcherTestThread.Run(...) directly, without declaring its own EnsureStarted call
+    // or a second [AssemblyInitialize].
 
     private const string GenesisChapterOneUsx = """
         <?xml version="1.0" encoding="UTF-8"?>

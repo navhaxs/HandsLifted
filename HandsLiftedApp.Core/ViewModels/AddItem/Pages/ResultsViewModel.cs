@@ -84,7 +84,7 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
             
             OnCreateNewSongCommand = ReactiveCommand.Create<Window>(window =>
             {
-                var song = new SongItemInstance(Globals.Instance.MainViewModel.Playlist);
+                var song = SongItemInstance.NewDraft(Globals.Instance.MainViewModel.Playlist);
                 // itemToInsert = song;
                 // SongEditorViewModel vm = new SongEditorViewModel(song, Playlist);
                 // SongEditorWindow seq = new SongEditorWindow() { DataContext = vm };

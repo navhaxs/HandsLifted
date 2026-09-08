@@ -24,15 +24,15 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         private Guid _design = Guid.Empty;
-        public Guid Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
+        public virtual Guid Design { get => _design; set => this.RaiseAndSetIfChanged(ref _design, value); }
 
         [XmlIgnore]
         private string _copyright = "";
-        public string Copyright { get => _copyright; set => this.RaiseAndSetIfChanged(ref _copyright, value); }
+        public virtual string Copyright { get => _copyright; set => this.RaiseAndSetIfChanged(ref _copyright, value); }
 
         [XmlIgnore]
         private TrulyObservableCollection<SongStanza> _stanzas = new TrulyObservableCollection<SongStanza>();
-        public TrulyObservableCollection<SongStanza> Stanzas
+        public virtual TrulyObservableCollection<SongStanza> Stanzas
         {
             get => _stanzas;
             set
@@ -58,18 +58,18 @@ namespace HandsLiftedApp.Data.Models.Items
          */
         [XmlIgnore]
         private SerializableDictionary<string, List<Guid>> _arrangements = new SerializableDictionary<string, List<Guid>>();
-        public SerializableDictionary<string, List<Guid>> Arrangements { get => _arrangements; set => this.RaiseAndSetIfChanged(ref _arrangements, value); }
+        public virtual SerializableDictionary<string, List<Guid>> Arrangements { get => _arrangements; set => this.RaiseAndSetIfChanged(ref _arrangements, value); }
 
         private string? _selectedArrangementId;
-        public string? SelectedArrangementId { get => _selectedArrangementId; set => this.RaiseAndSetIfChanged(ref _selectedArrangementId, value); }
+        public virtual string? SelectedArrangementId { get => _selectedArrangementId; set => this.RaiseAndSetIfChanged(ref _selectedArrangementId, value); }
 
         private string? _motionBackgroundVideoPath;
-        public string? MotionBackgroundVideoPath { get => _motionBackgroundVideoPath; set => this.RaiseAndSetIfChanged(ref _motionBackgroundVideoPath, value); }
+        public virtual string? MotionBackgroundVideoPath { get => _motionBackgroundVideoPath; set => this.RaiseAndSetIfChanged(ref _motionBackgroundVideoPath, value); }
 
         [XmlIgnore]
         private ObservableCollection<Guid> _arrangement = new ObservableCollection<Guid>();
 
-        public ObservableCollection<Guid> Arrangement
+        public virtual ObservableCollection<Guid> Arrangement
         {
             get => _arrangement;
             set => this.RaiseAndSetIfChanged(ref _arrangement, value);
@@ -78,12 +78,12 @@ namespace HandsLiftedApp.Data.Models.Items
         [XmlIgnore]
         private Boolean _endOnBlankSlide = true;
 
-        public Boolean EndOnBlankSlide { get => _endOnBlankSlide; set => this.RaiseAndSetIfChanged(ref _endOnBlankSlide, value); }
+        public virtual Boolean EndOnBlankSlide { get => _endOnBlankSlide; set => this.RaiseAndSetIfChanged(ref _endOnBlankSlide, value); }
 
         [XmlIgnore]
         private Boolean _startOnTitleSlide = true;
 
-        public Boolean StartOnTitleSlide { get => _startOnTitleSlide; set => this.RaiseAndSetIfChanged(ref _startOnTitleSlide, value); }
+        public virtual Boolean StartOnTitleSlide { get => _startOnTitleSlide; set => this.RaiseAndSetIfChanged(ref _startOnTitleSlide, value); }
 
         // Stanzas + Arrangement = _stanzaSlides
         // [XmlIgnore]

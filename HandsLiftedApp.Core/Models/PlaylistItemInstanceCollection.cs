@@ -42,6 +42,8 @@ namespace HandsLiftedApp.Core.Models
             {
                 i.ItemDataModified -= OnIOnItemDataModified;
             }
+
+            (item as IDisposable)?.Dispose();
         }
 
         private void OnIOnItemDataModified(object? sender, EventArgs args)
@@ -66,6 +68,19 @@ namespace HandsLiftedApp.Core.Models
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);
+
+            // A Move (reorder, e.g. "Move Up"/"Move Down" or drag-reorder) raises NewItems and
+            // OldItems containing the SAME item instance - it never left the collection, it just
+            // changed position. Processing it through RegisterItem/UnregisterItem below would be
+            // harmless on its own (one subscription added, one equivalent one removed - net
+            // no-op), except UnregisterItem now also calls Dispose() on IDisposable items (e.g.
+            // SongItemInstance), which would permanently tear down that item's subscriptions while
+            // it's still live in the playlist. Skip register/unregister entirely for a pure Move.
+            if (e.Action == NotifyCollectionChangedAction.Move)
+            {
+                return;
+            }
+
             if (e.NewItems != null)
             {
                 foreach (T inpc in e.NewItems)

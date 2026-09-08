@@ -867,6 +867,17 @@ namespace HandsLiftedApp.Core.Models
                         disposableSlide.Dispose();
                     }
                 }
+
+                // Dispose the item instance itself (e.g. SongItemInstance's SongChanged
+                // subscription) - not just its slides' render resources. This path (whole-
+                // playlist replace/discard) never raises the collection-removal events that
+                // PlaylistItemInstanceCollection.UnregisterItem relies on for the same teardown,
+                // so it needs to happen here too. Safe to run alongside that other path since
+                // IDisposable.Dispose() is idempotent by convention.
+                if (itemInstance is IDisposable disposableItem)
+                {
+                    disposableItem.Dispose();
+                }
             }
         }
     }

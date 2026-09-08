@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
@@ -20,32 +21,43 @@ namespace HandsLiftedApp.Core
             {
                 return new LogoItemInstance(playlist) { Title = i.Title, SlideTransitionDurationMs = i.SlideTransitionDurationMs };
             }
+            else if (deserializedItem is SongItemReference songReference)
+            {
+                var instance = new SongItemInstance(playlist)
+                {
+                    UUID = songReference.UUID,
+                    SongId = songReference.SongId,
+                    SlideTransitionDurationMs = songReference.SlideTransitionDurationMs
+                };
+                instance.RaiseForwardedPropertiesChanged();
+                return instance;
+            }
             else if (deserializedItem is SongItem songItem)
             {
-                var resolvedMotionBgPath = !string.IsNullOrEmpty(songItem.MotionBackgroundVideoPath)
-                    ? RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath, songItem.MotionBackgroundVideoPath)
-                    : null;
-
-                Log.Debug("ItemInstanceFactory: SongItem '{Title}' MotionBg raw='{RawPath}', resolved='{ResolvedPath}', base='{BasePath}'",
-                    songItem.Title, songItem.MotionBackgroundVideoPath, resolvedMotionBgPath, playlistDirectoryPath);
-
-                var song = new SongItemInstance(playlist)
+                // Either a freshly-parsed library file (add-from-library flow — CreateItem.GenerateItem
+                // just deserialized it) or legacy inline playlist content (old-format playlist file,
+                // pre-dating SongItemReference). Both cases: if this UUID isn't already known to the
+                // shared index, this object is the best available content for it — import it so the
+                // reference resolves. If it's already known (the common add-from-library case, since
+                // SongLibrary's scan already registered it), leave the existing cached entry alone
+                // rather than overwriting it with what may be a stale re-parse.
+                if (Globals.Instance.SongLibraryIndex.Resolve(songItem.UUID) == null)
                 {
-                    UUID = songItem.UUID,
-                    Title = songItem.Title,
-                    Arrangement = songItem.Arrangement,
-                    Arrangements = songItem.Arrangements,
-                    SelectedArrangementId = songItem.SelectedArrangementId,
-                    Stanzas = songItem.Stanzas,
-                    Copyright = songItem.Copyright,
-                    Design = songItem.Design,
-                    StartOnTitleSlide = songItem.StartOnTitleSlide,
-                    EndOnBlankSlide = songItem.EndOnBlankSlide,
-                    MotionBackgroundVideoPath = resolvedMotionBgPath,
+                    var libraryDirectory = playlistDirectoryPath ?? Path.GetTempPath();
+                    Globals.Instance.SongLibraryIndex.ImportAndCache(songItem, libraryDirectory);
+                }
+
+                // A fresh playlist item — gets its own Item-constructor-assigned UUID (playlist-item
+                // identity), distinct from SongId (which song it points at). Do NOT copy songItem.UUID
+                // onto this instance's UUID: that would make this playlist item's own identity equal to
+                // the song's identity, reintroducing UUID/SongId ambiguity for slide navigation.
+                var instance = new SongItemInstance(playlist)
+                {
+                    SongId = songItem.UUID,
                     SlideTransitionDurationMs = songItem.SlideTransitionDurationMs
                 };
-                // song.GenerateSlides();
-                return song;
+                instance.RaiseForwardedPropertiesChanged();
+                return instance;
             }
             else if (deserializedItem is ScriptureItem scriptureItem)
             {

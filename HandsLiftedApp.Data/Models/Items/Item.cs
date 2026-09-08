@@ -9,7 +9,6 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public abstract class Item : ReactiveObject
     {
-        [XmlIgnore]
         public Guid UUID { get; set; }
 
         private int _index;
@@ -23,7 +22,7 @@ namespace HandsLiftedApp.Data.Models.Items
 
         private string _title = "";
         [DataField]
-        public string Title
+        public virtual string Title
         {
             get => _title; set
             {

@@ -1,11 +1,14 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Reactive;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
+using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Tests.Models;
 
@@ -236,5 +239,30 @@ public class PlaylistInstanceTests
         var result = playlist.GetEffectiveTransitionDurationMs(item);
 
         Assert.AreEqual(900.0, result);
+    }
+
+    // Minimal IItemInstance + IDisposable test double for DisposeSlideRenderResources coverage -
+    // avoids pulling in the full SongItemInstance/SongLibraryIndex/dispatcher machinery just to
+    // prove the item-instance-level Dispose() call happens.
+    private sealed class DisposableTestItemInstance : Item, IItemInstance, IDisposable
+    {
+        public bool IsDisposed { get; private set; }
+        public PlaylistInstance? ParentPlaylist { get; set; }
+        public int SelectedSlideIndex { get; set; }
+        public Slide ActiveSlide => null!;
+        public ObservableCollection<Slide> Slides { get; } = new();
+
+        public void Dispose() => IsDisposed = true;
+    }
+
+    [TestMethod]
+    public void DisposeSlideRenderResources_DisposesIDisposableItemInstance()
+    {
+        var item = new DisposableTestItemInstance();
+
+        PlaylistInstance.DisposeSlideRenderResources(new Item[] { item });
+
+        Assert.IsTrue(item.IsDisposed,
+            "DisposeSlideRenderResources must dispose the item instance itself (e.g. SongItemInstance's SongChanged subscription), not just its slides' render resources");
     }
 }
