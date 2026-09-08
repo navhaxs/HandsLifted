@@ -140,5 +140,26 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
             Assert.IsFalse(raisedAfterDispose,
                 "A disposed SongItemInstance must not react to SongChanged notifications for its UUID");
         });
+
+        [TestMethod]
+        public void MissingSong_GeneratesSinglePlaceholderSlide()
+        {
+            var instance = new SongItemInstance(null) { UUID = Guid.NewGuid() };
+
+            instance.GenerateSlides();
+
+            Assert.AreEqual(1, instance.Slides.Count);
+            Assert.IsInstanceOfType(instance.Slides[0], typeof(HandsLiftedApp.Data.Slides.SongSlideInstance));
+            // Distinguishes the intended "(Missing Song)" placeholder from the pre-existing
+            // EndOnBlankSlide "BLANK" slide, which - in this synchronous test where the
+            // Dispatcher is never pumped - is coincidentally also the only slide produced
+            // today (TitleSlide's ToProperty chain never emits without a pumped Dispatcher,
+            // so the title-slide branch is skipped even before this fix). Asserting on
+            // content, not just count/type, ensures this test actually exercises the new
+            // missing-song short-circuit rather than passing for an unrelated reason.
+            var placeholder = (HandsLiftedApp.Data.Slides.SongSlideInstance)instance.Slides[0];
+            Assert.AreEqual("MISSING", placeholder.Id);
+            Assert.AreEqual("(Missing Song)", placeholder.Text);
+        }
     }
 }

@@ -350,6 +350,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 try
                 {
+                    if (IsMissing)
+                    {
+                        var missingSlides = new TrulyObservableCollection<Slide>
+                        {
+                            new SongSlideInstance(this, new SongStanza(), "MISSING", text: "(Missing Song)", label: null)
+                        };
+                        StanzaSlides = missingSlides;
+                        this.RaisePropertyChanged("Slides");
+                        Globals.Instance.SlideRenderQueue.EnqueueBatch(missingSlides.OfType<IRenderable>().ToList());
+                        return;
+                    }
+
                     var newSlides = new TrulyObservableCollection<Slide>();
                     foreach (var existingSlide in Slides)
                     {
