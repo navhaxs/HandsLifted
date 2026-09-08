@@ -12,6 +12,7 @@ namespace HandsLiftedApp.Controls.Messages
         {
             Presentation,
             GoogleSlides,
+            OnlineVideo,
             PDF,
             ExistingSong,
             NewSong,

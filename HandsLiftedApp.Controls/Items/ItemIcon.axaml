@@ -44,6 +44,9 @@
                 <DataTemplate x:Key="GoogleSlidesGroupItemInstance">
                     <material:MaterialIcon Kind="Slideshow" />
                 </DataTemplate>
+                <DataTemplate x:Key="OnlineVideoItemInstance">
+                    <material:MaterialIcon Kind="Video" />
+                </DataTemplate>
                 <DataTemplate x:Key="PowerPointPresentationItemInstance">
                     <material:MaterialIcon Kind="MicrosoftPowerpoint" />
                 </DataTemplate>

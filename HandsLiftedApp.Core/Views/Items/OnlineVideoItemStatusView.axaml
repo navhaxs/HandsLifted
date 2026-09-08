@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="150"
+             x:DataType="items:OnlineVideoItemInstance"
+             x:Class="HandsLiftedApp.Core.Views.Items.OnlineVideoItemStatusView">
+    <StackPanel>
+        <Border MinHeight="2" IsVisible="{Binding IsBusy}">
+            <StackPanel>
+                <ProgressBar IsIndeterminate="True" MinHeight="2" />
+                <TextBlock Margin="10 6 10 0">Importing <Run Text="{Binding SourceVideoUrl}" />...</TextBlock>
+            </StackPanel>
+        </Border>
+        <Border IsVisible="{Binding LastSyncWarning, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+            <TextBlock Margin="10 6 10 0"
+                       Foreground="#FFA500"
+                       TextWrapping="Wrap"
+                       Text="{Binding LastSyncWarning}" />
+        </Border>
+    </StackPanel>
+</UserControl>

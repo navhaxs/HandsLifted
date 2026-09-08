@@ -21,6 +21,7 @@ namespace HandsLiftedApp.Data.Models
     [XmlInclude(typeof(SlidesGroupItem))]
     [XmlInclude(typeof(GoogleSlidesGroupItem))]
     [XmlInclude(typeof(PowerPointPresentationItem))]
+    [XmlInclude(typeof(OnlineVideoItem))]
     [XmlInclude(typeof(PDFSlidesGroupItem))]
     [XmlInclude(typeof(CommentItem))]
     //

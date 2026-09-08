@@ -326,6 +326,15 @@ public class MainViewModel : ViewModelBase
                             SourceGooglePresentationId = addItemMessage.CreateInfo
                         };
                         break;
+                    case AddItemMessage.AddItemType.OnlineVideo:
+                        var onlineVideoItem = new OnlineVideoItemInstance(Playlist)
+                        {
+                            Title = "Online Video",
+                            SourceVideoUrl = addItemMessage.CreateInfo
+                        };
+                        onlineVideoItem.Sync();
+                        itemToInsert = onlineVideoItem;
+                        break;
                     case AddItemMessage.AddItemType.Presentation:
                         var filePaths = await ShowOpenFileDialog.Handle(new FilePickerOpenOptions()
                         {

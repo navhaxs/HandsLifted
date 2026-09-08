@@ -24,6 +24,9 @@
 				<DataTemplate x:Key="GoogleSlidesGroupItemInstance">
 					<items1:GoogleSlidesGroupItemStatusView />
 				</DataTemplate>
+				<DataTemplate x:Key="OnlineVideoItemInstance">
+					<items1:OnlineVideoItemStatusView />
+				</DataTemplate>
 				<DataTemplate x:Key="Fallback">
 				</DataTemplate>
 			</common:MyTemplateSelector>

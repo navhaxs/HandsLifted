@@ -130,6 +130,25 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             CloseWindow();
         }
         
+        private async void ButtonImportOnlineVideo_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var dialog = new OnlineVideoUrlDialog();
+            if (this.VisualRoot is Window window)
+            {
+                await dialog.ShowDialog(window);
+            }
+
+            if (dialog.Result == null)
+            {
+                // abort
+                return;
+            }
+
+            var itemInsertIndex = Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex;
+            MessageBus.Current.SendMessage(new AddItemMessage() {InsertIndex = itemInsertIndex, Type = AddItemMessage.AddItemType.OnlineVideo, CreateInfo = dialog.Result});
+            CloseWindow();
+        }
+
         private async void ButtonCreateFreeTextSlide_OnClick(object? sender, RoutedEventArgs e)
         {
             var itemInsertIndex = Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex;

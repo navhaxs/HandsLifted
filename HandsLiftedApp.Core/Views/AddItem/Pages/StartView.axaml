@@ -208,6 +208,12 @@
                                 <TextBlock Text="Import Google Slides" VerticalAlignment="Center" FontSize="14" />
                             </DockPanel>
                         </Button>
+                        <Button HorizontalContentAlignment="Left" Click="ButtonImportOnlineVideo_OnClick">
+                            <DockPanel>
+                                <avalonia:MaterialIcon Kind="Video" DockPanel.Dock="Left" Width="34" Height="34" Margin="8" />
+                                <TextBlock Text="Add Online Video" VerticalAlignment="Center" FontSize="14" />
+                            </DockPanel>
+                        </Button>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
