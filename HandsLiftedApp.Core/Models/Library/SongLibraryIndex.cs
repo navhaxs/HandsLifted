@@ -90,6 +90,8 @@ namespace HandsLiftedApp.Core.Models.Library
         {
             if (_uuidByPath.TryGetValue(filePath, out var stableId))
             {
+                // Already stabilized earlier this session — trust the remembered value regardless of
+                // what this particular parse produced.
                 if (song.UUID != stableId)
                 {
                     song.UUID = stableId;
@@ -98,11 +100,30 @@ namespace HandsLiftedApp.Core.Models.Library
                 return;
             }
 
+            // First sighting of this path this session. Only stamp the file if it genuinely has no
+            // persisted UUID yet — checking the in-memory map alone would treat every file as "first
+            // seen" on every fresh process launch (the map starts empty each time), causing a full
+            // library rewrite-and-notify sweep on every startup instead of a true one-time migration.
+            var needsStamp = FileLacksPersistedUuid(filePath);
             _uuidByPath[filePath] = song.UUID;
             Register(song, filePath, libraryDirectory);
-            // Stamp the UUID onto disk once, so future parses of this file read it directly instead
-            // of relying on this in-memory map, which is empty again after a restart.
-            NotifyChanged(song.UUID);
+            if (needsStamp)
+            {
+                NotifyChanged(song.UUID);
+            }
+        }
+
+        private static bool FileLacksPersistedUuid(string filePath)
+        {
+            try
+            {
+                return !File.ReadAllText(filePath).Contains("<UUID>", StringComparison.Ordinal);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "SongLibraryIndex: failed to check {FilePath} for a persisted UUID; assuming it has one", filePath);
+                return false;
+            }
         }
 
         /// <summary>
