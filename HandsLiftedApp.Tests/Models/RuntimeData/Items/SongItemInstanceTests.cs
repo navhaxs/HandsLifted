@@ -71,6 +71,36 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
                 "A draft must not be registered in the shared index until AttachToLibrary is called");
         }
 
+        // Regression test for a bug in NewDraft's construction order: the SongItemInstance
+        // constructor's WhenAnyValue(x => x.Stanzas)/WhenAnyValue(x => x.Arrangement) subscriptions
+        // run *before* NewDraft assigns _localDraft, so at subscribe time ResolvedSong is still
+        // null and the Stanzas/Arrangement facade getters each return a fresh, throwaway, empty
+        // collection - the CollectionChanged handler (OnArrangementCollectionChanged) ends up wired
+        // to that discarded collection, not the real draft's Stanzas/Arrangement. Once _localDraft
+        // is assigned, draft.Stanzas/draft.Arrangement start returning the real, persistent
+        // collections, but without re-running those subscriptions nothing ever rewires the handler
+        // onto them - so mutating draft.Stanzas/draft.Arrangement in place (e.g. `.Add(...)`, as the
+        // song editor UI does) silently fails to trigger GenerateArrangementViews()/UpdateStanzaSlides().
+        // NewDraft's fix (calling RaiseForwardedPropertiesChanged() after _localDraft is set) forces
+        // those WhenAnyValue subscriptions to re-fire against the real collections.
+        [TestMethod]
+        public void NewDraft_MutatingStanzasAndArrangementInPlace_TriggersArrangementViewRegeneration()
+        {
+            var draft = SongItemInstance.NewDraft(null);
+
+            var stanza = new HandsLiftedApp.Data.Models.Items.SongStanza { Name = "Verse 1", Lyrics = "Line one" };
+            draft.Stanzas.Add(stanza);
+            draft.Arrangement.Add(stanza.Id);
+
+            Assert.AreEqual(1, draft.ArrangementAsRefList.Count,
+                "Adding a stanza to a NewDraft instance's Stanzas collection and referencing it from " +
+                "Arrangement must trigger GenerateArrangementViews() via the collection's CollectionChanged " +
+                "event - this only happens if the constructor's handler got rewired onto the real draft " +
+                "collections instead of staying attached to the throwaway ones built before _localDraft " +
+                "was assigned.");
+            Assert.AreEqual(stanza.Id, draft.ArrangementAsRefList[0].SongStanza.Id);
+        }
+
         // The SongChanged subscription in SongItemInstance's constructor uses
         // .ObserveOn(RxSchedulers.MainThreadScheduler), which posts through Avalonia's
         // Dispatcher.UIThread rather than delivering synchronously. Asserting on it therefore

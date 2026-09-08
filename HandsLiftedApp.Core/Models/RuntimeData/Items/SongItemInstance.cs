@@ -56,6 +56,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             var draftSong = new SongItem();
             var instance = new SongItemInstance(parentPlaylist) { UUID = draftSong.UUID };
             instance._localDraft = draftSong;
+            // The constructor's WhenAnyValue(Stanzas)/WhenAnyValue(Arrangement) subscriptions ran
+            // before _localDraft was assigned above, so they wired up against the throwaway empty
+            // collections the facade getters return when ResolvedSong is still null at construction
+            // time. Force a re-derivation now that _localDraft (and therefore ResolvedSong) is set,
+            // so those subscriptions (and the title slide) attach to the real draft's collections.
+            instance.RaiseForwardedPropertiesChanged();
             return instance;
         }
 
