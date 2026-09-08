@@ -101,7 +101,7 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             if (songLibrary == null) return;
 
             var playlist = Globals.Instance.MainViewModel.Playlist;
-            var editorVm = new SongEditorViewModel(new SongItemInstance(null), playlist)
+            var editorVm = new SongEditorViewModel(SongItemInstance.NewDraft(playlist), playlist)
             {
                 SongLibrary = songLibrary
             };

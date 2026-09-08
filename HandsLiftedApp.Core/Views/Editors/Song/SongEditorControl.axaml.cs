@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Importer.OnlineSongLyrics;
@@ -79,17 +80,18 @@ namespace HandsLiftedApp.Core.Views.Editors.Song
                         return;
                     }
 
-                    songEditorViewModel.Song.UUID = loaded.UUID;
-                    songEditorViewModel.Song.Title = loaded.Title;
-                    songEditorViewModel.Song.Stanzas = loaded.Stanzas;
-                    songEditorViewModel.Song.SelectedArrangementId = loaded.SelectedArrangementId;
-                    songEditorViewModel.Song.Arrangements = loaded.Arrangements;
-                    songEditorViewModel.Song.Arrangement = loaded.Arrangement;
-                    songEditorViewModel.Song.Copyright = loaded.Copyright;
-                    songEditorViewModel.Song.Design = loaded.Design;
-                    songEditorViewModel.Song.StartOnTitleSlide = loaded.StartOnTitleSlide;
-                    songEditorViewModel.Song.EndOnBlankSlide = loaded.EndOnBlankSlide;
+                    var newDraft = SongItemInstance.NewDraft(songEditorViewModel.Song.ParentPlaylist);
+                    newDraft.Title = loaded.Title;
+                    newDraft.Stanzas = loaded.Stanzas;
+                    newDraft.SelectedArrangementId = loaded.SelectedArrangementId;
+                    newDraft.Arrangements = loaded.Arrangements;
+                    newDraft.Arrangement = loaded.Arrangement;
+                    newDraft.Copyright = loaded.Copyright;
+                    newDraft.Design = loaded.Design;
+                    newDraft.StartOnTitleSlide = loaded.StartOnTitleSlide;
+                    newDraft.EndOnBlankSlide = loaded.EndOnBlankSlide;
 
+                    songEditorViewModel.Song = newDraft;
                     // songEditorViewModel.Song.ResetArrangement();
                     songEditorViewModel.Song.GenerateSlides();
                 }

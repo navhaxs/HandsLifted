@@ -153,7 +153,7 @@ namespace HandsLiftedApp.Core.ViewModels
             {
                 // TODO remove dependency on Globals.MainViewModel.Playlist 
                 MessageBus.Current.SendMessage(new MainWindowModalMessage(new SongEditorWindow(), false,
-                    new SongEditorViewModel(new SongItemInstance(null), Globals.Instance.MainViewModel.Playlist)));
+                    new SongEditorViewModel(SongItemInstance.NewDraft(Globals.Instance.MainViewModel.Playlist), Globals.Instance.MainViewModel.Playlist)));
             });
 
             if (Design.IsDesignMode)
