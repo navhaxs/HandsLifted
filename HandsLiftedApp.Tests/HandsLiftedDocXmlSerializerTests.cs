@@ -134,6 +134,10 @@ public class HandsLiftedDocXmlSerializerTests
     public void SerializePlaylist_ThenDeserialize_RoundTripsSongItemTransitionOverride()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };
+        // No UUID registered in SongLibraryIndex and no local draft, so under the
+        // SongItemInstance facade (Task 6) this Title write is a no-op — Title isn't
+        // asserted below, only SlideTransitionDurationMs, which is a real local field
+        // on Item unaffected by the facade.
         var songInstance = new SongItemInstance(playlist)
         {
             Title = "Amazing Grace",
@@ -146,8 +150,40 @@ public class HandsLiftedDocXmlSerializerTests
 
         var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
 
-        var songItem = (SongItem)deserialized.Items.Single();
-        Assert.AreEqual(300.0, songItem.SlideTransitionDurationMs);
+        // Songs now serialize as a lightweight SongItemReference, not a full SongItem.
+        var songReference = (SongItemReference)deserialized.Items.Single();
+        Assert.AreEqual(300.0, songReference.SlideTransitionDurationMs);
+    }
+
+    [TestMethod]
+    public void SerializeItem_SongItemInstance_ReturnsReferenceNotFullContent()
+    {
+        var song = new SongItem { Title = "Amazing Grace", Copyright = "PD" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var instance = new SongItemInstance(null) { UUID = song.UUID };
+
+        var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance, "irrelevant-playlist-dir");
+
+        Assert.IsInstanceOfType(serialized, typeof(SongItemReference));
+        var reference = (SongItemReference)serialized;
+        Assert.AreEqual(song.UUID, reference.UUID);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_SongItem_RoundTripsAsReference()
+    {
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var playlist = new PlaylistInstance { Title = "Test Playlist" };
+        playlist.Items.Add(new SongItemInstance(playlist) { UUID = song.UUID });
+
+        var path = Path.Combine(_tempDir, "playlist-song-reference.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+
+        Assert.IsInstanceOfType(deserialized.Items.Single(), typeof(SongItemReference));
+        var reference = (SongItemReference)deserialized.Items.Single();
+        Assert.AreEqual(song.UUID, reference.UUID);
     }
 
     [TestMethod]

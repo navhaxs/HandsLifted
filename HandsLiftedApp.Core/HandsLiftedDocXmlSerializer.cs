@@ -127,38 +127,14 @@ namespace HandsLiftedApp.Core
             }
             else if (item is SongItemInstance songItemInstance)
             {
-                var songSerialized = new SongItem()
+                // SlideTransitionDurationMs is a per-item override on the base Item class
+                // (not song content) and, like every other branch here (LogoItem, ScriptureItem,
+                // MediaGroupItem, ...), must be carried over explicitly.
+                return new SongItemReference
                 {
                     UUID = songItemInstance.UUID,
-                    Title = songItemInstance.Title,
-                    Arrangement = songItemInstance.Arrangement,
-                    Arrangements = songItemInstance.Arrangements,
-                    SelectedArrangementId = songItemInstance.SelectedArrangementId,
-                    Stanzas = songItemInstance.Stanzas,
-                    Copyright = songItemInstance.Copyright,
-                    Design = songItemInstance.Design,
-                    StartOnTitleSlide = songItemInstance.StartOnTitleSlide,
-                    EndOnBlankSlide = songItemInstance.EndOnBlankSlide,
                     SlideTransitionDurationMs = songItemInstance.SlideTransitionDurationMs
                 };
-
-                if (!string.IsNullOrEmpty(songItemInstance.MotionBackgroundVideoPath))
-                {
-                    // Only convert to relative if the path is a valid absolute path
-                    if (Path.IsPathFullyQualified(songItemInstance.MotionBackgroundVideoPath))
-                    {
-                        songSerialized.MotionBackgroundVideoPath =
-                            RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
-                                songItemInstance.MotionBackgroundVideoPath);
-                    }
-                    else
-                    {
-                        Log.Warning("Skipping save of non-absolute MotionBackgroundVideoPath: {Path}",
-                            songItemInstance.MotionBackgroundVideoPath);
-                    }
-                }
-
-                return songSerialized;
             }
             else if (item is ScriptureItemInstance scriptureItemInstance)
             {
