@@ -68,7 +68,7 @@ namespace HandsLiftedApp.Core.Models.Library
                             Copyright: song.Copyright ?? "",
                             LyricText: string.Join(" ", song.Stanzas.Select(s => s.Lyrics ?? ""))
                         );
-                        HandsLiftedApp.Core.Globals.Instance.SongLibraryIndex.Register(song, path, Config.Directory);
+                        HandsLiftedApp.Core.Globals.Instance.SongLibraryIndex.RegisterFromScan(song, path, Config.Directory);
                     }
                     catch (Exception ex)
                     {

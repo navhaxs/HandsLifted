@@ -22,6 +22,7 @@ namespace HandsLiftedApp.Core.Models.Library
         private sealed record Entry(SongItem Song, string FilePath, string LibraryDirectory);
 
         private readonly ConcurrentDictionary<Guid, Entry> _byId = new();
+        private readonly ConcurrentDictionary<string, Guid> _uuidByPath = new(StringComparer.OrdinalIgnoreCase);
         private readonly ConcurrentDictionary<Guid, DebounceDispatcher> _saveDebouncers = new();
         private readonly Subject<Guid> _songChanged = new();
         private readonly Subject<(Guid Id, Exception Error)> _saveFailed = new();
@@ -71,6 +72,40 @@ namespace HandsLiftedApp.Core.Models.Library
         }
 
         /// <summary>
+        /// Registers a song freshly parsed from a library scan, stabilizing its identity across
+        /// scans. A song file written before Item.UUID started persisting to XML has no
+        /// &lt;UUID&gt; element, so XmlSerializer leaves the constructor-assigned Guid.NewGuid()
+        /// in place — a fresh, different UUID on every single parse of the same file. Left
+        /// uncorrected, references never survive a reload (or even a second scan within the
+        /// same session), and every add-from-library trip treats the song as "unknown", writing
+        /// a stray duplicate file via ImportAndCache.
+        ///
+        /// Fix: remember the UUID first assigned to each file path. If this path was seen before
+        /// with a different UUID (the file still has no persisted identity), overwrite the
+        /// freshly-parsed song's UUID with the remembered one before registering, and persist it
+        /// once so future parses read the real, stable value directly from the file — after that,
+        /// this whole path-based correction becomes a permanent no-op for that file.
+        /// </summary>
+        public void RegisterFromScan(SongItem song, string filePath, string libraryDirectory)
+        {
+            if (_uuidByPath.TryGetValue(filePath, out var stableId))
+            {
+                if (song.UUID != stableId)
+                {
+                    song.UUID = stableId;
+                }
+                Register(song, filePath, libraryDirectory);
+                return;
+            }
+
+            _uuidByPath[filePath] = song.UUID;
+            Register(song, filePath, libraryDirectory);
+            // Stamp the UUID onto disk once, so future parses of this file read it directly instead
+            // of relying on this in-memory map, which is empty again after a restart.
+            NotifyChanged(song.UUID);
+        }
+
+        /// <summary>
         /// Registers content that has no known library file yet — a brand-new song, or an
         /// old-format playlist's inline song data being migrated — by writing it to a new
         /// file under libraryDirectory and then registering it normally.
@@ -82,7 +117,10 @@ namespace HandsLiftedApp.Core.Models.Library
             var filePath = Path.Combine(libraryDirectory, fileName);
 
             SaveToDisk(song.UUID, song, filePath, libraryDirectory);
-            _byId[song.UUID] = new Entry(song, filePath, libraryDirectory);
+            // Go through Register (rather than writing _byId directly) so this path also gets
+            // Register's MotionBackgroundVideoPath relative→absolute resolution and its
+            // existing-object-identity-wins behaviour.
+            Register(song, filePath, libraryDirectory);
         }
 
         /// <summary>
@@ -103,12 +141,15 @@ namespace HandsLiftedApp.Core.Models.Library
 
         private void SaveToDisk(Guid id, SongItem song, string filePath, string libraryDirectory)
         {
+            // MotionBackgroundVideoPath is held in-memory as an absolute path (see
+            // Register); store it relative to the library directory so the file stays
+            // portable, then restore the absolute path afterward for continued use.
+            // The restore must run in a finally: if Serialize throws partway through, the
+            // shared song object would otherwise be left holding a relative path in memory
+            // for the rest of the session.
+            var absoluteMotionBgPath = song.MotionBackgroundVideoPath;
             try
             {
-                // MotionBackgroundVideoPath is held in-memory as an absolute path (see
-                // Register); store it relative to the library directory so the file stays
-                // portable, then restore the absolute path afterward for continued use.
-                var absoluteMotionBgPath = song.MotionBackgroundVideoPath;
                 if (!string.IsNullOrEmpty(absoluteMotionBgPath) && Path.IsPathFullyQualified(absoluteMotionBgPath))
                 {
                     song.MotionBackgroundVideoPath =
@@ -120,13 +161,15 @@ namespace HandsLiftedApp.Core.Models.Library
                 {
                     serializer.Serialize(stream, song);
                 }
-
-                song.MotionBackgroundVideoPath = absoluteMotionBgPath;
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "SongLibraryIndex: failed to save {FilePath}", filePath);
                 _saveFailed.OnNext((id, ex));
+            }
+            finally
+            {
+                song.MotionBackgroundVideoPath = absoluteMotionBgPath;
             }
         }
     }

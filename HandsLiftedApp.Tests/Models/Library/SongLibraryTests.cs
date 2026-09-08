@@ -26,8 +26,16 @@ namespace HandsLiftedApp.Tests.Models.Library
         [TestCleanup]
         public void Cleanup()
         {
-            if (Directory.Exists(_libraryDir))
-                Directory.Delete(_libraryDir, recursive: true);
+            try
+            {
+                if (Directory.Exists(_libraryDir))
+                    Directory.Delete(_libraryDir, recursive: true);
+            }
+            catch (IOException)
+            {
+                // A scan's debounced (500ms) UUID-stamping save can still land in this directory
+                // after the test body returns; losing the temp-dir cleanup must not fail the test.
+            }
         }
 
         // Runs on DispatcherTestThread (see HandsLiftedApp.Tests/TestSupport/DispatcherTestThread.cs -

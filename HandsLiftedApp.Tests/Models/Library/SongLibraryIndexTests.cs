@@ -22,8 +22,17 @@ namespace HandsLiftedApp.Tests.Models.Library
         [TestCleanup]
         public void Cleanup()
         {
-            if (Directory.Exists(_libraryDir))
-                Directory.Delete(_libraryDir, recursive: true);
+            try
+            {
+                if (Directory.Exists(_libraryDir))
+                    Directory.Delete(_libraryDir, recursive: true);
+            }
+            catch (IOException)
+            {
+                // NotifyChanged's debounced (500ms) write-through save can still land in this
+                // directory after a test body returns; losing the temp-dir cleanup is harmless
+                // and must not fail an otherwise-passing test.
+            }
         }
 
         [TestMethod]
@@ -69,6 +78,43 @@ namespace HandsLiftedApp.Tests.Models.Library
             index.Register(second, Path.Combine(_libraryDir, "song.xml"), _libraryDir);
 
             Assert.AreSame(first, index.Resolve(first.UUID));
+        }
+
+        // A song XML file written before Item.UUID started persisting to XML has no <UUID>
+        // element. XmlSerializer.Deserialize runs the parameterless Item() constructor first
+        // (which assigns Guid.NewGuid()) and only overwrites properties it finds elements for,
+        // so every parse of such a file yields a DIFFERENT UUID — not just across restarts,
+        // but on every library rescan within a single session. RegisterFromScan pins the
+        // identity to the file path so a re-parse of the same file keeps the first-seen UUID.
+        //
+        // Simulated here by calling RegisterFromScan twice for the same filePath with two
+        // separately-constructed SongItems, each carrying its own fresh constructor-assigned
+        // UUID — exactly what two parses of one legacy file produce.
+        [TestMethod]
+        public void RegisterFromScan_SameFilePath_ReparsedWithDifferentUUID_KeepsFirstSeenIdentity()
+        {
+            var index = new SongLibraryIndex();
+            var filePath = Path.Combine(_libraryDir, "legacy-song.xml");
+
+            var firstParse = new SongItem { Title = "Legacy Song" };
+            var firstSeenId = firstParse.UUID;
+            index.RegisterFromScan(firstParse, filePath, _libraryDir);
+
+            var secondParse = new SongItem { Title = "Legacy Song" };
+            var secondParseOriginalId = secondParse.UUID;
+            Assert.AreNotEqual(firstSeenId, secondParseOriginalId,
+                "Precondition: the two simulated parses must start with different UUIDs");
+
+            index.RegisterFromScan(secondParse, filePath, _libraryDir);
+
+            Assert.AreEqual(firstSeenId, secondParse.UUID,
+                "The re-parsed song's UUID must be corrected back to the first-seen identity for this file");
+            Assert.IsNotNull(index.Resolve(firstSeenId),
+                "The song must still resolve under the stable, first-seen UUID after a rescan");
+            Assert.AreSame(firstParse, index.Resolve(firstSeenId),
+                "Register's existing-object-identity-wins rule must keep the originally cached object");
+            Assert.IsNull(index.Resolve(secondParseOriginalId),
+                "The re-parse's throwaway constructor-assigned UUID must never become a resolvable identity");
         }
 
         [TestMethod]
