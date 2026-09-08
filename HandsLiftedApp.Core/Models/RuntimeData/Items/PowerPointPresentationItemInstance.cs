@@ -276,6 +276,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             try
             {
                 var result = EmbeddedVideoExtractor.ExtractVideos(SourcePresentationFile, targetDirectory);
+
+                ExternalVideoDownloader.DownloadPendingVideos(
+                    result.PendingExternalVideos, result.ShownSlideCount, targetDirectory, result.Warnings);
+
                 var warningsFile = Path.Combine(targetDirectory, EmbeddedVideoExtractor.WarningsFileName);
 
                 if (result.Warnings.Count > 0)
