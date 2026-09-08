@@ -61,6 +61,16 @@ public class ExternalVideoDownloaderTests
     }
 
     [TestMethod]
+    public void AlreadyDownloaded_OnlyIntermediateFileExists_ReturnsFalse()
+    {
+        // Simulates a yt-dlp separate-streams download killed mid-merge: the video-only intermediate
+        // survives on disk, but it must not be mistaken for the final merged output.
+        File.WriteAllText(Path.Combine(_tempDir, "Slide.1.f271.mp4"), "intermediate-bytes");
+
+        Assert.IsFalse(ExternalVideoDownloader.AlreadyDownloaded(_tempDir, "1"));
+    }
+
+    [TestMethod]
     public void AlreadyDownloaded_NothingExists_ReturnsFalse()
     {
         Assert.IsFalse(ExternalVideoDownloader.AlreadyDownloaded(_tempDir, "1"));
@@ -81,6 +91,9 @@ public class ExternalVideoDownloaderTests
                 "-o", "/cache/Slide.1.%(ext)s",
                 "--no-playlist",
                 "--newline",
+                "--ignore-config",
+                "--socket-timeout", "20",
+                "--retries", "2",
                 "https://player.vimeo.com/video/1117314702?app_id=122963",
             },
             result.ToArray());

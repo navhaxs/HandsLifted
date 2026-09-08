@@ -21,7 +21,7 @@ public static class ExternalVideoDownloader
     private static readonly TimeSpan DownloadTimeout = TimeSpan.FromMinutes(15);
 
     private static readonly HashSet<string> SupportedExtensions =
-        new(StringComparer.OrdinalIgnoreCase) { "mp4", "flv", "mov", "mkv", "avi", "wmv", "webm" };
+        new(Constants.SUPPORTED_VIDEO, StringComparer.OrdinalIgnoreCase);
 
     private static readonly HashSet<string> ImageExtensions =
         new(StringComparer.OrdinalIgnoreCase) { ".png", ".jpg", ".jpeg" };
@@ -46,19 +46,25 @@ public static class ExternalVideoDownloader
 
     internal static bool AlreadyDownloaded(string outputDirectory, string paddedNumber)
     {
-        var prefix = $"Slide.{paddedNumber}.";
+        var stem = $"Slide.{paddedNumber}";
         return Directory.GetFiles(outputDirectory).Any(f =>
-            Path.GetFileName(f).StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(Path.GetFileNameWithoutExtension(f), stem, StringComparison.OrdinalIgnoreCase) &&
             SupportedExtensions.Contains(Path.GetExtension(f).TrimStart('.').ToLowerInvariant()));
     }
 
     internal static IReadOnlyList<string> BuildArguments(string url, string outputPathTemplate) => new[]
     {
+        // Cap at 1080p, preferring a single already-combined stream so ffmpeg (needed to merge
+        // separate video+audio streams) isn't required for most sites; falls back to
+        // bestvideo+bestaudio (which does need ffmpeg to merge) only when no combined stream exists.
         "-f", "best[height<=1080]/bestvideo[height<=1080]+bestaudio",
         "--merge-output-format", "mp4",
         "-o", outputPathTemplate,
         "--no-playlist",
         "--newline",
+        "--ignore-config",
+        "--socket-timeout", "20",
+        "--retries", "2",
         url,
     };
 
@@ -104,47 +110,67 @@ public static class ExternalVideoDownloader
                 return;
             }
 
-            var stderr = new StringBuilder();
-            process.ErrorDataReceived += (_, e) => { if (!string.IsNullOrEmpty(e.Data)) stderr.AppendLine(e.Data); };
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-
-            bool exited = process.WaitForExit((int)DownloadTimeout.TotalMilliseconds);
-            if (!exited)
+            try
             {
-                try { process.Kill(entireProcessTree: true); } catch (Exception) { }
-                warnings.Add($"Slide {pending.SlideNumber}: video download timed out after {DownloadTimeout.TotalMinutes:0} minutes.");
-                return;
-            }
+                var stderr = new StringBuilder();
+                process.ErrorDataReceived += (_, e) => { if (!string.IsNullOrEmpty(e.Data)) stderr.AppendLine(e.Data); };
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
 
-            if (process.ExitCode != 0)
+                bool exited = process.WaitForExit((int)DownloadTimeout.TotalMilliseconds);
+                if (!exited)
+                {
+                    try { process.Kill(entireProcessTree: true); } catch (Exception) { }
+                    DeleteLeftoverArtifacts(outputDirectory, paddedNumber);
+                    warnings.Add($"Slide {pending.SlideNumber}: video download timed out after {DownloadTimeout.TotalMinutes:0} minutes.");
+                    return;
+                }
+
+                // The timed overload doesn't guarantee the async output/error readers have finished
+                // draining; the parameterless overload does. Without this, the captured stderr used
+                // for the failure message below can be missing its last (often most useful) line.
+                process.WaitForExit();
+
+                if (process.ExitCode != 0)
+                {
+                    var detail = LastNonEmptyLine(stderr.ToString());
+                    if (detail != null && detail.Length > 200) detail = detail[..200] + "…";
+                    DeleteLeftoverArtifacts(outputDirectory, paddedNumber);
+                    warnings.Add(detail != null
+                        ? $"Slide {pending.SlideNumber}: video download failed — {detail}"
+                        : $"Slide {pending.SlideNumber}: video download failed.");
+                    return;
+                }
+
+                var downloadedPath = FindDownloadedVideoFile(outputDirectory, paddedNumber);
+                if (downloadedPath == null)
+                {
+                    warnings.Add($"Slide {pending.SlideNumber}: video download reported success but no output file was found.");
+                    return;
+                }
+
+                var ext = Path.GetExtension(downloadedPath).TrimStart('.').ToLowerInvariant();
+                if (!SupportedExtensions.Contains(ext))
+                {
+                    warnings.Add($"Slide {pending.SlideNumber}: downloaded video format '.{ext}' isn't supported.");
+                    File.Delete(downloadedPath);
+                    return;
+                }
+
+                var siblingPng = Path.Combine(outputDirectory, $"Slide.{paddedNumber}.png");
+                if (File.Exists(siblingPng)) File.Delete(siblingPng);
+
+                Log.Debug("Slide {SlideNumber}: downloaded external video to {Path}", pending.SlideNumber, downloadedPath);
+            }
+            finally
             {
-                var detail = LastNonEmptyLine(stderr.ToString());
-                warnings.Add(detail != null
-                    ? $"Slide {pending.SlideNumber}: video download failed — {detail}"
-                    : $"Slide {pending.SlideNumber}: video download failed.");
-                return;
+                try
+                {
+                    if (!process.HasExited) process.Kill(entireProcessTree: true);
+                }
+                catch (Exception) { }
+                process.Dispose();
             }
-
-            var downloadedPath = FindNonImageFileWithPrefix(outputDirectory, paddedNumber);
-            if (downloadedPath == null)
-            {
-                warnings.Add($"Slide {pending.SlideNumber}: video download reported success but no output file was found.");
-                return;
-            }
-
-            var ext = Path.GetExtension(downloadedPath).TrimStart('.').ToLowerInvariant();
-            if (!SupportedExtensions.Contains(ext))
-            {
-                warnings.Add($"Slide {pending.SlideNumber}: downloaded video format '.{ext}' isn't supported.");
-                File.Delete(downloadedPath);
-                return;
-            }
-
-            var siblingPng = Path.Combine(outputDirectory, $"Slide.{paddedNumber}.png");
-            if (File.Exists(siblingPng)) File.Delete(siblingPng);
-
-            Log.Debug("Slide {SlideNumber}: downloaded external video to {Path}", pending.SlideNumber, downloadedPath);
         }
         catch (Exception e)
         {
@@ -153,16 +179,31 @@ public static class ExternalVideoDownloader
         }
     }
 
-    // Excludes only image extensions (rather than requiring a supported video extension) so that a
-    // download producing an unexpected-but-real format still gets found and reported with the
-    // specific "unsupported format" warning, instead of the vaguer "no output file was found" one.
-    private static string? FindNonImageFileWithPrefix(string outputDirectory, string paddedNumber)
+    // Matches the exact "Slide.{paddedNumber}" stem (not merely a shared prefix), so an intermediate
+    // file yt-dlp leaves behind mid-merge (e.g. "Slide.03.f271.mp4" from the bestvideo+bestaudio
+    // fallback) is never mistaken for the final merged output - only its exact-stem filename is.
+    private static string? FindDownloadedVideoFile(string outputDirectory, string paddedNumber)
     {
-        var prefix = $"Slide.{paddedNumber}.";
+        var stem = $"Slide.{paddedNumber}";
         return Directory.GetFiles(outputDirectory)
             .FirstOrDefault(f =>
-                Path.GetFileName(f).StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(Path.GetFileNameWithoutExtension(f), stem, StringComparison.OrdinalIgnoreCase) &&
                 !ImageExtensions.Contains(Path.GetExtension(f)));
+    }
+
+    // Removes any leftover non-image files for this slide (e.g. yt-dlp's partial merge intermediates)
+    // after a failed or timed-out attempt, so the next sync starts clean rather than picking up a
+    // stale intermediate as a slide (CollectSlideFilesInOrder accepts any supported video extension
+    // regardless of exact naming) or as an "already downloaded" false positive.
+    private static void DeleteLeftoverArtifacts(string outputDirectory, string paddedNumber)
+    {
+        var prefix = $"Slide.{paddedNumber}.";
+        foreach (var file in Directory.GetFiles(outputDirectory)
+                     .Where(f => Path.GetFileName(f).StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
+                                 !ImageExtensions.Contains(Path.GetExtension(f))))
+        {
+            try { File.Delete(file); } catch (Exception) { }
+        }
     }
 
     private static string? LastNonEmptyLine(string text)
