@@ -187,6 +187,29 @@ public class HandsLiftedDocXmlSerializerTests
     }
 
     [TestMethod]
+    public void SongItemReference_Clone_PreservesUUID_SoDuplicateStillResolvesInLibrary()
+    {
+        // Regression test for MainViewModel's "duplicate item" command:
+        // SerializeItem -> Item.Clone() -> ItemInstanceFactory.ToItemInstance.
+        // Item.Clone() (base) reassigns a fresh UUID, which is correct for content-owning
+        // item types but was silently orphaning a duplicated song reference from the
+        // library song it points at (UUID means "which song", not "this item's identity").
+        var song = new SongItem { Title = "Amazing Grace", Copyright = "PD" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var instance = new SongItemInstance(null) { UUID = song.UUID, SlideTransitionDurationMs = 300 };
+
+        var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance, "irrelevant-playlist-dir");
+        var cloned = serialized.Clone();
+
+        Assert.IsInstanceOfType(cloned, typeof(SongItemReference));
+        var clonedReference = (SongItemReference)cloned;
+        Assert.AreEqual(song.UUID, clonedReference.UUID);
+        Assert.AreEqual(300.0, clonedReference.SlideTransitionDurationMs);
+        Assert.AreSame(song, Globals.Instance.SongLibraryIndex.Resolve(clonedReference.UUID),
+            "Duplicated song reference must still resolve to the original library song.");
+    }
+
+    [TestMethod]
     public void SerializePlaylist_ThenDeserialize_RoundTripsMediaGroupItemTransitionOverride()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };

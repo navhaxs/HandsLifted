@@ -12,5 +12,13 @@ namespace HandsLiftedApp.Data.Models.Items
     [Serializable]
     public class SongItemReference : Item
     {
+        public override Item Clone()
+        {
+            // A reference's UUID identifies which library song it points at, not this
+            // playlist item's own identity. The base Clone() reassigns a fresh UUID for
+            // independent duplicate-item identity, which is correct for content-owning
+            // item types but would orphan a reference from the song it points at.
+            return new SongItemReference { UUID = UUID, SlideTransitionDurationMs = SlideTransitionDurationMs };
+        }
     }
 }
