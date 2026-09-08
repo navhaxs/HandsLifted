@@ -64,85 +64,93 @@ public static class ExternalVideoDownloader
 
     private static void DownloadOne(PendingExternalVideo pending, int shownSlideCount, string outputDirectory, List<string> warnings)
     {
-        var paddedNumber = PadSlideNumber(pending.SlideNumber, shownSlideCount);
-
-        if (AlreadyDownloaded(outputDirectory, paddedNumber))
-        {
-            Log.Debug("Slide {SlideNumber}: external video already downloaded, skipping", pending.SlideNumber);
-            return;
-        }
-
-        var outputTemplate = Path.Combine(outputDirectory, $"Slide.{paddedNumber}.%(ext)s");
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = "yt-dlp",
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true,
-        };
-        foreach (var arg in BuildArguments(pending.Url, outputTemplate))
-        {
-            startInfo.ArgumentList.Add(arg);
-        }
-
-        Process? process;
         try
         {
-            process = Process.Start(startInfo);
+            var paddedNumber = PadSlideNumber(pending.SlideNumber, shownSlideCount);
+
+            if (AlreadyDownloaded(outputDirectory, paddedNumber))
+            {
+                Log.Debug("Slide {SlideNumber}: external video already downloaded, skipping", pending.SlideNumber);
+                return;
+            }
+
+            var outputTemplate = Path.Combine(outputDirectory, $"Slide.{paddedNumber}.%(ext)s");
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "yt-dlp",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+            };
+            foreach (var arg in BuildArguments(pending.Url, outputTemplate))
+            {
+                startInfo.ArgumentList.Add(arg);
+            }
+
+            Process? process;
+            try
+            {
+                process = Process.Start(startInfo);
+            }
+            catch (Exception)
+            {
+                process = null;
+            }
+
+            if (process == null)
+            {
+                warnings.Add($"Slide {pending.SlideNumber}: needs yt-dlp to import this video — install it (see https://github.com/yt-dlp/yt-dlp#installation) and re-sync.");
+                return;
+            }
+
+            var stderr = new StringBuilder();
+            process.ErrorDataReceived += (_, e) => { if (!string.IsNullOrEmpty(e.Data)) stderr.AppendLine(e.Data); };
+            process.BeginErrorReadLine();
+            process.BeginOutputReadLine();
+
+            bool exited = process.WaitForExit((int)DownloadTimeout.TotalMilliseconds);
+            if (!exited)
+            {
+                try { process.Kill(entireProcessTree: true); } catch (Exception) { }
+                warnings.Add($"Slide {pending.SlideNumber}: video download timed out after {DownloadTimeout.TotalMinutes:0} minutes.");
+                return;
+            }
+
+            if (process.ExitCode != 0)
+            {
+                var detail = LastNonEmptyLine(stderr.ToString());
+                warnings.Add(detail != null
+                    ? $"Slide {pending.SlideNumber}: video download failed — {detail}"
+                    : $"Slide {pending.SlideNumber}: video download failed.");
+                return;
+            }
+
+            var downloadedPath = FindNonImageFileWithPrefix(outputDirectory, paddedNumber);
+            if (downloadedPath == null)
+            {
+                warnings.Add($"Slide {pending.SlideNumber}: video download reported success but no output file was found.");
+                return;
+            }
+
+            var ext = Path.GetExtension(downloadedPath).TrimStart('.').ToLowerInvariant();
+            if (!SupportedExtensions.Contains(ext))
+            {
+                warnings.Add($"Slide {pending.SlideNumber}: downloaded video format '.{ext}' isn't supported.");
+                File.Delete(downloadedPath);
+                return;
+            }
+
+            var siblingPng = Path.Combine(outputDirectory, $"Slide.{paddedNumber}.png");
+            if (File.Exists(siblingPng)) File.Delete(siblingPng);
+
+            Log.Debug("Slide {SlideNumber}: downloaded external video to {Path}", pending.SlideNumber, downloadedPath);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            process = null;
+            Log.Warning(e, "Unexpected error downloading external video for slide {SlideNumber}", pending.SlideNumber);
+            warnings.Add($"Slide {pending.SlideNumber}: video download failed unexpectedly.");
         }
-
-        if (process == null)
-        {
-            warnings.Add($"Slide {pending.SlideNumber}: needs yt-dlp to import this video — install it (see https://github.com/yt-dlp/yt-dlp#installation) and re-sync.");
-            return;
-        }
-
-        var stderr = new StringBuilder();
-        process.ErrorDataReceived += (_, e) => { if (!string.IsNullOrEmpty(e.Data)) stderr.AppendLine(e.Data); };
-        process.BeginErrorReadLine();
-        process.BeginOutputReadLine();
-
-        bool exited = process.WaitForExit((int)DownloadTimeout.TotalMilliseconds);
-        if (!exited)
-        {
-            try { process.Kill(entireProcessTree: true); } catch (Exception) { }
-            warnings.Add($"Slide {pending.SlideNumber}: video download timed out after {DownloadTimeout.TotalMinutes:0} minutes.");
-            return;
-        }
-
-        if (process.ExitCode != 0)
-        {
-            var detail = LastNonEmptyLine(stderr.ToString());
-            warnings.Add(detail != null
-                ? $"Slide {pending.SlideNumber}: video download failed — {detail}"
-                : $"Slide {pending.SlideNumber}: video download failed.");
-            return;
-        }
-
-        var downloadedPath = FindNonImageFileWithPrefix(outputDirectory, paddedNumber);
-        if (downloadedPath == null)
-        {
-            warnings.Add($"Slide {pending.SlideNumber}: video download reported success but no output file was found.");
-            return;
-        }
-
-        var ext = Path.GetExtension(downloadedPath).TrimStart('.').ToLowerInvariant();
-        if (!SupportedExtensions.Contains(ext))
-        {
-            warnings.Add($"Slide {pending.SlideNumber}: downloaded video format '.{ext}' isn't supported.");
-            File.Delete(downloadedPath);
-            return;
-        }
-
-        var siblingPng = Path.Combine(outputDirectory, $"Slide.{paddedNumber}.png");
-        if (File.Exists(siblingPng)) File.Delete(siblingPng);
-
-        Log.Debug("Slide {SlideNumber}: downloaded external video to {Path}", pending.SlideNumber, downloadedPath);
     }
 
     // Excludes only image extensions (rather than requiring a supported video extension) so that a
