@@ -10,7 +10,18 @@ public class PowerPointVideoExtractionResult
 
     /// <summary>Human-readable messages for slides that had a video but couldn't import it.</summary>
     public List<string> Warnings { get; init; } = new();
+
+    /// <summary>Slides whose video is an http(s) External reference — not yet resolved. A separate,
+    /// slower step (ExternalVideoDownloader) attempts to download these.</summary>
+    public List<PendingExternalVideo> PendingExternalVideos { get; init; } = new();
+
+    /// <summary>Count of shown (non-hidden) slides, so a caller can reproduce the same zero-pad digit
+    /// width this class used for Slide.{padded}.ext filenames, without needing maxDigits exposed
+    /// directly. 0 if extraction returned before any slides were counted.</summary>
+    public int ShownSlideCount { get; set; }
 }
+
+public record PendingExternalVideo(int SlideNumber, string Url);
 
 /// <summary>
 /// Pulls embedded videos straight out of a .pptx package so a slide whose main content is a video
@@ -98,6 +109,7 @@ public static class EmbeddedVideoExtractor
 
             if (shownSlideParts.Count == 0) return result;
 
+            result.ShownSlideCount = shownSlideParts.Count;
             int maxDigits = (int)Math.Floor(Math.Log10(shownSlideParts.Count) + 1);
 
             for (int i = 0; i < shownSlideParts.Count; i++)
@@ -161,6 +173,14 @@ public static class EmbeddedVideoExtractor
         var targetMode = relationship.Attribute("TargetMode")?.Value;
         if (string.Equals(targetMode, "External", StringComparison.OrdinalIgnoreCase))
         {
+            var externalTarget = relationship.Attribute("Target")?.Value;
+            if (Uri.TryCreate(externalTarget, UriKind.Absolute, out var externalUri) &&
+                (externalUri.Scheme == Uri.UriSchemeHttp || externalUri.Scheme == Uri.UriSchemeHttps))
+            {
+                result.PendingExternalVideos.Add(new PendingExternalVideo(slideNumber, externalUri.ToString()));
+                return;
+            }
+
             result.Warnings.Add($"Slide {slideNumber}: video is linked to an external file and can't be imported.");
             return;
         }

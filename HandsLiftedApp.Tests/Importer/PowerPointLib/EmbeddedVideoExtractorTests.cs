@@ -228,4 +228,54 @@ public class EmbeddedVideoExtractorTests
         StringAssert.Contains(result.Warnings[0], "isn't supported");
         Assert.IsTrue(File.Exists(siblingPng));
     }
+
+    [TestMethod]
+    public void ExtractVideos_ExternalHttpVideo_AddsToPendingExternalVideosWithoutWarning()
+    {
+        var pptxPath = CreateTestPptx(new[]
+        {
+            new TestSlide(Hidden: false, VideoTarget: "https://player.vimeo.com/video/1117314702?app_id=122963", VideoTargetMode: "External"),
+        });
+        var siblingPng = Path.Combine(_tempDir, "Slide.1.png");
+        File.WriteAllText(siblingPng, "png-bytes");
+
+        var result = EmbeddedVideoExtractor.ExtractVideos(pptxPath, _tempDir);
+
+        Assert.AreEqual(0, result.Warnings.Count);
+        Assert.AreEqual(0, result.SlideIndexToVideoFile.Count);
+        Assert.AreEqual(1, result.PendingExternalVideos.Count);
+        Assert.AreEqual(1, result.PendingExternalVideos[0].SlideNumber);
+        Assert.AreEqual("https://player.vimeo.com/video/1117314702?app_id=122963", result.PendingExternalVideos[0].Url);
+        Assert.IsTrue(File.Exists(siblingPng), "PNG must be left alone until the downloader actually succeeds");
+    }
+
+    [TestMethod]
+    public void ExtractVideos_ExternalNonHttpTarget_StillWarnsAndDoesNotAddToPending()
+    {
+        var pptxPath = CreateTestPptx(new[]
+        {
+            new TestSlide(Hidden: false, VideoTarget: "file:///C:/videos/clip.mp4", VideoTargetMode: "External"),
+        });
+
+        var result = EmbeddedVideoExtractor.ExtractVideos(pptxPath, _tempDir);
+
+        Assert.AreEqual(0, result.PendingExternalVideos.Count);
+        Assert.AreEqual(1, result.Warnings.Count);
+        StringAssert.Contains(result.Warnings[0], "linked to an external file");
+    }
+
+    [TestMethod]
+    public void ExtractVideos_ShownSlideCount_MatchesNumberOfShownSlides()
+    {
+        var pptxPath = CreateTestPptx(new[]
+        {
+            new TestSlide(Hidden: false, VideoTarget: null, VideoTargetMode: null),
+            new TestSlide(Hidden: true, VideoTarget: null, VideoTargetMode: null),
+            new TestSlide(Hidden: false, VideoTarget: null, VideoTargetMode: null),
+        });
+
+        var result = EmbeddedVideoExtractor.ExtractVideos(pptxPath, _tempDir);
+
+        Assert.AreEqual(2, result.ShownSlideCount);
+    }
 }
