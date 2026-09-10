@@ -220,7 +220,7 @@
                                             Tag="{Binding}"
                                             ToolTip.Tip="{Binding FilePath}">
                                             <Button.ContextMenu>
-                                                <ContextMenu>
+                                                <ContextMenu PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
                                                     <MenuItem Click="OpenFileLocation_Clicked" Header="Open file location" />
                                                     <MenuItem Click="RemoveFromRecents_Clicked" Header="Remove from recents" />
                                                 </ContextMenu>
