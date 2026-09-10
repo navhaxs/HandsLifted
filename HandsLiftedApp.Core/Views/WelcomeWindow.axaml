@@ -217,10 +217,10 @@
                                     <DataTemplate>
                                         <Button
                                             Click="LoadRecentPlaylistEntryCommand"
-                                            Tag="{Binding}"
+                                            ContextRequested="RecentPlaylistButton_ContextRequested"
                                             ToolTip.Tip="{Binding FilePath}">
                                             <Button.ContextMenu>
-                                                <ContextMenu PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}">
+                                                <ContextMenu>
                                                     <MenuItem Click="OpenFileLocation_Clicked" Header="Open file location" />
                                                     <MenuItem Click="RemoveFromRecents_Clicked" Header="Remove from recents" />
                                                 </ContextMenu>

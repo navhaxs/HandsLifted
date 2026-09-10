@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -151,9 +152,21 @@ namespace HandsLiftedApp.Core.Views
 
         private async void OpenFileButton_Clicked(object sender, RoutedEventArgs args) => await OpenFileAsync();
 
+        // Avalonia's ContextMenu opens via ControlContextRequested, which passes
+        // e.Source (the specific child under the cursor, not the Button) as the popup's
+        // internal PlacementTarget - and writes it only to the Popup, never back to
+        // ContextMenu.PlacementTarget. So that property can't be used to recover which
+        // row was right-clicked. Capture it here instead, off the real event sender.
+        private WelcomeWindowViewModel.RecentPlaylistEntry? _contextMenuEntry;
+
+        private void RecentPlaylistButton_ContextRequested(object? sender, ContextRequestedEventArgs e)
+        {
+            _contextMenuEntry = (sender as Control)?.DataContext as WelcomeWindowViewModel.RecentPlaylistEntry;
+        }
+
         private void OpenFileLocation_Clicked(object? sender, RoutedEventArgs e)
         {
-            var entry = GetEntryFromContextMenuSender(sender);
+            var entry = _contextMenuEntry;
             if (entry is null) return;
             try
             {
@@ -167,7 +180,7 @@ namespace HandsLiftedApp.Core.Views
 
         private void RemoveFromRecents_Clicked(object? sender, RoutedEventArgs e)
         {
-            var entry = GetEntryFromContextMenuSender(sender);
+            var entry = _contextMenuEntry;
             if (entry is null) return;
             var vm = DataContext as WelcomeWindowViewModel;
             vm?.RecentPlaylists.Remove(entry);
@@ -175,20 +188,6 @@ namespace HandsLiftedApp.Core.Views
             {
                 s.RecentPlaylistFullPathsList = System.Array.FindAll(list, p => p != entry.FilePath);
             }
-        }
-
-        private static WelcomeWindowViewModel.RecentPlaylistEntry? GetEntryFromContextMenuSender(object? sender)
-        {
-            // ContextMenu items don't inherit DataContext through popup boundary.
-            // We use Tag="{Binding}" on the Button as the workaround.
-            if (sender is MenuItem menuItem &&
-                menuItem.Parent is ContextMenu contextMenu &&
-                contextMenu.PlacementTarget is Button btn)
-            {
-                return btn.Tag as WelcomeWindowViewModel.RecentPlaylistEntry;
-            }
-
-            return null;
         }
     }
 }
