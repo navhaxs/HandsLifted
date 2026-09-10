@@ -115,8 +115,9 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
 
         private async void ButtonImportGoogleSlides_OnClick(object? sender, RoutedEventArgs e)
         {
+            Window? window = FindOwnerWindow();
+            if (window == null) return;
 
-            Window? window = this.VisualRoot as Window;
             var GoogleSlidesPresentationId = await ImportWizard.Run(window);
 
             if (GoogleSlidesPresentationId == null)
@@ -124,19 +125,19 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
                 // abort
                 return;
             }
-        
+
             var itemInsertIndex = Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex;
             MessageBus.Current.SendMessage(new AddItemMessage() {InsertIndex = itemInsertIndex, Type = AddItemMessage.AddItemType.GoogleSlides, CreateInfo = GoogleSlidesPresentationId});
             CloseWindow();
         }
-        
+
         private async void ButtonImportOnlineVideo_OnClick(object? sender, RoutedEventArgs e)
         {
+            Window? window = FindOwnerWindow();
+            if (window == null) return;
+
             var dialog = new OnlineVideoUrlDialog();
-            if (this.VisualRoot is Window window)
-            {
-                await dialog.ShowDialog(window);
-            }
+            await dialog.ShowDialog(window);
 
             if (dialog.Result == null)
             {
@@ -147,6 +148,22 @@ namespace HandsLiftedApp.Core.Views.AddItem.Pages
             var itemInsertIndex = Globals.Instance.MainViewModel.Playlist.ActiveItemInsertIndex;
             MessageBus.Current.SendMessage(new AddItemMessage() {InsertIndex = itemInsertIndex, Type = AddItemMessage.AddItemType.OnlineVideo, CreateInfo = dialog.Result});
             CloseWindow();
+        }
+
+        // this.VisualRoot / TopLevel.GetTopLevel(this) have been observed returning null here even
+        // though StartView is hosted directly inside AddItemWindow (see logs/visionscreens_app_log.txt
+        // 00:15:43 fatal ArgumentNullException from ButtonImportGoogleSlides_OnClick). Walk the logical
+        // tree instead, matching AddItemFlyoutResourceDictionary.OnMenuItemClick's Scripture case.
+        private Window? FindOwnerWindow()
+        {
+            Control? ancestor = this;
+            while (ancestor != null)
+            {
+                if (ancestor is Window w) return w;
+                ancestor = ancestor.Parent as Control;
+            }
+
+            return null;
         }
 
         private async void ButtonCreateFreeTextSlide_OnClick(object? sender, RoutedEventArgs e)

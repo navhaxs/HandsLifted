@@ -6,6 +6,7 @@
         Width="420"
         Height="190"
         WindowStartupLocation="CenterOwner"
+        Topmost="True"
         ExtendClientAreaToDecorationsHint="True"
         Background="Transparent"
         TransparencyLevelHint="Transparent"
