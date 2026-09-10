@@ -115,6 +115,10 @@ namespace HandsLiftedApp.Core
         {
             IsShuttingDown = true;
 
+            // Any edit made within the last debounce window (500ms) has a save still pending on
+            // a timer that may never fire once the process exits — flush it now.
+            SongLibraryIndex.FlushPendingSaves();
+
             NativePowerPointImportService.Shutdown();
 
             if (MpvContextInstance != null)

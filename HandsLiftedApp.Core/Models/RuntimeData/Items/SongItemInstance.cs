@@ -348,6 +348,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             ItemDataModified?.Invoke(this, EventArgs.Empty);
             GenerateArrangementViews();
             debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+            NotifySharedSongChanged();
         }
 
         public void ResetArrangement()
@@ -538,6 +539,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             s();
             ItemDataModified?.Invoke(this, EventArgs.Empty);
+            NotifySharedSongChanged();
         }
 
         private void _stanzas_CollectionChanged(object? sender,

@@ -160,6 +160,28 @@ namespace HandsLiftedApp.Core.Models.Library
             debouncer.Debounce(() => SaveToDisk(id, entry.Song, entry.FilePath, entry.LibraryDirectory));
         }
 
+        /// <summary>
+        /// Writes the current in-memory content for `id` to disk immediately, bypassing the
+        /// debounce delay. Use for an explicit user-initiated save.
+        /// </summary>
+        public void SaveNow(Guid id)
+        {
+            if (_byId.TryGetValue(id, out var entry))
+                SaveToDisk(id, entry.Song, entry.FilePath, entry.LibraryDirectory);
+        }
+
+        /// <summary>
+        /// Immediately writes to disk every song that has ever had a debounced save scheduled
+        /// this session (see NotifyChanged), bypassing the debounce delay. Call on app shutdown
+        /// so an edit made within the last debounce window isn't lost — the still-pending
+        /// debounced call may fire after this and re-write the same content, which is harmless.
+        /// </summary>
+        public void FlushPendingSaves()
+        {
+            foreach (var id in _saveDebouncers.Keys)
+                SaveNow(id);
+        }
+
         private void SaveToDisk(Guid id, SongItem song, string filePath, string libraryDirectory)
         {
             // MotionBackgroundVideoPath is held in-memory as an absolute path (see

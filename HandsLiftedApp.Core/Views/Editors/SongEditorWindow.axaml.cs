@@ -212,6 +212,25 @@ namespace HandsLiftedApp.Core.Views.Editors
                 DoSaveToLibrary(vm);
         }
 
+        /// <summary>
+        /// Save button for an already-attached (existing) library song. Unlike DoSaveToLibrary
+        /// (which writes a brand-new file for a song not yet in the library), edits to an
+        /// existing song already write through to disk automatically as they're made
+        /// (SongItemInstance.NotifySharedSongChanged -> SongLibraryIndex.NotifyChanged), debounced
+        /// by 500ms. This just flushes that pending write immediately so the user gets an explicit,
+        /// confirmable save action instead of only relying on the debounce timer.
+        /// </summary>
+        private void SaveExisting_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (DataContext is SongEditorViewModel { Song: { } song })
+            {
+                Globals.Instance.SongLibraryIndex.SaveNow(song.SongId);
+            }
+
+            _closeConfirmed = true;
+            Close();
+        }
+
         private void DoSaveToLibrary(SongEditorViewModel vm)
         {
             var dir = vm.SongLibrary?.Config.Directory;

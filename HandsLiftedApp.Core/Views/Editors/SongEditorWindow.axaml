@@ -178,6 +178,17 @@
                         </Button>
 
                     </StackPanel>
+
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" IsVisible="{Binding !IsNewSongMode}">
+
+                        <Button Click="SaveExisting_OnClick">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="Save" />
+                                <material:MaterialIcon Kind="TickCircleOutline" />
+                            </DockPanel>
+                        </Button>
+
+                    </StackPanel>
                     <Grid />
                 </DockPanel>
 
