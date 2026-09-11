@@ -14,6 +14,7 @@ public static class ScriptureParagraphSpecBuilder
     private const int CanvasWidth = ScriptureParagraphLayoutEngine.CanvasWidth;
     private const int CanvasHeight = ScriptureParagraphLayoutEngine.CanvasHeight;
     private const float HorizontalMargin = ScriptureParagraphLayoutEngine.HorizontalMargin;
+    private const float TopMargin = 160f;
 
     private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
         theme.DropShadowEnabled
@@ -68,11 +69,19 @@ public static class ScriptureParagraphSpecBuilder
         using var headerPaint = new SKPaint(headerFont);
 
         bool hasHeader = lines.Any(l => l.IsHeader);
-        float totalHeight = lines.Sum(l => l.IsHeader ? headerLineHeight : lineHeight);
-        if (hasHeader && lines.Any(l => !l.IsHeader))
-            totalHeight += ScriptureParagraphLayoutEngine.HeaderSpacingBelow;
+        float startY;
+        if (hasHeader)
+        {
+            float totalHeight = lines.Sum(l => l.IsHeader ? headerLineHeight : lineHeight);
+            if (lines.Any(l => !l.IsHeader))
+                totalHeight += ScriptureParagraphLayoutEngine.HeaderSpacingBelow;
+            startY = (CanvasHeight - totalHeight) / 2f;
+        }
+        else
+        {
+            startY = TopMargin;
+        }
 
-        float startY = (CanvasHeight - totalHeight) / 2f;
         var result = new List<RenderElement>(lines.Count);
         float y = startY;
 
