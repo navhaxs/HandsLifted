@@ -142,7 +142,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                     WindowState = (WindowState)vm.settings.LastWindowState;
                 }
 
-                if (!Debugger.IsAttached && !Environment.MachineName.Contains("JEREMY"))
+                if (!Debugger.IsAttached && !Environment.MachineName.Contains("JEREMY") && !Globals.Instance.AppPreferences.OnTheEdge)
                 {
                     ThisIsATestBuildWarningWindow warningWindow = new();
                     warningWindow.ShowDialog(this);

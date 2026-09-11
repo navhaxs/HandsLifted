@@ -66,7 +66,14 @@ namespace HandsLiftedApp.Core.ViewModels
                 })
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.LogoBitmap);
-
+        }
+        
+        private bool _onTheEdge;
+        [DataMember]
+        public bool OnTheEdge
+        {
+            get => _onTheEdge;
+            set => this.RaiseAndSetIfChanged(ref _onTheEdge, value);
         }
         
         private bool _enableDebugStats = false;
