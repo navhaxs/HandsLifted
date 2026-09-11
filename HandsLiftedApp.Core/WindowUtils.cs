@@ -17,12 +17,12 @@ namespace HandsLiftedApp.Core
 
                 var targetPosition = new PixelPoint(targetSavedDisplay.X, targetSavedDisplay.Y);
 
-                if (targetWindow.Screens.All.FirstOrDefault(target => target.Bounds.Contains(targetPosition)) == null)
+                if (!IsDisplayConnected(targetWindow, targetSavedDisplay))
                 {
                     if (forceShow != true)
                         return;
                 }
-                
+
                 // force re-toggle
                 if (targetWindow.WindowState == WindowState.FullScreen)
                 {
@@ -42,6 +42,13 @@ namespace HandsLiftedApp.Core
             targetWindow.Show();
 
         }
+
+        public static bool IsDisplayConnected(Window window, AppPreferencesViewModel.DisplayModel targetSavedDisplay)
+        {
+            var targetPosition = new PixelPoint(targetSavedDisplay.X, targetSavedDisplay.Y);
+            return window.Screens.All.Any(target => target.Bounds.Contains(targetPosition));
+        }
+
         public static void RegisterWindowWatcher(Window targetWindow)
         {
         // maintain fullscreen state when user moves this window across monitors (e.g. by Win+Shift+Left/RightArrow)

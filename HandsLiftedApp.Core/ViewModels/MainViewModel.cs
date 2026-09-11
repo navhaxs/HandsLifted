@@ -798,7 +798,23 @@ public class MainViewModel : ViewModelBase
                 ProjectorWindow = new ProjectorWindow() { DataContext = this };
             }
 
-            ToggleProjectorWindow(Globals.Instance.AppPreferences.OnStartupShowOutput);
+            if (Globals.Instance.AppPreferences.OnStartupShowOutput)
+            {
+                var savedOutputDisplay = Globals.Instance.AppPreferences.OutputDisplayBounds;
+                if (savedOutputDisplay != null && !WindowUtils.IsDisplayConnected(ProjectorWindow, savedOutputDisplay))
+                {
+                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                    {
+                        Title = "Projector display not found",
+                        Content =
+                            $"The configured projector display \"{savedOutputDisplay.Label}\" is not connected. The projector window has not been shown."
+                    });
+                }
+                else
+                {
+                    ToggleProjectorWindow(true);
+                }
+            }
 
             if (StageDisplayWindow == null)
             {
@@ -806,7 +822,23 @@ public class MainViewModel : ViewModelBase
                 StageDisplayWindow.DataContext = this;
             }
 
-            ToggleStageDisplayWindow(Globals.Instance.AppPreferences.OnStartupShowStage);
+            if (Globals.Instance.AppPreferences.OnStartupShowStage)
+            {
+                var savedStageDisplay = Globals.Instance.AppPreferences.StageDisplayBounds;
+                if (savedStageDisplay != null && !WindowUtils.IsDisplayConnected(StageDisplayWindow, savedStageDisplay))
+                {
+                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                    {
+                        Title = "Stage display not found",
+                        Content =
+                            $"The configured stage display \"{savedStageDisplay.Label}\" is not connected. The stage display window has not been shown."
+                    });
+                }
+                else
+                {
+                    ToggleStageDisplayWindow(true);
+                }
+            }
         });
     }
 
