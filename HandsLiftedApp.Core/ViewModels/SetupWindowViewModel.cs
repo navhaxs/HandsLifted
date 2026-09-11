@@ -29,7 +29,25 @@ namespace HandsLiftedApp.Core.ViewModels
                     ? $"Display {index + 1} - {name}"
                     : $"Display {index + 1}";
             }
+
+            AddConfiguredDisplayIfDisconnected(Globals.Instance.AppPreferences.OutputDisplayBounds);
+            AddConfiguredDisplayIfDisconnected(Globals.Instance.AppPreferences.StageDisplayBounds);
+
             AllAvailableScreens.Add(null);
+        }
+
+        // Keeps the last-configured display selectable (and selected) even when it's not
+        // currently connected, so the setup dropdowns don't reset to (Unset) just because
+        // a projector/stage display happens to be off/unplugged at the moment Setup is opened.
+        private void AddConfiguredDisplayIfDisconnected(AppPreferencesViewModel.DisplayModel? configured)
+        {
+            if (configured == null) return;
+            if (_AllAvailableScreens.Any(s => s != null && s.Equals(configured))) return;
+
+            _AllAvailableScreens.Add(new AppPreferencesViewModel.DisplayModel(new PixelRect(configured.X, configured.Y, configured.Width, configured.Height))
+            {
+                Label = $"{configured.Label} (Disconnected)"
+            });
         }
 
         public void ShowDisplayIdentification(Screens screens)
