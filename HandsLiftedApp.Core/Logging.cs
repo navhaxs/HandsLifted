@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -25,28 +26,70 @@ namespace HandsLiftedApp.Core
 
         public static void InitLogging()
         {
-            var envLogLevel = Environment.GetEnvironmentVariable("VISIONSCREENS_LOG_LEVEL");
-            if (!string.IsNullOrEmpty(envLogLevel) && Enum.TryParse<LogEventLevel>(envLogLevel, true, out var level))
+            if (LoggingConfig.Instance.LogLevel != null)
             {
-                LevelSwitch.MinimumLevel = level;
+                LevelSwitch.MinimumLevel = LoggingConfig.Instance.LogLevel.Value;
             }
 
-            if (OperatingSystem.IsWindows())
-            {
-                ConsoleUtils.AllocConsole();
-            }
-            //var myWriter = new ConsoleTraceListener();
-            //Trace.Listeners.Add(myWriter);
+            // Surfaces Seq send failures (unreachable server etc.), which Serilog otherwise swallows internally.
+            Serilog.Debugging.SelfLog.Enable(msg => System.Diagnostics.Debug.WriteLine($"[SerilogSelfLog] {msg}"));
 
             ExpressionTemplate OUTPUT_TEMPLATE = new ExpressionTemplate(
                 "[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
-            Log.Logger = new LoggerConfiguration()
+            var seqUrl = LoggingConfig.Instance.SeqUrl;
+
+            var loggerConfig = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(LevelSwitch)
                 .Enrich.FromLogContext()
-                .WriteTo.Debug(formatter: OUTPUT_TEMPLATE)
-                .WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE)
-                .WriteTo.Console(formatter: OUTPUT_TEMPLATE)
-                .CreateLogger();
+                .WriteTo.Debug(formatter: OUTPUT_TEMPLATE);
+
+            if (LoggingConfig.Instance.EnableLogConsole)
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    ConsoleUtils.AllocConsole();
+
+                    // AllocConsole() doesn't repoint the process's std handles to the new console,
+                    // so Console.Out/Error must be rebound via the CONOUT$ device directly.
+                    Console.SetOut(new StreamWriter(new FileStream("CONOUT$", FileMode.Open, FileAccess.Write, FileShare.Write)) { AutoFlush = true });
+                    Console.SetError(new StreamWriter(new FileStream("CONOUT$", FileMode.Open, FileAccess.Write, FileShare.Write)) { AutoFlush = true });
+                }
+                loggerConfig = loggerConfig.WriteTo.Console(formatter: OUTPUT_TEMPLATE);
+            }
+            
+            if (LoggingConfig.Instance.EnableLogFile)
+            {
+                loggerConfig =
+                    loggerConfig.WriteTo.File(path: "logs/visionscreens_app_log.txt", formatter: OUTPUT_TEMPLATE);
+            }
+
+            string? seqSkippedReason = null;
+            if (!string.IsNullOrWhiteSpace(seqUrl))
+            {
+                if (Uri.TryCreate(seqUrl, UriKind.Absolute, out var seqUri) &&
+                    (seqUri.Scheme == Uri.UriSchemeHttp || seqUri.Scheme == Uri.UriSchemeHttps))
+                {
+                    try
+                    {
+                        loggerConfig = loggerConfig.WriteTo.Seq(seqUrl);
+                    }
+                    catch (Exception ex)
+                    {
+                        seqSkippedReason = $"failed to configure Seq sink: {ex.Message}";
+                    }
+                }
+                else
+                {
+                    seqSkippedReason = $"invalid SeqUrl in logging.yml: \"{seqUrl}\"";
+                }
+            }
+
+            Log.Logger = loggerConfig.CreateLogger();
+
+            if (seqSkippedReason != null)
+            {
+                Log.Warning("Seq logging disabled - {Reason}", seqSkippedReason);
+            }
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;

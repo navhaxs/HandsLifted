@@ -1,14 +1,14 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace HandsLiftedApp.Utils
 {
     public static class ConsoleUtils
     {
         [DllImport("Kernel32")]
-        public static extern void AllocConsole();
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool AllocConsole();
 
         [DllImport("Kernel32")]
         public static extern void FreeConsole();
-
     }
 }
