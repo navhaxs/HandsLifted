@@ -60,6 +60,12 @@ namespace HandsLiftedApp.Core.Views
             _slideSubscription?.Dispose();
         }
 
+        private SlideRenderSpec? BuildSlideSpec(Slide? slide)
+        {
+            var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
+            return SlideSpecResolver.Resolve(slide, logoPath);
+        }
+
         private async void OnActiveSlideChanged(Slide? slide)
         {
             // Generation token: if another slide change fires while we are preloading,
@@ -67,26 +73,13 @@ namespace HandsLiftedApp.Core.Views
             // override the newer slide with an out-of-order result.
             int myGeneration = System.Threading.Interlocked.Increment(ref _transitionGeneration);
 
-            var logoPath = NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
+            var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
             Log.Debug("[LivePane] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
                 slide?.GetType().Name ?? "null",
                 (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-",
                 logoPath ?? "-");
 
-            SlideRenderSpec? spec = slide switch
-            {
-                SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
-                SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
-                ScriptureSlideInstance sc => ScriptureParagraphSpecBuilder.Build(sc),
-                ImageSlideInstance img   => IsValidMediaPath(img.SourceMediaFilePath)
-                    ? new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>())
-                    : null,
-                LogoSlide                => IsValidMediaPath(logoPath)
-                    ? new SlideRenderSpec(new ImageBackground(logoPath), Array.Empty<RenderElement>())
-                    : null,
-                HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs => CustomSlideSpecBuilder.Build(cs),
-                _                        => null,
-            };
+            SlideRenderSpec? spec = BuildSlideSpec(slide);
 
             // Pre-warm bitmap cache on a background thread so the render thread never
             // has to decode a large image during the first transition frame.
@@ -122,43 +115,6 @@ namespace HandsLiftedApp.Core.Views
                 // No video cross-fade — use the user's slide transition duration.
                 LivePreviewCanvas.Transition(spec, TimeSpan.FromMilliseconds(_vm?.Playlist.GetEffectiveTransitionDurationMs(_vm.Playlist.SelectedItem) ?? 120));
             }
-        }
-
-        /// <summary>
-        /// Repairs paths where the serializer has mangled an avares:// URI into a Windows-style
-        /// absolute path (e.g. "C:\...\avares:\Assembly\Assets\...").
-        /// Returns the corrected avares:// URI, or the original path unchanged for normal files.
-        /// </summary>
-        private static string? NormalizeMediaPath(string? path)
-        {
-            if (string.IsNullOrWhiteSpace(path)) return path;
-
-            var idx = path.IndexOf("avares:", StringComparison.OrdinalIgnoreCase);
-            if (idx > 0)
-            {
-                // Repair paths mangled by the serializer, e.g.:
-                //   "C:\VisionScreens Data\avares:\Assembly\Assets\logo.png"
-                // → "avares://Assembly/Assets/logo.png"
-                var rest = path.Substring(idx + "avares:".Length)
-                               .Replace('\\', '/')
-                               .TrimStart('/');
-                if (rest.Length == 0) return path; // malformed — return original unchanged
-                return "avares://" + rest;
-            }
-
-            return path;
-        }
-
-        // Returns true when a media path is expected to resolve to real content.
-        // avares:// URIs are always treated as valid (checked at render time).
-        // File system paths are only valid when the file actually exists, so that
-        // a missing file produces a null spec (smooth fade to black) rather than
-        // an ImageBackground spec whose bitmap silently fails to load mid-transition.
-        private static bool IsValidMediaPath(string? path)
-        {
-            if (string.IsNullOrWhiteSpace(path)) return false;
-            if (path.StartsWith("avares://", StringComparison.OrdinalIgnoreCase)) return true;
-            return System.IO.File.Exists(path);
         }
 
         private void SetupDnd(string suffix, Func<DataTransfer, Task> factory, DragDropEffects effects)

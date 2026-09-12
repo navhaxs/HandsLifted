@@ -110,6 +110,7 @@ namespace HandsLiftedApp.Core
             }
 
             MainViewModel = new();
+            SlidePreloadService.Initialize(MainViewModel.Playlist);
 
             // Create an observable that combines the changes to both LogoBitmap properties
             _logoBitmap = MainViewModel.WhenAnyValue(x => x.Playlist.LogoBitmap)

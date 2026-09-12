@@ -13,13 +13,25 @@ public static class SlideRenderer
 {
     // ── Image bitmap cache ─────────────────────────────────────────────────────
     // Avoids re-decoding the same image from disk on every frame during transitions.
-    // Cache is keyed by file path. FIFO eviction, max 8 entries.
-    // Cache owns the bitmaps and disposes evicted ones.
+    // Cache is keyed by file path. LRU eviction (CacheOrder: front = least-recently-used,
+    // back = most-recently-used), max 24 entries so a media group can be scrubbed back
+    // and forth without thrashing. Cache owns the bitmaps and disposes evicted ones.
 
     private static readonly object CacheLock = new();
-    private static readonly Dictionary<string, SKBitmap> BitmapCache = new(8);
-    private static readonly Queue<string> CacheOrder = new(8);
-    private const int MaxCacheEntries = 8;
+    private static readonly Dictionary<string, SKBitmap> BitmapCache = new(24);
+    private static readonly LinkedList<string> CacheOrder = new();
+    private static readonly Dictionary<string, LinkedListNode<string>> CacheNodes = new(24);
+    private const int MaxCacheEntries = 24;
+
+    // Must be called under CacheLock. Marks filePath as most-recently-used.
+    private static void TouchCacheEntry(string filePath)
+    {
+        if (CacheNodes.TryGetValue(filePath, out var node))
+        {
+            CacheOrder.Remove(node);
+            CacheOrder.AddLast(node);
+        }
+    }
 
     /// <param name="maxWidth">If &gt; 0 and decoded image exceeds this, scale down (preload only).</param>
     /// <param name="maxHeight">If &gt; 0 and decoded image exceeds this, scale down (preload only).</param>
@@ -28,7 +40,10 @@ public static class SlideRenderer
         lock (CacheLock)
         {
             if (BitmapCache.TryGetValue(filePath, out var cached))
+            {
+                TouchCacheEntry(filePath);
                 return cached;
+            }
         }
 
         // Decode outside lock — expensive operation
@@ -84,18 +99,21 @@ public static class SlideRenderer
             if (BitmapCache.TryGetValue(filePath, out var race))
             {
                 decoded.Dispose();
+                TouchCacheEntry(filePath);
                 return race;
             }
 
             if (BitmapCache.Count >= MaxCacheEntries)
             {
-                var oldest = CacheOrder.Dequeue();
+                var oldest = CacheOrder.First!.Value;
+                CacheOrder.RemoveFirst();
+                CacheNodes.Remove(oldest);
                 if (BitmapCache.Remove(oldest, out var evicted))
                     evicted.Dispose();
             }
 
             BitmapCache[filePath] = decoded;
-            CacheOrder.Enqueue(filePath);
+            CacheNodes[filePath] = CacheOrder.AddLast(filePath);
             return decoded;
         }
     }
