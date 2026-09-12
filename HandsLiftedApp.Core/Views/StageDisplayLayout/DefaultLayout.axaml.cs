@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,21 +47,9 @@ namespace HandsLiftedApp.Views.StageDisplayLayout
         {
             int myGeneration = Interlocked.Increment(ref _transitionGeneration);
 
-            var logoPath = NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
+            var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
 
-            SlideRenderSpec? spec = slide switch
-            {
-                SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
-                SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
-                ImageSlideInstance img   => IsValidMediaPath(img.SourceMediaFilePath)
-                    ? new SlideRenderSpec(new ImageBackground(img.SourceMediaFilePath), Array.Empty<RenderElement>())
-                    : null,
-                LogoSlide                => IsValidMediaPath(logoPath)
-                    ? new SlideRenderSpec(new ImageBackground(logoPath), Array.Empty<RenderElement>())
-                    : null,
-                HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs => CustomSlideSpecBuilder.Build(cs),
-                _                        => null,
-            };
+            SlideRenderSpec? spec = SlideSpecResolver.Resolve(slide, logoPath);
 
             await Task.Yield();
             if (myGeneration != _transitionGeneration) return;
@@ -86,28 +73,5 @@ namespace HandsLiftedApp.Views.StageDisplayLayout
             }
         }
 
-        private static string? NormalizeMediaPath(string? path)
-        {
-            if (string.IsNullOrWhiteSpace(path)) return path;
-
-            var idx = path.IndexOf("avares:", StringComparison.OrdinalIgnoreCase);
-            if (idx > 0)
-            {
-                var rest = path.Substring(idx + "avares:".Length)
-                               .Replace('\\', '/')
-                               .TrimStart('/');
-                if (rest.Length == 0) return path;
-                return "avares://" + rest;
-            }
-
-            return path;
-        }
-
-        private static bool IsValidMediaPath(string? path)
-        {
-            if (string.IsNullOrWhiteSpace(path)) return false;
-            if (path.StartsWith("avares://", StringComparison.OrdinalIgnoreCase)) return true;
-            return File.Exists(path);
-        }
     }
 }
