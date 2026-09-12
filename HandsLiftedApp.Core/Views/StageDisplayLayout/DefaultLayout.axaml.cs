@@ -51,6 +51,12 @@ namespace HandsLiftedApp.Views.StageDisplayLayout
 
             SlideRenderSpec? spec = SlideSpecResolver.Resolve(slide, logoPath);
 
+            // Pre-warm the shared bitmap cache ourselves — see ProjectorWindow.OnActiveSlideChanged
+            // for why relying solely on LivePane's preload to win the race isn't safe.
+            if (spec?.Background is ImageBackground)
+                await Task.Run(() => SlideRenderer.Preload(spec));
+            if (myGeneration != _transitionGeneration) return;
+
             await Task.Yield();
             if (myGeneration != _transitionGeneration) return;
 

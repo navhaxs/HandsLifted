@@ -113,11 +113,6 @@ namespace HandsLiftedApp.Core.Views
 
         private async void OnActiveSlideChanged(Slide? slide)
         {
-            // Bitmap preload is intentionally omitted here — LivePane.OnActiveSlideChanged
-            // already runs Task.Run(Preload) for image slides on the same ActiveSlide change,
-            // and the bitmap cache is shared. A second preload call would race to find the
-            // entry already cached (no-op) but wastes a thread-pool job.
-
             int myGeneration = System.Threading.Interlocked.Increment(ref _transitionGeneration);
 
             var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
@@ -127,6 +122,16 @@ namespace HandsLiftedApp.Core.Views
                 logoPath ?? "-");
 
             SlideRenderSpec? spec = SlideSpecResolver.Resolve(slide, logoPath);
+
+            // Pre-warm the shared bitmap cache ourselves rather than relying on LivePane's own
+            // preload to win the race — LivePane.OnActiveSlideChanged fires from the same
+            // ActiveSlide change but this window's Transition() was not gated on it finishing,
+            // so on a cold cache miss this window could still hit SlideRenderer.Draw's synchronous
+            // decode on the render thread. LoadCachedBitmap is lock-protected and dedupes a
+            // simultaneous decode of the same path, so calling Preload from both windows is safe.
+            if (spec?.Background is ImageBackground)
+                await Task.Run(() => SlideRenderer.Preload(spec));
+            if (myGeneration != _transitionGeneration) return;
 
             // Yield so that ActiveItem bindings (MotionBackgroundLayer) have a chance to
             // fire and arm the cross-fade gate before we check it.
