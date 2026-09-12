@@ -522,6 +522,7 @@ namespace HandsLiftedApp.Core.Models
             get => PresentationState == PresentationStateEnum.Logo;
             set
             {
+                if (value) AutoAdvanceTimer.Timer.Stop(true);
                 this.RaiseAndSetIfChanged(ref _presentationState,
                     value ? PresentationStateEnum.Logo : PresentationStateEnum.Slides, nameof(PresentationState));
             }
@@ -530,8 +531,12 @@ namespace HandsLiftedApp.Core.Models
         public bool IsBlank
         {
             get => PresentationState == PresentationStateEnum.Blank;
-            set => this.RaiseAndSetIfChanged(ref _presentationState,
-                value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides, nameof(PresentationState));
+            set
+            {
+                if (value) AutoAdvanceTimer.Timer.Stop(true);
+                this.RaiseAndSetIfChanged(ref _presentationState,
+                    value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides, nameof(PresentationState));
+            }
         }
 
         public bool IsQuickShow
