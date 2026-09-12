@@ -37,6 +37,9 @@ namespace HandsLiftedApp.Core.Views
             if (Design.IsDesignMode)
                 return;
 
+            Globals.Instance.WhenAnyValue(g => g.ShowOutputWindowsInTaskbar)
+                .Subscribe(show => this.ShowInTaskbar = show);
+
             // Main NDI output (motion background + slide canvas + video layer):
             // high-res when a motion background is playing or a slide transition is active.
             NdiMainContainer.IsContentHighResCheckFunc = _ =>
@@ -238,8 +241,6 @@ namespace HandsLiftedApp.Core.Views
                 
                 this.Position = screen.Bounds.Position;
             }
-            
-            this.ShowInTaskbar = !isRequestingFullscreen; // make this user option
             
             if (OperatingSystem.IsWindows())
             {

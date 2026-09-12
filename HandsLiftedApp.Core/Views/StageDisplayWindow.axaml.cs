@@ -21,6 +21,9 @@ namespace HandsLiftedApp.Core.Views
 
             WindowUtils.RegisterWindowWatcher(this);
 
+            Globals.Instance.WhenAnyValue(g => g.ShowOutputWindowsInTaskbar)
+                .Subscribe(show => this.ShowInTaskbar = show);
+
             this.DataContextChanged += (sender, args) =>
             {
                 if (DataContext is MainViewModel mainViewModel)
@@ -73,7 +76,6 @@ namespace HandsLiftedApp.Core.Views
                 this.Width = bounds.Width;
             }
 
-            this.ShowInTaskbar = !isFullScreenNext; // make this user option
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 this.WindowState = isFullScreenNext ? WindowState.FullScreen : WindowState.Normal;

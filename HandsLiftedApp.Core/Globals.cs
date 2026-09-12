@@ -39,6 +39,17 @@ namespace HandsLiftedApp.Core
         /// </summary>
         public bool IsShuttingDown { get; private set; }
 
+        /// <summary>
+        /// Debug-only, in-memory (not persisted) toggle controlling whether ProjectorWindow
+        /// and StageDisplayWindow show a taskbar entry. Set from DebugWindow.
+        /// </summary>
+        private bool _showOutputWindowsInTaskbar;
+        public bool ShowOutputWindowsInTaskbar
+        {
+            get => _showOutputWindowsInTaskbar;
+            set => this.RaiseAndSetIfChanged(ref _showOutputWindowsInTaskbar, value);
+        }
+
         public ImportWorkerThread ImportWorkerThread { get; } = new();
         public SlideRenderQueue SlideRenderQueue { get; } = new SlideRenderQueue();
         public HandsLiftedApp.Core.Models.Library.SongLibraryIndex SongLibraryIndex { get; } = new();
