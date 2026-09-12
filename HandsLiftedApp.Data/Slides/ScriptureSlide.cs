@@ -1,6 +1,5 @@
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
-using System;
 
 namespace HandsLiftedApp.Data.Slides
 {
@@ -33,18 +32,5 @@ namespace HandsLiftedApp.Data.Slides
         public override string? SlideLabel => Label;
 
         public ScriptureItem? ParentScriptureItem { get; } = null;
-
-        public override bool Equals(Object obj)
-        {
-            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-            {
-                return false;
-            }
-            else
-            {
-                ScriptureSlide p = (ScriptureSlide)obj;
-                return (Id == p.Id);
-            }
-        }
     }
 }

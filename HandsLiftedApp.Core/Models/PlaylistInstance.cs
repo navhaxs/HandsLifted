@@ -37,6 +37,12 @@ namespace HandsLiftedApp.Core.Models
 
         public PlaylistInstance()
         {
+            // No .ObserveOn(RxSchedulers.MainThreadScheduler) on this chain (SelectedItem /
+            // SelectedItemAsIItemInstance / ActiveSlide) -- with it present, the nested WhenAnyValue
+            // (x => x.SelectedItemAsIItemInstance.ActiveSlide) tracks the first switch of the outer
+            // item but permanently stops tracking further switches, leaving ActiveSlide latched on
+            // the previous item. SelectedItemIndex is only ever set from the UI thread already, so
+            // dropping the hop is safe.
             _selectedItem = this.WhenAnyValue(
                     (x => x.SelectedItemIndex),
                     (int selectedIndex) =>
@@ -52,7 +58,6 @@ namespace HandsLiftedApp.Core.Models
 
                         return new BlankItem();
                     })
-                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItem);
 
             this.WhenAnyValue(x => x.SelectedItem).Subscribe((item) =>
@@ -75,7 +80,6 @@ namespace HandsLiftedApp.Core.Models
 
                         return new BlankItemInstance(this);
                     })
-                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SelectedItemAsIItemInstance);
 
             _activeSlide = this.WhenAnyValue(x => x.SelectedItemAsIItemInstance.ActiveSlide, x => x.PresentationState, x => x.QuickShowItem,
@@ -95,7 +99,6 @@ namespace HandsLiftedApp.Core.Models
 
                         return activeSlide;
                     })
-                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.ActiveSlide);
 
             // TODO: what if the next item changes, without the active slide changing this will never get retriggered...!!

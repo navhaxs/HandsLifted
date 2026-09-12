@@ -21,14 +21,15 @@ public class ScriptureSlideTests
         Assert.AreSame(item, slide.ParentScriptureItem);
     }
 
+    // Two different scripture items both number their own pages "page0", "page1", ...
+    // independently, so slides from different readings can share an Id -- they must not compare
+    // equal just because of that (see ScriptureSlide's removed Equals override).
     [TestMethod]
-    public void ScriptureSlide_EqualityIsById()
+    public void Equals_TwoDifferentSlidesWithSameId_AreNotEqual()
     {
-        var slideA = new ScriptureSlide(null, "3:16") { Text = "first text" };
-        var slideB = new ScriptureSlide(null, "3:16") { Text = "different text" };
-        var slideC = new ScriptureSlide(null, "3:17");
+        var slideA = new ScriptureSlide(null, "page0");
+        var slideB = new ScriptureSlide(null, "page0");
 
-        Assert.IsTrue(slideA.Equals(slideB));
-        Assert.IsFalse(slideA.Equals(slideC));
+        Assert.AreNotEqual(slideA, slideB);
     }
 }
