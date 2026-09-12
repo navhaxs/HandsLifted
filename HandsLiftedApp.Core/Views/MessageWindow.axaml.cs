@@ -9,9 +9,6 @@ namespace HandsLiftedApp.Views.App
         public MessageWindow(string Title = "", string Message = "")
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void OnDismiss(object? sender, RoutedEventArgs e)

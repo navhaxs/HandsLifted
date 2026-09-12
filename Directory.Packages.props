@@ -14,10 +14,11 @@
     <!-- Avalonia.Controls.PanAndZoom renamed to PanAndZoom for Avalonia 12. -->
     <PackageVersion Include="PanAndZoom" Version="12.0.0.1" />
     <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
-    <!-- No 12.x release yet; official successor is AvaloniaUI.DiagnosticsSupport but its
-         API differs from AttachDevTools() and needs a real code port. Pinned to last 11.x
-         build for now so restore succeeds - AttachDevTools() call sites need re-checking. -->
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.18" />
+    <!-- Successor to Avalonia.Diagnostics for Avalonia 12: app-level AttachDeveloperTools()
+         instead of per-window AttachDevTools(). Standalone AvaloniaUI.DeveloperTools viewer
+         app attaches to the running app instead of the old in-process F12 window. Versioned
+         independently of Avalonia core (2.x, not 12.x). -->
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="$(AvaloniaVersion)" />
     <!-- Avalonia.ReactiveUI renamed to ReactiveUI.Avalonia (reactiveui org) for Avalonia 12. -->

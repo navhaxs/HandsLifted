@@ -13,9 +13,6 @@ namespace HandsLiftedApp.Core.Views.Confirmation
         public UnsavedChangesConfirmationWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void OnConfirmSave(object? sender, RoutedEventArgs e)

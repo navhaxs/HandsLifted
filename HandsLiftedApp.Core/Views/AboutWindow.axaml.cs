@@ -10,9 +10,6 @@ namespace HandsLiftedApp.Core.Views
         public AboutWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
 
             var buttonDone = this.FindControl<Button>("buttonDone");
             buttonDone.Click += (o, e) => this.Close();

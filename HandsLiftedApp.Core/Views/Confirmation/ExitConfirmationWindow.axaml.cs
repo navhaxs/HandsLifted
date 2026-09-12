@@ -14,10 +14,6 @@ namespace HandsLiftedApp.Core.Views.Confirmation
             InitializeComponent();
             
             Win10DropshadowWorkaround.Register(this);
-
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void OnExit(object? sender, RoutedEventArgs e)

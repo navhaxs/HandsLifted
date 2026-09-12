@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using AvaloniaUI.DiagnosticsSupport;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.ViewModels;
 using Newtonsoft.Json;
@@ -18,6 +19,9 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+#if DEBUG
+        this.AttachDeveloperTools();
+#endif
     }
 
     public static void ExitApplication(IApplicationLifetime? applicationLifetime, Window sender)
