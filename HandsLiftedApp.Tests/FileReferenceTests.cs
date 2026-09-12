@@ -16,21 +16,31 @@ namespace HandsLiftedApp.Tests
             Assert.AreEqual(@"C:\Presentations\Assets\Logo.png",
                 RelativeFilePathResolver.ToAbsolutePath(@"C:\Presentations\", @"Assets\Logo.png"));
             
-            // Converting a relative path to absolute path - when input is already an absolute path, do nothing  
+            // Converting a relative path to absolute path - when input is already an absolute path, do nothing
             Assert.AreEqual(@"C:\Presentations\Assets\Logo.png",
                 RelativeFilePathResolver.ToAbsolutePath(@"C:\Presentations\", @"C:\Presentations\Assets\Logo.png"));
+
+            // avares:// URIs are not filesystem paths - never re-root them against the base directory
+            Assert.AreEqual("avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png",
+                RelativeFilePathResolver.ToAbsolutePath(@"C:\Presentations\",
+                    "avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png"));
         }
-        
+
         [TestMethod]
         public void TestToRelativePath()
         {
             // Converting an absolute path to relative path - when root path matches, do replace
             Assert.AreEqual(@"Assets\Logo.png",
                 RelativeFilePathResolver.ToRelativePath(@"C:\Presentations\", @"C:\Presentations\Assets\Logo.png"));
-            
+
             // Converting an absolute path to relative path - when root path does not match, do nothing
             Assert.AreEqual(@"C:\Presentations\Assets\Logo.png",
                 RelativeFilePathResolver.ToRelativePath(@"D:\SomeOtherDirectory\", @"C:\Presentations\Assets\Logo.png"));
+
+            // avares:// URIs are not filesystem paths - never relativize them against the base directory
+            Assert.AreEqual("avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png",
+                RelativeFilePathResolver.ToRelativePath(@"C:\Presentations\",
+                    "avares://HandsLiftedApp.Core/Assets/DefaultTheme/logo-default.png"));
         }
     }
 }
