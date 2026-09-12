@@ -164,8 +164,7 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _libraryPath, value);
         }
 
-        private string _scriptureDataPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HandsLifted", "ScriptureData");
+        private string _scriptureDataPath = Path.Combine(Constants.APP_DATA_DIR, "ScriptureData");
         [DataMember]
         public string ScriptureDataPath
         {

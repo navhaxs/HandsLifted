@@ -70,7 +70,7 @@ public class MainViewModel : ViewModelBase
         }
 
         settings = new ConfigurationBuilder<IMySettings>()
-            .UseJsonFile("HandsLiftedApp.UserConfig.json")
+            .UseJsonFile(Constants.USER_CONFIG_FILEPATH)
             .Build();
 
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.

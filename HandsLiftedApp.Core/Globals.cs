@@ -50,6 +50,8 @@ namespace HandsLiftedApp.Core
                 return;
             }
 
+            Directory.CreateDirectory(Constants.APP_DATA_DIR);
+
             // initialize LibMPV before MainViewModel
             try
             {
