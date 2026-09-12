@@ -1,38 +1,46 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:items="clr-namespace:HandsLiftedApp.Data.Data.Models.Items;assembly=HandsLiftedApp.Data"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="items:ItemAutoAdvanceTimer"
-             x:Class="HandsLiftedApp.Core.Views.ItemEditDock.ItemTimer">
-    <Button
-        Padding="22,6"
-        Margin="6 6 0 6"
-        Background="{DynamicResource EditButtonBackgroundBrush}"
-        BorderBrush="#b3aed9"
-        BorderThickness="1"
-        CornerRadius="4"
-        x:Name="EditButton"
-        DockPanel.Dock="Right">
-        <DockPanel>
-            <TextBlock>Timer</TextBlock>
-        </DockPanel>
-        <Button.Flyout>
-            <Flyout
-                Placement="Bottom">
-                <StackPanel Margin="6">
-                    <DockPanel VerticalAlignment="Center" Margin="6">
-                        <avalonia:MaterialIcon Kind="TimerOutline" />
-                        <CheckBox Margin="6 0"
-                                  IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" />
-                        <TextBox Margin="6 0"
-                                   Text="{Binding IntervalSeconds}" VerticalAlignment="Center" />
-                        <TextBlock Text="sec" VerticalAlignment="Center" Margin="4 0 0 0" />
-                    </DockPanel>
-                </StackPanel>
-            </Flyout>
-        </Button.Flyout>
-    </Button>
+﻿<UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.ItemEditDock.ItemTimer"
+    x:DataType="items:ItemAutoAdvanceTimer"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:items="clr-namespace:HandsLiftedApp.Data.Data.Models.Items;assembly=HandsLiftedApp.Data"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel LastChildFill="False">
+        <Button
+            Classes="menuRow"
+            DockPanel.Dock="Top"
+            x:Name="EditButton">
+            <DockPanel>
+                <avalonia:MaterialIcon Kind="TimerOutline" Margin="0,0,8,0" />
+                <TextBlock>Autoplay Timer</TextBlock>
+            </DockPanel>
+            <Button.Flyout>
+                <Flyout Placement="RightEdgeAlignedTop">
+                    <StackPanel Margin="6">
+                        <DockPanel Margin="6" VerticalAlignment="Center">
+                            <avalonia:MaterialIcon Kind="TimerOutline" />
+                            <CheckBox
+                                IsChecked="{Binding IsEnabled}"
+                                Margin="6,0"
+                                VerticalAlignment="Center" />
+                            <TextBox
+                                Margin="6,0"
+                                Text="{Binding IntervalSeconds}"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Margin="4,0,0,0"
+                                Text="sec"
+                                VerticalAlignment="Center" />
+                        </DockPanel>
+                    </StackPanel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+    </DockPanel>
 </UserControl>

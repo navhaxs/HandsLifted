@@ -14,14 +14,9 @@ using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Core;
-using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
-using HandsLiftedApp.Core.ViewModels.Editor;
-using HandsLiftedApp.Core.Views;
-using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
-using Serilog;
 
 namespace HandsLiftedApp.Controls
 {
@@ -58,116 +53,6 @@ namespace HandsLiftedApp.Controls
         internal class OnSelectionClickedMessage
         {
             //public Item<ItemStateImpl> SourceItem { get; set; }
-        }
-
-        private async void EditButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (sender is Control { DataContext: SongItemInstance item })
-            {
-                SongEditorViewModel songEditorViewModel =
-                    new SongEditorViewModel(item, Globals.Instance.MainViewModel.Playlist);
-                // songEditorViewModel.SongDataUpdated += (ex, ey) =>
-                // {
-                //             
-                // };
-                SongEditorWindow songEditorWindow = new SongEditorWindow() { DataContext = songEditorViewModel };
-                songEditorWindow.Show();
-                return;
-            }
-
-            if (sender is Control { DataContext: MediaGroupItemInstance mediaGroupItemInstance })
-            {
-                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
-                    { DataContext = mediaGroupItemInstance };
-                songEditorWindow.Show();
-                return;
-            }
-
-            if (sender is Control { DataContext: PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance })
-            {
-                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
-                    { DataContext = pdfSlidesGroupItemInstance };
-                songEditorWindow.Show();
-                return;
-            }
-
-            if (sender is Control
-                {
-                    DataContext: PowerPointPresentationItemInstance powerPointPresentationItemInstance
-                })
-            {
-                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
-                    { DataContext = powerPointPresentationItemInstance };
-                songEditorWindow.Show();
-                return;
-            }
-            
-            if (sender is Control { DataContext: GoogleSlidesGroupItemInstance googleSlidesGroupItemInstance })
-            {
-                GenericContentEditorWindow songEditorWindow = new GenericContentEditorWindow()
-                    { DataContext = googleSlidesGroupItemInstance };
-                songEditorWindow.Show();
-                return;
-            }
-
-            if (sender is Control { DataContext: ScriptureItemInstance scripture } scriptureControl)
-            {
-                var parentWindow = TopLevel.GetTopLevel(scriptureControl) as Window;
-                if (parentWindow == null) return;
-
-                var dialog = new ScriptureAddDialog(scripture.Book, scripture.StartChapter, scripture.StartVerse, scripture.EndChapter, scripture.EndVerse);
-                await dialog.ShowDialog(parentWindow);
-                if (dialog.Result == null) return;
-
-                var result = dialog.Result.Value;
-                scripture.Book = result.BookCode;
-                scripture.StartChapter = result.StartChapter;
-                scripture.StartVerse = result.StartVerse;
-                scripture.EndChapter = result.EndChapter;
-                scripture.EndVerse = result.EndVerse;
-                scripture.Title = ScriptureTitleFormatter.Format(result.BookName, result.StartChapter, result.StartVerse, result.EndChapter, result.EndVerse);
-
-                // forceInvalidateCache: true — UpdatePages reuses existing ScriptureSlideInstances
-                // by page index and only resets a reused slide's Cached bitmap when the resolved
-                // theme object changed; an edited verse RANGE (this call) can produce the same
-                // page count with entirely different text, which that reuse check alone would not
-                // catch, leaving a stale cached thumbnail. Forcing invalidation here is the same
-                // fix CLAUDE.md documents for the analogous theme-reassignment case, generalized to
-                // content changes.
-                _ = scripture.GenerateSlidesAsync(forceInvalidateCache: true).ContinueWith(
-                    t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", scripture.Title),
-                    TaskContinuationOptions.OnlyOnFaulted);
-                return;
-            }
-        }
-
-        // NOTE: The brief specified separate Checked/Unchecked handlers, matching the
-        // ToggleButton API surface from before this codebase's Avalonia 12 upgrade.
-        // In Avalonia 12.1.0 (the version pinned in this repo), ToggleButton/CheckBox
-        // no longer exposes Checked/Unchecked events - only IsCheckedChanged remains
-        // (confirmed via Avalonia.Controls.xml doc comments: only
-        // E:Avalonia.Controls.Primitives.ToggleButton.IsCheckedChanged is documented,
-        // no Checked/Unchecked members exist). This single handler reproduces the same
-        // seed-from-playlist-default / clear-to-null semantics the brief's two handlers
-        // described.
-        private void FadeOverrideCheckBox_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
-        {
-            if (sender is not CheckBox { DataContext: Item item } checkBox)
-            {
-                return;
-            }
-
-            if (checkBox.IsChecked == true)
-            {
-                if (item.SlideTransitionDurationMs is null)
-                {
-                    item.SlideTransitionDurationMs = Globals.Instance.MainViewModel.Playlist.SlideTransitionDurationMs;
-                }
-            }
-            else
-            {
-                item.SlideTransitionDurationMs = null;
-            }
         }
 
         private void MoveUpItem_OnClick(object? sender, RoutedEventArgs e)

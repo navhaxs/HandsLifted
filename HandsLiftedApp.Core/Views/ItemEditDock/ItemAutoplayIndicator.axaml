@@ -1,0 +1,63 @@
+<UserControl
+    d:DesignHeight="30"
+    d:DesignWidth="200"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.ItemEditDock.ItemAutoplayIndicator"
+    x:CompileBindings="False"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <converters:ReferenceEqualsMultiConverter x:Key="ReferenceEqualsMultiConverter" />
+    </UserControl.Resources>
+    <!--  <Border  -->
+    <!--  BorderBrush="#c8a16a"  -->
+    <!--  BorderThickness="1"  -->
+    <!--  CornerRadius="6">  -->
+    <DockPanel
+        DataContext="{Binding AutoAdvanceTimer}"
+        IsVisible="{Binding IsEnabled}"
+        Margin="6,6,0,6"
+        VerticalAlignment="Center">
+        <ProgressBar
+            DockPanel.Dock="Top"
+            IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=MainViewModel.Playlist.AutoAdvanceTimer.IsTimerConfigured}"
+            Maximum="{Binding Source={x:Static app:Globals.Instance}, Path=MainViewModel.Playlist.AutoAdvanceTimer.Timer.TotalTime, FallbackValue=0}"
+            MinHeight="2"
+            Value="{Binding Source={x:Static app:Globals.Instance}, Path=MainViewModel.Playlist.AutoAdvanceTimer.Timer.ElapsedTime, FallbackValue=0}" />
+
+        <avalonia:MaterialIcon
+            Kind="TimerOutline"
+            Margin="0,0,4,0"
+            VerticalAlignment="Center" />
+        <TextBlock
+            Margin="0,0,4,0"
+            Text="{Binding IntervalSeconds, StringFormat='{}{0}s'}"
+            VerticalAlignment="Center" />
+        <StackPanel Orientation="Horizontal">
+            <StackPanel.IsVisible>
+                <MultiBinding Converter="{StaticResource ReferenceEqualsMultiConverter}">
+                    <Binding Path="$parent[UserControl].DataContext" />
+                    <Binding Path="MainViewModel.Playlist.SelectedItem" Source="{x:Static app:Globals.Instance}" />
+                </MultiBinding>
+            </StackPanel.IsVisible>
+            <Button
+                Click="ResumeAutoplayButton_OnClick"
+                IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=MainViewModel.Playlist.AutoAdvanceTimer.Timer.Enabled, Converter={x:Static BoolConverters.Not}}"
+                Padding="6,2">
+                Resume
+            </Button>
+            <Button
+                Click="PauseAutoplayButton_OnClick"
+                IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=MainViewModel.Playlist.AutoAdvanceTimer.Timer.Enabled}"
+                Padding="6,2">
+                Pause
+            </Button>
+        </StackPanel>
+    </DockPanel>
+    <!-- </Border> -->
+</UserControl>
