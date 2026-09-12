@@ -151,79 +151,80 @@
                     HorizontalAlignment="Stretch"
                     Stretch="Uniform"
                     StretchDirection="DownOnly">
-                <DockPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                    <DockPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
 
-                    <DockPanel.Styles>
-                        <Style Selector="Button">
-                            <Setter Property="CornerRadius" Value="0 64 64 0" />
-                            <Setter Property="Height" Value="60" />
-                            <Setter Property="Background" Value="#313131" />
-                            <Setter Property="BorderThickness" Value="0" />
-                            <Setter Property="Padding" Value="10 0" />
-                        </Style>
-                        <Style Selector="Button:nth-child(1)">
-                            <Setter Property="CornerRadius" Value="64 0 0 64" />
-                        </Style>
-                        <Style Selector="avalonia|MaterialIcon">
-                            <Setter Property="Height" Value="50" />
-                            <Setter Property="Width" Value="50" />
-                            <Setter Property="Foreground" Value="#888888" />
-                        </Style>
-                        <Style Selector="Button:pointerover /template/ ContentPresenter">
-                            <Setter Property="Background" Value="#5b39b3" />
-                        </Style>
-                    </DockPanel.Styles>
+                        <DockPanel.Styles>
+                            <Style Selector="Button">
+                                <Setter Property="CornerRadius" Value="0 64 64 0" />
+                                <Setter Property="Height" Value="60" />
+                                <Setter Property="Background" Value="#313131" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Padding" Value="10 0" />
+                            </Style>
+                            <Style Selector="Button:nth-child(1)">
+                                <Setter Property="CornerRadius" Value="64 0 0 64" />
+                            </Style>
+                            <Style Selector="avalonia|MaterialIcon">
+                                <Setter Property="Height" Value="50" />
+                                <Setter Property="Width" Value="50" />
+                                <Setter Property="Foreground" Value="#888888" />
+                            </Style>
+                            <Style Selector="Button:disabled /template/ ContentPresenter" />
+                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#5b39b3" />
+                            </Style>
+                        </DockPanel.Styles>
 
-                    <Button
-                        Command="{Binding OnPrevSlideClickCommand}"
-                        DockPanel.Dock="Left"
-                        Height="70"
-                        VerticalAlignment="Stretch">
-                        <avalonia:MaterialIcon
-                            Height="60"
-                            Kind="ArrowLeft"
-                            Width="80" />
-                    </Button>
+                        <Button
+                            Command="{Binding OnPrevSlideClickCommand}"
+                            DockPanel.Dock="Left"
+                            Height="70"
+                            VerticalAlignment="Stretch">
+                            <avalonia:MaterialIcon
+                                Height="60"
+                                Kind="ArrowLeft"
+                                Width="80" />
+                        </Button>
 
-                    <Button
-                        Command="{Binding OnNextSlideClickCommand}"
-                        DockPanel.Dock="Right"
-                        Height="70">
-                        <avalonia:MaterialIcon
-                            Height="60"
-                            Kind="ArrowRight"
-                            Width="80" />
-                    </Button>
+                        <Button
+                            Command="{Binding OnNextSlideClickCommand}"
+                            DockPanel.Dock="Right"
+                            Height="70">
+                            <avalonia:MaterialIcon
+                                Height="60"
+                                Kind="ArrowRight"
+                                Width="80" />
+                        </Button>
 
-                    <Border
-                        Background="#313131"
-                        CornerRadius="2"
-                        Margin="2,0">
-                        <DockPanel>
-                            <Viewbox Margin="16,0" StretchDirection="DownOnly">
-                                <TextBlock
-                                    FontSize="15"
-                                    HorizontalAlignment="Center"
-                                    Margin="0"
-                                    Text="{Binding Playlist.StageDisplaySlideCountText, FallbackValue='Slide A/B'}"
-                                    VerticalAlignment="Center" />
-                            </Viewbox>
-                        </DockPanel>
-                    </Border>
-                </DockPanel>
+                        <Border
+                            Background="#313131"
+                            CornerRadius="2"
+                            Margin="2,0">
+                            <DockPanel>
+                                <Viewbox Margin="16,0" StretchDirection="DownOnly">
+                                    <TextBlock
+                                        FontSize="15"
+                                        HorizontalAlignment="Center"
+                                        Margin="0"
+                                        Text="{Binding Playlist.StageDisplaySlideCountText, FallbackValue='Slide A/B'}"
+                                        VerticalAlignment="Center" />
+                                </Viewbox>
+                            </DockPanel>
+                        </Border>
+                    </DockPanel>
                 </Viewbox>
             </Border>
 
-            <Border Background="{DynamicResource DarkSurfaceBrush}" DockPanel.Dock="Top">
+            <Border DockPanel.Dock="Top">
                 <UniformGrid
                     Columns="2"
-                    Height="35"
-                    Margin="6,0,6,12"
+                    Height="42"
+                    Margin="6,10"
                     MaxWidth="300"
                     Rows="1">
                     <UniformGrid.Styles>
                         <Style Selector="RadioButton">
-                            <Setter Property="Background" Value="#313131" />
+                            <Setter Property="Background" Value="#414141" />
                             <Setter Property="HorizontalContentAlignment" Value="Center" />
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -232,7 +233,7 @@
                                 <Setter.Value>
                                     <ControlTemplate>
                                         <ToggleButton
-                                            Background="{DynamicResource BackgroundBrush}"
+                                            Background="{TemplateBinding Background}"
                                             BorderBrush="{DynamicResource BackgroundBrush}"
                                             Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
                                             HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
@@ -245,6 +246,9 @@
                         </Style>
                         <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
                             <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
+                        </Style>
+                        <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                            <Setter Property="BorderBrush" Value="#c43e1c" />
                         </Style>
                         <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
                             <Setter Property="Background" Value="#5b39b3" />
