@@ -255,12 +255,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     if (existing != null)
                     {
+                        // Autofit can pick a different font size than last time (theme edit, or the
+                        // shrink-to-avoid-a-near-empty-page search in Paginate landing on a different
+                        // candidate) without flatText changing at all, so it needs its own explicit
+                        // Cached invalidation below rather than riding the Text-change one.
+                        bool fontSizeChanged = existing.EffectiveFontSize != page.FontSize;
                         existing.Lines = page.Lines;
+                        existing.EffectiveFontSize = page.FontSize;
                         if (existing.Text != flatText) existing.Text = flatText;
                         if (existing.Label != referenceLabel) existing.Label = referenceLabel;
                         bool themeChanged = !ReferenceEquals(existing.Theme, theme);
                         if (themeChanged) existing.Theme = theme;
-                        if (themeChanged || forceInvalidateCache)
+                        if (themeChanged || fontSizeChanged || forceInvalidateCache)
                         {
                             existing.Cached?.Dispose();
                             existing.Cached = null;
@@ -272,7 +278,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         var slide = new ScriptureSlideInstance(this, slideId, text: flatText, label: referenceLabel)
                         {
                             Lines = page.Lines,
-                            Theme = theme
+                            Theme = theme,
+                            EffectiveFontSize = page.FontSize
                         };
                         newSlides.Add(slide);
                     }

@@ -32,7 +32,8 @@ public static class ScriptureParagraphSpecBuilder
         if (slide.Theme == null || slide.Lines.Count == 0)
             return new SlideRenderSpec(bg, Array.Empty<RenderElement>());
 
-        var elements = BuildTextElements(slide.Lines, slide.Theme);
+        float bodyFontSize = slide.EffectiveFontSize ?? slide.Theme.FontSize;
+        var elements = BuildTextElements(slide.Lines, slide.Theme, bodyFontSize);
         return new SlideRenderSpec(bg, elements);
     }
 
@@ -48,10 +49,9 @@ public static class ScriptureParagraphSpecBuilder
     }
 
     private static IReadOnlyList<RenderElement> BuildTextElements(
-        IReadOnlyList<ScriptureParagraphLine> lines, BaseSlideTheme theme)
+        IReadOnlyList<ScriptureParagraphLine> lines, BaseSlideTheme theme, float bodyFontSize)
     {
         using var typeface = GetTypeface(theme);
-        float bodyFontSize = theme.FontSize;
         float headerFontSize = bodyFontSize * ScriptureParagraphLayoutEngine.HeaderFontSizeRatio;
         float superscriptFontSize = bodyFontSize * ScriptureParagraphLayoutEngine.SuperscriptFontSizeRatio;
         float superscriptBaselineOffset = -(bodyFontSize * ScriptureParagraphLayoutEngine.SuperscriptBaselineOffsetRatio);

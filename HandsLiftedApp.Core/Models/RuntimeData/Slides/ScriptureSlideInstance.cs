@@ -57,6 +57,18 @@ namespace HandsLiftedApp.Data.Slides
             set => this.RaiseAndSetIfChanged(ref _lines, value);
         }
 
+        // The font size ScriptureParagraphLayoutEngine.Paginate actually wrapped/paginated this
+        // page's Lines at (which may be smaller than Theme.FontSize when autofit shrank it to
+        // avoid reflowing to a near-empty page) -- null means "not paginated yet", fall back to
+        // Theme.FontSize. Rendering must use this rather than Theme.FontSize directly, or the
+        // drawn text would be measured at a different size than the size Lines was wrapped for.
+        private float? _effectiveFontSize;
+        public float? EffectiveFontSize
+        {
+            get => _effectiveFontSize;
+            set => this.RaiseAndSetIfChanged(ref _effectiveFontSize, value);
+        }
+
         private void RequestRender()
             => debounceDispatcher.Debounce(() => Globals.Instance.SlideRenderQueue.Enqueue(this));
 

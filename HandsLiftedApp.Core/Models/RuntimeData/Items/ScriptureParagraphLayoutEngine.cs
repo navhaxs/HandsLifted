@@ -10,7 +10,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
     public readonly record struct ScriptureParagraphLine(IReadOnlyList<ScriptureParagraphRun> Runs, bool IsHeader);
 
-    public readonly record struct ScriptureParagraphPage(IReadOnlyList<ScriptureParagraphLine> Lines);
+    public readonly record struct ScriptureParagraphPage(IReadOnlyList<ScriptureParagraphLine> Lines, float FontSize);
 
     public static class ScriptureParagraphLayoutEngine
     {
@@ -22,13 +22,38 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public const float SuperscriptFontSizeRatio = 0.6f;
         public const float SuperscriptBaselineOffsetRatio = 0.35f;
         public const float HeaderSpacingBelow = 20f;
+        private const float AutofitStep = 4f;
 
+        // Mirrors SongSlideSpecBuilder's shrink-to-fit autofit: try the theme's nominal font size
+        // first, then step the size down (down to the theme's configured floor) looking for a
+        // smaller size that lets the whole reading fit on fewer pages. Without this, a reading
+        // that's a couple of lines away from fitting a page always reflows the tail onto its own
+        // near-empty page even though the theme is configured to shrink text for exactly this case
+        // (AutofitEnabled/AutofitMinFontSizeRatio) -- ordinary song slides already do this via
+        // SongSlideSpecBuilder.ComputeAutofitSize, scripture paragraphs just weren't wired up to it.
         public static List<ScriptureParagraphPage> Paginate(
             IReadOnlyList<ScriptureVerseRef> verses, string headerText, BaseSlideTheme theme)
         {
+            var bestPages = PaginateAtFontSize(verses, headerText, theme, theme.FontSize);
+            if (!theme.AutofitEnabled)
+                return bestPages;
+
+            float floor = theme.FontSize * (float)theme.AutofitMinFontSizeRatio;
+            for (float candidate = theme.FontSize - AutofitStep; candidate >= floor && bestPages.Count > 1; candidate -= AutofitStep)
+            {
+                var candidatePages = PaginateAtFontSize(verses, headerText, theme, candidate);
+                if (candidatePages.Count < bestPages.Count)
+                    bestPages = candidatePages;
+            }
+
+            return bestPages;
+        }
+
+        private static List<ScriptureParagraphPage> PaginateAtFontSize(
+            IReadOnlyList<ScriptureVerseRef> verses, string headerText, BaseSlideTheme theme, float bodyFontSize)
+        {
             float maxWidth = CanvasWidth - 2 * HorizontalMargin;
             float maxHeight = CanvasHeight - 2 * VerticalMargin;
-            float bodyFontSize = theme.FontSize;
             float headerFontSize = bodyFontSize * HeaderFontSizeRatio;
             float lineHeight = bodyFontSize * (float)theme.LineHeightEm;
             float headerLineHeight = headerFontSize * (float)theme.LineHeightEm;
@@ -64,7 +89,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 if (currentPageLines.Count > 0 && heightUsed + lineHeight > maxHeight)
                 {
-                    pages.Add(new ScriptureParagraphPage(currentPageLines));
+                    pages.Add(new ScriptureParagraphPage(currentPageLines, bodyFontSize));
                     currentPageLines = new List<ScriptureParagraphLine>();
                     heightUsed = 0f;
                 }
@@ -72,7 +97,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 heightUsed += lineHeight;
             }
 
-            pages.Add(new ScriptureParagraphPage(currentPageLines));
+            pages.Add(new ScriptureParagraphPage(currentPageLines, bodyFontSize));
             return pages;
         }
 
