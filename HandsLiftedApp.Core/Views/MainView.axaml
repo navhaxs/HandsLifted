@@ -429,6 +429,42 @@
             </Carousel>
         </Border>
 
+        <Popup
+            IsLightDismissEnabled="True"
+            Name="fadeFlyout"
+            Placement="Top"
+            PlacementTarget="{Binding #TransitionsToggleButton}">
+            <Border
+                Background="{DynamicResource WindowBackgroundBrush}"
+                BorderBrush="#9a93cd"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="8,6"
+                Width="220">
+                <DockPanel>
+                    <TextBlock
+                        DockPanel.Dock="Right"
+                        FontSize="13"
+                        Margin="6,0,0,0"
+                        Text="{Binding Playlist.SlideTransitionDurationMs, StringFormat='{}{0:0}ms'}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        FontSize="13"
+                        Margin="0,0,6,0"
+                        Text="Fade:"
+                        VerticalAlignment="Center" />
+                    <Slider
+                        LargeChange="200"
+                        Maximum="2000"
+                        Minimum="0"
+                        SmallChange="50"
+                        TickFrequency="100"
+                        Value="{Binding Playlist.SlideTransitionDurationMs, Mode=TwoWay}"
+                        VerticalAlignment="Center" />
+                </DockPanel>
+            </Border>
+        </Popup>
+
         <!--  Docked toggle buttons  -->
         <Border Background="{DynamicResource DarkSurfaceBrush}" Grid.Row="3">
 
@@ -500,6 +536,25 @@
                                 Foreground="{DynamicResource ForegroundBrush}"
                                 Kind="Paintbrush" />
                             <TextBlock Text="Designer" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </ToggleButton>
+
+                    <ToggleButton
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Classes="MenuItem"
+                        ClickMode="Press"
+                        DockPanel.Dock="Bottom"
+                        IsChecked="{Binding #fadeFlyout.IsOpen, Mode=TwoWay}"
+                        Margin="6,0,6,0"
+                        Name="TransitionsToggleButton"
+                        Padding="10,10,14,8">
+                        <DockPanel>
+                            <avalonia:MaterialIcon
+                                DockPanel.Dock="Left"
+                                Foreground="{DynamicResource ForegroundBrush}"
+                                Kind="TimerOutline" />
+                            <TextBlock Text="Fade" VerticalAlignment="Center" />
                         </DockPanel>
                     </ToggleButton>
 

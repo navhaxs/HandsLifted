@@ -40,6 +40,7 @@ public partial class MainView : UserControl
             }
 
             DesignerToggleButton.IsChecked = false;
+            TransitionsToggleButton.IsChecked = false;
         };
         DesignerToggleButton.Click += (object? sender, RoutedEventArgs e) =>
         {
@@ -51,6 +52,7 @@ public partial class MainView : UserControl
             }
 
             LibraryToggleButton.IsChecked = false;
+            TransitionsToggleButton.IsChecked = false;
         };
     }
 
