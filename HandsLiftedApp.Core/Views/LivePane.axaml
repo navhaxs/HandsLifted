@@ -147,6 +147,10 @@
                 DockPanel.Dock="Top"
                 Padding="0,12">
 
+                <Viewbox
+                    HorizontalAlignment="Stretch"
+                    Stretch="Uniform"
+                    StretchDirection="DownOnly">
                 <DockPanel HorizontalAlignment="Center" VerticalAlignment="Stretch">
 
                     <DockPanel.Styles>
@@ -207,6 +211,7 @@
                         </DockPanel>
                     </Border>
                 </DockPanel>
+                </Viewbox>
             </Border>
 
             <Border Background="{DynamicResource DarkSurfaceBrush}" DockPanel.Dock="Top">
