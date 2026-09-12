@@ -34,6 +34,7 @@
             <TextBox Text="{Binding SourceMediaFilePath}" />
         </DockPanel>
         <Image
+            Name="PreviewImage"
             Margin="20"
             RenderOptions.BitmapInterpolationMode="MediumQuality"
             Source="{Binding SourceMediaFilePath, Converter={StaticResource VariableImage}}"

@@ -95,6 +95,11 @@ namespace HandsLiftedApp.Core
 
             ThumbnailEngineSettings.UseMpvEngine = true;
 
+            AsyncImageLoader.ImageLoader.AsyncImageLoader = new ThumbnailImageLoader(
+                ThumbnailEngineSettings.UseMpvEngine
+                    ? new MpvThumbnailImageLoader()
+                    : new WindowsThumbnailImageLoader());
+
             // Native PowerPoint import (Windows-only)
             if (OperatingSystem.IsWindows())
             {

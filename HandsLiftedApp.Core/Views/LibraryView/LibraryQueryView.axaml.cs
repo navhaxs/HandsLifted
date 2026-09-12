@@ -9,7 +9,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
-using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Confirmation;
@@ -28,10 +27,6 @@ namespace HandsLiftedApp.Core.Views.LibraryView
 
         public LibraryQueryView()
         {
-            AsyncImageLoader.ImageLoader.AsyncImageLoader = ThumbnailEngineSettings.UseMpvEngine
-                ? new MpvThumbnailImageLoader()
-                : new WindowsThumbnailImageLoader();
-
             InitializeComponent();
         }
 
