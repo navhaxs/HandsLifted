@@ -218,7 +218,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         },
                         new ImportTaskReporter(stats =>
                         {
-                            Log.Debug("Native import progress: {Pct}% — {Status}",
+                            Log.Debug("Native import progress: {Pct}% - {Status}",
                                 stats.JobPercentage, stats.StatusMessage);
                         }));
 

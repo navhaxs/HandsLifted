@@ -47,7 +47,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 _itemsByPath[entry.Id] = item;
                 paths.Add(entry.Id);
             }
-            Log.Information("Refreshed SongLibrary [{Label}] — {Count} items", Config.Label, paths.Count);
+            Log.Information("Refreshed SongLibrary [{Label}] - {Count} items", Config.Label, paths.Count);
             _ = BuildIndexAsync(paths);
         }
 
@@ -78,7 +78,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 _index = idx;
             });
             await Dispatcher.UIThread.InvokeAsync(() => IsIndexReady = true);
-            Log.Information("SongLibrary [{Label}] index ready — {Count} entries", Config.Label, _index?.Count ?? 0);
+            Log.Information("SongLibrary [{Label}] index ready - {Count} entries", Config.Label, _index?.Count ?? 0);
         }
 
         public override IEnumerable<LibraryItem> Search(string? term)

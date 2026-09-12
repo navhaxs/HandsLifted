@@ -37,7 +37,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 Items.Add(new LibraryItem { FullFilePath = f.FullName });
             }
 
-            Log.Information("Refreshed ScriptureLibrary [{Label}] — {Count} items", Config.Label, Items.Count);
+            Log.Information("Refreshed ScriptureLibrary [{Label}] - {Count} items", Config.Label, Items.Count);
         }
     }
 }

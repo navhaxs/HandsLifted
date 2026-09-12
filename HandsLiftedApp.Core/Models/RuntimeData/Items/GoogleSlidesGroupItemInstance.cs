@@ -177,7 +177,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         }
                         catch (TokenExpiredImportException)
                         {
-                            Log.Warning("Google Slides token expired — prompting reauth");
+                            Log.Warning("Google Slides token expired - prompting reauth");
                             var clientId = Globals.Instance.AppPreferences.GoogleClientId;
                             var clientSecret = Globals.Instance.AppPreferences.GoogleClientSecret;
 

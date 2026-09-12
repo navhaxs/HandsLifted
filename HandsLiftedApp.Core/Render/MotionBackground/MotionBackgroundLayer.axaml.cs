@@ -347,7 +347,7 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			    _currentVideoPath != null &&
 			    string.Equals(_currentVideoPath, newVideoPath, StringComparison.OrdinalIgnoreCase))
 			{
-				Log.Debug("[MotionBg] Stop was pending but same video requested again — cancelling stop and fading back in");
+				Log.Debug("[MotionBg] Stop was pending but same video requested again - cancelling stop and fading back in");
 				_pendingFadeOutTimer?.Dispose();
 				_pendingFadeOutTimer = null;
 				_isStopPending = false;
@@ -359,7 +359,7 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			// fade-out, stop immediately, and start the new video.
 			if (_isStopPending && newVideoPath != null)
 			{
-				Log.Debug("[MotionBg] Stop was pending but different video requested — cancelling and starting new");
+				Log.Debug("[MotionBg] Stop was pending but different video requested - cancelling and starting new");
 				CancelPendingFadeOut();
 				StartPlayback(newVideoPath);
 				return;
