@@ -178,10 +178,10 @@
                         <Button
                             Command="{Binding OnPrevSlideClickCommand}"
                             DockPanel.Dock="Left"
-                            Height="70"
+                            Height="60"
                             VerticalAlignment="Stretch">
                             <avalonia:MaterialIcon
-                                Height="60"
+                                Height="50"
                                 Kind="ArrowLeft"
                                 Width="80" />
                         </Button>
@@ -189,9 +189,9 @@
                         <Button
                             Command="{Binding OnNextSlideClickCommand}"
                             DockPanel.Dock="Right"
-                            Height="70">
+                            Height="60">
                             <avalonia:MaterialIcon
-                                Height="60"
+                                Height="50"
                                 Kind="ArrowRight"
                                 Width="80" />
                         </Button>
