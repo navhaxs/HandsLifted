@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:freeText="clr-namespace:HandsLiftedApp.Core.Views.Editors.FreeText"
+        mc:Ignorable="d"
+        x:Class="HandsLiftedApp.Core.Views.Editors.CustomSlideEditorWindow"
+        Width="900"
+        Height="700"
+        Title="Edit Custom Slide"
+        WindowStartupLocation="CenterOwner"
+        x:CompileBindings="False">
+    <freeText:CustomSlideEditor />
+</Window>

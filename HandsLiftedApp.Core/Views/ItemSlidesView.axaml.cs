@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -14,9 +16,14 @@ using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Core;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Core.Views.Confirmation;
+using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Controls
 {
@@ -273,6 +280,264 @@ namespace HandsLiftedApp.Controls
         private void DropContainer_OnAttachedToLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)
         {
             SetupDnd(sender as Grid);
+            SetupHoverInsert(sender as Grid);
+        }
+
+        // Hover-reveal "+" button in the gaps between slide thumbnails (and before the
+        // first / after the last), for inserting a new MediaGroupItem.GroupItem via the
+        // same "Add Media" / "Add Custom Slide" options MediaGroupItemEditor offers.
+        // Only applies to MediaGroupItemInstance - other item types don't support arbitrary insertion.
+        //
+        // The button lives on "InsertOverlay", a plain Canvas sibling of the ListBoxWithoutKey
+        // with no Background set, so it never intercepts hit-testing itself (only its Button
+        // child does) - existing slide selection/DnD on the list underneath is unaffected.
+        // Position is computed as the true midpoint between two adjacent slide containers
+        // (via TranslatePoint into the overlay's own coordinate space) rather than being
+        // anchored to one container's edge, so it lands in the visual gap instead of overlapping
+        // thumbnail content. "Nearest gap, with hysteresis" hit-testing (bigger radius to leave
+        // than to enter) avoids the flicker a hard edge/boundary test causes once the button
+        // itself is hovered.
+        void SetupHoverInsert(Grid dropContainer)
+        {
+            if (dropContainer?.DataContext is not MediaGroupItemInstance mediaGroupItemInstance) return;
+
+            var overlay = dropContainer.Children.OfType<Canvas>().FirstOrDefault(c => c.Name == "InsertOverlay");
+            if (overlay == null) return;
+
+            const double buttonSize = 22;
+            const double enterRadius = 22;
+            const double exitRadius = 34;
+
+            Button? insertButton = null;
+            int? shownInsertIndex = null;
+
+            MenuFlyout BuildInsertFlyout(Func<int> resolveInsertIndex)
+            {
+                var flyout = new MenuFlyout { Placement = PlacementMode.Bottom };
+
+                var addMedia = new MenuItem { Header = "Add Media" };
+                addMedia.Click += async (_, _) =>
+                {
+                    // Unlike a SlideItem/CustomSlide, a MediaItem with no SourceMediaFilePath
+                    // yet renders no Slide at all (CreateItem.GenerateMediaContentSlide returns
+                    // null for it), so GenerateSlides() would just silently drop it - browse for
+                    // the file up front instead, matching MediaItemEditor's BrowseButton_OnClick.
+                    var topLevel = TopLevel.GetTopLevel(this);
+                    if (topLevel == null) return;
+
+                    var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                    {
+                        Title = "Select Media File",
+                        AllowMultiple = false,
+                        FileTypeFilter = new[]
+                        {
+                            new FilePickerFileType("Image files") { Patterns = new[] { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.webp" } },
+                            new FilePickerFileType("Video files") { Patterns = new[] { "*.mp4", "*.mov", "*.avi", "*.mkv", "*.webm" } },
+                            new FilePickerFileType("All files") { Patterns = new[] { "*.*" } },
+                        }
+                    });
+
+                    var filePath = files.Count > 0 ? files[0].TryGetLocalPath() : null;
+                    if (filePath == null) return;
+
+                    string localizedMediaPath;
+                    try
+                    {
+                        localizedMediaPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                            filePath, Globals.Instance.AppPreferences?.MediaLibraryPath);
+                    }
+                    catch (MediaLibraryNotConfiguredException ex)
+                    {
+                        Log.Warning(ex, "Cannot add media to group: Media Library not configured");
+                        GoogleSlidesReauthWindow.ShowError("Media Library Not Configured", ex.Message);
+                        return;
+                    }
+
+                    var index = Math.Clamp(resolveInsertIndex(), 0, mediaGroupItemInstance.Items.Count);
+                    mediaGroupItemInstance.Items.Insert(index, new MediaGroupItem.MediaItem { SourceMediaFilePath = localizedMediaPath });
+                    mediaGroupItemInstance.GenerateSlides();
+                };
+
+                var addSlide = new MenuItem { Header = "Add Custom Slide" };
+                addSlide.Click += (_, _) =>
+                {
+                    var index = Math.Clamp(resolveInsertIndex(), 0, mediaGroupItemInstance.Items.Count);
+                    mediaGroupItemInstance.Items.Insert(index, new MediaGroupItem.SlideItem { SlideData = new CustomSlide() });
+                    mediaGroupItemInstance.GenerateSlides();
+                };
+
+                flyout.Items.Add(addMedia);
+                flyout.Items.Add(addSlide);
+                return flyout;
+            }
+
+            Button EnsureButton()
+            {
+                if (insertButton != null) return insertButton;
+
+                insertButton = new Button
+                {
+                    Width = buttonSize,
+                    Height = buttonSize,
+                    Padding = new Thickness(0),
+                    CornerRadius = new CornerRadius(buttonSize / 2),
+                    Background = new SolidColorBrush(Color.Parse("#724bab")),
+                    Foreground = Brushes.White,
+                    Content = "+",
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    IsVisible = false
+                };
+                overlay.Children.Add(insertButton);
+                return insertButton;
+            }
+
+            void HideButton()
+            {
+                if (insertButton != null) insertButton.IsVisible = false;
+                shownInsertIndex = null;
+            }
+
+            void ShowButtonAt(Point center, int insertIndex)
+            {
+                var button = EnsureButton();
+                if (shownInsertIndex != insertIndex)
+                {
+                    button.Flyout = BuildInsertFlyout(() => insertIndex);
+                    shownInsertIndex = insertIndex;
+                }
+
+                Canvas.SetLeft(button, center.X - buttonSize / 2);
+                Canvas.SetTop(button, center.Y - buttonSize / 2);
+                button.IsVisible = true;
+            }
+
+            // One point per valid insertion index (0..count): the midpoint of the gap it
+            // represents. A gap between two same-row items sits between their edges; a gap
+            // before the first item in a (possibly wrapped) row sits just left of it.
+            //
+            // Positions come from "PART_Thumbnail" (the ListBoxItem control template's actual
+            // thumbnail-image element), not the container's own rect, for both axes:
+            //  - Y: the container also includes the slide number/label strip docked below the
+            //    thumbnail, so centering on the container sits low, inside that strip.
+            //  - X: PART_Thumbnail is HorizontalAlignment="Left" inside the container and keeps
+            //    a fixed (16:9) aspect ratio, so a container can be wider than the thumbnail it
+            //    holds - using the container's edges biases the midpoint towards whichever
+            //    neighbour's container happens to have more trailing whitespace.
+            List<(Point Center, int InsertIndex)> ComputeGapPoints(ListBoxWithoutKey listBox)
+            {
+                var points = new List<(Point Center, int InsertIndex)>();
+                var count = listBox.Items.Count;
+
+                var visualRects = new Rect?[count];
+                for (var i = 0; i < count; i++)
+                {
+                    var container = listBox.ContainerFromIndex(i);
+                    if (container == null) continue;
+
+                    var thumbnail = container.GetVisualDescendants().OfType<Control>()
+                        .FirstOrDefault(v => v.Name == "PART_Thumbnail");
+                    var target = (Visual?)thumbnail ?? container;
+                    var topLeft = target.TranslatePoint(new Point(0, 0), overlay) ?? default;
+                    visualRects[i] = new Rect(topLeft, target.Bounds.Size);
+                }
+
+                for (var i = 0; i < count; i++)
+                {
+                    if (visualRects[i] is not { } r) continue;
+                    var y = r.Y + r.Height / 2;
+
+                    var sameRowAsPrevious = i > 0 && visualRects[i - 1] is { } prev && Math.Abs(prev.Y - r.Y) < 1;
+                    points.Add(sameRowAsPrevious
+                        ? (new Point((visualRects[i - 1]!.Value.Right + r.X) / 2, y), i)
+                        : (new Point(Math.Max(r.X / 2, 0), y), i));
+
+                    if (i == count - 1)
+                    {
+                        points.Add((new Point(r.Right + 16, y), count));
+                    }
+                }
+
+                return points;
+            }
+
+            void PointerMoved(object? sender, PointerEventArgs e)
+            {
+                var listBox = dropContainer.FindDescendantOfType<ListBoxWithoutKey>();
+                if (listBox == null || listBox.Items.Count == 0) return;
+
+                var pos = e.GetPosition(overlay);
+
+                (Point Center, int InsertIndex)? nearest = null;
+                var nearestDistance = double.MaxValue;
+                foreach (var gap in ComputeGapPoints(listBox))
+                {
+                    var dx = pos.X - gap.Center.X;
+                    var dy = pos.Y - gap.Center.Y;
+                    var distance = Math.Sqrt(dx * dx + dy * dy);
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        nearest = gap;
+                    }
+                }
+
+                var radius = shownInsertIndex != null ? exitRadius : enterRadius;
+                if (nearest != null && nearestDistance <= radius)
+                {
+                    ShowButtonAt(nearest.Value.Center, nearest.Value.InsertIndex);
+                }
+                else
+                {
+                    HideButton();
+                }
+            }
+
+            void PointerExited(object? sender, PointerEventArgs e) => HideButton();
+
+            Button? emptyStateButton = null;
+
+            void UpdateEmptyState()
+            {
+                var listBox = dropContainer.FindDescendantOfType<ListBoxWithoutKey>();
+                var isEmpty = listBox == null || listBox.Items.Count == 0;
+
+                if (isEmpty && emptyStateButton == null)
+                {
+                    emptyStateButton = new Button
+                    {
+                        Width = buttonSize,
+                        Height = buttonSize,
+                        Padding = new Thickness(0),
+                        CornerRadius = new CornerRadius(buttonSize / 2),
+                        Background = new SolidColorBrush(Color.Parse("#724bab")),
+                        Foreground = Brushes.White,
+                        Content = "+",
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Flyout = BuildInsertFlyout(() => 0)
+                    };
+                    dropContainer.Children.Add(emptyStateButton);
+                }
+
+                if (emptyStateButton != null)
+                {
+                    emptyStateButton.IsVisible = isEmpty;
+                }
+
+                if (!isEmpty)
+                {
+                    HideButton();
+                }
+            }
+
+            dropContainer.AddHandler(InputElement.PointerMovedEvent, PointerMoved);
+            dropContainer.AddHandler(InputElement.PointerExitedEvent, PointerExited);
+
+            mediaGroupItemInstance.Slides.CollectionChanged += (_, _) => UpdateEmptyState();
+            UpdateEmptyState();
         }
     }
 }

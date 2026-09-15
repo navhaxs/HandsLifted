@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:behaviours="clr-namespace:HandsLiftedApp.Controls.Behaviours"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Xaml.Behaviors.Interactions"
     x:CompileBindings="False"
     mc:Ignorable="d">
 
@@ -13,6 +14,10 @@
         <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
         <converters:StringHasValueVisibilityConverter x:Key="stringHasValueVisibilityConverter" />
         <converters:ObjectNonNullVisibilityConverter x:Key="ObjectNonNullVisibilityConverter" />
+        <converters:IsMediaBackedSlideConverter x:Key="isMediaBackedSlideConverter" />
+        <converters:IsCustomSlideConverter x:Key="isCustomSlideConverter" />
+        <converters:IsDuplicatableSlideConverter x:Key="isDuplicatableSlideConverter" />
+        <converters:IsSongSlideConverter x:Key="isSongSlideConverter" />
     </Styles.Resources>
 
     <Design.PreviewWith>
@@ -176,6 +181,20 @@
 
                     <Interaction.Behaviors>
                         <behaviours:SlideThumbnailBehavior />
+                        <!--
+                            None of the per-slide context menu actions apply to a Song slide
+                            (they only make sense for a MediaGroupItem.GroupItem-backed slide) -
+                            remove the context menu entirely rather than leave an empty popup.
+                        -->
+                        <ia:DataTriggerBehavior
+                            Binding="{Binding Converter={StaticResource isSongSlideConverter}}"
+                            ComparisonCondition="Equal"
+                            Value="True">
+                            <ia:ChangePropertyAction
+                                PropertyName="ContextMenu"
+                                TargetObject="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                Value="{x:Null}" />
+                        </ia:DataTriggerBehavior>
                     </Interaction.Behaviors>
                 </DockPanel>
             </ControlTemplate>
@@ -191,8 +210,33 @@
                     <!--     Command="{Binding $parent[Window].DataContext.MoveDownItemCommand}" -->
                     <!--     CommandParameter="{Binding}" -->
                     <!--     Header="Move Down" /> -->
+                    <MenuItem Command="{Binding $parent[Window].DataContext.EditCustomSlideCommand}"
+                              CommandParameter="{Binding}"
+                              Header="Edit..."
+                              IsVisible="{Binding Converter={StaticResource isCustomSlideConverter}}" />
+                    <MenuItem Command="{Binding $parent[Window].DataContext.ChangeMediaCommand}"
+                              Header="Change Media..."
+                              IsVisible="{Binding Converter={StaticResource isMediaBackedSlideConverter}}">
+                        <MenuItem.CommandParameter>
+                            <MultiBinding>
+                                <Binding />
+                                <Binding Path="$parent[ListBox].DataContext" />
+                            </MultiBinding>
+                        </MenuItem.CommandParameter>
+                    </MenuItem>
+                    <MenuItem Command="{Binding $parent[Window].DataContext.DuplicateSlideCommand}"
+                              Header="Duplicate"
+                              IsVisible="{Binding Converter={StaticResource isDuplicatableSlideConverter}}">
+                        <MenuItem.CommandParameter>
+                            <MultiBinding>
+                                <Binding />
+                                <Binding Path="$parent[ListBox].DataContext" />
+                            </MultiBinding>
+                        </MenuItem.CommandParameter>
+                    </MenuItem>
                     <MenuItem Command="{Binding $parent[Window].DataContext.DeleteSlideCommand}"
-                              Header="Delete item">
+                              Header="Delete item"
+                              IsVisible="{Binding Converter={StaticResource isDuplicatableSlideConverter}}">
                         <MenuItem.CommandParameter>
                             <MultiBinding>
                                 <Binding />

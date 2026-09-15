@@ -26,6 +26,7 @@ using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Core.Views.Editors;
+using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
@@ -133,6 +134,103 @@ public class MainViewModel : ViewModelBase
                                 groupInstance.SelectedSlideIndex = groupInstance.Slides.IndexOf(lastSelectedSlide);
                             }
                         }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                }
+            }
+        });
+
+        ChangeMediaCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
+        {
+            if (x is ReadOnlyCollection<object> parameters)
+            {
+                try
+                {
+                    Slide slide = (Slide)parameters.ElementAt(0);
+                    object groupItem = parameters.ElementAt(1);
+
+                    if (groupItem is MediaGroupItem group and IItemInstance groupInstance)
+                    {
+                        int index = groupInstance.Slides.IndexOf(slide);
+                        if (index < 0 || index >= group.Items.Count) return;
+                        if (group.Items[index] is not MediaGroupItem.MediaItem mediaItem) return;
+
+                        var filePaths = await ShowOpenFileDialog.Handle(new FilePickerOpenOptions()
+                        {
+                            AllowMultiple = false,
+                            Title = "Select Media File",
+                            FileTypeFilter = new List<FilePickerFileType>()
+                            {
+                                new FilePickerFileType("Media File")
+                                {
+                                    Patterns = Constants.SUPPORTED_VIDEO.Select(ext => $"*.{ext}")
+                                        .Concat(Constants.SUPPORTED_IMAGE.Select(ext => $"*.{ext}")).ToList()
+                                },
+                                new FilePickerFileType("All Files")
+                                {
+                                    Patterns = new List<string>() { "*.*" }
+                                }
+                            }
+                        });
+
+                        if (filePaths.Count == 0) return;
+
+                        var localPath = filePaths[0].TryGetLocalPath();
+                        if (string.IsNullOrEmpty(localPath)) return;
+
+                        string localizedMediaPath;
+                        try
+                        {
+                            localizedMediaPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                                localPath, Globals.Instance.AppPreferences?.MediaLibraryPath);
+                        }
+                        catch (MediaLibraryNotConfiguredException ex)
+                        {
+                            Log.Warning(ex, "Cannot change media: Media Library not configured");
+                            GoogleSlidesReauthWindow.ShowError("Media Library Not Configured", ex.Message);
+                            return;
+                        }
+
+                        mediaItem.SourceMediaFilePath = localizedMediaPath;
+                        RegerenateSlides(groupItem);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                }
+            }
+        });
+
+        EditCustomSlideCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
+        {
+            if (x is CustomSlide slide)
+            {
+                var window = new CustomSlideEditorWindow { DataContext = slide };
+                window.Show();
+            }
+        });
+
+        DuplicateSlideCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
+        {
+            if (x is ReadOnlyCollection<object> parameters)
+            {
+                try
+                {
+                    Slide slide = (Slide)parameters.ElementAt(0);
+                    object groupItem = parameters.ElementAt(1);
+
+                    if (groupItem is MediaGroupItem group and IItemInstance groupInstance)
+                    {
+                        int index = groupInstance.Slides.IndexOf(slide);
+                        if (index < 0 || index >= group.Items.Count) return;
+
+                        var duplicatedItem = group.Items[index].Clone();
+                        group.Items.Insert(index + 1, duplicatedItem);
+                        RegerenateSlides(groupItem);
                     }
                 }
                 catch (Exception e)
@@ -735,6 +833,9 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
     public ReactiveCommand<object, Unit> DeleteSlideCommand { get; }
+    public ReactiveCommand<object, Unit> ChangeMediaCommand { get; }
+    public ReactiveCommand<object, Unit> EditCustomSlideCommand { get; }
+    public ReactiveCommand<object, Unit> DuplicateSlideCommand { get; }
 
     private PlaylistInstance _playlist = new();
 

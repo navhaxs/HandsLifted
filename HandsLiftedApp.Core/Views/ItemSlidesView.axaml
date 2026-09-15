@@ -427,6 +427,12 @@
                                     </controls:ListBoxWithoutKey.ItemTemplate>
 
                                 </controls:ListBoxWithoutKey>
+                                <!--
+                                    Click-through overlay (no Background -> not hit-test visible itself)
+                                    that hosts the hover-reveal "insert" button for MediaGroupItemInstance;
+                                    populated/positioned in ItemSlidesView.axaml.cs (SetupHoverInsert).
+                                -->
+                                <Canvas Name="InsertOverlay" />
                             </Grid>
                         </StackPanel>
                     </Border>
