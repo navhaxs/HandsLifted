@@ -9,6 +9,7 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels.Editor;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Data.Models.Items;
@@ -155,11 +156,16 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
                         await Globals.Instance.MainViewModel.ShowOpenFileDialog.Handle(new FilePickerOpenOptions() { SuggestedStartLocation = TopLevel.GetTopLevel(this).StorageProvider.TryGetFolderFromPathAsync(instance.SourcePresentationFile).Result });
                     if (filePaths == null || filePaths.Count == 0) return;
 
-                    instance.SourcePresentationFile = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
+                    instance.SourcePresentationFile = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
                         filePaths[0].Path.LocalPath,
-                        instance.ParentPlaylist.PlaylistWorkingDirectory);
+                        Globals.Instance.AppPreferences?.MediaLibraryPath);
 
                     instance.Sync();
+                }
+                catch (MediaLibraryNotConfiguredException ex)
+                {
+                    Log.Warning(ex, "Cannot change PowerPoint file: Media Library not configured");
+                    GoogleSlidesReauthWindow.ShowError("Media Library Not Configured", ex.Message);
                 }
                 catch (Exception ex)
                 {

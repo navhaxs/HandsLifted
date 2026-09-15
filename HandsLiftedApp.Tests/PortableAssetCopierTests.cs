@@ -10,6 +10,7 @@ public class PortableAssetCopierTests
 {
     private string _tempDir = null!;
     private string _playlistDir = null!;
+    private string _libraryDir = null!;
 
     [TestInitialize]
     public void Setup()
@@ -185,5 +186,52 @@ public class PortableAssetCopierTests
             PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(video, @"VisionScreensUserData\"));
         Assert.AreEqual(pdf,
             PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(pdf, @"VisionScreensUserData\"));
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoMediaLibrary_NotConfigured_ThrowsForMediaFile()
+    {
+        var image = WriteSourceFile("photo.jpg", "photo-bytes");
+
+        Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
+            PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(image, null));
+        Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
+            PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(image, ""));
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoMediaLibrary_NotConfigured_NonMediaFilePassesThroughUnchanged()
+    {
+        var songXml = WriteSourceFile("song.xml", "<Song />");
+
+        var result = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(songXml, null);
+
+        Assert.AreEqual(songXml, result);
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoMediaLibrary_FileAlreadyInsideLibrary_ReferencedInPlaceWithoutCopy()
+    {
+        _libraryDir = Path.Combine(_tempDir, "Library");
+        Directory.CreateDirectory(Path.Combine(_libraryDir, "Media", "Images"));
+        var libraryFile = Path.Combine(_libraryDir, "Media", "Images", "photo.jpg");
+        File.WriteAllText(libraryFile, "photo-bytes");
+
+        var result = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(libraryFile, _libraryDir);
+
+        Assert.AreEqual(libraryFile, result);
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoMediaLibrary_FileOutsideLibrary_CopiesIntoLibrary()
+    {
+        _libraryDir = Path.Combine(_tempDir, "Library");
+        Directory.CreateDirectory(_libraryDir);
+        var source = WriteSourceFile("photo.jpg", "photo-bytes");
+
+        var result = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(source, _libraryDir);
+
+        Assert.AreEqual(Path.Combine(_libraryDir, "Media", "Images", "photo.jpg"), result);
+        Assert.IsTrue(File.Exists(result));
     }
 }

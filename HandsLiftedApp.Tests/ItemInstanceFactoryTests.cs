@@ -3,7 +3,9 @@ using System.IO;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Tests;
@@ -18,6 +20,7 @@ public class ItemInstanceFactoryTests
     {
         _tempDir = Path.Combine(Path.GetTempPath(), "HandsLiftedItemInstanceFactoryTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_tempDir);
+        Globals.Instance.AppPreferences = new AppPreferencesViewModel();
     }
 
     [TestCleanup]
@@ -160,5 +163,52 @@ public class ItemInstanceFactoryTests
         ItemInstanceFactory.ToItemInstance(staleParsedCopy, null);
 
         Assert.AreEqual("Current", Globals.Instance.SongLibraryIndex.Resolve(libraryVersion.UUID)!.Copyright);
+    }
+
+    [TestMethod]
+    public void ToItemInstance_MediaGroupItem_RelativePathUnderLibrary_ResolvesAgainstMediaLibrary()
+    {
+        var libraryDir = Path.Combine(_tempDir, "Library");
+        var playlistDir = Path.Combine(_tempDir, "Playlist");
+        Directory.CreateDirectory(Path.Combine(libraryDir, "Media", "Images"));
+        Directory.CreateDirectory(playlistDir);
+        var libraryFile = Path.Combine(libraryDir, "Media", "Images", "photo.jpg");
+        File.WriteAllText(libraryFile, "jpg-bytes");
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
+
+        var mediaGroupItem = new MediaGroupItem { Title = "Photos" };
+        mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem
+            { SourceMediaFilePath = Path.Combine("Media", "Images", "photo.jpg") });
+
+        var playlist = new PlaylistInstance { PlaylistWorkingDirectory = playlistDir };
+        var instance = (MediaGroupItemInstance)ItemInstanceFactory.ToItemInstance(mediaGroupItem, playlist);
+
+        var resolvedMediaItem = (MediaGroupItem.MediaItem)instance.Items.Single();
+        Assert.AreEqual(libraryFile, resolvedMediaItem.SourceMediaFilePath);
+    }
+
+    [TestMethod]
+    public void ToItemInstance_MediaGroupItem_RelativePathOnlyUnderPlaylistDir_FallsBackToLegacyResolution()
+    {
+        // A legacy playlist saved before the Media Library feature existed: its relative path
+        // means "relative to the playlist's own folder", not the (now-configured) library, and
+        // the file doesn't exist under the library at all.
+        var libraryDir = Path.Combine(_tempDir, "Library");
+        var playlistDir = Path.Combine(_tempDir, "Playlist");
+        Directory.CreateDirectory(libraryDir);
+        Directory.CreateDirectory(Path.Combine(playlistDir, "Media", "Images"));
+        var legacyFile = Path.Combine(playlistDir, "Media", "Images", "photo.jpg");
+        File.WriteAllText(legacyFile, "jpg-bytes");
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
+
+        var mediaGroupItem = new MediaGroupItem { Title = "Photos" };
+        mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem
+            { SourceMediaFilePath = Path.Combine("Media", "Images", "photo.jpg") });
+
+        var playlist = new PlaylistInstance { PlaylistWorkingDirectory = playlistDir };
+        var instance = (MediaGroupItemInstance)ItemInstanceFactory.ToItemInstance(mediaGroupItem, playlist);
+
+        var resolvedMediaItem = (MediaGroupItem.MediaItem)instance.Items.Single();
+        Assert.AreEqual(legacyFile, resolvedMediaItem.SourceMediaFilePath);
     }
 }

@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Google.Apis.Auth.OAuth2;
@@ -99,6 +100,26 @@ namespace HandsLiftedApp.Core.Views.Setup
         private void ReloadLibraryButton_OnClick(object? sender, RoutedEventArgs e)
         {
             Globals.Instance.MainViewModel.LibraryViewModel.ReloadLibraries();
+        }
+
+        private async void BrowseMediaLibraryButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var currentPath = Globals.Instance.AppPreferences.MediaLibraryPath;
+            var startFolder = !string.IsNullOrWhiteSpace(currentPath)
+                ? await StorageProvider.TryGetFolderFromPathAsync(currentPath)
+                : null;
+
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select Media Library Folder",
+                AllowMultiple = false,
+                SuggestedStartLocation = startFolder
+            });
+
+            if (folders.Count > 0)
+            {
+                Globals.Instance.AppPreferences.MediaLibraryPath = folders[0].TryGetLocalPath();
+            }
         }
 
         private void DownloadScriptureDataButton_OnClick(object? sender, RoutedEventArgs e)

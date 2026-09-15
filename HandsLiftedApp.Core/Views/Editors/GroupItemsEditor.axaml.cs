@@ -8,9 +8,12 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors
 {
@@ -109,6 +112,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                 AllowMultiple = true
             });
 
+            var mediaLibraryPath = Globals.Instance.AppPreferences?.MediaLibraryPath;
+
             foreach (var fileName in files)
             {
                 // Put your logic for opening file here.
@@ -122,8 +127,22 @@ namespace HandsLiftedApp.Core.Views.Editors
                 // var x = CreateItem.GenerateMediaContentSlide(fileName.Path);
                 if (this.DataContext is MediaGroupItem mediaGroupItem)
                 {
+                    string localizedMediaPath;
+                    try
+                    {
+                        localizedMediaPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                            fileName.Path.LocalPath, mediaLibraryPath);
+                    }
+                    catch (MediaLibraryNotConfiguredException ex)
+                    {
+                        Log.Warning(ex, "Cannot add {FilePath}: Media Library not configured",
+                            fileName.Path.LocalPath);
+                        GoogleSlidesReauthWindow.ShowError("Media Library Not Configured", ex.Message);
+                        break;
+                    }
+
                     mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
-                        { SourceMediaFilePath = fileName.Path.LocalPath });
+                        { SourceMediaFilePath = localizedMediaPath });
                 }
             }
         }

@@ -57,5 +57,50 @@ namespace HandsLiftedApp.Core.Utils
 
             return Path.GetRelativePath(relativeTo, path);
         }
+
+        /// <summary>
+        /// Resolves a media path saved by a playlist. New-format playlists store media paths
+        /// relative to the configured Media Library folder; legacy playlists (saved before the
+        /// Media Library feature existed) store them relative to the playlist's own folder. There
+        /// is no format/version flag, so we disambiguate by trying the library first and falling
+        /// back to the playlist folder when the file isn't found there.
+        /// </summary>
+        public static string? ToAbsoluteMediaPath(string? mediaLibraryPath, string? playlistDirectoryPath, string? path)
+        {
+            if (IsAvaresUri(path) || path == null || Path.IsPathFullyQualified(path))
+            {
+                return path;
+            }
+
+            if (mediaLibraryPath != null && Path.IsPathFullyQualified(mediaLibraryPath))
+            {
+                var libraryResolved = Path.GetFullPath(Path.Combine(mediaLibraryPath, path));
+                if (File.Exists(libraryResolved))
+                {
+                    return libraryResolved;
+                }
+            }
+
+            return ToAbsolutePath(playlistDirectoryPath, path);
+        }
+
+        /// <summary>
+        /// True if <paramref name="path"/> lives under <paramref name="directoryPath"/>.
+        /// </summary>
+        public static bool IsUnderDirectory(string? directoryPath, string path)
+        {
+            if (directoryPath == null || !Path.IsPathFullyQualified(directoryPath))
+            {
+                return false;
+            }
+
+            // GetRelativePath returns `path` unchanged (still rooted) when the two are on
+            // different volumes, and a leading ".." when `path` sits above `directoryPath`.
+            var relative = Path.GetRelativePath(directoryPath, path);
+            return !Path.IsPathRooted(relative)
+                   && relative != ".."
+                   && !relative.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                   && !relative.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal);
+        }
     }
 }

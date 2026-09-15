@@ -260,7 +260,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 
             if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
             {
-                Item convertMe = HandsLiftedDocXmlSerializer.SerializeItem(mediaGroupItemInstance, null);
+                Item convertMe = HandsLiftedDocXmlSerializer.SerializeItem(mediaGroupItemInstance);
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
                     XmlSerializer serializer = new XmlSerializer(typeof(MediaGroupItem));

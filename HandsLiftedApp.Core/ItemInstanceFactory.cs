@@ -17,6 +17,7 @@ namespace HandsLiftedApp.Core
         public static Item ToItemInstance(Item deserializedItem, PlaylistInstance? playlist)
         {
             var playlistDirectoryPath = playlist?.PlaylistWorkingDirectory;
+            var mediaLibraryPath = Globals.Instance.AppPreferences?.MediaLibraryPath;
             if (deserializedItem is LogoItem i)
             {
                 return new LogoItemInstance(playlist) { Title = i.Title, SlideTransitionDurationMs = i.SlideTransitionDurationMs };
@@ -101,8 +102,8 @@ namespace HandsLiftedApp.Core
                                 if (newMediaItem.SourceMediaFilePath != null)
                                 {
                                     newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                            mediaItem.SourceMediaFilePath);
+                                        RelativeFilePathResolver.ToAbsoluteMediaPath(mediaLibraryPath,
+                                            playlistDirectoryPath, mediaItem.SourceMediaFilePath);
                                 }
 
                                 return newMediaItem;
@@ -111,8 +112,8 @@ namespace HandsLiftedApp.Core
                             return item;
                         }).ToList()),
                     AutoAdvanceTimer = powerPointPresentationItem.AutoAdvanceTimer,
-                    SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        powerPointPresentationItem.SourcePresentationFile),
+                    SourcePresentationFile = RelativeFilePathResolver.ToAbsoluteMediaPath(mediaLibraryPath,
+                        playlistDirectoryPath, powerPointPresentationItem.SourcePresentationFile),
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         powerPointPresentationItem.SourceSlidesExportDirectory),
                     SlideTransitionDurationMs = powerPointPresentationItem.SlideTransitionDurationMs
@@ -137,8 +138,8 @@ namespace HandsLiftedApp.Core
                                 if (newMediaItem.SourceMediaFilePath != null)
                                 {
                                     newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                            mediaItem.SourceMediaFilePath);
+                                        RelativeFilePathResolver.ToAbsoluteMediaPath(mediaLibraryPath,
+                                            playlistDirectoryPath, mediaItem.SourceMediaFilePath);
                                 }
 
                                 return newMediaItem;
@@ -170,8 +171,8 @@ namespace HandsLiftedApp.Core
                                 if (newMediaItem.SourceMediaFilePath != null)
                                 {
                                     newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                            mediaItem.SourceMediaFilePath);
+                                        RelativeFilePathResolver.ToAbsoluteMediaPath(mediaLibraryPath,
+                                            playlistDirectoryPath, mediaItem.SourceMediaFilePath);
                                 }
 
                                 return newMediaItem;
@@ -180,8 +181,8 @@ namespace HandsLiftedApp.Core
                             return item;
                         }).ToList()),
                     AutoAdvanceTimer = pdfSlidesGroupItem.AutoAdvanceTimer,
-                    SourcePresentationFile = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                        pdfSlidesGroupItem.SourcePresentationFile),
+                    SourcePresentationFile = RelativeFilePathResolver.ToAbsoluteMediaPath(mediaLibraryPath,
+                        playlistDirectoryPath, pdfSlidesGroupItem.SourcePresentationFile),
                     SourceSlidesExportDirectory = RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         pdfSlidesGroupItem.SourceSlidesExportDirectory),
                     SlideTransitionDurationMs = pdfSlidesGroupItem.SlideTransitionDurationMs
@@ -206,8 +207,8 @@ namespace HandsLiftedApp.Core
                                 if (newMediaItem.SourceMediaFilePath != null)
                                 {
                                     newMediaItem.SourceMediaFilePath =
-                                        RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                            mediaItem.SourceMediaFilePath);
+                                        RelativeFilePathResolver.ToAbsoluteMediaPath(mediaLibraryPath,
+                                            playlistDirectoryPath, mediaItem.SourceMediaFilePath);
                                 }
 
                                 return newMediaItem;
@@ -240,8 +241,8 @@ namespace HandsLiftedApp.Core
                             if (newMediaItem.SourceMediaFilePath != null)
                             {
                                 newMediaItem.SourceMediaFilePath =
-                                    RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                        mediaItem.SourceMediaFilePath);
+                                    RelativeFilePathResolver.ToAbsoluteMediaPath(mediaLibraryPath,
+                                        playlistDirectoryPath, mediaItem.SourceMediaFilePath);
                             }
 
                             return newMediaItem;

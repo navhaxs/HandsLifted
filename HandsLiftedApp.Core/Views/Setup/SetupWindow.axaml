@@ -208,7 +208,26 @@
 
                 <TabItem Header="Library">
                     <StackPanel>
-                        <TextBlock Text="TODO edit library.yml to configure libraries" />
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Margin="0,0,0,4"
+                            Text="Media Library" />
+                        <TextBlock
+                            Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                            Margin="0,0,0,4"
+                            Text="Folder where imported media (images, video, PDF/PowerPoint sources) is stored. Media already inside this folder is referenced in place; media added from elsewhere is copied in. Required before media can be added to a playlist."
+                            TextWrapping="Wrap" />
+                        <DockPanel>
+                            <Button
+                                Click="BrowseMediaLibraryButton_OnClick"
+                                DockPanel.Dock="Right"
+                                Margin="8,0,0,0">
+                                Browse…
+                            </Button>
+                            <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.MediaLibraryPath}" />
+                        </DockPanel>
+
+                        <TextBlock Margin="0,24,0,0" Text="TODO edit library.yml to configure libraries" />
                         <Button
                             Click="EditLibraryButton_OnClick"
                             HorizontalAlignment="Center"

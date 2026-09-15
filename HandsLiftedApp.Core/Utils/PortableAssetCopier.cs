@@ -6,8 +6,60 @@ using Serilog;
 
 namespace HandsLiftedApp.Core.Utils
 {
+    public class MediaLibraryNotConfiguredException : Exception
+    {
+        public MediaLibraryNotConfiguredException()
+            : base("No Media Library folder is configured. Open Setup and choose one before adding media.")
+        {
+        }
+    }
+
     public static class PortableAssetCopier
     {
+        /// <summary>
+        /// Resolves a file being added to a playlist against the configured Media Library folder.
+        /// A file of a type this method doesn't route anywhere (e.g. a song XML file) passes
+        /// through unchanged, same as <see cref="CopyMediaOrPresentationIntoPlaylist"/> — no
+        /// library needed. A media/presentation file already inside the library is referenced in
+        /// place (no copy); one from outside the library is copied in via
+        /// <see cref="CopyMediaOrPresentationIntoPlaylist"/> so every playlist media reference ends
+        /// up under the library.
+        /// </summary>
+        /// <exception cref="MediaLibraryNotConfiguredException">
+        /// The file is a media/presentation type and no Media Library folder is configured.
+        /// </exception>
+        public static string ResolveOrCopyIntoMediaLibrary(string filePath, string? mediaLibraryPath)
+        {
+            if (!RequiresMediaLibrary(filePath))
+            {
+                return filePath;
+            }
+
+            if (string.IsNullOrWhiteSpace(mediaLibraryPath) || !Path.IsPathFullyQualified(mediaLibraryPath))
+            {
+                throw new MediaLibraryNotConfiguredException();
+            }
+
+            var fullMediaLibraryPath = Path.GetFullPath(mediaLibraryPath);
+
+            if (Path.IsPathFullyQualified(filePath) &&
+                RelativeFilePathResolver.IsUnderDirectory(fullMediaLibraryPath, Path.GetFullPath(filePath)))
+            {
+                return Path.GetFullPath(filePath);
+            }
+
+            return CopyMediaOrPresentationIntoPlaylist(filePath, fullMediaLibraryPath);
+        }
+
+        private static bool RequiresMediaLibrary(string filePath)
+        {
+            var ext = Path.GetExtension(filePath).TrimStart('.').ToLowerInvariant();
+            return Constants.SUPPORTED_IMAGE.Contains(ext)
+                   || Constants.SUPPORTED_VIDEO.Contains(ext)
+                   || Constants.SUPPORTED_PDF.Contains(ext)
+                   || Constants.SUPPORTED_POWERPOINT.Contains(ext);
+        }
+
         public static string CopyIntoSubfolder(string sourceFilePath, string playlistWorkingDirectory, string relativeSubfolder)
         {
             // A playlist that has never been saved still carries the class-default relative

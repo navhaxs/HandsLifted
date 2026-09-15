@@ -3,9 +3,12 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Utils;
 using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.FreeText
 {
@@ -81,7 +84,16 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
             if (DataContext is MediaGroupItem.MediaItem mediaItem)
             {
-                mediaItem.SourceMediaFilePath = filePath;
+                try
+                {
+                    mediaItem.SourceMediaFilePath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                        filePath, Globals.Instance.AppPreferences?.MediaLibraryPath);
+                }
+                catch (MediaLibraryNotConfiguredException ex)
+                {
+                    Log.Warning(ex, "Cannot set media file: Media Library not configured");
+                    GoogleSlidesReauthWindow.ShowError("Media Library Not Configured", ex.Message);
+                }
             }
         }
     }

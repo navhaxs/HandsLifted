@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Tests;
@@ -19,6 +20,7 @@ public class HandsLiftedDocXmlSerializerTests
     {
         _tempDir = Path.Combine(Path.GetTempPath(), "HandsLiftedDocXmlSerializerTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_tempDir);
+        Globals.Instance.AppPreferences = new AppPreferencesViewModel();
     }
 
     [TestCleanup]
@@ -162,7 +164,7 @@ public class HandsLiftedDocXmlSerializerTests
         Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
         var instance = new SongItemInstance(null) { SongId = song.UUID };
 
-        var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance, "irrelevant-playlist-dir");
+        var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance);
 
         Assert.IsInstanceOfType(serialized, typeof(SongItemReference));
         var reference = (SongItemReference)serialized;
@@ -205,7 +207,7 @@ public class HandsLiftedDocXmlSerializerTests
         Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
         var instance = new SongItemInstance(null) { SongId = song.UUID, SlideTransitionDurationMs = 300 };
 
-        var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance, "irrelevant-playlist-dir");
+        var serialized = HandsLiftedDocXmlSerializer.SerializeItem(instance);
         var originalReference = (SongItemReference)serialized;
         var cloned = serialized.Clone();
 
@@ -264,6 +266,7 @@ public class HandsLiftedDocXmlSerializerTests
     [TestMethod]
     public void SerializePlaylist_PdfItem_SourcePresentationFileIsRelative_ItemsAndExportDirNotWritten()
     {
+        Globals.Instance.AppPreferences.MediaLibraryPath = _tempDir;
         var playlist = new PlaylistInstance();
         var sourcesDir = Path.Combine(_tempDir, "Sources");
         Directory.CreateDirectory(sourcesDir);
@@ -295,6 +298,7 @@ public class HandsLiftedDocXmlSerializerTests
     [TestMethod]
     public void SerializePlaylist_MediaGroupItem_SourceMediaFilePathIsRelative()
     {
+        Globals.Instance.AppPreferences.MediaLibraryPath = _tempDir;
         var playlist = new PlaylistInstance();
         var imagesDir = Path.Combine(_tempDir, "Media", "Images");
         Directory.CreateDirectory(imagesDir);
@@ -310,8 +314,8 @@ public class HandsLiftedDocXmlSerializerTests
 
         var rawXml = File.ReadAllText(path);
         StringAssert.Contains(rawXml, @"Media\Images\photo.jpg");
-        Assert.IsFalse(rawXml.Contains(_tempDir),
-            "Absolute path must not be written; SourceMediaFilePath should be relative to the playlist directory.");
+        Assert.IsFalse(rawXml.Contains(mediaFile),
+            "Absolute path must not be written; SourceMediaFilePath should be relative to the media library directory.");
 
         var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
         var mediaGroupItem = (MediaGroupItem)deserialized.Items.Single();
@@ -320,15 +324,16 @@ public class HandsLiftedDocXmlSerializerTests
     }
 
     [TestMethod]
-    public void SerializePlaylist_PdfItem_SourceOutsidePlaylistFolder_KeepsAbsolutePath()
+    public void SerializePlaylist_PdfItem_SourceOutsideMediaLibrary_KeepsAbsolutePath()
     {
-        // A legacy playlist (or one whose PDF was added before copy-on-add covered that path)
-        // references a source that does not live under the playlist folder. Relativizing it
+        // A source that does not live under the configured Media Library folder — added before
+        // the library was configured, or from a library that has since moved. Relativizing it
         // would emit "..\Outside\sermon.pdf" — portable-looking, but not portable.
-        var playlistDir = Path.Combine(_tempDir, "PlaylistFolder");
+        var libraryDir = Path.Combine(_tempDir, "Library");
         var outsideDir = Path.Combine(_tempDir, "Outside");
-        Directory.CreateDirectory(playlistDir);
+        Directory.CreateDirectory(libraryDir);
         Directory.CreateDirectory(outsideDir);
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
         var sourceFile = Path.Combine(outsideDir, "sermon.pdf");
         File.WriteAllText(sourceFile, "pdf-bytes");
 
@@ -339,7 +344,7 @@ public class HandsLiftedDocXmlSerializerTests
             SourcePresentationFile = sourceFile
         });
 
-        var path = Path.Combine(playlistDir, "playlist-pdf-outside.xml");
+        var path = Path.Combine(libraryDir, "playlist-pdf-outside.xml");
         HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
 
         var rawXml = File.ReadAllText(path);
@@ -347,8 +352,8 @@ public class HandsLiftedDocXmlSerializerTests
         // NOTE: not asserting the absence of ".." across the whole document — the default
         // avares:// LogoGraphicFile is separately (and pre-existingly) mangled into a ".." path
         // by this serializer. Assert specifically that THIS source was not relativized.
-        Assert.IsFalse(rawXml.Contains(Path.GetRelativePath(playlistDir, sourceFile)),
-            "A source outside the playlist folder must stay absolute, not become a '..' relative path.");
+        Assert.IsFalse(rawXml.Contains(Path.GetRelativePath(libraryDir, sourceFile)),
+            "A source outside the media library folder must stay absolute, not become a '..' relative path.");
 
         var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
         var pdfItem = (PDFSlidesGroupItem)deserialized.Items.Single();
@@ -356,12 +361,13 @@ public class HandsLiftedDocXmlSerializerTests
     }
 
     [TestMethod]
-    public void SerializePlaylist_MediaGroupItem_SourceOutsidePlaylistFolder_KeepsAbsolutePath()
+    public void SerializePlaylist_MediaGroupItem_SourceOutsideMediaLibrary_KeepsAbsolutePath()
     {
-        var playlistDir = Path.Combine(_tempDir, "PlaylistFolder");
+        var libraryDir = Path.Combine(_tempDir, "Library");
         var outsideDir = Path.Combine(_tempDir, "Outside");
-        Directory.CreateDirectory(playlistDir);
+        Directory.CreateDirectory(libraryDir);
         Directory.CreateDirectory(outsideDir);
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
         var mediaFile = Path.Combine(outsideDir, "photo.jpg");
         File.WriteAllText(mediaFile, "jpg-bytes");
 
@@ -370,12 +376,34 @@ public class HandsLiftedDocXmlSerializerTests
         mediaGroupInstance.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = mediaFile });
         playlist.Items.Add(mediaGroupInstance);
 
-        var path = Path.Combine(playlistDir, "playlist-mediagroup-outside.xml");
+        var path = Path.Combine(libraryDir, "playlist-mediagroup-outside.xml");
         HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
 
         var rawXml = File.ReadAllText(path);
         StringAssert.Contains(rawXml, mediaFile);
-        Assert.IsFalse(rawXml.Contains(Path.GetRelativePath(playlistDir, mediaFile)),
+        Assert.IsFalse(rawXml.Contains(Path.GetRelativePath(libraryDir, mediaFile)),
             "A media file outside the playlist folder must stay absolute, not become a '..' relative path.");
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_MediaGroupItem_NoMediaLibraryConfigured_KeepsAbsolutePath()
+    {
+        // MediaLibraryPath is left unset (default from Setup's fresh AppPreferencesViewModel).
+        var mediaFile = Path.Combine(_tempDir, "photo.jpg");
+        File.WriteAllText(mediaFile, "jpg-bytes");
+
+        var playlist = new PlaylistInstance();
+        var mediaGroupInstance = new MediaGroupItemInstance(playlist) { Title = "Photos" };
+        mediaGroupInstance.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = mediaFile });
+        playlist.Items.Add(mediaGroupInstance);
+
+        var path = Path.Combine(_tempDir, "playlist-no-library.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var mediaGroupItem = (MediaGroupItem)deserialized.Items.Single();
+        var roundTrippedMediaItem = (MediaGroupItem.MediaItem)mediaGroupItem.Items.Single();
+        Assert.AreEqual(mediaFile, roundTrippedMediaItem.SourceMediaFilePath,
+            "With no Media Library configured, the source must stay absolute rather than being relativized against nothing.");
     }
 }

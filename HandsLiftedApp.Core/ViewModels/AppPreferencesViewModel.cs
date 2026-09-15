@@ -172,6 +172,14 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _scriptureDataPath, value);
         }
 
+        private string? _mediaLibraryPath;
+        [DataMember]
+        public string? MediaLibraryPath
+        {
+            get => _mediaLibraryPath;
+            set => this.RaiseAndSetIfChanged(ref _mediaLibraryPath, value);
+        }
+
         private string _ndiMainOutputName = "VisionScreens Main Output";
         [DataMember]
         public string NdiMainOutputName

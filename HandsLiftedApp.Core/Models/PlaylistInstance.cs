@@ -17,6 +17,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Utils;
+using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Models;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
@@ -180,8 +181,19 @@ namespace HandsLiftedApp.Core.Models
                     // and insert at INDEX
                     foreach (var filePath in itemsToInsert)
                     {
-                        var localizedFilePath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
-                            filePath, PlaylistWorkingDirectory);
+                        string localizedFilePath;
+                        try
+                        {
+                            localizedFilePath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                                filePath, Globals.Instance.AppPreferences?.MediaLibraryPath);
+                        }
+                        catch (MediaLibraryNotConfiguredException ex)
+                        {
+                            Log.Warning(ex, "Cannot add {FilePath}: Media Library not configured", filePath);
+                            GoogleSlidesReauthWindow.ShowError("Media Library Not Configured", ex.Message);
+                            continue;
+                        }
+
                         var newItem = CreateItem.GenerateItem(localizedFilePath);
                         if (newItem != null)
                         {

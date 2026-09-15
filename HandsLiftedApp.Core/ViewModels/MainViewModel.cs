@@ -363,8 +363,19 @@ public class MainViewModel : ViewModelBase
                         });
                         if (filePaths.Count > 0)
                         {
-                            var localizedPresentationPath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
-                                filePaths[0].TryGetLocalPath(), Playlist.PlaylistWorkingDirectory);
+                            string localizedPresentationPath;
+                            try
+                            {
+                                localizedPresentationPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                                    filePaths[0].TryGetLocalPath(), Globals.Instance.AppPreferences?.MediaLibraryPath);
+                            }
+                            catch (MediaLibraryNotConfiguredException ex)
+                            {
+                                Log.Warning(ex, "Cannot add presentation file: Media Library not configured");
+                                GoogleSlidesReauthWindow.ShowError("Media Library Not Configured", ex.Message);
+                                break;
+                            }
+
                             itemToInsert = CreateItem.OpenPresentationFile(localizedPresentationPath, Playlist);
                         }
 
@@ -414,7 +425,16 @@ public class MainViewModel : ViewModelBase
                         {
                             return;
                         }
-                        
+
+                        var mediaGroupLibraryPath = Globals.Instance.AppPreferences?.MediaLibraryPath;
+                        if (string.IsNullOrWhiteSpace(mediaGroupLibraryPath))
+                        {
+                            Log.Warning("Cannot add media group: Media Library not configured");
+                            GoogleSlidesReauthWindow.ShowError("Media Library Not Configured",
+                                "Set a Media Library folder in Setup before adding media to a playlist.");
+                            return;
+                        }
+
                         MediaGroupItemInstance mediaGroupItem = new MediaGroupItemInstance(Playlist)
                             { Title = "New media group" };
 
@@ -429,8 +449,8 @@ public class MainViewModel : ViewModelBase
                                 continue;
                             }
 
-                            var localizedMediaPath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
-                                localPath, Playlist.PlaylistWorkingDirectory);
+                            var localizedMediaPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                                localPath, mediaGroupLibraryPath);
                             mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
                                 { SourceMediaFilePath = localizedMediaPath });
                         }
@@ -547,7 +567,7 @@ public class MainViewModel : ViewModelBase
                         if (theSelectedIndex != -1)
                         {
                             var itemToDuplicate = Playlist.Items[theSelectedIndex];
-                            var serializedItem = HandsLiftedDocXmlSerializer.SerializeItem(itemToDuplicate, Playlist.PlaylistWorkingDirectory);
+                            var serializedItem = HandsLiftedDocXmlSerializer.SerializeItem(itemToDuplicate);
                             var clonedItem = serializedItem.Clone();
                             var newItemInstance = ItemInstanceFactory.ToItemInstance(clonedItem, Playlist);
                             Playlist.Items.Insert(theSelectedIndex + 1, newItemInstance);
@@ -648,12 +668,21 @@ public class MainViewModel : ViewModelBase
                 var destItem = Playlist.Items.FirstOrDefault(item => item.UUID == command.DestItemUUID);
                 if (destItem is MediaGroupItemInstance destItemInstance)
                 {
+                    var addFilesLibraryPath = Globals.Instance.AppPreferences?.MediaLibraryPath;
+                    if (string.IsNullOrWhiteSpace(addFilesLibraryPath))
+                    {
+                        Log.Warning("Cannot add files to group: Media Library not configured");
+                        GoogleSlidesReauthWindow.ShowError("Media Library Not Configured",
+                            "Set a Media Library folder in Setup before adding media to a playlist.");
+                        return;
+                    }
+
                     foreach (var item in command.SourceFiles)
                     {
                         if (item is IStorageFile file)
                         {
-                            var localizedMediaPath = PortableAssetCopier.CopyMediaOrPresentationIntoPlaylist(
-                                file.Path.LocalPath, Playlist.PlaylistWorkingDirectory);
+                            var localizedMediaPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                                file.Path.LocalPath, addFilesLibraryPath);
                             destItemInstance.Items.Insert(command.DestSlideIndex, new MediaGroupItem.MediaItem()
                                 { SourceMediaFilePath = localizedMediaPath });
                         }
