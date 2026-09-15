@@ -5,10 +5,8 @@
     x:Class="HandsLiftedApp.Core.Views.LibraryView.LibraryQueryView"
     x:DataType="viewModels:LibraryQueryViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:libraryView="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
-    xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

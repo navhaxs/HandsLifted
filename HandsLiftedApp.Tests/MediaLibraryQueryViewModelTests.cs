@@ -148,4 +148,50 @@ public class MediaLibraryQueryViewModelTests
 
         Assert.AreEqual(0, vm.Entries.Count);
     }
+
+    [TestMethod]
+    public void NavigateIntoCommand_ResetsSearchTerm()
+    {
+        var sermonsDir = Path.Combine(_tempDir, "Sermons");
+        Directory.CreateDirectory(sermonsDir);
+        File.WriteAllText(Path.Combine(sermonsDir, "sermon1.mp4"), "mp4-bytes");
+        File.WriteAllText(Path.Combine(_tempDir, "unrelated.jpg"), "jpg-bytes");
+
+        var vm = CreateVm();
+        vm.SearchTerm = "Sermons";
+        Assert.AreEqual(1, vm.Entries.Count, "Filter should narrow the root listing to just the Sermons folder.");
+
+        var sermonsEntry = vm.Entries.Single(e => e.Title == "Sermons");
+        vm.NavigateIntoCommand.Execute(sermonsEntry).Subscribe();
+
+        Assert.AreEqual("", vm.SearchTerm, "Navigating into a folder must clear the stale filter.");
+        Assert.AreEqual(1, vm.Entries.Count);
+        Assert.AreEqual("sermon1.mp4", vm.Entries[0].Title,
+            "With the filter cleared, the Sermons folder's own contents must be visible, not filtered out by the old 'Sermons' search term.");
+    }
+
+    [TestMethod]
+    public void NavigateIntoCommand_TwoLevelsDeep_AccumulatesBreadcrumbsCorrectly()
+    {
+        var level1 = Path.Combine(_tempDir, "Sermons");
+        var level2 = Path.Combine(level1, "2024");
+        Directory.CreateDirectory(level2);
+        File.WriteAllText(Path.Combine(level2, "sermon.mp4"), "mp4-bytes");
+
+        var vm = CreateVm();
+        vm.NavigateIntoCommand.Execute(vm.Entries.Single(e => e.Title == "Sermons")).Subscribe();
+        vm.NavigateIntoCommand.Execute(vm.Entries.Single(e => e.Title == "2024")).Subscribe();
+
+        Assert.AreEqual(Path.Combine("Sermons", "2024"), vm.CurrentRelativePath);
+        Assert.AreEqual(1, vm.Entries.Count);
+        Assert.AreEqual("sermon.mp4", vm.Entries[0].Title);
+
+        Assert.AreEqual(3, vm.Breadcrumbs.Count);
+        Assert.AreEqual("Home", vm.Breadcrumbs[0].Label);
+        Assert.AreEqual("", vm.Breadcrumbs[0].RelativePath);
+        Assert.AreEqual("Sermons", vm.Breadcrumbs[1].Label);
+        Assert.AreEqual("Sermons", vm.Breadcrumbs[1].RelativePath);
+        Assert.AreEqual("2024", vm.Breadcrumbs[2].Label);
+        Assert.AreEqual(Path.Combine("Sermons", "2024"), vm.Breadcrumbs[2].RelativePath);
+    }
 }

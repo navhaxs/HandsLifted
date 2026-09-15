@@ -64,6 +64,13 @@ namespace HandsLiftedApp.Core.ViewModels
         private void Navigate(string relativePath)
         {
             CurrentRelativePath = relativePath ?? "";
+
+            if (_searchTerm.Length > 0)
+            {
+                _searchTerm = "";
+                this.RaisePropertyChanged(nameof(SearchTerm));
+            }
+
             RescanCurrentFolder();
             RebuildBreadcrumbs();
         }

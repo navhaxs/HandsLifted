@@ -140,7 +140,8 @@ namespace HandsLiftedApp.Core.ViewModels
                 {
                     Label = "Home",
                     Directory = mediaLibraryPath,
-                    Type = LibraryType.Media
+                    Type = LibraryType.Media,
+                    Icon = "Home"
                 }));
             }
         }
