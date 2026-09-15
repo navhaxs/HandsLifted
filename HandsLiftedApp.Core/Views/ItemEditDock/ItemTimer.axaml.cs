@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using HandsLiftedApp.Core.Models.UI;
@@ -23,6 +24,7 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
                 {
                     _subscription = itemAutoAdvanceTimer
                         .WhenAnyValue(x => x.IsEnabled)
+                        .Skip(1) // skip initial value on subscribe - not an actual user toggle
                         .Subscribe(x =>
                         {
                             MessageBus.Current.SendMessage(new OnTimerEnabledToggleEvent());
@@ -35,6 +37,11 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
         {
             _subscription?.Dispose();
             base.OnDetachedFromVisualTree(e);
+        }
+
+        public void OpenTimerFlyout()
+        {
+            EditButton.Flyout?.ShowAt(EditButton);
         }
     }
 }

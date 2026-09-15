@@ -133,13 +133,6 @@
             <!--  <controlmodules:SlidesGroupItemViewWrapper DataContext="{Binding Playlist.State.SelectedItem}"  -->
             <!--  DockPanel.Dock="Top" />  -->
 
-            <Grid DockPanel.Dock="Top" Height="2">
-                <ProgressBar
-                    IsVisible="{Binding Playlist.AutoAdvanceTimer.IsTimerConfigured}"
-                    Maximum="{Binding Playlist.AutoAdvanceTimer.Timer.TotalTime, FallbackValue=0}"
-                    MinHeight="2"
-                    Value="{Binding Playlist.AutoAdvanceTimer.Timer.ElapsedTime, FallbackValue=0}" />
-            </Grid>
 
             <Border
                 Background="{DynamicResource DarkSurfaceBrush}"
@@ -283,7 +276,7 @@
             <!--<controlmodules:AutoAdvanceControlView DockPanel.Dock="Bottom" />-->
             <StackPanel DockPanel.Dock="Top">
                 <controlModules:VideoSlideControlViewWrapper DataContext="{Binding Playlist.ActiveSlide}" />
-                <!-- <controlModules:AutoAdvanceTimerControlViewWrapper DataContext="{Binding Playlist.AutoAdvanceTimer}" /> -->
+                <controlModules:AutoAdvanceTimerControlViewWrapper DataContext="{Binding Playlist.AutoAdvanceTimer}" />
             </StackPanel>
             <!--<controlmodules:AudioRecorderControlView DockPanel.Dock="Bottom" />-->
             <!--<Background="#F7F0D7" BorderBrush="#CEB561" BorderThickness="0 1 0 1">

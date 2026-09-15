@@ -21,7 +21,7 @@ namespace HandsLiftedApp.Views.ControlModules
         {
             if (this.DataContext is AutoAdvanceTimerController controller)
             {
-                controller.Timer?.Resume();
+                controller.ResumeTimer();
             }
         }
 
@@ -29,7 +29,7 @@ namespace HandsLiftedApp.Views.ControlModules
         {
             if (this.DataContext is AutoAdvanceTimerController controller)
             {
-                controller.Timer?.Stop();
+                controller.PauseTimer();
             }
         }
     }

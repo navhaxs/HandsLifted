@@ -35,27 +35,49 @@ namespace HandsLiftedApp.Core.Utils
         private IItemInstance? itemInstance;
         private Slide? itemInstanceSlide;
         private ISlideInstance? slideInstance;
+        private bool userPaused;
+
+        public void PauseTimer()
+        {
+            userPaused = true;
+            Timer.Stop();
+        }
+
+        public void ResumeTimer()
+        {
+            userPaused = false;
+            Timer.Resume();
+        }
+
         public void OnSlideNavigation(IItemInstance? _itemInstance)
         {
+            var isSameItemGroup = itemInstance != null && ReferenceEquals(itemInstance, _itemInstance);
+            var wasPaused = IsTimerConfigured && userPaused && isSameItemGroup;
+
             Timer.Stop(true);
-            
+
             itemInstance = _itemInstance;
             itemInstanceSlide = itemInstance?.Slides.ElementAtOrDefault(itemInstance.SelectedSlideIndex);
             slideInstance = itemInstanceSlide?.GetAsISlideInstance();
 
             IsTimerConfigured = slideInstance?.SlideTimerConfig is { IsEnabled: true };
-            
+
             if (slideInstance == null || !IsTimerConfigured)
             {
+                userPaused = false;
                 return;
             }
-            
+
             PrettyTimerInterval = FormatTimeSpan(TimeSpan.FromMilliseconds(slideInstance.SlideTimerConfig.IntervalMs));
 
-            if (slideInstance.SlideTimerConfig.IsEnabled)
+            Timer.Start(slideInstance.SlideTimerConfig.IntervalMs);
+
+            if (wasPaused)
             {
-                Timer.Start(slideInstance.SlideTimerConfig.IntervalMs);
+                Timer.Stop();
             }
+
+            userPaused = wasPaused;
         }
         
         private void ApplyTimerConfig(object? sender, EventArgs e)
