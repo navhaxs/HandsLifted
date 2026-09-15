@@ -19,7 +19,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public MediaGroupItemInstance(PlaylistInstance parentPlaylist)
         {
             ParentPlaylist = parentPlaylist;
-            // TODO do not use SelectedSlideIndex, rather use slide id ref ! currently this causes a flicker when re-ordering slides
+            // SelectedSlideIndex is an index into Slides. Callers that reorder slides (see
+            // MainViewModel's MoveSlideCommand handler) must recalculate it by locating the
+            // previously-selected Slide instance in the post-reorder Slides collection.
             _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides, (selectedSlideIndex, slides) =>
                 {
                     try
@@ -50,22 +52,95 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             // Items.CollectionChanged += (sender, args) => IsDirty = true;
         }
 
-        public void GenerateSlides()
+        // Cache of GroupItem -> generated Slide, so that reordering Items (or regenerating
+        // slides for an unrelated reason) reuses the same Slide instance instead of
+        // constructing a fresh one (CreateItem.GenerateMediaContentSlide always `new`s a
+        // fresh Slide for a MediaItem). Preserving identity lets callers track the
+        // currently-selected Slide by reference across a GenerateSlides() call.
+        private readonly Dictionary<MediaGroupItem.MediaItem, (string? Path, Slide Slide)> _mediaSlideCache = new();
+
+        private Slide? GetOrCreateSlide(MediaGroupItem.GroupItem item)
         {
-            var x = new List<Slide>();
-            foreach (var item in Items)
+            if (item is MediaGroupItem.MediaItem mediaItem)
             {
-                var generateMediaContentSlide = CreateItem.GenerateMediaContentSlide(item, this);
-                x.Add(generateMediaContentSlide);
+                if (_mediaSlideCache.TryGetValue(mediaItem, out var cached) &&
+                    cached.Path == mediaItem.SourceMediaFilePath)
+                {
+                    return cached.Slide;
+                }
+
+                var slide = CreateItem.GenerateMediaContentSlide(item, this);
+                if (slide != null)
+                {
+                    _mediaSlideCache[mediaItem] = (mediaItem.SourceMediaFilePath, slide);
+                }
+                else
+                {
+                    _mediaSlideCache.Remove(mediaItem);
+                }
+
+                return slide;
             }
 
-            _Slides = x;
+            // SlideItem.SlideData (and any other future GroupItem types) already has stable
+            // identity across calls - CreateItem.GenerateMediaContentSlide returns it directly.
+            return CreateItem.GenerateMediaContentSlide(item, this);
+        }
+
+        public void GenerateSlides()
+        {
+            var newOrder = new List<Slide>();
+            foreach (var item in Items)
+            {
+                var slide = GetOrCreateSlide(item);
+                if (slide != null)
+                {
+                    newOrder.Add(slide);
+                }
+            }
+
+            if (_mediaSlideCache.Count > 0)
+            {
+                var currentMediaItems = new HashSet<MediaGroupItem.MediaItem>(Items.OfType<MediaGroupItem.MediaItem>());
+                foreach (var staleKey in _mediaSlideCache.Keys.Where(k => !currentMediaItems.Contains(k)).ToList())
+                {
+                    _mediaSlideCache.Remove(staleKey);
+                }
+            }
+
+            // Sync _slides in place (Move/Insert/Remove) rather than replacing the collection,
+            // so bound controls (e.g. the slide thumbnail strip) update incrementally instead
+            // of tearing down and recreating every container on every regeneration/reorder.
+            for (int i = _slides.Count - 1; i >= 0; i--)
+            {
+                if (!newOrder.Contains(_slides[i]))
+                {
+                    _slides.RemoveAt(i);
+                }
+            }
+
+            for (int i = 0; i < newOrder.Count; i++)
+            {
+                var slide = newOrder[i];
+                int currentIndex = _slides.IndexOf(slide);
+                if (currentIndex < 0)
+                {
+                    _slides.Insert(i, slide);
+                }
+                else if (currentIndex != i)
+                {
+                    _slides.Move(currentIndex, i);
+                }
+            }
+
+            _Slides = newOrder;
 
             this.RaisePropertyChanged(nameof(Slides));
         }
 
         public List<Slide> _Slides = new();
-        public ObservableCollection<Slide> Slides => new(_Slides);
+        private readonly ObservableCollection<Slide> _slides = new();
+        public ObservableCollection<Slide> Slides => _slides;
 
         private int _selectedSlideIndex = -1;
 

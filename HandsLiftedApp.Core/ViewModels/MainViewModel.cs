@@ -588,7 +588,10 @@ public class MainViewModel : ViewModelBase
 
                         RegerenateSlides(sourceItem);
 
-                        // hack - restore the last selected slide, as re-ordering slides should not affect the selected slide (however this currently causes a brief flicker)
+                        // restore the last selected slide by reference - re-ordering slides must not affect the
+                        // selected slide. Works without a flicker because MediaGroupItemInstance.GenerateSlides()
+                        // reuses existing Slide instances (by GroupItem identity) and updates Slides in place
+                        // (Move/Insert/Remove) instead of replacing the collection.
                         if (lastSelectedSlide != null)
                         {
                             var x = sourceItemInstance.Slides.IndexOf(lastSelectedSlide);
