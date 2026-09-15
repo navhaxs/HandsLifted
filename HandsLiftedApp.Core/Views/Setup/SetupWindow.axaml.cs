@@ -119,6 +119,7 @@ namespace HandsLiftedApp.Core.Views.Setup
             if (folders.Count > 0)
             {
                 Globals.Instance.AppPreferences.MediaLibraryPath = folders[0].TryGetLocalPath();
+                Globals.Instance.MainViewModel.LibraryViewModel.ReloadLibraries();
             }
         }
 

@@ -5,10 +5,8 @@
     x:Class="HandsLiftedApp.Core.Views.LibraryView.LibraryQueryView"
     x:DataType="viewModels:LibraryQueryViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:libraryView="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
-    xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -26,88 +24,8 @@
             x:Name="SearchBox" />
         <Grid>
 
-            <!--  Media Bin  -->
-            <ListBox
-                HorizontalAlignment="Stretch"
-                IsVisible="{Binding IsMediaBin}"
-                ItemsSource="{Binding SearchResults}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel ItemHeight="120" ItemWidth="200" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel PointerPressed="DockPanel_PointerPressed">
-                            <DockPanel.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Add to playlist" />
-                                </ContextMenu>
-                            </DockPanel.ContextMenu>
-                            <TextBlock DockPanel.Dock="Bottom" Text="{Binding Title}" />
-                            <Viewbox>
-                                <Grid
-                                    Background="Black"
-                                    Height="720"
-                                    Width="1280">
-                                    <Image
-                                        x:Name="ThumbImage"
-                                        HorizontalAlignment="Stretch"
-                                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                                        VerticalAlignment="Stretch"
-                                        asyncImageLoader:ImageLoader.Source="{Binding FullFilePath}" />
-
-                                    <!--  No preview available (only after a load attempt has finished and failed)  -->
-                                    <StackPanel
-                                        HorizontalAlignment="Center"
-                                        Spacing="16"
-                                        VerticalAlignment="Center">
-                                        <StackPanel.IsVisible>
-                                            <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                                <Binding
-                                                    Converter="{x:Static BoolConverters.Not}"
-                                                    ElementName="ThumbImage"
-                                                    Path="(asyncImageLoader:ImageLoader.IsLoading)" />
-                                                <Binding
-                                                    Converter="{x:Static ObjectConverters.IsNull}"
-                                                    ElementName="ThumbImage"
-                                                    Path="Source" />
-                                            </MultiBinding>
-                                        </StackPanel.IsVisible>
-                                        <material:MaterialIcon
-                                            Foreground="#666666"
-                                            Height="128"
-                                            HorizontalAlignment="Center"
-                                            Kind="ImageOffOutline"
-                                            Width="128" />
-                                        <TextBlock
-                                            FontSize="36"
-                                            Foreground="#888888"
-                                            HorizontalAlignment="Center"
-                                            Text="No preview available" />
-                                    </StackPanel>
-
-                                    <!--  Loading  -->
-                                    <StackPanel
-                                        HorizontalAlignment="Center"
-                                        IsVisible="{Binding #ThumbImage.(asyncImageLoader:ImageLoader.IsLoading)}"
-                                        Spacing="16"
-                                        VerticalAlignment="Center">
-                                        <ProgressBar
-                                            Height="96"
-                                            IsIndeterminate="True"
-                                            Width="200" />
-                                    </StackPanel>
-                                </Grid>
-                            </Viewbox>
-                        </DockPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-
             <!--  Song Library  -->
-            <Grid ColumnDefinitions="2*,1,3*" IsVisible="{Binding !IsMediaBin}">
+            <Grid ColumnDefinitions="2*,1,3*">
 
                 <!--  listbox  -->
                 <Grid>

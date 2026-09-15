@@ -13,7 +13,6 @@ namespace HandsLiftedApp.Core.Models.Library
     {
         public ScriptureLibrary(LibraryConfig.LibraryDefinition config) : base(config, ConstructorMode.SkipRefresh)
         {
-            isMediaBin = false;
             Refresh();
         }
 

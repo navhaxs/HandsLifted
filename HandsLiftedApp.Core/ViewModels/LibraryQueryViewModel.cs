@@ -19,12 +19,6 @@ namespace HandsLiftedApp.Core.ViewModels
         private readonly List<Library> _libraries;
         private readonly Subject<string?> _reSearchTrigger = new();
 
-        private ObservableAsPropertyHelper<bool> _isMediaBin;
-        public bool IsMediaBin
-        {
-            get => _isMediaBin.Value;
-        }
-
         private string _query;
         public string Query
         {
@@ -65,12 +59,6 @@ namespace HandsLiftedApp.Core.ViewModels
         public SongLibrary? ActiveSongLibrary =>
             _libraries.OfType<SongLibrary>().FirstOrDefault();
 
-        private bool IsLyricFile(string fullFilePath)
-        {
-            string str = fullFilePath.ToLower();
-            return str.EndsWith(".txt") || str.EndsWith(".xml");
-        }
-
         public LibraryQueryViewModel()
         {
             var sampleItems = new List<LibraryItem>
@@ -83,8 +71,6 @@ namespace HandsLiftedApp.Core.ViewModels
             };
             _searchResults = Observable.Return<IEnumerable<LibraryItem>>(sampleItems)
                 .ToProperty(this, x => x.SearchResults);
-            _isMediaBin = Observable.Return(false)
-                .ToProperty(this, x => x.IsMediaBin);
             _selectedItemPreview = Observable.Return<LibraryItemPreviewViewModel>(null)
                 .ToProperty(this, x => x.SelectedLibraryItemPreview);
             _libraries = new List<Library>();
@@ -114,12 +100,6 @@ namespace HandsLiftedApp.Core.ViewModels
                 .SelectMany(SearchLibrary)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
-
-            _isMediaBin = this
-                .WhenAnyValue(x => x.SearchResults)
-                .Select(x => x?.All(result => !IsLyricFile(result.FullFilePath)) ?? false)
-                .ObserveOn(RxSchedulers.MainThreadScheduler)
-                .ToProperty(this, x => x.IsMediaBin);
 
             _selectedItemPreview = this
                 .WhenAnyValue(x => x.SelectedLibraryItem)

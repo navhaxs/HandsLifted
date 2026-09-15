@@ -30,14 +30,6 @@ namespace HandsLiftedApp.Core.Models.Library
 
         private FileSystemWatcher watcher = new FileSystemWatcher();
 
-        private bool _isMediaBin;
-
-        public bool isMediaBin
-        {
-            get => _isMediaBin;
-            set => this.RaiseAndSetIfChanged(ref _isMediaBin, value);
-        }
-
         protected enum ConstructorMode { SkipRefresh }
 
         protected Library(LibraryConfig.LibraryDefinition config, ConstructorMode _)
@@ -72,7 +64,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 .OrderBy(i => i.Title);
         }
 
-        private static readonly HashSet<string> SupportedMediaExtensions = new(
+        internal static readonly HashSet<string> SupportedMediaExtensions = new(
             Constants.SUPPORTED_IMAGE.Concat(Constants.SUPPORTED_VIDEO)
                 .Concat(Constants.SUPPORTED_PDF).Concat(Constants.SUPPORTED_POWERPOINT),
             StringComparer.OrdinalIgnoreCase);
@@ -100,9 +92,6 @@ namespace HandsLiftedApp.Core.Models.Library
                 {
                     Items.Add(new LibraryItem() { FullFilePath = f });
                 }
-
-                isMediaBin = !(Items.Count > 0 && (Items.First().FullFilePath.ToLower().EndsWith("txt") ||
-                                                   Items.First().FullFilePath.ToLower().EndsWith("xml")));
             }
         }
 
