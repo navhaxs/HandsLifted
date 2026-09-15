@@ -28,7 +28,6 @@ namespace HandsLiftedApp.Core.Models.Library
             : base(config, ConstructorMode.SkipRefresh)
         {
             _source = source;
-            isMediaBin = false;
             Refresh();
         }
 
