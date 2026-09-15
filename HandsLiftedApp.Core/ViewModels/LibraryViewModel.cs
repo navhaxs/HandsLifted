@@ -132,6 +132,17 @@ namespace HandsLiftedApp.Core.ViewModels
             {
                 Libraries.Add(lib);
             }
+
+            var mediaLibraryPath = Globals.Instance.AppPreferences?.MediaLibraryPath;
+            if (!string.IsNullOrWhiteSpace(mediaLibraryPath))
+            {
+                Libraries.Add(new Library(new LibraryConfig.LibraryDefinition
+                {
+                    Label = "Home",
+                    Directory = mediaLibraryPath,
+                    Type = LibraryType.Media
+                }));
+            }
         }
 
         public LibraryViewModel()
@@ -167,10 +178,14 @@ namespace HandsLiftedApp.Core.ViewModels
                 {
                     ActiveQuery = null;
                 }
+                else if (x.Config.Type == LibraryType.Media)
+                {
+                    ActiveQuery = new MediaLibraryQueryViewModel(x);
+                }
                 else
                 {
                     ActiveQuery = new LibraryQueryViewModel(new List<Library>(){x});
-                }                
+                }
             });
         }
 
@@ -216,9 +231,9 @@ namespace HandsLiftedApp.Core.ViewModels
             }
         }
 
-        private LibraryQueryViewModel? _activeQuery;
+        private object? _activeQuery;
 
-        public LibraryQueryViewModel? ActiveQuery
+        public object? ActiveQuery
         {
             get => _activeQuery;
             set => this.RaiseAndSetIfChanged(ref _activeQuery, value);
