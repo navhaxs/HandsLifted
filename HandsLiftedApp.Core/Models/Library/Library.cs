@@ -72,7 +72,7 @@ namespace HandsLiftedApp.Core.Models.Library
                 .OrderBy(i => i.Title);
         }
 
-        private static readonly HashSet<string> SupportedMediaExtensions = new(
+        internal static readonly HashSet<string> SupportedMediaExtensions = new(
             Constants.SUPPORTED_IMAGE.Concat(Constants.SUPPORTED_VIDEO)
                 .Concat(Constants.SUPPORTED_PDF).Concat(Constants.SUPPORTED_POWERPOINT),
             StringComparer.OrdinalIgnoreCase);
