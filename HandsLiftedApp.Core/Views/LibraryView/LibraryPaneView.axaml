@@ -88,6 +88,9 @@
                         <DataTemplate DataType="viewModels:LibraryQueryViewModel">
                             <library:LibraryQueryView />
                         </DataTemplate>
+                        <DataTemplate DataType="viewModels:MediaLibraryQueryViewModel">
+                            <library:MediaLibraryQueryView />
+                        </DataTemplate>
                     </ContentControl.DataTemplates>
                 </ContentControl>
             </Grid>
