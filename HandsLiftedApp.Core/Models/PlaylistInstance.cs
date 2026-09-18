@@ -606,17 +606,34 @@ namespace HandsLiftedApp.Core.Models
                 return;
             }
 
+            var targetItemInstance = Items[nextItemIndex] as IItemInstance;
+
+            // Re-clicking the already-active slide leaves SelectedItemIndex/SelectedSlideIndex
+            // unchanged, so the ActiveSlide OAPH chain below would no-op (it's reference-equality
+            // gated - see CLAUDE.md's "reassigning a property doesn't always trigger a re-render"
+            // note). If the slide was edited since it went live, Cached is null (the same
+            // "needs re-render" signal ScriptureItemInstance/SongItemInstance already use), so
+            // force the live/projector canvases to re-pull the current slide state. If nothing
+            // changed, do nothing.
+            var isAlreadyActiveSlide = nextItemIndex == SelectedItemIndex
+                && (slideReference.SlideIndex == null || targetItemInstance?.SelectedSlideIndex == slideReference.SlideIndex);
+            if (isAlreadyActiveSlide)
+            {
+                if (ActiveSlide.GetAsISlideInstance() is { Cached: null })
+                {
+                    this.RaisePropertyChanged(nameof(ActiveSlide));
+                }
+
+                return;
+            }
+
             var lastSelectedItemIndex = SelectedItemIndex; // TODO this can be wrong
 
             IItemInstance? currentItemInstance = null;
-            if (slideReference.SlideIndex != null)
+            if (slideReference.SlideIndex != null && targetItemInstance != null)
             {
-                var baseItemInstance = Items[nextItemIndex];
-                if (baseItemInstance is IItemInstance itemInstance)
-                {
-                    currentItemInstance = itemInstance;
-                    itemInstance.SelectedSlideIndex = (int)slideReference.SlideIndex;
-                }
+                currentItemInstance = targetItemInstance;
+                targetItemInstance.SelectedSlideIndex = (int)slideReference.SlideIndex;
             }
 
             SelectedItemIndex = nextItemIndex;
