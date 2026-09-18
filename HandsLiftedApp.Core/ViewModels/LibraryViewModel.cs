@@ -123,21 +123,18 @@ namespace HandsLiftedApp.Core.ViewModels
             // only mutated afterward, sequentially, on this (UI) thread, so there's no cross-thread
             // binding contention.
             var libDefs = LibraryConfig.LibraryItems;
-            var built = new Library[libDefs.Count];
+            var built = new Library?[libDefs.Count];
             Parallel.For(0, libDefs.Count, i =>
             {
-                var libDef = libDefs[i];
-                built[i] = libDef.Type switch
-                {
-                    LibraryType.Song => new SongLibrary(libDef, new FileSystemSongLibrarySource(libDef.Directory)),
-                    LibraryType.Scripture => new ScriptureLibrary(libDef),
-                    _ => new Library(libDef)
-                };
+                built[i] = BuildLibraryOrNull(libDefs[i]);
             });
 
             foreach (var lib in built)
             {
-                Libraries.Add(lib);
+                if (lib != null)
+                {
+                    Libraries.Add(lib);
+                }
             }
 
             var mediaLibraryPath = Globals.Instance.AppPreferences?.MediaLibraryPath;
@@ -152,6 +149,17 @@ namespace HandsLiftedApp.Core.ViewModels
                 }));
             }
         }
+
+        // Scripture-type entries are excluded (return null) rather than becoming sidebar-browsable
+        // libraries - they're translation configuration (see ScriptureTranslationResolver), not
+        // something the user browses file-by-file the way Media/Song libraries work.
+        internal static Library? BuildLibraryOrNull(LibraryConfig.LibraryDefinition libDef) =>
+            libDef.Type switch
+            {
+                LibraryType.Scripture => null,
+                LibraryType.Song => new SongLibrary(libDef, new FileSystemSongLibrarySource(libDef.Directory)),
+                _ => new Library(libDef)
+            };
 
         public LibraryViewModel()
         {
