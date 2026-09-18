@@ -195,13 +195,26 @@ git commit -m "feat: parameterize ScriptureUsxDownloader's translation code"
 
 **Files:**
 - Create: `HandsLiftedApp.Importer.Scripture/ScriptureTranslationCatalog.cs`
+- Modify: `HandsLiftedApp.Importer.Scripture/HandsLiftedApp.Importer.Scripture.csproj`
 - Test: `HandsLiftedApp.Tests/Importer/Scripture/ScriptureTranslationCatalogTests.cs`
 
 **Interfaces:**
 - Consumes: `HandsLiftedApp.Tests.Importer.Scripture.FakeHttpMessageHandler` (existing test helper, same one `ScriptureUsxDownloaderTests` uses — takes a `Func<HttpRequestMessage, HttpResponseMessage>`).
 - Produces: `ScriptureTranslationCatalog(HttpClient? httpClient = null)`, `Task<IReadOnlyList<ScriptureTranslationCatalog.Translation>> GetPublicDomainEnglishTranslationsAsync(CancellationToken ct = default)`, and the record `ScriptureTranslationCatalog.Translation(string Code, string Name, string Abbrev)`.
 
-- [ ] **Step 1: Write the failing test**
+**Note:** `System.Net.Http.Json`'s `ReadFromJsonAsync` extension requires an explicit `PackageReference` in this repo even on net10.0 — it is not part of the implicit shared framework here. The version (`7.0.0`) is already centrally pinned in the repo root's `Directory.Packages.props:88`; only the bare `<PackageReference Include="System.Net.Http.Json" />` line (no version attribute, matching this repo's central package management style — see the existing bare `<PackageReference Include="Serilog"/>` in this same csproj) needs adding.
+
+- [ ] **Step 1: Add the package reference**
+
+In `HandsLiftedApp.Importer.Scripture/HandsLiftedApp.Importer.Scripture.csproj`, add to the existing `<ItemGroup>`:
+
+```xml
+<PackageReference Include="System.Net.Http.Json"/>
+```
+
+(Alongside the existing `<PackageReference Include="Serilog"/>` — same `<ItemGroup>`, no version attribute.)
+
+- [ ] **Step 2: Write the failing test**
 
 Create `HandsLiftedApp.Tests/Importer/Scripture/ScriptureTranslationCatalogTests.cs`:
 
@@ -263,12 +276,12 @@ public class ScriptureTranslationCatalogTests
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 3: Run test to verify it fails**
 
 Run: `dotnet test HandsLiftedApp.Tests/HandsLiftedApp.Tests.csproj --filter "FullyQualifiedName~ScriptureTranslationCatalogTests"`
 Expected: FAIL — compile error, `ScriptureTranslationCatalog` doesn't exist yet.
 
-- [ ] **Step 3: Create the catalog class**
+- [ ] **Step 4: Create the catalog class**
 
 Create `HandsLiftedApp.Importer.Scripture/ScriptureTranslationCatalog.cs`:
 
@@ -387,15 +400,15 @@ public sealed class ScriptureTranslationCatalog
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 5: Run test to verify it passes**
 
 Run: `dotnet test HandsLiftedApp.Tests/HandsLiftedApp.Tests.csproj --filter "FullyQualifiedName~ScriptureTranslationCatalogTests"`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add HandsLiftedApp.Importer.Scripture/ScriptureTranslationCatalog.cs HandsLiftedApp.Tests/Importer/Scripture/ScriptureTranslationCatalogTests.cs
+git add HandsLiftedApp.Importer.Scripture/HandsLiftedApp.Importer.Scripture.csproj HandsLiftedApp.Importer.Scripture/ScriptureTranslationCatalog.cs HandsLiftedApp.Tests/Importer/Scripture/ScriptureTranslationCatalogTests.cs
 git commit -m "feat: add ScriptureTranslationCatalog for fetch.bible public-domain translation list"
 ```
 
@@ -661,12 +674,15 @@ git commit -m "refactor: stop building sidebar Library entries for Scripture-typ
 - Modify: `HandsLiftedApp.Core/Models/RuntimeData/Items/ScriptureItemInstance.cs`
 - Modify: `HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml`
 - Modify: `HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml.cs`
+- Modify: `HandsLiftedApp.Core/Views/AddItem/ScriptureAddDialog.axaml.cs`
 
 **Interfaces:**
 - Consumes: `ScriptureTranslationResolver.ResolveDirectory(string?, IEnumerable<LibraryConfig.LibraryDefinition>)` (Task 4).
 - Produces: nothing new — this task retires `AppPreferences.ScriptureDataPath` and its UI.
 
-This task has no new automated test of its own (it's wiring a previously-tested pure function into a class whose existing tests all use the `_injectedStore` seam and are therefore unaffected — see spec's Testing section). Verify manually per Step 4.
+**Ordering note:** `ScriptureAddDialog.axaml.cs:40` also reads `Globals.Instance.AppPreferences.ScriptureDataPath` — deleting the property in Step 1 without touching this file would leave the build broken until Task 8 runs. Step 2b below is a deliberately minimal fix (fall back to the first configured translation, matching today's single-translation behavior) — it is not the translation-picker UI, which stays entirely Task 8's job and will replace this exact line again.
+
+This task has no new automated test of its own (it's wiring a previously-tested pure function into classes whose existing tests all use the `_injectedStore` seam and are therefore unaffected — see spec's Testing section). Verify manually per Step 4.
 
 - [ ] **Step 1: Remove `ScriptureDataPath` from `AppPreferencesViewModel.cs`**
 
@@ -704,6 +720,25 @@ private List<ScriptureVerseRef> MakeMissingDataPlaceholder()
 
 (Only the second string literal changes, from "Check Setup > Library > Scripture Data Path" to "Check Setup > Library > Scripture Libraries", matching the renamed section from Task 7.)
 
+- [ ] **Step 2b: Minimal fix for `ScriptureAddDialog.axaml.cs`'s now-broken `ScriptureDataPath` reference**
+
+In `HandsLiftedApp.Core/Views/AddItem/ScriptureAddDialog.axaml.cs`, change:
+
+```csharp
+_store = store ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
+```
+
+to:
+
+```csharp
+_store = store ?? new ScriptureLocalUsxStore(ScriptureTranslationResolver.ResolveDirectory(
+    null, Globals.Instance.MainViewModel.LibraryViewModel.LibraryConfig.LibraryItems.Where(d => d.Type == LibraryType.Scripture)));
+```
+
+Add `using HandsLiftedApp.Core.Models.Library;` and `using HandsLiftedApp.Core.Models.Library.Config;` to this file's usings if not already present; `System.Linq` is required for `.Where(...)` — check whether it's already imported before adding it again.
+
+This is intentionally not the full translation-aware version (passing `null` always resolves to the first configured translation, matching today's single-translation behavior) — Task 8 replaces this exact line with the real selected-translation lookup once the picker UI exists.
+
 - [ ] **Step 3: Remove the "Scripture Data" section from Setup**
 
 In `HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml`, delete the entire block from the "Scripture Data" `TextBlock` through the `ScriptureDownloadStatusText` `TextBlock` (currently lines 289-315 — the section header, description, the `TextBox` bound to `AppPreferences.ScriptureDataPath`, the "Download Bible Data" button, and the status text block). Nothing should remain between the Scripture Libraries section's "+ Add Scripture Library" button (renamed in Task 7) and the end of the outer `StackPanel`/`ScrollViewer`.
@@ -713,7 +748,7 @@ In `HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml.cs`, delete the `DownloadS
 - [ ] **Step 4: Manual verification**
 
 Run: `dotnet build HandsLiftedApp.Core/HandsLiftedApp.Core.csproj`
-Expected: Build succeeds, 0 errors (confirms no other file still references `ScriptureDataPath` or `DownloadScriptureDataButton_OnClick` — Task 7/8/9 haven't run yet, but nothing before this task referenced them either per the earlier 5-file grep).
+Expected: Build succeeds, 0 errors — this includes `ScriptureAddDialog.axaml.cs` (Step 2b), so this is a genuine green build, not deferred to a later task.
 
 Run: `dotnet test HandsLiftedApp.Tests/HandsLiftedApp.Tests.csproj --filter "FullyQualifiedName~ScriptureItemInstanceTests|FullyQualifiedName~PlaylistInstanceScriptureNavigationTests"`
 Expected: PASS — these all use `_injectedStore`, confirming the constructor-injection seam still isolates them from this change.
@@ -721,7 +756,7 @@ Expected: PASS — these all use `_injectedStore`, confirming the constructor-in
 - [ ] **Step 5: Commit**
 
 ```bash
-git add HandsLiftedApp.Core/ViewModels/AppPreferencesViewModel.cs HandsLiftedApp.Core/Models/RuntimeData/Items/ScriptureItemInstance.cs HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml.cs
+git add HandsLiftedApp.Core/ViewModels/AppPreferencesViewModel.cs HandsLiftedApp.Core/Models/RuntimeData/Items/ScriptureItemInstance.cs HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml HandsLiftedApp.Core/Views/Setup/SetupWindow.axaml.cs HandsLiftedApp.Core/Views/AddItem/ScriptureAddDialog.axaml.cs
 git commit -m "feat: resolve scripture rendering from configured translations, retire ScriptureDataPath"
 ```
 
@@ -1052,7 +1087,7 @@ In `HandsLiftedApp.Core/Views/AddItem/ScriptureAddDialog.axaml`, add a `Translat
 
 - [ ] **Step 2: Wire the ComboBox and make `_store` re-buildable in the code-behind**
 
-In `HandsLiftedApp.Core/Views/AddItem/ScriptureAddDialog.axaml.cs`, add the needed usings and change the `_store` field from `readonly`:
+In `HandsLiftedApp.Core/Views/AddItem/ScriptureAddDialog.axaml.cs`, confirm the needed usings are present (Task 6, Step 2b already added them for its minimal fix — add only if missing) and change the `_store` field from `readonly`:
 
 ```csharp
 using HandsLiftedApp.Core.Models.Library;
@@ -1233,12 +1268,12 @@ MessageBus.Current.SendMessage(new AddItemMessage
 
 - [ ] **Step 3: Consume it in `MainViewModel.cs`**
 
-Change:
+**Note:** Task 2 already had to touch this line as a minimal compile-fix (removing `ScriptureUsxDownloader.FixedTranslation` broke this call site immediately) — it currently reads `Translation = "eng_bsb",`, a literal, not the original `ScriptureUsxDownloader.FixedTranslation` reference. Change:
 
 ```csharp
 var scripture = new ScriptureItemInstance(Playlist)
 {
-    Translation = ScriptureUsxDownloader.FixedTranslation,
+    Translation = "eng_bsb",
     Book = addItemMessage.ScriptureBookCode!,
 ```
 
@@ -1251,7 +1286,7 @@ var scripture = new ScriptureItemInstance(Playlist)
     Book = addItemMessage.ScriptureBookCode!,
 ```
 
-(If `using HandsLiftedApp.Importer.Scripture;` is no longer referenced anywhere else in this file after removing the `ScriptureUsxDownloader.FixedTranslation` reference, leave the `using` in place regardless — `ScriptureUsxDownloader` may still be referenced elsewhere in this large file; do not remove usings speculatively. Check with `grep -n "ScriptureUsxDownloader" HandsLiftedApp.Core/ViewModels/MainViewModel.cs` after this edit — if zero matches remain, remove the now-unused `using`.)
+Check with `grep -n "ScriptureUsxDownloader" HandsLiftedApp.Core/ViewModels/MainViewModel.cs` whether `using HandsLiftedApp.Importer.Scripture;` is still needed in this file — if zero matches remain, remove the now-unused `using`; otherwise leave it in place.
 
 - [ ] **Step 4: Thread it through the edit flow in `ItemEditDockRoot.axaml.cs`**
 

@@ -10,8 +10,6 @@ namespace HandsLiftedApp.Importer.Scripture;
 
 public sealed class ScriptureUsxDownloader
 {
-    public const string FixedTranslation = "eng_bsb";
-
     private const string BaseUrl = "https://v1.fetch.bible/bibles/";
 
     public static readonly IReadOnlyList<string> AllBookCodes = new[]
@@ -32,7 +30,7 @@ public sealed class ScriptureUsxDownloader
         _httpClient = httpClient ?? new HttpClient();
     }
 
-    public async Task<int> DownloadAllBooksAsync(string rootPath, IProgress<(int done, int total)>? progress = null, CancellationToken ct = default)
+    public async Task<int> DownloadAllBooksAsync(string rootPath, string translationCode, IProgress<(int done, int total)>? progress = null, CancellationToken ct = default)
     {
         Directory.CreateDirectory(rootPath);
         var total = AllBookCodes.Count;
@@ -48,12 +46,12 @@ public sealed class ScriptureUsxDownloader
             {
                 try
                 {
-                    await DownloadOneBookAsync(bookCode, destPath, ct).ConfigureAwait(false);
+                    await DownloadOneBookAsync(translationCode, bookCode, destPath, ct).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
                     failed++;
-                    Log.Error(ex, "Failed to download scripture book {BookCode}", bookCode);
+                    Log.Error(ex, "Failed to download scripture book {BookCode} ({TranslationCode})", bookCode, translationCode);
                 }
             }
 
@@ -64,9 +62,9 @@ public sealed class ScriptureUsxDownloader
         return failed;
     }
 
-    private async Task DownloadOneBookAsync(string bookCode, string destPath, CancellationToken ct)
+    private async Task DownloadOneBookAsync(string translationCode, string bookCode, string destPath, CancellationToken ct)
     {
-        var uri = new Uri($"{BaseUrl}{FixedTranslation}/usx/{bookCode}.usx", UriKind.Absolute);
+        var uri = new Uri($"{BaseUrl}{translationCode}/usx/{bookCode}.usx", UriKind.Absolute);
         using var response = await _httpClient.GetAsync(uri, ct).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)

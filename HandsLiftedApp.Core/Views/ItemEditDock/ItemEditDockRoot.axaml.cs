@@ -83,7 +83,7 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
                     if (parentWindow == null) return;
 
                     var dialog = new ScriptureAddDialog(scripture.Book, scripture.StartChapter, scripture.StartVerse,
-                        scripture.EndChapter, scripture.EndVerse);
+                        scripture.EndChapter, scripture.EndVerse, scripture.Translation);
                     await dialog.ShowDialog(parentWindow);
                     if (dialog.Result == null) return;
 
@@ -93,6 +93,7 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
                     scripture.StartVerse = result.StartVerse;
                     scripture.EndChapter = result.EndChapter;
                     scripture.EndVerse = result.EndVerse;
+                    scripture.Translation = result.Translation;
                     scripture.Title = ScriptureTitleFormatter.Format(result.BookName, result.StartChapter,
                         result.StartVerse, result.EndChapter, result.EndVerse);
 

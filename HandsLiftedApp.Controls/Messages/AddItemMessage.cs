@@ -35,5 +35,6 @@ namespace HandsLiftedApp.Controls.Messages
         public int? ScriptureStartVerse { get; init; }
         public int? ScriptureEndChapter { get; init; }
         public int? ScriptureEndVerse { get; init; }
+        public string? ScriptureTranslation { get; init; }
     }
 }

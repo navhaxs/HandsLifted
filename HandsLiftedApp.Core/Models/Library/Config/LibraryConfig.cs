@@ -26,6 +26,9 @@ namespace HandsLiftedApp.Core.Models.Library.Config
             private LibraryType _type = LibraryType.Media;
             public LibraryType Type { get => _type; set => SetField(ref _type, value); }
 
+            private string? _translationCode;
+            public string? TranslationCode { get => _translationCode; set => SetField(ref _translationCode, value); }
+
             public event PropertyChangedEventHandler? PropertyChanged;
 
             // Setting Directory from the Browse folder picker (code-behind, not a binding round-trip)
