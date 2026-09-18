@@ -145,48 +145,6 @@ namespace HandsLiftedApp.Core.Views.Setup
             }
         }
 
-        private void DownloadScriptureDataButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            var button = this.Get<Button>("DownloadScriptureDataButton");
-            var statusText = this.Get<TextBlock>("ScriptureDownloadStatusText");
-            var rootPath = Globals.Instance.AppPreferences.ScriptureDataPath;
-            var totalBooks = ScriptureUsxDownloader.AllBookCodes.Count;
-
-            button.IsEnabled = false;
-            statusText.IsVisible = true;
-            statusText.Text = $"Downloading... 0/{totalBooks} books";
-
-            var progress = new Progress<(int done, int total)>(p =>
-            {
-                statusText.Text = $"Downloading... {p.done}/{p.total} books";
-            });
-
-            System.Threading.Tasks.Task.Run(async () =>
-            {
-                try
-                {
-                    var downloader = new ScriptureUsxDownloader();
-                    var failedCount = await downloader.DownloadAllBooksAsync(rootPath, "eng_bsb", progress);
-
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        statusText.Text = failedCount == 0
-                            ? "Download complete."
-                            : $"Downloaded {totalBooks - failedCount} of {totalBooks} books; {failedCount} failed (see log).";
-                        button.IsEnabled = true;
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        statusText.Text = $"Download failed: {ex.Message}";
-                        button.IsEnabled = true;
-                    });
-                }
-            });
-        }
-
         private void SignInWithGoogle_OnClick(object? sender, RoutedEventArgs e)
         {
             var clientId = Globals.Instance.AppPreferences.GoogleClientId;

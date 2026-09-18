@@ -10,6 +10,8 @@ using DebounceThrottle;
 using DynamicData.Binding;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.Library;
+using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
@@ -164,7 +166,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public async Task GenerateSlidesAsync(bool forceInvalidateCache = false)
         {
-            var store = _injectedStore ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
+            var store = _injectedStore ?? new ScriptureLocalUsxStore(ScriptureTranslationResolver.ResolveDirectory(
+                Translation,
+                Globals.Instance.MainViewModel.LibraryViewModel.LibraryConfig.LibraryItems.Where(d => d.Type == LibraryType.Scripture)));
             List<ScriptureVerseRef> verses;
             string bookTitle;
             try
@@ -218,7 +222,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         {
             var text =
                 $"Scripture data not found: {Book} {StartChapter}:{StartVerse}-{EndChapter}:{EndVerse} ({Translation})\n" +
-                "Check Setup > Library > Scripture Data Path";
+                "Check Setup > Library > Scripture Libraries";
             return new List<ScriptureVerseRef> { new ScriptureVerseRef(StartChapter, StartVerse, text) };
         }
 
