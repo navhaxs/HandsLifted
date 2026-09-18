@@ -4,6 +4,10 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <!-- Class-library output doesn't copy NuGet deps locally by default, so the
+             Avalonia XAML previewer (which loads this project's own bin output as a
+             host) can't find Avalonia.Controls.WebView.dll to resolve NativeWebView. -->
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
     <ItemGroup>
