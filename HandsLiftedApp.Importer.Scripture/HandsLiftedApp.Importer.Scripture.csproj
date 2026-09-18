@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog"/>
+    <PackageReference Include="System.Net.Http.Json"/>
   </ItemGroup>
 
 </Project>
