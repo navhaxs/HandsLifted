@@ -17,6 +17,8 @@ namespace HandsLiftedApp.Core.Views.Setup
         private ScriptureTranslationCatalog.Translation[] _translations = Array.Empty<ScriptureTranslationCatalog.Translation>();
         private bool _directoryManuallyEdited;
         private bool _settingDirectoryProgrammatically;
+        private bool _codeManuallyEdited;
+        private bool _settingCodeProgrammatically;
 
         private CancellationTokenSource? _downloadCts;
 
@@ -49,10 +51,11 @@ namespace HandsLiftedApp.Core.Views.Setup
                 var translations = await catalog.GetPublicDomainEnglishTranslationsAsync();
 
                 _translations = translations.ToArray();
-                TranslationComboBox.ItemsSource = _translations.Select(t => t.Name).ToList();
+                TranslationListBox.ItemsSource = _translations.Select(t => t.Name).ToList();
                 if (_translations.Length > 0)
                 {
-                    TranslationComboBox.SelectedIndex = 0;
+                    TranslationTextBox.Text = _translations[0].Name;
+                    ApplyCatalogTranslationDefaults(_translations[0]);
                     LoadingText.IsVisible = false;
                 }
                 else
@@ -77,29 +80,63 @@ namespace HandsLiftedApp.Core.Views.Setup
             _ = LoadTranslationsAsync();
         }
 
-        private void OnTranslationSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        // Free-typed translation text has no catalog entry to match against (no Abbrev/Code to
+        // seed Directory/Code from), so this only runs for an actual pick off TranslationListBox
+        // - see OnTranslationPicked.
+        private void ApplyCatalogTranslationDefaults(ScriptureTranslationCatalog.Translation selected)
         {
-            if (_directoryManuallyEdited) return;
-            if (TranslationComboBox.SelectedIndex < 0) return;
-
-            var selected = _translations[TranslationComboBox.SelectedIndex];
-
-            // Setting Text below synchronously fires OnDirectoryTextChanged. That handler must be
-            // able to tell this programmatic assignment apart from a genuine user edit - without
-            // the flag, it has no way to distinguish the two, and would latch _directoryManuallyEdited
-            // permanently true on this very first (self-inflicted) write, before the user ever gets
-            // a chance to pick anything. That would silently break auto-fill for every subsequent
-            // translation pick, even though the user never touched the folder box.
-            _settingDirectoryProgrammatically = true;
-            try
+            // Setting Text below synchronously fires OnDirectoryTextChanged/OnCodeTextChanged.
+            // Those handlers must be able to tell this programmatic assignment apart from a
+            // genuine user edit - without the flag, it has no way to distinguish the two, and
+            // would latch _directoryManuallyEdited/_codeManuallyEdited permanently true on this
+            // very first (self-inflicted) write, before the user ever gets a chance to pick
+            // anything. That would silently break auto-fill for every subsequent translation pick,
+            // even though the user never touched the field themselves.
+            if (!_directoryManuallyEdited)
             {
-                DirectoryTextBox.Text = Path.Combine(Constants.APP_DATA_DIR, "ScriptureData", selected.Abbrev);
+                _settingDirectoryProgrammatically = true;
+                try
+                {
+                    DirectoryTextBox.Text = Path.Combine(Constants.APP_DATA_DIR, "ScriptureData", selected.Abbrev);
+                }
+                finally
+                {
+                    _settingDirectoryProgrammatically = false;
+                }
             }
-            finally
+
+            if (!_codeManuallyEdited)
             {
-                _settingDirectoryProgrammatically = false;
+                _settingCodeProgrammatically = true;
+                try
+                {
+                    CodeTextBox.Text = selected.Code;
+                }
+                finally
+                {
+                    _settingCodeProgrammatically = false;
+                }
             }
         }
+
+        private void OnTranslationPicked(object? sender, SelectionChangedEventArgs e)
+        {
+            var idx = TranslationListBox.SelectedIndex;
+            if (idx >= 0 && idx < _translations.Length)
+            {
+                var selected = _translations[idx];
+                TranslationTextBox.Text = selected.Name;
+                TranslationPickerButton.Flyout?.Hide();
+                ApplyCatalogTranslationDefaults(selected);
+            }
+
+            // Clear selection so picking the same translation again later still raises
+            // SelectionChanged (a reselect of an already-selected item otherwise wouldn't fire).
+            TranslationListBox.SelectedItem = null;
+        }
+
+        private ScriptureTranslationCatalog.Translation? FindMatchingCatalogTranslation(string label) =>
+            _translations.FirstOrDefault(t => string.Equals(t.Name, label, StringComparison.Ordinal));
 
         private void OnDirectoryTextChanged(object? sender, TextChangedEventArgs e)
         {
@@ -110,6 +147,12 @@ namespace HandsLiftedApp.Core.Views.Setup
             // permanently disable auto-fill before the user ever typed a character.
             if (_settingDirectoryProgrammatically) return;
             _directoryManuallyEdited = true;
+        }
+
+        private void OnCodeTextChanged(object? sender, TextChangedEventArgs e)
+        {
+            if (_settingCodeProgrammatically) return;
+            _codeManuallyEdited = true;
         }
 
         private async void OnBrowseClick(object? sender, RoutedEventArgs e)
@@ -133,11 +176,14 @@ namespace HandsLiftedApp.Core.Views.Setup
 
         private void OnAddWithoutDownloadingClick(object? sender, RoutedEventArgs e)
         {
-            if (TranslationComboBox.SelectedIndex < 0) return;
+            var label = TranslationTextBox.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(label)) return;
             if (string.IsNullOrWhiteSpace(DirectoryTextBox.Text)) return;
 
-            var selected = _translations[TranslationComboBox.SelectedIndex];
-            Result = (selected.Name, DirectoryTextBox.Text, selected.Code);
+            // CodeTextBox is user-editable (auto-filled from the catalog on a pick, but free text
+            // otherwise), so it - not a catalog lookup - is the source of truth for the code to
+            // store alongside a translation added without downloading.
+            Result = (label, DirectoryTextBox.Text, CodeTextBox.Text?.Trim() ?? "");
             Close();
         }
 
@@ -153,10 +199,19 @@ namespace HandsLiftedApp.Core.Views.Setup
                 return;
             }
 
-            if (TranslationComboBox.SelectedIndex < 0) return;
+            var label = TranslationTextBox.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(label)) return;
             if (string.IsNullOrWhiteSpace(DirectoryTextBox.Text)) return;
 
-            var selected = _translations[TranslationComboBox.SelectedIndex];
+            // Downloading needs a catalog Code - a free-typed translation with no catalog match
+            // can only be added via "Add Without Downloading" (for files the user already has).
+            var selected = FindMatchingCatalogTranslation(label);
+            if (selected is null)
+            {
+                StatusText.Text = "Pick a translation from the list to download, or use \"Add Without Downloading\" for one you already have files for.";
+                return;
+            }
+
             var directory = DirectoryTextBox.Text;
 
             SetDownloadingState(true);
@@ -223,7 +278,9 @@ namespace HandsLiftedApp.Core.Views.Setup
             DownloadButton.Content = "Download";
             DownloadButton.IsEnabled = !downloading;
             CancelButton.IsEnabled = true;
-            TranslationComboBox.IsEnabled = !downloading;
+            TranslationTextBox.IsEnabled = !downloading;
+            TranslationPickerButton.IsEnabled = !downloading;
+            CodeTextBox.IsEnabled = !downloading;
             AddWithoutDownloadingButton.IsEnabled = !downloading && _translations.Length > 0;
         }
 

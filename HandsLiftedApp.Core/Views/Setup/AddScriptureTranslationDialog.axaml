@@ -31,13 +31,25 @@
                 <TextBlock Text="Add Translation" FontWeight="SemiBold" FontSize="14" Margin="0 4 0 0" />
 
                 <TextBlock Text="Translation" />
-                <ComboBox x:Name="TranslationComboBox" HorizontalAlignment="Stretch"
-                          SelectionChanged="OnTranslationSelectionChanged" />
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox x:Name="TranslationTextBox" Grid.Column="0" HorizontalAlignment="Stretch" />
+                    <Button x:Name="TranslationPickerButton" Grid.Column="1" Content="▾" Margin="4 0 0 0"
+                            Padding="8 0">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedLeft">
+                                <ListBox x:Name="TranslationListBox" SelectionChanged="OnTranslationPicked" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
                 <DockPanel>
                     <Button x:Name="RetryButton" Content="Retry" DockPanel.Dock="Right" Margin="8 0 0 0"
                             IsVisible="False" Click="OnRetryTranslationsClick" />
                     <TextBlock x:Name="LoadingText" Text="Loading translations…" FontSize="11" />
                 </DockPanel>
+
+                <TextBlock Text="Code" Margin="0 8 0 0" />
+                <TextBox x:Name="CodeTextBox" Watermark="e.g. eng_kjv" TextChanged="OnCodeTextChanged" />
 
                 <TextBlock Text="Folder" Margin="0 8 0 0" />
                 <DockPanel>
