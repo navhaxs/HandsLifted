@@ -10,15 +10,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
-        Background="Transparent"
-        BorderThickness="0"
+        Background="{DynamicResource EditButtonBackgroundBrush}"
+        BorderBrush="#b3aed9"
+        BorderThickness="1"
         Click="Indicator_OnClick"
+        CornerRadius="4"
         DataContext="{Binding AutoAdvanceTimer}"
         IsVisible="{Binding IsEnabled}"
         Margin="6,6,0,6"
         Padding="0"
-        VerticalAlignment="Center">
+        VerticalAlignment="Stretch">
         <DockPanel>
+            <TextBlock Margin="0,0,6,0">Autoplay:</TextBlock>
             <avalonia:MaterialIcon
                 Kind="TimerOutline"
                 Margin="0,0,4,0"
