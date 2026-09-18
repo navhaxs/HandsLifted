@@ -105,7 +105,14 @@ namespace HandsLiftedApp.Core.ViewModels
                 LibraryConfig = lastSavedConfig;
             }
 
-            // runtime...
+            RebuildLibraries();
+        }
+
+        // Rebuilds the runtime Libraries collection from the current in-memory LibraryConfig -
+        // no disk I/O. Called after ReloadLibraries() loads/migrates config from disk, and after
+        // any live edit from the Setup window's library table (see PersistLibraries).
+        private void RebuildLibraries()
+        {
             Libraries = new ObservableCollection<Library>();
 
             // Each Library's constructor does its own synchronous directory listing (often over
@@ -188,6 +195,13 @@ namespace HandsLiftedApp.Core.ViewModels
                     ActiveQuery = new LibraryQueryViewModel(new List<Library>(){x});
                 }
             });
+        }
+
+        // Called by the Setup window's library table after every live edit (add/remove/field change).
+        public void PersistLibraries()
+        {
+            WriteConfig();
+            RebuildLibraries();
         }
 
         private void WriteConfig()
