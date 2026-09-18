@@ -20,10 +20,6 @@ namespace LibVLCSharp.Avalonia.Sample
             autoComplete.GetObservable(AutoCompleteBox.IsDropDownOpenProperty)
                             .Skip(1).Take(1)
                             .Subscribe(_ => autoComplete.IsDropDownOpen = false);
-
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void InitializeComponent()

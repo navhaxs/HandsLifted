@@ -21,10 +21,6 @@ namespace LibVLCSharp.Avalonia.Sample
                 var w = new Example2();
                 w.Show();
             };
-
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void InitializeComponent()

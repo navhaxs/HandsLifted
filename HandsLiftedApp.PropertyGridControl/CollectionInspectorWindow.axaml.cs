@@ -10,9 +10,6 @@ namespace HandsLiftedApp.PropertyGridControl
         public CollectionInspectorWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
             this.DataContextChanged += ObjectInspectorWindow_DataContextChanged;
         }
 

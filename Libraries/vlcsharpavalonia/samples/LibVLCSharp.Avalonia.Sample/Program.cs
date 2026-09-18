@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using AvaloniaUI.DiagnosticsSupport;
 using ReactiveUI.Avalonia;
 
 namespace LibVLCSharp.Avalonia.Sample
@@ -13,7 +14,8 @@ namespace LibVLCSharp.Avalonia.Sample
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()
+        {
+            var builder = AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 //.UseDirect2D1()
                 .UseReactiveUI(_ => { })
@@ -23,6 +25,11 @@ namespace LibVLCSharp.Avalonia.Sample
                 //.UseVLCSharp(renderingOptions: LibVLCAvaloniaRenderingOptions.AvaloniaCustomDrawingOperation)
                 //.LogToDebug()
                 ;
+#if DEBUG
+            builder = builder.WithDeveloperTools();
+#endif
+            return builder;
+        }
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI
         // container, etc.

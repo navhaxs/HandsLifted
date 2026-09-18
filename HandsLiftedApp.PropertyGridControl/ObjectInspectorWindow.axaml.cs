@@ -12,9 +12,6 @@ namespace HandsLiftedApp.PropertyGridControl
         public ObjectInspectorWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
 
             _debugButton = this.Find<Button>("debugButton");
             _debugButton.Click += _debugButton_Click;
