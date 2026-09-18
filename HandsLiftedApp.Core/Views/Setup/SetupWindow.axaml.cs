@@ -166,7 +166,7 @@ namespace HandsLiftedApp.Core.Views.Setup
                 try
                 {
                     var downloader = new ScriptureUsxDownloader();
-                    var failedCount = await downloader.DownloadAllBooksAsync(rootPath, progress);
+                    var failedCount = await downloader.DownloadAllBooksAsync(rootPath, "eng_bsb", progress);
 
                     Dispatcher.UIThread.Post(() =>
                     {

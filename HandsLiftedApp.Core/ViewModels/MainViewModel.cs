@@ -571,7 +571,7 @@ public class MainViewModel : ViewModelBase
 
                         var scripture = new ScriptureItemInstance(Playlist)
                         {
-                            Translation = ScriptureUsxDownloader.FixedTranslation,
+                            Translation = "eng_bsb",
                             Book = addItemMessage.ScriptureBookCode!,
                             StartChapter = addItemMessage.ScriptureStartChapter!.Value,
                             StartVerse = addItemMessage.ScriptureStartVerse!.Value,
