@@ -7,7 +7,9 @@ namespace HandsLiftedApp.Data.Models.Items
     // Deliberately stores only the passage reference, not cached parsed content:
     // HandsLiftedApp.Data has no dependency on HandsLiftedApp.Importer.Scripture (and shouldn't gain
     // one), and ScriptureLocalUsxStore already caches parsed USX in memory, reading from a local,
-    // user-configured directory (see AppPreferencesViewModel.ScriptureDataPath) rather than the network.
+    // user-configured directory (resolved per-Translation via ScriptureTranslationResolver against the
+    // configured Scripture Library rows - see SetupWindowViewModel.ScriptureLibraryRows) rather than
+    // the network.
     [XmlRoot("Scripture", Namespace = Constants.Namespace, IsNullable = false)]
     [Serializable]
     public class ScriptureItem : Item
