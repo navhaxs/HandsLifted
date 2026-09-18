@@ -90,9 +90,15 @@ namespace HandsLiftedApp.Core.Views.Setup
             _setupWindowViewModel.AddSongLibraryRow();
         }
 
-        private void AddScriptureLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
+        private async void AddScriptureLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            _setupWindowViewModel.AddScriptureLibraryRow();
+            var dialog = new AddScriptureTranslationDialog();
+            await dialog.ShowDialog(this);
+
+            if (dialog.Result is { } result)
+            {
+                _setupWindowViewModel.AddScriptureLibraryRow(result.Label, result.Directory, result.TranslationCode);
+            }
         }
 
         private void RemoveLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)

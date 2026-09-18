@@ -283,7 +283,7 @@
                                 Click="AddScriptureLibraryRowButton_OnClick"
                                 HorizontalAlignment="Left"
                                 Margin="0,4,0,0">
-                                + Add Scripture Library
+                                + Add Translation
                             </Button>
 
                         </StackPanel>
