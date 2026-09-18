@@ -1,36 +1,43 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
-             xmlns:app="clr-namespace:HandsLiftedApp.Core"
-             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-             xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="350"
-             x:DataType="viewModels:MainViewModel"
-             x:Class="HandsLiftedApp.Core.Views.Designer.LogoEditorView">
+﻿<UserControl
+    d:DesignHeight="350"
+    d:DesignWidth="300"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.Designer.LogoEditorView"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DockPanel>
 
-        <Border BorderBrush="#808080" BorderThickness="1" Background="#282828" IsVisible="False">
-        <ScrollViewer DockPanel.Dock="Left" Width="100" >
-            <ScrollViewer.Styles>
-                <Style Selector="ListBox">
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Padding" Value="0" />
-                </Style>
-                <Style Selector="ListBoxItem">
-                    <Setter Property="Height" Value="50" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                </Style>
-                <Style Selector="Button">
-                    <Setter Property="Height" Value="50" />
-                    <Setter Property="CornerRadius" Value="0" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Background" Value="Transparent" />
-                </Style>
-            </ScrollViewer.Styles>
+        <Border
+            Background="#282828"
+            BorderBrush="#808080"
+            BorderThickness="1"
+            IsVisible="False">
+            <ScrollViewer DockPanel.Dock="Left" Width="100">
+                <ScrollViewer.Styles>
+                    <Style Selector="ListBox">
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Height" Value="50" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                    <Style Selector="Button">
+                        <Setter Property="Height" Value="50" />
+                        <Setter Property="CornerRadius" Value="0" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                </ScrollViewer.Styles>
 
                 <StackPanel>
                     <ListBox>
@@ -41,32 +48,70 @@
                         <ListBoxItem>Default</ListBoxItem>
                     </ListBox>
                     <Button>
-                        <avalonia:MaterialIcon Kind="PlusCircleOutline"
-                                               Width="20"
-                                               Height="20" />
+                        <avalonia:MaterialIcon
+                            Height="20"
+                            Kind="PlusCircleOutline"
+                            Width="20" />
                     </Button>
                 </StackPanel>
-        </ScrollViewer>
-            </Border>
+            </ScrollViewer>
+        </Border>
 
-        <DockPanel Margin="8">
-            <StackPanel DockPanel.Dock="Bottom">
-                <TextBlock>Global:</TextBlock>
-                <controls:TextBoxFilePathPicker FilePath="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.LogoGraphicFile}" />
-                
-                <TextBlock>Playlist:</TextBlock>
-                <controls:TextBoxFilePathPicker x:Name="playlistLogoPicker" FilePath="{Binding Playlist.LogoGraphicFile}" />
-            </StackPanel>
-            <Grid DockPanel.Dock="Left">
+        <Grid ColumnDefinitions="* *" Margin="8">
+            <Grid>
                 <Viewbox VerticalAlignment="Center">
-                    <Grid
-                        Width="1920"
-                        Height="1080">
+                    <Grid Height="1080" Width="1920">
                         <items:LogoSlideView />
                     </Grid>
                 </Viewbox>
             </Grid>
-        </DockPanel>
+
+            <StackPanel Grid.Column="1">
+
+                <TextBlock TextWrapping="Wrap">Set the media file to display as the logo. e.g. a series, title or event graphic.</TextBlock>
+
+                <Border
+                    Background="#808080"
+                    Height="1"
+                    Margin="0,6" />
+
+
+
+                <Border
+                    Background="#771C496D"
+                    CornerRadius="6"
+                    Margin="0,6">
+                    <StackPanel Margin="6">
+
+                        <TextBlock FontWeight="Bold">Logo for this playlist</TextBlock>
+                        <TextBlock TextWrapping="Wrap">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Set the logo for '{0}':">
+                                    <Binding
+                                        FallbackValue="this playlist"
+                                        Path="MainViewModel.Playlist.Title"
+                                        Source="{x:Static app:Globals.Instance}" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <controls:TextBoxFilePathPicker FilePath="{Binding Playlist.LogoGraphicFile}" x:Name="playlistLogoPicker" />
+                    </StackPanel>
+
+                </Border>
+
+
+                <Border
+                    Background="#808080"
+                    Height="1"
+                    Margin="0,6" />
+
+                <TextBlock FontWeight="Bold" TextWrapping="Wrap">Default logo</TextBlock>
+                <TextBlock TextWrapping="Wrap">This is the default across all playlists, and will be shown whenever the above is unset.</TextBlock>
+                <controls:TextBoxFilePathPicker FilePath="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.LogoGraphicFile}" />
+            </StackPanel>
+
+        </Grid>
     </DockPanel>
 
 </UserControl>
