@@ -10,6 +10,7 @@
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
     xmlns:converters="using:HandsLiftedApp.Converters"
+    xmlns:coreConverters="clr-namespace:HandsLiftedApp.Core.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
     xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
@@ -19,6 +20,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:PercentageScaleConverter x:Key="PercentageScaleConverter" />
+            <coreConverters:AppliesToSongsVisibilityConverter x:Key="AppliesToSongsVisibilityConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -89,6 +91,12 @@
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding Playlist.Designs}"
                             SelectedItem="{Binding SelectedSlideTheme}">
+                            <ComboBox.Styles>
+                                <Style Selector="ComboBoxItem">
+                                    <Setter Property="IsVisible"
+                                            Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
+                                </Style>
+                            </ComboBox.Styles>
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Name}" />
