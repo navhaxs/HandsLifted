@@ -1,23 +1,23 @@
 <UserControl
+    d:DesignHeight="400"
+    d:DesignWidth="200"
+    mc:Ignorable="d"
     x:Class="HandsLiftedApp.Core.Controls.Navigation.ItemOrderListView"
+    x:DataType="models:PlaylistInstance"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:avaloniaconverters="using:Avalonia.Markup.Xaml.Converters"
     xmlns:behaviours="using:HandsLiftedApp.Behaviours"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Xaml.Behaviors.Interactivity"
+    xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+    xmlns:items1="clr-namespace:HandsLiftedApp.Controls.Items;assembly=HandsLiftedApp.Controls"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:mockData1="clr-namespace:HandsLiftedApp.Controls.MockData;assembly=HandsLiftedApp.Controls"
-    xmlns:items1="clr-namespace:HandsLiftedApp.Controls.Items;assembly=HandsLiftedApp.Controls"
-    xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     xmlns:models="clr-namespace:HandsLiftedApp.Core.Models"
-    d:DesignHeight="400"
-    d:DesignWidth="200"
-    x:DataType="models:PlaylistInstance"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
         <!-- <viewModels:MainViewModel /> -->
@@ -27,28 +27,28 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:ColorToBrush
-                x:Key="ColorToLightLuminanceBrush"
                 A="0.2"
                 L="0.4"
-                S="0.4" />
+                S="0.4"
+                x:Key="ColorToLightLuminanceBrush" />
             <converters:ColorToBrush
-                x:Key="ColorToDarkLuminanceBrush"
                 L="0.6"
-                S="0.7" />
+                S="0.7"
+                x:Key="ColorToDarkLuminanceBrush" />
             <converters:ColorToConstrastingBrush x:Key="ColorToConstrastingBrush" />
             <converters:ColorToLightLuminance x:Key="ColorToLightLuminance" />
             <converters:ColorToLightLuminance
-                x:Key="ColorToBrightLuminance"
                 L="0.4"
-                S="0.8" />
+                S="0.8"
+                x:Key="ColorToBrightLuminance" />
             <converters:ChainedConverter
-                x:Key="ChainedConverter"
                 Converter1="{StaticResource ColorToLightLuminance}"
-                Converter2="{StaticResource ColorToBrushConverter}" />
+                Converter2="{StaticResource ColorToBrushConverter}"
+                x:Key="ChainedConverter" />
             <converters:ChainedConverter
-                x:Key="ChainedBrightConverter"
                 Converter1="{StaticResource ColorToBrightLuminance}"
-                Converter2="{StaticResource ColorToBrushConverter}" />
+                Converter2="{StaticResource ColorToBrushConverter}"
+                x:Key="ChainedBrightConverter" />
             <converters:StringToUppercaseConverter x:Key="StringToUppercaseConverter" />
             <converters:ItemToIndexConverter x:Key="itemToIndexConverter" />
             <converters:IntMinusOneConverter x:Key="intMinusOneConverter" />
@@ -101,8 +101,7 @@
         <Style Selector="ListBoxItem">
             <Setter Property="ContextMenu">
                 <Setter.Value>
-                    <ContextMenu AttachedToLogicalTree="StyledElement_OnAttachedToLogicalTree"
-                                 Closed="MenuBase_OnClosed">
+                    <ContextMenu AttachedToLogicalTree="StyledElement_OnAttachedToLogicalTree" Closed="MenuBase_OnClosed">
                         <MenuItem
                             Click="MoveUpItem_OnClick"
                             CommandParameter="{Binding}"
@@ -208,8 +207,7 @@
         </Style>
 
         <Style Selector="ListBoxItem Border.SectionHeadingBorder" x:DataType="items:SectionHeadingItem">
-            <Setter Property="BorderBrush"
-                    Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
+            <Setter Property="BorderBrush" Value="{Binding ItemGroupAvaloniaColor, Converter={StaticResource ColorToDarkLuminanceBrush}, FallbackValue='#9a93cd'}" />
             <Setter Property="Background" Value="{DynamicResource GroupHeadingBackground}" />
         </Style>
 
@@ -241,25 +239,25 @@
 
     <Grid x:Name="Root">
         <ScrollViewer>
-            <!-- SelectedIndex="{Binding SelectedItemIndex}" -->
+            <!--  SelectedIndex="{Binding SelectedItemIndex}"  -->
             <ListBox
-                x:Name="itemsListBox"
-                Margin="0,0,0,60"
                 Background="{DynamicResource SurfaceBrush}"
                 Classes="ItemsDragAndDrop"
-                CornerRadius="0,6,0,6"
                 ClipToBounds="True"
+                CornerRadius="0,6,0,6"
                 DragDrop.AllowDrop="True"
                 ItemsSource="{Binding Items, Mode=OneWay}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                Margin="0,0,0,60"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                x:Name="itemsListBox">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--  disable virtualization  -->
                         <StackPanel />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
-                <!-- 
-                TODO how to register custom 'classes' on the list *item* object?
+                <!--
+                    TODO how to register custom 'classes' on the list *item* object?
                 -->
                 <!-- <ListBox.ContextMenu> -->
                 <!--     <ContextMenu> -->
@@ -268,32 +266,29 @@
                 <!-- </ListBox.ContextMenu> -->
                 <ListBox.ItemTemplate>
                     <common:MyTemplateSelector>
-                        <DataTemplate x:Key="SectionHeadingItem" x:DataType="items:SectionHeadingItem">
+                        <DataTemplate x:DataType="items:SectionHeadingItem" x:Key="SectionHeadingItem">
                             <!--  TODO not working  -->
                             <!--<Grid.Styles>
 									<Style Selector="Border:pointerover">
 										<Setter Property="Background" Value="#214c5e" />
 									</Style>
 								</Grid.Styles>-->
-                            <Border BorderThickness="0 1 0 1"
-                                    Classes="SectionHeadingBorder">
+                            <Border BorderThickness="0,1,0,1" Classes="SectionHeadingBorder">
                                 <DockPanel Margin="9,0,0,0" VerticalAlignment="Stretch">
                                     <Grid>
                                         <TextBlock
+                                            Classes="SectionHeadingTextBlock"
+                                            FontSize="12"
                                             IsVisible="{Binding Title, Converter={x:Static StringConverters.IsNullOrEmpty}}"
-                                            Padding="8 4 0 4"
-                                            Classes="SectionHeadingTextBlock"
-                                            FontSize="12"
-                                            TextTrimming="CharacterEllipsis"
+                                            Padding="8,4,0,4"
                                             Text="(New section)"
-                                            />
+                                            TextTrimming="CharacterEllipsis" />
                                         <TextBlock
-                                            Padding="8 4 0 4"
                                             Classes="SectionHeadingTextBlock"
                                             FontSize="12"
-                                            TextTrimming="CharacterEllipsis"
+                                            Padding="8,4,0,4"
                                             Text="{Binding Title}"
-                                            />
+                                            TextTrimming="CharacterEllipsis" />
                                     </Grid>
                                 </DockPanel>
                                 <i:Interaction.Behaviors>
@@ -301,15 +296,16 @@
                                 </i:Interaction.Behaviors>
                             </Border>
                         </DataTemplate>
-                        <DataTemplate x:Key="CommentItem" x:DataType="items:CommentItem">
+                        <DataTemplate x:DataType="items:CommentItem" x:Key="CommentItem">
                             <DockPanel
-                                Margin="0,0,0,0"
                                 Background="Transparent"
+                                Margin="0,0,0,0"
                                 VerticalAlignment="Stretch">
-                                <items1:ItemIcon Margin="16,0,12,0" DockPanel.Dock="Left" />
+                                <items1:ItemIcon DockPanel.Dock="Left" Margin="12,0,8,0" />
                                 <TextBlock
+                                    Classes="ItemTextBlock"
+                                    FontSize="12"
                                     Padding="0,8,0,8"
-                                    FontSize="14"
                                     TextTrimming="CharacterEllipsis">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">
@@ -322,27 +318,29 @@
                                 </i:Interaction.Behaviors>
                             </DockPanel>
                         </DataTemplate>
-                        <DataTemplate x:Key="Fallback" x:CompileBindings="False">
+                        <DataTemplate x:CompileBindings="False" x:Key="Fallback">
                             <DockPanel
-                                Margin="0,0,0,0"
                                 Background="Transparent"
+                                Margin="0,0,0,0"
                                 VerticalAlignment="Stretch">
                                 <Grid Width="12">
                                     <Viewbox
-                                        Width="22"
                                         Height="22"
+                                        IsVisible="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
                                         Margin="-8,0,8,0"
-                                        IsVisible="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}">
+                                        Width="22">
                                         <Polygon Fill="#FF3400" Points="0,0 8,5, 0,10" />
                                     </Viewbox>
                                 </Grid>
-                                <items1:ItemIcon Margin="0,0,8,0" DockPanel.Dock="Left"
-                                                 Foreground="#a2a2a2" />
+                                <items1:ItemIcon
+                                    DockPanel.Dock="Left"
+                                    Foreground="#a2a2a2"
+                                    Margin="0,0,8,0" />
                                 <TextBlock
-                                    Padding="0,8,0,8"
-                                    FontSize="12"
                                     Classes="ItemTextBlock"
                                     Classes.isSelectedItem="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"
+                                    FontSize="12"
+                                    Padding="0,8,0,8"
                                     TextTrimming="CharacterEllipsis">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}">
@@ -351,13 +349,12 @@
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBlock
-                                    IsVisible="{Binding Title, Converter={x:Static StringConverters.IsNullOrEmpty}}"
-                                    Padding="0,8,0,8"
                                     Classes="ItemTextBlock"
                                     FontSize="12"
-                                    TextTrimming="CharacterEllipsis"
+                                    IsVisible="{Binding Title, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                                    Padding="0,8,0,8"
                                     Text="(New item)"
-                                />
+                                    TextTrimming="CharacterEllipsis" />
                                 <i:Interaction.Behaviors>
                                     <behaviours:DragControlBehavior />
                                 </i:Interaction.Behaviors>
@@ -368,12 +365,6 @@
             </ListBox>
         </ScrollViewer>
         <Button
-            Name="AddItemButton"
-            Margin="6,0,8,8"
-            Padding="12"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            HorizontalContentAlignment="Left"
             Background="#4d347f"
             BorderThickness="0"
             ClickMode="Press"
@@ -384,6 +375,12 @@
             Flyout="{StaticResource addItemFlyout}"
             FontSize="14"
             Foreground="White"
+            HorizontalAlignment="Right"
+            HorizontalContentAlignment="Left"
+            Margin="6,0,8,8"
+            Name="AddItemButton"
+            Padding="12"
+            VerticalAlignment="Bottom"
             ZIndex="999">
             <Button.Styles>
                 <Style Selector="ScrollViewer">
@@ -404,22 +401,22 @@
             <Button.Effect>
                 <DropShadowEffect
                     BlurRadius="6"
+                    Color="#55000000"
                     OffsetX="0"
-                    OffsetY="1"
-                    Color="#55000000" />
+                    OffsetY="1" />
             </Button.Effect>
 
             <DockPanel>
                 <material:MaterialIcon
-                    Width="20"
-                    Height="20"
                     DockPanel.Dock="Left"
-                    Kind="Plus" />
+                    Height="20"
+                    Kind="Plus"
+                    Width="20" />
                 <TextBlock
-                    Margin="8,0,8,0"
                     IsVisible="True"
-                    VerticalAlignment="Center"
-                    Text="Add Item" />
+                    Margin="8,0,8,0"
+                    Text="Add Item"
+                    VerticalAlignment="Center" />
             </DockPanel>
         </Button>
 
