@@ -30,7 +30,6 @@ using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using HandsLiftedApp.Data.SlideTheme;
-using HandsLiftedApp.Importer.Scripture;
 using ReactiveUI;
 using Serilog;
 using Item = HandsLiftedApp.Data.Models.Items.Item;
@@ -571,7 +570,7 @@ public class MainViewModel : ViewModelBase
 
                         var scripture = new ScriptureItemInstance(Playlist)
                         {
-                            Translation = "eng_bsb",
+                            Translation = addItemMessage.ScriptureTranslation ?? "",
                             Book = addItemMessage.ScriptureBookCode!,
                             StartChapter = addItemMessage.ScriptureStartChapter!.Value,
                             StartVerse = addItemMessage.ScriptureStartVerse!.Value,
