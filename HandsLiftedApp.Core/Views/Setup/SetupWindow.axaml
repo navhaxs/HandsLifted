@@ -27,6 +27,27 @@
                     <SolidColorBrush x:Key="ActiveTabForegroundBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
+
+            <DataTemplate x:CompileBindings="False" x:Key="LibraryRowTemplate">
+                <Grid ColumnDefinitions="*,2*,32" Margin="0,0,0,4">
+                    <TextBox
+                        Grid.Column="0"
+                        Margin="0,0,4,0"
+                        Text="{Binding Label, UpdateSourceTrigger=LostFocus}" />
+                    <DockPanel Grid.Column="1" Margin="0,0,4,0">
+                        <Button
+                            Click="BrowseLibraryDirectoryButton_OnClick"
+                            DockPanel.Dock="Right"
+                            Margin="4,0,0,0">
+                            …
+                        </Button>
+                        <TextBox Text="{Binding Directory, UpdateSourceTrigger=LostFocus}" />
+                    </DockPanel>
+                    <Button Click="RemoveLibraryRowButton_OnClick" Grid.Column="2">
+                        ✕
+                    </Button>
+                </Grid>
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -207,67 +228,89 @@
                 </TabItem>
 
                 <TabItem Header="Library">
-                    <StackPanel>
-                        <TextBlock
-                            FontWeight="SemiBold"
-                            Margin="0,0,0,4"
-                            Text="Media Library" />
-                        <TextBlock
-                            Foreground="{DynamicResource SystemColorGrayTextBrush}"
-                            Margin="0,0,0,4"
-                            Text="Folder where imported media (images, video, PDF/PowerPoint sources) is stored. Media already inside this folder is referenced in place; media added from elsewhere is copied in. Required before media can be added to a playlist."
-                            TextWrapping="Wrap" />
-                        <DockPanel>
-                            <Button
-                                Click="BrowseMediaLibraryButton_OnClick"
-                                DockPanel.Dock="Right"
-                                Margin="8,0,0,0">
-                                Browse…
-                            </Button>
-                            <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.MediaLibraryPath}" />
-                        </DockPanel>
+                    <ScrollViewer>
+                        <StackPanel>
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Margin="0,0,0,4"
+                                Text="Media Library" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                                Margin="0,0,0,4"
+                                Text="Folder where imported media (images, video, PDF/PowerPoint sources) is stored. Media already inside this folder is referenced in place; media added from elsewhere is copied in. Required before media can be added to a playlist."
+                                TextWrapping="Wrap" />
+                            <DockPanel>
+                                <Button
+                                    Click="BrowseMediaLibraryButton_OnClick"
+                                    DockPanel.Dock="Right"
+                                    Margin="8,0,0,0">
+                                    Browse…
+                                </Button>
+                                <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.MediaLibraryPath}" />
+                            </DockPanel>
 
-                        <TextBlock Margin="0,24,0,0" Text="TODO edit library.yml to configure libraries" />
-                        <Button
-                            Click="EditLibraryButton_OnClick"
-                            HorizontalAlignment="Center"
-                            Margin="0,16,0,0"
-                            MinWidth="200"
-                            Padding="20">
-                            Edit library.yml
-                        </Button>
-                        <Button
-                            Click="ReloadLibraryButton_OnClick"
-                            HorizontalAlignment="Center"
-                            Margin="0,16,0,0"
-                            MinWidth="200"
-                            Padding="20">
-                            Reload library.yml
-                        </Button>
-                        <TextBlock
-                            FontWeight="SemiBold"
-                            Margin="0,24,0,4"
-                            Text="Scripture Data" />
-                        <TextBlock
-                            Foreground="{DynamicResource SystemColorGrayTextBrush}"
-                            Margin="0,0,0,4"
-                            Text="Local folder where scripture (Bible) data is stored. Scripture slides render from this folder only — download must complete before scripture slides can render."
-                            TextWrapping="Wrap" />
-                        <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.ScriptureDataPath}" />
-                        <Button
-                            Click="DownloadScriptureDataButton_OnClick"
-                            HorizontalAlignment="Center"
-                            Margin="0,12,0,0"
-                            MinWidth="200"
-                            Padding="20"
-                            x:Name="DownloadScriptureDataButton">
-                            Download Bible Data
-                        </Button>
-                        <TextBlock
-                            IsVisible="False"
-                            Margin="0,8,0,0"
-                            x:Name="ScriptureDownloadStatusText" />
-                    </StackPanel>
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Margin="0,24,0,4"
+                                Text="Libraries" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                                Margin="0,0,0,8"
+                                Text="Folders shown in the library list on the main window."
+                                TextWrapping="Wrap" />
+
+                            <TextBlock FontWeight="SemiBold" Margin="0,8,0,4" Text="Media Libraries" />
+                            <ItemsControl ItemsSource="{Binding MediaLibraryRows}" ItemTemplate="{StaticResource LibraryRowTemplate}" />
+                            <Button
+                                Click="AddMediaLibraryRowButton_OnClick"
+                                HorizontalAlignment="Left"
+                                Margin="0,4,0,0">
+                                + Add Media Library
+                            </Button>
+
+                            <TextBlock FontWeight="SemiBold" Margin="0,16,0,4" Text="Song Libraries" />
+                            <ItemsControl ItemsSource="{Binding SongLibraryRows}" ItemTemplate="{StaticResource LibraryRowTemplate}" />
+                            <Button
+                                Click="AddSongLibraryRowButton_OnClick"
+                                HorizontalAlignment="Left"
+                                Margin="0,4,0,0">
+                                + Add Song Library
+                            </Button>
+
+                            <TextBlock FontWeight="SemiBold" Margin="0,16,0,4" Text="Scripture Libraries" />
+                            <ItemsControl ItemsSource="{Binding ScriptureLibraryRows}" ItemTemplate="{StaticResource LibraryRowTemplate}" />
+                            <Button
+                                Click="AddScriptureLibraryRowButton_OnClick"
+                                HorizontalAlignment="Left"
+                                Margin="0,4,0,0">
+                                + Add Scripture Library
+                            </Button>
+
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Margin="0,24,0,4"
+                                Text="Scripture Data" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                                Margin="0,0,0,4"
+                                Text="Local folder where scripture (Bible) data is stored. Scripture slides render from this folder only — download must complete before scripture slides can render."
+                                TextWrapping="Wrap" />
+                            <TextBox Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.ScriptureDataPath}" />
+                            <Button
+                                Click="DownloadScriptureDataButton_OnClick"
+                                HorizontalAlignment="Center"
+                                Margin="0,12,0,0"
+                                MinWidth="200"
+                                Padding="20"
+                                x:Name="DownloadScriptureDataButton">
+                                Download Bible Data
+                            </Button>
+                            <TextBlock
+                                IsVisible="False"
+                                Margin="0,8,0,0"
+                                x:Name="ScriptureDownloadStatusText" />
+                        </StackPanel>
+                    </ScrollViewer>
                 </TabItem>
 
                 <TabItem Header="Integrations">

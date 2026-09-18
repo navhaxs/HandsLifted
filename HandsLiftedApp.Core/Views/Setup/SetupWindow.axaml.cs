@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
@@ -17,6 +16,7 @@ using Google.Apis.Slides.v1;
 using Google.Apis.Util;
 using Google.Apis.Util.Store;
 using HandsLiftedApp.Controls;
+using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Importer.Scripture;
@@ -80,26 +80,48 @@ namespace HandsLiftedApp.Core.Views.Setup
             }
         }
 
-        private void EditLibraryButton_OnClick(object? sender, RoutedEventArgs e)
+        private void AddMediaLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (OperatingSystem.IsWindows())
+            _setupWindowViewModel.AddMediaLibraryRow();
+        }
+
+        private void AddSongLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _setupWindowViewModel.AddSongLibraryRow();
+        }
+
+        private void AddScriptureLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _setupWindowViewModel.AddScriptureLibraryRow();
+        }
+
+        private void RemoveLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control { DataContext: LibraryConfig.LibraryDefinition row })
             {
-                Process.Start("notepad.exe", Constants.LIBRARY_CONFIG_FILEPATH);
-            }
-            else if (OperatingSystem.IsMacOS())
-            {
-                Process.Start("open", Constants.LIBRARY_CONFIG_FILEPATH);
-            }
-            else
-            {
-                // For Linux and other platforms, try using the default text editor
-                Process.Start("xdg-open", Constants.LIBRARY_CONFIG_FILEPATH);
+                _setupWindowViewModel.RemoveLibraryRow(row);
             }
         }
 
-        private void ReloadLibraryButton_OnClick(object? sender, RoutedEventArgs e)
+        private async void BrowseLibraryDirectoryButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            Globals.Instance.MainViewModel.LibraryViewModel.ReloadLibraries();
+            if (sender is not Control { DataContext: LibraryConfig.LibraryDefinition row }) return;
+
+            var startFolder = !string.IsNullOrWhiteSpace(row.Directory)
+                ? await StorageProvider.TryGetFolderFromPathAsync(row.Directory)
+                : null;
+
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select Library Folder",
+                AllowMultiple = false,
+                SuggestedStartLocation = startFolder
+            });
+
+            if (folders.Count > 0)
+            {
+                row.Directory = folders[0].TryGetLocalPath();
+            }
         }
 
         private async void BrowseMediaLibraryButton_OnClick(object? sender, RoutedEventArgs e)
