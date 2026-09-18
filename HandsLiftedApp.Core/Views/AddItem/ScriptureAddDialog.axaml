@@ -29,6 +29,9 @@
             <StackPanel Spacing="8">
                 <TextBlock x:Name="HeadingText" Text="Add Scripture" FontWeight="SemiBold" FontSize="14" Margin="0 4 0 0" />
 
+                <TextBlock Text="Translation" />
+                <ComboBox x:Name="TranslationComboBox" HorizontalAlignment="Stretch" SelectionChanged="OnTranslationSelectionChanged" />
+
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <RadioButton x:Name="TypeModeRadio" GroupName="ScriptureEntryMode" Content="Type" IsCheckedChanged="OnModeChanged" />
                     <RadioButton x:Name="PickModeRadio" GroupName="ScriptureEntryMode" Content="Pick" IsCheckedChanged="OnModeChanged" />
