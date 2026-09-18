@@ -169,13 +169,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                 });
 
                 var scriptureSlide = new ScriptureSlideInstance(null, "theme-preview") { Theme = item };
-                var pages = ScriptureParagraphLayoutEngine.Paginate(PreviewScriptureVerses, PreviewScriptureHeader, item);
-                if (pages.Count > 0)
-                {
-                    scriptureSlide.Lines = pages[0].Lines;
-                    scriptureSlide.EffectiveFontSize = pages[0].FontSize;
-                }
-                themePreviewScriptureView.SetSlide(scriptureSlide);
+                themePreviewScriptureView.SetSlide(scriptureSlide, PreviewScriptureVerses, PreviewScriptureHeader);
             }
             else
             {

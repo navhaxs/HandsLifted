@@ -15,6 +15,7 @@
     xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
     xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:slideTheme="clr-namespace:HandsLiftedApp.Data.SlideTheme;assembly=HandsLiftedApp.Data"
     xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
@@ -92,7 +93,7 @@
                             ItemsSource="{Binding Playlist.Designs}"
                             SelectedItem="{Binding SelectedSlideTheme}">
                             <ComboBox.Styles>
-                                <Style Selector="ComboBoxItem">
+                                <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
                                     <Setter Property="IsVisible"
                                             Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
                                 </Style>
