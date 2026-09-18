@@ -16,12 +16,6 @@
     </Design.DataContext>
 
     <DockPanel>
-        <TextBox
-            DockPanel.Dock="Top"
-            KeyDown="InputElement_OnKeyDown"
-            Text="{Binding SearchTerm}"
-            Watermark="Filter"
-            x:Name="SearchBox" />
         <Grid>
 
             <!--  Song Library  -->
@@ -30,37 +24,46 @@
                 <!--  listbox  -->
                 <Grid>
 
-                    <ListBox
-                        BorderThickness="0"
-                        ContextRequested="SongListBox_ContextRequested"
-                        HorizontalAlignment="Stretch"
-                        ItemsSource="{Binding SearchResults}"
-                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                        SelectedItem="{Binding SelectedLibraryItem}">
-                        <ListBox.Styles>
-                            <Style Selector="ListBoxItem">
-                                <Setter Property="ContextMenu">
-                                    <ContextMenu>
-                                        <MenuItem Header="Rename..." Click="RenameItem_OnClick" />
-                                        <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick" />
-                                        <Separator />
-                                        <MenuItem Header="Delete" Click="DeleteItem_OnClick" />
-                                    </ContextMenu>
-                                </Setter>
-                            </Style>
-                        </ListBox.Styles>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel PointerPressed="DockPanel_PointerPressed">
-                                    <TextBlock
-                                        DockPanel.Dock="Bottom"
-                                        FontSize="14"
-                                        Padding="2"
-                                        Text="{Binding Title}" />
-                                </DockPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <DockPanel>
+                        <TextBox
+                            DockPanel.Dock="Top"
+                            KeyDown="InputElement_OnKeyDown"
+                            Text="{Binding SearchTerm}"
+                            Watermark="Search"
+                            x:Name="SearchBox" />
+
+                        <ListBox
+                            BorderThickness="0"
+                            ContextRequested="SongListBox_ContextRequested"
+                            HorizontalAlignment="Stretch"
+                            ItemsSource="{Binding SearchResults}"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            SelectedItem="{Binding SelectedLibraryItem}">
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="ContextMenu">
+                                        <ContextMenu>
+                                            <MenuItem Click="RenameItem_OnClick" Header="Rename..." />
+                                            <MenuItem Click="DuplicateItem_OnClick" Header="Duplicate" />
+                                            <Separator />
+                                            <MenuItem Click="DeleteItem_OnClick" Header="Delete" />
+                                        </ContextMenu>
+                                    </Setter>
+                                </Style>
+                            </ListBox.Styles>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel PointerPressed="DockPanel_PointerPressed">
+                                        <TextBlock
+                                            DockPanel.Dock="Bottom"
+                                            FontSize="14"
+                                            Padding="2"
+                                            Text="{Binding Title}" />
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
 
                     <Button
                         Click="AddItem_OnClick"
