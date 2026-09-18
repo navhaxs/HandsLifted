@@ -29,18 +29,29 @@ namespace HandsLiftedApp.Core.Views
         // Remembered for the lifetime of the app process only — not a saved user preference.
         private static bool s_preferPickMode;
 
-        private readonly ScriptureLocalUsxStore _store;
+        private ScriptureLocalUsxStore _store;
         private readonly ReferenceState _state = new();
         private CancellationTokenSource? _validationCts;
         private bool _initializing = true;
 
-        public (string BookCode, string BookName, int StartChapter, int StartVerse, int EndChapter, int EndVerse)? Result { get; private set; }
+        public (string BookCode, string BookName, int StartChapter, int StartVerse, int EndChapter, int EndVerse, string Translation)? Result { get; private set; }
 
-        public ScriptureAddDialog(ScriptureLocalUsxStore? store = null)
+        public ScriptureAddDialog(ScriptureLocalUsxStore? store = null, string? currentTranslation = null)
         {
             InitializeComponent();
-            _store = store ?? new ScriptureLocalUsxStore(ScriptureTranslationResolver.ResolveDirectory(
-                null, Globals.Instance.MainViewModel.LibraryViewModel.LibraryConfig.LibraryItems.Where(d => d.Type == LibraryType.Scripture)));
+
+            var configuredTranslations = Globals.Instance.MainViewModel.LibraryViewModel.LibraryConfig.LibraryItems
+                .Where(d => d.Type == LibraryType.Scripture)
+                .ToList();
+            TranslationComboBox.ItemsSource = configuredTranslations.Select(d => d.Label).ToList();
+
+            var selectedIndex = currentTranslation != null
+                ? configuredTranslations.FindIndex(d => d.Label == currentTranslation)
+                : -1;
+            TranslationComboBox.SelectedIndex = selectedIndex >= 0 ? selectedIndex : (configuredTranslations.Count > 0 ? 0 : -1);
+
+            _store = store ?? new ScriptureLocalUsxStore(
+                ScriptureTranslationResolver.ResolveDirectory(SelectedTranslationLabel(), configuredTranslations));
 
             BookComboBox.ItemsSource = ScriptureBookCatalog.AllBooks.Select(b => b.Name).ToList();
             BookComboBox.SelectedIndex = 0;
@@ -57,8 +68,28 @@ namespace HandsLiftedApp.Core.Views
             _initializing = false;
         }
 
-        public ScriptureAddDialog(string bookCode, int startChapter, int startVerse, int endChapter, int endVerse, ScriptureLocalUsxStore? store = null)
-            : this(store)
+        private string? SelectedTranslationLabel() =>
+            TranslationComboBox.SelectedIndex >= 0 ? (string)TranslationComboBox.SelectedItem! : null;
+
+        private void OnTranslationSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (_initializing) return;
+
+            var configuredTranslations = Globals.Instance.MainViewModel.LibraryViewModel.LibraryConfig.LibraryItems
+                .Where(d => d.Type == LibraryType.Scripture);
+            _store = new ScriptureLocalUsxStore(ScriptureTranslationResolver.ResolveDirectory(SelectedTranslationLabel(), configuredTranslations));
+
+            // Re-validate whatever's currently typed against the newly selected translation's data -
+            // switching translations mid-entry must not leave a stale validation result (e.g. a verse
+            // range valid in one translation's versification but not another's) silently in place.
+            if (TypeModeRadio.IsChecked == true)
+            {
+                OnReferenceTextChanged(ReferenceTextBox, null!);
+            }
+        }
+
+        public ScriptureAddDialog(string bookCode, int startChapter, int startVerse, int endChapter, int endVerse, string? currentTranslation = null, ScriptureLocalUsxStore? store = null)
+            : this(store, currentTranslation)
         {
             Title = "Edit Scripture";
             HeadingText.Text = "Edit Scripture";
@@ -365,17 +396,19 @@ namespace HandsLiftedApp.Core.Views
 
         private void OnConfirmInsert(object? sender, RoutedEventArgs e)
         {
+            var translation = SelectedTranslationLabel() ?? "";
+
             if (PickModeRadio.IsChecked == true)
             {
                 if (!TryReadPickModeValues(out var bookName, out var startChapter, out var startVerse, out var endChapter, out var endVerse)) return;
                 var selected = ScriptureBookCatalog.AllBooks[BookComboBox.SelectedIndex];
-                Result = (selected.Code, bookName, startChapter, startVerse, endChapter, endVerse);
+                Result = (selected.Code, bookName, startChapter, startVerse, endChapter, endVerse, translation);
                 Close();
                 return;
             }
 
             if (!_state.IsValid) return;
-            Result = (_state.BookCode!, _state.BookName!, _state.StartChapter, _state.StartVerse, _state.EndChapter, _state.EndVerse);
+            Result = (_state.BookCode!, _state.BookName!, _state.StartChapter, _state.StartVerse, _state.EndChapter, _state.EndVerse, translation);
             Close();
         }
 
