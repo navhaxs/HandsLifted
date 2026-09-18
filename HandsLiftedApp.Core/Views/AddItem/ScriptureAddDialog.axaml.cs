@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using HandsLiftedApp.Core.Models.Library;
+using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Importer.Scripture;
 using HandsLiftedApp.Importer.Scripture.Models;
@@ -37,7 +39,8 @@ namespace HandsLiftedApp.Core.Views
         public ScriptureAddDialog(ScriptureLocalUsxStore? store = null)
         {
             InitializeComponent();
-            _store = store ?? new ScriptureLocalUsxStore(Globals.Instance.AppPreferences.ScriptureDataPath);
+            _store = store ?? new ScriptureLocalUsxStore(ScriptureTranslationResolver.ResolveDirectory(
+                null, Globals.Instance.MainViewModel.LibraryViewModel.LibraryConfig.LibraryItems.Where(d => d.Type == LibraryType.Scripture)));
 
             BookComboBox.ItemsSource = ScriptureBookCatalog.AllBooks.Select(b => b.Name).ToList();
             BookComboBox.SelectedIndex = 0;
