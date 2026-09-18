@@ -19,7 +19,6 @@ using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
-using HandsLiftedApp.Importer.Scripture;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Setup
@@ -90,9 +89,15 @@ namespace HandsLiftedApp.Core.Views.Setup
             _setupWindowViewModel.AddSongLibraryRow();
         }
 
-        private void AddScriptureLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
+        private async void AddScriptureLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            _setupWindowViewModel.AddScriptureLibraryRow();
+            var dialog = new AddScriptureTranslationDialog();
+            await dialog.ShowDialog(this);
+
+            if (dialog.Result is { } result)
+            {
+                _setupWindowViewModel.AddScriptureLibraryRow(result.Label, result.Directory, result.TranslationCode);
+            }
         }
 
         private void RemoveLibraryRowButton_OnClick(object? sender, RoutedEventArgs e)
@@ -143,48 +148,6 @@ namespace HandsLiftedApp.Core.Views.Setup
                 Globals.Instance.AppPreferences.MediaLibraryPath = folders[0].TryGetLocalPath();
                 Globals.Instance.MainViewModel.LibraryViewModel.ReloadLibraries();
             }
-        }
-
-        private void DownloadScriptureDataButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            var button = this.Get<Button>("DownloadScriptureDataButton");
-            var statusText = this.Get<TextBlock>("ScriptureDownloadStatusText");
-            var rootPath = Globals.Instance.AppPreferences.ScriptureDataPath;
-            var totalBooks = ScriptureUsxDownloader.AllBookCodes.Count;
-
-            button.IsEnabled = false;
-            statusText.IsVisible = true;
-            statusText.Text = $"Downloading... 0/{totalBooks} books";
-
-            var progress = new Progress<(int done, int total)>(p =>
-            {
-                statusText.Text = $"Downloading... {p.done}/{p.total} books";
-            });
-
-            System.Threading.Tasks.Task.Run(async () =>
-            {
-                try
-                {
-                    var downloader = new ScriptureUsxDownloader();
-                    var failedCount = await downloader.DownloadAllBooksAsync(rootPath, progress);
-
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        statusText.Text = failedCount == 0
-                            ? "Download complete."
-                            : $"Downloaded {totalBooks - failedCount} of {totalBooks} books; {failedCount} failed (see log).";
-                        button.IsEnabled = true;
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        statusText.Text = $"Download failed: {ex.Message}";
-                        button.IsEnabled = true;
-                    });
-                }
-            });
         }
 
         private void SignInWithGoogle_OnClick(object? sender, RoutedEventArgs e)

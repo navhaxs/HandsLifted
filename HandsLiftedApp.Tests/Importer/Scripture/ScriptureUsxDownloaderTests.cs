@@ -49,7 +49,7 @@ public class ScriptureUsxDownloaderTests
             new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(MinimalUsx) });
         var downloader = new ScriptureUsxDownloader(new HttpClient(handler));
 
-        await downloader.DownloadAllBooksAsync(_tempRoot);
+        await downloader.DownloadAllBooksAsync(_tempRoot, "eng_bsb");
 
         Assert.AreEqual(ScriptureUsxDownloader.AllBookCodes.Count, Directory.GetFiles(_tempRoot, "*.usx").Length);
         Assert.AreEqual(ScriptureUsxDownloader.AllBookCodes.Count, handler.CallCount);
@@ -72,7 +72,7 @@ public class ScriptureUsxDownloaderTests
         });
         var downloader = new ScriptureUsxDownloader(new HttpClient(handler));
 
-        await downloader.DownloadAllBooksAsync(_tempRoot);
+        await downloader.DownloadAllBooksAsync(_tempRoot, "eng_bsb");
 
         Assert.AreEqual("already-downloaded-sentinel", await File.ReadAllTextAsync(genPath));
     }
@@ -86,7 +86,7 @@ public class ScriptureUsxDownloaderTests
                 : new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(MinimalUsx) });
         var downloader = new ScriptureUsxDownloader(new HttpClient(handler));
 
-        var failedCount = await downloader.DownloadAllBooksAsync(_tempRoot);
+        var failedCount = await downloader.DownloadAllBooksAsync(_tempRoot, "eng_bsb");
 
         Assert.IsFalse(File.Exists(Path.Combine(_tempRoot, "gen.usx")));
         Assert.IsTrue(File.Exists(Path.Combine(_tempRoot, "exo.usx")));
@@ -104,7 +104,7 @@ public class ScriptureUsxDownloaderTests
                 : new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(MinimalUsx) });
         var downloader = new ScriptureUsxDownloader(new HttpClient(handler));
 
-        var failedCount = await downloader.DownloadAllBooksAsync(_tempRoot);
+        var failedCount = await downloader.DownloadAllBooksAsync(_tempRoot, "eng_bsb");
 
         Assert.AreEqual(failingCodes.Length, failedCount);
         Assert.AreEqual(ScriptureUsxDownloader.AllBookCodes.Count - failingCodes.Length, Directory.GetFiles(_tempRoot, "*.usx").Length);

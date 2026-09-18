@@ -34,8 +34,11 @@ namespace HandsLiftedApp.Core.ViewModels
         public void AddSongLibraryRow() =>
             SongLibraryRows.Add(new LibraryConfig.LibraryDefinition { Label = "New Library", Type = LibraryType.Song });
 
-        public void AddScriptureLibraryRow() =>
-            ScriptureLibraryRows.Add(new LibraryConfig.LibraryDefinition { Label = "New Library", Type = LibraryType.Scripture });
+        public void AddScriptureLibraryRow(string label, string directory, string translationCode) =>
+            ScriptureLibraryRows.Add(new LibraryConfig.LibraryDefinition
+            {
+                Label = label, Directory = directory, Type = LibraryType.Scripture, TranslationCode = translationCode
+            });
 
         public void RemoveLibraryRow(LibraryConfig.LibraryDefinition row)
         {
