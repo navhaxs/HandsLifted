@@ -1,4 +1,5 @@
 using Avalonia;
+using AvaloniaUI.DiagnosticsSupport;
 using System;
 
 namespace AvaloniaNDI.Sample
@@ -19,9 +20,13 @@ namespace AvaloniaNDI.Sample
             // workaround for https://github.com/AvaloniaUI/AvaloniaVS/issues/250
             GC.KeepAlive(typeof(AvaloniaNDI.NDISendContainer).Assembly);
 
-            return AppBuilder.Configure<App>()
+            var builder = AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToTrace();
+#if DEBUG
+            builder = builder.WithDeveloperTools();
+#endif
+            return builder;
         }
     }
 }

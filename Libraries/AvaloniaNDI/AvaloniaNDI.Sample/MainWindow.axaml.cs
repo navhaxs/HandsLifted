@@ -9,9 +9,6 @@ namespace AvaloniaNDI.Sample
         public MainWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
 
             //TestButton.Click += TestButton_Click;
         }

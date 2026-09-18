@@ -23,9 +23,6 @@ namespace LibVLCSharp.Avalonia.Sample
             _mediaPlayer = new MediaPlayer(_libVLC);
 
             VideoView.MediaPlayer = _mediaPlayer;
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         private void InitializeComponent()

@@ -13,8 +13,8 @@
         <PackageReference Include="Avalonia.Desktop" />
         <PackageReference Include="ReactiveUI.Avalonia" />
         <PackageReference Include="Avalonia.Themes.Fluent" />
-        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
+        <!--Condition below is needed to remove AvaloniaUI.DiagnosticsSupport package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="AvaloniaUI.DiagnosticsSupport" />
         <PackageReference Include="LoadingIndicators.Avalonia" />
         <PackageReference Include="Material.Icons.Avalonia" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
