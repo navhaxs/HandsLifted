@@ -134,7 +134,7 @@
                         ContextMenu="{StaticResource ItemContextMenu}"
                         CornerRadius="0"
                         DockPanel.Dock="Top"
-                        Margin="14,12,14,0">
+                        Margin="14,12,14,12">
                         <DockPanel>
                             <avalonia:MaterialIcon
                                 DockPanel.Dock="Left"
@@ -148,7 +148,7 @@
                                 AcceptsReturn="True"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                FontSize="12"
+                                FontSize="14"
                                 Foreground="Black"
                                 HorizontalAlignment="Stretch"
                                 Padding="0,8,8,8"

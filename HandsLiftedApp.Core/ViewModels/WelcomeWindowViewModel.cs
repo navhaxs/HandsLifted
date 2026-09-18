@@ -36,7 +36,7 @@ namespace HandsLiftedApp.Core.ViewModels
                 foreach (var se in parent.settings.RecentPlaylistFullPathsList)
                 {
                     DateTime? lastOpened = File.Exists(se) ? File.GetLastWriteTime(se) : null;
-                    RecentPlaylists.Add(new RecentPlaylistEntry() { FilePath = se, FileName = Path.GetFileName(se), LastOpenedDate = lastOpened });
+                    RecentPlaylists.Add(new RecentPlaylistEntry() { FilePath = se, FileName = Path.GetFileNameWithoutExtension(se), LastOpenedDate = lastOpened });
                 }
             }
         }

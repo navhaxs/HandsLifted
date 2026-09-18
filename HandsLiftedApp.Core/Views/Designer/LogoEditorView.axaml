@@ -58,7 +58,7 @@
         </Border>
 
         <Grid ColumnDefinitions="* *" Margin="8">
-            <Grid>
+            <Grid Margin="0,0,8,0">
                 <Viewbox VerticalAlignment="Center">
                     <Grid Height="1080" Width="1920">
                         <items:LogoSlideView />
@@ -68,25 +68,16 @@
 
             <StackPanel Grid.Column="1">
 
-                <TextBlock TextWrapping="Wrap">Set the media file to display as the logo. e.g. a series, title or event graphic.</TextBlock>
-
-                <Border
-                    Background="#808080"
-                    Height="1"
-                    Margin="0,6" />
-
-
-
                 <Border
                     Background="#771C496D"
                     CornerRadius="6"
                     Margin="0,6">
                     <StackPanel Margin="6">
 
-                        <TextBlock FontWeight="Bold">Logo for this playlist</TextBlock>
+                        <TextBlock FontWeight="Bold">Playlist logo slide</TextBlock>
                         <TextBlock TextWrapping="Wrap">
                             <TextBlock.Text>
-                                <MultiBinding StringFormat="{}Set the logo for '{0}':">
+                                <MultiBinding StringFormat="{}Set the media file to display as the logo slide for '{0}', e.g. a series, title or event graphic:">
                                     <Binding
                                         FallbackValue="this playlist"
                                         Path="MainViewModel.Playlist.Title"
@@ -95,20 +86,26 @@
                             </TextBlock.Text>
                         </TextBlock>
 
-                        <controls:TextBoxFilePathPicker FilePath="{Binding Playlist.LogoGraphicFile}" x:Name="playlistLogoPicker" />
+                        <controls:TextBoxFilePathPicker
+                            FilePath="{Binding Playlist.LogoGraphicFile}"
+                            Margin="0,6,0,0"
+                            x:Name="playlistLogoPicker" />
                     </StackPanel>
-
                 </Border>
-
 
                 <Border
                     Background="#808080"
                     Height="1"
                     Margin="0,6" />
 
-                <TextBlock FontWeight="Bold" TextWrapping="Wrap">Default logo</TextBlock>
-                <TextBlock TextWrapping="Wrap">This is the default across all playlists, and will be shown whenever the above is unset.</TextBlock>
-                <controls:TextBoxFilePathPicker FilePath="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.LogoGraphicFile}" />
+                <StackPanel Margin="6">
+
+                    <TextBlock FontWeight="Bold" TextWrapping="Wrap">Default logo slide</TextBlock>
+                    <TextBlock TextWrapping="Wrap">Set a default media file, for playlists which have the above unset.</TextBlock>
+                    <controls:TextBoxFilePathPicker FilePath="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.LogoGraphicFile}" Margin="0,6,0,0" />
+
+                </StackPanel>
+
             </StackPanel>
 
         </Grid>

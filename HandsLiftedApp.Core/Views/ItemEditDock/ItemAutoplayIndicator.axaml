@@ -1,6 +1,6 @@
 <UserControl
-    d:DesignHeight="30"
-    d:DesignWidth="200"
+    d:DesignHeight="50"
+    d:DesignWidth="180"
     mc:Ignorable="d"
     x:Class="HandsLiftedApp.Core.Views.ItemEditDock.ItemAutoplayIndicator"
     x:CompileBindings="False"
@@ -20,8 +20,8 @@
         Margin="6,6,0,6"
         Padding="0"
         VerticalAlignment="Stretch">
-        <DockPanel>
-            <TextBlock Margin="0,0,6,0">Autoplay:</TextBlock>
+        <DockPanel Margin="6,0">
+            <TextBlock Margin="0,0,6,0">Autoplay</TextBlock>
             <avalonia:MaterialIcon
                 Kind="TimerOutline"
                 Margin="0,0,4,0"
