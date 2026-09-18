@@ -6,7 +6,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using AvaloniaUI.DiagnosticsSupport;
 using HandsLiftedApp.Core.Views;
 using HandsLiftedApp.Core.ViewModels;
 using Newtonsoft.Json;
