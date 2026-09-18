@@ -1268,12 +1268,12 @@ MessageBus.Current.SendMessage(new AddItemMessage
 
 - [ ] **Step 3: Consume it in `MainViewModel.cs`**
 
-Change:
+**Note:** Task 2 already had to touch this line as a minimal compile-fix (removing `ScriptureUsxDownloader.FixedTranslation` broke this call site immediately) — it currently reads `Translation = "eng_bsb",`, a literal, not the original `ScriptureUsxDownloader.FixedTranslation` reference. Change:
 
 ```csharp
 var scripture = new ScriptureItemInstance(Playlist)
 {
-    Translation = ScriptureUsxDownloader.FixedTranslation,
+    Translation = "eng_bsb",
     Book = addItemMessage.ScriptureBookCode!,
 ```
 
@@ -1286,7 +1286,7 @@ var scripture = new ScriptureItemInstance(Playlist)
     Book = addItemMessage.ScriptureBookCode!,
 ```
 
-(If `using HandsLiftedApp.Importer.Scripture;` is no longer referenced anywhere else in this file after removing the `ScriptureUsxDownloader.FixedTranslation` reference, leave the `using` in place regardless — `ScriptureUsxDownloader` may still be referenced elsewhere in this large file; do not remove usings speculatively. Check with `grep -n "ScriptureUsxDownloader" HandsLiftedApp.Core/ViewModels/MainViewModel.cs` after this edit — if zero matches remain, remove the now-unused `using`.)
+Check with `grep -n "ScriptureUsxDownloader" HandsLiftedApp.Core/ViewModels/MainViewModel.cs` whether `using HandsLiftedApp.Importer.Scripture;` is still needed in this file — if zero matches remain, remove the now-unused `using`; otherwise leave it in place.
 
 - [ ] **Step 4: Thread it through the edit flow in `ItemEditDockRoot.axaml.cs`**
 
