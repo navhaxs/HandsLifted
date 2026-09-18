@@ -203,6 +203,9 @@
                     <RadioButton x:Name="previewTitleToggle" Content="Song Title"
                                  GroupName="ThemePreviewMode"
                                  IsCheckedChanged="PreviewModeToggle_OnChecked" />
+                    <RadioButton x:Name="previewScriptureToggle" Content="Scripture"
+                                 GroupName="ThemePreviewMode"
+                                 IsCheckedChanged="PreviewModeToggle_OnChecked" />
                 </StackPanel>
                 <Viewbox StretchDirection="DownOnly"
                          VerticalAlignment="Stretch"
@@ -210,6 +213,8 @@
                     <Grid Width="1920" Height="1080">
                         <designer:SongSlideView x:Name="themePreviewSlideView" Height="1080" Width="1920" />
                         <designer:SongTitleSlideView x:Name="themePreviewTitleSlideView" Height="1080" Width="1920"
+                                                      IsVisible="False" />
+                        <designer:ScriptureSlideView x:Name="themePreviewScriptureView" Height="1080" Width="1920"
                                                       IsVisible="False" />
                     </Grid>
                 </Viewbox>

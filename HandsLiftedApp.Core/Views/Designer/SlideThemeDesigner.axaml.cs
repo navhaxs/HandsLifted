@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
@@ -138,6 +139,14 @@ namespace HandsLiftedApp.Core.Views.Designer
         private const string PreviewCopyrightText =
             "John Newton\nCCLI Song #22025\nPublic Domain\nCCLI License #317371";
 
+        private static readonly IReadOnlyList<ScriptureVerseRef> PreviewScriptureVerses = new List<ScriptureVerseRef>
+        {
+            new(3, 16, "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."),
+            new(3, 17, "For God sent not his Son into the world to condemn the world, but that the world through him might be saved."),
+        };
+
+        private const string PreviewScriptureHeader = "John 3:16-17";
+
         private void SyncEditorToSelection()
         {
             var item = SelectedDesign;
@@ -158,11 +167,21 @@ namespace HandsLiftedApp.Core.Views.Designer
                     Copyright = PreviewCopyrightText,
                     Theme = item,
                 });
+
+                var scriptureSlide = new ScriptureSlideInstance(null, "theme-preview") { Theme = item };
+                var pages = ScriptureParagraphLayoutEngine.Paginate(PreviewScriptureVerses, PreviewScriptureHeader, item);
+                if (pages.Count > 0)
+                {
+                    scriptureSlide.Lines = pages[0].Lines;
+                    scriptureSlide.EffectiveFontSize = pages[0].FontSize;
+                }
+                themePreviewScriptureView.SetSlide(scriptureSlide);
             }
             else
             {
                 themePreviewSlideView.SetSlide(null);
                 themePreviewTitleSlideView.SetSlide(null);
+                themePreviewScriptureView.SetSlide(null);
             }
         }
 
@@ -229,14 +248,16 @@ namespace HandsLiftedApp.Core.Views.Designer
             // Avalonia 12's ToggleButton only exposes IsCheckedChanged, which fires twice per
             // group toggle: once when the clicked radio button becomes checked (while the
             // sibling is still stale-checked), and again when the group manager unchecks the
-            // sibling. The handler body below is a pure function of both toggles' current
-            // IsChecked state, so it's safe - and necessary - to let it run on both
-            // transitions: the first pass may briefly show both panels, but the second pass
-            // (after the sibling settles) recomputes from the final state and corrects it.
-            // Guarding to only the first transition (as the old WPF-style Checked-only
-            // semantics would) would leave the transient "both visible" result uncorrected.
+            // sibling. The handler body below is a pure function of all three toggles' current
+            // IsChecked state, so it's safe - and necessary - to let it run on every
+            // transition: an intermediate pass may briefly show more than one panel, but the
+            // final pass (after the siblings settle) recomputes from the final state and
+            // corrects it. Guarding to only the first transition (as the old WPF-style
+            // Checked-only semantics would) would leave a transient "multiple visible" result
+            // uncorrected.
             themePreviewSlideView.IsVisible = previewLyricToggle.IsChecked == true;
             themePreviewTitleSlideView.IsVisible = previewTitleToggle.IsChecked == true;
+            themePreviewScriptureView.IsVisible = previewScriptureToggle.IsChecked == true;
         }
 
         private void SetDefaultSongTheme_OnClick(object? sender, RoutedEventArgs e)
