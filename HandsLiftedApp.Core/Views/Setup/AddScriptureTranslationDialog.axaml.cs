@@ -16,6 +16,7 @@ namespace HandsLiftedApp.Core.Views.Setup
 
         private ScriptureTranslationCatalog.Translation[] _translations = Array.Empty<ScriptureTranslationCatalog.Translation>();
         private bool _directoryManuallyEdited;
+        private bool _settingDirectoryProgrammatically;
 
         public AddScriptureTranslationDialog()
         {
@@ -54,19 +55,32 @@ namespace HandsLiftedApp.Core.Views.Setup
             if (TranslationComboBox.SelectedIndex < 0) return;
 
             var selected = _translations[TranslationComboBox.SelectedIndex];
-            DirectoryTextBox.Text = Path.Combine(Constants.APP_DATA_DIR, "ScriptureData", selected.Abbrev);
+
+            // Setting Text below synchronously fires OnDirectoryTextChanged. That handler must be
+            // able to tell this programmatic assignment apart from a genuine user edit - without
+            // the flag, it has no way to distinguish the two, and would latch _directoryManuallyEdited
+            // permanently true on this very first (self-inflicted) write, before the user ever gets
+            // a chance to pick anything. That would silently break auto-fill for every subsequent
+            // translation pick, even though the user never touched the folder box.
+            _settingDirectoryProgrammatically = true;
+            try
+            {
+                DirectoryTextBox.Text = Path.Combine(Constants.APP_DATA_DIR, "ScriptureData", selected.Abbrev);
+            }
+            finally
+            {
+                _settingDirectoryProgrammatically = false;
+            }
         }
 
         private void OnDirectoryTextChanged(object? sender, TextChangedEventArgs e)
         {
-            // Any programmatic set below is followed immediately by this handler firing too -
-            // there's no way to distinguish "user typed" from "we just set it" via this event
-            // alone, so OnTranslationSelectionChanged only auto-fills when nothing has been typed
-            // since the dialog opened, and this flag latches true on the very first change,
-            // whichever caused it. That means picking a different translation immediately after
-            // opening the dialog (before touching the folder box) still auto-fills correctly -
-            // the first TextChanged is this class's own initial assignment - but AFTER the user's
-            // very first manual edit, subsequent translation picks stop overwriting their choice.
+            // Only a genuine user edit should stop future auto-fill. Text changes made by
+            // OnTranslationSelectionChanged itself are marked via _settingDirectoryProgrammatically
+            // and must not count - otherwise the dialog's own bootstrap write (from the initial
+            // SelectedIndex = 0 in LoadTranslationsAsync, or any later programmatic re-fill) would
+            // permanently disable auto-fill before the user ever typed a character.
+            if (_settingDirectoryProgrammatically) return;
             _directoryManuallyEdited = true;
         }
 
