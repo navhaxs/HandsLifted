@@ -59,9 +59,15 @@ namespace HandsLiftedApp.Core.ViewModels
                 get
                 {
                     if (LastOpenedDate is null) return string.Empty;
+                    var elapsed = DateTime.Now - LastOpenedDate.Value;
                     var days = (DateTime.Now.Date - LastOpenedDate.Value.Date).TotalDays;
-                    if (days <= 0) return "today";
-                    if (days < 2) return "yesterday";
+                    if (days <= 0)
+                    {
+                        if (elapsed.TotalMinutes < 1) return "Just now";
+                        if (elapsed.TotalMinutes < 60) return $"{(int)elapsed.TotalMinutes} minute{((int)elapsed.TotalMinutes > 1 ? "s" : "")} ago";
+                        return $"{(int)elapsed.TotalHours} hour{((int)elapsed.TotalHours > 1 ? "s" : "")} ago";
+                    }
+                    if (days < 2) return "Yesterday";
                     if (days < 7) return $"{(int)days} days ago";
                     if (days < 14) return "1 week ago";
                     if (days < 30) return $"{(int)(days / 7)} weeks ago";
