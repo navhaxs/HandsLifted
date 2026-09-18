@@ -135,7 +135,7 @@ namespace HandsLiftedApp.Core.Models.Library
         public LibraryItem()
         {
             _title = this.WhenAnyValue(x => x.FullFilePath)
-                .Select(a => Path.GetFileName(a))
+                .Select(a => Path.GetFileNameWithoutExtension(a))
                 .ToProperty(this, x => x.Title, out _title);
         }
 
