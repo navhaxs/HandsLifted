@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json;
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
@@ -58,6 +59,7 @@ CCLI License #317371";
         public event EventHandler<string>? TextSelected;
 
         private WindowsHwndSource windowClipboardManager;
+        private DispatcherTimer? _urlPollTimer;
 
         public BrowserWindow()
         {
@@ -99,15 +101,53 @@ CCLI License #317371";
                 PART_WebView.Source = new Uri("https://songselect.com");
             });
 
-            Closing += ((sender, args) => { });
-            // PART_WebView.BeforeNavigate += (request) =>
-            // {
-            //     Dispatcher.UIThread.InvokeAsync(() => PART_ProgressBar.IsVisible = true);
-            // };
-            //
-            // PART_WebView.Navigated += (url, frameName) => {
-            //     Dispatcher.UIThread.InvokeAsync(() => PART_ProgressBar.IsVisible = false);
-            // };
+            Closing += ((sender, args) => { _urlPollTimer?.Stop(); });
+
+            // Source only updates on full page loads, so poll to catch SPA/pushState navigation too.
+            _urlPollTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+
+            // Reroutes any site copy button's clipboard write here (see ClipboardInterceptScript);
+            // reinjected per navigation since a fresh document resets the JS context.
+            PART_WebView.WebMessageReceived += (sender, args) =>
+            {
+                if (!string.IsNullOrEmpty(args.Body) && DataContext is BrowserWindowViewModel vm)
+                {
+                    vm.SelectedClipboardData = args.Body;
+                }
+            };
+
+            PART_WebView.NavigationCompleted += (sender, args) =>
+            {
+                UpdateCurrentUrl(args.Request);
+                _urlPollTimer.Start();
+                _ = PART_WebView.InvokeScript(ClipboardInterceptScript);
+            };
+
+            _urlPollTimer.Tick += async (sender, args) =>
+            {
+                try
+                {
+                    // InvokeScript returns results JSON-encoded, so decode rather than use the raw string.
+                    var raw = await PART_WebView.InvokeScript("location.href");
+                    var href = raw != null ? JsonSerializer.Deserialize<string>(raw) : null;
+                    if (Uri.TryCreate(href, UriKind.Absolute, out var uri))
+                    {
+                        UpdateCurrentUrl(uri);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // Racing a fresh Navigate() call that hasn't loaded a page yet - next tick retries.
+                }
+            };
+        }
+
+        private void UpdateCurrentUrl(Uri? url)
+        {
+            if (url != null && DataContext is BrowserWindowViewModel vm)
+            {
+                vm.CurrentUrl = url.ToString();
+            }
         }
 
         protected virtual void OnTextSelected(string selectedText)
@@ -122,7 +162,6 @@ CCLI License #317371";
                 .ContinueWith(t =>
                 {
                     string result = t.Result;
-
 
                     string TEST_DATA = @"Before The Throne Of God
 
@@ -163,6 +202,29 @@ Who ever lives and pleads for me";
         private void ReloadButton_OnClick(object? sender, RoutedEventArgs e)
         {
             PART_WebView.Refresh();
+        }
+
+        private const string ClipboardInterceptScript = @"
+            (function(){
+                if (!navigator.clipboard || !window.chrome || !window.chrome.webview) return;
+                navigator.clipboard.writeText = function(text) {
+                    window.chrome.webview.postMessage(text);
+                    return Promise.resolve();
+                };
+            })()";
+
+        private const string TriggerCopyLyricsScript = @"
+            (function(){
+                var wrapper = document.querySelector('[data-user-activity=""Copied Lyrics""]');
+                var btn = wrapper ? wrapper.querySelector('button') : null;
+                if (btn) { btn.click(); return true; }
+                return false;
+            })()";
+
+        private async void CopyLyricsButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            // Triggers the site's own copy button via its data-user-activity hook, not an id/class.
+            await PART_WebView.InvokeScript(TriggerCopyLyricsScript);
         }
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)
