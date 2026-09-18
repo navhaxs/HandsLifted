@@ -41,6 +41,7 @@ public sealed class ScriptureTranslationCatalog
         var result = new List<Translation>();
         foreach (var (code, entry) in manifest.Bibles)
         {
+            if (entry is null) continue;
             if (!code.StartsWith("eng_", StringComparison.Ordinal)) continue;
             if (entry.Name?.English is not { Length: > 0 } name) continue;
             if (!IsPublicDomain(entry.Copyright?.Licenses)) continue;

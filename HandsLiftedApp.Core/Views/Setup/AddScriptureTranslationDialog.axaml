@@ -3,8 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Width="420"
-        Height="280"
+        Width="520"
+        Height="300"
         WindowStartupLocation="CenterOwner"
         ExtendClientAreaToDecorationsHint="True"
         Background="Transparent"
@@ -22,6 +22,7 @@
         <DockPanel Margin="15">
             <StackPanel Margin="0 10 0 0" DockPanel.Dock="Bottom"
                         Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+                <Button Content="Add Without Downloading" x:Name="AddWithoutDownloadingButton" Click="OnAddWithoutDownloadingClick" />
                 <Button Content="Download" x:Name="DownloadButton" IsDefault="True" Click="OnDownloadClick" />
                 <Button Content="Cancel" x:Name="CancelButton" IsCancel="True" Click="OnCancelClick" />
             </StackPanel>
@@ -32,7 +33,11 @@
                 <TextBlock Text="Translation" />
                 <ComboBox x:Name="TranslationComboBox" HorizontalAlignment="Stretch"
                           SelectionChanged="OnTranslationSelectionChanged" />
-                <TextBlock x:Name="LoadingText" Text="Loading translations…" FontSize="11" />
+                <DockPanel>
+                    <Button x:Name="RetryButton" Content="Retry" DockPanel.Dock="Right" Margin="8 0 0 0"
+                            IsVisible="False" Click="OnRetryTranslationsClick" />
+                    <TextBlock x:Name="LoadingText" Text="Loading translations…" FontSize="11" />
+                </DockPanel>
 
                 <TextBlock Text="Folder" Margin="0 8 0 0" />
                 <DockPanel>

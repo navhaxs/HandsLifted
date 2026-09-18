@@ -19,7 +19,6 @@ using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
-using HandsLiftedApp.Importer.Scripture;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Setup

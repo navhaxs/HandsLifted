@@ -307,7 +307,7 @@ namespace HandsLiftedApp.Core.Views
                 catch (Exception)
                 {
                     if (token.IsCancellationRequested) return;
-                    SetInvalid($"Couldn't load {parsed.BookName} — check scripture data path.");
+                    SetInvalid($"Couldn't load {parsed.BookName} — check Setup > Library > Scripture Libraries.");
                     return;
                 }
 
