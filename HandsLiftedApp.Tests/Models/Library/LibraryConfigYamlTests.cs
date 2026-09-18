@@ -36,4 +36,22 @@ public class LibraryConfigYamlTests
         Assert.AreEqual("Media", roundTripped.LibraryItems[1].Label);
         Assert.AreEqual(LibraryType.Media, roundTripped.LibraryItems[1].Type);
     }
+
+    [TestMethod]
+    public void RoundTrips_TranslationCode_OnScriptureEntries()
+    {
+        var config = new LibraryConfig();
+        config.LibraryItems.Add(new LibraryConfig.LibraryDefinition
+        {
+            Label = "KJV", Directory = @"C:\Scripture\KJV", Type = LibraryType.Scripture, TranslationCode = "eng_kjv"
+        });
+
+        var serializer = new SerializerBuilder().Build();
+        var yaml = serializer.Serialize(config);
+
+        var deserializer = new DeserializerBuilder().Build();
+        var roundTripped = deserializer.Deserialize<LibraryConfig>(new StringReader(yaml));
+
+        Assert.AreEqual("eng_kjv", roundTripped.LibraryItems[0].TranslationCode);
+    }
 }
