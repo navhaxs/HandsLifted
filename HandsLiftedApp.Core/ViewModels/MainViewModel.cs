@@ -857,6 +857,11 @@ public class MainViewModel : ViewModelBase
         MessageBus.Current.SendMessage(new FocusSelectedItem());
     }
 
+    public void OnResetSlideTransitionDurationMsCommand()
+    {
+        Playlist.SlideTransitionDurationMs = 200;
+    }
+
     private bool _IsDisplayDebugInfo = false;
 
     public bool IsDisplayDebugInfo

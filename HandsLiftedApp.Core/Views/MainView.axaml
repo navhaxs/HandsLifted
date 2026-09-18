@@ -444,6 +444,12 @@
                 Padding="8,6"
                 Width="220">
                 <DockPanel>
+                    <Button
+                        Command="{Binding OnResetSlideTransitionDurationMsCommand}"
+                        DockPanel.Dock="Right"
+                        ToolTip.Tip="Reset fade duration to default">
+                        <material:MaterialIcon Kind="Restart" />
+                    </Button>
                     <TextBlock
                         DockPanel.Dock="Right"
                         FontSize="13"
