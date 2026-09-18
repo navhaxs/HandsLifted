@@ -102,7 +102,8 @@ namespace HandsLiftedApp.Core.Assets
                             ScriptureStartChapter = result.StartChapter,
                             ScriptureStartVerse = result.StartVerse,
                             ScriptureEndChapter = result.EndChapter,
-                            ScriptureEndVerse = result.EndVerse
+                            ScriptureEndVerse = result.EndVerse,
+                            ScriptureTranslation = result.Translation
                         });
 
                         return;
