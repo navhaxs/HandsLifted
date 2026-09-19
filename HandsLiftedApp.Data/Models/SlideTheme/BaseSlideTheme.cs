@@ -122,6 +122,15 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _name, value);
         }
 
+        private SlideThemeType _type = SlideThemeType.General;
+
+        [DataMember]
+        public SlideThemeType Type
+        {
+            get => _type;
+            set => this.RaiseAndSetIfChanged(ref _type, value);
+        }
+
         // Slide Design Properties
         private XmlFontFamily _fontFamily = new();
 

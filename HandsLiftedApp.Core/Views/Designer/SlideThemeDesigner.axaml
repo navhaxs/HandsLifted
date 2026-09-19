@@ -25,7 +25,99 @@
         <converters2:IsDefaultSongThemeConverter x:Key="IsDefaultSongThemeConverter" />
         <converters2:IsDefaultSongMotionThemeConverter x:Key="IsDefaultSongMotionThemeConverter" />
         <converters2:IsDefaultScriptureThemeConverter x:Key="IsDefaultScriptureThemeConverter" />
+        <converters2:IsGeneralThemeTypeConverter x:Key="IsGeneralThemeTypeConverter" />
+        <converters2:IsSongThemeTypeConverter x:Key="IsSongThemeTypeConverter" />
+        <converters2:IsScriptureThemeTypeConverter x:Key="IsScriptureThemeTypeConverter" />
+
+        <ContextMenu x:Key="DesignListItemContextMenu">
+            <MenuItem Header="Export" Click="ExportItem_OnClick">
+                <MenuItem.Icon>
+                    <avalonia:MaterialIcon Foreground="#888888" Kind="ContentSave" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick">
+                <MenuItem.Icon>
+                    <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Remove" Click="RemoveItem_OnClick">
+                <MenuItem.Icon>
+                    <avalonia:MaterialIcon Foreground="#888888" Kind="Times" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Set as default for Songs" Click="SetDefaultSongTheme_OnClick">
+                <MenuItem.Icon>
+                    <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Set as default for Songs (motion bg)" Click="SetDefaultSongMotionTheme_OnClick">
+                <MenuItem.Icon>
+                    <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Set as default for Scripture" Click="SetDefaultScriptureTheme_OnClick">
+                <MenuItem.Icon>
+                    <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+        <DataTemplate x:Key="DesignListItemTemplate">
+            <DockPanel>
+                <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" HorizontalAlignment="Center"
+                           Margin="0 6 0 0" />
+                <TextBlock Text="default"
+                           DockPanel.Dock="Bottom"
+                           HorizontalAlignment="Center"
+                           FontSize="10"
+                           Foreground="#888888"
+                           IsVisible="{Binding ., Converter={StaticResource IsDefaultThemeConverter}}" />
+                <TextBlock Text="default (songs)"
+                           DockPanel.Dock="Bottom"
+                           HorizontalAlignment="Center"
+                           FontSize="10"
+                           Foreground="#888888">
+                    <TextBlock.IsVisible>
+                        <MultiBinding Converter="{StaticResource IsDefaultSongThemeConverter}">
+                            <Binding Path="." />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongThemeId" />
+                        </MultiBinding>
+                    </TextBlock.IsVisible>
+                </TextBlock>
+                <TextBlock Text="default (songs, motion)"
+                           DockPanel.Dock="Bottom"
+                           HorizontalAlignment="Center"
+                           FontSize="10"
+                           Foreground="#888888">
+                    <TextBlock.IsVisible>
+                        <MultiBinding Converter="{StaticResource IsDefaultSongMotionThemeConverter}">
+                            <Binding Path="." />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongMotionThemeId" />
+                        </MultiBinding>
+                    </TextBlock.IsVisible>
+                </TextBlock>
+                <TextBlock Text="default (scripture)"
+                           DockPanel.Dock="Bottom"
+                           HorizontalAlignment="Center"
+                           FontSize="10"
+                           Foreground="#888888">
+                    <TextBlock.IsVisible>
+                        <MultiBinding Converter="{StaticResource IsDefaultScriptureThemeConverter}">
+                            <Binding Path="." />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultScriptureThemeId" />
+                        </MultiBinding>
+                    </TextBlock.IsVisible>
+                </TextBlock>
+            </DockPanel>
+        </DataTemplate>
     </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.SectionHeader">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="0 0 0 6" />
+        </Style>
+    </UserControl.Styles>
 
     <Design.DataContext>
         <viewModels:MainViewModel />
@@ -34,122 +126,80 @@
     <DockPanel>
         <!-- List -->
         <DockPanel DockPanel.Dock="Left">
-            <Button DockPanel.Dock="Bottom" Click="AddItem_OnClick">Add new theme</Button>
-            <ListBox
-                SelectedIndex="0"
-                MinWidth="80"
-                Name="designsListBox"
-                ItemsSource="{Binding Playlist.Designs}">
-                <ListBox.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Import" Click="ImportItem_OnClick">
-                            <MenuItem.Icon>
-                                <avalonia:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                    </ContextMenu>
-                </ListBox.ContextMenu>
-                <ListBox.Styles>
-                    <Style Selector="ListBoxItem">
-                        <Setter Property="ContextMenu">
+            <UniformGrid DockPanel.Dock="Bottom" Columns="3" Rows="1">
+                <Button Tag="General" Click="AddItem_OnClick">+ General</Button>
+                <Button Tag="SongTheme" Click="AddItem_OnClick">+ Song</Button>
+                <Button Tag="ScriptureTheme" Click="AddItem_OnClick">+ Scripture</Button>
+            </UniformGrid>
+            <ScrollViewer>
+                <StackPanel MinWidth="80">
+                    <TextBlock Text="General" Classes="SectionHeader" Margin="4 4 4 0" />
+                    <ListBox Name="generalDesignsListBox"
+                             ItemsSource="{Binding Playlist.Designs}"
+                             ItemTemplate="{StaticResource DesignListItemTemplate}"
+                             SelectionChanged="DesignsListBox_OnSelectionChanged">
+                        <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Export" Click="ExportItem_OnClick">
+                                <MenuItem Header="Import" Click="ImportItem_OnClick">
                                     <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Foreground="#888888" Kind="ContentSave" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick">
-                                    <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Remove" Click="RemoveItem_OnClick">
-                                    <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Times" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Set as default for Songs" Click="SetDefaultSongTheme_OnClick">
-                                    <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Set as default for Songs (motion bg)" Click="SetDefaultSongMotionTheme_OnClick">
-                                    <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="Set as default for Scripture" Click="SetDefaultScriptureTheme_OnClick">
-                                    <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
+                                        <avalonia:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>
-                        </Setter>
-                    </Style>
-                </ListBox.Styles>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel>
-                            <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" HorizontalAlignment="Center"
-                                       Margin="0 6 0 0" />
-                            <TextBlock Text="default"
-                                       DockPanel.Dock="Bottom"
-                                       HorizontalAlignment="Center"
-                                       FontSize="10"
-                                       Foreground="#888888"
-                                       IsVisible="{Binding ., Converter={StaticResource IsDefaultThemeConverter}}" />
-                            <TextBlock Text="default (songs)"
-                                       DockPanel.Dock="Bottom"
-                                       HorizontalAlignment="Center"
-                                       FontSize="10"
-                                       Foreground="#888888">
-                                <TextBlock.IsVisible>
-                                    <MultiBinding Converter="{StaticResource IsDefaultSongThemeConverter}">
-                                        <Binding Path="." />
-                                        <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongThemeId" />
-                                    </MultiBinding>
-                                </TextBlock.IsVisible>
-                            </TextBlock>
-                            <TextBlock Text="default (songs, motion)"
-                                       DockPanel.Dock="Bottom"
-                                       HorizontalAlignment="Center"
-                                       FontSize="10"
-                                       Foreground="#888888">
-                                <TextBlock.IsVisible>
-                                    <MultiBinding Converter="{StaticResource IsDefaultSongMotionThemeConverter}">
-                                        <Binding Path="." />
-                                        <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongMotionThemeId" />
-                                    </MultiBinding>
-                                </TextBlock.IsVisible>
-                            </TextBlock>
-                            <TextBlock Text="default (scripture)"
-                                       DockPanel.Dock="Bottom"
-                                       HorizontalAlignment="Center"
-                                       FontSize="10"
-                                       Foreground="#888888">
-                                <TextBlock.IsVisible>
-                                    <MultiBinding Converter="{StaticResource IsDefaultScriptureThemeConverter}">
-                                        <Binding Path="." />
-                                        <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultScriptureThemeId" />
-                                    </MultiBinding>
-                                </TextBlock.IsVisible>
-                            </TextBlock>
-                            <!-- <Viewbox Height="60"> -->
-                            <!--     <Grid -->
-                            <!--         Height="130" -->
-                            <!--         Width="130" -->
-                            <!--         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource XmlColorToBrush}}"> -->
-                            <!--         <TextBlock Text="A" -->
-                            <!--                    FontSize="80" -->
-                            <!--                    Margin="20" -->
-                            <!--                    FontFamily="{Binding FontFamilyAsAvalonia, FallbackValue='Arial'}" -->
-                            <!--                    FontWeight="{Binding FontWeight, FallbackValue='SemiBold'}" /> -->
-                            <!--     </Grid> -->
-                            <!-- </Viewbox> -->
-                        </DockPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                        </ListBox.ContextMenu>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="IsVisible" Value="{Binding Type, Converter={StaticResource IsGeneralThemeTypeConverter}}" />
+                                <Setter Property="ContextMenu" Value="{StaticResource DesignListItemContextMenu}" />
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+
+                    <TextBlock Text="Song Themes" Classes="SectionHeader" Margin="4 10 4 0" />
+                    <ListBox Name="songDesignsListBox"
+                             ItemsSource="{Binding Playlist.Designs}"
+                             ItemTemplate="{StaticResource DesignListItemTemplate}"
+                             SelectionChanged="DesignsListBox_OnSelectionChanged">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Import" Click="ImportItem_OnClick">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="IsVisible" Value="{Binding Type, Converter={StaticResource IsSongThemeTypeConverter}}" />
+                                <Setter Property="ContextMenu" Value="{StaticResource DesignListItemContextMenu}" />
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+
+                    <TextBlock Text="Scripture Themes" Classes="SectionHeader" Margin="4 10 4 0" />
+                    <ListBox Name="scriptureDesignsListBox"
+                             ItemsSource="{Binding Playlist.Designs}"
+                             ItemTemplate="{StaticResource DesignListItemTemplate}"
+                             SelectionChanged="DesignsListBox_OnSelectionChanged">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Import" Click="ImportItem_OnClick">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="IsVisible" Value="{Binding Type, Converter={StaticResource IsScriptureThemeTypeConverter}}" />
+                                <Setter Property="ContextMenu" Value="{StaticResource DesignListItemContextMenu}" />
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
         </DockPanel>
         <!-- Preview -->
         <Grid ColumnDefinitions="3*, *">
@@ -161,6 +211,9 @@
                     <RadioButton x:Name="previewTitleToggle" Content="Song Title"
                                  GroupName="ThemePreviewMode"
                                  IsCheckedChanged="PreviewModeToggle_OnChecked" />
+                    <RadioButton x:Name="previewScriptureToggle" Content="Scripture"
+                                 GroupName="ThemePreviewMode"
+                                 IsCheckedChanged="PreviewModeToggle_OnChecked" />
                 </StackPanel>
                 <Viewbox StretchDirection="DownOnly"
                          VerticalAlignment="Stretch"
@@ -168,6 +221,8 @@
                     <Grid Width="1920" Height="1080">
                         <designer:SongSlideView x:Name="themePreviewSlideView" Height="1080" Width="1920" />
                         <designer:SongTitleSlideView x:Name="themePreviewTitleSlideView" Height="1080" Width="1920"
+                                                      IsVisible="False" />
+                        <designer:ScriptureSlideView x:Name="themePreviewScriptureView" Height="1080" Width="1920"
                                                       IsVisible="False" />
                     </Grid>
                 </Viewbox>
@@ -198,6 +253,11 @@
 
                     <TextBlock Text="Name" />
                     <TextBox Watermark="" Text="{Binding Name}" />
+
+                    <TextBlock Text="Applies To" Margin="0 6 0 0" />
+                    <controls:ComboBoxWithoutWheelScroll x:Name="themeTypeComboBox"
+                                                         HorizontalAlignment="Stretch"
+                                                         SelectedItem="{Binding Type}" />
 
                     <Grid ColumnDefinitions="2*, *" Margin="0 6 0 0">
                         <StackPanel Grid.Column="0">

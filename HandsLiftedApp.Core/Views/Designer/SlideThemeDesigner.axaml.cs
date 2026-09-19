@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels;
@@ -34,6 +35,57 @@ namespace HandsLiftedApp.Core.Views.Designer
 
         private readonly Dictionary<string, HashSet<int>> _fontWeightCache = new();
 
+        private bool _suppressSelectionSync;
+
+        private BaseSlideTheme? SelectedDesign =>
+            generalDesignsListBox.SelectedItem as BaseSlideTheme
+            ?? songDesignsListBox.SelectedItem as BaseSlideTheme
+            ?? scriptureDesignsListBox.SelectedItem as BaseSlideTheme;
+
+        private ListBox ListBoxFor(SlideThemeType type) => type switch
+        {
+            SlideThemeType.SongTheme => songDesignsListBox,
+            SlideThemeType.ScriptureTheme => scriptureDesignsListBox,
+            _ => generalDesignsListBox,
+        };
+
+        private void SelectDesign(BaseSlideTheme design)
+        {
+            _suppressSelectionSync = true;
+            try
+            {
+                generalDesignsListBox.SelectedItem = null;
+                songDesignsListBox.SelectedItem = null;
+                scriptureDesignsListBox.SelectedItem = null;
+                ListBoxFor(design.Type).SelectedItem = design;
+            }
+            finally
+            {
+                _suppressSelectionSync = false;
+            }
+            SyncEditorToSelection();
+        }
+
+        private void DesignsListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (_suppressSelectionSync) return;
+            if (sender is not ListBox changedListBox || changedListBox.SelectedItem is not BaseSlideTheme)
+                return;
+
+            _suppressSelectionSync = true;
+            try
+            {
+                if (changedListBox != generalDesignsListBox) generalDesignsListBox.SelectedItem = null;
+                if (changedListBox != songDesignsListBox) songDesignsListBox.SelectedItem = null;
+                if (changedListBox != scriptureDesignsListBox) scriptureDesignsListBox.SelectedItem = null;
+            }
+            finally
+            {
+                _suppressSelectionSync = false;
+            }
+            SyncEditorToSelection();
+        }
+
         public List<XmlFontWeight> FontWeightOptions = new()
         {
             (XmlFontWeight)FontWeight.Thin,
@@ -62,17 +114,22 @@ namespace HandsLiftedApp.Core.Views.Designer
 
             // TextAlignmentComboBox.ItemsSource = Enum.GetValues(typeof(TextAlignment)).Cast<TextAlignment>();
 
-            this.WhenAnyValue(v => v.designsListBox.ItemsSource)
+            themeTypeComboBox.ItemsSource = Enum.GetValues<SlideThemeType>();
+
+            this.WhenAnyValue(v => v.generalDesignsListBox.ItemsSource)
                 .Subscribe((x) =>
                 {
-                    if (designsListBox.SelectedIndex == -1)
-                        designsListBox.SelectedIndex = 0;
+                    if (SelectedDesign == null)
+                    {
+                        var first = (generalDesignsListBox.ItemsSource as System.Collections.IEnumerable)?
+                            .Cast<BaseSlideTheme>().FirstOrDefault();
+                        if (first != null)
+                            SelectDesign(first);
+                    }
                     SyncEditorToSelection();
                 });
 
-            designsListBox.SelectionChanged += (sender, args) => SyncEditorToSelection();
-
-            designsListBox.DataContextChanged += (sender, args) => SyncEditorToSelection();
+            generalDesignsListBox.DataContextChanged += (sender, args) => SyncEditorToSelection();
         }
 
         private const string PreviewText =
@@ -82,9 +139,17 @@ namespace HandsLiftedApp.Core.Views.Designer
         private const string PreviewCopyrightText =
             "John Newton\nCCLI Song #22025\nPublic Domain\nCCLI License #317371";
 
+        private static readonly IReadOnlyList<ScriptureVerseRef> PreviewScriptureVerses = new List<ScriptureVerseRef>
+        {
+            new(3, 16, "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."),
+            new(3, 17, "For God sent not his Son into the world to condemn the world, but that the world through him might be saved."),
+        };
+
+        private const string PreviewScriptureHeader = "John 3:16-17";
+
         private void SyncEditorToSelection()
         {
-            var item = designsListBox.SelectedItem as BaseSlideTheme;
+            var item = SelectedDesign;
             themeEditorPanel.DataContext = item;
             if (item != null)
             {
@@ -102,11 +167,15 @@ namespace HandsLiftedApp.Core.Views.Designer
                     Copyright = PreviewCopyrightText,
                     Theme = item,
                 });
+
+                var scriptureSlide = new ScriptureSlideInstance(null, "theme-preview") { Theme = item };
+                themePreviewScriptureView.SetSlide(scriptureSlide, PreviewScriptureVerses, PreviewScriptureHeader);
             }
             else
             {
                 themePreviewSlideView.SetSlide(null);
                 themePreviewTitleSlideView.SetSlide(null);
+                themePreviewScriptureView.SetSlide(null);
             }
         }
 
@@ -173,14 +242,16 @@ namespace HandsLiftedApp.Core.Views.Designer
             // Avalonia 12's ToggleButton only exposes IsCheckedChanged, which fires twice per
             // group toggle: once when the clicked radio button becomes checked (while the
             // sibling is still stale-checked), and again when the group manager unchecks the
-            // sibling. The handler body below is a pure function of both toggles' current
-            // IsChecked state, so it's safe - and necessary - to let it run on both
-            // transitions: the first pass may briefly show both panels, but the second pass
-            // (after the sibling settles) recomputes from the final state and corrects it.
-            // Guarding to only the first transition (as the old WPF-style Checked-only
-            // semantics would) would leave the transient "both visible" result uncorrected.
+            // sibling. The handler body below is a pure function of all three toggles' current
+            // IsChecked state, so it's safe - and necessary - to let it run on every
+            // transition: an intermediate pass may briefly show more than one panel, but the
+            // final pass (after the siblings settle) recomputes from the final state and
+            // corrects it. Guarding to only the first transition (as the old WPF-style
+            // Checked-only semantics would) would leave a transient "multiple visible" result
+            // uncorrected.
             themePreviewSlideView.IsVisible = previewLyricToggle.IsChecked == true;
             themePreviewTitleSlideView.IsVisible = previewTitleToggle.IsChecked == true;
+            themePreviewScriptureView.IsVisible = previewScriptureToggle.IsChecked == true;
         }
 
         private void SetDefaultSongTheme_OnClick(object? sender, RoutedEventArgs e)
@@ -228,8 +299,10 @@ namespace HandsLiftedApp.Core.Views.Designer
                         }
                         else if (mainViewModel.Playlist.Designs.Count > 1)
                         {
-                            designsListBox.SelectedIndex = 0;
+                            var remainingDesigns = mainViewModel.Playlist.Designs.Where(d => d.Id != item.Id).ToList();
                             mainViewModel.Playlist.Designs.Remove(item);
+                            if (remainingDesigns.Count > 0)
+                                SelectDesign(remainingDesigns[0]);
                         }
                         else
                         {
@@ -243,11 +316,12 @@ namespace HandsLiftedApp.Core.Views.Designer
 
         private void AddItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is MainViewModel mainViewModel)
+            if (this.DataContext is MainViewModel mainViewModel && sender is Button { Tag: string tagText } &&
+                Enum.TryParse<SlideThemeType>(tagText, out var type))
             {
-                var newTheme = new BaseSlideTheme();
+                var newTheme = new BaseSlideTheme { Type = type };
                 mainViewModel.Playlist.Designs.Add(newTheme);
-                designsListBox.SelectedIndex = mainViewModel.Playlist.Designs.Count - 1;
+                SelectDesign(newTheme);
             }
         }
 
@@ -264,7 +338,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                         copy.Id = Guid.NewGuid();
                         copy.Name = $"{item.Name} (Copy)";
                         mainViewModel.Playlist.Designs.Add(copy);
-                        designsListBox.SelectedIndex = mainViewModel.Playlist.Designs.Count - 1;
+                        SelectDesign(copy);
                     }
                 }
             }
@@ -339,7 +413,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                             theme.Id = Guid.NewGuid();
 
                         mainViewModel.Playlist.Designs.Add(theme);
-                        designsListBox.SelectedIndex = mainViewModel.Playlist.Designs.Count - 1;
+                        SelectDesign(theme);
                     }
                     else
                     {
@@ -390,7 +464,7 @@ namespace HandsLiftedApp.Core.Views.Designer
                 {
                     if (localPath != null && File.Exists(localPath))
                     {
-                        var selectedTheme = designsListBox.SelectedItem as BaseSlideTheme;
+                        var selectedTheme = SelectedDesign;
                         var isSharedDefaultTheme = selectedTheme != null
                             && selectedTheme.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id;
 
