@@ -28,7 +28,7 @@ public unsafe class MpvSimpleEventLoop : IEventLoop, IDisposable
     public void Start()
     {
         evenLoopTask?.Dispose();
-        evenLoopTask = new Task(ProcessEvents);
+        evenLoopTask = new Task(ProcessEvents, TaskCreationOptions.LongRunning);
         isEventLoopRunning = true;
         evenLoopTask.Start();
     }
