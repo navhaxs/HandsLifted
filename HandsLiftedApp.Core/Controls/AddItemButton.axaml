@@ -1,116 +1,121 @@
 <UserControl
+    Background="Transparent"
+    DragDrop.AllowDrop="True"
+    d:DesignHeight="50"
+    d:DesignWidth="400"
+    mc:Ignorable="d"
     x:Class="HandsLiftedApp.Core.Controls.AddItemButton"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:app="clr-namespace:HandsLiftedApp.Core"
-    d:DesignHeight="50"
-    d:DesignWidth="400"
-    Background="Transparent"
-    DragDrop.AllowDrop="True"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-	<UserControl.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="avares://HandsLiftedApp.Core/Assets/AddItemFlyoutResourceDictionary.axaml"/>
-			</ResourceDictionary.MergedDictionaries>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://HandsLiftedApp.Core/Assets/AddItemFlyoutResourceDictionary.axaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-			<ResourceDictionary.ThemeDictionaries>
-				<ResourceDictionary x:Key="Light">
-					<SolidColorBrush x:Key="ForegroundBrush">#9a93cd</SolidColorBrush>
-					<SolidColorBrush x:Key="ActiveForegroundBrush">#9a93cd</SolidColorBrush>
-					<SolidColorBrush x:Key="BackgroundBrush">#5AE5E2F1</SolidColorBrush>
-					<SolidColorBrush x:Key="PressedBackgroundBrush">#5c3ab6</SolidColorBrush>
-				</ResourceDictionary>
-				<ResourceDictionary x:Key="Dark">
-					<SolidColorBrush x:Key="ForegroundBrush">#958e99</SolidColorBrush>
-					<SolidColorBrush x:Key="BackgroundBrush">#2b2b2b</SolidColorBrush>
-					<SolidColorBrush x:Key="ActiveForegroundBrush">#9a93cd</SolidColorBrush>
-					<SolidColorBrush x:Key="PressedBackgroundBrush">#5c3ab6</SolidColorBrush>
-				</ResourceDictionary>
-			</ResourceDictionary.ThemeDictionaries>
-		</ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ForegroundBrush">#9a93cd</SolidColorBrush>
+                    <SolidColorBrush x:Key="ActiveForegroundBrush">#9a93cd</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#5AE5E2F1</SolidColorBrush>
+                    <SolidColorBrush x:Key="PressedBackgroundBrush">#5c3ab6</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="ForegroundBrush">#958e99</SolidColorBrush>
+                    <SolidColorBrush x:Key="BackgroundBrush">#2b2b2b</SolidColorBrush>
+                    <SolidColorBrush x:Key="ActiveForegroundBrush">#9a93cd</SolidColorBrush>
+                    <SolidColorBrush x:Key="PressedBackgroundBrush">#5c3ab6</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
 
-	</UserControl.Resources>
-	
+    </UserControl.Resources>
+
     <DockPanel>
-        <TextBlock Name="DropState" />
-		<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-			<Button
-				Name="AddButton"
-				Width="100"
-				Margin="0,0,18,0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
-				Flyout="{StaticResource addItemFlyout}"
-				DockPanel.Dock="Left">
-				<Button.Styles>
-					<Style Selector="Button">
-						<Setter Property="Padding" Value="12 8" />
-						<Setter Property="HorizontalAlignment" Value="Stretch" />
-						<Setter Property="BorderThickness" Value="0" />
-						<Setter Property="CornerRadius" Value="6" />
-						<Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
-						<Setter Property="BorderBrush" Value="#9a93cd" />
-					</Style>
-					<Style Selector="material|MaterialIcon">
-						<Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
-					</Style>
-					<Style Selector="Button:pointerover">
-						<Setter Property="Background" Value="#5c3ab6" />
-						<Setter Property="BorderBrush" Value="#f6f4ff" />
-					</Style>
-					<Style Selector="Button:pointerover material|MaterialIcon">
-						<Setter Property="Foreground" Value="{DynamicResource ActiveForegroundBrush}" />
-					</Style>
-					<Style Selector="Button:pressed /template/ ContentPresenter">
-						<Setter Property="Background" Value="{DynamicResource PressedBackgroundBrush}" />
-					</Style>
-					<Style Selector="Button:flyout-open /template/ ContentPresenter">
-						<Setter Property="Background" Value="{DynamicResource PressedBackgroundBrush}" />
-					</Style>
-					<Style Selector="MenuItem">
-						<Setter Property="Padding" Value="6 10" />
-						<Setter Property="FontSize" Value="14" />
-					</Style>
-					<Style Selector="Button.active">
-						<Setter Property="Background" Value="#5c3ab6" />
-					</Style>
-				</Button.Styles>
+        <TextBlock IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.EnableDebugStats}" Name="DropState" />
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+            <Button
+                DockPanel.Dock="Left"
+                Flyout="{StaticResource addItemFlyout}"
+                HorizontalAlignment="Left"
+                Margin="0,0,18,0"
+                Name="AddButton"
+                VerticalAlignment="Top"
+                Width="100">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Padding" Value="12 8" />
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="CornerRadius" Value="6" />
+                        <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+                        <Setter Property="BorderBrush" Value="#9a93cd" />
+                    </Style>
+                    <Style Selector="material|MaterialIcon">
+                        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                    </Style>
+                    <Style Selector="Button:pointerover">
+                        <Setter Property="Background" Value="#5c3ab6" />
+                        <Setter Property="BorderBrush" Value="#f6f4ff" />
+                    </Style>
+                    <Style Selector="Button:pointerover material|MaterialIcon">
+                        <Setter Property="Foreground" Value="{DynamicResource ActiveForegroundBrush}" />
+                    </Style>
+                    <Style Selector="Button:pressed /template/ ContentPresenter">
+                        <Setter Property="Background" Value="{DynamicResource PressedBackgroundBrush}" />
+                    </Style>
+                    <Style Selector="Button:flyout-open /template/ ContentPresenter">
+                        <Setter Property="Background" Value="{DynamicResource PressedBackgroundBrush}" />
+                    </Style>
+                    <Style Selector="MenuItem">
+                        <Setter Property="Padding" Value="6 10" />
+                        <Setter Property="FontSize" Value="14" />
+                    </Style>
+                    <Style Selector="Button.active">
+                        <Setter Property="Background" Value="#5c3ab6" />
+                    </Style>
+                </Button.Styles>
 
-				<!-- <Interaction.Behaviors> -->
-				<!-- 	<DataTriggerBehavior -->
-				<!-- 		Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}" -->
-				<!-- 		ComparisonCondition="Equal" -->
-				<!-- 		Value="True"> -->
-				<!-- 		<ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" /> -->
-				<!-- 		<ChangePropertyAction PropertyName="BorderThickness" Value="2" /> -->
-				<!-- 	</DataTriggerBehavior> -->
-				<!-- 	<DataTriggerBehavior -->
-				<!-- 		Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}" -->
-				<!-- 		ComparisonCondition="Equal" -->
-				<!-- 		Value="False"> -->
-				<!-- 		<ChangePropertyAction PropertyName="BorderBrush" Value="Transparent" /> -->
-				<!-- 		<ChangePropertyAction PropertyName="BorderThickness" Value="1" /> -->
-				<!-- 	</DataTriggerBehavior> -->
-				<!-- </Interaction.Behaviors> -->
-				
-				<material:MaterialIcon
-					Width="24"
-					Height="24"
-					Margin="-4"
-					VerticalAlignment="Center"
-					DockPanel.Dock="Top"
-					Kind="Plus" />
-			</Button>
-			
-			<TextBlock Name="AddButtonTooltip" Text="Add Item" VerticalAlignment="Center" HorizontalAlignment="Left" 
-					   FontSize="14" IsVisible="False"/>
-			<!--<TextBlock Text="{Binding State.ItemIndex}" VerticalAlignment="Center" HorizontalAlignment="Left" 
+                <!-- <Interaction.Behaviors> -->
+                <!--  <DataTriggerBehavior  -->
+                <!--  Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"  -->
+                <!--  ComparisonCondition="Equal"  -->
+                <!--  Value="True">  -->
+                <!-- 		<ChangePropertyAction PropertyName="BorderBrush" Value="#c43e1c" /> -->
+                <!-- 		<ChangePropertyAction PropertyName="BorderThickness" Value="2" /> -->
+                <!-- 	</DataTriggerBehavior> -->
+                <!--  <DataTriggerBehavior  -->
+                <!--  Binding="{Binding SelectedSlideIndex, FallbackValue=-1, Converter={StaticResource IsGreaterThanConverter}}"  -->
+                <!--  ComparisonCondition="Equal"  -->
+                <!--  Value="False">  -->
+                <!-- 		<ChangePropertyAction PropertyName="BorderBrush" Value="Transparent" /> -->
+                <!-- 		<ChangePropertyAction PropertyName="BorderThickness" Value="1" /> -->
+                <!-- 	</DataTriggerBehavior> -->
+                <!-- </Interaction.Behaviors> -->
+
+                <material:MaterialIcon
+                    DockPanel.Dock="Top"
+                    Height="24"
+                    Kind="Plus"
+                    Margin="-4"
+                    VerticalAlignment="Center"
+                    Width="24" />
+            </Button>
+
+            <TextBlock
+                FontSize="14"
+                HorizontalAlignment="Left"
+                IsVisible="False"
+                Name="AddButtonTooltip"
+                Text="Add Item"
+                VerticalAlignment="Center" />
+            <!--<TextBlock Text="{Binding State.ItemIndex}" VerticalAlignment="Center" HorizontalAlignment="Left"
 					   FontSize="14" />-->
-		</StackPanel>
+        </StackPanel>
     </DockPanel>
 </UserControl>
