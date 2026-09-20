@@ -254,6 +254,16 @@ namespace HandsLiftedApp.Core.Views.Designer
             themePreviewScriptureView.IsVisible = previewScriptureToggle.IsChecked == true;
         }
 
+        private void MoveToGroup_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (sender is Control { DataContext: BaseSlideTheme item, Tag: string tagText } &&
+                Enum.TryParse<SlideThemeType>(tagText, out var type))
+            {
+                item.Type = type;
+                SelectDesign(item);
+            }
+        }
+
         private void SetDefaultSongTheme_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&

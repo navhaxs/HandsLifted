@@ -28,6 +28,8 @@
         <converters2:IsGeneralThemeTypeConverter x:Key="IsGeneralThemeTypeConverter" />
         <converters2:IsSongThemeTypeConverter x:Key="IsSongThemeTypeConverter" />
         <converters2:IsScriptureThemeTypeConverter x:Key="IsScriptureThemeTypeConverter" />
+        <converters2:RadioMenuIconConverter x:Key="RadioMenuIconConverter" />
+        <converters2:IsDifferentThemeTypeConverter x:Key="IsDifferentThemeTypeConverter" />
 
         <ContextMenu x:Key="DesignListItemContextMenu">
             <MenuItem Header="Export" Click="ExportItem_OnClick">
@@ -44,6 +46,32 @@
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="Times" />
                 </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Move to">
+                <MenuItem.Icon>
+                    <avalonia:MaterialIcon Foreground="#888888" Kind="SwapHorizontal" />
+                </MenuItem.Icon>
+                <MenuItem Header="General" Tag="General" Click="MoveToGroup_OnClick"
+                          IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=General}">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Foreground="#888888"
+                                                Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=General}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Song Theme" Tag="SongTheme" Click="MoveToGroup_OnClick"
+                          IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=SongTheme}">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Foreground="#888888"
+                                                Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=SongTheme}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Scripture Theme" Tag="ScriptureTheme" Click="MoveToGroup_OnClick"
+                          IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=ScriptureTheme}">
+                    <MenuItem.Icon>
+                        <avalonia:MaterialIcon Foreground="#888888"
+                                                Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=ScriptureTheme}" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Set as default for Songs" Click="SetDefaultSongTheme_OnClick">
                 <MenuItem.Icon>
