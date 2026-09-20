@@ -27,6 +27,17 @@ namespace HandsLiftedApp.Views.StageDisplayLayout
         protected override void OnDataContextChanged(EventArgs e)
         {
             base.OnDataContextChanged(e);
+            Resubscribe();
+        }
+
+        protected override void OnAttachedToVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            Resubscribe();
+        }
+
+        private void Resubscribe()
+        {
             _slideSubscription?.Dispose();
 
             if (DataContext is not MainViewModel vm) return;
