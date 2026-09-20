@@ -529,36 +529,101 @@ namespace HandsLiftedApp.Controls
 
             void PointerExited(object? sender, PointerEventArgs e) => HideButton();
 
-            Button? emptyStateButton = null;
+            Grid? emptyStatePlaceholder = null;
 
             void UpdateEmptyState()
             {
                 var listBox = dropContainer.FindDescendantOfType<ListBoxWithoutKey>();
                 var isEmpty = listBox == null || listBox.Items.Count == 0;
 
-                if (isEmpty && emptyStateButton == null)
+                if (isEmpty && emptyStatePlaceholder == null)
                 {
-                    emptyStateButton = new Button
+                    // Decorative circle+icon only - the click target is the whole thumbnail-sized
+                    // Button below (thumbnailButton), not this.
+                    var plusCircle = new Border
                     {
                         Width = buttonSize,
                         Height = buttonSize,
-                        Padding = new Thickness(0),
                         CornerRadius = new CornerRadius(buttonSize / 2),
                         Background = new SolidColorBrush(Color.Parse("#724bab")),
-                        Foreground = Brushes.White,
-                        Content = new MaterialIcon { Kind = MaterialIconKind.Plus, Width = 16, Height = 16 },
-                        HorizontalContentAlignment = HorizontalAlignment.Center,
-                        VerticalContentAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
+                        Child = new MaterialIcon
+                        {
+                            Kind = MaterialIconKind.Plus,
+                            Width = 16,
+                            Height = 16,
+                            Foreground = Brushes.White,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center
+                        }
+                    };
+
+                    // Reproduces ListBoxItem.axaml's own template geometry (DockPanel label
+                    // strip docked bottom, then a left-aligned 16:9 Viewbox filling what's
+                    // left) instead of computing pixel sizes ourselves, so Avalonia's layout
+                    // engine derives the exact same thumbnail rect a real slide would get -
+                    // including the "#PART_Thumbnail.Bounds" -> sibling.Width/Height binding
+                    // trick ListBoxItem.axaml itself uses to size Border#PART_Border.
+                    var mainViewModel = Globals.Instance.MainViewModel;
+                    var sizeMultiplier = Globals.Instance.AppPreferences.SlideThumbnailSizeMultiplier * 0.01;
+
+                    var slideNumberProbe = new TextBlock { Text = "0", Opacity = 0, IsHitTestVisible = false };
+                    slideNumberProbe.Classes.Add("slideNumber");
+                    DockPanel.SetDock(slideNumberProbe, Dock.Left);
+
+                    var labelStrip = new DockPanel { Margin = new Thickness(2, 2, 2, 2) };
+                    labelStrip.Children.Add(slideNumberProbe);
+                    DockPanel.SetDock(labelStrip, Dock.Bottom);
+
+                    var thumbnailViewbox = new Viewbox
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Child = new Grid { Width = 1280, Height = 720 }
+                    };
+
+                    var thumbnailButton = new Button
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center,
+                        Padding = new Thickness(0),
+                        Background = new SolidColorBrush(Color.Parse("#1a1a1a")),
+                        BorderBrush = new SolidColorBrush(Color.Parse("#4E4E4E")),
+                        BorderThickness = new Thickness(1),
+                        Content = plusCircle,
                         Flyout = BuildInsertFlyout(() => 0)
                     };
-                    dropContainer.Children.Add(emptyStateButton);
+                    thumbnailButton.Bind(Layoutable.WidthProperty,
+                        new Avalonia.Data.Binding("Bounds.Width") { Source = thumbnailViewbox });
+                    thumbnailButton.Bind(Layoutable.HeightProperty,
+                        new Avalonia.Data.Binding("Bounds.Height") { Source = thumbnailViewbox });
+
+                    var thumbnailGrid = new Grid();
+                    thumbnailGrid.Children.Add(thumbnailViewbox);
+                    thumbnailGrid.Children.Add(thumbnailButton);
+
+                    var dock = new DockPanel();
+                    dock.Children.Add(labelStrip);
+                    dock.Children.Add(thumbnailGrid);
+
+                    emptyStatePlaceholder = new Grid
+                    {
+                        Width = mainViewModel.ItemWidth * sizeMultiplier - 8,
+                        Height = mainViewModel.ItemHeight * sizeMultiplier - 16,
+                        Margin = new Thickness(12, 8, 0, 0),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Top
+                    };
+                    emptyStatePlaceholder.Children.Add(dock);
+
+                    dropContainer.Children.Add(emptyStatePlaceholder);
                 }
 
-                if (emptyStateButton != null)
+                if (emptyStatePlaceholder != null)
                 {
-                    emptyStateButton.IsVisible = isEmpty;
+                    emptyStatePlaceholder.IsVisible = isEmpty;
                 }
 
                 if (!isEmpty)

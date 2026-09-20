@@ -127,36 +127,7 @@
             <common:MyTemplateSelector>
                 <DataTemplate x:Key="BlankItem" />
                 <DataTemplate x:DataType="items2:CommentItem" x:Key="CommentItem">
-                    <Border
-                        Background="#BADDDD"
-                        BorderBrush="#32B1BC"
-                        BorderThickness="6,0,0,0"
-                        ContextMenu="{StaticResource ItemContextMenu}"
-                        CornerRadius="0"
-                        DockPanel.Dock="Top"
-                        Margin="14,12,14,12">
-                        <DockPanel>
-                            <avalonia:MaterialIcon
-                                DockPanel.Dock="Left"
-                                Foreground="#32B1BC"
-                                Height="32"
-                                Kind="AlertCircle"
-                                Margin="15,10"
-                                VerticalAlignment="Top"
-                                Width="32" />
-                            <TextBox
-                                AcceptsReturn="True"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontSize="14"
-                                Foreground="Black"
-                                HorizontalAlignment="Stretch"
-                                Padding="0,8,8,8"
-                                Text="{Binding Title, Mode=TwoWay, FallbackValue='hello'}"
-                                VerticalAlignment="Stretch"
-                                Watermark="Untitled Playlist" />
-                        </DockPanel>
-                    </Border>
+                    <items:CommentItemView ContextMenu="{StaticResource ItemContextMenu}" />
                 </DataTemplate>
                 <DataTemplate x:DataType="items2:SectionHeadingItem" x:Key="SectionHeadingItem">
                     <!--    -->

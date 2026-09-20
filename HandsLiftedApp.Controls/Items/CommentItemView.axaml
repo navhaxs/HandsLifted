@@ -1,0 +1,52 @@
+<UserControl
+    d:DataContext="{d:DesignInstance items2:CommentItem}"
+    d:DesignWidth="600"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Controls.Items.CommentItemView"
+    x:CompileBindings="False"
+    x:Name="Root"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:items2="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+    xmlns:local="clr-namespace:HandsLiftedApp.Controls.Items;assembly=HandsLiftedApp.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid
+        HorizontalAlignment="Left"
+        Width="{Binding #Root.Bounds.Width, Converter={x:Static local:CommentItemView.ClampWidthTo600}}">
+        <Border
+            Background="#BADDDD"
+            BorderBrush="#32B1BC"
+            BorderThickness="6,0,0,0"
+            CornerRadius="0"
+            DockPanel.Dock="Top"
+            HorizontalAlignment="Stretch"
+            Margin="14,12,14,12">
+            <DockPanel>
+                <avalonia:MaterialIcon
+                    DockPanel.Dock="Left"
+                    Foreground="#32B1BC"
+                    Height="32"
+                    Kind="AlertCircle"
+                    Margin="15,10"
+                    VerticalAlignment="Top"
+                    Width="32" />
+                <TextBox
+                    AcceptsReturn="True"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    FontSize="14"
+                    Foreground="Black"
+                    HorizontalAlignment="Stretch"
+                    Padding="0,8,8,8"
+                    PlaceholderText="(Type a comment, e.g. a reminder or some notes)"
+                    Text="{Binding Title, Mode=TwoWay, FallbackValue='hello'}"
+                    TextAlignment="Left"
+                    TextWrapping="Wrap"
+                    VerticalAlignment="Stretch" />
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>
