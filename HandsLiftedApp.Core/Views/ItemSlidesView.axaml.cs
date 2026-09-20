@@ -22,6 +22,8 @@ using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
+using Material.Icons;
+using Material.Icons.Avalonia;
 using ReactiveUI;
 using Serilog;
 
@@ -309,6 +311,7 @@ namespace HandsLiftedApp.Controls
             const double exitRadius = 34;
 
             Button? insertButton = null;
+            Avalonia.Controls.Shapes.Line? gapLine = null;
             int? shownInsertIndex = null;
 
             MenuFlyout BuildInsertFlyout(Func<int> resolveInsertIndex)
@@ -383,7 +386,7 @@ namespace HandsLiftedApp.Controls
                     CornerRadius = new CornerRadius(buttonSize / 2),
                     Background = new SolidColorBrush(Color.Parse("#724bab")),
                     Foreground = Brushes.White,
-                    Content = "+",
+                    Content = new MaterialIcon { Kind = MaterialIconKind.Plus, Width = 16, Height = 16 },
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     IsVisible = false
@@ -392,13 +395,32 @@ namespace HandsLiftedApp.Controls
                 return insertButton;
             }
 
+            // Behind the button (inserted at index 0 so later Children.Add calls for the
+            // button stay on top), only drawn for gaps that sit between two thumbnails -
+            // not the before-first/after-last edge positions.
+            Avalonia.Controls.Shapes.Line EnsureLine()
+            {
+                if (gapLine != null) return gapLine;
+
+                gapLine = new Avalonia.Controls.Shapes.Line
+                {
+                    Stroke = new SolidColorBrush(Color.Parse("#724bab")),
+                    StrokeThickness = 2,
+                    IsHitTestVisible = false,
+                    IsVisible = false
+                };
+                overlay.Children.Insert(0, gapLine);
+                return gapLine;
+            }
+
             void HideButton()
             {
                 if (insertButton != null) insertButton.IsVisible = false;
+                if (gapLine != null) gapLine.IsVisible = false;
                 shownInsertIndex = null;
             }
 
-            void ShowButtonAt(Point center, int insertIndex)
+            void ShowButtonAt(Point center, int insertIndex, bool isBetweenTwo, double gapHeight)
             {
                 var button = EnsureButton();
                 if (shownInsertIndex != insertIndex)
@@ -410,6 +432,18 @@ namespace HandsLiftedApp.Controls
                 Canvas.SetLeft(button, center.X - buttonSize / 2);
                 Canvas.SetTop(button, center.Y - buttonSize / 2);
                 button.IsVisible = true;
+
+                var line = EnsureLine();
+                if (isBetweenTwo)
+                {
+                    line.StartPoint = new Point(center.X, center.Y - gapHeight / 2);
+                    line.EndPoint = new Point(center.X, center.Y + gapHeight / 2);
+                    line.IsVisible = true;
+                }
+                else
+                {
+                    line.IsVisible = false;
+                }
             }
 
             // One point per valid insertion index (0..count): the midpoint of the gap it
@@ -424,9 +458,9 @@ namespace HandsLiftedApp.Controls
             //    a fixed (16:9) aspect ratio, so a container can be wider than the thumbnail it
             //    holds - using the container's edges biases the midpoint towards whichever
             //    neighbour's container happens to have more trailing whitespace.
-            List<(Point Center, int InsertIndex)> ComputeGapPoints(ListBoxWithoutKey listBox)
+            List<(Point Center, int InsertIndex, bool IsBetweenTwo, double GapHeight)> ComputeGapPoints(ListBoxWithoutKey listBox)
             {
-                var points = new List<(Point Center, int InsertIndex)>();
+                var points = new List<(Point Center, int InsertIndex, bool IsBetweenTwo, double GapHeight)>();
                 var count = listBox.Items.Count;
 
                 var visualRects = new Rect?[count];
@@ -449,12 +483,12 @@ namespace HandsLiftedApp.Controls
 
                     var sameRowAsPrevious = i > 0 && visualRects[i - 1] is { } prev && Math.Abs(prev.Y - r.Y) < 1;
                     points.Add(sameRowAsPrevious
-                        ? (new Point((visualRects[i - 1]!.Value.Right + r.X) / 2, y), i)
-                        : (new Point(Math.Max(r.X / 2, 0), y), i));
+                        ? (new Point((visualRects[i - 1]!.Value.Right + r.X) / 2, y), i, true, Math.Max(visualRects[i - 1]!.Value.Height, r.Height))
+                        : (new Point(Math.Max(r.X / 2, 0), y), i, false, r.Height));
 
                     if (i == count - 1)
                     {
-                        points.Add((new Point(r.Right + 16, y), count));
+                        points.Add((new Point(r.Right + 16, y), count, false, r.Height));
                     }
                 }
 
@@ -468,7 +502,7 @@ namespace HandsLiftedApp.Controls
 
                 var pos = e.GetPosition(overlay);
 
-                (Point Center, int InsertIndex)? nearest = null;
+                (Point Center, int InsertIndex, bool IsBetweenTwo, double GapHeight)? nearest = null;
                 var nearestDistance = double.MaxValue;
                 foreach (var gap in ComputeGapPoints(listBox))
                 {
@@ -485,7 +519,7 @@ namespace HandsLiftedApp.Controls
                 var radius = shownInsertIndex != null ? exitRadius : enterRadius;
                 if (nearest != null && nearestDistance <= radius)
                 {
-                    ShowButtonAt(nearest.Value.Center, nearest.Value.InsertIndex);
+                    ShowButtonAt(nearest.Value.Center, nearest.Value.InsertIndex, nearest.Value.IsBetweenTwo, nearest.Value.GapHeight);
                 }
                 else
                 {
@@ -512,7 +546,7 @@ namespace HandsLiftedApp.Controls
                         CornerRadius = new CornerRadius(buttonSize / 2),
                         Background = new SolidColorBrush(Color.Parse("#724bab")),
                         Foreground = Brushes.White,
-                        Content = "+",
+                        Content = new MaterialIcon { Kind = MaterialIconKind.Plus, Width = 16, Height = 16 },
                         HorizontalContentAlignment = HorizontalAlignment.Center,
                         VerticalContentAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
