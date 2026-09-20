@@ -20,149 +20,208 @@
         <onlineSongLyrics:BrowserWindowViewModel />
     </Design.DataContext>
 
-    <DockPanel Margin="0,18,0,0">
+    <DockPanel Margin="0,26,0,0">
 
         <DockPanel>
 
             <DockPanel>
 
-                <StackPanel DockPanel.Dock="Top">
-                    <StackPanel.Styles>
-                        <Style Selector="Ellipse">
-                            <Setter Property="Width" Value="30" />
-                            <Setter Property="Height" Value="30" />
-                            <Setter Property="Fill" Value="DarkSlateBlue" />
-                        </Style>
-                        <Style Selector="StackPanel &gt; Grid:not(:last-child)">
-                            <Setter Property="Margin" Value="0 0 0 18" />
-                        </Style>
-                        <Style Selector="TextBlock.Number">
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="Foreground" Value="White" />
-                            <Setter Property="FontSize" Value="16" />
-                        </Style>
-                        <Style Selector="TextBlock.Main">
-                            <Setter Property="HorizontalAlignment" Value="Left" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="FontSize" Value="14" />
-                        </Style>
-                    </StackPanel.Styles>
+                <ScrollViewer>
 
-                    <Grid>
-                        <TextBlock Classes="Main" Margin="16,12,0,0">
-                            Import lyrics using the web browser
-                        </TextBlock>
-                    </Grid>
 
-                    <Grid ColumnDefinitions="64,*">
+                    <StackPanel DockPanel.Dock="Top" Margin="6,0,2,0">
+                        <StackPanel.Styles>
+                            <Style Selector="Ellipse">
+                                <Setter Property="Width" Value="30" />
+                                <Setter Property="Height" Value="30" />
+                                <Setter Property="Fill" Value="DarkSlateBlue" />
+                            </Style>
+                            <Style Selector="StackPanel &gt; Grid:not(:last-child)">
+                                <Setter Property="Margin" Value="0 0 0 18" />
+                            </Style>
+                            <Style Selector="TextBlock.Number">
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="FontSize" Value="16" />
+                            </Style>
+                            <Style Selector="TextBlock.Main">
+                                <Setter Property="HorizontalAlignment" Value="Left" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Setter Property="FontSize" Value="14" />
+                            </Style>
+                            <Style Selector="Border.Step">
+                                <Setter Property="CornerRadius" Value="6" />
+                                <Setter Property="Margin" Value="0 3" />
+                                <Setter Property="Padding" Value="0 10" />
+                            </Style>
+                            <Style Selector="Border.Step.Active">
+                                <Setter Property="Background" Value="#33483d8b" />
+                            </Style>
+                            <Style Selector="Grid.StepHeader">
+                                <Setter Property="Margin" Value="0,0,18,0" />
+                            </Style>
+                            <Style Selector="Button.StepAction">
+                                <Setter Property="BorderBrush" Value="#483d8b" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="CornerRadius" Value="6" />
+                                <Setter Property="Margin" Value="8" />
+                                <Setter Property="MinHeight" Value="100" />
+                            </Style>
+                            <Style Selector="Button.StepAction avalonia|MaterialIcon">
+                                <Setter Property="Margin" Value="0,0,6,0" />
+                                <Setter Property="Width" Value="26" />
+                            </Style>
+                            <Style Selector="Button.StepAction TextBlock">
+                                <Setter Property="FontSize" Value="15" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                            <Style Selector="Border.FadeIn">
+                                <Setter Property="Opacity" Value="0" />
+                                <Setter Property="Transitions">
+                                    <Transitions>
+                                        <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+                                    </Transitions>
+                                </Setter>
+                            </Style>
+                            <Style Selector="Border.FadeIn.Selected">
+                                <Setter Property="Opacity" Value="1" />
+                            </Style>
+                        </StackPanel.Styles>
+
                         <Grid>
-                            <Ellipse />
-                            <TextBlock Classes="Number">1</TextBlock>
+                            <TextBlock
+                                Classes="Main"
+                                FontSize="20"
+                                Margin="8,18,12,0">
+                                Import lyrics from online
+                            </TextBlock>
                         </Grid>
-                        <TextBlock Classes="Main" Grid.Column="1">Search for the song</TextBlock>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="64,*">
-                        <Grid>
-                            <Ellipse />
-                            <TextBlock Classes="Number">2</TextBlock>
-                        </Grid>
-                        <TextBlock Classes="Main" Grid.Column="1">Copy lyrics to the clipboard</TextBlock>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="64,*">
-                        <Grid>
-                            <Ellipse />
-                            <TextBlock Classes="Number">3</TextBlock>
-                        </Grid>
-                        <TextBlock Classes="Main" Grid.Column="1">Click the import button</TextBlock>
-                    </Grid>
-
-                    <Button
-                        Click="Button_OnClick"
-                        DockPanel.Dock="Bottom"
-                        HorizontalAlignment="Center">
-                        <DockPanel Margin="3,2">
-                            <avalonia:MaterialIcon
-                                Height="30"
-                                Kind="ArrowRightCircleOutline"
-                                Margin="0,0,8,0"
-                                Width="30" />
-                            <TextBlock FontSize="16" VerticalAlignment="Center">Continue</TextBlock>
-                        </DockPanel>
-                    </Button>
-                </StackPanel>
 
 
-                <Button
-                    Click="CopyLyricsButton_OnClick"
-                    DockPanel.Dock="Bottom"
-                    IsVisible="{Binding IsSongPage}"
-                    ToolTip.Tip="Copy Lyrics">
-                    <DockPanel>
-                        <TextBlock Text="Select this song" />
-                        <avalonia:MaterialIcon Kind="ContentCopy" />
-                    </DockPanel>
-                </Button>
+                        <Border Classes="Step" Classes.Active="{Binding IsSearchState}">
 
+                            <Grid Classes="StepHeader" ColumnDefinitions="64,*">
 
-                <Border
-                    Background="ForestGreen"
-                    BorderThickness="0,0,0,0"
-                    IsVisible="{Binding SelectedClipboardData, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                    MaxHeight="60"
-                    VerticalAlignment="Bottom">
-                    <DockPanel>
+                                <Grid>
+                                    <Ellipse />
+                                    <TextBlock Classes="Number">1</TextBlock>
+                                </Grid>
+                                <TextBlock Classes="Main" Grid.Column="1">Search for the song</TextBlock>
+                            </Grid>
+                        </Border>
 
-                        <avalonia:MaterialIcon
-                            Foreground="White"
-                            Height="30"
-                            Kind="About"
-                            Margin="16,8,8,8"
-                            Width="30" />
+                        <Border Classes="Step" Classes.Active="{Binding IsReadyToPickState}">
+                            <StackPanel>
+
+                                <Grid Classes="StepHeader" ColumnDefinitions="64,*">
+                                    <Grid>
+                                        <Ellipse />
+                                        <TextBlock Classes="Number">2</TextBlock>
+                                    </Grid>
+                                    <TextBlock Classes="Main" Grid.Column="1">Copy lyrics to the clipboard</TextBlock>
+                                </Grid>
+
+                                <Button
+                                    Classes="StepAction"
+                                    Click="CopyLyricsButton_OnClick"
+                                    DockPanel.Dock="Bottom"
+                                    IsVisible="{Binding IsReadyToPickState}"
+                                    ToolTip.Tip="Copy Lyrics">
+                                    <DockPanel>
+                                        <avalonia:MaterialIcon Kind="TickCircleOutline" />
+                                        <TextBlock Text="Select this song" />
+                                    </DockPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="Step" Classes.Active="{Binding IsSelectedSongState}">
+                            <StackPanel>
+                                <Grid Classes="StepHeader" ColumnDefinitions="64,*">
+                                    <Grid>
+                                        <Ellipse />
+                                        <TextBlock Classes="Number">3</TextBlock>
+                                    </Grid>
+                                    <TextBlock Classes="Main" Grid.Column="1">Confirm song import</TextBlock>
+                                </Grid>
+
+                                <Button
+                                    Classes="StepAction"
+                                    Command="{Binding ChooseAnotherSongCommand}"
+                                    IsVisible="{Binding IsSelectedSongState}">
+                                    <DockPanel>
+                                        <avalonia:MaterialIcon Kind="ArrowLeftCircleOutline" />
+                                        <TextBlock Text="Pick a different song" />
+                                    </DockPanel>
+                                </Button>
+
+                                <Border
+                                    Classes="FadeIn"
+                                    Classes.Selected="{Binding IsSelectedSongState}"
+                                    IsVisible="{Binding IsSelectedSongState}"
+                                    Margin="8">
+                                    <Grid MinHeight="140">
+                                        <Rectangle
+                                            Fill="White"
+                                            RadiusX="7"
+                                            RadiusY="7"
+                                            Stroke="#888888"
+                                            StrokeDashArray="5, 3"
+                                            StrokeThickness="2" />
+                                        <TextBlock
+                                            FontSize="15"
+                                            HorizontalAlignment="Center"
+                                            Margin="6,0"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap"
+                                            VerticalAlignment="Center">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{} Selected song:&#x0a;'{0}'">
+                                                    <Binding Path="SelectedClipboardDataTitle" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+
+                                <Button
+                                    Classes="StepAction"
+                                    Click="ImportSongButton_OnClick"
+                                    IsVisible="{Binding IsSelectedSongState}">
+                                    <DockPanel>
+                                        <avalonia:MaterialIcon Kind="TickCircleOutline" />
+                                        <TextBlock Text="Confirm song selection" />
+                                    </DockPanel>
+                                </Button>
+
+                            </StackPanel>
+                        </Border>
 
                         <Button
-                            Background="#145414"
-                            BorderThickness="0"
-                            Click="ImportSongButton_OnClick"
-                            CornerRadius="0"
-                            DockPanel.Dock="Right"
-                            VerticalAlignment="Stretch">
+                            Classes="StepAction"
+                            Click="Button_OnClick"
+                            DockPanel.Dock="Bottom"
+                            IsVisible="{Binding IsStartState}">
                             <DockPanel Margin="3,2">
                                 <avalonia:MaterialIcon
-                                    Foreground="White"
                                     Height="30"
                                     Kind="ArrowRightCircleOutline"
                                     Margin="0,0,8,0"
                                     Width="30" />
-                                <TextBlock
-                                    FontSize="16"
-                                    Foreground="White"
-                                    VerticalAlignment="Center">
-                                    Import song
-                                </TextBlock>
+                                <TextBlock FontSize="16" VerticalAlignment="Center">Let's start!</TextBlock>
                             </DockPanel>
                         </Button>
-                        <TextBlock
-                            Foreground="White"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            x:Name="PART_SelectionText">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{} Selected song: '{0}'">
-                                    <Binding Path="SelectedClipboardDataTitle" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                    </DockPanel>
-                </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
             </DockPanel>
 
             <Border
                 Background="LightGray"
                 BorderThickness="1"
                 CornerRadius="6"
+                DockPanel.Dock="Bottom"
                 HorizontalAlignment="Stretch"
                 Margin="4"
                 Padding="2">

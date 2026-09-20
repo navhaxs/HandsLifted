@@ -180,7 +180,10 @@ Who ever lives and pleads for me";
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        if (DataContext is BrowserWindowViewModel vm)
+                        // AddClipboardFormatListener fires an initial WM_CLIPBOARDUPDATE as soon as it's
+                        // registered (on window Opened), which would otherwise leak whatever was already
+                        // sitting in the clipboard before the user ever clicked "Let's start!".
+                        if (DataContext is BrowserWindowViewModel { HasStarted: true } vm)
                         {
                             vm.SelectedClipboardData = result;
                         }
@@ -229,6 +232,11 @@ Who ever lives and pleads for me";
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)
         {
+            if (DataContext is BrowserWindowViewModel vm)
+            {
+                vm.HasStarted = true;
+            }
+
             Carousel.SelectedIndex = 1;
         }
 
