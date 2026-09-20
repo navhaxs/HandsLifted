@@ -80,7 +80,7 @@
                                 <Setter Property="Opacity" Value="0" />
                                 <Setter Property="Transitions">
                                     <Transitions>
-                                        <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+                                        <DoubleTransition Duration="0:0:0.3" Property="Opacity" />
                                     </Transitions>
                                 </Setter>
                             </Style>
@@ -126,8 +126,7 @@
                                     Classes="StepAction"
                                     Click="CopyLyricsButton_OnClick"
                                     DockPanel.Dock="Bottom"
-                                    IsVisible="{Binding IsReadyToPickState}"
-                                    ToolTip.Tip="Copy Lyrics">
+                                    IsVisible="{Binding IsReadyToPickState}">
                                     <DockPanel>
                                         <avalonia:MaterialIcon Kind="TickCircleOutline" />
                                         <TextBlock Text="Select this song" />

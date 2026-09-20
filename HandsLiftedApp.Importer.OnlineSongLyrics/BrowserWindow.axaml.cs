@@ -220,13 +220,15 @@ Who ever lives and pleads for me";
             (function(){
                 var wrapper = document.querySelector('[data-user-activity=""Copied Lyrics""]');
                 var btn = wrapper ? wrapper.querySelector('button') : null;
+                if (!btn) btn = document.getElementById('lyricsCopyButton');
                 if (btn) { btn.click(); return true; }
                 return false;
             })()";
 
         private async void CopyLyricsButton_OnClick(object? sender, RoutedEventArgs e)
         {
-            // Triggers the site's own copy button via its data-user-activity hook, not an id/class.
+            // Triggers site's own copy button: data-user-activity hook on the summary page,
+            // or #lyricsCopyButton toolbar button on the full lyrics/chords/lead/vocal sheet view.
             await PART_WebView.InvokeScript(TriggerCopyLyricsScript);
         }
 
