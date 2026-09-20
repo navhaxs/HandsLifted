@@ -158,7 +158,7 @@
                                 <Setter Property="Padding" Value="10 0" />
                                 <Setter Property="Transitions">
                                     <Transitions>
-                                        <BrushTransition Property="BorderBrush" Duration="0:0:0.2" />
+                                        <BrushTransition Duration="0:0:0.12" Property="BorderBrush" />
                                     </Transitions>
                                 </Setter>
                             </Style>
@@ -180,11 +180,11 @@
                         </DockPanel.Styles>
 
                         <Button
-                            x:Name="PrevSlideButton"
                             Command="{Binding OnPrevSlideClickCommand}"
                             DockPanel.Dock="Left"
                             Height="60"
-                            VerticalAlignment="Stretch">
+                            VerticalAlignment="Stretch"
+                            x:Name="PrevSlideButton">
                             <avalonia:MaterialIcon
                                 Height="50"
                                 Kind="ArrowLeft"
@@ -192,10 +192,10 @@
                         </Button>
 
                         <Button
-                            x:Name="NextSlideButton"
                             Command="{Binding OnNextSlideClickCommand}"
                             DockPanel.Dock="Right"
-                            Height="60">
+                            Height="60"
+                            x:Name="NextSlideButton">
                             <avalonia:MaterialIcon
                                 Height="50"
                                 Kind="ArrowRight"
