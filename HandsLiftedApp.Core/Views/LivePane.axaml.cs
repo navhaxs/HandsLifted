@@ -1,7 +1,9 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.Render.Skia.Builders;
@@ -14,6 +16,7 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Core.Views
@@ -21,12 +24,20 @@ namespace HandsLiftedApp.Core.Views
     public partial class LivePane : UserControl
     {
         private IDisposable? _slideSubscription;
+        private IDisposable? _navActionSubscription;
         private MainViewModel? _vm;
         private int _transitionGeneration;
+        private CancellationTokenSource? _prevFlashCts;
+        private CancellationTokenSource? _nextFlashCts;
+        private static readonly TimeSpan NavFlashDuration = TimeSpan.FromMilliseconds(200);
 
         public LivePane()
         {
             InitializeComponent();
+
+            _navActionSubscription = MessageBus.Current.Listen<ActionMessage>()
+                .Subscribe(OnNavActionMessage);
+
             SetupDnd(
                 "Files",
                 async d =>
@@ -58,6 +69,37 @@ namespace HandsLiftedApp.Core.Views
         {
             base.OnDetachedFromVisualTree(e);
             _slideSubscription?.Dispose();
+            _navActionSubscription?.Dispose();
+            _prevFlashCts?.Cancel();
+            _nextFlashCts?.Cancel();
+        }
+
+        private void OnNavActionMessage(ActionMessage message)
+        {
+            switch (message.Action)
+            {
+                case ActionMessage.NavigateSlideAction.NextSlide:
+                    Dispatcher.UIThread.Post(() => FlashNavButton(NextSlideButton, ref _nextFlashCts));
+                    break;
+                case ActionMessage.NavigateSlideAction.PreviousSlide:
+                    Dispatcher.UIThread.Post(() => FlashNavButton(PrevSlideButton, ref _prevFlashCts));
+                    break;
+            }
+        }
+
+        private void FlashNavButton(Button button, ref CancellationTokenSource? cts)
+        {
+            cts?.Cancel();
+            var localCts = new CancellationTokenSource();
+            cts = localCts;
+
+            button.Classes.Add("nav-flash");
+
+            Task.Delay(NavFlashDuration, localCts.Token).ContinueWith(t =>
+            {
+                if (t.IsCanceled) return;
+                Dispatcher.UIThread.Post(() => button.Classes.Remove("nav-flash"));
+            }, TaskScheduler.Default);
         }
 
         private SlideRenderSpec? BuildSlideSpec(Slide? slide)

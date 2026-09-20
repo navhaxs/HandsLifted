@@ -153,8 +153,14 @@
                                 <Setter Property="CornerRadius" Value="0 64 64 0" />
                                 <Setter Property="Height" Value="60" />
                                 <Setter Property="Background" Value="#313131" />
-                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="BorderThickness" Value="3" />
+                                <Setter Property="BorderBrush" Value="#313131" />
                                 <Setter Property="Padding" Value="10 0" />
+                                <Setter Property="Transitions">
+                                    <Transitions>
+                                        <BrushTransition Property="BorderBrush" Duration="0:0:0.2" />
+                                    </Transitions>
+                                </Setter>
                             </Style>
                             <Style Selector="Button:nth-child(1)">
                                 <Setter Property="CornerRadius" Value="64 0 0 64" />
@@ -168,9 +174,13 @@
                             <Style Selector="Button:pointerover /template/ ContentPresenter">
                                 <Setter Property="Background" Value="#5b39b3" />
                             </Style>
+                            <Style Selector="Button.nav-flash">
+                                <Setter Property="BorderBrush" Value="#9072EA" />
+                            </Style>
                         </DockPanel.Styles>
 
                         <Button
+                            x:Name="PrevSlideButton"
                             Command="{Binding OnPrevSlideClickCommand}"
                             DockPanel.Dock="Left"
                             Height="60"
@@ -182,6 +192,7 @@
                         </Button>
 
                         <Button
+                            x:Name="NextSlideButton"
                             Command="{Binding OnNextSlideClickCommand}"
                             DockPanel.Dock="Right"
                             Height="60">
