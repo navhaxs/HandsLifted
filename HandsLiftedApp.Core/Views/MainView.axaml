@@ -258,7 +258,10 @@
 
                 <Grid x:Name="NavAreaGrid">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="6" Width="260" />
+                        <ColumnDefinition
+                            MaxWidth="340"
+                            MinWidth="8"
+                            Width="260" />
                         <ColumnDefinition Width="0" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
