@@ -94,6 +94,7 @@
     <PackageVersion Include="XamlNameReferenceGenerator" Version="1.6.1" />
     <PackageVersion Include="xunit" Version="2.4.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
+    <PackageVersion Include="WatsonWebsocket" Version="4.1.2" />
     <PackageVersion Include="YamlDotNet" Version="13.7.1" />
     <PackageVersion Include="CppSharp" Version="1.0.45.22293" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.6.0-1.final" />
