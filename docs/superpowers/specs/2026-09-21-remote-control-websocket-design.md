@@ -25,7 +25,7 @@ This spec defines a minimal remote-control protocol HandsLifted exposes, so Clic
 ## Protocol
 
 - **Transport**: WebSocket.
-- **Endpoint**: `ws://127.0.0.1:8979/remote`. Port matches ClickerFixer's existing `VisionScreensConfig.Port` default (already `8979` in that codebase) — no config change needed on the client side.
+- **Endpoint**: `ws://127.0.0.1:8979/`. Root path, no sub-path — matches both the original decompiled `VisionScreens.cs` POC's URL construction (`ws://localhost:{port}/`) and `WatsonWsServer` usage elsewhere in this codebase family (`ClickerFixer.Satellite/Services/MyWebServer.cs`, also root path — the library doesn't do per-path routing). Port matches ClickerFixer's existing `VisionScreensConfig.Port` default (already `8979` in that codebase) — no config change needed on the client side.
 - **Bind address**: `127.0.0.1` only. Not `0.0.0.0` — this is a same-machine integration, not a network service.
 - **Message format**: JSON, one field:
   ```json
@@ -48,20 +48,20 @@ This spec defines a minimal remote-control protocol HandsLifted exposes, so Clic
   MessageBus.Current.SendMessage(new ActionMessage { Action = mappedAction });
   ```
   This is the identical call `KeyboardSlideNavigation.OnKeyDown` already makes for `Key.Right`/`Key.PageDown` etc. — the remote-control path rides the same pipeline as a physical keypress, so there is exactly one place slide-navigation side effects live. (`KeyboardSlideNavigation` also sends a `FocusSelectedItem` message alongside `ActionMessage` for keyboard-specific UI focus; the remote-control path does not send this, since there's no keyboard focus context to restore.)
-- **Startup**: constructed and started once in `HandsLiftedApp.Core/App.axaml.cs`'s `OnFrameworkInitializationCompleted`, alongside other app-wide singleton init. Always-on for v1 — no settings toggle.
+- **Startup**: constructed and started once in `HandsLiftedApp.Core/Globals.cs`'s `OnStartup`, alongside the other app-wide singletons already initialized there (`ImportWorkerThread`, `SlidePreloadService`, etc — this is the codebase's established app-wide-service wiring point, not `App.axaml.cs` directly). Always-on for v1 — no settings toggle.
 - **Bind failure** (port already in use — realistically only a second HandsLifted instance on the same machine): catch, log a warning, continue app startup. Must not crash the app. Same defensive posture as `ClickerFixer.Satellite`'s `MyLogServer` (see that repo's CLAUDE.md: "harden against unguarded bind failure").
-- **Shutdown**: dispose the `WatsonWsServer` on app exit (wherever other app-wide singletons are torn down, if anywhere — if there's no existing app-exit teardown hook, this is a new one and should be minimal).
+- **Shutdown**: dispose the `WatsonWsServer` in `Globals.OnShutdown`, alongside the existing teardown calls there (`ImportWorkerThread?.Dispose()`, etc).
 
 ## Client side (follow-on, not implemented in this task)
 
 For context, so the contract above is exercised correctly whenever this is picked up:
 
-- `ClickerFixer.Desktop/ClickerTargets/VisionScreens.cs`'s `WebsocketWorkerLoop` body is fully commented out (leftover decompiled POC). Reactivating it means replacing that commented block with the same live pattern `ProPresenter.cs`'s `WebsocketWorkerLoop` already uses (same `Websocket.Client` library, same task-queue/worker-thread structure) — connect to `ws://localhost:{Global.Config.TargetsConfig.VisionScreensConfig.Port}/remote`, and change `SendNext()`/`SendPrevious()`'s JSON payloads from the current no-op stub to `{"action":"NextSlide"}` / `{"action":"PreviousSlide"}`.
+- `ClickerFixer.Desktop/ClickerTargets/VisionScreens.cs`'s `WebsocketWorkerLoop` body is fully commented out (leftover decompiled POC). Reactivating it means replacing that commented block with the same live pattern `ProPresenter.cs`'s `WebsocketWorkerLoop` already uses (same `Websocket.Client` library, same task-queue/worker-thread structure) — connect to `ws://localhost:{Global.Config.TargetsConfig.VisionScreensConfig.Port}/` (the POC's existing URL already matches this root-path convention, no change needed there), and change `SendNext()`/`SendPrevious()`'s JSON payloads from the current no-op stub to `{"action":"NextSlide"}` / `{"action":"PreviousSlide"}`.
 - `IClickerTarget.IsActive()` (`Process.GetProcessesByName("handsliftedapp").Length != 0`) already works today and needs no change.
 - No ClickerFixer config changes needed — `VisionScreensConfig.Port` already defaults to `8979`.
 
 ## Testing
 
 - **Unit**: a test around the message-parsing/dispatch function in isolation — feed a JSON string in, assert the expected `ActionMessage` was published on `MessageBus.Current` (subscribe before sending, or substitute a test scheduler). Does not need to exercise `WatsonWsServer` itself (external library).
-- **Manual smoke test**: connect with any WebSocket client (e.g. `wscat -c ws://localhost:8979/remote`), send `{"action":"NextSlide"}`, confirm the live slide advances in a running HandsLifted instance.
+- **Manual smoke test**: connect with any WebSocket client (e.g. `wscat -c ws://localhost:8979/`), send `{"action":"NextSlide"}`, confirm the live slide advances in a running HandsLifted instance.
 - **End-to-end** with a real ClickerFixer client is exercised once the follow-on client work lands — not part of this task's verification.
