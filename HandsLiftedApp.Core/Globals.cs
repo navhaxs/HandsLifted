@@ -138,6 +138,15 @@ namespace HandsLiftedApp.Core
         {
             IsShuttingDown = true;
 
+            try
+            {
+                RemoteControlServer?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error disposing RemoteControlServer");
+            }
+
             // Any edit made within the last debounce window (500ms) has a save still pending on
             // a timer that may never fire once the process exits — flush it now.
             SongLibraryIndex.FlushPendingSaves();
@@ -167,15 +176,6 @@ namespace HandsLiftedApp.Core
             catch (Exception ex)
             {
                 Log.Error(ex, "Error disposing ImportWorkerThread");
-            }
-
-            try
-            {
-                RemoteControlServer?.Dispose();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error disposing RemoteControlServer");
             }
         }
 
