@@ -8,10 +8,21 @@
         x:Class="HandsLiftedApp.Core.Views.AddItemWindow"
         ExtendClientAreaTitleBarHeightHint="90"
         ExtendClientAreaToDecorationsHint="True"
+        CanMinimize="False"
+        CanMaximize="False"
         WindowStartupLocation="CenterOwner"
         Topmost="True"
         Title="AddItemWindow">
     <Window.Styles>
+        <Style Selector="WindowDrawnDecorations /template/ Button#PART_CloseButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="WindowDrawnDecorations /template/ Button#PART_MinimizeButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="WindowDrawnDecorations /template/ Button#PART_MaximizeButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
         <Style Selector="Button#CloseButton">
             <Setter Property="Background" Value="Transparent" />
         </Style>
@@ -24,6 +35,10 @@
     </Window.Styles>
     <Grid>
         <views:AddItemRoot x:Name="AddItemContent" />
+        <Border Height="90"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                PointerPressed="DragArea_OnPointerPressed" />
         <Button x:Name="CloseButton"
                 IsCancel="True"
                 VerticalAlignment="Top"
@@ -31,7 +46,7 @@
                 BorderThickness="0"
                 CornerRadius="0"
                 Click="CloseButton_OnClick">
-     
+
             <avalonia:MaterialIcon Kind="Times" Width="24" Height="24" />
         </Button>
     </Grid>

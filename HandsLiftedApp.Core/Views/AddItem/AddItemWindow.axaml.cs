@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using ReactiveUI.Avalonia;
@@ -59,6 +60,14 @@ namespace HandsLiftedApp.Core.Views
         private void CloseButton_OnClick(object? sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void DragArea_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                BeginMoveDrag(e);
+            }
         }
     }
 }
