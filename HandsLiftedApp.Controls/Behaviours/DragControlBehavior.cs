@@ -10,7 +10,6 @@ using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Extensions;
 using ReactiveUI;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace HandsLiftedApp.Behaviours
