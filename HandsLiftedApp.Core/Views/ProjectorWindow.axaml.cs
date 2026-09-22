@@ -118,7 +118,7 @@ namespace HandsLiftedApp.Core.Views
         {
             int myGeneration = System.Threading.Interlocked.Increment(ref _transitionGeneration);
 
-            var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
+            var logoPath = SlideSpecResolver.ResolveLogoPath(_vm?.Playlist);
             Log.Debug("[ProjectorWindow] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
                 slide?.GetType().Name ?? "null",
                 (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-",

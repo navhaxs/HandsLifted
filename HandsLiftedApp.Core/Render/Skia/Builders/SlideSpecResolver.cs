@@ -1,5 +1,6 @@
 // HandsLiftedApp.Core/Render/Skia/Builders/SlideSpecResolver.cs
 using System;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Data.Slides;
 
@@ -27,6 +28,18 @@ public static class SlideSpecResolver
         HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs => CustomSlideSpecBuilder.Build(cs),
         _                        => null,
     };
+
+    /// <summary>
+    /// Resolves the logo path to display: the playlist's own logo slide if set and valid,
+    /// falling back to the app-wide default logo (mirrors the fallback Globals.LogoBitmap
+    /// already applies for the Designer preview: Playlist.LogoBitmap ?? AppPreferences.LogoBitmap).
+    /// </summary>
+    public static string? ResolveLogoPath(PlaylistInstance? playlist)
+    {
+        var playlistLogo = NormalizeMediaPath(playlist?.LogoGraphicFile);
+        if (IsValidMediaPath(playlistLogo)) return playlistLogo;
+        return NormalizeMediaPath(HandsLiftedApp.Core.Globals.Instance.AppPreferences?.LogoGraphicFile);
+    }
 
     /// <summary>
     /// Repairs paths where the serializer has mangled an avares:// URI into a Windows-style

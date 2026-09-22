@@ -1,49 +1,52 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
-             xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
-             xmlns:slides="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
-             xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
-             xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
-             xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
-             xmlns:slides2="clr-namespace:HandsLiftedApp.Data.Slides"
-             xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
-             xmlns:views="clr-namespace:HandsLiftedApp.Views"
-             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="slides1:Slide"
-             x:Class="HandsLiftedApp.Core.Render.SlideRender">
+﻿<UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Render.SlideRender"
+    x:DataType="slides1:Slide"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
+    xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
+    xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
+    xmlns:items="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:render="clr-namespace:HandsLiftedApp.Core.Render"
+    xmlns:slides="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Slides"
+    xmlns:slides1="clr-namespace:HandsLiftedApp.Data.Slides;assembly=HandsLiftedApp.Data"
+    xmlns:slides2="clr-namespace:HandsLiftedApp.Data.Slides"
+    xmlns:views="clr-namespace:HandsLiftedApp.Views"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <extensions:BitmapAssetValueConverter x:Key="variableImage"/>
+        <extensions:BitmapAssetValueConverter x:Key="variableImage" />
     </UserControl.Resources>
 
     <ContentControl Content="{Binding}">
         <ContentControl.ContentTemplate>
             <common:MyTemplateSelector>
-                <DataTemplate x:Key="SongTitleSlideInstance" x:DataType="slides2:SongTitleSlideInstance">
-                    <views:DesignerSlideTitle Width="1920" Height="1080" />
-                    <!-- <Image -->
-                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
-                    <!--     Source="{Binding Cached}" -->
-                    <!--     Stretch="Uniform" /> -->
+                <DataTemplate x:DataType="slides2:SongTitleSlideInstance" x:Key="SongTitleSlideInstance">
+                    <views:DesignerSlideTitle Height="1080" Width="1920" />
+                    <!--  <Image  -->
+                    <!--  RenderOptions.BitmapInterpolationMode="HighQuality"  -->
+                    <!--  Source="{Binding Cached}"  -->
+                    <!--  Stretch="Uniform" />  -->
                 </DataTemplate>
-                <DataTemplate x:Key="SongSlideInstance" x:DataType="slides2:SongSlideInstance">
-                    <designer:SongSlideView Width="1920" Height="1080" />
-                    <!-- <Image -->
-                    <!--     RenderOptions.BitmapInterpolationMode="HighQuality" -->
-                    <!--     Source="{Binding Cached}" -->
-                    <!--     Stretch="Uniform" /> -->
+                <DataTemplate x:DataType="slides2:SongSlideInstance" x:Key="SongSlideInstance">
+                    <designer:SongSlideView Height="1080" Width="1920" />
+                    <!--  <Image  -->
+                    <!--  RenderOptions.BitmapInterpolationMode="HighQuality"  -->
+                    <!--  Source="{Binding Cached}"  -->
+                    <!--  Stretch="Uniform" />  -->
                 </DataTemplate>
                 <DataTemplate x:Key="LogoSlide">
                     <items:LogoSlideView />
                 </DataTemplate>
-                <DataTemplate x:Key="ImageSlideInstance" x:DataType="slides:ImageSlideInstance">
-                    <!-- <Image -->
-                    <!--     RenderOptions.BitmapInterpolationMode="LowQuality" -->
-                    <!--     Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}" -->
-                    <!--     Stretch="Uniform" /> -->
+                <DataTemplate x:DataType="slides:ImageSlideInstance" x:Key="ImageSlideInstance">
+                    <!--  <Image  -->
+                    <!--  RenderOptions.BitmapInterpolationMode="LowQuality"  -->
+                    <!--  Source="{Binding SourceMediaFilePath, Converter={StaticResource variableImage}}"  -->
+                    <!--  Stretch="Uniform" />  -->
                     <Image
                         RenderOptions.BitmapInterpolationMode="HighQuality"
                         Source="{Binding Cached}"
@@ -52,21 +55,21 @@
                 <!-- <DataTemplate x:Key="VideoSlideInstance" x:DataType="slides:VideoSlideInstance"> -->
                 <!--     <render:MpvVideoSlideRenderer /> -->
                 <!-- </DataTemplate> -->
-                <DataTemplate x:Key="CustomAxamlSlideInstance" x:DataType="slides:CustomAxamlSlideInstance">
+                <DataTemplate x:DataType="slides:CustomAxamlSlideInstance" x:Key="CustomAxamlSlideInstance">
                     <render:CustomAxamlSlideRender />
                 </DataTemplate>
                 <DataTemplate x:Key="BlankSlide">
                     <Grid Background="Black" />
                 </DataTemplate>
                 <DataTemplate x:Key="CustomSlide">
-                     <customSlide:CustomSlideRender />
+                    <customSlide:CustomSlideRender />
                 </DataTemplate>
-                <DataTemplate x:Key="Fallback" x:DataType="slides1:Slide">
+                <DataTemplate x:DataType="slides1:Slide" x:Key="Fallback">
                     <Grid Background="Black" />
                 </DataTemplate>
             </common:MyTemplateSelector>
         </ContentControl.ContentTemplate>
-        <!-- NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down -->
+        <!--  NOTE: do *NOT* use ContentControl.DataTemplates or it will bubble down  -->
         <!--<ContentControl.DataTemplates>
 		</ContentControl.DataTemplates>-->
     </ContentControl>

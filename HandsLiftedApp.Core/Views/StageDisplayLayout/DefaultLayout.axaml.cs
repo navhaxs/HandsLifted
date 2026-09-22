@@ -58,7 +58,7 @@ namespace HandsLiftedApp.Views.StageDisplayLayout
         {
             int myGeneration = Interlocked.Increment(ref _transitionGeneration);
 
-            var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
+            var logoPath = SlideSpecResolver.ResolveLogoPath(_vm?.Playlist);
 
             SlideRenderSpec? spec = SlideSpecResolver.Resolve(slide, logoPath);
 

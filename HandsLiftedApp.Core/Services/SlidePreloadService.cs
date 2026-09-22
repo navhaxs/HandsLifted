@@ -35,7 +35,7 @@ public static class SlidePreloadService
 
     private static void Preload(Slide? nextSlide, PlaylistInstance playlist)
     {
-        var logoPath = SlideSpecResolver.NormalizeMediaPath(playlist.LogoGraphicFile);
+        var logoPath = SlideSpecResolver.ResolveLogoPath(playlist);
         var spec = SlideSpecResolver.Resolve(nextSlide, logoPath);
         if (spec?.Background is ImageBackground)
             SlideRenderer.Preload(spec);

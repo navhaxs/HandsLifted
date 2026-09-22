@@ -104,7 +104,7 @@ namespace HandsLiftedApp.Core.Views
 
         private SlideRenderSpec? BuildSlideSpec(Slide? slide)
         {
-            var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
+            var logoPath = SlideSpecResolver.ResolveLogoPath(_vm?.Playlist);
             return SlideSpecResolver.Resolve(slide, logoPath);
         }
 
@@ -115,7 +115,7 @@ namespace HandsLiftedApp.Core.Views
             // override the newer slide with an out-of-order result.
             int myGeneration = System.Threading.Interlocked.Increment(ref _transitionGeneration);
 
-            var logoPath = SlideSpecResolver.NormalizeMediaPath(_vm?.Playlist.LogoGraphicFile);
+            var logoPath = SlideSpecResolver.ResolveLogoPath(_vm?.Playlist);
             Log.Debug("[LivePane] OnActiveSlideChanged: {SlideType}, ImagePath={Path}, LogoPath={Logo}",
                 slide?.GetType().Name ?? "null",
                 (slide as ImageSlideInstance)?.SourceMediaFilePath ?? "-",
