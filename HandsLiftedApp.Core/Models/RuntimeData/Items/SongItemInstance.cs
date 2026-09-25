@@ -144,6 +144,41 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             set { if (ResolvedSong is { } s) { s.MotionBackgroundVideoPath = value; NotifySharedSongChanged(); } }
         }
 
+        private string? _motionBackgroundVideoOverride;
+
+        // Playlist-item-scoped override of the resolved theme's default motion background video.
+        // Unlike MotionBackgroundVideoPath above, this does NOT delegate to ResolvedSong - the same
+        // song can have a different override video in different playlists.
+        public string? MotionBackgroundVideoOverride
+        {
+            get => _motionBackgroundVideoOverride;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _motionBackgroundVideoOverride, value);
+                this.RaisePropertyChanged(nameof(ResolvedMotionBackgroundVideoPath));
+                this.RaisePropertyChanged(nameof(HasMotionBackground));
+            }
+        }
+
+        [XmlIgnore]
+        public string? ResolvedMotionBackgroundVideoPath
+        {
+            get
+            {
+                if (MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoOverride))
+                    return MotionBackgroundVideoOverride;
+
+                if (MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoPath))
+                    return MotionBackgroundVideoPath;
+
+                if (ResolvedDesignTheme?.BackgroundMode == ThemeBackgroundMode.MotionBackground
+                    && MotionBackgroundService.IsValidVideoFile(ResolvedDesignTheme.DefaultMotionBackgroundVideoPath))
+                    return ResolvedDesignTheme.DefaultMotionBackgroundVideoPath;
+
+                return null;
+            }
+        }
+
         public override ObservableCollection<Guid> Arrangement
         {
             get => ResolvedSong?.Arrangement ?? new ObservableCollection<Guid>();
@@ -290,7 +325,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
-            this.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+            this.WhenAnyValue(x => x.MotionBackgroundVideoPath, x => x.MotionBackgroundVideoOverride,
+                    (_, _) => ResolvedMotionBackgroundVideoPath)
                 .Scan(
                     new { Previous = (string?)null, Current = (string?)null },
                     (acc, newValue) => new { Previous = acc.Current, Current = newValue })
@@ -618,9 +654,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         }
 
         [XmlIgnore]
-        public bool HasMotionBackground =>
-            !string.IsNullOrWhiteSpace(MotionBackgroundVideoPath)
-            && MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoPath);
+        public bool HasMotionBackground => ResolvedMotionBackgroundVideoPath != null;
 
         private void RegenerateAllSlideBitmaps()
         {
