@@ -20,7 +20,6 @@
         <converters:PrependBlankThemeOptionConverter x:Key="PrependBlankThemeOptionConverter" />
         <converters:AppliesToSongsVisibilityConverter x:Key="AppliesToSongsVisibilityConverter" />
         <converters:AppliesToScriptureVisibilityConverter x:Key="AppliesToScriptureVisibilityConverter" />
-        <converters:IsMotionBackgroundThemeConverter x:Key="IsMotionBackgroundThemeConverter" />
     </UserControl.Resources>
     <UserControl.Styles>
         <Style Selector="FlyoutPresenter">
@@ -141,7 +140,7 @@
                             BorderBrush="#b3aed9"
                             BorderThickness="1"
                             CornerRadius="4"
-                            IsVisible="{Binding ResolvedDesignTheme, Converter={StaticResource IsMotionBackgroundThemeConverter}}"
+                            IsVisible="{Binding ShowMotionBackgroundVideoButton}"
                             Margin="6,6,0,6"
                             Padding="22,6"
                             ToolTip.Tip="Motion background video override">

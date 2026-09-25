@@ -334,8 +334,13 @@ public class MainViewModel : ViewModelBase
                     if (design.DefaultMotionBackgroundVideoPath != null &&
                         !design.DefaultMotionBackgroundVideoPath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
                     {
+                        // Matches the save-side treatment (ToRelativePathIfUnderMediaLibrary): this
+                        // path is never copied into the playlist folder, so it resolves against the
+                        // Media Library folder first, falling back to the playlist directory for
+                        // paths saved before the Media Library feature existed.
                         design.DefaultMotionBackgroundVideoPath =
-                            RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                            RelativeFilePathResolver.ToAbsoluteMediaPath(
+                                Globals.Instance.AppPreferences?.MediaLibraryPath, playlistDirectoryPath,
                                 design.DefaultMotionBackgroundVideoPath);
                     }
                     return design;

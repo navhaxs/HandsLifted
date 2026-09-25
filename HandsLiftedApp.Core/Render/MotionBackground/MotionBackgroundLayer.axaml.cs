@@ -331,7 +331,7 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 
 			var songItem = newItem as SongItemInstance;
 			var hasMotionBackground = songItem?.HasMotionBackground == true;
-			var newVideoPath = hasMotionBackground ? songItem!.MotionBackgroundVideoPath : null;
+			var newVideoPath = hasMotionBackground ? songItem!.ResolvedMotionBackgroundVideoPath : null;
 
 			Log.Debug("[MotionBg] OnActiveItemChanged: ItemType={ItemType}, HasMotionBg={HasMotionBg}, " +
 			          "NewVideoPath={NewPath}, CurrentVideoPath={CurrentPath}, IsStopPending={IsStopPending}",
@@ -429,7 +429,7 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			if (songItem != null)
 			{
 				_activeItemPathSubscription = songItem
-					.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+					.WhenAnyValue(x => x.ResolvedMotionBackgroundVideoPath)
 					.Skip(1)
 					.Subscribe(_ => Dispatcher.UIThread.Post(() => OnActiveItemChanged(newItem)));
 			}

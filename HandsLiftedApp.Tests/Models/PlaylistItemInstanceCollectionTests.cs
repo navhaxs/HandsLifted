@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Tests.Models;
 
@@ -46,5 +49,27 @@ public class PlaylistItemInstanceCollectionTests
 
         Assert.IsTrue(item.IsDisposed,
             "Removing an item from the collection must still dispose it - only Move is exempt");
+    }
+
+    // Regression test: MotionBackgroundVideoOverride must be marked [DataField] so that setting or
+    // clearing it marks the playlist dirty (via HandleDataFieldPropertyChanges -> ItemDataModified),
+    // the same way Item.SlideTransitionDurationMs already is - otherwise the override is silently
+    // lost on exit/autosave because nothing ever flags the playlist as having unsaved changes.
+    [TestMethod]
+    public void SettingMotionBackgroundVideoOverride_RaisesItemDataModified()
+    {
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var instance = new SongItemInstance(null) { SongId = song.UUID };
+        var collection = new PlaylistItemInstanceCollection<SongItemInstance>(new List<SongItemInstance> { instance });
+
+        var raised = false;
+        collection.ItemDataModified += (_, _) => raised = true;
+
+        instance.MotionBackgroundVideoOverride = @"C:\Videos\override.mp4";
+
+        Assert.IsTrue(raised,
+            "Setting MotionBackgroundVideoOverride must mark the playlist item collection dirty, " +
+            "otherwise the override is silently lost on exit since nothing triggers autosave/unsaved-changes tracking");
     }
 }

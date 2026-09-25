@@ -56,9 +56,12 @@ namespace HandsLiftedApp.Core
                         if (copy.DefaultMotionBackgroundVideoPath != null &&
                             !copy.DefaultMotionBackgroundVideoPath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
                         {
+                            // Unlike BackgroundGraphicFilePath above, this is never copied into the
+                            // playlist folder (spec decision 6 - no copy-into-library for videos), so
+                            // it must be relativized against the Media Library folder instead of the
+                            // playlist directory - the same treatment as other un-copied media paths.
                             copy.DefaultMotionBackgroundVideoPath =
-                                RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
-                                    copy.DefaultMotionBackgroundVideoPath);
+                                ToRelativePathIfUnderMediaLibrary(copy.DefaultMotionBackgroundVideoPath);
                         }
                         return copy;
                     }).ToList()),

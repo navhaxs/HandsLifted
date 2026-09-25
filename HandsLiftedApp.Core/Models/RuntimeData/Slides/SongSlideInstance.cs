@@ -53,7 +53,7 @@ namespace HandsLiftedApp.Data.Slides
 
             // Motion background presence flips which playlist default applies when Design is
             // unset (Guid.Empty), so this must re-resolve Theme, not just re-render.
-            parentSongItem?.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+            parentSongItem?.WhenAnyValue(x => x.ResolvedMotionBackgroundVideoPath)
                 .Skip(1)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ =>
