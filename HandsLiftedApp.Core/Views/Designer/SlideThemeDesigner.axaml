@@ -12,6 +12,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
              xmlns:converters2="clr-namespace:HandsLiftedApp.Core.Converters"
+             xmlns:coreControls="clr-namespace:HandsLiftedApp.Core.Controls"
              x:DataType="viewModels:MainViewModel"
              x:CompileBindings="False"
              x:Class="HandsLiftedApp.Core.Views.Designer.SlideThemeDesigner">
@@ -30,6 +31,7 @@
         <converters2:IsScriptureThemeTypeConverter x:Key="IsScriptureThemeTypeConverter" />
         <converters2:RadioMenuIconConverter x:Key="RadioMenuIconConverter" />
         <converters2:IsDifferentThemeTypeConverter x:Key="IsDifferentThemeTypeConverter" />
+        <converters2:IsMotionBackgroundModeConverter x:Key="IsMotionBackgroundModeConverter" />
 
         <ContextMenu x:Key="DesignListItemContextMenu">
             <MenuItem Header="Export" Click="ExportItem_OnClick">
@@ -286,6 +288,17 @@
                     <controls:ComboBoxWithoutWheelScroll x:Name="themeTypeComboBox"
                                                          HorizontalAlignment="Stretch"
                                                          SelectedItem="{Binding Type}" />
+
+                    <TextBlock Text="Background" Margin="0 6 0 0" />
+                    <controls:ComboBoxWithoutWheelScroll x:Name="backgroundModeComboBox"
+                                                         HorizontalAlignment="Stretch"
+                                                         SelectedItem="{Binding BackgroundMode}" />
+
+                    <StackPanel IsVisible="{Binding BackgroundMode, Converter={StaticResource IsMotionBackgroundModeConverter}}"
+                                Margin="0 6 0 0">
+                        <TextBlock Text="Default Motion Background Video" />
+                        <coreControls:MotionBackgroundVideoPicker VideoPath="{Binding DefaultMotionBackgroundVideoPath}" />
+                    </StackPanel>
 
                     <Grid ColumnDefinitions="2*, *" Margin="0 6 0 0">
                         <StackPanel Grid.Column="0">
