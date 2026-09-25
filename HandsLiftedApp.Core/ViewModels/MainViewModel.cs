@@ -331,6 +331,13 @@ public class MainViewModel : ViewModelBase
                             RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                                 design.BackgroundGraphicFilePath);
                     }
+                    if (design.DefaultMotionBackgroundVideoPath != null &&
+                        !design.DefaultMotionBackgroundVideoPath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        design.DefaultMotionBackgroundVideoPath =
+                            RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
+                                design.DefaultMotionBackgroundVideoPath);
+                    }
                     return design;
                 });
                 var defaultTheme = Globals.Instance.AppPreferences?.DefaultTheme;

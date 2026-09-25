@@ -112,6 +112,47 @@ public class HandsLiftedDocXmlSerializerTests
     }
 
     [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsThemeBackgroundModeAndDefaultVideoPath()
+    {
+        var playlist = new PlaylistInstance();
+        var videoPath = Path.Combine(_tempDir, "theme-video.mp4");
+        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme
+        {
+            BackgroundMode = HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground,
+            DefaultMotionBackgroundVideoPath = videoPath
+        };
+        playlist.Designs.Add(theme);
+
+        var path = Path.Combine(_tempDir, "playlist-theme-video.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        Assert.IsFalse(rawXml.Contains(_tempDir),
+            "Theme's DefaultMotionBackgroundVideoPath must be written relative to the playlist directory, not absolute.");
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
+        Assert.AreEqual(HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground, deserializedTheme.BackgroundMode);
+        Assert.AreEqual("theme-video.mp4", deserializedTheme.DefaultMotionBackgroundVideoPath);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_ThemeBackgroundModePlain_DefaultVideoPathStaysNull()
+    {
+        var playlist = new PlaylistInstance();
+        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme();
+        playlist.Designs.Add(theme);
+
+        var path = Path.Combine(_tempDir, "playlist-theme-plain.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
+        Assert.AreEqual(HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.Plain, deserializedTheme.BackgroundMode);
+        Assert.IsNull(deserializedTheme.DefaultMotionBackgroundVideoPath);
+    }
+
+    [TestMethod]
     public void SerializePlaylist_ThenDeserialize_RoundTripsScriptureItemTransitionOverride()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };

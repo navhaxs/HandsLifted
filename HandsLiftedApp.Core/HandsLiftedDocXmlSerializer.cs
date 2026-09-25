@@ -53,6 +53,13 @@ namespace HandsLiftedApp.Core
                                 RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
                                     copy.BackgroundGraphicFilePath);
                         }
+                        if (copy.DefaultMotionBackgroundVideoPath != null &&
+                            !copy.DefaultMotionBackgroundVideoPath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            copy.DefaultMotionBackgroundVideoPath =
+                                RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
+                                    copy.DefaultMotionBackgroundVideoPath);
+                        }
                         return copy;
                     }).ToList()),
                 Items = new TrulyObservableCollection<Item>()
