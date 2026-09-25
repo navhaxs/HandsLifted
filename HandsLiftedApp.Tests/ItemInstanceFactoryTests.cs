@@ -211,4 +211,41 @@ public class ItemInstanceFactoryTests
         var resolvedMediaItem = (MediaGroupItem.MediaItem)instance.Items.Single();
         Assert.AreEqual(legacyFile, resolvedMediaItem.SourceMediaFilePath);
     }
+
+    [TestMethod]
+    public void ToItemInstance_SongItemReference_MotionBackgroundOverride_RelativePathUnderLibrary_ResolvesAgainstMediaLibrary()
+    {
+        var libraryDir = Path.Combine(_tempDir, "Library");
+        var playlistDir = Path.Combine(_tempDir, "Playlist");
+        Directory.CreateDirectory(Path.Combine(libraryDir, "Videos"));
+        Directory.CreateDirectory(playlistDir);
+        var libraryFile = Path.Combine(libraryDir, "Videos", "override.mp4");
+        File.WriteAllText(libraryFile, "video-bytes");
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
+
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var reference = new SongItemReference
+        {
+            SongId = song.UUID,
+            MotionBackgroundVideoOverridePath = Path.Combine("Videos", "override.mp4")
+        };
+
+        var playlist = new PlaylistInstance { PlaylistWorkingDirectory = playlistDir };
+        var instance = (SongItemInstance)ItemInstanceFactory.ToItemInstance(reference, playlist);
+
+        Assert.AreEqual(libraryFile, instance.MotionBackgroundVideoOverride);
+    }
+
+    [TestMethod]
+    public void ToItemInstance_SongItemReference_NoMotionBackgroundOverride_StaysNull()
+    {
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var reference = new SongItemReference { SongId = song.UUID };
+
+        var instance = (SongItemInstance)ItemInstanceFactory.ToItemInstance(reference, null);
+
+        Assert.IsNull(instance.MotionBackgroundVideoOverride);
+    }
 }

@@ -153,6 +153,87 @@ public class HandsLiftedDocXmlSerializerTests
     }
 
     [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsSongItemMotionBackgroundOverride_UnderMediaLibrary()
+    {
+        Globals.Instance.AppPreferences.MediaLibraryPath = _tempDir;
+        var videosDir = Path.Combine(_tempDir, "Videos");
+        Directory.CreateDirectory(videosDir);
+        var videoFile = Path.Combine(videosDir, "override.mp4");
+        File.WriteAllText(videoFile, "video-bytes");
+
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var playlist = new PlaylistInstance();
+        var instance = new SongItemInstance(playlist)
+        {
+            SongId = song.UUID,
+            MotionBackgroundVideoOverride = videoFile
+        };
+        playlist.Items.Add(instance);
+
+        var path = Path.Combine(_tempDir, "playlist-song-video-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, @"Videos\override.mp4");
+        Assert.IsFalse(rawXml.Contains(videoFile),
+            "Absolute path must not be written; the override should be relative to the media library.");
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var reference = (SongItemReference)deserialized.Items.Single();
+        Assert.AreEqual(@"Videos\override.mp4", reference.MotionBackgroundVideoOverridePath);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_SongItemMotionBackgroundOverride_OutsideMediaLibrary_KeepsAbsolutePath()
+    {
+        var libraryDir = Path.Combine(_tempDir, "Library");
+        var outsideDir = Path.Combine(_tempDir, "Outside");
+        Directory.CreateDirectory(libraryDir);
+        Directory.CreateDirectory(outsideDir);
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
+        var videoFile = Path.Combine(outsideDir, "override.mp4");
+        File.WriteAllText(videoFile, "video-bytes");
+
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var playlist = new PlaylistInstance();
+        var instance = new SongItemInstance(playlist)
+        {
+            SongId = song.UUID,
+            MotionBackgroundVideoOverride = videoFile
+        };
+        playlist.Items.Add(instance);
+
+        var path = Path.Combine(libraryDir, "playlist-song-video-outside.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, videoFile);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var reference = (SongItemReference)deserialized.Items.Single();
+        Assert.AreEqual(videoFile, reference.MotionBackgroundVideoOverridePath);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_SongItemNoMotionBackgroundOverride_StaysNull()
+    {
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var playlist = new PlaylistInstance();
+        var instance = new SongItemInstance(playlist) { SongId = song.UUID };
+        playlist.Items.Add(instance);
+
+        var path = Path.Combine(_tempDir, "playlist-song-no-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var reference = (SongItemReference)deserialized.Items.Single();
+        Assert.IsNull(reference.MotionBackgroundVideoOverridePath);
+    }
+
+    [TestMethod]
     public void SerializePlaylist_ThenDeserialize_RoundTripsScriptureItemTransitionOverride()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };

@@ -124,12 +124,16 @@ namespace HandsLiftedApp.Core
             {
                 // SlideTransitionDurationMs is a per-item override on the base Item class
                 // (not song content) and, like every other branch here (LogoItem, ScriptureItem,
-                // MediaGroupItem, ...), must be carried over explicitly.
+                // MediaGroupItem, ...), must be carried over explicitly. MotionBackgroundVideoOverride
+                // is the same kind of per-item override, scoped to this playlist item rather than the
+                // shared library song.
                 return new SongItemReference
                 {
                     UUID = songItemInstance.UUID,
                     SongId = songItemInstance.SongId,
-                    SlideTransitionDurationMs = songItemInstance.SlideTransitionDurationMs
+                    SlideTransitionDurationMs = songItemInstance.SlideTransitionDurationMs,
+                    MotionBackgroundVideoOverridePath = ToRelativePathIfUnderMediaLibrary(
+                        songItemInstance.MotionBackgroundVideoOverride)
                 };
             }
             else if (item is ScriptureItemInstance scriptureItemInstance)
