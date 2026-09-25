@@ -1,0 +1,14 @@
+<!-- HandsLiftedApp.Core/Controls/MotionBackgroundVideoPicker.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="260" d:DesignHeight="40"
+             x:CompileBindings="False"
+             x:Class="HandsLiftedApp.Core.Controls.MotionBackgroundVideoPicker">
+    <DockPanel MinWidth="220">
+        <Button Click="ClearButton_OnClick" Content="Clear" DockPanel.Dock="Right" Margin="4,0,0,0" />
+        <Button Click="BrowseButton_OnClick" Content="..." DockPanel.Dock="Right" Margin="4,0,0,0" />
+        <TextBox x:Name="PathTextBox" IsReadOnly="True" Watermark="No video file selected" />
+    </DockPanel>
+</UserControl>

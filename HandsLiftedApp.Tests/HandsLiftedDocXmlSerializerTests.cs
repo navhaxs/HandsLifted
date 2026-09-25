@@ -112,6 +112,168 @@ public class HandsLiftedDocXmlSerializerTests
     }
 
     [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsThemeBackgroundModeAndDefaultVideoPath()
+    {
+        // The theme's default video is relativized against the configured Media Library folder
+        // (like the item-level override), not the playlist directory - see
+        // SerializePlaylist_ThemeDefaultVideo_RelativeToMediaLibrary_NotPlaylistDirectory below for
+        // the dedicated "outside the library" coverage. Here _tempDir doubles as the library folder
+        // so the video (placed directly inside it) counts as "under" it.
+        Globals.Instance.AppPreferences.MediaLibraryPath = _tempDir;
+        var playlist = new PlaylistInstance();
+        var videoPath = Path.Combine(_tempDir, "theme-video.mp4");
+        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme
+        {
+            BackgroundMode = HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground,
+            DefaultMotionBackgroundVideoPath = videoPath
+        };
+        playlist.Designs.Add(theme);
+
+        var path = Path.Combine(_tempDir, "playlist-theme-video.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        Assert.IsFalse(rawXml.Contains(_tempDir),
+            "Theme's DefaultMotionBackgroundVideoPath must be written relative to the playlist directory, not absolute.");
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
+        Assert.AreEqual(HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground, deserializedTheme.BackgroundMode);
+        Assert.AreEqual("theme-video.mp4", deserializedTheme.DefaultMotionBackgroundVideoPath);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_ThemeBackgroundModePlain_DefaultVideoPathStaysNull()
+    {
+        var playlist = new PlaylistInstance();
+        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme();
+        playlist.Designs.Add(theme);
+
+        var path = Path.Combine(_tempDir, "playlist-theme-plain.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
+        Assert.AreEqual(HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.Plain, deserializedTheme.BackgroundMode);
+        Assert.IsNull(deserializedTheme.DefaultMotionBackgroundVideoPath);
+    }
+
+    // Regression test: like the item-level override, the theme's own default video is never
+    // copied into the playlist folder (decision 6 in the spec - no copy-into-library), so it must
+    // be relativized against the configured Media Library folder (ToRelativePathIfUnderMediaLibrary),
+    // not the playlist directory (plain ToRelativePath) - otherwise a video under the media library
+    // gets written as a long ".." path relative to wherever the playlist happens to be saved, which
+    // breaks the moment the playlist and the library are not both moved together.
+    [TestMethod]
+    public void SerializePlaylist_ThemeDefaultVideo_RelativeToMediaLibrary_NotPlaylistDirectory()
+    {
+        var libraryDir = Path.Combine(_tempDir, "Library");
+        var playlistDir = Path.Combine(_tempDir, "Playlist");
+        Directory.CreateDirectory(Path.Combine(libraryDir, "Videos"));
+        Directory.CreateDirectory(playlistDir);
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
+        var videoFile = Path.Combine(libraryDir, "Videos", "bg.mp4");
+        File.WriteAllText(videoFile, "video-bytes");
+
+        var playlist = new PlaylistInstance();
+        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme
+        {
+            BackgroundMode = HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground,
+            DefaultMotionBackgroundVideoPath = videoFile
+        };
+        playlist.Designs.Add(theme);
+
+        var path = Path.Combine(playlistDir, "playlist-theme-video-library.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
+        Assert.AreEqual(Path.Combine("Videos", "bg.mp4"), deserializedTheme.DefaultMotionBackgroundVideoPath,
+            "Must be relative to the Media Library folder, not a long '..' path relative to the playlist directory");
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_ThenDeserialize_RoundTripsSongItemMotionBackgroundOverride_UnderMediaLibrary()
+    {
+        Globals.Instance.AppPreferences.MediaLibraryPath = _tempDir;
+        var videosDir = Path.Combine(_tempDir, "Videos");
+        Directory.CreateDirectory(videosDir);
+        var videoFile = Path.Combine(videosDir, "override.mp4");
+        File.WriteAllText(videoFile, "video-bytes");
+
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var playlist = new PlaylistInstance();
+        var instance = new SongItemInstance(playlist)
+        {
+            SongId = song.UUID,
+            MotionBackgroundVideoOverride = videoFile
+        };
+        playlist.Items.Add(instance);
+
+        var path = Path.Combine(_tempDir, "playlist-song-video-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, @"Videos\override.mp4");
+        Assert.IsFalse(rawXml.Contains(videoFile),
+            "Absolute path must not be written; the override should be relative to the media library.");
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var reference = (SongItemReference)deserialized.Items.Single();
+        Assert.AreEqual(@"Videos\override.mp4", reference.MotionBackgroundVideoOverridePath);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_SongItemMotionBackgroundOverride_OutsideMediaLibrary_KeepsAbsolutePath()
+    {
+        var libraryDir = Path.Combine(_tempDir, "Library");
+        var outsideDir = Path.Combine(_tempDir, "Outside");
+        Directory.CreateDirectory(libraryDir);
+        Directory.CreateDirectory(outsideDir);
+        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
+        var videoFile = Path.Combine(outsideDir, "override.mp4");
+        File.WriteAllText(videoFile, "video-bytes");
+
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var playlist = new PlaylistInstance();
+        var instance = new SongItemInstance(playlist)
+        {
+            SongId = song.UUID,
+            MotionBackgroundVideoOverride = videoFile
+        };
+        playlist.Items.Add(instance);
+
+        var path = Path.Combine(libraryDir, "playlist-song-video-outside.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var rawXml = File.ReadAllText(path);
+        StringAssert.Contains(rawXml, videoFile);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var reference = (SongItemReference)deserialized.Items.Single();
+        Assert.AreEqual(videoFile, reference.MotionBackgroundVideoOverridePath);
+    }
+
+    [TestMethod]
+    public void SerializePlaylist_SongItemNoMotionBackgroundOverride_StaysNull()
+    {
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var playlist = new PlaylistInstance();
+        var instance = new SongItemInstance(playlist) { SongId = song.UUID };
+        playlist.Items.Add(instance);
+
+        var path = Path.Combine(_tempDir, "playlist-song-no-override.xml");
+        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+
+        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
+        var reference = (SongItemReference)deserialized.Items.Single();
+        Assert.IsNull(reference.MotionBackgroundVideoOverridePath);
+    }
+
+    [TestMethod]
     public void SerializePlaylist_ThenDeserialize_RoundTripsScriptureItemTransitionOverride()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 120 };

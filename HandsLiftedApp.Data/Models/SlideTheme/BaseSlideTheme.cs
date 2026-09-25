@@ -131,6 +131,15 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _type, value);
         }
 
+        private ThemeBackgroundMode _backgroundMode = ThemeBackgroundMode.Plain;
+
+        [DataMember]
+        public ThemeBackgroundMode BackgroundMode
+        {
+            get => _backgroundMode;
+            set => this.RaiseAndSetIfChanged(ref _backgroundMode, value);
+        }
+
         // Slide Design Properties
         private XmlFontFamily _fontFamily = new();
 
@@ -430,6 +439,15 @@ namespace HandsLiftedApp.Data.SlideTheme
         {
             get => _backgroundGraphicFilePath;
             set => this.RaiseAndSetIfChanged(ref _backgroundGraphicFilePath, value);
+        }
+
+        private string? _defaultMotionBackgroundVideoPath;
+
+        [DataMember]
+        public string? DefaultMotionBackgroundVideoPath
+        {
+            get => _defaultMotionBackgroundVideoPath;
+            set => this.RaiseAndSetIfChanged(ref _defaultMotionBackgroundVideoPath, value);
         }
 
         private bool _dropShadowEnabled = true;

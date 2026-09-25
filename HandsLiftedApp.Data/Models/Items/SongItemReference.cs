@@ -19,5 +19,12 @@ namespace HandsLiftedApp.Data.Models.Items
     public class SongItemReference : Item
     {
         public Guid SongId { get; set; }
+
+        /// <summary>
+        /// Playlist-item-scoped override of the resolved theme's default motion background video
+        /// for this song item. Null means "no override" - see
+        /// SongItemInstance.ResolvedMotionBackgroundVideoPath for the full resolution chain.
+        /// </summary>
+        public string? MotionBackgroundVideoOverridePath { get; set; }
     }
 }

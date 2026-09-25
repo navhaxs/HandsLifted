@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
@@ -144,6 +145,54 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             set { if (ResolvedSong is { } s) { s.MotionBackgroundVideoPath = value; NotifySharedSongChanged(); } }
         }
 
+        private string? _motionBackgroundVideoOverride;
+
+        // Playlist-item-scoped override of the resolved theme's default motion background video.
+        // Unlike MotionBackgroundVideoPath above, this does NOT delegate to ResolvedSong - the same
+        // song can have a different override video in different playlists.
+        [DataField]
+        public string? MotionBackgroundVideoOverride
+        {
+            get => _motionBackgroundVideoOverride;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _motionBackgroundVideoOverride, value);
+                this.RaisePropertyChanged(nameof(ResolvedMotionBackgroundVideoPath));
+                this.RaisePropertyChanged(nameof(HasMotionBackground));
+                this.RaisePropertyChanged(nameof(ShowMotionBackgroundVideoButton));
+            }
+        }
+
+        // Whether ItemEditDockRoot's "Video" override button should be shown. Distinct from
+        // ResolvedDesignTheme.BackgroundMode alone: an override set while a MotionBackground theme
+        // was assigned must stay visible/clearable even if the item's theme is later changed to
+        // Plain or cleared - otherwise the override keeps silently applying (see
+        // ResolvedMotionBackgroundVideoPath, which does not gate the override tier on theme mode)
+        // with no way to see or remove it.
+        [XmlIgnore]
+        public bool ShowMotionBackgroundVideoButton =>
+            ResolvedDesignTheme?.BackgroundMode == ThemeBackgroundMode.MotionBackground
+            || MotionBackgroundVideoOverride != null;
+
+        [XmlIgnore]
+        public string? ResolvedMotionBackgroundVideoPath
+        {
+            get
+            {
+                if (MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoOverride))
+                    return MotionBackgroundVideoOverride;
+
+                if (MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoPath))
+                    return MotionBackgroundVideoPath;
+
+                if (ResolvedDesignTheme?.BackgroundMode == ThemeBackgroundMode.MotionBackground
+                    && MotionBackgroundService.IsValidVideoFile(ResolvedDesignTheme.DefaultMotionBackgroundVideoPath))
+                    return ResolvedDesignTheme.DefaultMotionBackgroundVideoPath;
+
+                return null;
+            }
+        }
+
         public override ObservableCollection<Guid> Arrangement
         {
             get => ResolvedSong?.Arrangement ?? new ObservableCollection<Guid>();
@@ -181,11 +230,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.RaisePropertyChanged(nameof(Title));
             this.RaisePropertyChanged(nameof(Design));
             this.RaisePropertyChanged(nameof(ResolvedDesignTheme));
+            this.RaisePropertyChanged(nameof(ShowMotionBackgroundVideoButton));
             this.RaisePropertyChanged(nameof(Copyright));
             this.RaisePropertyChanged(nameof(Stanzas));
             this.RaisePropertyChanged(nameof(Arrangements));
             this.RaisePropertyChanged(nameof(SelectedArrangementId));
             this.RaisePropertyChanged(nameof(MotionBackgroundVideoPath));
+            this.RaisePropertyChanged(nameof(ResolvedMotionBackgroundVideoPath));
+            this.RaisePropertyChanged(nameof(HasMotionBackground));
             this.RaisePropertyChanged(nameof(Arrangement));
             this.RaisePropertyChanged(nameof(EndOnBlankSlide));
             this.RaisePropertyChanged(nameof(StartOnTitleSlide));
@@ -237,6 +289,15 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
             this.WhenAnyValue(x => x.Design)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(ResolvedDesignTheme)));
+
+            // ShowMotionBackgroundVideoButton depends on the assigned theme's own BackgroundMode,
+            // so it must also re-raise when that theme's properties change in place (e.g. edited in
+            // SlideThemeDesigner while this item stays selected in ItemEditDockRoot) - not just when
+            // Design repoints to a different theme entirely.
+            this.WhenAnyValue(x => x.ResolvedDesignTheme)
+                .Select(theme => theme?.Changed.Select(_ => Unit.Default) ?? Observable.Never<Unit>())
+                .Switch()
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(ShowMotionBackgroundVideoButton)));
 
             titleSlide = new SongTitleSlideInstance(this);
 
@@ -290,7 +351,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 debounceDispatcher.Debounce(() => UpdateStanzaSlides());
             });
 
-            this.WhenAnyValue(x => x.MotionBackgroundVideoPath)
+            this.WhenAnyValue(x => x.MotionBackgroundVideoPath, x => x.MotionBackgroundVideoOverride,
+                    (_, _) => ResolvedMotionBackgroundVideoPath)
                 .Scan(
                     new { Previous = (string?)null, Current = (string?)null },
                     (acc, newValue) => new { Previous = acc.Current, Current = newValue })
@@ -618,9 +680,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         }
 
         [XmlIgnore]
-        public bool HasMotionBackground =>
-            !string.IsNullOrWhiteSpace(MotionBackgroundVideoPath)
-            && MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoPath);
+        public bool HasMotionBackground => ResolvedMotionBackgroundVideoPath != null;
 
         private void RegenerateAllSlideBitmaps()
         {
@@ -642,14 +702,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     {
                         try
                         {
-                            using var avaBmp = MpvThumbnailExtractor.ExtractAsync(MotionBackgroundVideoPath, maxWidth: 1920, maxHeight: 1080)
+                            using var avaBmp = MpvThumbnailExtractor.ExtractAsync(ResolvedMotionBackgroundVideoPath, maxWidth: 1920, maxHeight: 1080)
                                 .GetAwaiter().GetResult();
                             if (avaBmp != null)
                                 videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
                         }
                         catch (Exception ex)
                         {
-                            Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", MotionBackgroundVideoPath);
+                            Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", ResolvedMotionBackgroundVideoPath);
                         }
                     }
                     else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -657,13 +717,13 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         try
                         {
                             using var avaBmp = WindowsThumbnailProvider.GetThumbnail(
-                                MotionBackgroundVideoPath, 1920, 1080, ThumbnailOptions.None);
+                                ResolvedMotionBackgroundVideoPath, 1920, 1080, ThumbnailOptions.None);
                             if (avaBmp != null)
                                 videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
                         }
                         catch (Exception ex)
                         {
-                            Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", MotionBackgroundVideoPath);
+                            Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", ResolvedMotionBackgroundVideoPath);
                         }
                     }
                 }

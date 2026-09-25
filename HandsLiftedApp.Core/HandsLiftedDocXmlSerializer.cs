@@ -53,6 +53,16 @@ namespace HandsLiftedApp.Core
                                 RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
                                     copy.BackgroundGraphicFilePath);
                         }
+                        if (copy.DefaultMotionBackgroundVideoPath != null &&
+                            !copy.DefaultMotionBackgroundVideoPath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Unlike BackgroundGraphicFilePath above, this is never copied into the
+                            // playlist folder (spec decision 6 - no copy-into-library for videos), so
+                            // it must be relativized against the Media Library folder instead of the
+                            // playlist directory - the same treatment as other un-copied media paths.
+                            copy.DefaultMotionBackgroundVideoPath =
+                                ToRelativePathIfUnderMediaLibrary(copy.DefaultMotionBackgroundVideoPath);
+                        }
                         return copy;
                     }).ToList()),
                 Items = new TrulyObservableCollection<Item>()
@@ -117,12 +127,16 @@ namespace HandsLiftedApp.Core
             {
                 // SlideTransitionDurationMs is a per-item override on the base Item class
                 // (not song content) and, like every other branch here (LogoItem, ScriptureItem,
-                // MediaGroupItem, ...), must be carried over explicitly.
+                // MediaGroupItem, ...), must be carried over explicitly. MotionBackgroundVideoOverride
+                // is the same kind of per-item override, scoped to this playlist item rather than the
+                // shared library song.
                 return new SongItemReference
                 {
                     UUID = songItemInstance.UUID,
                     SongId = songItemInstance.SongId,
-                    SlideTransitionDurationMs = songItemInstance.SlideTransitionDurationMs
+                    SlideTransitionDurationMs = songItemInstance.SlideTransitionDurationMs,
+                    MotionBackgroundVideoOverridePath = ToRelativePathIfUnderMediaLibrary(
+                        songItemInstance.MotionBackgroundVideoOverride)
                 };
             }
             else if (item is ScriptureItemInstance scriptureItemInstance)

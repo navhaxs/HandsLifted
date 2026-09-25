@@ -116,6 +116,8 @@ namespace HandsLiftedApp.Core.Views.Designer
 
             themeTypeComboBox.ItemsSource = Enum.GetValues<SlideThemeType>();
 
+            backgroundModeComboBox.ItemsSource = Enum.GetValues<ThemeBackgroundMode>();
+
             this.WhenAnyValue(v => v.generalDesignsListBox.ItemsSource)
                 .Subscribe((x) =>
                 {

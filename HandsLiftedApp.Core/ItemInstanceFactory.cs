@@ -28,7 +28,9 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = songReference.UUID,
                     SongId = songReference.SongId,
-                    SlideTransitionDurationMs = songReference.SlideTransitionDurationMs
+                    SlideTransitionDurationMs = songReference.SlideTransitionDurationMs,
+                    MotionBackgroundVideoOverride = RelativeFilePathResolver.ToAbsoluteMediaPath(
+                        mediaLibraryPath, playlistDirectoryPath, songReference.MotionBackgroundVideoOverridePath)
                 };
                 instance.RaiseForwardedPropertiesChanged();
                 return instance;
