@@ -158,7 +158,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             }
 
             Song.Title = songItemFromStringData.Title;
-            Song.Copyright = songItemFromStringData.Copyright;
+            Song.Copyright = SongImporter.TrimSongSelectBoilerplate(songItemFromStringData.Copyright, dropSongNumber: true);
 
             Song.Arrangement.Clear();
             foreach (var sourceStanzaId in songItemFromStringData.Arrangement)
