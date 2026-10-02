@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
@@ -147,6 +148,29 @@ namespace HandsLiftedApp.Core.Views.Setup
             {
                 Globals.Instance.AppPreferences.MediaLibraryPath = folders[0].TryGetLocalPath();
                 Globals.Instance.MainViewModel.LibraryViewModel.ReloadLibraries();
+            }
+        }
+
+        private async void BrowseSlideThemesButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var prefs = Globals.Instance.AppPreferences;
+            var currentPath = Globals.ResolveSlideThemesFolder(prefs.SlideThemesPath);
+            var startFolder = Directory.Exists(currentPath)
+                ? await StorageProvider.TryGetFolderFromPathAsync(currentPath)
+                : null;
+
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select Slide Themes Folder",
+                AllowMultiple = false,
+                SuggestedStartLocation = startFolder
+            });
+
+            if (folders.Count > 0 && folders[0].TryGetLocalPath() is { } path)
+            {
+                prefs.SlideThemesPath = path;
+                Globals.Instance.ReloadSlideThemes();
+                Globals.Instance.SaveAppPreferences();
             }
         }
 

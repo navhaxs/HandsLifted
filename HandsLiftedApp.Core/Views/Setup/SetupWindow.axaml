@@ -252,6 +252,27 @@
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Margin="0,24,0,4"
+                                Text="Slide Themes" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                                Margin="0,0,0,4"
+                                Text="Folder where slide themes (designs) are stored, one XML file per theme. Themes are shared by every playlist. Changing this folder reloads themes; reopen the current playlist to apply them."
+                                TextWrapping="Wrap" />
+                            <DockPanel>
+                                <Button
+                                    Click="BrowseSlideThemesButton_OnClick"
+                                    DockPanel.Dock="Right"
+                                    Margin="8,0,0,0">
+                                    Browse…
+                                </Button>
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlideThemesPath, Mode=OneWay}" />
+                            </DockPanel>
+
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Margin="0,24,0,4"
                                 Text="Libraries" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemColorGrayTextBrush}"
