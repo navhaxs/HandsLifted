@@ -265,4 +265,21 @@ public class SlideThemeLibraryTests
         Assert.IsTrue(lib.Contains(theme.Id));
         Assert.IsFalse(lib.Contains(Guid.NewGuid()));
     }
+
+    [TestMethod]
+    public void Initialize_SecondCall_FlushesPendingEditsToOldFolderBeforeSwitching()
+    {
+        var lib = NewInitialized();
+        var theme = new BaseSlideTheme { Name = "Switch" };
+        lib.Themes.Add(theme);
+        lib.SaveNow(theme.Id);
+        theme.FontSize = theme.FontSize + 3;
+
+        var otherDir = Path.Combine(_root, "other");
+        lib.Initialize(otherDir, null);
+
+        Assert.AreEqual(0, lib.Themes.Count, "new folder is empty");
+        var reloadedOld = NewInitialized().Themes.Single();
+        Assert.AreEqual(theme.FontSize, reloadedOld.FontSize, "pending edit must land in the old folder");
+    }
 }

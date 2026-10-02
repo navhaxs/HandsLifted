@@ -53,6 +53,7 @@ namespace HandsLiftedApp.Core
         public ImportWorkerThread ImportWorkerThread { get; } = new();
         public SlideRenderQueue SlideRenderQueue { get; } = new SlideRenderQueue();
         public HandsLiftedApp.Core.Models.Library.SongLibraryIndex SongLibraryIndex { get; } = new();
+        public HandsLiftedApp.Core.Models.Library.SlideThemeLibrary SlideThemeLibrary { get; } = new();
         public HandsLiftedApp.Core.Services.RemoteControl.RemoteControlServer? RemoteControlServer { get; private set; }
 
         public void OnStartup(IApplicationLifetime applicationLifetime)
@@ -105,6 +106,8 @@ namespace HandsLiftedApp.Core
                 }
             }
 
+            ReloadSlideThemes();
+
             ThumbnailEngineSettings.UseMpvEngine = true;
 
             AsyncImageLoader.ImageLoader.AsyncImageLoader = new ThumbnailImageLoader(
@@ -122,6 +125,7 @@ namespace HandsLiftedApp.Core
             }
 
             MainViewModel = new();
+            MainViewModel.Playlist.Designs = SlideThemeLibrary.Themes;
             SlidePreloadService.Initialize(MainViewModel.Playlist);
 
             RemoteControlServer = new HandsLiftedApp.Core.Services.RemoteControl.RemoteControlServer();
@@ -150,6 +154,7 @@ namespace HandsLiftedApp.Core
             // Any edit made within the last debounce window (500ms) has a save still pending on
             // a timer that may never fire once the process exits — flush it now.
             SongLibraryIndex.FlushPendingSaves();
+            SlideThemeLibrary.FlushPendingSaves();
 
             NativePowerPointImportService.Shutdown();
 
@@ -197,6 +202,12 @@ namespace HandsLiftedApp.Core
             {
                 Log.Error(ex, "Failed to save app preferences to {Path}", Constants.APP_STATE_FILEPATH);
             }
+        }
+
+        public void ReloadSlideThemes()
+        {
+            var folder = ResolveSlideThemesFolder(AppPreferences?.SlideThemesPath);
+            SlideThemeLibrary.Initialize(folder, AppPreferences?.DefaultTheme);
         }
 
         private static Stream LoadConfigFromResource(string configFileName)
