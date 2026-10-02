@@ -77,6 +77,31 @@ public class SlideThemeMigrationTests
     }
 
     [TestMethod]
+    public void UnusableLibraryFolder_KeepsThemesInMemory_ButDoesNotRequestResave()
+    {
+        var blocker = Path.Combine(_root, "blocker");
+        File.WriteAllText(blocker, "not a folder");
+        using var lib = new SlideThemeLibrary(() => _media, a => a());
+        lib.Initialize(blocker, null);
+        Assert.IsNull(lib.Folder);
+        var a = new BaseSlideTheme { Name = "A" };
+
+        var result = SlideThemeMigration.Migrate(new[] { a }, _playlistDir, _media, lib, _prefs, null, null, null);
+
+        Assert.IsTrue(lib.Contains(a.Id));
+        Assert.IsTrue(result.LibraryUnavailable);
+        Assert.IsFalse(result.NeedsResave);
+    }
+
+    [TestMethod]
+    public void UsableLibraryFolder_LibraryUnavailableIsFalse()
+    {
+        var result = Run(new[] { new BaseSlideTheme { Name = "A" } });
+
+        Assert.IsFalse(result.LibraryUnavailable);
+    }
+
+    [TestMethod]
     public void NoEmbeddedThemes_NothingToDo()
     {
         var result = Run(Array.Empty<BaseSlideTheme>());

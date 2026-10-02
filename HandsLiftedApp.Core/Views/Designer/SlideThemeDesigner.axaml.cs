@@ -273,6 +273,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             {
                 Globals.Instance.AppPreferences.DefaultSongThemeId = item.Id;
                 mainViewModel.Playlist.DefaultSongThemeId = null; // clear this playlist's override
+                Globals.Instance.SaveAppPreferences();
             }
         }
 
@@ -283,6 +284,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             {
                 Globals.Instance.AppPreferences.DefaultSongMotionThemeId = item.Id;
                 mainViewModel.Playlist.DefaultSongMotionThemeId = null;
+                Globals.Instance.SaveAppPreferences();
             }
         }
 
@@ -293,6 +295,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             {
                 Globals.Instance.AppPreferences.DefaultScriptureThemeId = item.Id;
                 mainViewModel.Playlist.DefaultScriptureThemeId = null;
+                Globals.Instance.SaveAppPreferences();
             }
         }
 

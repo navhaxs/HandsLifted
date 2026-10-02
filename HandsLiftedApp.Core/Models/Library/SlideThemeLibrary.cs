@@ -38,6 +38,7 @@ namespace HandsLiftedApp.Core.Models.Library
         private readonly Subject<(Guid Id, Exception Error)> _saveFailed = new();
         private Guid? _builtInId;
         private bool _syncing;
+        private bool _disposed;
 
         public ObservableCollection<BaseSlideTheme> Themes { get; } = new();
         public string? Folder { get; private set; }
@@ -190,13 +191,13 @@ namespace HandsLiftedApp.Core.Models.Library
 
         private void ScheduleSave(Guid id)
         {
-            if (_syncing || !_entries.TryGetValue(id, out var entry)) return;
+            if (_disposed || _syncing || !_entries.TryGetValue(id, out var entry)) return;
             entry.Debouncer.Debounce(() => _postToSaveThread(() => SaveNow(id)));
         }
 
         public void SaveNow(Guid id)
         {
-            if (Folder == null || !_entries.TryGetValue(id, out var entry)) return;
+            if (_disposed || Folder == null || !_entries.TryGetValue(id, out var entry)) return;
             var theme = Themes.FirstOrDefault(t => t.Id == id);
             if (theme == null) return;
 
@@ -273,6 +274,10 @@ namespace HandsLiftedApp.Core.Models.Library
             return RelativeFilePathResolver.ToRelativePath(media, path);
         }
 
-        public void Dispose() => DetachAll();
+        public void Dispose()
+        {
+            _disposed = true;
+            DetachAll();
+        }
     }
 }

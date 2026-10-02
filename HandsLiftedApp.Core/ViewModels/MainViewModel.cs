@@ -330,6 +330,15 @@ public class MainViewModel : ViewModelBase
                 Playlist.DefaultSongMotionThemeId = migration.DefaultSongMotionThemeId;
                 Playlist.DefaultScriptureThemeId = migration.DefaultScriptureThemeId;
                 if (migration.AppDefaultsChanged) Globals.Instance.SaveAppPreferences();
+                if (migration.LibraryUnavailable)
+                {
+                    MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                    {
+                        Title = "Slide themes could not be stored",
+                        Content = "The slide themes folder is unavailable, so this playlist's slide themes are only loaded for this session. " +
+                                  "Saving the playlist will discard them until a valid folder is set in Set Up."
+                    });
+                }
                 Playlist.Designs = Globals.Instance.SlideThemeLibrary.Themes;
                 Playlist.PlaylistFilePath = msg.FilePath;
                 Playlist.PlaylistWorkingDirectory = playlistDirectoryPath;

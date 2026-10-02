@@ -29,10 +29,20 @@ public class SlideThemeLibraryTests
     [TestCleanup]
     public void Teardown()
     {
+        // Dispose first so a pending debounce can't write after the folder is gone.
+        foreach (var lib in _libraries) lib.Dispose();
+        _libraries.Clear();
         if (Directory.Exists(_root)) Directory.Delete(_root, recursive: true);
     }
 
-    private SlideThemeLibrary NewLibrary() => new(() => _media, a => a());
+    private readonly System.Collections.Generic.List<SlideThemeLibrary> _libraries = new();
+
+    private SlideThemeLibrary NewLibrary()
+    {
+        var lib = new SlideThemeLibrary(() => _media, a => a());
+        _libraries.Add(lib);
+        return lib;
+    }
 
     private SlideThemeLibrary NewInitialized(BaseSlideTheme? builtIn = null)
     {

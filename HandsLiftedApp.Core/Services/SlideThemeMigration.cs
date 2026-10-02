@@ -16,7 +16,8 @@ namespace HandsLiftedApp.Core.Services
         Guid? DefaultSongMotionThemeId,
         Guid? DefaultScriptureThemeId,
         bool AppDefaultsChanged,
-        bool NeedsResave);
+        bool NeedsResave,
+        bool LibraryUnavailable = false);
 
     /// <summary>
     /// Copies themes embedded in a legacy playlist into the app-level SlideThemeLibrary.
@@ -52,6 +53,16 @@ namespace HandsLiftedApp.Core.Services
                 library.Themes.Add(theme);
                 library.SaveNow(theme.Id);
                 imported++;
+            }
+
+            // No usable themes folder: the themes live in memory for this session only. Saving the
+            // playlist would drop them (Designs is no longer serialized), so do not request a resave
+            // and do not move playlist defaults to app level (they would point at unsaved themes).
+            if (library.Folder == null && imported + skipped > 0)
+            {
+                Log.Warning("Slide theme migration - themes folder unavailable, {Count} themes kept in memory only", imported + skipped);
+                return new SlideThemeMigrationResult(imported, skipped, songId, motionId, scriptureId,
+                    false, false, LibraryUnavailable: true);
             }
 
             var appChanged = false;

@@ -17,8 +17,11 @@ namespace HandsLiftedApp.Core.Converters
         {
             if (values == null || values.Count < 2) return false;
             if (values[0] is not BaseSlideTheme theme) return false;
-            if (values[1] is Guid defaultId) return theme.Id == defaultId;
-            return false;
+            // values[2] (optional) is the playlist override; it beats the app default in values[1].
+            Guid? effective = values.Count > 2 && values[2] is Guid p ? p
+                : values[1] is Guid a ? a
+                : null;
+            return effective.HasValue && theme.Id == effective.Value;
         }
     }
 }

@@ -291,6 +291,34 @@ public class PlaylistInstanceTests
     }
 
     [TestMethod]
+    public void Dispose_UnhooksDesignsCollection()
+    {
+        var shared = new ObservableCollection<BaseSlideTheme>();
+        var playlist = new PlaylistInstance { Designs = shared };
+        var fired = 0;
+        playlist.Changed += (_, _) => fired++;
+
+        playlist.Dispose();
+        shared.Add(MakeTheme("AfterDispose"));
+
+        Assert.AreEqual(0, fired);
+    }
+
+    [TestMethod]
+    public void ReassigningDesigns_UnhooksPreviousCollection()
+    {
+        var oldDesigns = new ObservableCollection<BaseSlideTheme>();
+        var playlist = new PlaylistInstance { Designs = oldDesigns };
+        playlist.Designs = new ObservableCollection<BaseSlideTheme>();
+        var fired = 0;
+        playlist.Changed += (_, _) => fired++;
+
+        oldDesigns.Add(MakeTheme("OnOld"));
+
+        Assert.AreEqual(0, fired);
+    }
+
+    [TestMethod]
     public void GetEffectiveTransitionDurationMs_NullItem_ReturnsPlaylistDefault()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 250 };

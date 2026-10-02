@@ -35,6 +35,7 @@ namespace HandsLiftedApp.Core.Models
     {
         private List<IDisposable> _disposables = new();
         private readonly Dictionary<Guid, IDisposable> _designSubscriptions = new();
+        private System.Collections.ObjectModel.ObservableCollection<BaseSlideTheme>? _hookedDesigns;
 
         public PlaylistInstance()
         {
@@ -274,15 +275,17 @@ namespace HandsLiftedApp.Core.Models
                     items.CollectionChanged += OnItemsCollectionChanged;
                 });
 
-            this.WhenAnyValue(p => p.Designs)
+            _disposables.Add(this.WhenAnyValue(p => p.Designs)
                 .Subscribe(designs =>
                 {
+                    if (_hookedDesigns != null) _hookedDesigns.CollectionChanged -= OnDesignsCollectionChanged;
                     designs.CollectionChanged -= OnDesignsCollectionChanged;
                     designs.CollectionChanged += OnDesignsCollectionChanged;
+                    _hookedDesigns = designs;
                     foreach (var sub in _designSubscriptions.Values) sub.Dispose();
                     _designSubscriptions.Clear();
                     foreach (var theme in designs) SubscribeToDesignChanges(theme);
-                });
+                }));
 
             this.WhenAnyValue(
                     p => p.Title,
@@ -875,6 +878,11 @@ namespace HandsLiftedApp.Core.Models
             foreach (var disposable in _disposables)
             {
                 disposable.Dispose();
+            }
+            if (_hookedDesigns != null)
+            {
+                _hookedDesigns.CollectionChanged -= OnDesignsCollectionChanged;
+                _hookedDesigns = null;
             }
             foreach (var sub in _designSubscriptions.Values)
             {

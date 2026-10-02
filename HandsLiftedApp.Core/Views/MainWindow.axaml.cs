@@ -362,7 +362,9 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 // resources (bitmaps, mpv event subscriptions) are released now rather than
                 // whenever finalizers happen to run.
                 vm.Playlist.Dispose();
-                vm.Playlist = new PlaylistInstance();
+                // Designs must point at the app-level theme library (Globals.OnStartup and the
+                // open-playlist handler do the same); otherwise the new playlist is cut off from it.
+                vm.Playlist = new PlaylistInstance { Designs = Globals.Instance.SlideThemeLibrary.Themes };
                 vm.Playlist.IsDirty = false;
             }
             catch (Exception ex)
