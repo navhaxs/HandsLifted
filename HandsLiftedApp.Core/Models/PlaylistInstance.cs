@@ -112,12 +112,27 @@ namespace HandsLiftedApp.Core.Models
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.NextSlide);
 
-            DefaultThemeAssignmentsChanged = this.WhenAnyValue(
+            var playlistDefaultChanges = this.WhenAnyValue(
                     p => p.DefaultSongThemeId,
                     p => p.DefaultSongMotionThemeId,
                     p => p.DefaultScriptureThemeId)
                 .Skip(1)
                 .Select(_ => Unit.Default);
+
+            // Deferred so each subscriber picks up the AppPreferences instance current at
+            // subscription time (Globals.Instance.AppPreferences is replaced in tests).
+            DefaultThemeAssignmentsChanged = Observable.Defer(() =>
+            {
+                var prefs = Globals.Instance.AppPreferences;
+                if (prefs == null) return playlistDefaultChanges;
+                var appDefaultChanges = prefs.WhenAnyValue(
+                        p => p.DefaultSongThemeId,
+                        p => p.DefaultSongMotionThemeId,
+                        p => p.DefaultScriptureThemeId)
+                    .Skip(1)
+                    .Select(_ => Unit.Default);
+                return playlistDefaultChanges.Merge(appDefaultChanges);
+            });
 
             if (Design.IsDesignMode)
             {
@@ -272,7 +287,6 @@ namespace HandsLiftedApp.Core.Models
             this.WhenAnyValue(
                     p => p.Title,
                     p => p.LogoGraphicFile,
-                    p => p.Designs,
                     p => p.Items,
                     p => p.DefaultSongThemeId,
                     p => p.DefaultSongMotionThemeId,
@@ -304,6 +318,15 @@ namespace HandsLiftedApp.Core.Models
 
         public IObservable<Unit> DefaultThemeAssignmentsChanged { get; }
 
+        public Guid? EffectiveDefaultSongThemeId =>
+            DefaultSongThemeId ?? Globals.Instance.AppPreferences?.DefaultSongThemeId;
+
+        public Guid? EffectiveDefaultSongMotionThemeId =>
+            DefaultSongMotionThemeId ?? Globals.Instance.AppPreferences?.DefaultSongMotionThemeId;
+
+        public Guid? EffectiveDefaultScriptureThemeId =>
+            DefaultScriptureThemeId ?? Globals.Instance.AppPreferences?.DefaultScriptureThemeId;
+
         public BaseSlideTheme ResolveSongTheme(Guid explicitDesignId, bool hasMotionBackground)
         {
             if (explicitDesignId != Guid.Empty)
@@ -312,7 +335,7 @@ namespace HandsLiftedApp.Core.Models
                 if (explicitTheme != null) return explicitTheme;
             }
 
-            var defaultId = hasMotionBackground ? DefaultSongMotionThemeId : DefaultSongThemeId;
+            var defaultId = hasMotionBackground ? EffectiveDefaultSongMotionThemeId : EffectiveDefaultSongThemeId;
             var byDefault = defaultId.HasValue ? Designs.FirstOrDefault(d => d.Id == defaultId.Value) : null;
             return byDefault ?? Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
         }
@@ -325,9 +348,8 @@ namespace HandsLiftedApp.Core.Models
                 if (explicitTheme != null) return explicitTheme;
             }
 
-            var byDefault = DefaultScriptureThemeId.HasValue
-                ? Designs.FirstOrDefault(d => d.Id == DefaultScriptureThemeId.Value)
-                : null;
+            var defaultId = EffectiveDefaultScriptureThemeId;
+            var byDefault = defaultId.HasValue ? Designs.FirstOrDefault(d => d.Id == defaultId.Value) : null;
             return byDefault ?? Globals.Instance.AppPreferences?.DefaultTheme ?? new BaseSlideTheme();
         }
 
@@ -350,7 +372,6 @@ namespace HandsLiftedApp.Core.Models
 
         private void OnDesignsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            IsDirty = true;
             Log.Verbose("Playlist designs collection changed");
             Changed?.Invoke(this, EventArgs.Empty);
             if (e.NewItems != null)
@@ -366,11 +387,7 @@ namespace HandsLiftedApp.Core.Models
             if (_designSubscriptions.ContainsKey(theme.Id)) return;
             if (theme.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id) return;
             _designSubscriptions[theme.Id] = theme.Changed
-                .Subscribe(_ =>
-                {
-                    IsDirty = true;
-                    Changed?.Invoke(this, EventArgs.Empty);
-                });
+                .Subscribe(_ => Changed?.Invoke(this, EventArgs.Empty));
         }
 
         private void UnsubscribeFromDesignChanges(BaseSlideTheme theme)

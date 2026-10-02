@@ -210,6 +210,87 @@ public class PlaylistInstanceTests
     }
 
     [TestMethod]
+    public void ResolveSongTheme_UsesAppDefault_WhenPlaylistHasNoOverride()
+    {
+        var playlist = new PlaylistInstance();
+        var appDefault = MakeTheme("AppDefault");
+        playlist.Designs.Add(appDefault);
+        Globals.Instance.AppPreferences.DefaultSongThemeId = appDefault.Id;
+
+        var result = playlist.ResolveSongTheme(Guid.Empty, hasMotionBackground: false);
+
+        Assert.AreSame(appDefault, result);
+    }
+
+    [TestMethod]
+    public void ResolveSongTheme_PlaylistOverrideBeatsAppDefault()
+    {
+        var playlist = new PlaylistInstance();
+        var appDefault = MakeTheme("AppDefault");
+        var overrideTheme = MakeTheme("Override");
+        playlist.Designs.Add(appDefault);
+        playlist.Designs.Add(overrideTheme);
+        Globals.Instance.AppPreferences.DefaultSongThemeId = appDefault.Id;
+        playlist.DefaultSongThemeId = overrideTheme.Id;
+
+        var result = playlist.ResolveSongTheme(Guid.Empty, hasMotionBackground: false);
+
+        Assert.AreSame(overrideTheme, result);
+    }
+
+    [TestMethod]
+    public void ResolveSongTheme_MotionUsesAppMotionDefault()
+    {
+        var playlist = new PlaylistInstance();
+        var motion = MakeTheme("Motion");
+        playlist.Designs.Add(motion);
+        Globals.Instance.AppPreferences.DefaultSongMotionThemeId = motion.Id;
+
+        var result = playlist.ResolveSongTheme(Guid.Empty, hasMotionBackground: true);
+
+        Assert.AreSame(motion, result);
+    }
+
+    [TestMethod]
+    public void ResolveScriptureTheme_UsesAppDefault_WhenPlaylistHasNoOverride()
+    {
+        var playlist = new PlaylistInstance();
+        var scripture = MakeTheme("Scripture");
+        playlist.Designs.Add(scripture);
+        Globals.Instance.AppPreferences.DefaultScriptureThemeId = scripture.Id;
+
+        var result = playlist.ResolveScriptureTheme(Guid.Empty);
+
+        Assert.AreSame(scripture, result);
+    }
+
+    [TestMethod]
+    public void DefaultThemeAssignmentsChanged_FiresWhenAppDefaultChanges()
+    {
+        var playlist = new PlaylistInstance();
+        var fireCount = 0;
+        playlist.DefaultThemeAssignmentsChanged.Subscribe(_ => fireCount++);
+
+        Globals.Instance.AppPreferences.DefaultSongThemeId = Guid.NewGuid();
+
+        Assert.AreEqual(1, fireCount);
+    }
+
+    [TestMethod]
+    public void EditingOrAddingDesigns_DoesNotMarkPlaylistDirty()
+    {
+        var playlist = new PlaylistInstance();
+        var theme = MakeTheme("T");
+        playlist.Designs.Add(theme);
+        playlist.IsDirty = false;
+
+        playlist.Designs.Add(MakeTheme("U"));
+        theme.Name = "Renamed";
+
+        Assert.IsFalse(playlist.IsDirty);
+    }
+
+    [TestMethod]
     public void GetEffectiveTransitionDurationMs_NullItem_ReturnsPlaylistDefault()
     {
         var playlist = new PlaylistInstance { SlideTransitionDurationMs = 250 };
