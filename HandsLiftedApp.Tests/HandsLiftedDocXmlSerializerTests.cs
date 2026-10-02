@@ -112,84 +112,35 @@ public class HandsLiftedDocXmlSerializerTests
     }
 
     [TestMethod]
-    public void SerializePlaylist_ThenDeserialize_RoundTripsThemeBackgroundModeAndDefaultVideoPath()
+    public void SerializePlaylist_DoesNotWriteDesigns()
     {
-        // The theme's default video is relativized against the configured Media Library folder
-        // (like the item-level override), not the playlist directory - see
-        // SerializePlaylist_ThemeDefaultVideo_RelativeToMediaLibrary_NotPlaylistDirectory below for
-        // the dedicated "outside the library" coverage. Here _tempDir doubles as the library folder
-        // so the video (placed directly inside it) counts as "under" it.
-        Globals.Instance.AppPreferences.MediaLibraryPath = _tempDir;
         var playlist = new PlaylistInstance();
-        var videoPath = Path.Combine(_tempDir, "theme-video.mp4");
-        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme
-        {
-            BackgroundMode = HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground,
-            DefaultMotionBackgroundVideoPath = videoPath
-        };
-        playlist.Designs.Add(theme);
+        playlist.Designs.Add(new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme { Name = "Global now" });
+        var path = Path.Combine(_tempDir, "p.xml");
 
-        var path = Path.Combine(_tempDir, "playlist-theme-video.xml");
         HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
-
-        var rawXml = File.ReadAllText(path);
-        Assert.IsFalse(rawXml.Contains(_tempDir),
-            "Theme's DefaultMotionBackgroundVideoPath must be written relative to the playlist directory, not absolute.");
-
         var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
-        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
-        Assert.AreEqual(HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground, deserializedTheme.BackgroundMode);
-        Assert.AreEqual("theme-video.mp4", deserializedTheme.DefaultMotionBackgroundVideoPath);
+
+        Assert.AreEqual(0, deserialized.Designs.Count);
+        Assert.IsFalse(File.ReadAllText(path).Contains("Global now"));
     }
 
     [TestMethod]
-    public void SerializePlaylist_ThemeBackgroundModePlain_DefaultVideoPathStaysNull()
+    public void DeserializePlaylist_StillReadsLegacyEmbeddedDesigns()
     {
-        var playlist = new PlaylistInstance();
-        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme();
-        playlist.Designs.Add(theme);
-
-        var path = Path.Combine(_tempDir, "playlist-theme-plain.xml");
-        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
-
-        var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
-        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
-        Assert.AreEqual(HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.Plain, deserializedTheme.BackgroundMode);
-        Assert.IsNull(deserializedTheme.DefaultMotionBackgroundVideoPath);
-    }
-
-    // Regression test: like the item-level override, the theme's own default video is never
-    // copied into the playlist folder (decision 6 in the spec - no copy-into-library), so it must
-    // be relativized against the configured Media Library folder (ToRelativePathIfUnderMediaLibrary),
-    // not the playlist directory (plain ToRelativePath) - otherwise a video under the media library
-    // gets written as a long ".." path relative to wherever the playlist happens to be saved, which
-    // breaks the moment the playlist and the library are not both moved together.
-    [TestMethod]
-    public void SerializePlaylist_ThemeDefaultVideo_RelativeToMediaLibrary_NotPlaylistDirectory()
-    {
-        var libraryDir = Path.Combine(_tempDir, "Library");
-        var playlistDir = Path.Combine(_tempDir, "Playlist");
-        Directory.CreateDirectory(Path.Combine(libraryDir, "Videos"));
-        Directory.CreateDirectory(playlistDir);
-        Globals.Instance.AppPreferences.MediaLibraryPath = libraryDir;
-        var videoFile = Path.Combine(libraryDir, "Videos", "bg.mp4");
-        File.WriteAllText(videoFile, "video-bytes");
-
-        var playlist = new PlaylistInstance();
-        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme
+        var legacy = new HandsLiftedApp.Data.Models.Playlist();
+        var theme = new HandsLiftedApp.Data.SlideTheme.BaseSlideTheme { Name = "Legacy" };
+        legacy.Designs.Add(theme);
+        var path = Path.Combine(_tempDir, "legacy.xml");
+        using (var fs = File.Create(path))
         {
-            BackgroundMode = HandsLiftedApp.Data.SlideTheme.ThemeBackgroundMode.MotionBackground,
-            DefaultMotionBackgroundVideoPath = videoFile
-        };
-        playlist.Designs.Add(theme);
-
-        var path = Path.Combine(playlistDir, "playlist-theme-video-library.xml");
-        HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, path);
+            new System.Xml.Serialization.XmlSerializer(typeof(HandsLiftedApp.Data.Models.Playlist))
+                .Serialize(fs, legacy);
+        }
 
         var deserialized = HandsLiftedDocXmlSerializer.DeserializePlaylist(path);
-        var deserializedTheme = deserialized.Designs.Single(d => d.Id == theme.Id);
-        Assert.AreEqual(Path.Combine("Videos", "bg.mp4"), deserializedTheme.DefaultMotionBackgroundVideoPath,
-            "Must be relative to the Media Library folder, not a long '..' path relative to the playlist directory");
+
+        Assert.AreEqual(theme.Id, deserialized.Designs.Single().Id);
     }
 
     [TestMethod]

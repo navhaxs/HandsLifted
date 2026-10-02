@@ -314,42 +314,23 @@ public class MainViewModel : ViewModelBase
                 Playlist.Title = x.Title;
                 Playlist.SlideTransitionDurationMs = x.SlideTransitionDurationMs;
                 Playlist.Meta = x.Meta;
-                Playlist.DefaultSongThemeId = x.DefaultSongThemeId;
-                Playlist.DefaultSongMotionThemeId = x.DefaultSongMotionThemeId;
-                Playlist.DefaultScriptureThemeId = x.DefaultScriptureThemeId;
 
                 Playlist.LogoGraphicFile =
                     RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
                         x.LogoGraphicFile);
                 
-                var loadedDesigns = x.Designs.Select(design =>
-                {
-                    if (design.BackgroundGraphicFilePath != null &&
-                        !design.BackgroundGraphicFilePath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
-                    {
-                        design.BackgroundGraphicFilePath =
-                            RelativeFilePathResolver.ToAbsolutePath(playlistDirectoryPath,
-                                design.BackgroundGraphicFilePath);
-                    }
-                    if (design.DefaultMotionBackgroundVideoPath != null &&
-                        !design.DefaultMotionBackgroundVideoPath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Matches the save-side treatment (ToRelativePathIfUnderMediaLibrary): this
-                        // path is never copied into the playlist folder, so it resolves against the
-                        // Media Library folder first, falling back to the playlist directory for
-                        // paths saved before the Media Library feature existed.
-                        design.DefaultMotionBackgroundVideoPath =
-                            RelativeFilePathResolver.ToAbsoluteMediaPath(
-                                Globals.Instance.AppPreferences?.MediaLibraryPath, playlistDirectoryPath,
-                                design.DefaultMotionBackgroundVideoPath);
-                    }
-                    return design;
-                });
-                var defaultTheme = Globals.Instance.AppPreferences?.DefaultTheme;
-                var designsWithDefault = defaultTheme != null
-                    ? new[] { defaultTheme }.Concat(loadedDesigns)
-                    : loadedDesigns;
-                Playlist.Designs = new ObservableCollection<BaseSlideTheme>(designsWithDefault.ToList());
+                // Themes are app-wide now. Import any themes embedded in a legacy playlist into the
+                // library (never overwriting an existing Id), then point the playlist at the library.
+                var prefs = Globals.Instance.AppPreferences;
+                var migration = SlideThemeMigration.Migrate(
+                    x.Designs, playlistDirectoryPath, prefs?.MediaLibraryPath,
+                    Globals.Instance.SlideThemeLibrary, prefs!,
+                    x.DefaultSongThemeId, x.DefaultSongMotionThemeId, x.DefaultScriptureThemeId);
+                Playlist.DefaultSongThemeId = migration.DefaultSongThemeId;
+                Playlist.DefaultSongMotionThemeId = migration.DefaultSongMotionThemeId;
+                Playlist.DefaultScriptureThemeId = migration.DefaultScriptureThemeId;
+                if (migration.AppDefaultsChanged) Globals.Instance.SaveAppPreferences();
+                Playlist.Designs = Globals.Instance.SlideThemeLibrary.Themes;
                 Playlist.PlaylistFilePath = msg.FilePath;
                 Playlist.PlaylistWorkingDirectory = playlistDirectoryPath;
                 
@@ -394,7 +375,7 @@ public class MainViewModel : ViewModelBase
 
                 // Defer the dirty reset to Background priority so deferred OAPH initial-value
                 // emissions from BaseSlideTheme (via ObserveOn(MainThreadScheduler)) fire first.
-                bool finalIsDirty = loadFilePath != msg.FilePath;
+                bool finalIsDirty = loadFilePath != msg.FilePath || migration.NeedsResave;
                 await Dispatcher.UIThread.InvokeAsync(() => Playlist.IsDirty = finalIsDirty, DispatcherPriority.Background);
                 // update MRU list
                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = msg.FilePath});

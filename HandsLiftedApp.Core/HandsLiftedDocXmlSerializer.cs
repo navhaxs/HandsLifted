@@ -40,31 +40,6 @@ namespace HandsLiftedApp.Core
                 DefaultSongThemeId = playlist.DefaultSongThemeId,
                 DefaultSongMotionThemeId = playlist.DefaultSongMotionThemeId,
                 DefaultScriptureThemeId = playlist.DefaultScriptureThemeId,
-                Designs = new ObservableCollection<BaseSlideTheme>(playlist.Designs
-                    .Where(d => d.Id != Globals.Instance.AppPreferences?.DefaultTheme?.Id)
-                    .Select(design =>
-                    {
-                        var copy = new BaseSlideTheme();
-                        copy.CopyFrom(design);
-                        if (copy.BackgroundGraphicFilePath != null &&
-                            !copy.BackgroundGraphicFilePath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
-                        {
-                            copy.BackgroundGraphicFilePath =
-                                RelativeFilePathResolver.ToRelativePath(playlistDirectoryPath,
-                                    copy.BackgroundGraphicFilePath);
-                        }
-                        if (copy.DefaultMotionBackgroundVideoPath != null &&
-                            !copy.DefaultMotionBackgroundVideoPath.StartsWith("avares://", StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Unlike BackgroundGraphicFilePath above, this is never copied into the
-                            // playlist folder (spec decision 6 - no copy-into-library for videos), so
-                            // it must be relativized against the Media Library folder instead of the
-                            // playlist directory - the same treatment as other un-copied media paths.
-                            copy.DefaultMotionBackgroundVideoPath =
-                                ToRelativePathIfUnderMediaLibrary(copy.DefaultMotionBackgroundVideoPath);
-                        }
-                        return copy;
-                    }).ToList()),
                 Items = new TrulyObservableCollection<Item>()
             };
 
