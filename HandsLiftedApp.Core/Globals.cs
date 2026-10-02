@@ -179,6 +179,26 @@ namespace HandsLiftedApp.Core
             }
         }
 
+        public static string ResolveSlideThemesFolder(string? configured) =>
+            string.IsNullOrWhiteSpace(configured) ? Constants.SLIDE_THEMES_DIR : configured;
+
+        /// <summary>
+        /// Persists app preferences immediately. Preferences are otherwise only written on app
+        /// exit, which would lose a changed setting on a crash.
+        /// </summary>
+        public void SaveAppPreferences()
+        {
+            try
+            {
+                Directory.CreateDirectory(Constants.APP_DATA_DIR);
+                File.WriteAllText(Constants.APP_STATE_FILEPATH, JsonConvert.SerializeObject(AppPreferences));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to save app preferences to {Path}", Constants.APP_STATE_FILEPATH);
+            }
+        }
+
         private static Stream LoadConfigFromResource(string configFileName)
         {
             Assembly assembly;

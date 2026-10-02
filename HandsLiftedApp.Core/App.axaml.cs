@@ -60,8 +60,7 @@ public partial class App : Application
             
             desktop.Exit += (_, __) =>
             {
-                var json = JsonConvert.SerializeObject(Globals.Instance.AppPreferences);
-                File.WriteAllText(Constants.APP_STATE_FILEPATH, json);
+                Globals.Instance.SaveAppPreferences();
             };
             
             SplashWindow splashScreen = new();

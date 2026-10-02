@@ -172,6 +172,38 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _mediaLibraryPath, value);
         }
 
+        private string _slideThemesPath = Constants.SLIDE_THEMES_DIR;
+        [DataMember]
+        public string SlideThemesPath
+        {
+            get => _slideThemesPath;
+            set => this.RaiseAndSetIfChanged(ref _slideThemesPath, value);
+        }
+
+        private Guid? _defaultSongThemeId;
+        [DataMember]
+        public Guid? DefaultSongThemeId
+        {
+            get => _defaultSongThemeId;
+            set => this.RaiseAndSetIfChanged(ref _defaultSongThemeId, value);
+        }
+
+        private Guid? _defaultSongMotionThemeId;
+        [DataMember]
+        public Guid? DefaultSongMotionThemeId
+        {
+            get => _defaultSongMotionThemeId;
+            set => this.RaiseAndSetIfChanged(ref _defaultSongMotionThemeId, value);
+        }
+
+        private Guid? _defaultScriptureThemeId;
+        [DataMember]
+        public Guid? DefaultScriptureThemeId
+        {
+            get => _defaultScriptureThemeId;
+            set => this.RaiseAndSetIfChanged(ref _defaultScriptureThemeId, value);
+        }
+
         private string _ndiMainOutputName = "VisionScreens Main Output";
         [DataMember]
         public string NdiMainOutputName

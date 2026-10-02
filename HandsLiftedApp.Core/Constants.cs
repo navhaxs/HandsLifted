@@ -12,6 +12,7 @@ namespace HandsLiftedApp.Core
         public static readonly string LIBRARY_CONFIG_FILEPATH = Path.Combine(APP_DATA_DIR, "library.yml");
         public static readonly string USER_CONFIG_FILEPATH = Path.Combine(APP_DATA_DIR, "HandsLiftedApp.UserConfig.json");
         public static readonly string LOGGING_CONFIG_FILEPATH = Path.Combine(APP_DATA_DIR, "logging.yml");
+        public static readonly string SLIDE_THEMES_DIR = Path.Combine(APP_DATA_DIR, "SlideThemes");
 
         public static readonly string[] SUPPORTED_SONG = { "txt", "xml" };
         public static readonly string[] SUPPORTED_POWERPOINT = { "ppt", "pptx", "odp" };
