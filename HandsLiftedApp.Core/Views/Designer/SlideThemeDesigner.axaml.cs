@@ -271,7 +271,8 @@ namespace HandsLiftedApp.Core.Views.Designer
             if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
                 control.DataContext is BaseSlideTheme item)
             {
-                mainViewModel.Playlist.DefaultSongThemeId = item.Id;
+                Globals.Instance.AppPreferences.DefaultSongThemeId = item.Id;
+                mainViewModel.Playlist.DefaultSongThemeId = null; // clear this playlist's override
             }
         }
 
@@ -280,7 +281,8 @@ namespace HandsLiftedApp.Core.Views.Designer
             if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
                 control.DataContext is BaseSlideTheme item)
             {
-                mainViewModel.Playlist.DefaultSongMotionThemeId = item.Id;
+                Globals.Instance.AppPreferences.DefaultSongMotionThemeId = item.Id;
+                mainViewModel.Playlist.DefaultSongMotionThemeId = null;
             }
         }
 
@@ -289,7 +291,8 @@ namespace HandsLiftedApp.Core.Views.Designer
             if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
                 control.DataContext is BaseSlideTheme item)
             {
-                mainViewModel.Playlist.DefaultScriptureThemeId = item.Id;
+                Globals.Instance.AppPreferences.DefaultScriptureThemeId = item.Id;
+                mainViewModel.Playlist.DefaultScriptureThemeId = null;
             }
         }
 
@@ -301,10 +304,15 @@ namespace HandsLiftedApp.Core.Views.Designer
                 {
                     if (control.DataContext is BaseSlideTheme item)
                     {
-                        if (item.Id == Globals.Instance.AppPreferences?.DefaultTheme?.Id
-                            || item.Id == mainViewModel.Playlist.DefaultSongThemeId
-                            || item.Id == mainViewModel.Playlist.DefaultSongMotionThemeId
-                            || item.Id == mainViewModel.Playlist.DefaultScriptureThemeId)
+                        var prefs = Globals.Instance.AppPreferences;
+                        var playlist = mainViewModel.Playlist;
+                        if (item.Id == prefs?.DefaultTheme?.Id
+                            || item.Id == prefs?.DefaultSongThemeId
+                            || item.Id == prefs?.DefaultSongMotionThemeId
+                            || item.Id == prefs?.DefaultScriptureThemeId
+                            || item.Id == playlist.DefaultSongThemeId
+                            || item.Id == playlist.DefaultSongMotionThemeId
+                            || item.Id == playlist.DefaultScriptureThemeId)
                         {
                             MessageBus.Current.SendMessage(new MessageWindowViewModel()
                                 { Title = "Cannot remove a theme that is set as a default" });
@@ -482,10 +490,20 @@ namespace HandsLiftedApp.Core.Views.Designer
 
                         if (!isSharedDefaultTheme)
                         {
-                            localPath = PortableAssetCopier.CopyIntoSubfolder(
-                                localPath,
-                                Globals.Instance.MainViewModel.Playlist.PlaylistWorkingDirectory,
-                                Path.Combine("Themes", "Backgrounds"));
+                            try
+                            {
+                                localPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                                    localPath, Globals.Instance.AppPreferences?.MediaLibraryPath);
+                            }
+                            catch (MediaLibraryNotConfiguredException)
+                            {
+                                MessageBus.Current.SendMessage(new MessageWindowViewModel()
+                                {
+                                    Title = "Media Library not configured",
+                                    Content = "Open Set Up and choose a Media Library folder before setting a theme background."
+                                });
+                                return;
+                            }
                         }
                     }
 
