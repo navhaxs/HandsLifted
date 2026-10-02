@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -83,6 +84,40 @@ namespace HandsLiftedApp.Core.Utils
             catch (XmlException ex)
             {
                 Log.Error(ex, "XML error during BaseSlideTheme deserialization");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Synchronously serialize a theme to UTF-8 (no BOM) XML bytes. Used by the theme library,
+        /// which compares bytes to skip no-op saves.
+        /// </summary>
+        public static bool TrySerializeToBytes(BaseSlideTheme theme, out byte[] bytes)
+        {
+            bytes = Array.Empty<byte>();
+            try
+            {
+                using var ms = new MemoryStream();
+                var settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    Encoding = new UTF8Encoding(false)
+                };
+                using (var writer = XmlWriter.Create(ms, settings))
+                {
+                    ThemeSerializer.Serialize(writer, theme);
+                }
+                bytes = ms.ToArray();
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Error(ex, "Failed to serialize BaseSlideTheme to bytes");
+                return false;
+            }
+            catch (XmlException ex)
+            {
+                Log.Error(ex, "XML error during BaseSlideTheme serialization to bytes");
                 return false;
             }
         }
