@@ -24,6 +24,12 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
             InitializeComponent();
         }
 
+        private void MotionVideoPicker_OnVideoPathPicked(object? sender, string path)
+        {
+            if (DataContext is SongItemInstance song)
+                song.MotionBackgroundVideoOverride = path;
+        }
+
         private void ClearThemeButton_OnClick(object? sender, RoutedEventArgs e)
         {
             switch (DataContext)

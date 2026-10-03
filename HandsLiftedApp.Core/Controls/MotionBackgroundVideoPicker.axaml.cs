@@ -20,6 +20,8 @@ namespace HandsLiftedApp.Core.Controls
 
         private string? _videoPath;
 
+        public event EventHandler<string>? VideoPathPicked;
+
         public static readonly DirectProperty<MotionBackgroundVideoPicker, string?> VideoPathProperty =
             AvaloniaProperty.RegisterDirect<MotionBackgroundVideoPicker, string?>(
                 nameof(VideoPath), o => o.VideoPath, (o, v) => o.VideoPath = v,
@@ -61,6 +63,10 @@ namespace HandsLiftedApp.Core.Controls
                 if (path != null)
                 {
                     VideoPath = path;
+                    // The native dialog steals focus, which light-dismisses a hosting Flyout and
+                    // detaches this control, severing the two-way VideoPath binding. Hosts that live
+                    // in a Flyout subscribe to this to write the value back themselves.
+                    VideoPathPicked?.Invoke(this, path);
                 }
             }
             catch (Exception ex)

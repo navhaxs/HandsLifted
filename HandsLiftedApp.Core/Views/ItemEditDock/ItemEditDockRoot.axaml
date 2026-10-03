@@ -48,6 +48,23 @@
                             BorderBrush="#b3aed9"
                             BorderThickness="1"
                             CornerRadius="4"
+                            IsVisible="{Binding ShowMotionBackgroundVideoButton}"
+                            Margin="6,6,0,6"
+                            Padding="8,6"
+                            ToolTip.Tip="Motion background video override">
+                            <TextBlock>Background</TextBlock>
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedRight">
+                                    <controls:MotionBackgroundVideoPicker Margin="8" VideoPath="{Binding MotionBackgroundVideoOverride}" VideoPathPicked="MotionVideoPicker_OnVideoPathPicked" />
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+
+                        <Button
+                            Background="{DynamicResource EditButtonBackgroundBrush}"
+                            BorderBrush="#b3aed9"
+                            BorderThickness="1"
+                            CornerRadius="4"
                             Margin="6,6,0,6"
                             Padding="22,6">
                             <TextBlock>Edit</TextBlock>
@@ -82,8 +99,7 @@
                                                             SelectedItem="{Binding ResolvedDesignTheme}">
                                                             <ComboBox.Styles>
                                                                 <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
-                                                                    <Setter Property="IsVisible"
-                                                                            Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
+                                                                    <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
                                                                 </Style>
                                                             </ComboBox.Styles>
                                                             <ComboBox.ItemTemplate>
@@ -135,24 +151,6 @@
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
-                        <Button
-                            Background="{DynamicResource EditButtonBackgroundBrush}"
-                            BorderBrush="#b3aed9"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            IsVisible="{Binding ShowMotionBackgroundVideoButton}"
-                            Margin="6,6,0,6"
-                            Padding="22,6"
-                            ToolTip.Tip="Motion background video override">
-                            <TextBlock>Video</TextBlock>
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedRight">
-                                    <controls:MotionBackgroundVideoPicker
-                                        Margin="8"
-                                        VideoPath="{Binding MotionBackgroundVideoOverride}" />
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate x:DataType="items1:ScriptureItemInstance" x:Key="ScriptureItemInstance">
@@ -195,8 +193,7 @@
                                                         SelectedItem="{Binding ExplicitDesignTheme}">
                                                         <ComboBox.Styles>
                                                             <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
-                                                                <Setter Property="IsVisible"
-                                                                        Value="{Binding Converter={StaticResource AppliesToScriptureVisibilityConverter}}" />
+                                                                <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToScriptureVisibilityConverter}}" />
                                                             </Style>
                                                         </ComboBox.Styles>
                                                         <ComboBox.ItemTemplate>
