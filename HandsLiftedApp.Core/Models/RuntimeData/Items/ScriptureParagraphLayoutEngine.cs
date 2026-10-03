@@ -22,24 +22,25 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public const float SuperscriptFontSizeRatio = 0.6f;
         public const float SuperscriptBaselineOffsetRatio = 0.35f;
         public const float HeaderSpacingBelow = 20f;
-        private const float AutofitStep = 4f;
+        private const float ShrinkStep = 2f;
 
-        // Mirrors SongSlideSpecBuilder's shrink-to-fit autofit: try the theme's nominal font size
-        // first, then step the size down (down to the theme's configured floor) looking for a
-        // smaller size that lets the whole reading fit on fewer pages. Without this, a reading
-        // that's a couple of lines away from fitting a page always reflows the tail onto its own
-        // near-empty page even though the theme is configured to shrink text for exactly this case
-        // (AutofitEnabled/AutofitMinFontSizeRatio) -- ordinary song slides already do this via
-        // SongSlideSpecBuilder.ComputeAutofitSize, scripture paragraphs just weren't wired up to it.
+        // Paginates at the theme's own font size. The only exception: if that leaves a reading a
+        // few lines over, step the size down (never below FontSize * (1 - ScriptureMaxShrinkRatio))
+        // looking for a size that needs fewer pages, so the tail isn't stranded alone on a
+        // near-empty slide. A reading that is much too long for one slide never shrinks beyond
+        // the tolerance - it splits across slides at (almost) the configured size. The song-lyric
+        // autofit settings (AutofitEnabled/AutofitMinFontSizeRatio) are deliberately ignored.
         public static List<ScriptureParagraphPage> Paginate(
             IReadOnlyList<ScriptureVerseRef> verses, string headerText, BaseSlideTheme theme)
         {
             var bestPages = PaginateAtFontSize(verses, headerText, theme, theme.FontSize);
-            if (!theme.AutofitEnabled)
+
+            float maxShrink = Math.Clamp((float)theme.ScriptureMaxShrinkRatio, 0f, 1f);
+            if (maxShrink <= 0f)
                 return bestPages;
 
-            float floor = theme.FontSize * (float)theme.AutofitMinFontSizeRatio;
-            for (float candidate = theme.FontSize - AutofitStep; candidate >= floor && bestPages.Count > 1; candidate -= AutofitStep)
+            float floor = theme.FontSize * (1f - maxShrink);
+            for (float candidate = theme.FontSize - ShrinkStep; candidate >= floor && bestPages.Count > 1; candidate -= ShrinkStep)
             {
                 var candidatePages = PaginateAtFontSize(verses, headerText, theme, candidate);
                 if (candidatePages.Count < bestPages.Count)

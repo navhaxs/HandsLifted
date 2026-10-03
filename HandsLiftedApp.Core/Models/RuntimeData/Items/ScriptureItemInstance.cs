@@ -259,10 +259,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                     if (existing != null)
                     {
-                        // Autofit can pick a different font size than last time (theme edit, or the
-                        // shrink-to-avoid-a-near-empty-page search in Paginate landing on a different
-                        // candidate) without flatText changing at all, so it needs its own explicit
-                        // Cached invalidation below rather than riding the Text-change one.
+                        // A theme font size edit changes the paginated font size without flatText
+                        // changing at all, so it needs its own explicit Cached invalidation below
+                        // rather than riding the Text-change one.
                         bool fontSizeChanged = existing.EffectiveFontSize != page.FontSize;
                         existing.Lines = page.Lines;
                         existing.EffectiveFontSize = page.FontSize;

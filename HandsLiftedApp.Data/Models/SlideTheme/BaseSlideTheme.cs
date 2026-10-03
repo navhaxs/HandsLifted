@@ -432,6 +432,18 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _autofitMinFontSizeRatio, value);
         }
 
+        // Scripture only: the most a reading's font may shrink (as a fraction of FontSize) to avoid
+        // spilling a few lines onto an extra, near-empty slide. 0 disables shrinking. Separate from
+        // AutofitEnabled/AutofitMinFontSizeRatio, which are song-lyric settings.
+        private decimal _scriptureMaxShrinkRatio = 0.1M;
+
+        [DataMember]
+        public decimal ScriptureMaxShrinkRatio
+        {
+            get => _scriptureMaxShrinkRatio;
+            set => this.RaiseAndSetIfChanged(ref _scriptureMaxShrinkRatio, value);
+        }
+
         private string? _backgroundGraphicFilePath;
 
         [DataMember]

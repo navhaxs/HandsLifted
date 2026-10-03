@@ -43,6 +43,69 @@ public class ScriptureParagraphLayoutEngineTests
         Assert.IsFalse(pages[1].Lines.Any(l => l.IsHeader), "continuation pages must not repeat the header");
     }
 
+    // Scripture shrinks only within ScriptureMaxShrinkRatio, and only when that avoids an extra
+    // page. The song-lyric autofit flag/floor (AutofitEnabled, AutofitMinFontSizeRatio) are ignored.
+    // 150 "word"s at font 60 needs 2 pages; it fits on 1 page at roughly 48 (about 20% smaller).
+    private static List<ScriptureVerseRef> OverflowingPassage() =>
+        MakeVerses((1, 1, string.Join(" ", Enumerable.Repeat("word", 150))));
+
+    [TestMethod]
+    public void Paginate_DefaultMaxShrinkRatio_IsTenPercent()
+    {
+        Assert.AreEqual(0.1M, new BaseSlideTheme().ScriptureMaxShrinkRatio);
+    }
+
+    [TestMethod]
+    public void Paginate_ZeroMaxShrinkRatio_NeverShrinks()
+    {
+        var theme = MakeTheme(fontSize: 60);
+        theme.ScriptureMaxShrinkRatio = 0M;
+
+        var pages = ScriptureParagraphLayoutEngine.Paginate(OverflowingPassage(), "Test 1:1", theme);
+
+        Assert.IsTrue(pages.Count > 1);
+        Assert.IsTrue(pages.All(p => p.FontSize == 60f));
+    }
+
+    [TestMethod]
+    public void Paginate_ShrinkNeededExceedsTolerance_KeepsFullSizeAndSplits()
+    {
+        var theme = MakeTheme(fontSize: 60);
+        theme.ScriptureMaxShrinkRatio = 0.05M; // floor 57, but it needs ~48 to fit one page
+
+        var pages = ScriptureParagraphLayoutEngine.Paginate(OverflowingPassage(), "Test 1:1", theme);
+
+        Assert.IsTrue(pages.Count > 1);
+        Assert.IsTrue(pages.All(p => p.FontSize == 60f), "must not shrink at all when it cannot avoid the extra page");
+    }
+
+    [TestMethod]
+    public void Paginate_ShrinkWithinTolerance_ShrinksJustEnoughToAvoidExtraPage()
+    {
+        var theme = MakeTheme(fontSize: 60);
+        theme.ScriptureMaxShrinkRatio = 0.5M; // floor 30, plenty of room
+
+        var pages = ScriptureParagraphLayoutEngine.Paginate(OverflowingPassage(), "Test 1:1", theme);
+
+        Assert.AreEqual(1, pages.Count);
+        Assert.IsTrue(pages[0].FontSize < 60f, "should have shrunk");
+        Assert.IsTrue(pages[0].FontSize >= 30f, "must respect the tolerance floor");
+    }
+
+    [TestMethod]
+    public void Paginate_SongAutofitSettings_AreIgnored()
+    {
+        var theme = MakeTheme(fontSize: 60);
+        theme.ScriptureMaxShrinkRatio = 0M;
+        theme.AutofitEnabled = true;
+        theme.AutofitMinFontSizeRatio = 0.1M;
+
+        var pages = ScriptureParagraphLayoutEngine.Paginate(OverflowingPassage(), "Test 1:1", theme);
+
+        Assert.IsTrue(pages.Count > 1);
+        Assert.IsTrue(pages.All(p => p.FontSize == 60f));
+    }
+
     [TestMethod]
     public void Paginate_LongPassage_ProducesMultiplePages()
     {
