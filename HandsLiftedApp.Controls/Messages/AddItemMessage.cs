@@ -21,7 +21,6 @@ namespace HandsLiftedApp.Controls.Messages
             SectionHeading,
             MediaGroup,
             BlankGroup,
-            BibleReadingSlideGroup,
             Comment,
             Scripture
         }

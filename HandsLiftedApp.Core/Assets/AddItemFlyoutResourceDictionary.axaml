@@ -71,14 +71,6 @@
                 Click="OnMenuItemClick" CommandParameter="BlankGroup"
                 Header="Blank Group" />
         </MenuItem>
-        <MenuItem Header="_Custom">
-            <MenuItem.Icon>
-                <material:MaterialIcon Kind="ContentCopy" />
-            </MenuItem.Icon>
-            <MenuItem
-                Click="OnMenuItemClick" CommandParameter="BibleReadingSlideGroup"
-                Header="Custom Group (Bible Reading Slide Test)" />
-        </MenuItem>
         <Separator />
         <MenuItem Header="_From Library..." Click="ExploreLibraryClick">
             <MenuItem.Icon>
