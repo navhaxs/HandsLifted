@@ -128,8 +128,17 @@
                         <Setter Property="CornerRadius" Value="0" />
                         <Setter Property="Padding" Value="12 0" />
                     </Style>
+                    <!--  Real (not negative) left margin on the pill itself, so the leading gap is genuine layout space inside the WrapPanel's own extent - a negative-margin overlay here would overflow past the arrangement row's actual content bounds and get clipped  -->
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-child(1) DockPanel#PART_Container">
+                        <Setter Property="Margin" Value="16 2 -5 2" />
+                    </Style>
+                    <!--  Same real-space treatment on the trailing side for the last pill  -->
                     <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-last-child(1) DockPanel#PART_Container">
-                        <Setter Property="Margin" Value="0 2 0 2" />
+                        <Setter Property="Margin" Value="0 2 16 2" />
+                    </Style>
+                    <!--  Single-token arrangement: it's both the first and last pill, so it needs both real gaps at once  -->
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-child(1):nth-last-child(1) DockPanel#PART_Container">
+                        <Setter Property="Margin" Value="16 2 16 2" />
                     </Style>
 
                     <!--  Hover Buttons visibility  -->
@@ -141,6 +150,15 @@
                     </Style>
                     <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter Button.HoverInsertButton.BeforeButton">
                         <Setter Property="IsVisible" Value="True" />
+                    </Style>
+                    <!--  First item's pill now carries a real 16px left margin (see DockPanel#PART_Container override above) instead of empty space outside the row's bounds. Width covers that whole gap PLUS a small 8px reach into the pill's own leading edge, matching the mid-token BeforeButtons' 8px reach into their neighbor  -->
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-child(1) Button.HoverInsertButton.BeforeButton">
+                        <Setter Property="Width" Value="24" />
+                        <Setter Property="Margin" Value="0" />
+                    </Style>
+                    <!--  Keep the "+" icon visually pinned at the gap/pill boundary (16px in) even though the hit-box above was widened to 24px - only the invisible hit area should grow, not the icon's visual position  -->
+                    <Style Selector="ItemsControl#PART_ArrangementTokens &gt; ContentPresenter:nth-child(1) Button.HoverInsertButton.BeforeButton material|MaterialIcon">
+                        <Setter Property="Margin" Value="-4,-4,4,-4" />
                     </Style>
                 </ItemsControl.Styles>
                 <ItemsControl.ItemsPanel>
@@ -166,6 +184,16 @@
                                     <Setter Property="Opacity" Value="1" />
                                     <Setter Property="Background" Value="Yellow" />
                                 </Style>
+                                <!--  Widen the BeforeButton hit-box leftward so it starts revealing while the pointer is still over the tail end of the previous token, not only once it crosses into this token's own bounds  -->
+                                <Style Selector="Button.HoverInsertButton.BeforeButton">
+                                    <Setter Property="Width" Value="28" />
+                                    <Setter Property="Margin" Value="-8,0,0,0" />
+                                </Style>
+                                <!--  Only ever shown for the last item, whose pill now carries a real 16px right margin (see DockPanel#PART_Container override above). Width covers that whole gap PLUS a small 8px reach into the pill's own trailing edge, mirroring the first item's BeforeButton  -->
+                                <Style Selector="Button.HoverInsertButton.AfterButton">
+                                    <Setter Property="Width" Value="24" />
+                                    <Setter Property="Margin" Value="0" />
+                                </Style>
                             </Grid.Styles>
                             <DockPanel
                                 Background="Transparent"
@@ -173,8 +201,8 @@
                                 Name="PART_Container">
                                 <DockPanel.ContextMenu>
                                     <ContextMenu
-                                        PlacementAnchor="Bottom"
                                         Placement="Bottom"
+                                        PlacementAnchor="Bottom"
                                         PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}}">
                                         <MenuItem Click="OnRepeatPartClick" Header="Repeat" />
                                         <MenuItem Click="OnRemovePartClick" Header="Remove" />
@@ -206,7 +234,8 @@
                                 </i:Interaction.Behaviors>
                             </DockPanel>
                             <Button
-                                BorderThickness="0"
+                                BorderBrush="#808080"
+                                BorderThickness="1"
                                 Classes="HoverInsertButton BeforeButton"
                                 Cursor="Hand"
                                 DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
@@ -214,22 +243,26 @@
                                 HorizontalAlignment="Left">
                                 <material:MaterialIcon
                                     Foreground="#888888"
+                                    HorizontalAlignment="Right"
                                     Kind="PlusCircleOutline"
                                     Margin="-4"
                                     VerticalAlignment="Center" />
                             </Button>
                             <Button
-                                BorderThickness="0"
+                                BorderBrush="#808080"
+                                BorderThickness="1"
                                 Classes="HoverInsertButton AfterButton"
                                 Cursor="Hand"
                                 DataContext="{Binding $parent[controls:SongArrangementControl].DataContext}"
                                 Flyout="{StaticResource MySharedFlyout}"
                                 HorizontalAlignment="Right"
                                 Tag="After">
+                                <!--  Icon stays pinned at the gap/pill boundary even though this button's own hit-box is wider (reaches into the pill) - see AfterButton width override in Grid.Styles above  -->
                                 <material:MaterialIcon
                                     Foreground="#888888"
+                                    HorizontalAlignment="Left"
                                     Kind="PlusCircleOutline"
-                                    Margin="-4"
+                                    Margin="4,-4,-4,-4"
                                     VerticalAlignment="Center" />
                             </Button>
                         </Grid>

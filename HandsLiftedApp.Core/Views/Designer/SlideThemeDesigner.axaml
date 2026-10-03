@@ -1,21 +1,24 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
-             xmlns:ext="using:HandsLiftedApp.Extensions"
-             xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
-             xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
-             xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
-             xmlns:core="clr-namespace:HandsLiftedApp.Core"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
-             xmlns:converters2="clr-namespace:HandsLiftedApp.Core.Converters"
-             xmlns:coreControls="clr-namespace:HandsLiftedApp.Core.Controls"
-             x:DataType="viewModels:MainViewModel"
-             x:CompileBindings="False"
-             x:Class="HandsLiftedApp.Core.Views.Designer.SlideThemeDesigner">
+<UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.Designer.SlideThemeDesigner"
+    x:CompileBindings="False"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
+    xmlns:converters="using:Avalonia.Markup.Xaml.Converters"
+    xmlns:converters1="clr-namespace:HandsLiftedApp.Controls.Converters;assembly=HandsLiftedApp.Controls"
+    xmlns:converters2="clr-namespace:HandsLiftedApp.Core.Converters"
+    xmlns:core="clr-namespace:HandsLiftedApp.Core"
+    xmlns:coreControls="clr-namespace:HandsLiftedApp.Core.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:designer="clr-namespace:HandsLiftedApp.Core.Views.Designer"
+    xmlns:ext="using:HandsLiftedApp.Extensions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:HandsLiftedApp.Core.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <converters1:XmlColorToBrushConverter x:Key="XmlColorToBrush" />
@@ -34,17 +37,17 @@
         <converters2:IsMotionBackgroundModeConverter x:Key="IsMotionBackgroundModeConverter" />
 
         <ContextMenu x:Key="DesignListItemContextMenu">
-            <MenuItem Header="Export" Click="ExportItem_OnClick">
+            <MenuItem Click="ExportItem_OnClick" Header="Export">
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="ContentSave" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Duplicate" Click="DuplicateItem_OnClick">
+            <MenuItem Click="DuplicateItem_OnClick" Header="Duplicate">
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="ContentCopy" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Remove" Click="RemoveItem_OnClick">
+            <MenuItem Click="RemoveItem_OnClick" Header="Remove">
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="Times" />
                 </MenuItem.Icon>
@@ -53,39 +56,45 @@
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="SwapHorizontal" />
                 </MenuItem.Icon>
-                <MenuItem Header="General" Tag="General" Click="MoveToGroup_OnClick"
-                          IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=General}">
+                <MenuItem
+                    Click="MoveToGroup_OnClick"
+                    Header="General"
+                    IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=General}"
+                    Tag="General">
                     <MenuItem.Icon>
-                        <avalonia:MaterialIcon Foreground="#888888"
-                                                Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=General}" />
+                        <avalonia:MaterialIcon Foreground="#888888" Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=General}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Song Theme" Tag="SongTheme" Click="MoveToGroup_OnClick"
-                          IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=SongTheme}">
+                <MenuItem
+                    Click="MoveToGroup_OnClick"
+                    Header="Song Theme"
+                    IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=SongTheme}"
+                    Tag="SongTheme">
                     <MenuItem.Icon>
-                        <avalonia:MaterialIcon Foreground="#888888"
-                                                Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=SongTheme}" />
+                        <avalonia:MaterialIcon Foreground="#888888" Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=SongTheme}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Scripture Theme" Tag="ScriptureTheme" Click="MoveToGroup_OnClick"
-                          IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=ScriptureTheme}">
+                <MenuItem
+                    Click="MoveToGroup_OnClick"
+                    Header="Scripture Theme"
+                    IsEnabled="{Binding Type, Converter={StaticResource IsDifferentThemeTypeConverter}, ConverterParameter=ScriptureTheme}"
+                    Tag="ScriptureTheme">
                     <MenuItem.Icon>
-                        <avalonia:MaterialIcon Foreground="#888888"
-                                                Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=ScriptureTheme}" />
+                        <avalonia:MaterialIcon Foreground="#888888" Kind="{Binding Type, Converter={StaticResource RadioMenuIconConverter}, ConverterParameter=ScriptureTheme}" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Set as default for Songs" Click="SetDefaultSongTheme_OnClick">
+            <MenuItem Click="SetDefaultSongTheme_OnClick" Header="Set as default for Songs">
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Set as default for Songs (motion bg)" Click="SetDefaultSongMotionTheme_OnClick">
+            <MenuItem Click="SetDefaultSongMotionTheme_OnClick" Header="Set as default for Songs (motion bg)">
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Set as default for Scripture" Click="SetDefaultScriptureTheme_OnClick">
+            <MenuItem Click="SetDefaultScriptureTheme_OnClick" Header="Set as default for Scripture">
                 <MenuItem.Icon>
                     <avalonia:MaterialIcon Foreground="#888888" Kind="Star" />
                 </MenuItem.Icon>
@@ -93,47 +102,54 @@
         </ContextMenu>
         <DataTemplate x:Key="DesignListItemTemplate">
             <DockPanel>
-                <TextBlock Text="{Binding Name}" DockPanel.Dock="Bottom" HorizontalAlignment="Center"
-                           Margin="0 6 0 0" />
-                <TextBlock Text="default"
-                           DockPanel.Dock="Bottom"
-                           HorizontalAlignment="Center"
-                           FontSize="10"
-                           Foreground="#888888"
-                           IsVisible="{Binding ., Converter={StaticResource IsDefaultThemeConverter}}" />
-                <TextBlock Text="default (songs)"
-                           DockPanel.Dock="Bottom"
-                           HorizontalAlignment="Center"
-                           FontSize="10"
-                           Foreground="#888888">
+                <TextBlock
+                    DockPanel.Dock="Bottom"
+                    HorizontalAlignment="Left"
+                    Margin="0,6,0,0"
+                    Text="{Binding Name}" />
+                <TextBlock
+                    DockPanel.Dock="Bottom"
+                    FontSize="10"
+                    Foreground="#888888"
+                    HorizontalAlignment="Left"
+                    IsVisible="{Binding ., Converter={StaticResource IsDefaultThemeConverter}}"
+                    Text="default" />
+                <TextBlock
+                    DockPanel.Dock="Bottom"
+                    FontSize="10"
+                    Foreground="#888888"
+                    HorizontalAlignment="Left"
+                    Text="default (songs)">
                     <TextBlock.IsVisible>
                         <MultiBinding Converter="{StaticResource IsDefaultSongThemeConverter}">
                             <Binding Path="." />
-                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongThemeId" />
+                            <Binding Source="{x:Static core:Globals.Instance}" Path="AppPreferences.DefaultSongThemeId" /><Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongThemeId" />
                         </MultiBinding>
                     </TextBlock.IsVisible>
                 </TextBlock>
-                <TextBlock Text="default (songs, motion)"
-                           DockPanel.Dock="Bottom"
-                           HorizontalAlignment="Center"
-                           FontSize="10"
-                           Foreground="#888888">
+                <TextBlock
+                    DockPanel.Dock="Bottom"
+                    FontSize="10"
+                    Foreground="#888888"
+                    HorizontalAlignment="Left"
+                    Text="default (songs, motion)">
                     <TextBlock.IsVisible>
                         <MultiBinding Converter="{StaticResource IsDefaultSongMotionThemeConverter}">
                             <Binding Path="." />
-                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongMotionThemeId" />
+                            <Binding Source="{x:Static core:Globals.Instance}" Path="AppPreferences.DefaultSongMotionThemeId" /><Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongMotionThemeId" />
                         </MultiBinding>
                     </TextBlock.IsVisible>
                 </TextBlock>
-                <TextBlock Text="default (scripture)"
-                           DockPanel.Dock="Bottom"
-                           HorizontalAlignment="Center"
-                           FontSize="10"
-                           Foreground="#888888">
+                <TextBlock
+                    DockPanel.Dock="Bottom"
+                    FontSize="10"
+                    Foreground="#888888"
+                    HorizontalAlignment="Left"
+                    Text="default (scripture)">
                     <TextBlock.IsVisible>
                         <MultiBinding Converter="{StaticResource IsDefaultScriptureThemeConverter}">
                             <Binding Path="." />
-                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultScriptureThemeId" />
+                            <Binding Source="{x:Static core:Globals.Instance}" Path="AppPreferences.DefaultScriptureThemeId" /><Binding Path="$parent[UserControl].DataContext.Playlist.DefaultScriptureThemeId" />
                         </MultiBinding>
                     </TextBlock.IsVisible>
                 </TextBlock>
@@ -154,23 +170,30 @@
     </Design.DataContext>
 
     <DockPanel>
-        <!-- List -->
+        <!--  List  -->
         <DockPanel DockPanel.Dock="Left">
-            <UniformGrid DockPanel.Dock="Bottom" Columns="3" Rows="1">
-                <Button Tag="General" Click="AddItem_OnClick">+ General</Button>
-                <Button Tag="SongTheme" Click="AddItem_OnClick">+ Song</Button>
-                <Button Tag="ScriptureTheme" Click="AddItem_OnClick">+ Scripture</Button>
+            <UniformGrid
+                Columns="3"
+                DockPanel.Dock="Bottom"
+                Rows="1">
+                <Button Click="AddItem_OnClick" Tag="General">+ General</Button>
+                <Button Click="AddItem_OnClick" Tag="SongTheme">+ Song</Button>
+                <Button Click="AddItem_OnClick" Tag="ScriptureTheme">+ Scripture</Button>
             </UniformGrid>
             <ScrollViewer>
                 <StackPanel MinWidth="80">
-                    <TextBlock Text="General" Classes="SectionHeader" Margin="4 4 4 0" />
-                    <ListBox Name="generalDesignsListBox"
-                             ItemsSource="{Binding Playlist.Designs}"
-                             ItemTemplate="{StaticResource DesignListItemTemplate}"
-                             SelectionChanged="DesignsListBox_OnSelectionChanged">
+                    <TextBlock
+                        Classes="SectionHeader"
+                        Margin="4,4,4,0"
+                        Text="General" />
+                    <ListBox
+                        ItemTemplate="{StaticResource DesignListItemTemplate}"
+                        ItemsSource="{Binding Playlist.Designs}"
+                        Name="generalDesignsListBox"
+                        SelectionChanged="DesignsListBox_OnSelectionChanged">
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Import" Click="ImportItem_OnClick">
+                                <MenuItem Click="ImportItem_OnClick" Header="Import">
                                     <MenuItem.Icon>
                                         <avalonia:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
                                     </MenuItem.Icon>
@@ -185,14 +208,18 @@
                         </ListBox.Styles>
                     </ListBox>
 
-                    <TextBlock Text="Song Themes" Classes="SectionHeader" Margin="4 10 4 0" />
-                    <ListBox Name="songDesignsListBox"
-                             ItemsSource="{Binding Playlist.Designs}"
-                             ItemTemplate="{StaticResource DesignListItemTemplate}"
-                             SelectionChanged="DesignsListBox_OnSelectionChanged">
+                    <TextBlock
+                        Classes="SectionHeader"
+                        Margin="4,10,4,0"
+                        Text="Song Themes" />
+                    <ListBox
+                        ItemTemplate="{StaticResource DesignListItemTemplate}"
+                        ItemsSource="{Binding Playlist.Designs}"
+                        Name="songDesignsListBox"
+                        SelectionChanged="DesignsListBox_OnSelectionChanged">
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Import" Click="ImportItem_OnClick">
+                                <MenuItem Click="ImportItem_OnClick" Header="Import">
                                     <MenuItem.Icon>
                                         <avalonia:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
                                     </MenuItem.Icon>
@@ -207,14 +234,18 @@
                         </ListBox.Styles>
                     </ListBox>
 
-                    <TextBlock Text="Scripture Themes" Classes="SectionHeader" Margin="4 10 4 0" />
-                    <ListBox Name="scriptureDesignsListBox"
-                             ItemsSource="{Binding Playlist.Designs}"
-                             ItemTemplate="{StaticResource DesignListItemTemplate}"
-                             SelectionChanged="DesignsListBox_OnSelectionChanged">
+                    <TextBlock
+                        Classes="SectionHeader"
+                        Margin="4,10,4,0"
+                        Text="Scripture Themes" />
+                    <ListBox
+                        ItemTemplate="{StaticResource DesignListItemTemplate}"
+                        ItemsSource="{Binding Playlist.Designs}"
+                        Name="scriptureDesignsListBox"
+                        SelectionChanged="DesignsListBox_OnSelectionChanged">
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Import" Click="ImportItem_OnClick">
+                                <MenuItem Click="ImportItem_OnClick" Header="Import">
                                     <MenuItem.Icon>
                                         <avalonia:MaterialIcon Foreground="#888888" Kind="FolderOpen" />
                                     </MenuItem.Icon>
@@ -231,29 +262,50 @@
                 </StackPanel>
             </ScrollViewer>
         </DockPanel>
-        <!-- Preview -->
+        <!--  Preview  -->
         <Grid ColumnDefinitions="3*, *">
             <DockPanel Grid.Column="0">
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8" Spacing="4">
-                    <RadioButton x:Name="previewLyricToggle" Content="Song Lyric"
-                                 GroupName="ThemePreviewMode" IsChecked="True"
-                                 IsCheckedChanged="PreviewModeToggle_OnChecked" />
-                    <RadioButton x:Name="previewTitleToggle" Content="Song Title"
-                                 GroupName="ThemePreviewMode"
-                                 IsCheckedChanged="PreviewModeToggle_OnChecked" />
-                    <RadioButton x:Name="previewScriptureToggle" Content="Scripture"
-                                 GroupName="ThemePreviewMode"
-                                 IsCheckedChanged="PreviewModeToggle_OnChecked" />
+                <StackPanel
+                    DockPanel.Dock="Top"
+                    Margin="8"
+                    Orientation="Horizontal"
+                    Spacing="4">
+                    <RadioButton
+                        Content="Song Lyric"
+                        GroupName="ThemePreviewMode"
+                        IsChecked="True"
+                        IsCheckedChanged="PreviewModeToggle_OnChecked"
+                        x:Name="previewLyricToggle" />
+                    <RadioButton
+                        Content="Song Title"
+                        GroupName="ThemePreviewMode"
+                        IsCheckedChanged="PreviewModeToggle_OnChecked"
+                        x:Name="previewTitleToggle" />
+                    <RadioButton
+                        Content="Scripture"
+                        GroupName="ThemePreviewMode"
+                        IsCheckedChanged="PreviewModeToggle_OnChecked"
+                        x:Name="previewScriptureToggle" />
                 </StackPanel>
-                <Viewbox StretchDirection="DownOnly"
-                         VerticalAlignment="Stretch"
-                         HorizontalAlignment="Stretch">
-                    <Grid Width="1920" Height="1080">
-                        <designer:SongSlideView x:Name="themePreviewSlideView" Height="1080" Width="1920" />
-                        <designer:SongTitleSlideView x:Name="themePreviewTitleSlideView" Height="1080" Width="1920"
-                                                      IsVisible="False" />
-                        <designer:ScriptureSlideView x:Name="themePreviewScriptureView" Height="1080" Width="1920"
-                                                      IsVisible="False" />
+                <Viewbox
+                    HorizontalAlignment="Stretch"
+                    StretchDirection="DownOnly"
+                    VerticalAlignment="Stretch">
+                    <Grid Height="1080" Width="1920">
+                        <designer:SongSlideView
+                            Height="1080"
+                            Width="1920"
+                            x:Name="themePreviewSlideView" />
+                        <designer:SongTitleSlideView
+                            Height="1080"
+                            IsVisible="False"
+                            Width="1920"
+                            x:Name="themePreviewTitleSlideView" />
+                        <designer:ScriptureSlideView
+                            Height="1080"
+                            IsVisible="False"
+                            Width="1920"
+                            x:Name="themePreviewScriptureView" />
                     </Grid>
                 </Viewbox>
             </DockPanel>
@@ -263,7 +315,7 @@
             <!-- </ScrollViewer> -->
 
             <ScrollViewer Grid.Column="1">
-                <StackPanel x:Name="themeEditorPanel" Margin="12 8">
+                <StackPanel Margin="12,8" x:Name="themeEditorPanel">
 
                     <StackPanel.Styles>
                         <Style Selector="ColorPicker">
@@ -276,60 +328,66 @@
                         </Style>
                     </StackPanel.Styles>
 
-                    <!-- ============================= -->
-                    <!-- Common (applies to all types) -->
-                    <!-- ============================= -->
-                    <TextBlock Text="Common" Classes="SectionHeader" />
+                    <!--  =============================  -->
+                    <!--  Common (applies to all types)  -->
+                    <!--  =============================  -->
+                    <TextBlock Classes="SectionHeader" Text="Common" />
 
                     <TextBlock Text="Name" />
-                    <TextBox Watermark="" Text="{Binding Name}" />
+                    <TextBox Text="{Binding Name}" Watermark="" />
 
-                    <TextBlock Text="Applies To" Margin="0 6 0 0" />
-                    <controls:ComboBoxWithoutWheelScroll x:Name="themeTypeComboBox"
-                                                         HorizontalAlignment="Stretch"
-                                                         SelectedItem="{Binding Type}" />
+                    <TextBlock Margin="0,6,0,0" Text="Applies To" />
+                    <controls:ComboBoxWithoutWheelScroll
+                        HorizontalAlignment="Stretch"
+                        SelectedItem="{Binding Type}"
+                        x:Name="themeTypeComboBox" />
 
-                    <TextBlock Text="Background" Margin="0 6 0 0" />
-                    <controls:ComboBoxWithoutWheelScroll x:Name="backgroundModeComboBox"
-                                                         HorizontalAlignment="Stretch"
-                                                         SelectedItem="{Binding BackgroundMode}" />
+                    <TextBlock Margin="0,6,0,0" Text="Background" />
+                    <controls:ComboBoxWithoutWheelScroll
+                        HorizontalAlignment="Stretch"
+                        SelectedItem="{Binding BackgroundMode}"
+                        x:Name="backgroundModeComboBox" />
 
-                    <StackPanel IsVisible="{Binding BackgroundMode, Converter={StaticResource IsMotionBackgroundModeConverter}}"
-                                Margin="0 6 0 0">
+                    <StackPanel IsVisible="{Binding BackgroundMode, Converter={StaticResource IsMotionBackgroundModeConverter}}" Margin="0,6,0,0">
                         <TextBlock Text="Default Motion Background Video" />
                         <coreControls:MotionBackgroundVideoPicker VideoPath="{Binding DefaultMotionBackgroundVideoPath}" />
                     </StackPanel>
 
-                    <Grid ColumnDefinitions="2*, *" Margin="0 6 0 0">
+                    <Grid ColumnDefinitions="2*, *" Margin="0,6,0,0">
                         <StackPanel Grid.Column="0">
-                            <!-- "Garamond, Playfair Display" -->
+                            <!--  "Garamond, Playfair Display"  -->
                             <TextBlock Text="Font" />
-                            <controls:ComboBoxWithoutWheelScroll x:Name="fontComboBox"
-                                                                 HorizontalAlignment="Stretch"
-                                                                 SelectionChanged="FontComboBox_OnSelectionChanged"
-                                                                 SelectedItem="{Binding FontFamilyAsText}">
+                            <controls:ComboBoxWithoutWheelScroll
+                                HorizontalAlignment="Stretch"
+                                SelectedItem="{Binding FontFamilyAsText}"
+                                SelectionChanged="FontComboBox_OnSelectionChanged"
+                                x:Name="fontComboBox">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding}"
-                                                   FontFamily="{Binding}" />
+                                        <TextBlock FontFamily="{Binding}" Text="{Binding}" />
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </controls:ComboBoxWithoutWheelScroll>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="1" Margin="6 0 0 0">
+                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
                             <TextBlock Text="Font Weight" />
-                            <controls:ComboBoxWithoutWheelScroll Name="FontWeightComboBox"
-                                                                 HorizontalAlignment="Stretch"
-                                                                 SelectedValue="{Binding FontWeight, FallbackValue=SemiBold, Converter={StaticResource SafeFontWeightConverter}}" />
+                            <controls:ComboBoxWithoutWheelScroll
+                                HorizontalAlignment="Stretch"
+                                Name="FontWeightComboBox"
+                                SelectedValue="{Binding FontWeight, FallbackValue=SemiBold, Converter={StaticResource SafeFontWeightConverter}}" />
                         </StackPanel>
                     </Grid>
 
                     <Border
-                        Margin="0,6"
                         Background="Transparent"
-                        DockPanel.Dock="Top">
-                        <UniformGrid Columns="4" Rows="1" HorizontalAlignment="Left" Height="35">
+                        DockPanel.Dock="Top"
+                        Margin="0,6">
+                        <UniformGrid
+                            Columns="4"
+                            Height="35"
+                            HorizontalAlignment="Left"
+                            Rows="1">
                             <UniformGrid.Styles>
                                 <Style Selector="RadioButton">
                                     <Setter Property="Background" Value="Transparent" />
@@ -341,29 +399,24 @@
                                             <ControlTemplate>
                                                 <ToggleButton
                                                     Background="Transparent"
-                                                    Padding="8 0"
                                                     BorderBrush="{DynamicResource OutlineBrush}"
-                                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                     Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-                                                    IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                    Padding="8,0"
+                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
                                 </Style>
-                                <Style
-                                    Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
-                                    <Setter Property="Background"
-                                            Value="{DynamicResource PrimaryActionBrush}" />
+                                <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
                                 </Style>
-                                <Style
-                                    Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
-                                    <Setter Property="Background"
-                                            Value="#b7a6e7" />
+                                <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#b7a6e7" />
                                 </Style>
-                                <Style
-                                    Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
                                     <Setter Property="Background" Value="#9072EA" />
                                 </Style>
                                 <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
@@ -377,58 +430,73 @@
                                     <Setter Property="Width" Value="14" />
                                 </Style>
                             </UniformGrid.Styles>
-                            <ToggleButton CornerRadius="6"
-                                         IsChecked="{Binding CalculatedTextFontBold}">
+                            <ToggleButton CornerRadius="6" IsChecked="{Binding CalculatedTextFontBold}">
                                 <avalonia:MaterialIcon Kind="FormatBold" />
                             </ToggleButton>
-                            <ToggleButton CornerRadius="6"
-                                          IsChecked="{Binding CalculatedTextFontItalic}">
+                            <ToggleButton CornerRadius="6" IsChecked="{Binding CalculatedTextFontItalic}">
                                 <avalonia:MaterialIcon Kind="FormatItalic" />
                             </ToggleButton>
-                            <ToggleButton CornerRadius="6"
-                                          IsChecked="{Binding CalculatedTextFontUnderline}">
+                            <ToggleButton CornerRadius="6" IsChecked="{Binding CalculatedTextFontUnderline}">
                                 <avalonia:MaterialIcon Kind="FormatUnderline" />
                             </ToggleButton>
                         </UniformGrid>
                     </Border>
 
-                    <Border Height="1" Margin="0 10" Background="#808080" />
+                    <Border
+                        Background="#808080"
+                        Height="1"
+                        Margin="0,10" />
 
                     <TextBlock Text="Line Height" />
-                    <controls:NumericSliderBox Text="{Binding LineHeightEm, FallbackValue=1}"
-                                                Minimum="0.1" Maximum="3" TickFrequency="0.01" />
+                    <controls:NumericSliderBox
+                        Maximum="3"
+                        Minimum="0.1"
+                        Text="{Binding LineHeightEm, FallbackValue=1}"
+                        TickFrequency="0.01" />
 
-                    <!-- <ComboBox Name="TextAlignmentComboBox" -->
-                    <!--           SelectedItem="{Binding #designsListBox.SelectedItem.TextAlignment}" /> -->
-                    <Border Height="1" Margin="0 10" Background="#808080" />
+                    <!--  <ComboBox Name="TextAlignmentComboBox"  -->
+                    <!--  SelectedItem="{Binding #designsListBox.SelectedItem.TextAlignment}" />  -->
+                    <Border
+                        Background="#808080"
+                        Height="1"
+                        Margin="0,10" />
 
                     <DockPanel>
-                        <ColorPicker Name="TextColour"
-                                     DockPanel.Dock="Right"
-                                     Color="{Binding TextAvaloniaColour, FallbackValue='White'}" />
+                        <ColorPicker
+                            Color="{Binding TextAvaloniaColour, FallbackValue='White'}"
+                            DockPanel.Dock="Right"
+                            Name="TextColour" />
                         <TextBlock Text="Colour" />
                     </DockPanel>
 
-                    <Border Height="1" Margin="0 10" Background="#808080" />
+                    <Border
+                        Background="#808080"
+                        Height="1"
+                        Margin="0,10" />
 
                     <TextBlock Text="Background" />
 
-                    <ColorPicker Name="BackgroundColour"
-                                 HorizontalAlignment="Right"
-                                 Color="{Binding BackgroundAvaloniaColour, FallbackValue='Black'}" />
+                    <ColorPicker
+                        Color="{Binding BackgroundAvaloniaColour, FallbackValue='Black'}"
+                        HorizontalAlignment="Right"
+                        Name="BackgroundColour" />
 
                     <TextBlock Text="Graphic" />
                     <DockPanel>
                         <Button Click="ChangeThemeBgGraphic_OnClick" DockPanel.Dock="Right">...</Button>
-                        <TextBox Name="bgGraphicFilePath" Watermark=""
-                                 Text="{Binding BackgroundGraphicFilePath}" />
+                        <TextBox
+                            Name="bgGraphicFilePath"
+                            Text="{Binding BackgroundGraphicFilePath}"
+                            Watermark="" />
                     </DockPanel>
 
-                    <Border Height="1" Margin="0 10" Background="#808080" />
+                    <Border
+                        Background="#808080"
+                        Height="1"
+                        Margin="0,10" />
 
-                    <DockPanel Margin="0 0 0 4">
-                        <CheckBox DockPanel.Dock="Right"
-                                  IsChecked="{Binding DropShadowEnabled}" />
+                    <DockPanel Margin="0,0,0,4">
+                        <CheckBox DockPanel.Dock="Right" IsChecked="{Binding DropShadowEnabled}" />
                         <TextBlock Text="Drop Shadow" VerticalAlignment="Center" />
                     </DockPanel>
 
@@ -436,51 +504,69 @@
                         <Grid ColumnDefinitions="*, *, *">
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Offset Y" />
-                                <controls:NumericSliderBox Text="{Binding DropShadowOffsetY, FallbackValue=8}"
-                                                            TextBoxMinWidth="40"
-                                                            Minimum="-100" Maximum="100" TickFrequency="1" />
+                                <controls:NumericSliderBox
+                                    Maximum="100"
+                                    Minimum="-100"
+                                    Text="{Binding DropShadowOffsetY, FallbackValue=8}"
+                                    TextBoxMinWidth="40"
+                                    TickFrequency="1" />
                             </StackPanel>
 
-                            <StackPanel Grid.Column="1" Margin="6 0 0 0">
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
                                 <TextBlock Text="Offset X" />
-                                <controls:NumericSliderBox Text="{Binding DropShadowOffsetX, FallbackValue=0}"
-                                                            TextBoxMinWidth="40"
-                                                            Minimum="-100" Maximum="100" TickFrequency="1" />
+                                <controls:NumericSliderBox
+                                    Maximum="100"
+                                    Minimum="-100"
+                                    Text="{Binding DropShadowOffsetX, FallbackValue=0}"
+                                    TextBoxMinWidth="40"
+                                    TickFrequency="1" />
                             </StackPanel>
 
-                            <StackPanel Grid.Column="2" Margin="6 0 0 0">
+                            <StackPanel Grid.Column="2" Margin="6,0,0,0">
                                 <TextBlock Text="Blur" />
-                                <controls:NumericSliderBox Text="{Binding DropShadowBlurRadius, FallbackValue=20}"
-                                                            TextBoxMinWidth="40"
-                                                            Minimum="0" Maximum="100" TickFrequency="1" />
+                                <controls:NumericSliderBox
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Text="{Binding DropShadowBlurRadius, FallbackValue=20}"
+                                    TextBoxMinWidth="40"
+                                    TickFrequency="1" />
                             </StackPanel>
                         </Grid>
 
-                        <DockPanel Margin="0 4 0 0">
-                            <ColorPicker DockPanel.Dock="Right"
-                                         Color="{Binding DropShadowAvaloniaColour, FallbackValue='Black'}" />
+                        <DockPanel Margin="0,4,0,0">
+                            <ColorPicker Color="{Binding DropShadowAvaloniaColour, FallbackValue='Black'}" DockPanel.Dock="Right" />
                             <TextBlock Text="Colour" VerticalAlignment="Center" />
                         </DockPanel>
                     </StackPanel>
 
-                    <!-- ============================= -->
-                    <!-- Song Lyric only               -->
-                    <!-- ============================= -->
+                    <!--  =============================  -->
+                    <!--  Song Lyric only  -->
+                    <!--  =============================  -->
                     <StackPanel IsVisible="{Binding #previewLyricToggle.IsChecked}">
 
-                        <Border Height="1" Margin="0 10" Background="#808080" />
-                        <TextBlock Text="Song Lyric" Classes="SectionHeader" />
+                        <Border
+                            Background="#808080"
+                            Height="1"
+                            Margin="0,10" />
+                        <TextBlock Classes="SectionHeader" Text="Song Lyric" />
 
                         <TextBlock Text="Font Size" />
-                        <controls:NumericSliderBox Text="{Binding FontSize, FallbackValue=90}"
-                                                    Minimum="1" Maximum="400" TickFrequency="1" />
+                        <controls:NumericSliderBox
+                            Maximum="400"
+                            Minimum="1"
+                            Text="{Binding FontSize, FallbackValue=90}"
+                            TickFrequency="1" />
 
-                        <TextBlock Text="Text Horizontal Alignment" Margin="0 6 0 0" />
+                        <TextBlock Margin="0,6,0,0" Text="Text Horizontal Alignment" />
                         <Border
-                            Margin="0,6"
                             Background="Transparent"
-                            DockPanel.Dock="Top">
-                            <UniformGrid Columns="4" Rows="1" HorizontalAlignment="Left" Height="35">
+                            DockPanel.Dock="Top"
+                            Margin="0,6">
+                            <UniformGrid
+                                Columns="4"
+                                Height="35"
+                                HorizontalAlignment="Left"
+                                Rows="1">
                                 <UniformGrid.Styles>
                                     <Style Selector="RadioButton">
                                         <Setter Property="Background" Value="Transparent" />
@@ -492,29 +578,24 @@
                                                 <ControlTemplate>
                                                     <ToggleButton
                                                         Background="Transparent"
-                                                        Padding="8 0"
                                                         BorderBrush="{DynamicResource OutlineBrush}"
-                                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                         Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-                                                        IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                        Padding="8,0"
+                                                        VerticalAlignment="{TemplateBinding VerticalAlignment}" />
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
                                     </Style>
-                                    <Style
-                                        Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
-                                        <Setter Property="Background"
-                                                Value="{DynamicResource PrimaryActionBrush}" />
+                                    <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
                                     </Style>
-                                    <Style
-                                        Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
-                                        <Setter Property="Background"
-                                                Value="#b7a6e7" />
+                                    <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#b7a6e7" />
                                     </Style>
-                                    <Style
-                                        Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                    <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
                                         <Setter Property="Background" Value="#9072EA" />
                                     </Style>
                                     <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
@@ -528,66 +609,79 @@
                                         <Setter Property="Width" Value="14" />
                                     </Style>
                                 </UniformGrid.Styles>
-                                <RadioButton CornerRadius="6"
-                                             IsChecked="{Binding CalculatedTextAlignmentLeft}">
+                                <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTextAlignmentLeft}">
                                     <avalonia:MaterialIcon Kind="AlignHorizontalLeft" />
                                 </RadioButton>
-                                <RadioButton CornerRadius="6"
-                                             IsChecked="{Binding CalculatedTextAlignmentCenter}">
+                                <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTextAlignmentCenter}">
                                     <avalonia:MaterialIcon Kind="AlignHorizontalCentre" />
                                 </RadioButton>
-                                <RadioButton CornerRadius="6"
-                                             IsChecked="{Binding CalculatedTextAlignmentRight}">
+                                <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTextAlignmentRight}">
                                     <avalonia:MaterialIcon Kind="AlignHorizontalRight" />
                                 </RadioButton>
-                                <RadioButton CornerRadius="6"
-                                             IsChecked="{Binding CalculatedTextAlignmentJustify}">
+                                <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTextAlignmentJustify}">
                                     <avalonia:MaterialIcon Kind="AlignHorizontalDistribute" />
                                 </RadioButton>
                             </UniformGrid>
                         </Border>
 
-                        <TextBlock Text="Autofit" Margin="0 10 0 0" />
-                        <CheckBox Name="AutofitEnabledCheckBox"
-                                  Content="Shrink font to fit stanza"
-                                  IsChecked="{Binding AutofitEnabled}" />
-                        <controls:NumericSliderBox IsEnabled="{Binding #AutofitEnabledCheckBox.IsChecked}"
-                                                    Text="{Binding AutofitMinFontSizeRatio, FallbackValue=0.5}"
-                                                    TextBoxMinWidth="30"
-                                                    Minimum="0.1" Maximum="1.0" TickFrequency="0.01" />
+                        <TextBlock Margin="0,10,0,0" Text="Autofit" />
+                        <CheckBox
+                            Content="Shrink font to fit stanza"
+                            IsChecked="{Binding AutofitEnabled}"
+                            Name="AutofitEnabledCheckBox" />
+                        <controls:NumericSliderBox
+                            IsEnabled="{Binding #AutofitEnabledCheckBox.IsChecked}"
+                            Maximum="1.0"
+                            Minimum="0.1"
+                            Text="{Binding AutofitMinFontSizeRatio, FallbackValue=0.5}"
+                            TextBoxMinWidth="30"
+                            TickFrequency="0.01" />
 
                     </StackPanel>
 
-                    <!-- ============================= -->
-                    <!-- Song Title only               -->
-                    <!-- ============================= -->
+                    <!--  =============================  -->
+                    <!--  Song Title only  -->
+                    <!--  =============================  -->
                     <StackPanel IsVisible="{Binding #previewTitleToggle.IsChecked}">
 
-                        <Border Height="1" Margin="0 10" Background="#808080" />
-                        <TextBlock Text="Song Title" Classes="SectionHeader" />
+                        <Border
+                            Background="#808080"
+                            Height="1"
+                            Margin="0,10" />
+                        <TextBlock Classes="SectionHeader" Text="Song Title" />
 
                         <Grid ColumnDefinitions="*, *">
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Title Font Size" />
-                                <controls:NumericSliderBox Text="{Binding TitleFontSize, FallbackValue=100}"
-                                                            Minimum="1" Maximum="400" TickFrequency="1" />
+                                <controls:NumericSliderBox
+                                    Maximum="400"
+                                    Minimum="1"
+                                    Text="{Binding TitleFontSize, FallbackValue=100}"
+                                    TickFrequency="1" />
                             </StackPanel>
 
-                            <StackPanel Grid.Column="1" Margin="6 0 0 0">
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
                                 <TextBlock Text="Copyright Font Size" />
-                                <controls:NumericSliderBox Text="{Binding CopyrightFontSize, FallbackValue=45}"
-                                                            Minimum="1" Maximum="150" TickFrequency="1" />
+                                <controls:NumericSliderBox
+                                    Maximum="150"
+                                    Minimum="1"
+                                    Text="{Binding CopyrightFontSize, FallbackValue=45}"
+                                    TickFrequency="1" />
                             </StackPanel>
                         </Grid>
 
-                        <Grid ColumnDefinitions="*, *" Margin="0 6 0 0">
+                        <Grid ColumnDefinitions="*, *" Margin="0,6,0,0">
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Title Horizontal Alignment" />
                                 <Border
-                                    Margin="0,6"
                                     Background="Transparent"
-                                    DockPanel.Dock="Top">
-                                    <UniformGrid Columns="3" Rows="1" HorizontalAlignment="Left" Height="35">
+                                    DockPanel.Dock="Top"
+                                    Margin="0,6">
+                                    <UniformGrid
+                                        Columns="3"
+                                        Height="35"
+                                        HorizontalAlignment="Left"
+                                        Rows="1">
                                         <UniformGrid.Styles>
                                             <Style Selector="RadioButton">
                                                 <Setter Property="Background" Value="Transparent" />
@@ -599,29 +693,24 @@
                                                         <ControlTemplate>
                                                             <ToggleButton
                                                                 Background="Transparent"
-                                                                Padding="8 0"
                                                                 BorderBrush="{DynamicResource OutlineBrush}"
-                                                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                                 Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-                                                                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                                Padding="8,0"
+                                                                VerticalAlignment="{TemplateBinding VerticalAlignment}" />
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style>
-                                            <Style
-                                                Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
-                                                <Setter Property="Background"
-                                                        Value="{DynamicResource PrimaryActionBrush}" />
+                                            <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
                                             </Style>
-                                            <Style
-                                                Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
-                                                <Setter Property="Background"
-                                                        Value="#b7a6e7" />
+                                            <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="#b7a6e7" />
                                             </Style>
-                                            <Style
-                                                Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                            <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
                                                 <Setter Property="Background" Value="#9072EA" />
                                             </Style>
                                             <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
@@ -635,29 +724,30 @@
                                                 <Setter Property="Width" Value="14" />
                                             </Style>
                                         </UniformGrid.Styles>
-                                        <RadioButton CornerRadius="6"
-                                                     IsChecked="{Binding CalculatedTitleTextAlignmentLeft}">
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTitleTextAlignmentLeft}">
                                             <avalonia:MaterialIcon Kind="AlignHorizontalLeft" />
                                         </RadioButton>
-                                        <RadioButton CornerRadius="6"
-                                                     IsChecked="{Binding CalculatedTitleTextAlignmentCenter}">
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTitleTextAlignmentCenter}">
                                             <avalonia:MaterialIcon Kind="AlignHorizontalCentre" />
                                         </RadioButton>
-                                        <RadioButton CornerRadius="6"
-                                                     IsChecked="{Binding CalculatedTitleTextAlignmentRight}">
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTitleTextAlignmentRight}">
                                             <avalonia:MaterialIcon Kind="AlignHorizontalRight" />
                                         </RadioButton>
                                     </UniformGrid>
                                 </Border>
                             </StackPanel>
 
-                            <StackPanel Grid.Column="1" Margin="6 0 0 0">
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
                                 <TextBlock Text="Title Vertical Alignment" />
                                 <Border
-                                    Margin="0,6"
                                     Background="Transparent"
-                                    DockPanel.Dock="Top">
-                                    <UniformGrid Columns="3" Rows="1" HorizontalAlignment="Left" Height="35">
+                                    DockPanel.Dock="Top"
+                                    Margin="0,6">
+                                    <UniformGrid
+                                        Columns="3"
+                                        Height="35"
+                                        HorizontalAlignment="Left"
+                                        Rows="1">
                                         <UniformGrid.Styles>
                                             <Style Selector="RadioButton">
                                                 <Setter Property="Background" Value="Transparent" />
@@ -669,29 +759,24 @@
                                                         <ControlTemplate>
                                                             <ToggleButton
                                                                 Background="Transparent"
-                                                                Padding="8 0"
                                                                 BorderBrush="{DynamicResource OutlineBrush}"
-                                                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                                 Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-                                                                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                                Padding="8,0"
+                                                                VerticalAlignment="{TemplateBinding VerticalAlignment}" />
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style>
-                                            <Style
-                                                Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
-                                                <Setter Property="Background"
-                                                        Value="{DynamicResource PrimaryActionBrush}" />
+                                            <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
                                             </Style>
-                                            <Style
-                                                Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
-                                                <Setter Property="Background"
-                                                        Value="#b7a6e7" />
+                                            <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="#b7a6e7" />
                                             </Style>
-                                            <Style
-                                                Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                            <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
                                                 <Setter Property="Background" Value="#9072EA" />
                                             </Style>
                                             <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
@@ -705,16 +790,13 @@
                                                 <Setter Property="Width" Value="14" />
                                             </Style>
                                         </UniformGrid.Styles>
-                                        <RadioButton CornerRadius="6"
-                                                     IsChecked="{Binding CalculatedTitleVerticalAlignmentTop}">
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTitleVerticalAlignmentTop}">
                                             <avalonia:MaterialIcon Kind="AlignVerticalTop" />
                                         </RadioButton>
-                                        <RadioButton CornerRadius="6"
-                                                     IsChecked="{Binding CalculatedTitleVerticalAlignmentCenter}">
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTitleVerticalAlignmentCenter}">
                                             <avalonia:MaterialIcon Kind="AlignVerticalCenter" />
                                         </RadioButton>
-                                        <RadioButton CornerRadius="6"
-                                                     IsChecked="{Binding CalculatedTitleVerticalAlignmentBottom}">
+                                        <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedTitleVerticalAlignmentBottom}">
                                             <avalonia:MaterialIcon Kind="AlignVerticalBottom" />
                                         </RadioButton>
                                     </UniformGrid>
@@ -722,12 +804,16 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="Copyright Alignment" Margin="0 6 0 0" />
+                        <TextBlock Margin="0,6,0,0" Text="Copyright Alignment" />
                         <Border
-                            Margin="0,6"
                             Background="Transparent"
-                            DockPanel.Dock="Top">
-                            <UniformGrid Columns="3" Rows="1" HorizontalAlignment="Left" Height="35">
+                            DockPanel.Dock="Top"
+                            Margin="0,6">
+                            <UniformGrid
+                                Columns="3"
+                                Height="35"
+                                HorizontalAlignment="Left"
+                                Rows="1">
                                 <UniformGrid.Styles>
                                     <Style Selector="RadioButton">
                                         <Setter Property="Background" Value="Transparent" />
@@ -739,29 +825,24 @@
                                                 <ControlTemplate>
                                                     <ToggleButton
                                                         Background="Transparent"
-                                                        Padding="8 0"
                                                         BorderBrush="{DynamicResource OutlineBrush}"
-                                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                         Content="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
-                                                        IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}" />
+                                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RadioButton}}}"
+                                                        Padding="8,0"
+                                                        VerticalAlignment="{TemplateBinding VerticalAlignment}" />
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
                                     </Style>
-                                    <Style
-                                        Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
-                                        <Setter Property="Background"
-                                                Value="{DynamicResource PrimaryActionBrush}" />
+                                    <Style Selector="RadioButton:checked /template/ ToggleButton /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
                                     </Style>
-                                    <Style
-                                        Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
-                                        <Setter Property="Background"
-                                                Value="#b7a6e7" />
+                                    <Style Selector="RadioButton:pointerover /template/ ToggleButton /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#b7a6e7" />
                                     </Style>
-                                    <Style
-                                        Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
+                                    <Style Selector="RadioButton /template/ ToggleButton:pressed /template/ ContentPresenter">
                                         <Setter Property="Background" Value="#9072EA" />
                                     </Style>
                                     <Style Selector="RadioButton:nth-child(1) /template/ ToggleButton">
@@ -775,16 +856,13 @@
                                         <Setter Property="Width" Value="14" />
                                     </Style>
                                 </UniformGrid.Styles>
-                                <RadioButton CornerRadius="6"
-                                             IsChecked="{Binding CalculatedCopyrightTextAlignmentLeft}">
+                                <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedCopyrightTextAlignmentLeft}">
                                     <avalonia:MaterialIcon Kind="AlignHorizontalLeft" />
                                 </RadioButton>
-                                <RadioButton CornerRadius="6"
-                                             IsChecked="{Binding CalculatedCopyrightTextAlignmentCenter}">
+                                <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedCopyrightTextAlignmentCenter}">
                                     <avalonia:MaterialIcon Kind="AlignHorizontalCentre" />
                                 </RadioButton>
-                                <RadioButton CornerRadius="6"
-                                             IsChecked="{Binding CalculatedCopyrightTextAlignmentRight}">
+                                <RadioButton CornerRadius="6" IsChecked="{Binding CalculatedCopyrightTextAlignmentRight}">
                                     <avalonia:MaterialIcon Kind="AlignHorizontalRight" />
                                 </RadioButton>
                             </UniformGrid>
