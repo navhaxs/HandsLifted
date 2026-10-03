@@ -640,6 +640,39 @@
                     </StackPanel>
 
                     <!--  =============================  -->
+                    <!--  Scripture only  -->
+                    <!--  =============================  -->
+                    <StackPanel IsVisible="{Binding #previewScriptureToggle.IsChecked}">
+
+                        <Border
+                            Background="#808080"
+                            Height="1"
+                            Margin="0,10" />
+                        <TextBlock Classes="SectionHeader" Text="Scripture" />
+
+                        <TextBlock Text="Font Size" />
+                        <controls:NumericSliderBox
+                            Maximum="400"
+                            Minimum="1"
+                            Text="{Binding FontSize, FallbackValue=90}"
+                            TickFrequency="1" />
+
+                        <TextBlock Margin="0,6,0,0" Text="Max font shrink to avoid an extra slide" />
+                        <controls:NumericSliderBox
+                            Maximum="0.5"
+                            Minimum="0"
+                            Text="{Binding ScriptureMaxShrinkRatio, FallbackValue=0.1}"
+                            TextBoxMinWidth="30"
+                            TickFrequency="0.01" />
+                        <TextBlock
+                            Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                            Margin="0,4,0,0"
+                            Text="If a reading is only a few lines too long for one slide, the font may shrink by up to this fraction of the theme font size to fit. 0 = never shrink; longer readings split across slides at full size."
+                            TextWrapping="Wrap" />
+
+                    </StackPanel>
+
+                    <!--  =============================  -->
                     <!--  Song Title only  -->
                     <!--  =============================  -->
                     <StackPanel IsVisible="{Binding #previewTitleToggle.IsChecked}">

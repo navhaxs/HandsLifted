@@ -241,6 +241,7 @@
                         HorizontalAlignment="Left"
                         IsHitTestVisible="False"
                         IsVisible="{Binding Playlist.IsDirty}"
+                        ToolTip.Tip="Playlist has unsaved changes"
                         VerticalAlignment="Center"
                         Width="6" />
 
