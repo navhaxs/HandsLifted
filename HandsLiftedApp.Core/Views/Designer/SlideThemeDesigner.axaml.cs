@@ -63,13 +63,29 @@ namespace HandsLiftedApp.Core.Views.Designer
             {
                 _suppressSelectionSync = false;
             }
+            SyncPreviewModeToDesign(design);
             SyncEditorToSelection();
+        }
+
+        // General designs preview fine in every mode, so they leave the current mode alone. A song
+        // design keeps Song Title if already on it, otherwise falls back to Song Lyric.
+        private void SyncPreviewModeToDesign(BaseSlideTheme design)
+        {
+            switch (design.Type)
+            {
+                case SlideThemeType.ScriptureTheme:
+                    previewScriptureToggle.IsChecked = true;
+                    break;
+                case SlideThemeType.SongTheme when previewScriptureToggle.IsChecked == true:
+                    previewLyricToggle.IsChecked = true;
+                    break;
+            }
         }
 
         private void DesignsListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (_suppressSelectionSync) return;
-            if (sender is not ListBox changedListBox || changedListBox.SelectedItem is not BaseSlideTheme)
+            if (sender is not ListBox changedListBox || changedListBox.SelectedItem is not BaseSlideTheme selected)
                 return;
 
             _suppressSelectionSync = true;
@@ -83,6 +99,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             {
                 _suppressSelectionSync = false;
             }
+            SyncPreviewModeToDesign(selected);
             SyncEditorToSelection();
         }
 
