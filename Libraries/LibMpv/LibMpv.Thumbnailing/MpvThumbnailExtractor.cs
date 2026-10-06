@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -15,6 +16,8 @@ public static class MpvThumbnailExtractor
 {
     private static readonly TimeSpan FileLoadTimeout = TimeSpan.FromSeconds(10);
     private static readonly TimeSpan SeekTimeout = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan BlankRetryDelay = TimeSpan.FromSeconds(1);
+    private const int BlankRetries = 4;
 
     public static async Task<WriteableBitmap?> ExtractAsync(
         string filePath,
@@ -145,13 +148,40 @@ public static class MpvThumbnailExtractor
                 }
             }
 
-            return bitmap;
+            // Under load (many extractions at once) mpv can signal a frame before it is decoded, so
+            // SoftwareRender yields an all-black bitmap. Give it more chances; if it is still blank,
+            // return null so callers do not cache a bogus thumbnail.
+            for (var attempt = 0; attempt < BlankRetries && IsBlank(bitmap); attempt++)
+            {
+                while (frameSignal.CurrentCount > 0)
+                    frameSignal.Wait(0);
+                frameSignal.Wait((int)BlankRetryDelay.TotalMilliseconds, ct);
+                Thread.Sleep(100);
+                bitmap = RenderFrame(ctx, outW, outH);
+            }
+
+            return IsBlank(bitmap) ? null : bitmap;
         }
         finally
         {
             ctx.Dispose();
             frameSignal.Dispose();
         }
+    }
+
+    // True when every sampled pixel is pure black (a frame that was never actually decoded).
+    private static bool IsBlank(WriteableBitmap bitmap)
+    {
+        using var buf = bitmap.Lock();
+        for (var y = 0; y < bitmap.PixelSize.Height; y += 16)
+        {
+            for (var x = 0; x < bitmap.PixelSize.Width; x += 16)
+            {
+                var pixel = Marshal.ReadInt32(buf.Address, y * buf.RowBytes + x * 4);
+                if ((pixel & 0x00FFFFFF) != 0) return false;
+            }
+        }
+        return true;
     }
 
     private static WriteableBitmap RenderFrame(MpvContext ctx, int outW, int outH)

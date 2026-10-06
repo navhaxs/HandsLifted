@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncImageLoader;
 using Avalonia.Media.Imaging;
@@ -25,18 +27,32 @@ public class MpvThumbnailImageLoader : IAsyncImageLoader
         return bitmap;
     }
 
-    private static Task<Bitmap?> LoadAsync(string path) =>
-        MpvThumbnailExtractor.ExtractAsync(path, maxWidth: 1280, maxHeight: 720)
-            .ContinueWith<Bitmap?>(t =>
-            {
-                if (t.IsCanceled || t.IsFaulted)
-                {
-                    if (t.IsFaulted)
-                        Log.Error(t.Exception, "[MpvThumbnailImageLoader] Failed to load thumbnail for {Path}", path);
-                    return null;
-                }
-                return t.Result;
-            });
+    // Each extraction spins up its own libmpv context; a screen of folder-collage tiles requests dozens
+    // at once, and heavy concurrency makes mpv hand back undecoded (black) frames and time out.
+    private static readonly SemaphoreSlim Concurrency = new(3);
+
+    private static async Task<Bitmap?> LoadAsync(string path)
+    {
+        await Concurrency.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            return await MpvThumbnailExtractor.ExtractAsync(path, maxWidth: 1280, maxHeight: 720)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[MpvThumbnailImageLoader] Failed to load thumbnail for {Path}", path);
+            return null;
+        }
+        finally
+        {
+            Concurrency.Release();
+        }
+    }
 
     public void Dispose() { }
 }
