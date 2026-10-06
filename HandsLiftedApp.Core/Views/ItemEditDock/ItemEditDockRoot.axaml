@@ -24,6 +24,7 @@
     <UserControl.Styles>
         <Style Selector="FlyoutPresenter">
             <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="6 0 6 6" />
         </Style>
         <Style Selector="Button.menuRow">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -55,522 +56,219 @@
                             <TextBlock>Background</TextBlock>
                             <Button.Flyout>
                                 <Flyout Placement="BottomEdgeAlignedRight">
-                                    <controls:MotionBackgroundVideoPicker Margin="8" VideoPath="{Binding MotionBackgroundVideoOverride}" VideoPathPicked="MotionVideoPicker_OnVideoPathPicked" />
+                                    <controls:MotionBackgroundVideoPicker
+                                        Margin="8"
+                                        VideoPath="{Binding MotionBackgroundVideoOverride}"
+                                        VideoPathPicked="MotionVideoPicker_OnVideoPathPicked" />
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
 
-                        <Button
-                            Background="{DynamicResource EditButtonBackgroundBrush}"
-                            BorderBrush="#b3aed9"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Margin="6,6,0,6"
-                            Padding="22,6">
-                            <TextBlock>Edit</TextBlock>
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedRight">
-                                    <StackPanel Margin="4" MinWidth="200">
-                                        <Button Classes="menuRow" Click="EditButton_OnClick">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,8,0" />
-                                                <TextBlock>Edit item</TextBlock>
+                        <itemEditDock:ItemEditMenuButton>
+                            <itemEditDock:ItemEditMenuButton.ExtraRows>
+                                <Button Classes="menuRow">
+                                    <DockPanel>
+                                        <avalonia:MaterialIcon Kind="Palette" Margin="0,0,8,0" />
+                                        <TextBlock>Theme</TextBlock>
+                                    </DockPanel>
+                                    <Button.Flyout>
+                                        <Flyout Placement="RightEdgeAlignedTop">
+                                            <DockPanel LastChildFill="True" MinWidth="180">
+                                                <Button
+                                                    Click="ClearThemeButton_OnClick"
+                                                    DockPanel.Dock="Right"
+                                                    Margin="4,0,0,0"
+                                                    Padding="6,0"
+                                                    ToolTip.Tip="Use fallback theme">
+                                                    <TextBlock>✕</TextBlock>
+                                                </Button>
+                                                <ComboBox
+                                                    HorizontalAlignment="Stretch"
+                                                    ItemsSource="{Binding ParentPlaylist.Designs}"
+                                                    SelectedItem="{Binding ResolvedDesignTheme}">
+                                                    <ComboBox.Styles>
+                                                        <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
+                                                            <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
+                                                        </Style>
+                                                    </ComboBox.Styles>
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Name}" />
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
                                             </DockPanel>
-                                        </Button>
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Palette" Margin="0,0,8,0" />
-                                                <TextBlock>Theme</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <DockPanel LastChildFill="True" MinWidth="180">
-                                                        <Button
-                                                            Click="ClearThemeButton_OnClick"
-                                                            DockPanel.Dock="Right"
-                                                            Margin="4,0,0,0"
-                                                            Padding="6,0"
-                                                            ToolTip.Tip="Use fallback theme">
-                                                            <TextBlock>✕</TextBlock>
-                                                        </Button>
-                                                        <ComboBox
-                                                            HorizontalAlignment="Stretch"
-                                                            ItemsSource="{Binding ParentPlaylist.Designs}"
-                                                            SelectedItem="{Binding ResolvedDesignTheme}">
-                                                            <ComboBox.Styles>
-                                                                <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
-                                                                    <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
-                                                                </Style>
-                                                            </ComboBox.Styles>
-                                                            <ComboBox.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <TextBlock Text="{Binding Name}" />
-                                                                </DataTemplate>
-                                                            </ComboBox.ItemTemplate>
-                                                        </ComboBox>
-                                                    </DockPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Blur" Margin="0,0,8,0" />
-                                                <TextBlock>Fade transition</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="8" MinWidth="220">
-                                                        <DockPanel Margin="0,0,0,6">
-                                                            <CheckBox
-                                                                DockPanel.Dock="Right"
-                                                                HorizontalAlignment="Right"
-                                                                IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                                IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
-                                                            <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                        <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                                            <TextBlock
-                                                                DockPanel.Dock="Right"
-                                                                Margin="6,0,0,0"
-                                                                Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}"
-                                                                VerticalAlignment="Center" />
-                                                            <Slider
-                                                                LargeChange="200"
-                                                                Maximum="2000"
-                                                                Minimum="0"
-                                                                SmallChange="50"
-                                                                TickFrequency="100"
-                                                                Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}"
-                                                                VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </itemEditDock:ItemEditMenuButton.ExtraRows>
+                        </itemEditDock:ItemEditMenuButton>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate x:DataType="items1:ScriptureItemInstance" x:Key="ScriptureItemInstance">
-                    <Button
-                        Background="{DynamicResource EditButtonBackgroundBrush}"
-                        BorderBrush="#b3aed9"
-                        BorderThickness="1"
-                        CornerRadius="4"
-                        Margin="6,6,0,6"
-                        Padding="22,6">
-                        <TextBlock>Edit</TextBlock>
-                        <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedRight">
-                                <StackPanel Margin="4" MinWidth="200">
-                                    <Button Classes="menuRow" Click="EditButton_OnClick">
-                                        <DockPanel>
-                                            <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,8,0" />
-                                            <TextBlock>Edit item</TextBlock>
+                    <itemEditDock:ItemEditMenuButton>
+                        <itemEditDock:ItemEditMenuButton.ExtraRows>
+                            <Button Classes="menuRow">
+                                <DockPanel>
+                                    <avalonia:MaterialIcon Kind="Palette" Margin="0,0,8,0" />
+                                    <TextBlock>Theme</TextBlock>
+                                </DockPanel>
+                                <Button.Flyout>
+                                    <Flyout Placement="RightEdgeAlignedTop">
+                                        <DockPanel LastChildFill="True" MinWidth="180">
+                                            <Button
+                                                Click="ClearThemeButton_OnClick"
+                                                DockPanel.Dock="Right"
+                                                Margin="4,0,0,0"
+                                                Padding="6,0"
+                                                ToolTip.Tip="Use fallback theme">
+                                                <TextBlock>✕</TextBlock>
+                                            </Button>
+                                            <ComboBox
+                                                HorizontalAlignment="Stretch"
+                                                ItemsSource="{Binding ParentPlaylist.Designs, Converter={StaticResource PrependBlankThemeOptionConverter}}"
+                                                SelectedItem="{Binding ExplicitDesignTheme}">
+                                                <ComboBox.Styles>
+                                                    <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
+                                                        <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToScriptureVisibilityConverter}}" />
+                                                    </Style>
+                                                </ComboBox.Styles>
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Name, FallbackValue=''}" />
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
                                         </DockPanel>
-                                    </Button>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </itemEditDock:ItemEditMenuButton.ExtraRows>
+                    </itemEditDock:ItemEditMenuButton>
+                </DataTemplate>
+                <DataTemplate x:DataType="items1:PowerPointPresentationItemInstance" x:Key="PowerPointPresentationItemInstance">
+                    <StackPanel Orientation="Horizontal">
+                        <itemEditDock:ItemAutoplayIndicator />
+                        <itemEditDock:ItemEditMenuButton>
+                            <itemEditDock:ItemEditMenuButton.ExtraRows>
+                                <StackPanel>
+                                    <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
                                     <Button Classes="menuRow">
                                         <DockPanel>
-                                            <avalonia:MaterialIcon Kind="Palette" Margin="0,0,8,0" />
-                                            <TextBlock>Theme</TextBlock>
+                                            <avalonia:MaterialIcon Kind="Sync" Margin="0,0,8,0" />
+                                            <TextBlock>Sync</TextBlock>
                                         </DockPanel>
                                         <Button.Flyout>
                                             <Flyout Placement="RightEdgeAlignedTop">
-                                                <DockPanel LastChildFill="True" MinWidth="180">
-                                                    <Button
-                                                        Click="ClearThemeButton_OnClick"
-                                                        DockPanel.Dock="Right"
-                                                        Margin="4,0,0,0"
-                                                        Padding="6,0"
-                                                        ToolTip.Tip="Use fallback theme">
-                                                        <TextBlock>✕</TextBlock>
+                                                <StackPanel Margin="6" MinWidth="200">
+                                                    <TextBlock TextAlignment="Center">PowerPoint Presentation</TextBlock>
+                                                    <TextBlock TextAlignment="Center">
+                                                        File:<Run Text="{Binding SourcePresentationFile}" />
+                                                    </TextBlock>
+                                                    <TextBlock TextAlignment="Center">
+                                                        Last Sync:<Run Text="{Binding LastSyncDateTime}" />
+                                                    </TextBlock>
+                                                    <Button Click="PowerPoint_EditButton_OnClick" Margin="0,6,0,0">
+                                                        <DockPanel>
+                                                            <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,5,0" />
+                                                            <TextBlock>Edit in PowerPoint</TextBlock>
+                                                        </DockPanel>
                                                     </Button>
-                                                    <ComboBox
-                                                        HorizontalAlignment="Stretch"
-                                                        ItemsSource="{Binding ParentPlaylist.Designs, Converter={StaticResource PrependBlankThemeOptionConverter}}"
-                                                        SelectedItem="{Binding ExplicitDesignTheme}">
-                                                        <ComboBox.Styles>
-                                                            <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
-                                                                <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToScriptureVisibilityConverter}}" />
-                                                            </Style>
-                                                        </ComboBox.Styles>
-                                                        <ComboBox.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock Text="{Binding Name, FallbackValue=''}" />
-                                                            </DataTemplate>
-                                                        </ComboBox.ItemTemplate>
-                                                    </ComboBox>
-                                                </DockPanel>
-                                            </Flyout>
-                                        </Button.Flyout>
-                                    </Button>
-                                    <Button Classes="menuRow">
-                                        <DockPanel>
-                                            <avalonia:MaterialIcon Kind="Blur" Margin="0,0,8,0" />
-                                            <TextBlock>Fade transition</TextBlock>
-                                        </DockPanel>
-                                        <Button.Flyout>
-                                            <Flyout Placement="RightEdgeAlignedTop">
-                                                <StackPanel Margin="8" MinWidth="220">
-                                                    <DockPanel Margin="0,0,0,6">
-                                                        <CheckBox
-                                                            DockPanel.Dock="Right"
-                                                            HorizontalAlignment="Right"
-                                                            IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                            IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
-                                                        <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
-                                                    </DockPanel>
-                                                    <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                                        <TextBlock
-                                                            DockPanel.Dock="Right"
-                                                            Margin="6,0,0,0"
-                                                            Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}"
-                                                            VerticalAlignment="Center" />
-                                                        <Slider
-                                                            LargeChange="200"
-                                                            Maximum="2000"
-                                                            Minimum="0"
-                                                            SmallChange="50"
-                                                            TickFrequency="100"
-                                                            Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}"
-                                                            VerticalAlignment="Center" />
-                                                    </DockPanel>
+                                                    <Button Click="Button_OnClick" Margin="0,6,0,0">
+                                                        <DockPanel>
+                                                            <avalonia:MaterialIcon Kind="Sync" Margin="0,0,5,0" />
+                                                            <TextBlock>Sync</TextBlock>
+                                                        </DockPanel>
+                                                    </Button>
+                                                    <Button Click="PowerPoint_ChangeFileButton_OnClick" Margin="0,6,0,0">
+                                                        <DockPanel>
+                                                            <avalonia:MaterialIcon Kind="SwapHorizontal" Margin="0,0,5,0" />
+                                                            <TextBlock>Change file</TextBlock>
+                                                        </DockPanel>
+                                                    </Button>
                                                 </StackPanel>
                                             </Flyout>
                                         </Button.Flyout>
                                     </Button>
                                 </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                </DataTemplate>
-                <DataTemplate x:DataType="items1:PowerPointPresentationItemInstance" x:Key="PowerPointPresentationItemInstance">
-                    <StackPanel Orientation="Horizontal">
-                        <itemEditDock:ItemAutoplayIndicator />
-                        <Button
-                            Background="{DynamicResource EditButtonBackgroundBrush}"
-                            BorderBrush="#b3aed9"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Margin="6,6,0,6"
-                            Padding="22,6">
-                            <TextBlock>Edit</TextBlock>
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedRight">
-                                    <StackPanel Margin="4" MinWidth="200">
-                                        <Button Classes="menuRow" Click="EditButton_OnClick">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,8,0" />
-                                                <TextBlock>Edit item</TextBlock>
-                                            </DockPanel>
-                                        </Button>
-                                        <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Sync" Margin="0,0,8,0" />
-                                                <TextBlock>Sync</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="6" MinWidth="200">
-                                                        <TextBlock TextAlignment="Center">PowerPoint Presentation</TextBlock>
-                                                        <TextBlock TextAlignment="Center">
-                                                            File:<Run Text="{Binding SourcePresentationFile}" />
-                                                        </TextBlock>
-                                                        <TextBlock TextAlignment="Center">
-                                                            Last Sync:<Run Text="{Binding LastSyncDateTime}" />
-                                                        </TextBlock>
-                                                        <Button Click="PowerPoint_EditButton_OnClick" Margin="0,6,0,0">
-                                                            <DockPanel>
-                                                                <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,5,0" />
-                                                                <TextBlock>Edit in PowerPoint</TextBlock>
-                                                            </DockPanel>
-                                                        </Button>
-                                                        <Button Click="Button_OnClick" Margin="0,6,0,0">
-                                                            <DockPanel>
-                                                                <avalonia:MaterialIcon Kind="Sync" Margin="0,0,5,0" />
-                                                                <TextBlock>Sync</TextBlock>
-                                                            </DockPanel>
-                                                        </Button>
-                                                        <Button Click="PowerPoint_ChangeFileButton_OnClick" Margin="0,6,0,0">
-                                                            <DockPanel>
-                                                                <avalonia:MaterialIcon Kind="SwapHorizontal" Margin="0,0,5,0" />
-                                                                <TextBlock>Change file</TextBlock>
-                                                            </DockPanel>
-                                                        </Button>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Blur" Margin="0,0,8,0" />
-                                                <TextBlock>Fade transition</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="8" MinWidth="220">
-                                                        <DockPanel Margin="0,0,0,6">
-                                                            <CheckBox
-                                                                DockPanel.Dock="Right"
-                                                                HorizontalAlignment="Right"
-                                                                IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                                IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
-                                                            <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                        <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                                            <TextBlock
-                                                                DockPanel.Dock="Right"
-                                                                Margin="6,0,0,0"
-                                                                Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}"
-                                                                VerticalAlignment="Center" />
-                                                            <Slider
-                                                                LargeChange="200"
-                                                                Maximum="2000"
-                                                                Minimum="0"
-                                                                SmallChange="50"
-                                                                TickFrequency="100"
-                                                                Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}"
-                                                                VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                            </itemEditDock:ItemEditMenuButton.ExtraRows>
+                        </itemEditDock:ItemEditMenuButton>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate x:DataType="items1:GoogleSlidesGroupItemInstance" x:Key="GoogleSlidesGroupItemInstance">
                     <StackPanel Orientation="Horizontal">
                         <itemEditDock:ItemAutoplayIndicator />
-                        <Button
-                            Background="{DynamicResource EditButtonBackgroundBrush}"
-                            BorderBrush="#b3aed9"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Margin="6,6,0,6"
-                            Padding="22,6">
-                            <TextBlock>Edit</TextBlock>
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedRight">
-                                    <StackPanel Margin="4" MinWidth="200">
-                                        <Button Classes="menuRow" Click="EditButton_OnClick">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,8,0" />
-                                                <TextBlock>Edit item</TextBlock>
-                                            </DockPanel>
-                                        </Button>
-                                        <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Sync" Margin="0,0,8,0" />
-                                                <TextBlock>Sync</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="6" MinWidth="200">
-                                                        <TextBlock TextAlignment="Center">
-                                                            Last Sync:<Run Text="{Binding LastSyncDateTime}" />
-                                                        </TextBlock>
-                                                        <Button Click="Button_OnClick" Margin="0,6,0,0">
-                                                            <DockPanel>
-                                                                <avalonia:MaterialIcon Kind="Sync" Margin="0,0,5,0" />
-                                                                <TextBlock>Sync</TextBlock>
-                                                            </DockPanel>
-                                                        </Button>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Blur" Margin="0,0,8,0" />
-                                                <TextBlock>Fade transition</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="8" MinWidth="220">
-                                                        <DockPanel Margin="0,0,0,6">
-                                                            <CheckBox
-                                                                DockPanel.Dock="Right"
-                                                                HorizontalAlignment="Right"
-                                                                IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                                IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
-                                                            <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
+                        <itemEditDock:ItemEditMenuButton>
+                            <itemEditDock:ItemEditMenuButton.ExtraRows>
+                                <StackPanel>
+                                    <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
+                                    <Button Classes="menuRow">
+                                        <DockPanel>
+                                            <avalonia:MaterialIcon Kind="Sync" Margin="0,0,8,0" />
+                                            <TextBlock>Sync</TextBlock>
+                                        </DockPanel>
+                                        <Button.Flyout>
+                                            <Flyout Placement="RightEdgeAlignedTop">
+                                                <StackPanel Margin="6" MinWidth="200">
+                                                    <TextBlock TextAlignment="Center">
+                                                        Last Sync:<Run Text="{Binding LastSyncDateTime}" />
+                                                    </TextBlock>
+                                                    <Button Click="Button_OnClick" Margin="0,6,0,0">
+                                                        <DockPanel>
+                                                            <avalonia:MaterialIcon Kind="Sync" Margin="0,0,5,0" />
+                                                            <TextBlock>Sync</TextBlock>
                                                         </DockPanel>
-                                                        <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                                            <TextBlock
-                                                                DockPanel.Dock="Right"
-                                                                Margin="6,0,0,0"
-                                                                Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}"
-                                                                VerticalAlignment="Center" />
-                                                            <Slider
-                                                                LargeChange="200"
-                                                                Maximum="2000"
-                                                                Minimum="0"
-                                                                SmallChange="50"
-                                                                TickFrequency="100"
-                                                                Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}"
-                                                                VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </StackPanel>
+                            </itemEditDock:ItemEditMenuButton.ExtraRows>
+                        </itemEditDock:ItemEditMenuButton>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate x:DataType="items1:PDFSlidesGroupItemInstance" x:Key="PDFSlidesGroupItemInstance">
                     <StackPanel Orientation="Horizontal">
                         <itemEditDock:ItemAutoplayIndicator />
-                        <Button
-                            Background="{DynamicResource EditButtonBackgroundBrush}"
-                            BorderBrush="#b3aed9"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Margin="6,6,0,6"
-                            Padding="22,6">
-                            <TextBlock>Edit</TextBlock>
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedRight">
-                                    <StackPanel Margin="4" MinWidth="200">
-                                        <Button Classes="menuRow" Click="EditButton_OnClick">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,8,0" />
-                                                <TextBlock>Edit item</TextBlock>
-                                            </DockPanel>
-                                        </Button>
-                                        <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Sync" Margin="0,0,8,0" />
-                                                <TextBlock>Sync</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="6" MinWidth="200">
-                                                        <TextBlock TextAlignment="Center">
-                                                            Last Sync:<Run Text="{Binding LastSyncDateTime}" />
-                                                        </TextBlock>
-                                                        <Button Click="Button_OnClick" Margin="0,6,0,0">
-                                                            <DockPanel>
-                                                                <avalonia:MaterialIcon Kind="Sync" Margin="0,0,5,0" />
-                                                                <TextBlock>Sync</TextBlock>
-                                                            </DockPanel>
-                                                        </Button>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Blur" Margin="0,0,8,0" />
-                                                <TextBlock>Fade transition</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="8" MinWidth="220">
-                                                        <DockPanel Margin="0,0,0,6">
-                                                            <CheckBox
-                                                                DockPanel.Dock="Right"
-                                                                HorizontalAlignment="Right"
-                                                                IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                                IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
-                                                            <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
+                        <itemEditDock:ItemEditMenuButton>
+                            <itemEditDock:ItemEditMenuButton.ExtraRows>
+                                <StackPanel>
+                                    <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
+                                    <Button Classes="menuRow">
+                                        <DockPanel>
+                                            <avalonia:MaterialIcon Kind="Sync" Margin="0,0,8,0" />
+                                            <TextBlock>Sync</TextBlock>
+                                        </DockPanel>
+                                        <Button.Flyout>
+                                            <Flyout Placement="RightEdgeAlignedTop">
+                                                <StackPanel Margin="6" MinWidth="200">
+                                                    <TextBlock TextAlignment="Center">
+                                                        Last Sync:<Run Text="{Binding LastSyncDateTime}" />
+                                                    </TextBlock>
+                                                    <Button Click="Button_OnClick" Margin="0,6,0,0">
+                                                        <DockPanel>
+                                                            <avalonia:MaterialIcon Kind="Sync" Margin="0,0,5,0" />
+                                                            <TextBlock>Sync</TextBlock>
                                                         </DockPanel>
-                                                        <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                                            <TextBlock
-                                                                DockPanel.Dock="Right"
-                                                                Margin="6,0,0,0"
-                                                                Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}"
-                                                                VerticalAlignment="Center" />
-                                                            <Slider
-                                                                LargeChange="200"
-                                                                Maximum="2000"
-                                                                Minimum="0"
-                                                                SmallChange="50"
-                                                                TickFrequency="100"
-                                                                Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}"
-                                                                VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </StackPanel>
+                            </itemEditDock:ItemEditMenuButton.ExtraRows>
+                        </itemEditDock:ItemEditMenuButton>
                     </StackPanel>
                 </DataTemplate>
                 <DataTemplate x:DataType="items1:MediaGroupItemInstance" x:Key="MediaGroupItemInstance">
                     <StackPanel Orientation="Horizontal">
                         <itemEditDock:ItemAutoplayIndicator />
-                        <Button
-                            Background="{DynamicResource EditButtonBackgroundBrush}"
-                            BorderBrush="#b3aed9"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Margin="6,6,0,6"
-                            Padding="22,6">
-                            <TextBlock>Edit</TextBlock>
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedRight">
-                                    <StackPanel Margin="4" MinWidth="200">
-                                        <Button Classes="menuRow" Click="EditButton_OnClick">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,8,0" />
-                                                <TextBlock>Edit item</TextBlock>
-                                            </DockPanel>
-                                        </Button>
-                                        <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
-                                        <Button Classes="menuRow">
-                                            <DockPanel>
-                                                <avalonia:MaterialIcon Kind="Blur" Margin="0,0,8,0" />
-                                                <TextBlock>Fade transition</TextBlock>
-                                            </DockPanel>
-                                            <Button.Flyout>
-                                                <Flyout Placement="RightEdgeAlignedTop">
-                                                    <StackPanel Margin="8" MinWidth="220">
-                                                        <DockPanel Margin="0,0,0,6">
-                                                            <CheckBox
-                                                                DockPanel.Dock="Right"
-                                                                HorizontalAlignment="Right"
-                                                                IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                                IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
-                                                            <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                        <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                                            <TextBlock
-                                                                DockPanel.Dock="Right"
-                                                                Margin="6,0,0,0"
-                                                                Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}"
-                                                                VerticalAlignment="Center" />
-                                                            <Slider
-                                                                LargeChange="200"
-                                                                Maximum="2000"
-                                                                Minimum="0"
-                                                                SmallChange="50"
-                                                                TickFrequency="100"
-                                                                Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}"
-                                                                VerticalAlignment="Center" />
-                                                        </DockPanel>
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                        <itemEditDock:ItemEditMenuButton>
+                            <itemEditDock:ItemEditMenuButton.ExtraRows>
+                                <itemEditDock:ItemTimer DataContext="{Binding AutoAdvanceTimer}" />
+                            </itemEditDock:ItemEditMenuButton.ExtraRows>
+                        </itemEditDock:ItemEditMenuButton>
                     </StackPanel>
                 </DataTemplate>
             </common:MyTemplateSelector>

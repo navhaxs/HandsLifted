@@ -15,11 +15,11 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
 
         private void Indicator_OnClick(object? sender, RoutedEventArgs e)
         {
-            // The Edit button is our sibling in the DataTemplate's StackPanel (see
+            // The Edit menu button is our sibling in the DataTemplate's StackPanel (see
             // ItemEditDockRoot.axaml); the Autoplay Timer row lives inside its Flyout.
             if (this.Parent is not Panel siblingPanel) return;
 
-            var editButton = siblingPanel.Children.OfType<Button>().FirstOrDefault();
+            var editButton = siblingPanel.Children.OfType<ItemEditMenuButton>().FirstOrDefault()?.MenuButton;
             if (editButton?.Flyout is not Flyout editFlyout) return;
 
             var timerRow = (editFlyout.Content as ILogical)?

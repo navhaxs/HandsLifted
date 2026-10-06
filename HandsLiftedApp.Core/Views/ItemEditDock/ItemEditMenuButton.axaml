@@ -1,0 +1,84 @@
+<UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="HandsLiftedApp.Core.Views.ItemEditDock.ItemEditMenuButton"
+    x:DataType="items:Item"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
+    xmlns:local="clr-namespace:HandsLiftedApp.Core.Views.ItemEditDock"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        The "Edit" button and its dropdown, shared by every item type: [Edit item] + type-specific
+        ExtraRows + [Fade transition]. Pass the type-specific rows via the ExtraRows property element.
+    -->
+    <UserControl.Styles>
+        <!--  CornerRadius lives in styles (not a local attribute) so the :flyout-open setter can override it.  -->
+        <Style Selector="Button.editButton">
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+    </UserControl.Styles>
+    <Button
+        Background="{DynamicResource EditButtonBackgroundBrush}"
+        BorderBrush="#b3aed9"
+        BorderThickness="1"
+        Classes="editButton"
+        Margin="6,6,0,6"
+        Padding="22,6"
+        x:Name="EditButton">
+        <TextBlock>Edit</TextBlock>
+        <Button.Flyout>
+            <!--  +6: the popup's own margin leaves the menu ~6px short of the button's right edge.  -->
+            <Flyout HorizontalOffset="6" Placement="BottomEdgeAlignedRight">
+                <!--  Fixed (not Min) width: the popup is positioned using its size at first layout, so a content-dependent width leaves the right edge off the button's.  -->
+                <StackPanel Margin="4" Width="200">
+                    <Button Classes="menuRow" Click="EditButton_OnClick">
+                        <DockPanel>
+                            <avalonia:MaterialIcon Kind="Pencil" Margin="0,0,8,0" />
+                            <TextBlock>Edit item</TextBlock>
+                        </DockPanel>
+                    </Button>
+                    <ContentControl Content="{Binding $parent[local:ItemEditMenuButton].ExtraRows}" HorizontalContentAlignment="Stretch" />
+                    <Button Classes="menuRow">
+                        <DockPanel>
+                            <avalonia:MaterialIcon Kind="Blur" Margin="0,0,8,0" />
+                            <TextBlock>Fade transition</TextBlock>
+                        </DockPanel>
+                        <Button.Flyout>
+                            <Flyout Placement="RightEdgeAlignedTop">
+                                <StackPanel Margin="8" MinWidth="220">
+                                    <DockPanel Margin="0,0,0,6">
+                                        <CheckBox
+                                            DockPanel.Dock="Right"
+                                            HorizontalAlignment="Right"
+                                            IsChecked="{Binding SlideTransitionDurationMs, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            IsCheckedChanged="FadeOverrideCheckBox_OnIsCheckedChanged" />
+                                        <TextBlock Text="Override fade duration" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                    <DockPanel IsEnabled="{Binding SlideTransitionDurationMs, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                        <TextBlock
+                                            DockPanel.Dock="Right"
+                                            Margin="6,0,0,0"
+                                            Text="{Binding SlideTransitionDurationMs, StringFormat='{}{0:0}ms', TargetNullValue='—'}"
+                                            VerticalAlignment="Center" />
+                                        <Slider
+                                            LargeChange="200"
+                                            Maximum="2000"
+                                            Minimum="0"
+                                            SmallChange="50"
+                                            TickFrequency="100"
+                                            Value="{Binding SlideTransitionDurationMs, TargetNullValue=0}"
+                                            VerticalAlignment="Center" />
+                                    </DockPanel>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+            </Flyout>
+        </Button.Flyout>
+    </Button>
+</UserControl>
