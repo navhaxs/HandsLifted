@@ -172,17 +172,16 @@
                             <Grid.Styles>
                                 <Style Selector="Button.HoverInsertButton">
                                     <Setter Property="Opacity" Value="0" />
-                                    <Setter Property="Width" Value="20" />
                                     <Setter Property="ZIndex" Value="100" />
                                     <Setter Property="Background" Value="Transparent" />
                                 </Style>
                                 <Style Selector="Button.HoverInsertButton:pointerover">
                                     <Setter Property="Opacity" Value="1" />
-                                    <Setter Property="Background" Value="Yellow" />
+                                    <Setter Property="Background" Value="#724bab" />
                                 </Style>
                                 <Style Selector="Button.HoverInsertButton.flyout-open">
                                     <Setter Property="Opacity" Value="1" />
-                                    <Setter Property="Background" Value="Yellow" />
+                                    <Setter Property="Background" Value="#724bab" />
                                 </Style>
                                 <!--  Widen the BeforeButton hit-box leftward so it starts revealing while the pointer is still over the tail end of the previous token, not only once it crosses into this token's own bounds  -->
                                 <Style Selector="Button.HoverInsertButton.BeforeButton">
@@ -242,9 +241,9 @@
                                 Flyout="{StaticResource MySharedFlyout}"
                                 HorizontalAlignment="Left">
                                 <material:MaterialIcon
-                                    Foreground="#888888"
+                                    Foreground="White"
                                     HorizontalAlignment="Right"
-                                    Kind="PlusCircleOutline"
+                                    Kind="Plus"
                                     Margin="-4"
                                     VerticalAlignment="Center" />
                             </Button>
@@ -259,10 +258,10 @@
                                 Tag="After">
                                 <!--  Icon stays pinned at the gap/pill boundary even though this button's own hit-box is wider (reaches into the pill) - see AfterButton width override in Grid.Styles above  -->
                                 <material:MaterialIcon
-                                    Foreground="#888888"
+                                    Foreground="White"
                                     HorizontalAlignment="Left"
-                                    Kind="PlusCircleOutline"
-                                    Margin="4,-4,-4,-4"
+                                    Kind="Plus"
+                                    Margin="4,-4,0,-4"
                                     VerticalAlignment="Center" />
                             </Button>
                         </Grid>
