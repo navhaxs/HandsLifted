@@ -151,6 +151,28 @@ namespace HandsLiftedApp.Core.Views.Setup
             }
         }
 
+        private async void BrowseMotionBackgroundLibraryButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            var prefs = Globals.Instance.AppPreferences;
+            var currentPath = prefs.MotionBackgroundLibraryPath;
+            var startFolder = !string.IsNullOrWhiteSpace(currentPath) && Directory.Exists(currentPath)
+                ? await StorageProvider.TryGetFolderFromPathAsync(currentPath)
+                : null;
+
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select Motion Background Folder",
+                AllowMultiple = false,
+                SuggestedStartLocation = startFolder
+            });
+
+            if (folders.Count > 0 && folders[0].TryGetLocalPath() is { } path)
+            {
+                prefs.MotionBackgroundLibraryPath = path;
+                Globals.Instance.SaveAppPreferences();
+            }
+        }
+
         private async void BrowseSlideThemesButton_OnClick(object? sender, RoutedEventArgs e)
         {
             var prefs = Globals.Instance.AppPreferences;

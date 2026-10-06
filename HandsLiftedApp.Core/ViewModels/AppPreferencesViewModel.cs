@@ -172,7 +172,15 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _mediaLibraryPath, value);
         }
 
-        private string _slideThemesPath = Constants.SLIDE_THEMES_DIR;
+        private string? _motionBackgroundLibraryPath;
+        [DataMember]
+        public string? MotionBackgroundLibraryPath
+        {
+            get => _motionBackgroundLibraryPath;
+            set => this.RaiseAndSetIfChanged(ref _motionBackgroundLibraryPath, value);
+        }
+
+        private string _slideThemesPath =Constants.SLIDE_THEMES_DIR;
         [DataMember]
         public string SlideThemesPath
         {

@@ -33,6 +33,16 @@ public class AppPreferencesViewModelTests
     }
 
     [TestMethod]
+    public void MotionBackgroundLibraryPath_RoundTripsThroughJson_AndDefaultsToNull()
+    {
+        var prefs = new AppPreferencesViewModel { MotionBackgroundLibraryPath = @"C:\Motion" };
+        var loaded = JsonConvert.DeserializeObject<AppPreferencesViewModel>(JsonConvert.SerializeObject(prefs))!;
+        Assert.AreEqual(@"C:\Motion", loaded.MotionBackgroundLibraryPath);
+
+        Assert.IsNull(JsonConvert.DeserializeObject<AppPreferencesViewModel>("{}")!.MotionBackgroundLibraryPath);
+    }
+
+    [TestMethod]
     public void OldAppState_WithoutThemeSettings_GetsDefaults()
     {
         var loaded = JsonConvert.DeserializeObject<AppPreferencesViewModel>("{}")!;

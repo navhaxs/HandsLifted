@@ -252,6 +252,27 @@
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Margin="0,24,0,4"
+                                Text="Motion Background" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                                Margin="0,0,0,4"
+                                Text="Folder containing motion background videos. Subfolders are included, so videos can be organised into a hierarchy."
+                                TextWrapping="Wrap" />
+                            <DockPanel>
+                                <Button
+                                    Click="BrowseMotionBackgroundLibraryButton_OnClick"
+                                    DockPanel.Dock="Right"
+                                    Margin="8,0,0,0">
+                                    Browse…
+                                </Button>
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.MotionBackgroundLibraryPath, Mode=OneWay}" />
+                            </DockPanel>
+
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Margin="0,24,0,4"
                                 Text="Slide Themes" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemColorGrayTextBrush}"
