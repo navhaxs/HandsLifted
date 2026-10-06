@@ -211,6 +211,48 @@ public class MediaLibraryQueryViewModelTests
     }
 
     [TestMethod]
+    public void FolderPreviewFinder_PassesThroughNestedFolders_BreadthFirst_Capped()
+    {
+        var deep = Path.Combine(_tempDir, "A", "B", "C");
+        Directory.CreateDirectory(deep);
+        Directory.CreateDirectory(Path.Combine(_tempDir, "A", "D"));
+        File.WriteAllText(Path.Combine(deep, "deep.mp4"), "x");
+        File.WriteAllText(Path.Combine(_tempDir, "A", "top.mp4"), "x");
+        File.WriteAllText(Path.Combine(_tempDir, "A", "ignored.txt"), "x");
+        File.WriteAllText(Path.Combine(_tempDir, "A", "D", "d1.mp4"), "x");
+
+        var exts = new System.Collections.Generic.HashSet<string>(new[] { "mp4" }, StringComparer.OrdinalIgnoreCase);
+        var found = HandsLiftedApp.Core.Models.Library.FolderPreviewFinder.Find(Path.Combine(_tempDir, "A"), exts);
+
+        CollectionAssert.AreEqual(
+            new[] { Path.Combine(_tempDir, "A", "top.mp4"), Path.Combine(_tempDir, "A", "D", "d1.mp4"), Path.Combine(deep, "deep.mp4") },
+            found.ToArray());
+    }
+
+    [TestMethod]
+    public void FolderPreviewFinder_SingleSubfolderOfManyClips_FillsAllFourSlots_EvenlySpaced()
+    {
+        var sub = Path.Combine(_tempDir, "Calvary", "H265");
+        Directory.CreateDirectory(sub);
+        for (var i = 1; i <= 10; i++) File.WriteAllText(Path.Combine(sub, $"Calvary_{i:00}.mp4"), "x");
+
+        var exts = new System.Collections.Generic.HashSet<string>(new[] { "mp4" }, StringComparer.OrdinalIgnoreCase);
+        var found = HandsLiftedApp.Core.Models.Library.FolderPreviewFinder.Find(Path.Combine(_tempDir, "Calvary"), exts);
+
+        CollectionAssert.AreEqual(
+            new[] { "Calvary_02.mp4", "Calvary_04.mp4", "Calvary_07.mp4", "Calvary_09.mp4" },
+            found.Select(Path.GetFileName).ToArray());
+    }
+
+    [TestMethod]
+    public void FolderPreviewFinder_EmptyOrMissingFolder_ReturnsNothing()
+    {
+        var exts = new System.Collections.Generic.HashSet<string>(new[] { "mp4" });
+        Assert.AreEqual(0, HandsLiftedApp.Core.Models.Library.FolderPreviewFinder.Find(_tempDir, exts).Count);
+        Assert.AreEqual(0, HandsLiftedApp.Core.Models.Library.FolderPreviewFinder.Find(Path.Combine(_tempDir, "nope"), exts).Count);
+    }
+
+    [TestMethod]
     public void NavigateIntoCommand_TwoLevelsDeep_AccumulatesBreadcrumbsCorrectly()
     {
         var level1 = Path.Combine(_tempDir, "Sermons");

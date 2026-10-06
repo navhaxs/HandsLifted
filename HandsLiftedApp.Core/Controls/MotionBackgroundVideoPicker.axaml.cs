@@ -69,6 +69,12 @@ namespace HandsLiftedApp.Core.Controls
                 entry => SetPicked(entry.FullPath));
         }
 
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            (Browser.DataContext as MediaLibraryQueryViewModel)?.CancelPreviewLoading();
+            base.OnDetachedFromVisualTree(e);
+        }
+
         // OS file dialog fallback for when no Motion Background folder is configured.
         private async void BrowseFileButton_OnClick(object? sender, RoutedEventArgs e)
         {

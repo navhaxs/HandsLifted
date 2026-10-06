@@ -106,15 +106,56 @@
                         <Viewbox>
                             <Grid Background="Black" Height="720" Width="1280">
 
-                                <!--  Folder tile  -->
+                                <!--  Folder tile: big icon until previews load, then a 2x2 collage  -->
                                 <material:MaterialIcon
-                                    IsVisible="{Binding IsDirectory}"
                                     Foreground="#CCCCCC"
                                     Height="420"
                                     HorizontalAlignment="Center"
                                     Kind="FolderOutline"
                                     VerticalAlignment="Center"
-                                    Width="420" />
+                                    Width="420">
+                                    <material:MaterialIcon.IsVisible>
+                                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                            <Binding Path="IsDirectory" />
+                                            <Binding Path="Preview1" Converter="{x:Static ObjectConverters.IsNull}" />
+                                        </MultiBinding>
+                                    </material:MaterialIcon.IsVisible>
+                                </material:MaterialIcon>
+
+                                <Grid
+                                    ColumnDefinitions="*,*"
+                                    IsVisible="{Binding Preview1, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    RowDefinitions="*,*">
+                                    <Image
+                                        Grid.Column="0"
+                                        Grid.Row="0"
+                                        Stretch="UniformToFill"
+                                        asyncImageLoader:ImageLoader.Source="{Binding Preview1}" />
+                                    <Image
+                                        Grid.Column="1"
+                                        Grid.Row="0"
+                                        Stretch="UniformToFill"
+                                        asyncImageLoader:ImageLoader.Source="{Binding Preview2}" />
+                                    <Image
+                                        Grid.Column="0"
+                                        Grid.Row="1"
+                                        Stretch="UniformToFill"
+                                        asyncImageLoader:ImageLoader.Source="{Binding Preview3}" />
+                                    <Image
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        Stretch="UniformToFill"
+                                        asyncImageLoader:ImageLoader.Source="{Binding Preview4}" />
+                                </Grid>
+                                <material:MaterialIcon
+                                    Foreground="White"
+                                    Height="150"
+                                    HorizontalAlignment="Left"
+                                    IsVisible="{Binding Preview1, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    Kind="Folder"
+                                    Margin="16"
+                                    VerticalAlignment="Bottom"
+                                    Width="150" />
 
                                 <!--  File thumbnail  -->
                                 <Image

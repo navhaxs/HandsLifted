@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 using HandsLiftedApp.Comparer;
 using HandsLiftedApp.Core.Models.Library;
 using ReactiveUI;
@@ -129,6 +132,46 @@ namespace HandsLiftedApp.Core.ViewModels
 
             _allEntriesInCurrentFolder = entries;
             ApplyFilter();
+            LoadFolderPreviews(entries.Where(e => e.IsDirectory).ToList());
+        }
+
+        // Fills in each folder tile's collage in the background (one folder at a time, in display
+        // order); superseded by the next navigation.
+        private CancellationTokenSource? _previewCts;
+
+        // Stop background preview work when the browser is closed.
+        public void CancelPreviewLoading() => _previewCts?.Cancel();
+
+        private void LoadFolderPreviews(List<HomeLibraryEntry> folders)
+        {
+            _previewCts?.Cancel();
+            _previewCts = new CancellationTokenSource();
+            if (folders.Count == 0) return;
+
+            var token = _previewCts.Token;
+            Task.Run(() =>
+            {
+                foreach (var folder in folders)
+                {
+                    if (token.IsCancellationRequested) return;
+                    try
+                    {
+                        var files = FolderPreviewFinder.Find(folder.FullPath, _extensions, token);
+                        if (files.Count > 0 && !token.IsCancellationRequested)
+                        {
+                            Dispatcher.UIThread.Post(() => folder.SetPreviews(files));
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(ex, "Failed to build folder preview for [{Directory}]", folder.FullPath);
+                    }
+                }
+            }, token);
         }
 
         private void ApplyFilter()
