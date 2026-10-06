@@ -9,6 +9,9 @@ namespace HandsLiftedApp.ViewModels.Editor
     {
         public ExampleSongItemInstance() : base(null)
         {
+            // No library at design time - back the facade with a local draft, otherwise every
+            // property write below is a no-op and the arrangement renders empty.
+            UseLocalDraft(new SongItem());
 
             this.Title = "Rock Of Ages";
             this.Copyright = @"“Hallelujah” words and music by John Doe

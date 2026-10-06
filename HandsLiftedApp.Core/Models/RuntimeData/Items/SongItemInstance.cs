@@ -70,18 +70,28 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public static SongItemInstance NewDraft(PlaylistInstance? parentPlaylist)
         {
-            var draftSong = new SongItem();
+            var instance = new SongItemInstance(parentPlaylist);
+            instance.UseLocalDraft(new SongItem());
+            return instance;
+        }
+
+        /// <summary>
+        /// Backs this instance with an unattached local draft song, so the facade properties
+        /// (Title, Stanzas, Arrangement, ...) read and write real data. Used by NewDraft() and by
+        /// design-time sample instances that have no library to resolve against.
+        /// </summary>
+        protected void UseLocalDraft(SongItem draftSong)
+        {
             // SongId points at the draft song; UUID keeps the fresh playlist-item identity the
             // base Item() constructor already assigned — do not overwrite it.
-            var instance = new SongItemInstance(parentPlaylist) { SongId = draftSong.UUID };
-            instance._localDraft = draftSong;
+            SongId = draftSong.UUID;
+            _localDraft = draftSong;
             // The constructor's WhenAnyValue(Stanzas)/WhenAnyValue(Arrangement) subscriptions ran
             // before _localDraft was assigned above, so they wired up against the throwaway empty
             // collections the facade getters return when ResolvedSong is still null at construction
             // time. Force a re-derivation now that _localDraft (and therefore ResolvedSong) is set,
             // so those subscriptions (and the title slide) attach to the real draft's collections.
-            instance.RaiseForwardedPropertiesChanged();
-            return instance;
+            RaiseForwardedPropertiesChanged();
         }
 
         /// <summary>
