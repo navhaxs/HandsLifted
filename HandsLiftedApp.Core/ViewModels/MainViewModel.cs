@@ -142,6 +142,15 @@ public class MainViewModel : ViewModelBase
             }
         });
 
+        DeleteItemCommand = ReactiveCommand.Create<object>(x =>
+        {
+            if (x is Item item)
+            {
+                MessageBus.Current.SendMessage(new MoveItemCommand
+                    { SourceItem = item, Direction = MoveItemCommand.DirectionValue.REMOVE });
+            }
+        });
+
         ChangeMediaCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
         {
             if (x is ReadOnlyCollection<object> parameters)
@@ -813,6 +822,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
     public ReactiveCommand<object, Unit> DeleteSlideCommand { get; }
+    public ReactiveCommand<object, Unit> DeleteItemCommand { get; }
     public ReactiveCommand<object, Unit> ChangeMediaCommand { get; }
     public ReactiveCommand<object, Unit> EditCustomSlideCommand { get; }
     public ReactiveCommand<object, Unit> DuplicateSlideCommand { get; }

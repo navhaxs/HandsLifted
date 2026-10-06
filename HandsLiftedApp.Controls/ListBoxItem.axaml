@@ -18,6 +18,7 @@
         <converters:IsCustomSlideConverter x:Key="isCustomSlideConverter" />
         <converters:IsDuplicatableSlideConverter x:Key="isDuplicatableSlideConverter" />
         <converters:IsSongSlideConverter x:Key="isSongSlideConverter" />
+        <converters:IsLogoSlideConverter x:Key="isLogoSlideConverter" />
     </Styles.Resources>
 
     <Design.PreviewWith>
@@ -244,6 +245,11 @@
                             </MultiBinding>
                         </MenuItem.CommandParameter>
                     </MenuItem>
+                    <!--  A LogoItem has a single synthetic slide, so deleting it removes the whole item.  -->
+                    <MenuItem Command="{Binding $parent[Window].DataContext.DeleteItemCommand}"
+                              CommandParameter="{Binding $parent[ListBox].DataContext}"
+                              Header="Delete item"
+                              IsVisible="{Binding Converter={StaticResource isLogoSlideConverter}}" />
                     <!-- <MenuItem Command="{Binding $parent[Window].DataContext.SlideJoinBackwardsFromHere}" -->
                     <!--           Header="Join group with previous item group"> -->
                     <!--     <MenuItem.CommandParameter> -->
