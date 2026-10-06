@@ -3,12 +3,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:library="clr-namespace:HandsLiftedApp.Core.Views.LibraryView"
              mc:Ignorable="d" d:DesignWidth="260" d:DesignHeight="40"
              x:CompileBindings="False"
              x:Class="HandsLiftedApp.Core.Controls.MotionBackgroundVideoPicker">
-    <DockPanel MinWidth="220">
-        <Button Click="ClearButton_OnClick" Content="Clear" DockPanel.Dock="Right" Margin="4,0,0,0" />
-        <Button Click="BrowseButton_OnClick" Content="..." DockPanel.Dock="Right" Margin="4,0,0,0" />
-        <TextBox x:Name="PathTextBox" IsReadOnly="True" Watermark="No video file selected" />
-    </DockPanel>
+    <StackPanel>
+        <DockPanel MinWidth="220">
+            <Button Click="ClearButton_OnClick" Content="Clear" DockPanel.Dock="Right" Margin="4,0,0,0" />
+            <!--  OS file dialog fallback, only shown when no Motion Background folder is configured  -->
+            <Button x:Name="BrowseFileButton" Click="BrowseFileButton_OnClick" Content="..." DockPanel.Dock="Right" IsVisible="False" Margin="4,0,0,0" />
+            <TextBox x:Name="PathTextBox" IsReadOnly="True" Watermark="No video file selected" />
+        </DockPanel>
+
+        <TextBlock
+            x:Name="NoLibraryHint"
+            Foreground="{DynamicResource SystemColorGrayTextBrush}"
+            IsVisible="False"
+            Margin="0,6,0,0"
+            Text="No Motion Background folder set. Choose one in Set Up > Library to browse here."
+            TextWrapping="Wrap" />
+
+        <!--  Inline browser over the Motion Background library folder (Set Up > Library)  -->
+        <Border
+            Height="360"
+            Margin="0,6,0,0"
+            Width="560"
+            x:Name="BrowserHost">
+            <library:MediaLibraryQueryView x:Name="Browser" />
+        </Border>
+    </StackPanel>
 </UserControl>

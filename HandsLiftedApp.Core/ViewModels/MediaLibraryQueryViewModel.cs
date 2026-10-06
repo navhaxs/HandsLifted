@@ -42,9 +42,23 @@ namespace HandsLiftedApp.Core.ViewModels
 
         private List<HomeLibraryEntry> _allEntriesInCurrentFolder = new();
 
-        public MediaLibraryQueryViewModel(Library library)
+        // Pick mode (onFileChosen != null): the browser is used to choose a single file rather than
+        // to add media to the playlist, so playlist-add/drag-out are disabled in the view.
+        private readonly Action<HomeLibraryEntry>? _onFileChosen;
+        private readonly ISet<string> _extensions;
+        public bool IsPickMode => _onFileChosen != null;
+
+        public void ChooseFile(HomeLibraryEntry entry)
+        {
+            if (!entry.IsDirectory) _onFileChosen?.Invoke(entry);
+        }
+
+        public MediaLibraryQueryViewModel(Library library, ISet<string>? extensions = null,
+            Action<HomeLibraryEntry>? onFileChosen = null)
         {
             Library = library;
+            _extensions = extensions ?? Library.SupportedMediaExtensions;
+            _onFileChosen = onFileChosen;
 
             NavigateIntoCommand = ReactiveCommand.Create<HomeLibraryEntry>(entry =>
             {
@@ -96,7 +110,7 @@ namespace HandsLiftedApp.Core.ViewModels
 
                     var files = new DirectoryInfo(currentDir).GetFiles()
                         .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
-                        .Where(f => Library.SupportedMediaExtensions.Contains(f.Extension.TrimStart('.')))
+                        .Where(f => _extensions.Contains(f.Extension.TrimStart('.')))
                         .OrderBy(f => f.Name, comparer)
                         .Select(f => new HomeLibraryEntry { FullPath = f.FullName, Title = f.Name, IsDirectory = false });
 

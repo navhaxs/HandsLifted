@@ -170,6 +170,46 @@ public class MediaLibraryQueryViewModelTests
             "With the filter cleared, the Sermons folder's own contents must be visible, not filtered out by the old 'Sermons' search term.");
     }
 
+    private MediaLibraryQueryViewModel CreatePickVm(Action<HandsLiftedApp.Core.Models.Library.HomeLibraryEntry> onChosen)
+    {
+        var library = new Library(new LibraryConfig.LibraryDefinition
+        {
+            Label = "Motion", Directory = _tempDir, Type = LibraryType.Media
+        });
+        var videoOnly = new System.Collections.Generic.HashSet<string>(
+            new[] { "mp4" }, StringComparer.OrdinalIgnoreCase);
+        return new MediaLibraryQueryViewModel(library, videoOnly, onChosen);
+    }
+
+    [TestMethod]
+    public void ExtensionFilter_LimitsFilesShown_FoldersKept()
+    {
+        Directory.CreateDirectory(Path.Combine(_tempDir, "Loops"));
+        File.WriteAllText(Path.Combine(_tempDir, "clip.mp4"), "x");
+        File.WriteAllText(Path.Combine(_tempDir, "photo.jpg"), "x");
+
+        var vm = CreatePickVm(_ => { });
+
+        CollectionAssert.AreEqual(new[] { "Loops", "clip.mp4" }, vm.Entries.Select(e => e.Title).ToArray());
+    }
+
+    [TestMethod]
+    public void ChooseFile_FileInvokesCallback_FolderDoesNot_AndPickModeFlagSet()
+    {
+        Directory.CreateDirectory(Path.Combine(_tempDir, "Loops"));
+        File.WriteAllText(Path.Combine(_tempDir, "clip.mp4"), "x");
+        string? chosen = null;
+        var vm = CreatePickVm(e => chosen = e.FullPath);
+
+        vm.ChooseFile(vm.Entries.Single(e => e.IsDirectory));
+        Assert.IsNull(chosen);
+
+        vm.ChooseFile(vm.Entries.Single(e => !e.IsDirectory));
+        Assert.AreEqual(Path.Combine(_tempDir, "clip.mp4"), chosen);
+        Assert.IsTrue(vm.IsPickMode);
+        Assert.IsFalse(CreateVm().IsPickMode);
+    }
+
     [TestMethod]
     public void NavigateIntoCommand_TwoLevelsDeep_AccumulatesBreadcrumbsCorrectly()
     {

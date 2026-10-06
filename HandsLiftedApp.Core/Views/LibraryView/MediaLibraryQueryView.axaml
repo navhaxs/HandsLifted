@@ -47,6 +47,29 @@
             HorizontalAlignment="Stretch"
             ItemsSource="{Binding Entries}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.Styles>
+                <!--
+                    Popups (e.g. the Motion Background picker's flyout) inherit styles from the control
+                    they are attached to, so ItemSlidesView's slide-thumbnail ListBoxItem template
+                    (HandsLiftedApp.Controls/ListBoxItem.axaml) would otherwise replace these tiles with
+                    "(Unset SlideLabel)" slide chrome. A nearer style wins, so reset to a plain container.
+                -->
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="4" />
+                    <Setter Property="Template">
+                        <ControlTemplate>
+                            <ContentPresenter
+                                Background="{TemplateBinding Background}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}"
+                                x:Name="PART_ContentPresenter" />
+                        </ControlTemplate>
+                    </Setter>
+                </Style>
+            </ListBox.Styles>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel ItemHeight="120" ItemWidth="200" />
@@ -58,7 +81,7 @@
                         DoubleTapped="Entry_OnDoubleTapped"
                         PointerPressed="Entry_OnPointerPressed">
                         <DockPanel.ContextMenu>
-                            <ContextMenu>
+                            <ContextMenu Opening="EntryContextMenu_OnOpening">
                                 <MenuItem
                                     Click="AddToPlaylist_OnClick"
                                     Header="Add to playlist"

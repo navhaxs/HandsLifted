@@ -37,6 +37,16 @@ namespace HandsLiftedApp.Core.Views.LibraryView
             {
                 Vm?.NavigateIntoCommand.Execute(entry).Subscribe();
             }
+            else if (entry != null)
+            {
+                Vm?.ChooseFile(entry);
+            }
+        }
+
+        // No playlist actions while the browser is used as a file picker.
+        private void EntryContextMenu_OnOpening(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (Vm is { IsPickMode: true }) e.Cancel = true;
         }
 
         private void Breadcrumb_OnClick(object? sender, RoutedEventArgs e)
@@ -67,6 +77,7 @@ namespace HandsLiftedApp.Core.Views.LibraryView
         private void Entry_OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
             var entry = GetEntry(sender);
+            if (Vm is { IsPickMode: true }) return;
             if (entry is not { IsDirectory: false } || sender is not Control control) return;
 
             _dragStart = e.GetPosition(null);
