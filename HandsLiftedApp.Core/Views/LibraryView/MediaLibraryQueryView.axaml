@@ -5,6 +5,9 @@
     x:Class="HandsLiftedApp.Core.Views.LibraryView.MediaLibraryQueryView"
     x:DataType="viewModels:MediaLibraryQueryViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:app="clr-namespace:HandsLiftedApp.Core"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
+    xmlns:converters="using:HandsLiftedApp.Converters"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:material="using:Material.Icons.Avalonia"
@@ -16,13 +19,22 @@
         <viewModels:MediaLibraryQueryViewModel />
     </Design.DataContext>
 
+    <UserControl.Resources>
+        <converters:PercentageScaleConverter x:Key="PercentageScaleConverter" />
+    </UserControl.Resources>
+
     <DockPanel>
-        <TextBox
-            DockPanel.Dock="Top"
-            KeyDown="InputElement_OnKeyDown"
-            Text="{Binding SearchTerm}"
-            Watermark="Filter"
-            x:Name="SearchBox" />
+        <DockPanel DockPanel.Dock="Top">
+            <controls:ThumbnailSizeSlider
+                DockPanel.Dock="Right"
+                Margin="8,0,0,0"
+                Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.MediaLibraryThumbnailSizeMultiplier}" />
+            <TextBox
+                KeyDown="InputElement_OnKeyDown"
+                Text="{Binding SearchTerm}"
+                Watermark="Filter"
+                x:Name="SearchBox" />
+        </DockPanel>
 
         <ItemsControl
             DockPanel.Dock="Top"
@@ -72,7 +84,9 @@
             </ListBox.Styles>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel ItemHeight="120" ItemWidth="200" />
+                    <WrapPanel
+                        ItemHeight="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.MediaLibraryThumbnailSizeMultiplier, Converter={StaticResource PercentageScaleConverter}, ConverterParameter=120}"
+                        ItemWidth="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.MediaLibraryThumbnailSizeMultiplier, Converter={StaticResource PercentageScaleConverter}, ConverterParameter=200}" />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>

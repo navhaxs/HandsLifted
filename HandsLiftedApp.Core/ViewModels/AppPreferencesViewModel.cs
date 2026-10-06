@@ -281,6 +281,16 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _songEditorThumbnailSizeMultiplier, value);
         }
 
+        // Tile size of MediaLibraryQueryView (Home library + Motion Background picker); 100 = 200x120.
+        // 80 (160x96) fits three columns in the Motion Background picker's 560px-wide browser.
+        private double _mediaLibraryThumbnailSizeMultiplier = 80;
+        [DataMember]
+        public double MediaLibraryThumbnailSizeMultiplier
+        {
+            get => _mediaLibraryThumbnailSizeMultiplier;
+            set => this.RaiseAndSetIfChanged(ref _mediaLibraryThumbnailSizeMultiplier, value);
+        }
+
         private double _mainNavPaneWidth = 260;
         [DataMember]
         public double MainNavPaneWidth
