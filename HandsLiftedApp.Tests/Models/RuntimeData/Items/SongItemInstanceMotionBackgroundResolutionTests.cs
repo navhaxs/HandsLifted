@@ -108,6 +108,58 @@ public class SongItemInstanceMotionBackgroundResolutionTests
             "A Plain-mode theme's DefaultMotionBackgroundVideoPath must never be used, even if set");
     }
 
+    // Regression: an item with no explicit Design (Guid.Empty) rides the playlist default song
+    // theme at render time. ShowMotionBackgroundVideoButton / ResolvedMotionBackgroundVideoPath used
+    // to look only at the explicit Design, so the "Background" button stayed hidden and the theme's
+    // default video was ignored even though the slides rendered with the Motion default.
+    [TestMethod]
+    public void NoExplicitDesign_PlaylistDefaultIsMotionTheme_ShowsButtonAndUsesThemeDefaultVideo()
+    {
+        var playlist = new PlaylistInstance();
+        var theme = new BaseSlideTheme
+        {
+            BackgroundMode = ThemeBackgroundMode.MotionBackground,
+            DefaultMotionBackgroundVideoPath = TempVideoPath("theme-default.mp4")
+        };
+        playlist.Designs.Add(theme);
+        playlist.DefaultSongThemeId = theme.Id;
+        var instance = new SongItemInstance(playlist) { SongId = Guid.NewGuid() };
+
+        Assert.AreEqual(Guid.Empty, instance.Design);
+        Assert.IsTrue(instance.ShowMotionBackgroundVideoButton,
+            "An item riding a Motion default theme must still offer the Background override button");
+        Assert.AreEqual(TempVideoPath("theme-default.mp4"), instance.ResolvedMotionBackgroundVideoPath);
+    }
+
+    [TestMethod]
+    public void NoExplicitDesign_PlaylistMotionDefaultIsMotionTheme_ShowsButton()
+    {
+        // The motion-default slot only applies once a video exists, so the button must show
+        // up front - it is how the user supplies that first video.
+        var playlist = new PlaylistInstance();
+        var plain = new BaseSlideTheme { BackgroundMode = ThemeBackgroundMode.Plain };
+        var motion = new BaseSlideTheme { BackgroundMode = ThemeBackgroundMode.MotionBackground };
+        playlist.Designs.Add(plain);
+        playlist.Designs.Add(motion);
+        playlist.DefaultSongThemeId = plain.Id;
+        playlist.DefaultSongMotionThemeId = motion.Id;
+        var instance = new SongItemInstance(playlist) { SongId = Guid.NewGuid() };
+
+        Assert.IsTrue(instance.ShowMotionBackgroundVideoButton);
+    }
+
+    [TestMethod]
+    public void NoExplicitDesign_PlaylistDefaultIsPlain_HidesButton()
+    {
+        var playlist = new PlaylistInstance();
+        var plain = new BaseSlideTheme { BackgroundMode = ThemeBackgroundMode.Plain };
+        playlist.Designs.Add(plain);
+        playlist.DefaultSongThemeId = plain.Id;
+        var instance = new SongItemInstance(playlist) { SongId = Guid.NewGuid() };
+
+        Assert.IsFalse(instance.ShowMotionBackgroundVideoButton);
+    }
+
     // Regression test: the live motion-background layer (MotionBackgroundLayer) and the title
     // slide's video-thumbnail render both watch ResolvedMotionBackgroundVideoPath, not the raw
     // MotionBackgroundVideoPath, so that an item override or theme-default change actually reaches

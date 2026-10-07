@@ -32,6 +32,11 @@ namespace HandsLiftedApp.Core
                     MotionBackgroundVideoOverride = RelativeFilePathResolver.ToAbsoluteMediaPath(
                         mediaLibraryPath, playlistDirectoryPath, songReference.MotionBackgroundVideoOverridePath)
                 };
+                if (instance.IsMissing)
+                {
+                    Log.Warning("Song reference unresolved: SongId={SongId} PlaylistItemUuid={ItemUuid} IndexedSongs={Count}",
+                        songReference.SongId, songReference.UUID, Globals.Instance.SongLibraryIndex.Count);
+                }
                 instance.RaiseForwardedPropertiesChanged();
                 return instance;
             }

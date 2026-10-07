@@ -39,6 +39,8 @@ namespace HandsLiftedApp.Core.Models.Library
         /// </summary>
         public IObservable<(Guid Id, Exception Error)> SaveFailed => _saveFailed;
 
+        public int Count => _byId.Count;
+
         public SongItem? Resolve(Guid id) => _byId.TryGetValue(id, out var entry) ? entry.Song : null;
 
         /// <summary>
@@ -106,6 +108,8 @@ namespace HandsLiftedApp.Core.Models.Library
             // library rewrite-and-notify sweep on every startup instead of a true one-time migration.
             var needsStamp = FileLacksPersistedUuid(filePath);
             _uuidByPath[filePath] = song.UUID;
+            Log.Information("SongLibraryIndex: scanned {Title} SongId={SongId} PersistedUuid={Persisted} File={FilePath}",
+                song.Title, song.UUID, !needsStamp, filePath);
             Register(song, filePath, libraryDirectory);
             if (needsStamp)
             {

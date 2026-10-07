@@ -179,10 +179,16 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         // Plain or cleared - otherwise the override keeps silently applying (see
         // ResolvedMotionBackgroundVideoPath, which does not gate the override tier on theme mode)
         // with no way to see or remove it.
+        //
+        // Uses the same theme resolution as rendering (PlaylistInstance.ResolveSongTheme): an item
+        // with no explicit Design rides the playlist/app default, and ResolvedDesignTheme (explicit
+        // Design only) is null for it. Both the plain and motion defaults are checked, since the
+        // motion default only applies once a video exists - which this button is how you add one.
         [XmlIgnore]
         public bool ShowMotionBackgroundVideoButton =>
-            ResolvedDesignTheme?.BackgroundMode == ThemeBackgroundMode.MotionBackground
-            || MotionBackgroundVideoOverride != null;
+            MotionBackgroundVideoOverride != null
+            || ParentPlaylist?.ResolveSongTheme(Design, false).BackgroundMode == ThemeBackgroundMode.MotionBackground
+            || ParentPlaylist?.ResolveSongTheme(Design, true).BackgroundMode == ThemeBackgroundMode.MotionBackground;
 
         [XmlIgnore]
         public string? ResolvedMotionBackgroundVideoPath
@@ -195,9 +201,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 if (MotionBackgroundService.IsValidVideoFile(MotionBackgroundVideoPath))
                     return MotionBackgroundVideoPath;
 
-                if (ResolvedDesignTheme?.BackgroundMode == ThemeBackgroundMode.MotionBackground
-                    && MotionBackgroundService.IsValidVideoFile(ResolvedDesignTheme.DefaultMotionBackgroundVideoPath))
-                    return ResolvedDesignTheme.DefaultMotionBackgroundVideoPath;
+                // No override/song video yet, so resolve as the non-motion case (avoids circularity
+                // with HasMotionBackground, which derives from this property).
+                var theme = ParentPlaylist?.ResolveSongTheme(Design, false);
+                if (theme?.BackgroundMode == ThemeBackgroundMode.MotionBackground
+                    && MotionBackgroundService.IsValidVideoFile(theme.DefaultMotionBackgroundVideoPath))
+                    return theme.DefaultMotionBackgroundVideoPath;
 
                 return null;
             }
@@ -308,6 +317,20 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .Select(theme => theme?.Changed.Select(_ => Unit.Default) ?? Observable.Never<Unit>())
                 .Switch()
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(ShowMotionBackgroundVideoButton)));
+
+            // An item with no explicit Design rides the playlist/app default song themes, so the
+            // button must also re-evaluate when those assignments change. Weak self-capture: the
+            // playlist observable is app-lifetime and must not root this instance.
+            var weakSelf = new WeakReference<SongItemInstance>(this);
+            parentPlaylist?.DefaultThemeAssignmentsChanged
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ =>
+                {
+                    if (!weakSelf.TryGetTarget(out var self)) return;
+                    self.RaisePropertyChanged(nameof(ShowMotionBackgroundVideoButton));
+                    self.RaisePropertyChanged(nameof(ResolvedMotionBackgroundVideoPath));
+                    self.RaisePropertyChanged(nameof(HasMotionBackground));
+                });
 
             titleSlide = new SongTitleSlideInstance(this);
 
@@ -452,6 +475,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 {
                     if (IsMissing)
                     {
+                        Log.Warning("Song unresolved when generating slides: SongId={SongId} PlaylistItemUuid={ItemUuid} IndexedSongs={Count}",
+                            SongId, UUID, Globals.Instance.SongLibraryIndex.Count);
                         var missingSlides = new TrulyObservableCollection<Slide>
                         {
                             new SongSlideInstance(this, new SongStanza(), "MISSING", text: "(Missing Song)", label: null)
@@ -597,7 +622,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("SongItemInstance.GenerateSlides", ex);
+                    Log.Error(ex, "SongItemInstance.GenerateSlides failed for SongId={SongId}", SongId);
                 }
 
 
