@@ -53,7 +53,7 @@
                             </ListBox.Styles>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <DockPanel PointerPressed="DockPanel_PointerPressed">
+                                    <DockPanel Background="Transparent" PointerPressed="DockPanel_PointerPressed">
                                         <TextBlock
                                             DockPanel.Dock="Bottom"
                                             FontSize="14"
