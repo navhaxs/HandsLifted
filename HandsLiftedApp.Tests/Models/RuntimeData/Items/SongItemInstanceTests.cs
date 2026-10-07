@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using HandsLiftedApp.Core;
@@ -206,5 +207,36 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
             Assert.AreEqual("MISSING", placeholder.Id);
             Assert.AreEqual("(Missing Song)", placeholder.Text);
         }
+
+        // Regression: ItemInstanceFactory assigns SongId in an object initializer AFTER the constructor
+        // returns. On a slow machine the constructor can outlast the 200ms slide-generation debounce it
+        // starts, so slides get generated while SongId is still Guid.Empty ("(Missing Song)"). Assigning
+        // SongId afterwards must regenerate the slides rather than leave the placeholder in place.
+        [TestMethod]
+        public Task SongId_AssignedAfterSlidesGeneratedAsMissing_ReplacesPlaceholderWithRealSlides() => DispatcherTestThread.Run(async () =>
+        {
+            var stanza = new HandsLiftedApp.Data.Models.Items.SongStanza { Name = "Verse 1", Lyrics = "I can sing" };
+            var song = new HandsLiftedApp.Data.Models.Items.SongItem { Title = "Every Step" };
+            song.Stanzas.Add(stanza);
+            song.Arrangement = new System.Collections.ObjectModel.ObservableCollection<Guid> { stanza.Id };
+            Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+
+            var instance = new SongItemInstance(null);
+            // Let the constructor's own 200ms debounce fire while SongId is still Guid.Empty - exactly
+            // what happens when construction of the real item outlasts the debounce interval.
+            await Task.Delay(800);
+            Dispatcher.UIThread.RunJobs();
+            Assert.AreEqual("MISSING", ((HandsLiftedApp.Data.Slides.SongSlideInstance)instance.Slides[0]).Id);
+
+            instance.SongId = song.UUID;
+            await Task.Delay(800); // longer than the 200ms slide-generation debounce
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.IsFalse(instance.IsMissing);
+            Assert.IsFalse(
+                instance.Slides.OfType<HandsLiftedApp.Data.Slides.SongSlideInstance>().Any(s => s.Id == "MISSING"),
+                "Slides still hold the '(Missing Song)' placeholder after SongId was assigned");
+            Assert.IsTrue(instance.Slides.Count > 0);
+        });
     }
 }

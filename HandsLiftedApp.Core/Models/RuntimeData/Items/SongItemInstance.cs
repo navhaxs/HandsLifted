@@ -36,7 +36,24 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         /// this codebase). Two playlist items can share a SongId (both reference the same song)
         /// while each keeping their own distinct UUID.
         /// </summary>
-        public Guid SongId { get; set; }
+        public Guid SongId
+        {
+            get => _songId;
+            set
+            {
+                if (_songId == value) return;
+                _songId = value;
+                // SongId is normally assigned in an object initializer AFTER the constructor returns
+                // (see ItemInstanceFactory). The constructor starts a 200ms slide-generation debounce,
+                // and on a slow machine construction can outlast it - slides then get generated while
+                // SongId is still Guid.Empty ("(Missing Song)") and nothing else would ever regenerate
+                // them. Re-run generation whenever the song this item points at changes.
+                this.RaisePropertyChanged(nameof(IsMissing));
+                debounceDispatcher.Debounce(() => UpdateStanzaSlides());
+            }
+        }
+
+        private Guid _songId;
 
         public BaseSlideTheme? ResolvedDesignTheme
         {
