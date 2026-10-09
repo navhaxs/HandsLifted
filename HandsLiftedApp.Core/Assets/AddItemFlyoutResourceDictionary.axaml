@@ -1,39 +1,51 @@
 <ResourceDictionary
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:material="using:Material.Icons.Avalonia"
     x:Class="HandsLiftedApp.Core.Assets.AddItemFlyoutResourceDictionary"
-    x:CompileBindings="False">
+    x:CompileBindings="False"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:material="using:Material.Icons.Avalonia"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.PreviewWith>
-        <!-- Add Controls for Previewer Here -->
-        <Button Content="Arrangement"
-                Flyout="{StaticResource addItemFlayout}" />
+        <!--  Add Controls for Previewer Here  -->
+        <Button Content="Arrangement" Flyout="{StaticResource addItemFlayout}" />
     </Design.PreviewWith>
 
-    <MenuFlyout x:Key="addItemFlyout" Placement="BottomEdgeAlignedLeft">
-        <MenuItem Click="OnMenuItemClick" CommandParameter="Presentation" Header="_Presentation">
+    <MenuFlyout Placement="BottomEdgeAlignedLeft" x:Key="addItemFlyout">
+        <MenuItem
+            Click="OnMenuItemClick"
+            CommandParameter="Presentation"
+            Header="_Presentation (PDF/PPTX)">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Presentation" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Click="OnMenuItemClick" CommandParameter="GoogleSlides" Header="_Google Slides">
+        <MenuItem
+            Click="OnMenuItemClick"
+            CommandParameter="GoogleSlides"
+            Header="_Google Slides">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Slideshow" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Click="OnMenuItemClick" CommandParameter="NewSong" Header="_Song">
+        <MenuItem
+            Click="OnMenuItemClick"
+            CommandParameter="NewSong"
+            Header="_Song">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Music" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Click="OnMenuItemClick" CommandParameter="Scripture" Header="_Scripture">
+        <MenuItem
+            Click="OnMenuItemClick"
+            CommandParameter="Scripture"
+            Header="_Scripture">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Bible" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem
-            Click="OnMenuItemClick" CommandParameter="MediaGroup"
+            Click="OnMenuItemClick"
+            CommandParameter="MediaGroup"
             Header="_Media">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="ImageMultiple" />
@@ -41,7 +53,8 @@
         </MenuItem>
         <Separator />
         <MenuItem
-            Click="OnMenuItemClick" CommandParameter="Logo"
+            Click="OnMenuItemClick"
+            CommandParameter="Logo"
             Header="_Logo">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Star" />
@@ -49,14 +62,16 @@
         </MenuItem>
         <Separator />
         <MenuItem
-            Click="OnMenuItemClick" CommandParameter="SectionHeading"
+            Click="OnMenuItemClick"
+            CommandParameter="SectionHeading"
             Header="_Section">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="FormatSection" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem
-            Click="OnMenuItemClick" CommandParameter="Comment"
+            Click="OnMenuItemClick"
+            CommandParameter="Comment"
             Header="_Comment">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Information" />
@@ -68,11 +83,12 @@
                 <material:MaterialIcon Kind="ContentCopy" />
             </MenuItem.Icon>
             <MenuItem
-                Click="OnMenuItemClick" CommandParameter="BlankGroup"
+                Click="OnMenuItemClick"
+                CommandParameter="BlankGroup"
                 Header="Blank Group" />
         </MenuItem>
         <Separator />
-        <MenuItem Header="_From Library..." Click="ExploreLibraryClick">
+        <MenuItem Click="ExploreLibraryClick" Header="_From Library...">
             <MenuItem.Icon>
                 <material:MaterialIcon Kind="Bookshelf" />
             </MenuItem.Icon>
