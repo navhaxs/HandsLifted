@@ -39,8 +39,40 @@ namespace HandsLiftedApp.Core.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private const int MAX_RECENT_PLAYLISTS = 5;
+    private const int AUTOSAVE_INTERVAL_SECONDS = 30;
+    private const int AUTOSAVE_CHANGE_DEBOUNCE_SECONDS = 2;
 
     public IMySettings settings;
+
+    public bool AutoSaveEnabled
+    {
+        get => settings?.AutoSaveEnabled ?? false;
+        set
+        {
+            if (settings == null || settings.AutoSaveEnabled == value) return;
+            settings.AutoSaveEnabled = value;
+            this.RaisePropertyChanged();
+            if (value) AutoSaveNow("enabled");
+        }
+    }
+
+    /// <summary>
+    /// Saves the open playlist over its file if auto-save is on. Best effort: failures are logged,
+    /// not shown, and leave <c>IsDirty</c> set so the normal unsaved-changes prompts still apply.
+    /// UI thread only.
+    /// </summary>
+    public void AutoSaveNow(string reason)
+    {
+        if (!AutoSaveEnabled) return;
+        try
+        {
+            PlaylistDocumentService.AutoSaveToFile(Playlist);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[DOC] Autosave failed ({Reason})", reason);
+        }
+    }
 
     public LibraryViewModel LibraryViewModel { get; init; }
 
@@ -248,28 +280,31 @@ public class MainViewModel : ViewModelBase
             }
         });
 
-        // AutoSave trigger
-        Observable.FromEventPattern(
-                handler => Playlist.Changed += handler,
-                handler => Playlist.Changed -= handler)
-            .Throttle(TimeSpan.FromSeconds(30))
-            .Where(_ => Playlist.IsDirty)
-            .Subscribe(_ =>
-            {
-                try
-                {
-                    PlaylistDocumentService.AutoSaveDocument(Playlist);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "[DOC] Autosave failed");
-                }
-            });
-        
+        // Auto-save triggers. Periodic: a fixed-rate timer that deliberately does NOT depend on
+        // IsDirty / Playlist.Changed, since change notification isn't complete (e.g. nested item
+        // edits can be missed). AutoSaveToFile compares against disk, so idle ticks write nothing.
+        Observable.Interval(TimeSpan.FromSeconds(AUTOSAVE_INTERVAL_SECONDS), RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => AutoSaveNow("timer"));
+
+        // On an operation (add/remove/reorder items, item data edits, design edits): shortly after
+        // the playlist raises Changed. Re-subscribes when the Playlist instance is replaced (New).
+        this.WhenAnyValue(x => x.Playlist)
+            .Select(playlist => Observable.FromEventPattern(
+                handler => playlist.Changed += handler,
+                handler => playlist.Changed -= handler))
+            .Switch()
+            .Throttle(TimeSpan.FromSeconds(AUTOSAVE_CHANGE_DEBOUNCE_SECONDS), RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => AutoSaveNow("change"));
+
         MessageBus.Current.Listen<LoadPlaylistAction>().Subscribe(async (msg) =>
         {
+            bool playlistMutatedByLoad = false;
             try
             {
+                // with auto-save on, commit the outgoing playlist first; on success it is no longer
+                // dirty so the unsaved-changes prompt below is skipped
+                if (!msg.IsStartupLoad) AutoSaveNow("before load");
+
                 // check for unsaved changes to current playlist
                 if (!msg.IsStartupLoad && Playlist.IsDirty)
                 {
@@ -287,26 +322,14 @@ public class MainViewModel : ViewModelBase
                     // else discard, proceed
                 }
                 
-                // delete autosaves when loading/reloading playlist
-                PlaylistDocumentService.DeleteAutoSave(msg.FilePath);
-                
-                string loadFilePath = msg.FilePath;
-                
-                if (PlaylistDocumentService.IsAutoSaveNewer(msg.FilePath))
-                {
-                    var confirmation = new ShowRestoreAutosaveConfirmationAction();
-                    MessageBus.Current.SendMessage(confirmation);
-                    bool restore = await confirmation.TaskCompletionSource.Task;
-                    if (restore)
-                    {
-                        loadFilePath = PlaylistDocumentService.GetAutoSavePlaylistFilePath(msg.FilePath);
-                        Log.Information("Restoring autosave from {FilePath}", loadFilePath);
-                    }
-                }
+                // clean up recovery sidecars left by versions that predate auto-save-to-file
+                PlaylistDocumentService.DeleteLegacyAutoSaveSidecar(msg.FilePath);
+                // next autosave write re-snapshots the freshly loaded file into .bak
+                PlaylistDocumentService.ResetAutoSaveState(msg.FilePath);
 
                 Playlist.IsPlaylistLoading = true;
 
-                var x = await Task.Run(() => HandsLiftedDocXmlSerializer.DeserializePlaylist(loadFilePath));
+                var x = await Task.Run(() => HandsLiftedDocXmlSerializer.DeserializePlaylist(msg.FilePath));
                 
                 string? playlistDirectoryPath = Path.GetDirectoryName(msg.FilePath);
 
@@ -350,6 +373,7 @@ public class MainViewModel : ViewModelBase
                 }
                 Playlist.Designs = Globals.Instance.SlideThemeLibrary.Themes;
                 Playlist.PlaylistFilePath = msg.FilePath;
+                playlistMutatedByLoad = true;
                 Playlist.PlaylistWorkingDirectory = playlistDirectoryPath;
                 
                 Log.Debug("Playlist load: PlaylistWorkingDirectory={PlaylistWorkingDirectory}", playlistDirectoryPath);
@@ -393,7 +417,7 @@ public class MainViewModel : ViewModelBase
 
                 // Defer the dirty reset to Background priority so deferred OAPH initial-value
                 // emissions from BaseSlideTheme (via ObserveOn(MainThreadScheduler)) fire first.
-                bool finalIsDirty = loadFilePath != msg.FilePath || migration.NeedsResave;
+                bool finalIsDirty = migration.NeedsResave;
                 await Dispatcher.UIThread.InvokeAsync(() => Playlist.IsDirty = finalIsDirty, DispatcherPriority.Background);
                 // update MRU list
                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = msg.FilePath});
@@ -401,6 +425,9 @@ public class MainViewModel : ViewModelBase
             catch (Exception ex)
             {
                 Playlist.IsPlaylistLoading = false;
+                // PlaylistFilePath is assigned before items finish building. Detach it so auto-save
+                // can't overwrite the user's real file with a half-loaded playlist.
+                if (playlistMutatedByLoad) Playlist.PlaylistFilePath = null;
                 MessageBus.Current.SendMessage(new MessageWindowViewModel()
                     { Title = "Playlist failed to load :(", Content = $"{ex.Message}" });
                 Log.Error(ex, "[DOC] Failed to parse playlist XML");

@@ -22,6 +22,21 @@ namespace HandsLiftedApp.Core
         // Serialize Playlist to XML
         public static void SerializePlaylist(PlaylistInstance playlist, string? filePath)
         {
+            byte[] bytes = SerializePlaylistToBytes(playlist, filePath);
+
+            // only once all serialization is OK, now write to disk
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                fileStream.Write(bytes, 0, bytes.Length);
+            }
+        }
+
+        /// <summary>
+        /// Serializes <paramref name="playlist"/> to the document XML without touching disk.
+        /// <paramref name="filePath"/> is only used to relativize media paths against its directory.
+        /// </summary>
+        public static byte[] SerializePlaylistToBytes(PlaylistInstance playlist, string? filePath)
+        {
             string? playlistDirectoryPath = Path.GetDirectoryName(filePath);
 
             if (playlistDirectoryPath == null)
@@ -53,15 +68,9 @@ namespace HandsLiftedApp.Core
                 // };
             }));
 
-            MemoryStream memoryStream = new MemoryStream();
+            using MemoryStream memoryStream = new MemoryStream();
             serializer.Serialize(memoryStream, playlistSerialized);
-
-            // only once all serialization is OK, now write to disk
-            memoryStream.Position = 0;
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                memoryStream.CopyTo(fileStream);
-            }
+            return memoryStream.ToArray();
         }
 
         /// <summary>

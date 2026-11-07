@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Config.Net;
 
 namespace HandsLiftedApp.Core.Models
 {
@@ -6,6 +7,9 @@ namespace HandsLiftedApp.Core.Models
     {
         string[]? RecentPlaylistFullPathsList { get; set; }
         WindowState? LastWindowState { get; set; }
+
+        [Option(DefaultValue = true)]
+        bool AutoSaveEnabled { get; set; }
 
         string AuthClientSecret { get; }
     }

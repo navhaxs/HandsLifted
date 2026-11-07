@@ -230,10 +230,6 @@
           <DependentUpon>UnsavedChangesConfirmationWindow.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Confirmation\RestoreAutosaveConfirmationWindow.axaml.cs">
-          <DependentUpon>RestoreAutosaveConfirmationWindow.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Assets\AddItemFlyoutResourceDictionary.axaml.cs">
           <DependentUpon>AddItemFlyoutResourceDictionary.axaml</DependentUpon>
           <SubType>Code</SubType>

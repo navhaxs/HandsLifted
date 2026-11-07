@@ -54,17 +54,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             mw.ShowDialog(this);
         });
 
-        MessageBus.Current.Listen<ShowRestoreAutosaveConfirmationAction>().Subscribe(async action =>
-        {
-            RestoreAutosaveConfirmationWindow window = new();
-            Shade.IsVisible = true;
-            IsEnabled = false;
-            await window.ShowDialog(this);
-            IsEnabled = true;
-            Shade.IsVisible = false;
-            action.TaskCompletionSource.SetResult(window.Result);
-        });
-
         MessageBus.Current.Listen<ShowUnsavedChangesConfirmationAction>().Subscribe(async action =>
         {
             UnsavedChangesConfirmationWindow window = new();
@@ -153,6 +142,13 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
         this.Closing += MainWindow_Closing;
 
+        // Editor/dialog windows are separate Windows; when one closes, focus returns here. Cheap
+        // catch-all for "editor window closed" (no-op if nothing changed on disk).
+        this.Activated += (_, _) =>
+        {
+            if (DataContext is MainViewModel activatedVm) activatedVm.AutoSaveNow("window activated");
+        };
+
         this.GetObservable(WindowStateProperty)
             .Subscribe(v =>
             {
@@ -210,6 +206,9 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     {
         if (this.DataContext is MainViewModel vm)
         {
+            // with auto-save on this clears the dirty bit, so the prompt below is skipped
+            vm.AutoSaveNow("exit");
+
             // feature: unsaved changes dirty bit
             var isPlaylistEmpty = (vm.Playlist.Title.Length == 0 && vm.Playlist.Items.Count == 0);
             if (vm.Playlist.IsDirty && !isPlaylistEmpty)
@@ -243,7 +242,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                         }
                         break;
                     case UnsavedChangesConfirmationWindow.DialogResult.Discard:
-                        PlaylistDocumentService.DeleteAutoSave(vm.Playlist.PlaylistFilePath);
                         break;
                     case UnsavedChangesConfirmationWindow.DialogResult.Cancel:
                         // abort application exit
@@ -307,6 +305,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
     {
         if (this.DataContext is MainViewModel vm)
         {
+            vm.AutoSaveNow("new playlist");
+
             // prompt user to save any unsaved changes
             var isPlaylistEmpty = (vm.Playlist.Title.Length == 0 && vm.Playlist.Items.Count == 0);
             if (vm.Playlist.IsDirty && !isPlaylistEmpty)
@@ -340,7 +340,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                         }
                         break;
                     case UnsavedChangesConfirmationWindow.DialogResult.Discard:
-                        PlaylistDocumentService.DeleteAutoSave(vm.Playlist.PlaylistFilePath);
                         break;
                     case UnsavedChangesConfirmationWindow.DialogResult.Cancel:
                         // abort new playlist creation
@@ -351,12 +350,6 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             // proceed with creating new playlist
             try
             {
-                // delete autosave for the current playlist if it exists
-                if (!string.IsNullOrEmpty(vm.Playlist.PlaylistFilePath))
-                {
-                    PlaylistDocumentService.DeleteAutoSave(vm.Playlist.PlaylistFilePath);
-                }
-
                 // create a new empty playlist
                 // Dispose the outgoing playlist so its subscriptions and its items' render
                 // resources (bitmaps, mpv event subscriptions) are released now rather than
