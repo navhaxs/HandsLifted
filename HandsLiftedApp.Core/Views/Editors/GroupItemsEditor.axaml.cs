@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -95,8 +96,9 @@ namespace HandsLiftedApp.Core.Views.Editors
             if (this.DataContext is MediaGroupItem mediaGroupItem)
             {
                 var newSlideData = new CustomSlide();
-                mediaGroupItem.Items.Add(new MediaGroupItem.SlideItem()
-                    { SlideData = newSlideData });
+                GroupSlideEdits.Insert(mediaGroupItem, mediaGroupItem.Items.Count,
+                    new MediaGroupItem.SlideItem() { SlideData = newSlideData }, "Add Custom Slide",
+                    regenerate: false);
             }
         }
 
@@ -141,8 +143,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                         break;
                     }
 
-                    mediaGroupItem.Items.Add(new MediaGroupItem.MediaItem()
-                        { SourceMediaFilePath = localizedMediaPath });
+                    GroupSlideEdits.Insert(mediaGroupItem, mediaGroupItem.Items.Count,
+                        new MediaGroupItem.MediaItem() { SourceMediaFilePath = localizedMediaPath }, "Add Media",
+                        regenerate: false);
                 }
             }
         }
@@ -157,7 +160,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                 }
 
                 var finalIndex = listBox.SelectedIndex - 1;
-                mediaGroupItem.Items.Move(listBox.SelectedIndex, finalIndex);
+                GroupSlideEdits.Move(mediaGroupItem, listBox.SelectedIndex, finalIndex, "Move Slide",
+                    regenerate: false);
                 listBox.SelectedIndex = finalIndex;
             }
         }
@@ -172,7 +176,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                 }
 
                 var finalIndex = listBox.SelectedIndex + 1;
-                mediaGroupItem.Items.Move(listBox.SelectedIndex, finalIndex);
+                GroupSlideEdits.Move(mediaGroupItem, listBox.SelectedIndex, finalIndex, "Move Slide",
+                    regenerate: false);
                 listBox.SelectedIndex = finalIndex;
             }
         }
@@ -194,7 +199,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                     return;
                 }
 
-                mediaGroupItem.Items.RemoveAt(listBox.SelectedIndex);
+                GroupSlideEdits.RemoveAt(mediaGroupItem, listBox.SelectedIndex, "Delete Slide", regenerate: false);
             }
         }
 
@@ -228,7 +233,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                         
                             using (StringReader reader = new StringReader(obj))
                             {
-                                mediaGroupItem.Items.Insert( index + 1, serializer.Deserialize(reader) as MediaGroupItem.GroupItem);
+                                if (serializer.Deserialize(reader) is MediaGroupItem.GroupItem duplicate)
+                                    GroupSlideEdits.Insert(mediaGroupItem, index + 1, duplicate, "Duplicate Slide",
+                                        regenerate: false);
                             }
                         }
                     }

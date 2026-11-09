@@ -21,6 +21,7 @@ using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -386,16 +387,16 @@ namespace HandsLiftedApp.Controls
                     }
 
                     var index = Math.Clamp(resolveInsertIndex(), 0, mediaGroupItemInstance.Items.Count);
-                    mediaGroupItemInstance.Items.Insert(index, new MediaGroupItem.MediaItem { SourceMediaFilePath = localizedMediaPath });
-                    mediaGroupItemInstance.GenerateSlides();
+                    GroupSlideEdits.Insert(mediaGroupItemInstance, index,
+                        new MediaGroupItem.MediaItem { SourceMediaFilePath = localizedMediaPath }, "Add Media");
                 };
 
                 var addSlide = new MenuItem { Header = "Add Custom Slide" };
                 addSlide.Click += (_, _) =>
                 {
                     var index = Math.Clamp(resolveInsertIndex(), 0, mediaGroupItemInstance.Items.Count);
-                    mediaGroupItemInstance.Items.Insert(index, new MediaGroupItem.SlideItem { SlideData = new CustomSlide() });
-                    mediaGroupItemInstance.GenerateSlides();
+                    GroupSlideEdits.Insert(mediaGroupItemInstance, index,
+                        new MediaGroupItem.SlideItem { SlideData = new CustomSlide() }, "Add Custom Slide");
                 };
 
                 flyout.Items.Add(addMedia);

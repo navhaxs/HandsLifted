@@ -10,6 +10,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 
@@ -184,7 +185,7 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             if (targetIndex > sourceIndex) targetIndex--;
             if (sourceIndex == targetIndex) return;
 
-            vm.Items.Move(sourceIndex, targetIndex);
+            GroupSlideEdits.Move(vm, sourceIndex, targetIndex, "Move Slide", regenerate: false);
         }
 
         private void OnThumbstripDragLeave(object? sender, RoutedEventArgs e)
@@ -281,7 +282,8 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
                 if (Thumbstrip.SelectedItem is MediaGroupItem.GroupItem selectedItem)
                 {
                     var duplicatedSlide = selectedItem.Clone();
-                    mediaGroupItemInstance.Items.Insert(Thumbstrip.SelectedIndex + 1, duplicatedSlide);
+                    GroupSlideEdits.Insert(mediaGroupItemInstance, Thumbstrip.SelectedIndex + 1, duplicatedSlide,
+                        "Duplicate Slide", regenerate: false);
                 }
             }
         }
@@ -292,7 +294,9 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             {
                 if (Thumbstrip.SelectedItem is MediaGroupItem.GroupItem selectedItem)
                 {
-                    mediaGroupItemInstance.Items.Remove(selectedItem);
+                    var removeIndex = mediaGroupItemInstance.Items.IndexOf(selectedItem);
+                    if (removeIndex >= 0)
+                        GroupSlideEdits.RemoveAt(mediaGroupItemInstance, removeIndex, "Delete Slide", regenerate: false);
                 }
             }
         }
@@ -301,7 +305,9 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
         {
             if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
             {
-                mediaGroupItemInstance.Items.Add(new MediaGroupItem.SlideItem() { SlideData = new CustomSlide() });
+                GroupSlideEdits.Insert(mediaGroupItemInstance, mediaGroupItemInstance.Items.Count,
+                    new MediaGroupItem.SlideItem() { SlideData = new CustomSlide() }, "Add Custom Slide",
+                    regenerate: false);
             }
         }
 
@@ -309,7 +315,8 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
         {
             if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
             {
-                mediaGroupItemInstance.Items.Add(new MediaGroupItem.MediaItem() { });
+                GroupSlideEdits.Insert(mediaGroupItemInstance, mediaGroupItemInstance.Items.Count,
+                    new MediaGroupItem.MediaItem() { }, "Add Media", regenerate: false);
             }
         }
 
@@ -320,7 +327,9 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
                 if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
                 {
                     var currentItemIndex = mediaGroupItemInstance.Items.IndexOf(currentItem);
-                    mediaGroupItemInstance.Items.Move(currentItemIndex, Math.Max(currentItemIndex - 1, 0));
+                    if (currentItemIndex >= 0)
+                        GroupSlideEdits.Move(mediaGroupItemInstance, currentItemIndex,
+                            Math.Max(currentItemIndex - 1, 0), "Move Slide", regenerate: false);
                 }
             }
         }
@@ -332,8 +341,10 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
                 if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
                 {
                     var currentItemIndex = mediaGroupItemInstance.Items.IndexOf(currentItem);
-                    mediaGroupItemInstance.Items.Move(currentItemIndex,
-                        Math.Min(currentItemIndex + 1, mediaGroupItemInstance.Items.Count - 1));
+                    if (currentItemIndex >= 0)
+                        GroupSlideEdits.Move(mediaGroupItemInstance, currentItemIndex,
+                            Math.Min(currentItemIndex + 1, mediaGroupItemInstance.Items.Count - 1), "Move Slide",
+                            regenerate: false);
                 }
             }
         }

@@ -156,16 +156,8 @@ public class MainViewModel : ViewModelBase
                         int index = groupInstance.Slides.IndexOf(slide);
                         if (index >= 0 && index < group.Items.Count)
                         {
-                            var lastSelectedSlide =
-                                groupInstance.Slides.ElementAtOrDefault(groupInstance.SelectedSlideIndex);
-
-                            group.Items.RemoveAt(index);
-                            RegerenateSlides(groupItem);
-
-                            if (lastSelectedSlide != null && !ReferenceEquals(lastSelectedSlide, slide))
-                            {
-                                groupInstance.SelectedSlideIndex = groupInstance.Slides.IndexOf(lastSelectedSlide);
-                            }
+                            // rebuilds the slides and keeps the selected slide selected (unless it was the one deleted)
+                            GroupSlideEdits.RemoveAt(group, index, "Delete Slide");
                         }
                     }
                 }
@@ -236,8 +228,7 @@ public class MainViewModel : ViewModelBase
                             return;
                         }
 
-                        mediaItem.SourceMediaFilePath = localizedMediaPath;
-                        RegerenateSlides(groupItem);
+                        GroupSlideEdits.SetMediaPath(group, index, localizedMediaPath, "Change Media");
                     }
                 }
                 catch (Exception e)
@@ -271,8 +262,7 @@ public class MainViewModel : ViewModelBase
                         if (index < 0 || index >= group.Items.Count) return;
 
                         var duplicatedItem = group.Items[index].Clone();
-                        group.Items.Insert(index + 1, duplicatedItem);
-                        RegerenateSlides(groupItem);
+                        GroupSlideEdits.Insert(group, index + 1, duplicatedItem, "Duplicate Slide");
                     }
                 }
                 catch (Exception e)
@@ -746,22 +736,12 @@ public class MainViewModel : ViewModelBase
                             return;
                         }
 
-                        var lastSelectedSlide =
-                            sourceItemInstance.Slides.ElementAtOrDefault(sourceItemInstance.SelectedSlideIndex);
-
-                        sourceItemAsGroup.Items.Move(moveSlideCommand.SourceSlideIndex, calcDestSlideIndex);
-
-                        RegerenateSlides(sourceItem);
-
-                        // restore the last selected slide by reference - re-ordering slides must not affect the
-                        // selected slide. Works without a flicker because MediaGroupItemInstance.GenerateSlides()
-                        // reuses existing Slide instances (by GroupItem identity) and updates Slides in place
-                        // (Move/Insert/Remove) instead of replacing the collection.
-                        if (lastSelectedSlide != null)
-                        {
-                            var x = sourceItemInstance.Slides.IndexOf(lastSelectedSlide);
-                            sourceItemInstance.SelectedSlideIndex = x;
-                        }
+                        // GroupSlideEdits rebuilds the slides and restores the selected slide by reference -
+                        // re-ordering slides must not affect the selected slide. Works without a flicker because
+                        // MediaGroupItemInstance.GenerateSlides() reuses existing Slide instances (by GroupItem
+                        // identity) and updates Slides in place (Move/Insert/Remove) instead of replacing the collection.
+                        GroupSlideEdits.Move(sourceItemAsGroup, moveSlideCommand.SourceSlideIndex, calcDestSlideIndex,
+                            "Move Slide");
                     }
                     else
                     {
@@ -777,11 +757,14 @@ public class MainViewModel : ViewModelBase
                         var destItemPreviousSelectedSlide =
                             destItemInstance.Slides.ElementAtOrDefault(destItemInstance.SelectedSlideIndex);
 
-                        destItemAsGroup.Items.Insert(moveSlideCommand.DestSlideIndex, itemToMove);
-                        sourceItemAsGroup.Items.RemoveAt(moveSlideCommand.SourceSlideIndex);
-
-                        RegerenateSlides(destItemInstance);
-                        RegerenateSlides(sourceItemInstance);
+                        // one undo step: insert into the destination + remove from the source
+                        using (GroupSlideEdits.BeginTransaction(destItemAsGroup, "Move Slide"))
+                        {
+                            GroupSlideEdits.Insert(destItemAsGroup, moveSlideCommand.DestSlideIndex, itemToMove,
+                                "Move Slide");
+                            GroupSlideEdits.RemoveAt(sourceItemAsGroup, moveSlideCommand.SourceSlideIndex,
+                                "Move Slide");
+                        }
 
                         if (sourceItemPreviousSelectedSlide != null)
                         {
@@ -822,18 +805,23 @@ public class MainViewModel : ViewModelBase
                         return;
                     }
 
-                    foreach (var item in command.SourceFiles)
+                    // dropping several files is one undo step
+                    using (GroupSlideEdits.BeginTransaction(destItemInstance, "Add Media"))
                     {
-                        if (item is IStorageFile file)
+                        foreach (var item in command.SourceFiles)
                         {
-                            var localizedMediaPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
-                                file.Path.LocalPath, addFilesLibraryPath);
-                            destItemInstance.Items.Insert(command.DestSlideIndex, new MediaGroupItem.MediaItem()
-                                { SourceMediaFilePath = localizedMediaPath });
+                            if (item is IStorageFile file)
+                            {
+                                var localizedMediaPath = PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(
+                                    file.Path.LocalPath, addFilesLibraryPath);
+                                GroupSlideEdits.Insert(destItemInstance, command.DestSlideIndex,
+                                    new MediaGroupItem.MediaItem { SourceMediaFilePath = localizedMediaPath },
+                                    "Add Media", regenerate: false);
+                            }
+                            // else if (item is IStorageFolder folder)
+                            // {
+                            // }
                         }
-                        // else if (item is IStorageFolder folder)
-                        // {
-                        // }
                     }
 
                     destItemInstance.GenerateSlides();
@@ -857,23 +845,6 @@ public class MainViewModel : ViewModelBase
             });
 
         _ = Update(); // calling an async function we do not want to await
-    }
-
-    private void RegerenateSlides(object item)
-    {
-        // TODO GenerateSlides() should be a generic interface shared across all implementations below:
-        if (item is MediaGroupItemInstance mediaGroupItemInstance)
-        {
-            mediaGroupItemInstance.GenerateSlides();
-        }
-        else if (item is PowerPointPresentationItemInstance pointPresentationItemInstance)
-        {
-            pointPresentationItemInstance.GenerateSlides();
-        }
-        else if (item is PDFSlidesGroupItemInstance pdfSlidesGroupItemInstance)
-        {
-            pdfSlidesGroupItemInstance.GenerateSlides();
-        }
     }
 
     public Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> ShowOpenFileDialog { get; }
