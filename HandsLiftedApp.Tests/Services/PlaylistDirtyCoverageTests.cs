@@ -285,6 +285,15 @@ public class PlaylistDirtyCoverageTests
                 PlaylistDocumentService.SaveDocument(playlist); // baseline: clean
                 Assert.IsFalse(playlist.IsDirty, "precondition: clean after save");
 
+                // Serialization must be deterministic: with no edit, the playlist re-serializes to the very
+                // same bytes. If it doesn't (e.g. an item minting a new Guid on every save), "changed" below
+                // would be true for every property and this test would pass vacuously.
+                if (playlist.DirtyTracker.Refresh())
+                {
+                    gaps.Add($"UNSTABLE       {c.Name} (serializes differently with no edit - not deterministic)");
+                    continue;
+                }
+
                 edit();
 
                 var eventRaised = playlist.IsDirty;

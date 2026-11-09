@@ -129,7 +129,15 @@ namespace HandsLiftedApp.Core
         {
             if (item is LogoItemInstance i)
             {
-                return new LogoItem() { Title = i.Title, SlideTransitionDurationMs = i.SlideTransitionDurationMs };
+                // UUID must be carried over like every other branch: left out, the LogoItem constructor
+                // mints a fresh Guid on every serialization, so the same playlist never serializes to the
+                // same bytes twice (dirty tracking / auto-save then see a change on every check).
+                return new LogoItem()
+                {
+                    UUID = i.UUID,
+                    Title = i.Title,
+                    SlideTransitionDurationMs = i.SlideTransitionDurationMs
+                };
             }
             else if (item is SongItemInstance songItemInstance)
             {

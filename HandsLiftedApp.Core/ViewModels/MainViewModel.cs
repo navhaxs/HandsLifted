@@ -21,6 +21,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels.AddItem;
 using HandsLiftedApp.Core.Views;
@@ -440,7 +441,12 @@ public class MainViewModel : ViewModelBase
                 // emissions from BaseSlideTheme (via ObserveOn(MainThreadScheduler)) fire first.
                 // Also takes the baseline hash the dirty tracker compares against from here on.
                 bool needsResave = migration.NeedsResave;
-                await Dispatcher.UIThread.InvokeAsync(() => Playlist.DirtyTracker.MarkLoaded(needsResave), DispatcherPriority.Background);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    Playlist.DirtyTracker.MarkLoaded(needsResave);
+                    // history from the previously open playlist must not be undoable into this one
+                    Playlist.UndoStack.Clear();
+                }, DispatcherPriority.Background);
                 // update MRU list
                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = msg.FilePath});
             }
@@ -685,14 +691,16 @@ public class MainViewModel : ViewModelBase
                     case MoveItemCommand.DirectionValue.UP:
                         if (theSelectedIndex > 0)
                         {
-                            Playlist.Items.Move(theSelectedIndex, theSelectedIndex - 1);
+                            Playlist.UndoStack.Execute(new MovePlaylistItemAction(Playlist,
+                                moveItemCommand.SourceItem, theSelectedIndex, theSelectedIndex - 1, "Move Item Up"));
                         }
 
                         break;
                     case MoveItemCommand.DirectionValue.DOWN:
-                        if (theSelectedIndex + 1 < Playlist.Items.Count)
+                        if (theSelectedIndex >= 0 && theSelectedIndex + 1 < Playlist.Items.Count)
                         {
-                            Playlist.Items.Move(theSelectedIndex, theSelectedIndex + 1);
+                            Playlist.UndoStack.Execute(new MovePlaylistItemAction(Playlist,
+                                moveItemCommand.SourceItem, theSelectedIndex, theSelectedIndex + 1, "Move Item Down"));
                         }
 
                         break;
@@ -834,14 +842,14 @@ public class MainViewModel : ViewModelBase
         MessageBus.Current.Listen<MoveItemMessage>()
             .Subscribe((moveItemMessage) =>
             {
-                var currentSelectedItem = Playlist.SelectedItem;
+                var sourceIndex = moveItemMessage.SourceIndex;
+                var destinationIndex = Math.Min(Playlist.Items.Count - 1, moveItemMessage.DestinationIndex);
 
-                Playlist.Items.Move(moveItemMessage.SourceIndex,
-                    Math.Min(Playlist.Items.Count - 1, moveItemMessage.DestinationIndex));
-
-                if (currentSelectedItem != null)
+                // dropping an item where it already is is not an edit (nothing to undo)
+                if (sourceIndex != destinationIndex)
                 {
-                    Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
+                    Playlist.UndoStack.Execute(new MovePlaylistItemAction(Playlist,
+                        Playlist.Items[sourceIndex], sourceIndex, destinationIndex, "Move Item"));
                 }
 
                 Log.Debug("Moving playlist item {SourceIndex} to {DestinationIndex}", moveItemMessage.SourceIndex, moveItemMessage.DestinationIndex);

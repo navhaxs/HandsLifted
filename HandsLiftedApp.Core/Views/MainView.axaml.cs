@@ -137,10 +137,39 @@ public partial class MainView : UserControl
         var focusManager = TopLevel.GetTopLevel(this).FocusManager;
         var focusedElement = focusManager.GetFocusedElement();
 
+        // A focused text box owns Ctrl+Z / Ctrl+Y for its own text; leave those alone.
         if (focusedElement is TextBox || focusedElement is DatePicker)
             return;
 
+        if (DataContext is MainViewModel vm && TryHandleUndoRedoKey(vm, e))
+            return;
+
         KeyboardSlideNavigation.OnKeyDown(e);
+    }
+
+    /// <summary>Ctrl+Z = undo; Ctrl+Y or Ctrl+Shift+Z = redo.</summary>
+    private static bool TryHandleUndoRedoKey(MainViewModel vm, Avalonia.Input.KeyEventArgs e)
+    {
+        var ctrl = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) != 0;
+        var shift = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Shift) != 0;
+        var alt = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Alt) != 0;
+        if (!ctrl || alt) return false;
+
+        if (e.Key == Avalonia.Input.Key.Z && !shift)
+        {
+            vm.Playlist.UndoStack.Undo();
+        }
+        else if (e.Key == Avalonia.Input.Key.Y || (e.Key == Avalonia.Input.Key.Z && shift))
+        {
+            vm.Playlist.UndoStack.Redo();
+        }
+        else
+        {
+            return false;
+        }
+
+        e.Handled = true;
+        return true;
     }
 
     private async void TestButton_Clicked(object sender, RoutedEventArgs args)

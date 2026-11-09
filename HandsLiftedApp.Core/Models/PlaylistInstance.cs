@@ -17,6 +17,7 @@ using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Models;
@@ -43,6 +44,12 @@ namespace HandsLiftedApp.Core.Models
         /// optimistically; <see cref="PlaylistDirtyTracker.Refresh"/> confirms it against the saved baseline.
         /// </summary>
         public PlaylistDirtyTracker DirtyTracker { get; }
+
+        /// <summary>
+        /// Undo/redo history for edits to this playlist. Replaced implicitly when a new playlist is
+        /// created; cleared when a file is loaded into this instance.
+        /// </summary>
+        public UndoStack UndoStack { get; } = new();
 
         public PlaylistInstance()
         {

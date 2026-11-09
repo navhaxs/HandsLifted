@@ -162,6 +162,27 @@
 
                                     <Separator />
 
+                                    <!--  Shortcuts are handled in MainView.axaml.cs (skipped while a text box has focus); InputGesture is display only.  -->
+                                    <MenuItem
+                                        Command="{Binding Playlist.UndoStack.UndoCommand}"
+                                        Header="{Binding Playlist.UndoStack.UndoMenuText}"
+                                        InputGesture="Ctrl+Z">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="Undo" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+
+                                    <MenuItem
+                                        Command="{Binding Playlist.UndoStack.RedoCommand}"
+                                        Header="{Binding Playlist.UndoStack.RedoMenuText}"
+                                        InputGesture="Ctrl+Y">
+                                        <MenuItem.Icon>
+                                            <material:MaterialIcon Foreground="#888888" Kind="Redo" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+
+                                    <Separator />
+
                                     <MenuItem Click="PlaylistInfoButton_Clicked" Header="Playlist Info">
                                         <MenuItem.Icon>
                                             <material:MaterialIcon Foreground="#888888" Kind="InfoCircle" />

@@ -20,7 +20,12 @@ namespace HandsLiftedApp.Core
             var mediaLibraryPath = Globals.Instance.AppPreferences?.MediaLibraryPath;
             if (deserializedItem is LogoItem i)
             {
-                return new LogoItemInstance(playlist) { Title = i.Title, SlideTransitionDurationMs = i.SlideTransitionDurationMs };
+                return new LogoItemInstance(playlist)
+                {
+                    UUID = i.UUID,
+                    Title = i.Title,
+                    SlideTransitionDurationMs = i.SlideTransitionDurationMs
+                };
             }
             else if (deserializedItem is SongItemReference songReference)
             {
