@@ -17,8 +17,10 @@ namespace HandsLiftedApp.Core.Services
             }
 
             Log.Information("Saving playlist to {FilePath}", playlist.PlaylistFilePath);
-            HandsLiftedDocXmlSerializer.SerializePlaylist(playlist, playlist.PlaylistFilePath);
-            playlist.IsDirty = false;
+            // Serialize once and hash those exact bytes so the dirty baseline is precisely what hit disk.
+            byte[] bytes = HandsLiftedDocXmlSerializer.SerializePlaylistToBytes(playlist, playlist.PlaylistFilePath);
+            File.WriteAllBytes(playlist.PlaylistFilePath, bytes);
+            playlist.DirtyTracker.MarkSaved(SHA256.HashData(bytes));
 
             // disk now holds something we didn't hash; let the next autosave re-learn it
             LastSavedHashes.Remove(playlist.PlaylistFilePath);
@@ -74,7 +76,7 @@ namespace HandsLiftedApp.Core.Services
             {
                 if (hash.AsSpan().SequenceEqual(lastHash))
                 {
-                    playlist.IsDirty = false;
+                    playlist.DirtyTracker.MarkSaved(hash);
                     return AutoSaveResult.Unchanged;
                 }
             }
@@ -85,7 +87,7 @@ namespace HandsLiftedApp.Core.Services
                 if (SHA256.HashData(onDisk).AsSpan().SequenceEqual(hash))
                 {
                     LastSavedHashes[path] = hash;
-                    playlist.IsDirty = false;
+                    playlist.DirtyTracker.MarkSaved(hash);
                     return AutoSaveResult.Unchanged;
                 }
             }
@@ -103,7 +105,7 @@ namespace HandsLiftedApp.Core.Services
             LastSavedHashes[path] = hash;
 
             Log.Information("Autosaved playlist to {FilePath}", path);
-            playlist.IsDirty = false;
+            playlist.DirtyTracker.MarkSaved(hash);
             playlist.LastSaved = DateTime.Now;
             return AutoSaveResult.Saved;
         }

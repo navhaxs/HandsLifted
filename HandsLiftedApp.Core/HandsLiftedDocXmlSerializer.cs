@@ -101,6 +101,30 @@ namespace HandsLiftedApp.Core
             return RelativeFilePathResolver.ToRelativePath(mediaLibraryPath, path);
         }
 
+        // Copies a group's slides for the document, relativizing media paths against the media library.
+        private static TrulyObservableCollection<MediaGroupItem.GroupItem> SerializeGroupItems(MediaGroupItem group)
+        {
+            return new TrulyObservableCollection<MediaGroupItem.GroupItem>(group.Items
+                .Select(item =>
+                {
+                    if (item is MediaGroupItem.MediaItem mediaItem)
+                    {
+                        // TODO deep copy
+                        var newMediaItem = new MediaGroupItem.MediaItem()
+                            { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
+                        if (newMediaItem.SourceMediaFilePath != null)
+                        {
+                            newMediaItem.SourceMediaFilePath =
+                                ToRelativePathIfUnderMediaLibrary(mediaItem.SourceMediaFilePath);
+                        }
+
+                        return newMediaItem;
+                    }
+
+                    return item;
+                }).ToList());
+        }
+
         public static Item SerializeItem(Item item)
         {
             if (item is LogoItemInstance i)
@@ -154,27 +178,25 @@ namespace HandsLiftedApp.Core
                 {
                     UUID = mediaGroupItemInstance.UUID,
                     Title = mediaGroupItemInstance.Title,
-                    Items = new TrulyObservableCollection<MediaGroupItem.GroupItem>(mediaGroupItemInstance.Items
-                        .Select(item =>
-                        {
-                            if (item is MediaGroupItem.MediaItem mediaItem)
-                            {
-                                // TODO deep copy
-                                var newMediaItem = new MediaGroupItem.MediaItem()
-                                    { SourceMediaFilePath = mediaItem.SourceMediaFilePath, Meta = mediaItem.Meta };
-                                if (newMediaItem.SourceMediaFilePath != null)
-                                {
-                                    newMediaItem.SourceMediaFilePath =
-                                        ToRelativePathIfUnderMediaLibrary(mediaItem.SourceMediaFilePath);
-                                }
-
-                                return newMediaItem;
-                            }
-
-                            return item;
-                        }).ToList()),
+                    Items = SerializeGroupItems(mediaGroupItemInstance),
                     AutoAdvanceTimer = mediaGroupItemInstance.AutoAdvanceTimer,
                     SlideTransitionDurationMs = mediaGroupItemInstance.SlideTransitionDurationMs
+                };
+            }
+            else if (item is OnlineVideoItemInstance onlineVideoItemInstance)
+            {
+                // The loader (ItemInstanceFactory) already rebuilds OnlineVideoItem from XML; without this
+                // branch the instance fell through to `return item` and XmlSerializer threw
+                // ("cannot be serialized because it does not have a parameterless constructor"), so a
+                // playlist containing an online video could not be saved at all.
+                return new OnlineVideoItem()
+                {
+                    UUID = onlineVideoItemInstance.UUID,
+                    Title = onlineVideoItemInstance.Title,
+                    Items = SerializeGroupItems(onlineVideoItemInstance),
+                    AutoAdvanceTimer = onlineVideoItemInstance.AutoAdvanceTimer,
+                    SourceVideoUrl = onlineVideoItemInstance.SourceVideoUrl,
+                    SlideTransitionDurationMs = onlineVideoItemInstance.SlideTransitionDurationMs
                 };
             }
             else if (item is PowerPointPresentationItemInstance powerPointPresentationItemInstance)

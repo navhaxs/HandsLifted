@@ -208,6 +208,8 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         {
             // with auto-save on this clears the dirty bit, so the prompt below is skipped
             vm.AutoSaveNow("exit");
+            // don't trust the flag for a data-loss decision: re-derive it (matters with auto-save off)
+            vm.Playlist.DirtyTracker.Refresh();
 
             // feature: unsaved changes dirty bit
             var isPlaylistEmpty = (vm.Playlist.Title.Length == 0 && vm.Playlist.Items.Count == 0);
@@ -306,6 +308,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
         if (this.DataContext is MainViewModel vm)
         {
             vm.AutoSaveNow("new playlist");
+            vm.Playlist.DirtyTracker.Refresh();
 
             // prompt user to save any unsaved changes
             var isPlaylistEmpty = (vm.Playlist.Title.Length == 0 && vm.Playlist.Items.Count == 0);
@@ -358,7 +361,7 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
                 // Designs must point at the app-level theme library (Globals.OnStartup and the
                 // open-playlist handler do the same); otherwise the new playlist is cut off from it.
                 vm.Playlist = new PlaylistInstance { Designs = Globals.Instance.SlideThemeLibrary.Themes };
-                vm.Playlist.IsDirty = false;
+                vm.Playlist.DirtyTracker.MarkPristine();
             }
             catch (Exception ex)
             {

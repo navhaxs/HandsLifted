@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Xml.Serialization;
@@ -17,7 +18,20 @@ namespace HandsLiftedApp.Data.Models.Items
         public MediaGroupItem()
         {
             _items.CollectionChanged += _items_CollectionChanged;
+            _items.CollectionItemChanged += _items_CollectionItemChanged;
+            ((INotifyPropertyChanged)_autoAdvanceTimer).PropertyChanged += AutoAdvanceTimer_PropertyChanged;
         }
+
+        /// <summary>
+        /// Raised when this group's persisted content changes <em>in place</em>: slides added / removed /
+        /// moved, a slide's properties edited (media path, caption), or the auto-advance timer edited.
+        /// <c>WhenAnyValue(i =&gt; i.Items)</c> can't be used for this - it de-dupes by reference and so
+        /// only sees the collection being replaced. Owners (playlist item instances) forward this as
+        /// their "item data modified" signal.
+        /// </summary>
+        public event EventHandler? ContentChanged;
+
+        private void RaiseContentChanged() => ContentChanged?.Invoke(this, EventArgs.Empty);
 
         // this should be a data type for the XML
         // that is the list of slide media items <by type... video song custom etc>
@@ -28,8 +42,12 @@ namespace HandsLiftedApp.Data.Models.Items
             get => _items;
             set
             {
+                // stop listening to the collection being replaced
+                _items.CollectionChanged -= _items_CollectionChanged;
+                _items.CollectionItemChanged -= _items_CollectionItemChanged;
                 this.RaiseAndSetIfChanged(ref _items, value);
                 _items.CollectionChanged += _items_CollectionChanged;
+                _items.CollectionItemChanged += _items_CollectionItemChanged;
                 this.RaisePropertyChanged(nameof(Slides));
             }
         }
@@ -38,7 +56,12 @@ namespace HandsLiftedApp.Data.Models.Items
         {
             this.RaisePropertyChanged(nameof(Items));
             this.RaisePropertyChanged(nameof(Slides));
+            RaiseContentChanged();
         }
+
+        private void _items_CollectionItemChanged(object? sender, PropertyChangedEventArgs e) => RaiseContentChanged();
+
+        private void AutoAdvanceTimer_PropertyChanged(object? sender, PropertyChangedEventArgs e) => RaiseContentChanged();
 
         private bool _IsLooping = false;
 
@@ -56,7 +79,12 @@ namespace HandsLiftedApp.Data.Models.Items
         public ItemAutoAdvanceTimer AutoAdvanceTimer
         {
             get => _autoAdvanceTimer;
-            set => this.RaiseAndSetIfChanged(ref _autoAdvanceTimer, value);
+            set
+            {
+                ((INotifyPropertyChanged)_autoAdvanceTimer).PropertyChanged -= AutoAdvanceTimer_PropertyChanged;
+                this.RaiseAndSetIfChanged(ref _autoAdvanceTimer, value);
+                ((INotifyPropertyChanged)_autoAdvanceTimer).PropertyChanged += AutoAdvanceTimer_PropertyChanged;
+            }
         }
 
         /// <summary>
@@ -120,13 +148,28 @@ namespace HandsLiftedApp.Data.Models.Items
                 set => this.RaiseAndSetIfChanged(ref _sourceMediaFilePath, value);
             }
 
+            public MediaItem()
+            {
+                ((INotifyPropertyChanged)_meta!).PropertyChanged += Meta_PropertyChanged;
+            }
+
             private MediaItemMeta? _meta = new();
 
             public MediaItemMeta? Meta
             {
                 get => _meta;
-                set => this.RaiseAndSetIfChanged(ref _meta, value);
+                set
+                {
+                    if (_meta != null) ((INotifyPropertyChanged)_meta).PropertyChanged -= Meta_PropertyChanged;
+                    this.RaiseAndSetIfChanged(ref _meta, value);
+                    if (_meta != null) ((INotifyPropertyChanged)_meta).PropertyChanged += Meta_PropertyChanged;
+                }
             }
+
+            // Editing the caption (Meta.Text) is an edit of this item: surface it as a change of Meta so the
+            // owning collection (TrulyObservableCollection.CollectionItemChanged) and group can see it.
+            private void Meta_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
+                this.RaisePropertyChanged(nameof(Meta));
 
             [XmlRoot(Namespace = Constants.Namespace)]
             [Serializable]

@@ -41,6 +41,7 @@ public class MainViewModel : ViewModelBase
     private const int MAX_RECENT_PLAYLISTS = 5;
     private const int AUTOSAVE_INTERVAL_SECONDS = 30;
     private const int AUTOSAVE_CHANGE_DEBOUNCE_SECONDS = 2;
+    private const int DIRTY_REFRESH_DEBOUNCE_MS = 400;
 
     public IMySettings settings;
 
@@ -284,7 +285,22 @@ public class MainViewModel : ViewModelBase
         // IsDirty / Playlist.Changed, since change notification isn't complete (e.g. nested item
         // edits can be missed). AutoSaveToFile compares against disk, so idle ticks write nothing.
         Observable.Interval(TimeSpan.FromSeconds(AUTOSAVE_INTERVAL_SECONDS), RxSchedulers.MainThreadScheduler)
-            .Subscribe(_ => AutoSaveNow("timer"));
+            .Subscribe(_ =>
+            {
+                // backstop for change events that were never raised; runs whether or not auto-save is on
+                Playlist.DirtyTracker.Refresh();
+                AutoSaveNow("timer");
+            });
+
+        // Dirty tracking: change events are hints, the tracker confirms against the saved baseline
+        // (so an edit that was undone/reverted clears the indicator, and nothing depends on auto-save).
+        this.WhenAnyValue(x => x.Playlist)
+            .Select(playlist => Observable.FromEventPattern(
+                handler => playlist.Changed += handler,
+                handler => playlist.Changed -= handler))
+            .Switch()
+            .Throttle(TimeSpan.FromMilliseconds(DIRTY_REFRESH_DEBOUNCE_MS), RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => Playlist.DirtyTracker.Refresh());
 
         // On an operation (add/remove/reorder items, item data edits, design edits): shortly after
         // the playlist raises Changed. Re-subscribes when the Playlist instance is replaced (New).
@@ -303,7 +319,12 @@ public class MainViewModel : ViewModelBase
             {
                 // with auto-save on, commit the outgoing playlist first; on success it is no longer
                 // dirty so the unsaved-changes prompt below is skipped
-                if (!msg.IsStartupLoad) AutoSaveNow("before load");
+                if (!msg.IsStartupLoad)
+                {
+                    AutoSaveNow("before load");
+                    // re-derive rather than trust the flag (matters with auto-save off)
+                    Playlist.DirtyTracker.Refresh();
+                }
 
                 // check for unsaved changes to current playlist
                 if (!msg.IsStartupLoad && Playlist.IsDirty)
@@ -417,8 +438,9 @@ public class MainViewModel : ViewModelBase
 
                 // Defer the dirty reset to Background priority so deferred OAPH initial-value
                 // emissions from BaseSlideTheme (via ObserveOn(MainThreadScheduler)) fire first.
-                bool finalIsDirty = migration.NeedsResave;
-                await Dispatcher.UIThread.InvokeAsync(() => Playlist.IsDirty = finalIsDirty, DispatcherPriority.Background);
+                // Also takes the baseline hash the dirty tracker compares against from here on.
+                bool needsResave = migration.NeedsResave;
+                await Dispatcher.UIThread.InvokeAsync(() => Playlist.DirtyTracker.MarkLoaded(needsResave), DispatcherPriority.Background);
                 // update MRU list
                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = msg.FilePath});
             }

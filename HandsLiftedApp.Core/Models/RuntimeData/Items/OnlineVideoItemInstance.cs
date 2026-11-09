@@ -83,6 +83,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 i => i.AutoAdvanceTimer,
                 i => i.SourceVideoUrl
             ).Subscribe(_ => { ItemDataModified?.Invoke(this, EventArgs.Empty); });
+
+            // in-place edits (e.g. the auto-advance timer) that WhenAnyValue's reference de-dupe can't see
+            ContentChanged += (_, _) => ItemDataModified?.Invoke(this, EventArgs.Empty);
         }
 
         public void GenerateSlides()

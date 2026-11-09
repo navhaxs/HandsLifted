@@ -39,7 +39,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .ToProperty(this, x => x.ActiveSlide);
 
             this.WhenAnyValue(
-                i => i.Items, // TODO not working
                 i => i.Title,
                 i => i.AutoAdvanceTimer
             ).Subscribe(_ =>
@@ -47,9 +46,10 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 ItemDataModified?.Invoke(this, EventArgs.Empty);
             });
 
-            // TODO not working
-            // Items.CollectionItemChanged += (sender, args) => IsDirty = true;
-            // Items.CollectionChanged += (sender, args) => IsDirty = true;
+            // WhenAnyValue(i => i.Items) de-dupes by reference, so it only ever saw the collection being
+            // *replaced*. ContentChanged reports in-place edits: slide add/remove/move, a slide's media
+            // path or caption, and the auto-advance timer.
+            ContentChanged += (_, _) => ItemDataModified?.Invoke(this, EventArgs.Empty);
         }
 
         // Cache of GroupItem -> generated Slide, so that reordering Items (or regenerating

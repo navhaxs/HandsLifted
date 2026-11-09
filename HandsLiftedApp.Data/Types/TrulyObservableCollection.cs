@@ -16,9 +16,21 @@ namespace HandsLiftedApp.Data
 
         public TrulyObservableCollection(List<T> x) : base(x)
         {
+            // the base constructor copies the items without raising CollectionChanged, so they would
+            // otherwise never be hooked and edits to them would go unreported
+            foreach (INotifyPropertyChanged inpc in x)
+                inpc.PropertyChanged += ItemPropertyChanged;
         }
 
         public event EventHandler<PropertyChangedEventArgs> CollectionItemChanged;
+
+        protected override void ClearItems()
+        {
+            // Clear() raises a Reset with no OldItems, so detach explicitly or removed items keep reporting
+            foreach (INotifyPropertyChanged inpc in this)
+                inpc.PropertyChanged -= ItemPropertyChanged;
+            base.ClearItems();
+        }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {

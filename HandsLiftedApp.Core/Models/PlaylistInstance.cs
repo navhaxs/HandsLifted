@@ -16,6 +16,7 @@ using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Models.RuntimeData.Slides;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data.Models;
@@ -37,8 +38,21 @@ namespace HandsLiftedApp.Core.Models
         private readonly Dictionary<Guid, IDisposable> _designSubscriptions = new();
         private System.Collections.ObjectModel.ObservableCollection<BaseSlideTheme>? _hookedDesigns;
 
+        /// <summary>
+        /// Arbiter of <see cref="IsDirty"/>. The change-event paths below only set the flag
+        /// optimistically; <see cref="PlaylistDirtyTracker.Refresh"/> confirms it against the saved baseline.
+        /// </summary>
+        public PlaylistDirtyTracker DirtyTracker { get; }
+
         public PlaylistInstance()
         {
+            DirtyTracker = new PlaylistDirtyTracker(this);
+
+            // The Items setter hooks ItemDataModified, but the default collection assigned by the field
+            // initializer never goes through it. Without this, item-data edits on a playlist that never
+            // had Items replaced (a new/untitled playlist) never marked it dirty.
+            _items.ItemDataModified += OnValueOnItemDataModified;
+
             // No .ObserveOn(RxSchedulers.MainThreadScheduler) on this chain (SelectedItem /
             // SelectedItemAsIItemInstance / ActiveSlide) -- with it present, the nested WhenAnyValue
             // (x => x.SelectedItemAsIItemInstance.ActiveSlide) tracks the first switch of the outer
@@ -294,6 +308,7 @@ namespace HandsLiftedApp.Core.Models
                     p => p.DefaultSongThemeId,
                     p => p.DefaultSongMotionThemeId,
                     p => p.DefaultScriptureThemeId)
+                .Skip(1) // skip initial value on subscribe: constructing a playlist is not an edit
                 .Subscribe(_ =>
                 {
                     IsDirty = true;
@@ -409,6 +424,8 @@ namespace HandsLiftedApp.Core.Models
             get => _items;
             set
             {
+                // detach from the collection being replaced so a discarded list can't keep flagging us
+                _items.ItemDataModified -= OnValueOnItemDataModified;
                 value.ItemDataModified -= OnValueOnItemDataModified;
                 this.RaiseAndSetIfChanged(ref _items, value);
                 UpdateIndexes();
@@ -454,10 +471,12 @@ namespace HandsLiftedApp.Core.Models
             set => this.RaiseAndSetIfChanged(ref _activeItemInsertIndex, value);
         }
 
-        private bool _isDirty = true;
+        private bool _isDirty = false;
 
         /// <summary>
-        /// File dirty bit = document has pending updates that are unsaved to disk
+        /// File dirty bit = document has pending updates that are unsaved to disk.
+        /// Change events set this optimistically; <see cref="DirtyTracker"/> is the authority and
+        /// the only thing that should clear it.
         /// </summary>
         public bool IsDirty
         {

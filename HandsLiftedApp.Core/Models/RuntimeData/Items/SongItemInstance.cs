@@ -43,6 +43,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 if (_songId == value) return;
                 _songId = value;
+                this.RaisePropertyChanged(nameof(SongId));
                 // SongId is normally assigned in an object initializer AFTER the constructor returns
                 // (see ItemInstanceFactory). The constructor starts a 200ms slide-generation debounce,
                 // and on a slow machine construction can outlast it - slides then get generated while
@@ -436,7 +437,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 i => i.Copyright,
                 // i => i.Design,
                 i => i.EndOnBlankSlide,
-                i => i.StartOnTitleSlide
+                i => i.StartOnTitleSlide,
+                // SongId is what the playlist file stores for a song; re-pointing the item at another song is an edit.
+                // (8 properties: the no-selector WhenAnyValue overload stops at 7, so a selector is required.)
+                i => i.SongId,
+                (_1, _2, _3, _4, _5, _6, _7, _8) => Unit.Default
             ).Subscribe(_ =>
             {
                 ItemDataModified?.Invoke(this, EventArgs.Empty);
