@@ -52,7 +52,8 @@ namespace HandsLiftedApp.Controls
 
         private static readonly Animation FlashAnimation = new()
         {
-            Duration = TimeSpan.FromMilliseconds(900),
+            // long enough to outlast the scroll spring (~0.4s), since the flash now starts with the scroll
+            Duration = TimeSpan.FromMilliseconds(1600),
             Easing = new CubicEaseOut(),
             Children =
             {

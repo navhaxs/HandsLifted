@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Controls;
@@ -88,25 +89,37 @@ namespace HandsLiftedApp.Core.Views
                             {
                                 var GUTTER = 300;
                                 
+                                // flash starts together with the scroll; its fade is long enough to outlast the spring
+                                if (x.Flash)
+                                    control.FindDescendantOfType<ItemSlidesView>()?.Flash();
+
                                 if (control.Bounds.Top < scrollViewer.Offset.Y + GUTTER || control.Bounds.Top >
                                     (scrollViewer.Offset.Y + scrollViewer.Bounds.Height - GUTTER))
                                 {
-                                    scrollViewer.Offset = new Vector(0, control.Bounds.Top + 4);
+                                    AnimateScrollTo(control.Bounds.Top + 4);
                                 }
 
                                 //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
-
-                                // flash even when no scroll was needed, so the user sees which item they picked
-                                if (x.Flash)
-                                    control.FindDescendantOfType<ItemSlidesView>()?.Flash();
                             });
                         }
                     });
                 });
 
+            // user input takes over from an in-flight animated scroll
+            scrollViewer.AddHandler(PointerWheelChangedEvent, (_, _) => CancelScrollAnimation(),
+                RoutingStrategies.Tunnel);
+            scrollViewer.AddHandler(PointerPressedEvent, (_, _) => CancelScrollAnimation(),
+                RoutingStrategies.Tunnel);
+
             scrollViewer.GetObservable(Avalonia.Controls.ScrollViewer.OffsetProperty)
                 .Subscribe(offset =>
                 {
+                    // the outline already shows the clicked item; don't let spy-scroll flick its selection
+                    // through every item we pass on the way. The final frame clears the flag first, so one
+                    // update is still sent on arrival.
+                    if (_isScrollAnimating)
+                        return;
+
                     var lastIndex = 0;
 
                     if (offset.Y == scrollViewer.ScrollBarMaximum.Y)
@@ -135,6 +148,88 @@ namespace HandsLiftedApp.Core.Views
                 });
 
             this.KeyDown += PlaylistSlidesView_KeyDown;
+        }
+
+        // ---- animated scroll: critically damped spring ----
+
+        /// <summary>
+        /// Spring stiffness (natural frequency, rad/s). Higher = snappier. Settling time is roughly 6/ω
+        /// regardless of distance (14 => ~0.4s).
+        /// </summary>
+        private const double ScrollSpringOmega = 14.0;
+
+        // Incremented to cancel the in-flight frame loop (each frame callback checks the id it started with).
+        private int _scrollAnimationId;
+        private bool _isScrollAnimating;
+        private double _scrollTargetY;
+        private double _scrollVelocity; // px/s, kept across retargets so redirecting mid-scroll stays smooth
+
+        private void CancelScrollAnimation()
+        {
+            _scrollAnimationId++;
+            _isScrollAnimating = false;
+            _scrollVelocity = 0;
+        }
+
+        /// <summary>
+        /// Springs the playlist scroll position to <paramref name="targetY"/>. If a scroll is already in flight it is
+        /// retargeted and keeps its current velocity (no restart). Wheel/click input cancels it.
+        /// </summary>
+        private void AnimateScrollTo(double targetY)
+        {
+            _scrollTargetY = Math.Clamp(targetY, 0, Math.Max(0, scrollViewer.ScrollBarMaximum.Y));
+
+            if (_isScrollAnimating)
+                return; // running loop picks up the new target
+
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel is null || Math.Abs(_scrollTargetY - scrollViewer.Offset.Y) < 1)
+            {
+                scrollViewer.Offset = new Vector(scrollViewer.Offset.X, _scrollTargetY);
+                return;
+            }
+
+            var id = ++_scrollAnimationId;
+            _isScrollAnimating = true;
+            _scrollVelocity = 0;
+            TimeSpan? last = null;
+
+            void Frame(TimeSpan now)
+            {
+                if (id != _scrollAnimationId)
+                    return; // cancelled
+
+                // cap dt so a stalled frame can't make a huge jump
+                var dt = last is null ? 1.0 / 60 : Math.Min((now - last.Value).TotalSeconds, 1.0 / 20);
+                last = now;
+
+                // Exact analytic step of a critically damped spring (stable for any dt):
+                //   x(t) = (x0 + (v0 + w*x0)*t) * e^(-w*t)
+                //   v(t) = (v0 - w*(v0 + w*x0)*t) * e^(-w*t)
+                var w = ScrollSpringOmega;
+                var x0 = scrollViewer.Offset.Y - _scrollTargetY;
+                var v0 = _scrollVelocity;
+                var decay = Math.Exp(-w * dt);
+                var c = v0 + w * x0;
+                var x = (x0 + c * dt) * decay;
+                var v = (v0 - w * c * dt) * decay;
+
+                if (Math.Abs(x) < 0.5 && Math.Abs(v) < 5)
+                {
+                    // settled. Clear the flag first so the final Offset change still reaches the spy-scroll subscription
+                    _isScrollAnimating = false;
+                    _scrollVelocity = 0;
+                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X, _scrollTargetY);
+                    return;
+                }
+
+                _scrollVelocity = v;
+                var maxY = Math.Max(0, scrollViewer.ScrollBarMaximum.Y);
+                scrollViewer.Offset = new Vector(scrollViewer.Offset.X, Math.Clamp(_scrollTargetY + x, 0, maxY));
+                topLevel.RequestAnimationFrame(Frame);
+            }
+
+            topLevel.RequestAnimationFrame(Frame);
         }
 
         private void PlaylistSlidesView_DataContextChanged(object? sender, EventArgs e)
