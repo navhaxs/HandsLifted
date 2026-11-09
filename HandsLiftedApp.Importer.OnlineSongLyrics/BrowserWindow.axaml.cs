@@ -4,6 +4,7 @@ using System.Text.Json;
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using HandsLiftedApp.Importer.OnlineSongLyrics.Clipboard;
 using ReactiveUI;
@@ -63,19 +64,32 @@ CCLI License #317371";
 
         public BrowserWindow()
         {
-            if (!Design.IsDesignMode)
-            {
-                var path = Path.Join(Directory.GetCurrentDirectory(), "webviewCache");
-                Directory.CreateDirectory(path);
-            }
-
             DataContext = new BrowserWindowViewModel();
 
-            // WebView.Settings.OsrEnabled = false;
-            //WebView.Settings.CachePath = path;
-            // WebView.Settings.LogFile = "ceflog.txt";
-            // WebView.Settings.EnableErrorLogOnly = true;
             InitializeComponent();
+
+            // Keep the WebView2 profile (cookies, i.e. the SongSelect login) in a fixed per-user
+            // folder. By default WebView2 puts it next to the exe, so each new install folder
+            // starts with an empty profile and the user is signed out. Must be hooked before the
+            // native adapter is created.
+            if (!Design.IsDesignMode && OperatingSystem.IsWindows())
+            {
+                PART_WebView.EnvironmentRequested += (sender, args) =>
+                {
+                    if (args is WindowsWebView2EnvironmentRequestedEventArgs webView2)
+                    {
+                        var userDataFolder = Path.Combine(
+                            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                            "HandsLifted", "WebView2");
+                        Directory.CreateDirectory(userDataFolder);
+                        webView2.UserDataFolder = userDataFolder;
+                        webView2.ProfileName = "SongSelect";
+
+                        var created = Directory.GetCreationTime(userDataFolder);
+                        Console.WriteLine($"[SongSelect] WebView2 profile: {userDataFolder} (folder created {created:u})");
+                    }
+                };
+            }
             // DataContext = new BrowserViewModel(PART_WebView);
 
             // PART_WebView.ShowDeveloperTools();
