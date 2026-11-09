@@ -20,13 +20,13 @@ namespace HandsLiftedApp.Core.Controls.Navigation
 {
     // TODO disable spyscroll feature as its rather buggy
     // good effort tho.
-    public partial class ItemOrderListView : UserControl
+    public partial class PlaylistOutlineView : UserControl
     {
         private static readonly object syncSlidesLock = new object();
 
         ListBox listBox;
 
-        public ItemOrderListView()
+        public PlaylistOutlineView()
         {
             InitializeComponent();
 

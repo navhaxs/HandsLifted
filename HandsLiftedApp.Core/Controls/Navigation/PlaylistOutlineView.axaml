@@ -2,7 +2,7 @@
     d:DesignHeight="400"
     d:DesignWidth="200"
     mc:Ignorable="d"
-    x:Class="HandsLiftedApp.Core.Controls.Navigation.ItemOrderListView"
+    x:Class="HandsLiftedApp.Core.Controls.Navigation.PlaylistOutlineView"
     x:DataType="models:PlaylistInstance"
     xmlns="https://github.com/avaloniaui"
     xmlns:avaloniaconverters="using:Avalonia.Markup.Xaml.Converters"

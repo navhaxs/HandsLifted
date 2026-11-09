@@ -90,8 +90,8 @@
         <Compile Update="Controls\SongArrangementControl.axaml.cs">
             <DependentUpon>%(Filename)</DependentUpon>
         </Compile>
-        <Compile Update="Controls\Navigation\ItemOrderListView.axaml.cs">
-            <DependentUpon>ItemOrderListView.axaml</DependentUpon>
+        <Compile Update="Controls\Navigation\PlaylistOutlineView.axaml.cs">
+            <DependentUpon>PlaylistOutlineView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Editors\SongEditorWindow.axaml.cs">

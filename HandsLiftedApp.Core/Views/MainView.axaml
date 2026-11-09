@@ -273,7 +273,7 @@
                     </Grid.ColumnDefinitions>
 
                     <DockPanel>
-                        <navigation:ItemOrderListView
+                        <navigation:PlaylistOutlineView
                             DataContext="{Binding Playlist}"
                             DockPanel.Dock="Left"
                             Margin="0,6,0,0" />
