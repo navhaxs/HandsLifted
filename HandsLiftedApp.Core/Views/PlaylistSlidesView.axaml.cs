@@ -95,6 +95,10 @@ namespace HandsLiftedApp.Core.Views
                                 }
 
                                 //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
+
+                                // flash even when no scroll was needed, so the user sees which item they picked
+                                if (x.Flash)
+                                    control.FindDescendantOfType<ItemSlidesView>()?.Flash();
                             });
                         }
                     });

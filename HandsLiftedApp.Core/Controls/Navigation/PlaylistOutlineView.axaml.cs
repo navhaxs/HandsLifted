@@ -65,7 +65,7 @@ namespace HandsLiftedApp.Core.Controls.Navigation
         private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (listBox.SelectedIndex > -1)
-                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = listBox.SelectedIndex });
+                MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = listBox.SelectedIndex, Flash = true });
         }
 
         // private Control lastHoveredListItem;

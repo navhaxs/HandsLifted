@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -13,6 +15,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Controls.Messages;
 using HandsLiftedApp.Core;
@@ -45,6 +48,31 @@ namespace HandsLiftedApp.Controls
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private static readonly Animation FlashAnimation = new()
+        {
+            Duration = TimeSpan.FromMilliseconds(900),
+            Easing = new CubicEaseOut(),
+            Children =
+            {
+                new KeyFrame { Cue = new Cue(0), Setters = { new Setter(OpacityProperty, 0.45) } },
+                new KeyFrame { Cue = new Cue(1), Setters = { new Setter(OpacityProperty, 0.0) } },
+            }
+        };
+
+        /// <summary>
+        /// Momentarily highlights this item's header, then fades the highlight out.
+        /// </summary>
+        public void Flash()
+        {
+            // x:Name inside a DataTemplate doesn't generate a field, so find the overlay by class
+            var overlay = this.GetVisualDescendants().OfType<Border>()
+                .FirstOrDefault(b => b.Classes.Contains("flash-overlay"));
+            if (overlay is null)
+                return;
+
+            _ = FlashAnimation.RunAsync(overlay);
         }
 
         public void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
