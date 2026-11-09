@@ -29,7 +29,13 @@
             Margin="0,6,0,0"
             Width="560"
             x:Name="BrowserHost">
-            <library:MediaLibraryQueryView x:Name="Browser" />
+            <!--
+                DataContext must be pinned to null locally: MediaLibraryQueryView uses compiled bindings
+                (x:DataType=MediaLibraryQueryViewModel), and until OnAttachedToVisualTree assigns the real
+                view model it would otherwise inherit the host's DataContext (a BaseSlideTheme in the theme
+                designer) and throw InvalidCastException in the SearchTerm getter.
+            -->
+            <library:MediaLibraryQueryView DataContext="{x:Null}" x:Name="Browser" />
         </Border>
     </StackPanel>
 </UserControl>
