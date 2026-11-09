@@ -216,6 +216,9 @@ namespace HandsLiftedApp.Core.Models
                     // for multiple files, if all are media type, combine into single new group
                     // else process each file separately
                     // and insert at INDEX
+                    // One drop of several files is one undo step. (Files already copied into the media
+                    // library stay there on undo - undo reverts the playlist, not the file system.)
+                    using var undoStep = UndoStack.BeginTransaction(itemsToInsert.Count == 1 ? "Add Item" : "Add Items");
                     foreach (var filePath in itemsToInsert)
                     {
                         string localizedFilePath;
@@ -235,15 +238,9 @@ namespace HandsLiftedApp.Core.Models
                         if (newItem != null)
                         {
                             var newItemInstance = ItemInstanceFactory.ToItemInstance(newItem, this);
-                            if (insertAt >= 0)
-                            {
-                                Items.Insert(insertAt, newItemInstance);
-                            }
-                            else
-                            {
-                                Items.Add(newItemInstance);
-                            }
-                            
+                            UndoStack.Execute(new InsertPlaylistItemAction(this, newItemInstance,
+                                insertAt >= 0 ? insertAt : Items.Count));
+
                             if (newItemInstance is IItemSyncable instance)
                             {
                                 instance.Sync();
@@ -390,6 +387,8 @@ namespace HandsLiftedApp.Core.Models
         public void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             UpdateIndexes();
+            if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
+                AutoAdvanceTimer.OnItemsRemoved(e.OldItems);
             IsDirty = true;
             Log.Verbose("Playlist items collection changed");
             Changed?.Invoke(this, EventArgs.Empty);

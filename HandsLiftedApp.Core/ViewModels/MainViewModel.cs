@@ -656,26 +656,22 @@ public class MainViewModel : ViewModelBase
 
                 if (itemToInsert != null)
                 {
-                    var currentSelectedItem = Playlist.SelectedItem;
-
+                    int insertIndex;
                     if (addItemMessage.InsertIndex != null)
                     {
-                        Playlist.Items.Insert(addItemMessage.InsertIndex.Value, itemToInsert);
+                        insertIndex = addItemMessage.InsertIndex.Value;
                     }
                     else if (addItemMessage.ItemToInsertAfter != null)
                     {
-                        var indexOf = Playlist.Items.IndexOf(addItemMessage.ItemToInsertAfter);
-                        Playlist.Items.Insert(indexOf + 1, itemToInsert);
+                        insertIndex = Playlist.Items.IndexOf(addItemMessage.ItemToInsertAfter) + 1;
                     }
                     else
                     {
-                        Playlist.Items.Add(itemToInsert);
+                        insertIndex = Playlist.Items.Count;
                     }
 
-                    if (currentSelectedItem != null)
-                    {
-                        Playlist.SelectedItemIndex = Playlist.Items.IndexOf(currentSelectedItem);
-                    }
+                    // Selection is preserved by the action (what was selected stays selected).
+                    Playlist.UndoStack.Execute(new InsertPlaylistItemAction(Playlist, itemToInsert, insertIndex, "Add Item"));
                 }
             });
 
@@ -705,7 +701,11 @@ public class MainViewModel : ViewModelBase
 
                         break;
                     case MoveItemCommand.DirectionValue.REMOVE:
-                        Playlist.Items.RemoveAt(theSelectedIndex);
+                        if (theSelectedIndex >= 0)
+                        {
+                            Playlist.UndoStack.Execute(new RemovePlaylistItemAction(Playlist,
+                                Playlist.Items[theSelectedIndex], "Delete Item"));
+                        }
                         break;
                     case MoveItemCommand.DirectionValue.DUPLICATE:
                         if (theSelectedIndex != -1)
@@ -714,7 +714,8 @@ public class MainViewModel : ViewModelBase
                             var serializedItem = HandsLiftedDocXmlSerializer.SerializeItem(itemToDuplicate);
                             var clonedItem = serializedItem.Clone();
                             var newItemInstance = ItemInstanceFactory.ToItemInstance(clonedItem, Playlist);
-                            Playlist.Items.Insert(theSelectedIndex + 1, newItemInstance);
+                            Playlist.UndoStack.Execute(new InsertPlaylistItemAction(Playlist, newItemInstance,
+                                theSelectedIndex + 1, "Duplicate Item"));
                         }
                         break;
                 }

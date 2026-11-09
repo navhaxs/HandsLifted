@@ -20,6 +20,9 @@ namespace HandsLiftedApp.Data.Models.Items
         }
 
         public XmlColor GroupColour = Color.Parse("#4d347f");
+
+        // See SectionHeadingItem: a derived view of GroupColour, must not be XML-serialized.
+        [XmlIgnore]
         public Color ItemGroupAvaloniaColor { get => GroupColour; set => this.RaiseAndSetIfChanged(ref GroupColour, value); }
     }
 }

@@ -80,6 +80,23 @@ namespace HandsLiftedApp.Core.Utils
             userPaused = wasPaused;
         }
         
+        /// <summary>
+        /// Call when items leave the playlist. If the timer was driving a removed item, stop it and hide the
+        /// control; otherwise it keeps counting down (and could auto-advance) for an item that no longer exists.
+        /// </summary>
+        public void OnItemsRemoved(System.Collections.IEnumerable? removed)
+        {
+            if (removed == null || itemInstance == null) return;
+            foreach (var r in removed)
+            {
+                if (ReferenceEquals(r, itemInstance))
+                {
+                    OnSlideNavigation(null);
+                    return;
+                }
+            }
+        }
+
         private void ApplyTimerConfig(object? sender, EventArgs e)
         {
             Timer.Stop();
