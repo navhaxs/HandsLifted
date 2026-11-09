@@ -279,7 +279,21 @@ namespace HandsLiftedApp.Core.Views.Editors
                 serializer.Serialize(xmlWriter, x);
             }
 
-            File.WriteAllBytes(path, memoryStream.ToArray());
+            try
+            {
+                // The library folder can be on a removable/network drive that isn't ready
+                // (IOException "The device is not ready"), or otherwise unwritable.
+                Directory.CreateDirectory(dir);
+                File.WriteAllBytes(path, memoryStream.ToArray());
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Log.Error(ex, "SongEditorWindow.DoSaveToLibrary: failed to write song file {Path}", path);
+                // Leave the editor open (and _closeConfirmed unset) so the user doesn't lose their work.
+                _ = ShowSaveErrorAsync(path, ex.Message);
+                return;
+            }
+
             vm.Song.AttachToLibrary(path, dir);
             vm.SongLibrary!.TriggerRefresh();
 
@@ -292,6 +306,49 @@ namespace HandsLiftedApp.Core.Views.Editors
 
             _closeConfirmed = true;
             Close();
+        }
+
+        private async Task ShowSaveErrorAsync(string path, string reason)
+        {
+            var okButton = new Button
+            {
+                Content = "OK",
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
+                MinWidth = 80,
+            };
+            var dialog = new Window
+            {
+                Title = "Could not save song",
+                Width = 460,
+                SizeToContent = SizeToContent.Height,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                CanResize = false,
+                Content = new StackPanel
+                {
+                    Margin = new Thickness(20),
+                    Spacing = 16,
+                    Children =
+                    {
+                        new TextBlock
+                        {
+                            TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                            Text = $"The song could not be saved to:\n{path}\n\n{reason}\n\n" +
+                                   "Check that the drive is connected and available, then press Save again. " +
+                                   "Your edits have not been lost.",
+                        },
+                        okButton,
+                    }
+                }
+            };
+            okButton.Click += (_, _) => dialog.Close();
+            try
+            {
+                await dialog.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to show save-error dialog");
+            }
         }
 
         protected override async void OnClosing(WindowClosingEventArgs e)
