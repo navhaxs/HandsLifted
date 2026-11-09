@@ -20,7 +20,7 @@
         <onlineSongLyrics:BrowserWindowViewModel />
     </Design.DataContext>
 
-    <DockPanel Margin="0,26,0,0">
+    <Grid Margin="0,26,0,0">
 
         <DockPanel>
 
@@ -197,20 +197,6 @@
                             </StackPanel>
                         </Border>
 
-                        <Button
-                            Classes="StepAction"
-                            Click="Button_OnClick"
-                            DockPanel.Dock="Bottom"
-                            IsVisible="{Binding IsStartState}">
-                            <DockPanel Margin="3,2">
-                                <avalonia:MaterialIcon
-                                    Height="30"
-                                    Kind="ArrowRightCircleOutline"
-                                    Margin="0,0,8,0"
-                                    Width="30" />
-                                <TextBlock FontSize="16" VerticalAlignment="Center">Let's start!</TextBlock>
-                            </DockPanel>
-                        </Button>
                     </StackPanel>
                 </ScrollViewer>
 
@@ -286,5 +272,98 @@
 
 
         </DockPanel>
-    </DockPanel>
+
+        <!-- Initial state only: overview of the steps with a start button. Covers the
+             regular sidebar + browser layout until the user clicks "Let's start!". -->
+        <Grid Background="White" IsVisible="{Binding IsStartState}">
+            <Grid.Styles>
+                <Style Selector="Border.IntroStep">
+                    <Setter Property="CornerRadius" Value="6" />
+                    <Setter Property="Padding" Value="16,20" />
+                    <Setter Property="Margin" Value="8,0" />
+                </Style>
+                <Style Selector="Border.IntroStep.Active">
+                    <Setter Property="Background" Value="#33483d8b" />
+                </Style>
+                <Style Selector="Border.IntroStep Ellipse">
+                    <Setter Property="Width" Value="38" />
+                    <Setter Property="Height" Value="38" />
+                    <Setter Property="Fill" Value="DarkSlateBlue" />
+                </Style>
+                <Style Selector="Border.IntroStep TextBlock.Number">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="18" />
+                </Style>
+                <Style Selector="Border.IntroStep TextBlock.Label">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="TextAlignment" Value="Center" />
+                    <Setter Property="TextWrapping" Value="Wrap" />
+                    <Setter Property="FontSize" Value="15" />
+                </Style>
+            </Grid.Styles>
+
+            <StackPanel
+                HorizontalAlignment="Center"
+                Spacing="48"
+                VerticalAlignment="Center"
+                Width="760">
+
+                <TextBlock
+                    FontSize="26"
+                    HorizontalAlignment="Center"
+                    Text="Import lyrics from online" />
+
+                <Grid ColumnDefinitions="*,*,*">
+                    <Border Classes="IntroStep Active" Grid.Column="0">
+                        <StackPanel Spacing="20">
+                            <Grid HorizontalAlignment="Center">
+                                <Ellipse />
+                                <TextBlock Classes="Number">1</TextBlock>
+                            </Grid>
+                            <TextBlock Classes="Label">Search for the song</TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="IntroStep" Grid.Column="1">
+                        <StackPanel Spacing="20">
+                            <Grid HorizontalAlignment="Center">
+                                <Ellipse />
+                                <TextBlock Classes="Number">2</TextBlock>
+                            </Grid>
+                            <TextBlock Classes="Label">Copy lyrics to the clipboard</TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="IntroStep" Grid.Column="2">
+                        <StackPanel Spacing="20">
+                            <Grid HorizontalAlignment="Center">
+                                <Ellipse />
+                                <TextBlock Classes="Number">3</TextBlock>
+                            </Grid>
+                            <TextBlock Classes="Label">Confirm song import</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Button
+                    BorderBrush="#483d8b"
+                    BorderThickness="1"
+                    Click="Button_OnClick"
+                    CornerRadius="6"
+                    HorizontalAlignment="Center"
+                    Padding="24,12">
+                    <DockPanel>
+                        <avalonia:MaterialIcon
+                            Height="30"
+                            Kind="ArrowRightCircleOutline"
+                            Margin="0,0,8,0"
+                            Width="30" />
+                        <TextBlock FontSize="16" VerticalAlignment="Center">Let's start!</TextBlock>
+                    </DockPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Window>
