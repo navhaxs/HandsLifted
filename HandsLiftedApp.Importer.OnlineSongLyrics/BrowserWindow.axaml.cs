@@ -78,9 +78,7 @@ CCLI License #317371";
                 {
                     if (args is WindowsWebView2EnvironmentRequestedEventArgs webView2)
                     {
-                        var userDataFolder = Path.Combine(
-                            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                            "HandsLifted", "WebView2");
+                        var userDataFolder = ImporterBrowserProfile.UserDataFolder;
                         Directory.CreateDirectory(userDataFolder);
                         webView2.UserDataFolder = userDataFolder;
                         webView2.ProfileName = "SongSelect";
@@ -135,6 +133,12 @@ CCLI License #317371";
                 UpdateCurrentUrl(args.Request);
                 _urlPollTimer.Start();
                 _ = PART_WebView.InvokeScript(ClipboardInterceptScript);
+
+                // Sites often issue login cookies as session-only, so they vanish when this window (and its
+                // WebView2 process) closes. Re-issue them with an expiry so the login survives
+                // reopening the importer and restarting the app. Runs after every navigation so a
+                // login, or a server-side cookie renewal, is picked up.
+                _ = SessionCookiePersistence.PersistAsync(PART_WebView);
             };
 
             _urlPollTimer.Tick += async (sender, args) =>

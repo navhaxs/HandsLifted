@@ -375,6 +375,30 @@
                             IsVisible="False"
                             Margin="0,8,0,0"
                             x:Name="SignInStatusText" />
+
+                        <!--  Online song import browser  -->
+                        <TextBlock
+                            FontSize="13"
+                            FontWeight="SemiBold"
+                            Margin="0,24,0,4"
+                            Text="Online Song Import" />
+                        <TextBlock
+                            Foreground="{DynamicResource SystemColorGrayTextBrush}"
+                            Text="The import browser remembers your logins between sessions. Clear its saved data to sign out of every site and reset the browser."
+                            TextWrapping="Wrap" />
+                        <Button
+                            Click="ClearImporterBrowserData_OnClick"
+                            HorizontalAlignment="Left"
+                            Margin="0,8,0,0"
+                            Padding="16,6"
+                            x:Name="ClearImporterBrowserDataButton">
+                            Clear saved browser data
+                        </Button>
+                        <TextBlock
+                            IsVisible="False"
+                            Margin="0,8,0,0"
+                            TextWrapping="Wrap"
+                            x:Name="ClearImporterBrowserDataStatusText" />
                     </StackPanel>
                 </TabItem>
 

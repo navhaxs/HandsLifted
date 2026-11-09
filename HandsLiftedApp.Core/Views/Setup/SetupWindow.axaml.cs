@@ -20,6 +20,7 @@ using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels;
+using HandsLiftedApp.Importer.OnlineSongLyrics;
 using ReactiveUI;
 
 namespace HandsLiftedApp.Core.Views.Setup
@@ -318,6 +319,23 @@ namespace HandsLiftedApp.Core.Views.Setup
 
                 Dispatcher.UIThread.Post(() => SetGoogleSignInStatus(text, status));
             });
+        }
+
+        private async void ClearImporterBrowserData_OnClick(object? sender, RoutedEventArgs e)
+        {
+            ClearImporterBrowserDataButton.IsEnabled = false;
+            ClearImporterBrowserDataStatusText.Foreground = new SolidColorBrush(Colors.Gray);
+            ClearImporterBrowserDataStatusText.Text = "Clearing...";
+            ClearImporterBrowserDataStatusText.IsVisible = true;
+
+            var cleared = await ImporterBrowserProfile.TryClearAsync();
+
+            ClearImporterBrowserDataStatusText.Foreground =
+                new SolidColorBrush(cleared ? Colors.MediumSeaGreen : Colors.OrangeRed);
+            ClearImporterBrowserDataStatusText.Text = cleared
+                ? "Saved browser data cleared."
+                : "Couldn't clear the data because the import browser is still running. Close the import window, wait a few seconds, then try again.";
+            ClearImporterBrowserDataButton.IsEnabled = true;
         }
 
         private void DoneButton_OnClick(object? sender, RoutedEventArgs e)
