@@ -40,8 +40,22 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
             DataContextChanged += (sender, args) => { RegisterDataContext(); };
         }
 
+        private global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide? _watchedSlide;
+
+        private void OnWatchedSlideChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide.BackgroundGraphicFilePath)
+                && sender is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide slide)
+                LoadBackgroundAsync(slide);
+        }
+
         private void RegisterDataContext()
         {
+            // follow the background image path of the slide we are showing (load it again when it changes)
+            if (_watchedSlide != null) _watchedSlide.PropertyChanged -= OnWatchedSlideChanged;
+            _watchedSlide = DataContext as global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide;
+            if (_watchedSlide != null) _watchedSlide.PropertyChanged += OnWatchedSlideChanged;
+
             if (DataContext is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
             {
                 Render(customSlide);
@@ -60,26 +74,11 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
 
         private void LoadBackgroundAsync(global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
         {
-            var path = customSlide.BackgroundGraphicFilePath;
-            if (string.IsNullOrEmpty(path))
-            {
-                BackgroundBorder.Background = null;
-                return;
-            }
-
-            _ = BitmapLoader.LoadBitmapAsync(path).ContinueWith(
-                t =>
-                {
-                    if (t.Result != null)
-                        Dispatcher.UIThread.Post(
-                            () =>
-                            {
-                                if (DataContext is global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide cs && cs.BackgroundGraphicFilePath == path)
-                                    BackgroundBorder.Background = new ImageBrush(t.Result) { Stretch = Stretch.UniformToFill };
-                            },
-                            DispatcherPriority.Background);
-                },
-                System.Threading.Tasks.TaskContinuationOptions.OnlyOnRanToCompletion);
+            ImagePathLoader.Load(
+                customSlide.BackgroundGraphicFilePath,
+                () => (DataContext as global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide)?.BackgroundGraphicFilePath,
+                bitmap => BackgroundBorder.Background =
+                    bitmap == null ? null : new ImageBrush(bitmap) { Stretch = Stretch.UniformToFill });
         }
 
         public void Render(global::HandsLiftedApp.Data.Data.Models.Slides.CustomSlide customSlide)
@@ -146,23 +145,26 @@ namespace HandsLiftedApp.Core.Render.CustomSlide
                     Converter = BitmapAssetValueConverter.Instance,
                 });
 
-                if (!string.IsNullOrEmpty(imageElement.FilePath))
+                // Load now, and again whenever the path changes (adding an image first and picking its file after
+                // is the normal flow). Only listen while the control is on screen: Render() builds a fresh control
+                // for every element on each change, and a permanent subscription would keep every old one alive.
+                void ReloadImage() => ImagePathLoader.Load(imageElement.FilePath, () => imageElement.FilePath,
+                    bitmap => image.Source = bitmap);
+
+                void OnElementChanged(object? s, System.ComponentModel.PropertyChangedEventArgs e)
                 {
-                    var capturedPath = imageElement.FilePath;
-                    _ = BitmapLoader.LoadBitmapAsync(capturedPath).ContinueWith(
-                        t =>
-                        {
-                            if (t.Result != null)
-                                Avalonia.Threading.Dispatcher.UIThread.Post(
-                                    () =>
-                                    {
-                                        if (imageElement.FilePath == capturedPath)
-                                            image.Source = t.Result;
-                                    },
-                                    Avalonia.Threading.DispatcherPriority.Background);
-                        },
-                        System.Threading.Tasks.TaskContinuationOptions.OnlyOnRanToCompletion);
+                    if (e.PropertyName == nameof(ImageElement.FilePath)) ReloadImage();
                 }
+
+                image.AttachedToVisualTree += (_, _) =>
+                {
+                    imageElement.PropertyChanged -= OnElementChanged;
+                    imageElement.PropertyChanged += OnElementChanged;
+                    ReloadImage(); // the path may have changed while the control was off screen
+                };
+                image.DetachedFromVisualTree += (_, _) => imageElement.PropertyChanged -= OnElementChanged;
+
+                ReloadImage();
 
                 return image;
             }

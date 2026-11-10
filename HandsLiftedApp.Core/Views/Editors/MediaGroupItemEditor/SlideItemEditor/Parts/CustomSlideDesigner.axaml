@@ -89,13 +89,10 @@
                         Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
                         Width="1920"
                         Height="1080">
-                    <Border>
+                    <!-- The background image is set from code (CustomSlideDesigner.LoadBackgroundImage): a binding
+                         through the converter only shows an already-cached file and never loads a newly chosen one. -->
+                    <Border Name="BackgroundHost">
                         <Canvas Name="Root" Background="Transparent" />
-                        <Border.Background>
-                            <ImageBrush
-                                Source="{Binding   BackgroundGraphicFilePath, Converter={StaticResource VariableImage}}"
-                                Stretch="UniformToFill" />
-                        </Border.Background>
                     </Border>
                     </Grid>
                 </ZoomBorder>

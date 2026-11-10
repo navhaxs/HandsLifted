@@ -100,10 +100,31 @@ namespace HandsLiftedApp.Core.Views.Editors
             UpdateAdornerClippingBounds();
         }
 
+        private CustomSlide? _watchedSlide;
+
+        private void OnWatchedSlideChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CustomSlide.BackgroundGraphicFilePath) && sender is CustomSlide slide)
+                LoadBackgroundImage(slide);
+        }
+
+        private void LoadBackgroundImage(CustomSlide slide)
+        {
+            ImagePathLoader.Load(slide.BackgroundGraphicFilePath,
+                () => (DataContext as CustomSlide)?.BackgroundGraphicFilePath,
+                bitmap => BackgroundHost.Background =
+                    bitmap == null ? null : new Avalonia.Media.ImageBrush(bitmap) { Stretch = Avalonia.Media.Stretch.UniformToFill });
+        }
+
         private void RegisterDataContext()
         {
+            if (_watchedSlide != null) _watchedSlide.PropertyChanged -= OnWatchedSlideChanged;
+            _watchedSlide = DataContext as CustomSlide;
+            if (_watchedSlide != null) _watchedSlide.PropertyChanged += OnWatchedSlideChanged;
+
             if (DataContext is CustomSlide customSlide)
             {
+                LoadBackgroundImage(customSlide);
                 Render(customSlide);
 
                 customSlide.WhenAnyValue(x => x.SlideElements)
