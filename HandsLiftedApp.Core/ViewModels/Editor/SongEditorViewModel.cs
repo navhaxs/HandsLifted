@@ -1,6 +1,7 @@
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.SlideTheme;
 using ReactiveUI;
@@ -19,6 +20,20 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         private ObservableAsPropertyHelper<string> _songEditorWindowTitle;
         public string SongEditorWindowTitle => _songEditorWindowTitle.Value;
 
+        /// <summary>This editor window's own undo history (separate from the playlist's).</summary>
+        public UndoStack UndoStack { get; } = new();
+
+        private SongEditRecorder? _recorder;
+
+        /// <summary>Groups everything done inside the scope into one undo step.</summary>
+        public IDisposable BeginUndoStep(string description) =>
+            _recorder?.BeginBatch(description) ?? new NoopScope();
+
+        private sealed class NoopScope : IDisposable
+        {
+            public void Dispose() { }
+        }
+
         public SongItemInstance Song
         {
             get => _song;
@@ -27,8 +42,17 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                 if (_song != null)
                     _song.PropertyChanged -= _song_PropertyChanged;
 
+                var changedSong = !ReferenceEquals(_song, value);
                 this.RaiseAndSetIfChanged(ref _song, value);
                 _song.PropertyChanged += _song_PropertyChanged;
+
+                // a different song (New / import from file): its history starts fresh
+                if (changedSong)
+                {
+                    if (_recorder == null) _recorder = new SongEditRecorder(UndoStack, value);
+                    else _recorder.Retarget(value);
+                    UndoStack.Clear();
+                }
 
                 if (Globals.Instance.MainViewModel != null)
                 {
@@ -97,6 +121,9 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                 (int? idx) => idx == null ? "Song Editor" : "Add new song")
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SongEditorWindowTitle);
+
+            // whatever setting up the editor changed (theme picker sync, etc.) is not an edit
+            UndoStack.Clear();
         }
 
         public ReactiveCommand<Unit, Unit> OnClickCommand { get; }
@@ -126,6 +153,7 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
 
         public void ParseAndLoadFromFreeText()
         {
+            using var undoStep = BeginUndoStep("Apply Lyrics Text");
             var songItemFromStringData = SongImporter.CreateSongItemFromStringData(FreeTextEntryField);
             List<string> matchingStanzas = new();
             foreach (var newStanza in songItemFromStringData.Stanzas)

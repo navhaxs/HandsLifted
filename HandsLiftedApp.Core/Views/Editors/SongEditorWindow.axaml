@@ -154,6 +154,23 @@
                         </TextBlock.ContextMenu>
                     </TextBlock>
 
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,0,10,0">
+                        <Button
+                            Command="{Binding UndoStack.UndoCommand}"
+                            MinWidth="40"
+                            Padding="10 8"
+                            ToolTip.Tip="{Binding UndoStack.UndoMenuText}">
+                            <material:MaterialIcon Kind="Undo" Margin="0" />
+                        </Button>
+                        <Button
+                            Command="{Binding UndoStack.RedoCommand}"
+                            MinWidth="40"
+                            Padding="10 8"
+                            ToolTip.Tip="{Binding UndoStack.RedoMenuText}">
+                            <material:MaterialIcon Kind="Redo" Margin="0" />
+                        </Button>
+                    </StackPanel>
+
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" IsVisible="{Binding IsNewSongMode}">
 
                         <!-- <Button Click="LoadFromText_OnClick"> -->

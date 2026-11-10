@@ -42,6 +42,28 @@ namespace HandsLiftedApp.Core.Views.Editors
             };
         }
 
+        /// <summary>
+        /// Ctrl+Z = undo; Ctrl+Y or Ctrl+Shift+Z = redo, for this window's own history. A focused text box keeps
+        /// its own Ctrl+Z (the resulting text change is then recorded here as an edit); the Undo/Redo buttons work regardless.
+        /// </summary>
+        protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            if (e.Handled || DataContext is not SongEditorViewModel vm) return;
+            if (FocusManager?.GetFocusedElement() is TextBox) return;
+
+            var ctrl = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) != 0;
+            var shift = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Shift) != 0;
+            var alt = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Alt) != 0;
+            if (!ctrl || alt) return;
+
+            if (e.Key == Avalonia.Input.Key.Z && !shift) vm.UndoStack.Undo();
+            else if (e.Key == Avalonia.Input.Key.Y || (e.Key == Avalonia.Input.Key.Z && shift)) vm.UndoStack.Redo();
+            else return;
+
+            e.Handled = true;
+        }
+
         public void AddToPlaylist_OnClick(object? sender, RoutedEventArgs args)
         {
             if (DataContext is SongEditorViewModel { ItemInsertIndex: not null, ItemInserted: false } songEditorViewModel)
