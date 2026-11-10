@@ -23,9 +23,10 @@ namespace HandsLiftedApp.Core.Undo
     /// finishing), or inside a <see cref="Suppress"/> scope. The remembered value is updated in every case, so the
     /// next real edit still has the right "old" value.
     ///
-    /// Deliberately not watched: a song item's title (it is the shared library song's title - an editor-window
-    /// concern, Phase 6) and scripture items (their reference is edited as one multi-field step, see
-    /// <see cref="EditScriptureReferenceAction"/>).
+    /// A song item's title and theme are the shared library song's, so they are watched on that song; while a song
+    /// editor window has the song open (<see cref="SongEditRecorder.IsEditing"/>) the edit goes to that window's
+    /// history instead. Scripture items' titles are not watched (their reference is edited as one multi-field step,
+    /// see <see cref="EditScriptureReferenceAction"/>).
     /// </summary>
     public sealed class PlaylistPropertyRecorder : IDisposable
     {
@@ -115,6 +116,27 @@ namespace HandsLiftedApp.Core.Undo
                     v => ((SongItemInstance)Find()).MotionBackgroundVideoOverride = (string?)v, uuid));
             }
 
+            // A song's title and theme live on the shared library song, so they are watched there (synchronously)
+            // rather than via the playlist item's own, asynchronously forwarded notifications. While the song is
+            // open in a song editor window the edit belongs to that window's history, not the playlist's.
+            if (item is SongItemInstance songItem && songItem.ResolvedSong is { } shared)
+            {
+                var songId = songItem.SongId;
+                SongItemInstance FindSong() =>
+                    _playlist.Items.OfType<SongItemInstance>().FirstOrDefault(i => i.SongId == songId)
+                    ?? throw new InvalidOperationException($"Song {songId} is no longer in the playlist");
+                Func<bool> editorOpen = () => SongEditRecorder.IsEditing(songId);
+
+                // keyed by song (not item) so two playlist items of the same song record one step, not two
+                Attach(shared, attachments, new[]
+                {
+                    new Watch(nameof(SongItem.Title), "Rename Song", () => songItem.Title,
+                        v => FindSong().Title = (string)v!, songId, "song", editorOpen),
+                    new Watch(nameof(SongItem.Design), "Change Theme", () => songItem.Design,
+                        v => FindSong().Design = (Guid)v!, songId, "song", editorOpen),
+                });
+            }
+
             Attach(item, attachments, itemWatches, onSourceChanged: name =>
             {
                 // the timer object itself was swapped: follow it
@@ -190,7 +212,7 @@ namespace HandsLiftedApp.Core.Undo
                 watch.Last = now;
                 if (Equals(old, now)) continue;
 
-                if (!ShouldRecord()) continue;
+                if (!ShouldRecord() || watch.Skip?.Invoke() == true) continue;
 
                 _playlist.UndoStack.Record(new PropertyEditAction(
                     (watch.Target, watch.Scope, watch.Name), watch.Name, watch.Label, old, now, watch.Write));
@@ -206,8 +228,9 @@ namespace HandsLiftedApp.Core.Undo
         private sealed class Watch
         {
             public Watch(string name, string label, Func<object?> read, Action<object?> write, object target,
-                string scope = "item")
+                string scope = "item", Func<bool>? skip = null)
             {
+                Skip = skip;
                 Name = name;
                 Label = label;
                 Read = read;
@@ -217,6 +240,8 @@ namespace HandsLiftedApp.Core.Undo
                 Last = read();
             }
 
+            /// <summary>When it returns true the change is not recorded here (someone else owns the history for it).</summary>
+            public Func<bool>? Skip { get; }
             public string Name { get; }
             public string Label { get; }
             public Func<object?> Read { get; }

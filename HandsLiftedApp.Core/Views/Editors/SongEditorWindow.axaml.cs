@@ -27,6 +27,7 @@ namespace HandsLiftedApp.Core.Views.Editors
         public SongEditorWindow()
         {
             InitializeComponent();
+            Closed += (_, _) => (DataContext as SongEditorViewModel)?.ReleaseUndo();
             DataContextChanged += (sender, args) =>
             {
                 if (DataContext is SongEditorViewModel songEditorViewModel)

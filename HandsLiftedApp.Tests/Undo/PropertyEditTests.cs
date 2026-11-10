@@ -228,7 +228,7 @@ public class PropertyEditTests
     private sealed class ItemAutoAdvanceTimerForTest : HandsLiftedApp.Data.Data.Models.Items.ItemAutoAdvanceTimer { }
 
     [TestMethod]
-    public void SongBackgroundVideoOverride_IsUndoable_ButSongTitleIsNotRecorded()
+    public void SongBackgroundVideoOverride_IsUndoable()
     {
         var song = new SongItem { Title = "Amazing Grace" };
         Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
@@ -237,13 +237,77 @@ public class PropertyEditTests
         p.Items.Add(item);
         p.UndoStack.Clear();
 
-        item.Title = "Renamed in the library"; // shared library song: not a playlist edit
-        Assert.IsFalse(p.UndoStack.CanUndo);
-
         item.MotionBackgroundVideoOverride = @"C:\Videos\bg.mp4";
         Assert.IsTrue(p.UndoStack.CanUndo);
         p.UndoStack.Undo();
         Assert.IsNull(item.MotionBackgroundVideoOverride);
+    }
+
+    private static (PlaylistInstance Playlist, SongItemInstance Item) SongInPlaylist()
+    {
+        var song = new SongItem { Title = "Amazing Grace" };
+        Globals.Instance.SongLibraryIndex.Register(song, "irrelevant.xml", "irrelevant");
+        var p = new PlaylistInstance();
+        var item = new SongItemInstance(p) { SongId = song.UUID };
+        p.Items.Add(item);
+        p.UndoStack.Clear();
+        return (p, item);
+    }
+
+    [TestMethod]
+    public void SongTitleAndTheme_EditedFromThePlaylist_AreUndoable()
+    {
+        var (p, item) = SongInPlaylist();
+        var theme = Guid.NewGuid();
+
+        item.Title = "How Great Thou Art";
+        Assert.AreEqual("Undo Rename Song", p.UndoStack.UndoMenuText);
+        item.Design = theme;
+        Assert.AreEqual("Undo Change Theme", p.UndoStack.UndoMenuText);
+
+        p.UndoStack.Undo();
+        Assert.AreEqual(Guid.Empty, item.Design);
+        p.UndoStack.Undo();
+        Assert.AreEqual("Amazing Grace", item.Title);
+        p.UndoStack.Redo();
+        Assert.AreEqual("How Great Thou Art", item.Title);
+    }
+
+    [TestMethod]
+    public void SongEdits_WhileItsEditorIsOpen_BelongToTheEditorNotThePlaylist()
+    {
+        var (p, item) = SongInPlaylist();
+        var editorStack = new UndoStack();
+        var recorder = new SongEditRecorder(editorStack, item);
+        try
+        {
+            item.Title = "Typed in the song editor";
+            Assert.IsFalse(p.UndoStack.CanUndo, "the editor window owns this edit");
+            Assert.IsTrue(editorStack.CanUndo);
+        }
+        finally
+        {
+            recorder.Dispose();
+        }
+
+        item.Title = "Typed on the playlist"; // editor closed: the playlist records again
+        Assert.IsTrue(p.UndoStack.CanUndo);
+        p.UndoStack.Undo();
+        Assert.AreEqual("Typed in the song editor", item.Title, "the 'old' value stayed in sync while the editor was open");
+    }
+
+    [TestMethod]
+    public void TwoPlaylistItemsOfTheSameSong_RecordOneRenameStep()
+    {
+        var (p, item) = SongInPlaylist();
+        var second = new SongItemInstance(p) { SongId = item.SongId };
+        p.Items.Add(second);
+        p.UndoStack.Clear();
+
+        item.Title = "Renamed";
+        p.UndoStack.Undo();
+        Assert.AreEqual("Amazing Grace", item.Title);
+        Assert.IsFalse(p.UndoStack.CanUndo, "one step, not one per item");
     }
 
     // ---------------- what must NOT be recorded ----------------

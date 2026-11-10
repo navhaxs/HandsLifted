@@ -42,6 +42,17 @@ namespace HandsLiftedApp.Core.Undo
         private string? _batchDescription;
         private int _suppressed;
 
+        // Songs that have an editor window open right now. A song edit made while its editor is open belongs to
+        // that window's history; the playlist's own recorder steps aside (see PlaylistPropertyRecorder).
+        private static readonly Dictionary<Guid, int> OpenEditors = new();
+        private Guid? _registeredSongId;
+
+        /// <summary>True while a song editor window has this library song open.</summary>
+        public static bool IsEditing(Guid songId)
+        {
+            lock (OpenEditors) return OpenEditors.TryGetValue(songId, out var n) && n > 0;
+        }
+
         public SongEditRecorder(UndoStack stack, SongItemInstance? song = null)
         {
             _stack = stack;
@@ -55,6 +66,12 @@ namespace HandsLiftedApp.Core.Undo
             _song = song;
             _source = song?.ResolvedSong;
             if (_source != null) Attach(_source);
+            if (song != null)
+            {
+                _registeredSongId = song.SongId;
+                lock (OpenEditors) OpenEditors[song.SongId] = OpenEditors.GetValueOrDefault(song.SongId) + 1;
+            }
+
             _last = Capture();
         }
 
@@ -95,6 +112,18 @@ namespace HandsLiftedApp.Core.Undo
         private void Detach()
         {
             if (_source != null) _source.PropertyChanged -= OnSourcePropertyChanged;
+            if (_registeredSongId is { } id)
+            {
+                lock (OpenEditors)
+                {
+                    var n = OpenEditors.GetValueOrDefault(id) - 1;
+                    if (n > 0) OpenEditors[id] = n;
+                    else OpenEditors.Remove(id);
+                }
+
+                _registeredSongId = null;
+            }
+
             UnhookCollections();
             _source = null;
             _song = null;

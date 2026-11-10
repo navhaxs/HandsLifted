@@ -29,6 +29,13 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         public IDisposable BeginUndoStep(string description) =>
             _recorder?.BeginBatch(description) ?? new NoopScope();
 
+        /// <summary>Stops watching the song (the editor window closed). Frees the song for playlist-level undo again.</summary>
+        public void ReleaseUndo()
+        {
+            _recorder?.Dispose();
+            _recorder = null;
+        }
+
         private sealed class NoopScope : IDisposable
         {
             public void Dispose() { }
