@@ -44,6 +44,11 @@ namespace HandsLiftedApp.Core.Controls.Navigation
 
             listBox = this.FindControl<ListBox>("itemsListBox");
             listBox.SelectionChanged += ListBox_SelectionChanged;
+            // Avalonia's ListBox selects the item under the pointer on a right-click too (so the
+            // context menu acts on the right item). We don't want that to navigate/flash the
+            // main view. Catch the button in the Tunnel phase, which runs before the selection
+            // change this press causes, so we can tell SelectionChanged to ignore it.
+            listBox.AddHandler(PointerPressedEvent, ListBox_PointerPressedPreview, RoutingStrategies.Tunnel);
 
             MessageBus.Current.Listen<SpyScrollUpdateMessage>()
                 .Subscribe(x =>
@@ -62,8 +67,21 @@ namespace HandsLiftedApp.Core.Controls.Navigation
                 DragDropEffects.Copy);
         }
 
+        private bool _ignoreNextSelection;
+
+        private void ListBox_PointerPressedPreview(object? sender, PointerPressedEventArgs e)
+        {
+            _ignoreNextSelection = e.GetCurrentPoint(listBox).Properties.IsRightButtonPressed;
+        }
+
         private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
+            var ignore = _ignoreNextSelection;
+            _ignoreNextSelection = false;
+
+            if (ignore)
+                return;
+
             if (listBox.SelectedIndex > -1)
                 MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = listBox.SelectedIndex, Flash = true });
         }
