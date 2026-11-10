@@ -96,17 +96,45 @@ namespace HandsLiftedApp.Core.Undo
 
         private void OnElementChanged(object? sender, PropertyChangedEventArgs e) => OnChanged();
 
+        private int _batchDepth;
+        private string? _batchDescription;
+
+        /// <summary>Everything changed inside the returned scope becomes ONE step with the given description.</summary>
+        public IDisposable BeginBatch(string description)
+        {
+            if (_batchDepth == 0) _batchDescription = description;
+            _batchDepth++;
+            return new BatchScope(() =>
+            {
+                if (--_batchDepth > 0) return;
+                var d = _batchDescription;
+                _batchDescription = null;
+                Flush(d);
+            });
+        }
+
+        private sealed class BatchScope : IDisposable
+        {
+            private Action? _onDispose;
+            public BatchScope(Action onDispose) => _onDispose = onDispose;
+            public void Dispose() => Interlocked.Exchange(ref _onDispose, null)?.Invoke();
+        }
+
         private void OnChanged()
         {
-            if (_stack.IsApplying) return;
+            if (_stack.IsApplying || _batchDepth > 0) return;
+            Flush(null);
+        }
 
+        private void Flush(string? forcedDescription)
+        {
             var now = SlideSnapshot.Of(_slide);
             var old = _last;
             _last = now;
             if (old.Equals(now)) return;
             if (Environment.CurrentManagedThreadId != _ownerThread) return;
 
-            _stack.Record(new SlideStateAction(old, now, SlideSnapshot.Describe(old, now), Write));
+            _stack.Record(new SlideStateAction(old, now, forcedDescription ?? SlideSnapshot.Describe(old, now), Write));
         }
 
         private void Write(SlideSnapshot target)

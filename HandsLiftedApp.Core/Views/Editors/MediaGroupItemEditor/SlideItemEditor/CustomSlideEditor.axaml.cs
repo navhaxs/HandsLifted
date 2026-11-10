@@ -14,6 +14,7 @@ using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Models.SlideElement;
+using HandsLiftedApp.Utils;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.FreeText
@@ -141,12 +142,46 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                     var result = await SelectFilePicker();
                     if (!string.IsNullOrWhiteSpace(result))
                     {
-                        imageElement.FilePath = result;
+                        // decode first (off the UI thread; it also lands in the bitmap cache, so the element then
+                        // shows it immediately) so the box can be fitted to the picture
+                        var bitmap = await BitmapLoader.LoadBitmapAsync(result);
+
+                        // one undo step for the new picture and its new size
+                        using (_activeHistory?.BeginBatch("Change Image"))
+                        {
+                            if (bitmap != null && DataContext is CustomSlide slide)
+                                FitElementToImage(imageElement, bitmap.PixelSize, slide);
+                            imageElement.FilePath = result;
+                        }
                     }
                 }
             }
         }
         
+        /// <summary>
+        /// Gives the element the picture's own proportions (its pixel size, scaled down to fit the slide), keeping its
+        /// centre where it was. Without this a newly added image keeps the 100x100 starting box, so the selection
+        /// handles sit around empty space and the picture is letterboxed inside it.
+        /// </summary>
+        internal static void FitElementToImage(ImageElement element, PixelSize pixels, CustomSlide slide)
+        {
+            if (pixels.Width <= 0 || pixels.Height <= 0) return;
+
+            var scale = Math.Min(1.0, Math.Min((double)slide.SlideWidth / pixels.Width, (double)slide.SlideHeight / pixels.Height));
+            var width = Math.Max(1, (int)Math.Round(pixels.Width * scale));
+            var height = Math.Max(1, (int)Math.Round(pixels.Height * scale));
+
+            var centreX = element.X + element.Width / 2.0;
+            var centreY = element.Y + element.Height / 2.0;
+            var x = (int)Math.Round(Math.Clamp(centreX - width / 2.0, 0, Math.Max(0, slide.SlideWidth - width)));
+            var y = (int)Math.Round(Math.Clamp(centreY - height / 2.0, 0, Math.Max(0, slide.SlideHeight - height)));
+
+            element.Width = width;
+            element.Height = height;
+            element.X = x;
+            element.Y = y;
+        }
+
         private async void ChangeSlideBgGraphic_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is CustomSlide customSlide)

@@ -19,6 +19,9 @@ namespace HandsLiftedApp.Core.Undo
 
         public UndoStack Stack { get; }
 
+        /// <summary>Everything changed inside the returned scope becomes ONE undo step.</summary>
+        public IDisposable BeginBatch(string description) => _recorder.BeginBatch(description);
+
         public void Dispose() => _recorder.Dispose();
     }
 

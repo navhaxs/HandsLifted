@@ -178,6 +178,29 @@ public class CustomSlideEditRecorderTests
     }
 
     [TestMethod]
+    public void ABatch_IsOneStep_WithItsOwnName()
+    {
+        var (slide, stack, recorder) = Open();
+        var image = (ImageElement)slide.SlideElements[1];
+
+        using (recorder.BeginBatch("Change Image"))
+        {
+            image.Width = 640;
+            image.Height = 480;
+            image.X = 5;
+            image.FilePath = "photo.jpg";
+        }
+
+        Assert.AreEqual("Undo Change Image", stack.UndoMenuText);
+        stack.Undo();
+        Assert.IsFalse(stack.CanUndo, "picture and size are one step");
+        Assert.AreEqual("logo.png", image.FilePath);
+        Assert.AreEqual(100, image.Width);
+        Assert.AreEqual(100, image.Height);
+        Assert.AreEqual(10, image.X);
+    }
+
+    [TestMethod]
     public void ChangingAnImage_IsUndoable()
     {
         var (slide, stack, _) = Open();
