@@ -8,6 +8,9 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia;
+using Avalonia.VisualTree;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Models.SlideElement;
@@ -34,6 +37,73 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             {
                 ListBox.SelectedItem = null;
             };
+
+            DataContextChanged += (_, _) => ActivateHistoryForCurrentSlide();
+            AttachedToVisualTree += (_, _) => ActivateHistoryForCurrentSlide();
+            DetachedFromVisualTree += (_, _) => DeactivateHistory();
+        }
+
+        // ---------------- undo/redo ----------------
+        // Each slide keeps its own history for as long as the editor *window* stays open. The histories live in
+        // CustomSlideEditHistories, not here: the media group editor rebuilds this control whenever the selected
+        // slide changes, so anything held by the control would be lost on a slide switch.
+
+        private CustomSlideEditHistory? _activeHistory;
+        private System.ComponentModel.PropertyChangedEventHandler? _activeHistoryHandler;
+
+        private void ActivateHistoryForCurrentSlide()
+        {
+            DeactivateHistory();
+            if (DataContext is not CustomSlide slide || Design.IsDesignMode || !this.IsAttachedToVisualTree()) return;
+
+            var window = TopLevel.GetTopLevel(this);
+            if (window == null) return;
+
+            var history = CustomSlideEditHistories.Get(window, slide);
+            _activeHistory = history;
+            _activeHistoryHandler = (_, _) => RefreshUndoButtons();
+            history.Stack.PropertyChanged += _activeHistoryHandler;
+            RefreshUndoButtons();
+        }
+
+        private void DeactivateHistory()
+        {
+            if (_activeHistory != null && _activeHistoryHandler != null)
+                _activeHistory.Stack.PropertyChanged -= _activeHistoryHandler;
+            _activeHistory = null;
+            _activeHistoryHandler = null;
+            RefreshUndoButtons();
+        }
+
+        private void RefreshUndoButtons()
+        {
+            var stack = _activeHistory?.Stack;
+            UndoButton.IsEnabled = stack?.CanUndo == true;
+            RedoButton.IsEnabled = stack?.CanRedo == true;
+            ToolTip.SetTip(UndoButton, stack?.UndoMenuText ?? "Undo");
+            ToolTip.SetTip(RedoButton, stack?.RedoMenuText ?? "Redo");
+        }
+
+        private void UndoButton_OnClick(object? sender, RoutedEventArgs e) => _activeHistory?.Stack.Undo();
+        private void RedoButton_OnClick(object? sender, RoutedEventArgs e) => _activeHistory?.Stack.Redo();
+
+        /// <summary>Ctrl+Z / Ctrl+Y (or Ctrl+Shift+Z) for the slide being edited, unless a text box has focus (it keeps its own).</summary>
+        protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            if (e.Handled || _activeHistory == null) return;
+            if (TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() is TextBox) return;
+
+            var ctrl = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) != 0;
+            var shift = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Shift) != 0;
+            var alt = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Alt) != 0;
+            if (!ctrl || alt) return;
+
+            if (e.Key == Avalonia.Input.Key.Z && !shift) _activeHistory.Stack.Undo();
+            else if (e.Key == Avalonia.Input.Key.Y || (e.Key == Avalonia.Input.Key.Z && shift)) _activeHistory.Stack.Redo();
+            else return;
+
+            e.Handled = true;
         }
 
         public void UpdateXml()

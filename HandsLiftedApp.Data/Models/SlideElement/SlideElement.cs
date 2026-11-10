@@ -95,7 +95,12 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         public string FontFamilyAsText
         {
             get => (string)FontFamily;
-            set { FontFamily = value; }
+            set
+            {
+                FontFamily = value;
+                // the field above doesn't notify by itself; watchers (undo history) rely on this
+                this.RaisePropertyChanged();
+            }
         }
 
         private FontWeight _fontWeight = FontWeight.Normal;

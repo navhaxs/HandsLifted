@@ -94,7 +94,54 @@ namespace PerspectiveDemo
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             UpdateSnapLines(false, false);
+            if (_followedControl != null)
+            {
+                _followedControl.PropertyChanged -= OnFollowedControlPropertyChanged;
+                _followedControl = null;
+            }
+
             base.OnDetachedFromLogicalTree(e);
+        }
+
+        // The adorner normally drives the control (drag/resize handlers push the new rect into it). The reverse
+        // also has to work: when something else moves or resizes the element (undo/redo, typing a value), the
+        // handles must follow. Dragging itself sets the control to the adorner's own rect, so the comparison below
+        // finds nothing to do and there is no feedback loop.
+        private Control? _followedControl;
+
+        private void FollowControl()
+        {
+            if (Control == null || ReferenceEquals(_followedControl, Control)) return;
+            if (_followedControl != null) _followedControl.PropertyChanged -= OnFollowedControlPropertyChanged;
+            _followedControl = Control;
+            _followedControl.PropertyChanged += OnFollowedControlPropertyChanged;
+        }
+
+        private void OnFollowedControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == Canvas.LeftProperty || e.Property == Canvas.TopProperty
+                || e.Property == WidthProperty || e.Property == HeightProperty)
+                SyncHandlesToControl();
+        }
+
+        private void SyncHandlesToControl()
+        {
+            if (Control == null || _topLeft == null || _bottomRight == null) return;
+
+            var left = Canvas.GetLeft(Control);
+            var top = Canvas.GetTop(Control);
+            var width = Control.Width;
+            var height = Control.Height;
+            if (double.IsNaN(left) || double.IsNaN(top) || double.IsNaN(width) || double.IsNaN(height)) return;
+
+            var target = new Rect(left, top, width, height);
+            var current = GetRect();
+            if (Math.Abs(current.X - target.X) < 0.01 && Math.Abs(current.Y - target.Y) < 0.01
+                && Math.Abs(current.Width - target.Width) < 0.01 && Math.Abs(current.Height - target.Height) < 0.01)
+                return;
+
+            UpdateThumbs(target);
+            UpdateDrag(target);
         }
         
         
@@ -245,8 +292,9 @@ namespace PerspectiveDemo
                 }
             }
             
+            FollowControl();
             UpdateAdornerTransform();
-    
+
             // Subscribe to zoom changes
             if (ZoomBorder != null)
             {

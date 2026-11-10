@@ -32,6 +32,14 @@
     <Grid ColumnDefinitions="*,1,3*,1,*">
         <DockPanel>
             <StackPanel DockPanel.Dock="Bottom">
+                <StackPanel Orientation="Horizontal" Spacing="4" Margin="0 0 0 4">
+                    <Button Name="UndoButton" Click="UndoButton_OnClick" IsEnabled="False" ToolTip.Tip="Undo">
+                        <avalonia:MaterialIcon Kind="Undo" />
+                    </Button>
+                    <Button Name="RedoButton" Click="RedoButton_OnClick" IsEnabled="False" ToolTip.Tip="Redo">
+                        <avalonia:MaterialIcon Kind="Redo" />
+                    </Button>
+                </StackPanel>
                 <Button Content="Add TextBox" Click="ButtonAddTextElement_OnClick" />
                 <Button Content="Add Image" Click="ButtonAddImageElement_OnClick" />
             </StackPanel>
