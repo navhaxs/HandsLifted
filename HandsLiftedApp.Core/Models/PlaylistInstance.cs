@@ -51,9 +51,16 @@ namespace HandsLiftedApp.Core.Models
         /// </summary>
         public UndoStack UndoStack { get; } = new();
 
+        /// <summary>
+        /// Records edits to the playlist's and its items' simple properties (titles, fade durations, theme
+        /// assignments, autoplay timers...) as undo steps.
+        /// </summary>
+        public PlaylistPropertyRecorder PropertyRecorder { get; }
+
         public PlaylistInstance()
         {
             DirtyTracker = new PlaylistDirtyTracker(this);
+            PropertyRecorder = new PlaylistPropertyRecorder(this);
 
             // The Items setter hooks ItemDataModified, but the default collection assigned by the field
             // initializer never goes through it. Without this, item-data edits on a playlist that never
@@ -291,6 +298,7 @@ namespace HandsLiftedApp.Core.Models
                 {
                     items.CollectionChanged -= OnItemsCollectionChanged;
                     items.CollectionChanged += OnItemsCollectionChanged;
+                    PropertyRecorder.ResyncItems(items);
                 });
 
             _disposables.Add(this.WhenAnyValue(p => p.Designs)
@@ -389,6 +397,17 @@ namespace HandsLiftedApp.Core.Models
             UpdateIndexes();
             if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
                 AutoAdvanceTimer.OnItemsRemoved(e.OldItems);
+
+            // keep the undo property recorder watching exactly the items that are in the playlist
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                PropertyRecorder.ResyncItems(Items);
+            }
+            else
+            {
+                if (e.OldItems != null) foreach (Item old in e.OldItems) PropertyRecorder.DetachItem(old);
+                if (e.NewItems != null) foreach (Item added in e.NewItems) PropertyRecorder.AttachItem(added);
+            }
             IsDirty = true;
             Log.Verbose("Playlist items collection changed");
             Changed?.Invoke(this, EventArgs.Empty);
@@ -895,6 +914,7 @@ namespace HandsLiftedApp.Core.Models
         {
             DisposeSlideRenderResources(Items);
 
+            PropertyRecorder.Dispose();
             AutoAdvanceTimer.Dispose();
             _selectedItem.Dispose();
             _selectedItemAsIItemInstance.Dispose();

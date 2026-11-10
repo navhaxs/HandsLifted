@@ -153,7 +153,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                                 Globals.Instance.AppPreferences.GoogleClientSecret
                             );
 
-                            this.Title = importStats.Title;
+                            // the title coming back from the import is not a user edit: keep it out of undo history
+                            using (ParentPlaylist?.PropertyRecorder.Suppress())
+                            {
+                                this.Title = importStats.Title;
+                            }
 
                             string exportDirectory = Path.Join(targetDirectory, "_export");
                             Directory.CreateDirectory(exportDirectory);

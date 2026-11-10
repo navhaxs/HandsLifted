@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Editors;
@@ -83,23 +84,14 @@ namespace HandsLiftedApp.Core.Views.ItemEditDock
                     if (dialog.Result == null) return;
 
                     var result = dialog.Result.Value;
-                    scripture.Book = result.BookCode;
-                    scripture.StartChapter = result.StartChapter;
-                    scripture.StartVerse = result.StartVerse;
-                    scripture.EndChapter = result.EndChapter;
-                    scripture.EndVerse = result.EndVerse;
-                    scripture.Translation = result.Translation;
-                    scripture.Title = ScriptureTitleFormatter.Format(result.BookName, result.StartChapter,
-                        result.StartVerse, result.EndChapter, result.EndVerse);
+                    var newReference = new ScriptureReference(
+                        result.BookCode, result.StartChapter, result.StartVerse, result.EndChapter, result.EndVerse,
+                        result.Translation,
+                        ScriptureTitleFormatter.Format(result.BookName, result.StartChapter, result.StartVerse,
+                            result.EndChapter, result.EndVerse));
 
-                    // forceInvalidateCache: true — UpdatePages reuses existing ScriptureSlideInstances
-                    // by page index and only resets a reused slide's Cached bitmap when the resolved
-                    // theme object changed; an edited verse range (this call) can produce the same
-                    // page count with entirely different text, which that reuse check alone would not
-                    // catch, leaving a stale cached thumbnail.
-                    _ = scripture.GenerateSlidesAsync(forceInvalidateCache: true).ContinueWith(
-                        t => Log.Error(t.Exception, "Failed to generate scripture slides for {Title}", scripture.Title),
-                        TaskContinuationOptions.OnlyOnFaulted);
+                    var playlist = scripture.ParentPlaylist ?? Globals.Instance.MainViewModel.Playlist;
+                    playlist.UndoStack.Execute(new EditScriptureReferenceAction(playlist, scripture, newReference));
                     return;
                 }
             }
