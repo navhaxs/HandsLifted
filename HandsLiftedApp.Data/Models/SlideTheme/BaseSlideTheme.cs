@@ -518,7 +518,12 @@ namespace HandsLiftedApp.Data.SlideTheme
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
 
-            foreach (var prop in GetType().GetProperties().Where(p => p.CanWrite && p.CanRead))
+            // The Calculated* properties are two-way views of other properties (CalculatedTextFontBold writes
+            // FontWeight, CalculatedTextFontItalic writes FontStyle, ...). They come after the real property, so
+            // copying them would overwrite what was just copied: any weight other than Normal/Bold became Normal
+            // and Oblique became Normal. The real properties carry all the data; skip the views.
+            foreach (var prop in GetType().GetProperties().Where(p =>
+                         p.CanWrite && p.CanRead && !p.Name.StartsWith("Calculated", StringComparison.Ordinal)))
                 prop.SetValue(this, prop.GetValue(other));
 
             foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
