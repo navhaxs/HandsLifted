@@ -66,6 +66,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             this.WhenAnyValue(x => x.Design)
                 .Select(_ => Unit.Default)
                 .Merge(ParentPlaylist?.DefaultThemeAssignmentsChanged ?? Observable.Never<Unit>())
+                .Merge(ParentPlaylist?.ThemeLibraryChanged ?? Observable.Never<Unit>())
                 .Subscribe(_ =>
                 {
                     if (weakSelf.TryGetTarget(out var self))
@@ -73,6 +74,16 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         self.RaisePropertyChanged(nameof(ResolvedDesignTheme));
                         self.RaisePropertyChanged(nameof(ExplicitDesignTheme));
                     }
+                });
+
+            // A theme was added to or removed from the library (deleted - or put back by undo, as a new object
+            // with the same Id). The explicit theme this item points at may have gone or come back, so the
+            // slides need laying out again with whatever it resolves to now, whatever Design says.
+            (ParentPlaylist?.ThemeLibraryChanged ?? Observable.Never<Unit>())
+                .Subscribe(_ =>
+                {
+                    if (weakSelf.TryGetTarget(out var self))
+                        self._themeChangeDebounce.Debounce(() => self.RepaginateFromCache(true));
                 });
 
             // Playlist scripture default changed - if this item's own Design is unset (i.e. it's

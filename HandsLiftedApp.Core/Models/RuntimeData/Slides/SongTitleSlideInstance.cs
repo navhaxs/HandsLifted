@@ -85,6 +85,20 @@ namespace HandsLiftedApp.Data.Slides
                     }
                 });
 
+            // A theme was added to or removed from the library (deleted - or put back by undo, as a new object with
+            // the same Id): look the theme up again whatever Design says. Weak captures, as above.
+            Globals.Instance.MainViewModel?.Playlist?.ThemeLibraryChanged
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
+                .Subscribe(_ =>
+                {
+                    if (!weakSelf.TryGetTarget(out var self)) return;
+                    var parent = weakParentSongItem != null && weakParentSongItem.TryGetTarget(out var p) ? p : null;
+                    var resolved = ResolveTheme(parent?.Design ?? Guid.Empty, parent?.HasMotionBackground ?? false);
+                    if (ReferenceEquals(resolved, self.Theme)) return;
+                    self.Theme = resolved;
+                    self.RequestRender();
+                });
+
             this.WhenAnyValue(x => x.Theme)
                 .Select(t => t?.WhenAnyPropertyChanged() ?? Observable.Never<BaseSlideTheme?>())
                 .Switch()

@@ -348,6 +348,16 @@ namespace HandsLiftedApp.Core.Models
 
         public IObservable<Unit> DefaultThemeAssignmentsChanged { get; }
 
+        private readonly System.Reactive.Subjects.Subject<Unit> _themeLibraryChanged = new();
+
+        /// <summary>
+        /// Emits when a theme is added to or removed from <see cref="Designs"/> (including undoing a delete, which
+        /// puts back a new theme object with the old Id). Anything holding a resolved theme must look it up again:
+        /// a slide still pointing at a deleted theme would keep drawing with it, and one pointing at a theme that was
+        /// restored would keep the stale copy, so edits to the restored theme would never reach it.
+        /// </summary>
+        public IObservable<Unit> ThemeLibraryChanged => _themeLibraryChanged;
+
         public Guid? EffectiveDefaultSongThemeId =>
             DefaultSongThemeId ?? Globals.Instance.AppPreferences?.DefaultSongThemeId;
 
@@ -423,6 +433,9 @@ namespace HandsLiftedApp.Core.Models
             if (e.OldItems != null)
                 foreach (BaseSlideTheme theme in e.OldItems)
                     UnsubscribeFromDesignChanges(theme);
+
+            if (e.Action != NotifyCollectionChangedAction.Move)
+                _themeLibraryChanged.OnNext(Unit.Default);
         }
 
         private void SubscribeToDesignChanges(BaseSlideTheme theme)

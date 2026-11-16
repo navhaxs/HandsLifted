@@ -340,11 +340,15 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             // button must also re-evaluate when those assignments change. Weak self-capture: the
             // playlist observable is app-lifetime and must not root this instance.
             var weakSelf = new WeakReference<SongItemInstance>(this);
+            // (also when a theme is added to / removed from the library: the explicit theme this item points at may
+            // have just gone, or come back)
             parentPlaylist?.DefaultThemeAssignmentsChanged
+                .Merge(parentPlaylist.ThemeLibraryChanged)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(_ =>
                 {
                     if (!weakSelf.TryGetTarget(out var self)) return;
+                    self.RaisePropertyChanged(nameof(ResolvedDesignTheme));
                     self.RaisePropertyChanged(nameof(ShowMotionBackgroundVideoButton));
                     self.RaisePropertyChanged(nameof(ResolvedMotionBackgroundVideoPath));
                     self.RaisePropertyChanged(nameof(HasMotionBackground));
