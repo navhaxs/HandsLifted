@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+using HandsLiftedApp.Tests.TestSupport;
 using System.Linq;
 using Avalonia.Media;
 using HandsLiftedApp.Core.Undo;
@@ -23,7 +25,7 @@ public class CustomSlideEditRecorderTests
     }
 
     [TestMethod]
-    public void EditingText_IsUndoable_AndNamedSo()
+    public Task EditingText_IsUndoable_AndNamedSo() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         ((TextElement)slide.SlideElements[0]).Text = "Welcome everyone";
@@ -33,10 +35,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual("Welcome", ((TextElement)slide.SlideElements[0]).Text);
         stack.Redo();
         Assert.AreEqual("Welcome everyone", ((TextElement)slide.SlideElements[0]).Text);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void DraggingAnElement_MergesIntoOneStep()
+    public Task DraggingAnElement_MergesIntoOneStep() => DispatcherTestThread.Run(() =>
     {
         var clock = new DateTime(2026, 1, 1, 10, 0, 0, DateTimeKind.Utc);
         var (slide, stack, _) = Open(() => clock);
@@ -54,10 +57,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual(100, el.X);
         Assert.AreEqual(200, el.Y);
         Assert.IsFalse(stack.CanUndo, "the whole drag is one step");
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void ResizingFromACorner_ChangesPositionAndSize_ButIsStillOneStep()
+    public Task ResizingFromACorner_ChangesPositionAndSize_ButIsStillOneStep() => DispatcherTestThread.Run(() =>
     {
         var clock = new DateTime(2026, 1, 1, 10, 0, 0, DateTimeKind.Utc);
         var (slide, stack, _) = Open(() => clock);
@@ -85,10 +89,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual(800, el.Width);
         Assert.AreEqual(150, el.Height);
         Assert.IsFalse(stack.CanUndo, "the whole resize is one step");
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void ResizingAnElement_IsUndoable()
+    public Task ResizingAnElement_IsUndoable() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         slide.SlideElements[0].Width = 400;
@@ -96,10 +101,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual("Undo Resize Element", stack.UndoMenuText);
         stack.Undo();
         Assert.AreEqual(800, slide.SlideElements[0].Width);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void FormattingAndColour_AreUndoable_IncludingFontFamily()
+    public Task FormattingAndColour_AreUndoable_IncludingFontFamily() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         var t = (TextElement)slide.SlideElements[0];
@@ -115,10 +121,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual(originalColour, t.ForegroundAvaloniaColour);
         stack.Undo();
         Assert.AreEqual(originalFont, t.FontFamilyAsText);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void BackgroundColourAndGraphic_AreUndoable()
+    public Task BackgroundColourAndGraphic_AreUndoable() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         var original = slide.BackgroundAvaloniaColour;
@@ -129,10 +136,11 @@ public class CustomSlideEditRecorderTests
         Assert.IsNull(slide.BackgroundGraphicFilePath);
         stack.Undo();
         Assert.AreEqual(original, slide.BackgroundAvaloniaColour);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void AddingAnElement_UndoRemovesIt_RedoBringsItBack()
+    public Task AddingAnElement_UndoRemovesIt_RedoBringsItBack() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         slide.SlideElements.Add(new TextElement { Text = "New box", X = 5 });
@@ -144,10 +152,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual(3, slide.SlideElements.Count);
         Assert.AreEqual("New box", ((TextElement)slide.SlideElements[2]).Text);
         Assert.AreEqual(5, slide.SlideElements[2].X);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void DeletingAnElement_FromTheMiddle_UndoRestoresEveryElementInOrder()
+    public Task DeletingAnElement_FromTheMiddle_UndoRestoresEveryElementInOrder() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         slide.SlideElements.Add(new TextElement { Text = "Third" });
@@ -163,10 +172,11 @@ public class CustomSlideEditRecorderTests
         Assert.IsInstanceOfType<ImageElement>(slide.SlideElements[1]);
         Assert.AreEqual("logo.png", ((ImageElement)slide.SlideElements[1]).FilePath);
         Assert.AreEqual("Third", ((TextElement)slide.SlideElements[2]).Text);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void ReorderingElements_UndoRestoresTheOrder()
+    public Task ReorderingElements_UndoRestoresTheOrder() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         slide.SlideElements.Move(0, 1);
@@ -175,10 +185,11 @@ public class CustomSlideEditRecorderTests
         stack.Undo();
         Assert.IsInstanceOfType<TextElement>(slide.SlideElements[0]);
         Assert.IsInstanceOfType<ImageElement>(slide.SlideElements[1]);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void ABatch_IsOneStep_WithItsOwnName()
+    public Task ABatch_IsOneStep_WithItsOwnName() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, recorder) = Open();
         var image = (ImageElement)slide.SlideElements[1];
@@ -198,10 +209,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual(100, image.Width);
         Assert.AreEqual(100, image.Height);
         Assert.AreEqual(10, image.X);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void ChangingAnImage_IsUndoable()
+    public Task ChangingAnImage_IsUndoable() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         ((ImageElement)slide.SlideElements[1]).FilePath = "other.png";
@@ -209,10 +221,11 @@ public class CustomSlideEditRecorderTests
         Assert.AreEqual("Undo Change Image", stack.UndoMenuText);
         stack.Undo();
         Assert.AreEqual("logo.png", ((ImageElement)slide.SlideElements[1]).FilePath);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void UndoItself_IsNotRecorded_AndLaterEditsStillDiffCorrectly()
+    public Task UndoItself_IsNotRecorded_AndLaterEditsStillDiffCorrectly() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         var t = (TextElement)slide.SlideElements[0];
@@ -225,10 +238,11 @@ public class CustomSlideEditRecorderTests
         t.Text = "B";
         stack.Undo();
         Assert.AreEqual("Welcome", ((TextElement)slide.SlideElements[0]).Text);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void WholeCollectionReplaced_IsFollowed()
+    public Task WholeCollectionReplaced_IsFollowed() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         slide.SlideElements = new(new[] { (SlideElement)new TextElement { Text = "Fresh" } });
@@ -238,15 +252,17 @@ public class CustomSlideEditRecorderTests
         Assert.IsTrue(stack.CanUndo);
         stack.Undo();
         Assert.AreEqual("Fresh", ((TextElement)slide.SlideElements[0]).Text);
-    }
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
-    public void Dispose_StopsRecording()
+    public Task Dispose_StopsRecording() => DispatcherTestThread.Run(() =>
     {
         var (slide, stack, recorder) = Open();
         recorder.Dispose();
         ((TextElement)slide.SlideElements[0]).Text = "After close";
         slide.SlideElements.Add(new TextElement());
         Assert.IsFalse(stack.CanUndo);
-    }
+        return Task.CompletedTask;
+    });
 }

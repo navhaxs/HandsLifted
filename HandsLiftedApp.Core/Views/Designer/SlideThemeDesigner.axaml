@@ -172,6 +172,26 @@
     <DockPanel>
         <!--  List  -->
         <DockPanel DockPanel.Dock="Left">
+            <StackPanel
+                DockPanel.Dock="Bottom"
+                Margin="0,0,0,4"
+                Orientation="Horizontal"
+                Spacing="4">
+                <Button
+                    IsEnabled="False"
+                    Click="UndoButton_OnClick"
+                    Name="UndoButton"
+                    ToolTip.Tip="Undo">
+                    <avalonia:MaterialIcon Kind="Undo" />
+                </Button>
+                <Button
+                    IsEnabled="False"
+                    Click="RedoButton_OnClick"
+                    Name="RedoButton"
+                    ToolTip.Tip="Redo">
+                    <avalonia:MaterialIcon Kind="Redo" />
+                </Button>
+            </StackPanel>
             <UniformGrid
                 Columns="3"
                 DockPanel.Dock="Bottom"

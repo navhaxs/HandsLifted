@@ -1,5 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.VisualTree;
+using HandsLiftedApp.Core.Undo;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
@@ -149,6 +151,108 @@ namespace HandsLiftedApp.Core.Views.Designer
                 });
 
             generalDesignsListBox.DataContextChanged += (sender, args) => SyncEditorToSelection();
+
+            AttachedToVisualTree += (_, _) => ActivateHistory();
+            DetachedFromVisualTree += (_, _) => DeactivateHistory();
+            DataContextChanged += (_, _) => ActivateHistory();
+        }
+
+        // ---------------- undo/redo ----------------
+        // One history per window (see ThemeEditHistories): it covers edits to every theme, adding/removing themes and
+        // "Set as default". It lives outside this control so taking the designer off screen doesn't lose it.
+
+        private ThemeEditHistory? _history;
+        private System.ComponentModel.PropertyChangedEventHandler? _historyHandler;
+        private System.Collections.ObjectModel.ObservableCollection<BaseSlideTheme>? _watchedDesigns;
+
+        private void ActivateHistory()
+        {
+            DeactivateHistory();
+            if (DataContext is not MainViewModel vm || !this.IsAttachedToVisualTree()) return;
+
+            var window = TopLevel.GetTopLevel(this);
+            if (window == null) return;
+
+            _history = ThemeEditHistories.Get(window, vm.Playlist.Designs);
+            _historyHandler = (_, _) => RefreshUndoButtons();
+            _history.Stack.PropertyChanged += _historyHandler;
+
+            _watchedDesigns = _history.Themes;
+            _watchedDesigns.CollectionChanged += OnDesignsChangedByUndo;
+            RefreshUndoButtons();
+        }
+
+        private void DeactivateHistory()
+        {
+            if (_history != null && _historyHandler != null) _history.Stack.PropertyChanged -= _historyHandler;
+            if (_watchedDesigns != null) _watchedDesigns.CollectionChanged -= OnDesignsChangedByUndo;
+            _history = null;
+            _historyHandler = null;
+            _watchedDesigns = null;
+            RefreshUndoButtons();
+        }
+
+        // An undo/redo that adds or removes a theme must leave the designer showing something sensible: bring a
+        // restored theme into view, and move off a theme that undo just removed.
+        private void OnDesignsChangedByUndo(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (_history is not { Stack.IsApplying: true }) return;
+
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add
+                && e.NewItems?.Count > 0 && e.NewItems[0] is BaseSlideTheme added)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() => SelectDesign(added), Avalonia.Threading.DispatcherPriority.Background);
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                {
+                    var themes = _history?.Themes;
+                    if (themes == null || themes.Count == 0) return;
+                    if (SelectedDesign == null || !themes.Contains(SelectedDesign)) SelectDesign(themes[0]);
+                }, Avalonia.Threading.DispatcherPriority.Background);
+            }
+        }
+
+        private void RefreshUndoButtons()
+        {
+            var stack = _history?.Stack;
+            UndoButton.IsEnabled = stack?.CanUndo == true;
+            RedoButton.IsEnabled = stack?.CanRedo == true;
+            ToolTip.SetTip(UndoButton, stack?.UndoMenuText ?? "Undo");
+            ToolTip.SetTip(RedoButton, stack?.RedoMenuText ?? "Redo");
+        }
+
+        private void UndoButton_OnClick(object? sender, RoutedEventArgs e) => _history?.Stack.Undo();
+        private void RedoButton_OnClick(object? sender, RoutedEventArgs e) => _history?.Stack.Redo();
+
+        /// <summary>Ctrl+Z / Ctrl+Y (or Ctrl+Shift+Z) for this window's theme history, unless a text box has focus (it keeps its own).</summary>
+        protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            if (e.Handled || _history == null) return;
+            if (TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() is TextBox) return;
+
+            var ctrl = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) != 0;
+            var shift = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Shift) != 0;
+            var alt = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Alt) != 0;
+            if (!ctrl || alt) return;
+
+            if (e.Key == Avalonia.Input.Key.Z && !shift) _history.Stack.Undo();
+            else if (e.Key == Avalonia.Input.Key.Y || (e.Key == Avalonia.Input.Key.Z && shift)) _history.Stack.Redo();
+            else return;
+
+            e.Handled = true;
+        }
+
+        /// <summary>Makes <paramref name="theme"/> the app-wide default of the given kind, as one undoable step.</summary>
+        private void SetDefaultTheme(MainViewModel mainViewModel, DefaultThemeKind kind, BaseSlideTheme theme)
+        {
+            var action = new SetDefaultThemeAction(Globals.Instance.AppPreferences, mainViewModel.Playlist, kind,
+                theme.Id, Globals.Instance.SaveAppPreferences);
+
+            if (_history != null) _history.Stack.Execute(action);
+            else action.Do();
         }
 
         private const string PreviewText =
@@ -288,9 +392,8 @@ namespace HandsLiftedApp.Core.Views.Designer
             if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
                 control.DataContext is BaseSlideTheme item)
             {
-                Globals.Instance.AppPreferences.DefaultSongThemeId = item.Id;
-                mainViewModel.Playlist.DefaultSongThemeId = null; // clear this playlist's override
-                Globals.Instance.SaveAppPreferences();
+                // also clears this playlist's override of the default
+                SetDefaultTheme(mainViewModel, DefaultThemeKind.Song, item);
             }
         }
 
@@ -299,9 +402,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
                 control.DataContext is BaseSlideTheme item)
             {
-                Globals.Instance.AppPreferences.DefaultSongMotionThemeId = item.Id;
-                mainViewModel.Playlist.DefaultSongMotionThemeId = null;
-                Globals.Instance.SaveAppPreferences();
+                SetDefaultTheme(mainViewModel, DefaultThemeKind.SongMotionBackground, item);
             }
         }
 
@@ -310,9 +411,7 @@ namespace HandsLiftedApp.Core.Views.Designer
             if (this.DataContext is MainViewModel mainViewModel && sender is Control control &&
                 control.DataContext is BaseSlideTheme item)
             {
-                Globals.Instance.AppPreferences.DefaultScriptureThemeId = item.Id;
-                mainViewModel.Playlist.DefaultScriptureThemeId = null;
-                Globals.Instance.SaveAppPreferences();
+                SetDefaultTheme(mainViewModel, DefaultThemeKind.Scripture, item);
             }
         }
 
