@@ -110,15 +110,6 @@ public class MainViewModel : ViewModelBase
         // The ShowOpenFileDialog interaction requests the UI to show the file open dialog.
         ShowOpenFileDialog = new Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?>();
 
-        EditSlideInfoCommand = ReactiveCommand.CreateFromTask<object>(async (object x) =>
-        {
-            if (x is CustomAxamlSlideInstance c)
-            {
-                SlideInfoEditorWindow window = new SlideInfoEditorWindow() { DataContext = c.parentMediaItem.Meta };
-                window.Show();
-            }
-        });
-
         SlideSplitFromHere = ReactiveCommand.CreateFromTask<object>(async (object x) =>
         {
             if (x is ReadOnlyCollection<object> parameters)
@@ -848,7 +839,6 @@ public class MainViewModel : ViewModelBase
     }
 
     public Interaction<FilePickerOpenOptions?, IReadOnlyList<IStorageFile>?> ShowOpenFileDialog { get; }
-    public ReactiveCommand<object, Unit> EditSlideInfoCommand { get; }
     public ReactiveCommand<object, Unit> SlideSplitFromHere { get; }
     public ReactiveCommand<object, Unit> DeleteSlideCommand { get; }
     public ReactiveCommand<object, Unit> DeleteItemCommand { get; }
