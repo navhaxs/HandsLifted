@@ -133,6 +133,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             get => _activeSlide?.Value;
         }
 
+        // keys of the current slides (see SlideIdentity), so the next Sync can tell which slide is which
+        private List<string?>? _slideKeys;
+
         public void Sync()
         {
             if (IsBusy)
@@ -176,19 +179,29 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             Log.Debug($"Importing PDF file: {importStats.OutputFullFilePath}");
                             ConvertPDF.Convert(new ImportTask() { InputFile = importStats.OutputFullFilePath, OutputDirectory = exportDirectory, ExportFileFormat = ImportTask.ExportFileFormatType.PNG});
 
+                            var oldKeys = _slideKeys;
+                            var oldIndex = SelectedSlideIndex;
                             SyncSlideHold.Begin(this, ParentPlaylist);
                             var newItems = new TrulyObservableCollection<GroupItem>();
+                            var files = new List<string>();
                             foreach (var convertedFilePath in Directory.GetFiles(exportDirectory)
                                          .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
                             {
                                 newItems.Add(new MediaItem()
                                     { SourceMediaFilePath = convertedFilePath });
+                                files.Add(convertedFilePath);
                             }
+
+                            // Google object ids when they line up with the exported pages, else page images
+                            var newKeys = SlideIdentity.KeysFor(files, importStats.SlideObjectIds);
+                            _slideKeys = newKeys;
 
                             Items = newItems;
 
                             Log.Debug($"Generating slides");
                             GenerateSlides();
+
+                            SyncSlideHold.Follow(this, oldKeys, oldIndex, newKeys);
 
                             Log.Debug($"Import OK");
 

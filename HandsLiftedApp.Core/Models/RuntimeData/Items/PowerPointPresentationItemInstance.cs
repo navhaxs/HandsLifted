@@ -287,9 +287,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private void ExtractEmbeddedVideos(string targetDirectory)
         {
+            _shownSlideIds = null;
             try
             {
                 var result = EmbeddedVideoExtractor.ExtractVideos(SourcePresentationFile, targetDirectory);
+                _shownSlideIds = result.ShownSlideIds;
 
                 ExternalVideoDownloader.DownloadPendingVideos(
                     result.PendingExternalVideos, result.ShownSlideCount, targetDirectory, result.Warnings);
@@ -316,20 +318,34 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
         }
 
+        // keys of the current slides (see SlideIdentity), so the next Sync can tell which slide is which
+        private List<string?>? _slideKeys;
+
+        // PowerPoint slide ids of the last export (null/empty when unavailable, e.g. a legacy .ppt)
+        private List<string>? _shownSlideIds;
+
         private void ApplySlidesFromDirectory(string targetDirectory)
         {
+            var oldKeys = _slideKeys;
+            var oldIndex = SelectedSlideIndex;
             SyncSlideHold.Begin(this, ParentPlaylist);
             var newItems = new TrulyObservableCollection<GroupItem>();
-            foreach (var filePath in CollectSlideFilesInOrder(targetDirectory))
+            var files = CollectSlideFilesInOrder(targetDirectory);
+            foreach (var filePath in files)
             {
                 newItems.Add(new MediaItem { SourceMediaFilePath = filePath });
             }
+
+            var newKeys = SlideIdentity.KeysFor(files, _shownSlideIds);
+            _slideKeys = newKeys;
 
             Items = newItems;
             LastSyncWarning = ReadSyncWarnings(targetDirectory);
 
             Log.Debug("Generating slides");
             GenerateSlides();
+
+            SyncSlideHold.Follow(this, oldKeys, oldIndex, newKeys);
 
             Log.Debug("Import OK");
             LastSyncDateTime = DateTime.Now;

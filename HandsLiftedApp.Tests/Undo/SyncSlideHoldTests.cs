@@ -79,6 +79,51 @@ public class SyncSlideHoldTests
     });
 
     [TestMethod]
+    public Task AfterASync_TheSelectionFollowsTheSameSlideToItsNewPosition() => DispatcherTestThread.Run(async () =>
+    {
+        var p = new PlaylistInstance();
+        var pdf = new PDFSlidesGroupItemInstance(p);
+        p.Items.Add(pdf);
+        Load(pdf, "a.png", "b.png", "c.png");
+        p.SelectedItemIndex = 0;
+        pdf.SelectedSlideIndex = 1; // "b" is live
+        await Settle();
+        var live = pdf.ActiveSlide;
+
+        var oldKeys = new string?[] { "id:a", "id:b", "id:c" };
+        var newKeys = new string?[] { "id:new", "id:c", "id:a", "id:b" }; // b moved to index 3
+
+        SyncSlideHold.Begin(pdf, p);
+        Load(pdf, "n.png", "c.png", "a.png", "b.png");
+        SyncSlideHold.Follow(pdf, oldKeys, 1, newKeys);
+        await Settle();
+
+        Assert.AreEqual(3, pdf.SelectedSlideIndex, "the cursor moved with the slide");
+        Assert.AreSame(live, pdf.ActiveSlide, "but what's live did not change");
+
+        // Next from there goes to the slide after b in the new set (none: past the end)
+        Assert.IsNull(p.GetNextSlide(allowItemLookAhead: false).Slide);
+    });
+
+    [TestMethod]
+    public Task AfterASync_ADeletedLiveSlideKeepsTheOldPositionClamped() => DispatcherTestThread.Run(async () =>
+    {
+        var p = new PlaylistInstance();
+        var pdf = new PDFSlidesGroupItemInstance(p);
+        p.Items.Add(pdf);
+        Load(pdf, "a.png", "b.png", "c.png");
+        p.SelectedItemIndex = 0;
+        pdf.SelectedSlideIndex = 2;
+        await Settle();
+
+        SyncSlideHold.Begin(pdf, p);
+        Load(pdf, "a.png", "b.png"); // c was deleted
+        SyncSlideHold.Follow(pdf, new string?[] { "id:a", "id:b", "id:c" }, 2, new string?[] { "id:a", "id:b" });
+
+        Assert.AreEqual(1, pdf.SelectedSlideIndex);
+    });
+
+    [TestMethod]
     public Task NothingIsHeldWhenTheItemIsNotLive() => DispatcherTestThread.Run(async () =>
     {
         var p = new PlaylistInstance();

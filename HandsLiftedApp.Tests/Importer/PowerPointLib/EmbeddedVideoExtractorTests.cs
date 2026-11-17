@@ -121,6 +121,21 @@ public class EmbeddedVideoExtractorTests
     }
 
     [TestMethod]
+    public void ExtractVideos_ReportsPowerPointSlideIdsOfShownSlidesInPageOrder()
+    {
+        var pptxPath = CreateTestPptx(new[]
+        {
+            new TestSlide(Hidden: false, VideoTarget: null, VideoTargetMode: null), // id 256
+            new TestSlide(Hidden: true, VideoTarget: null, VideoTargetMode: null),  // id 257, not in the PDF
+            new TestSlide(Hidden: false, VideoTarget: null, VideoTargetMode: null), // id 258
+        });
+
+        var result = EmbeddedVideoExtractor.ExtractVideos(pptxPath, _tempDir);
+
+        CollectionAssert.AreEqual(new[] { "256", "258" }, result.ShownSlideIds);
+    }
+
+    [TestMethod]
     public void ExtractVideos_NoVideoAnywhere_ReturnsEmptyResult()
     {
         var pptxPath = CreateTestPptx(new[]

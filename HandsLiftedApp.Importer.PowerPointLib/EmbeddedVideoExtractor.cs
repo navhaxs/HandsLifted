@@ -19,6 +19,10 @@ public class PowerPointVideoExtractionResult
     /// width this class used for Slide.{padded}.ext filenames, without needing maxDigits exposed
     /// directly. 0 if extraction returned before any slides were counted.</summary>
     public int ShownSlideCount { get; set; }
+
+    /// <summary>PowerPoint's own slide ids (the sldId "id" values, which survive edits and re-ordering), one per
+    /// shown slide in page order. Empty if they couldn't be read.</summary>
+    public List<string> ShownSlideIds { get; init; } = new();
 }
 
 public record PendingExternalVideo(int SlideNumber, string Url);
@@ -73,6 +77,7 @@ public static class EmbeddedVideoExtractor
             // Ordered list of slide part paths that are actually shown, matching the numbering
             // ConvertPDF/PowerPoint's own PDF export produce (hidden slides excluded).
             var shownSlideParts = new List<string>();
+            var shownSlideIds = new List<string>();
             foreach (var sldId in sldIdList)
             {
                 var rid = sldId.Attribute(R + "id")?.Value;
@@ -85,6 +90,7 @@ public static class EmbeddedVideoExtractor
                     // Can't read this part to check whether it's hidden - fail open (assume shown)
                     // rather than silently shifting every subsequent slide's number.
                     shownSlideParts.Add(slidePartPath);
+                    shownSlideIds.Add(sldId.Attribute("id")?.Value ?? "");
                     continue;
                 }
 
@@ -98,6 +104,7 @@ public static class EmbeddedVideoExtractor
                 {
                     // Same fail-open reasoning as above.
                     shownSlideParts.Add(slidePartPath);
+                    shownSlideIds.Add(sldId.Attribute("id")?.Value ?? "");
                     continue;
                 }
 
@@ -105,9 +112,12 @@ public static class EmbeddedVideoExtractor
                 if (show is "0" or "false") continue; // hidden slide - excluded from PDF page count too
 
                 shownSlideParts.Add(slidePartPath);
+                shownSlideIds.Add(sldId.Attribute("id")?.Value ?? "");
             }
 
             if (shownSlideParts.Count == 0) return result;
+
+            if (shownSlideIds.All(id => id.Length > 0)) result.ShownSlideIds.AddRange(shownSlideIds);
 
             result.ShownSlideCount = shownSlideParts.Count;
             int maxDigits = (int)Math.Floor(Math.Log10(shownSlideParts.Count) + 1);

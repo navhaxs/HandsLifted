@@ -180,10 +180,16 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             });
         }
 
+        // keys of the current slides (see SlideIdentity), so the next Sync can tell which slide is which
+        private List<string?>? _slideKeys;
+
         private void ApplySlidesFromDirectory(string targetDirectory)
         {
+            var oldKeys = _slideKeys;
+            var oldIndex = SelectedSlideIndex;
             SyncSlideHold.Begin(this, ParentPlaylist);
             var newItems = new TrulyObservableCollection<GroupItem>();
+            var files = new List<string>();
             foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
                          .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
             {
@@ -192,12 +198,19 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 if (ext != ".png" && ext != ".jpg" && ext != ".jpeg") continue;
 
                 newItems.Add(new MediaItem() { SourceMediaFilePath = convertedFilePath });
+                files.Add(convertedFilePath);
             }
+
+            // PDF pages have no ids: slides are told apart by their image
+            var newKeys = SlideIdentity.KeysFor(files, null);
+            _slideKeys = newKeys;
 
             Items = newItems;
 
             Log.Debug($"Generating slides");
             GenerateSlides();
+
+            SyncSlideHold.Follow(this, oldKeys, oldIndex, newKeys);
 
             Log.Debug($"Import OK");
 

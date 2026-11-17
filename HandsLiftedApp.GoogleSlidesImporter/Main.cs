@@ -115,11 +115,12 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                     stats.OutputFullFilePath = Path.Join(task.OutputDirectory, outputFileName);
 
                     IList<Page> slides = presentation.Slides;
+                    stats.SlideObjectIds = slides.Select(s => s.ObjectId).ToList();
                     Console.WriteLine("The presentation contains {0} slides:", slides.Count);
                     for (var i = 0; i < slides.Count; i++)
                     {
                         var slide = slides[i];
-                        Debug.Print($"Slide {i}: ObjectId={slide.ObjectId}"); // TODO: store this slide.ObjectId so that subsequent 'syncs' can determine and maintain current active/relative slide selection
+                        Debug.Print($"Slide {i}: ObjectId={slide.ObjectId}"); // ids are returned in stats.SlideObjectIds so a re-sync can keep the live slide selection stable
                         Console.WriteLine("- Slide #{0} contains {1} elements.", i + 1, slide.PageElements?.Count);
                     }
 
@@ -229,6 +230,9 @@ namespace HandsLiftedApp.Importer.GoogleSlides
             public String Title;
             public String OutputFileName;
             public String OutputFullFilePath;
+
+            /// <summary>Google's stable object id of each slide, in presentation order.</summary>
+            public List<string> SlideObjectIds = new();
 
             public GoogleSlidesPresentationImporter Task { get; set; }
             public double JobPercentage { get; set; }

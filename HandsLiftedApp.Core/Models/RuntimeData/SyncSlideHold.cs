@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using HandsLiftedApp.Data.Slides;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData
@@ -29,5 +31,20 @@ namespace HandsLiftedApp.Core.Models.RuntimeData
             holdable.HeldSlide = active;
         }
 
+        /// <summary>
+        /// Call after a Sync has replaced the item's slides. If a slide was held, the item's selected index moves to
+        /// where that same slide is now (see <see cref="SlideIdentity"/>) so highlight, Next and Prev carry on from the
+        /// right place; the held slide itself stays live. If the slide can't be found the old position is kept (clamped).
+        /// </summary>
+        public static void Follow(IItemInstance item, IReadOnlyList<string?>? oldKeys, int oldIndex,
+            IReadOnlyList<string?> newKeys)
+        {
+            if (item is not ISlideHoldable { HeldSlide: not null }) return;
+            if (newKeys.Count == 0) return;
+
+            var target = SlideIdentity.MapIndex(oldKeys, oldIndex, newKeys);
+            if (target < 0) target = Math.Min(oldIndex, newKeys.Count - 1);
+            if (target >= 0) item.SelectedSlideIndex = target;
+        }
     }
 }
