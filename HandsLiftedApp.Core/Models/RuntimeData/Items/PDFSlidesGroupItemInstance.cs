@@ -17,7 +17,7 @@ using HandsLiftedApp.Importer.PDF;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
-    public class PDFSlidesGroupItemInstance : PDFSlidesGroupItem, IItemInstance, IItemDirtyBit, IItemSyncable
+    public class PDFSlidesGroupItemInstance : PDFSlidesGroupItem, IItemInstance, IItemDirtyBit, IItemSyncable, ISlideHoldable
     {
         public PlaylistInstance ParentPlaylist { get; set; }
 
@@ -54,8 +54,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         public PDFSlidesGroupItemInstance(PlaylistInstance parentPlaylist)
         {
             ParentPlaylist = parentPlaylist;
-            _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides, (selectedSlideIndex, slides) =>
+            _activeSlide = this.WhenAnyValue(x => x.SelectedSlideIndex, x => x.Slides, x => x.HeldSlide, (selectedSlideIndex, slides, held) =>
                 {
+                    // a slide held across a Sync stays live until the user navigates
+                    if (held != null) return held;
+
                     try
                     {
                         if (selectedSlideIndex > -1 && selectedSlideIndex < slides.Count)
@@ -100,6 +103,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public List<Slide> _Slides = new();
         public ObservableCollection<Slide> Slides => new(_Slides);
+
+        private Slide? _heldSlide;
+
+        public Slide? HeldSlide
+        {
+            get => _heldSlide;
+            set => this.RaiseAndSetIfChanged(ref _heldSlide, value);
+        }
 
         public int _selectedSlideIndex = -1;
 
@@ -171,6 +182,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         private void ApplySlidesFromDirectory(string targetDirectory)
         {
+            SyncSlideHold.Begin(this, ParentPlaylist);
             var newItems = new TrulyObservableCollection<GroupItem>();
             foreach (var convertedFilePath in Directory.GetFiles(targetDirectory)
                          .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))

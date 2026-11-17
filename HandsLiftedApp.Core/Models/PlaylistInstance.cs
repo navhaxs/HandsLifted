@@ -692,7 +692,10 @@ namespace HandsLiftedApp.Core.Models
             // "needs re-render" signal ScriptureItemInstance/SongItemInstance already use), so
             // force the live/projector canvases to re-pull the current slide state. If nothing
             // changed, do nothing.
-            var isAlreadyActiveSlide = nextItemIndex == SelectedItemIndex
+            // After a Sync the old live slide is held (see SyncSlideHold), so even the same index is a real change.
+            var targetHold = targetItemInstance as ISlideHoldable;
+            var isAlreadyActiveSlide = targetHold?.HeldSlide == null
+                && nextItemIndex == SelectedItemIndex
                 && (slideReference.SlideIndex == null || targetItemInstance?.SelectedSlideIndex == slideReference.SlideIndex);
             if (isAlreadyActiveSlide)
             {
@@ -715,6 +718,10 @@ namespace HandsLiftedApp.Core.Models
 
             SelectedItemIndex = nextItemIndex;
 
+            // navigating into the item releases the slide held across a Sync (after the index is set, so the
+            // item's active slide changes once, straight to the chosen slide)
+            if (targetHold != null) targetHold.HeldSlide = null;
+
             if (lastSelectedItemIndex != nextItemIndex && lastSelectedItemIndex > -1 &&
                 Items.ElementAtOrDefault(lastSelectedItemIndex) != null)
             {
@@ -722,6 +729,7 @@ namespace HandsLiftedApp.Core.Models
                 var lastBaseItemInstance = Items[lastSelectedItemIndex];
                 if (lastBaseItemInstance is IItemInstance itemInstance)
                     itemInstance.SelectedSlideIndex = -1;
+                if (lastBaseItemInstance is ISlideHoldable lastHoldable) lastHoldable.HeldSlide = null;
             }
 
             // lastly clear LOGO
