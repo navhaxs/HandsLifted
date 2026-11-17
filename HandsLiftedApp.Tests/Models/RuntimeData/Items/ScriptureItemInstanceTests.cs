@@ -35,6 +35,10 @@ public class ScriptureItemInstanceTests
     public static void AssemblyInit(TestContext context)
     {
         DispatcherTestThread.EnsureStarted();
+
+        // Undo/redo restoring an imported item (PDF, PowerPoint, Google Slides) with no slides starts its import;
+        // no test should launch a real one. Tests that check the import is started swap in their own starter.
+        HandsLiftedApp.Core.Undo.PlaylistItemSnapshot.StartImport = _ => { };
     }
 
     [TestInitialize]

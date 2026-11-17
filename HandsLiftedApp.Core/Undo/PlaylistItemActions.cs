@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using HandsLiftedApp.Core.Models;
+using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Core.Undo
@@ -36,8 +38,22 @@ namespace HandsLiftedApp.Core.Undo
         {
             var copy = snapshot.Clone();
             copy.UUID = snapshot.UUID;
-            return ItemInstanceFactory.ToItemInstance(copy, playlist);
+            var restored = ItemInstanceFactory.ToItemInstance(copy, playlist);
+
+            // An imported item (PDF, PowerPoint, Google Slides, online video) that was deleted or undone before its
+            // import finished has no slides to show, or its generated files are gone. Bring it up to date exactly as
+            // loading a playlist does.
+            if (NeedsImportAfterRestore(restored) && restored is IItemSyncable syncable) StartImport(syncable);
+
+            return restored;
         }
+
+        /// <summary>Starts an item's import. Replaceable so tests do not launch real PDF / PowerPoint / Google imports.</summary>
+        internal static Action<IItemSyncable> StartImport { get; set; } = syncable => syncable.Sync();
+
+        /// <summary>True for an imported item whose slides are missing (never generated, or their files are gone).</summary>
+        internal static bool NeedsImportAfterRestore(Item item) =>
+            item is IItemSyncable && item is MediaGroupItem group && SlideRegenerationCheck.NeedsSlideRegeneration(group);
 
         public static Item FindOrThrow(PlaylistInstance playlist, Guid itemId) =>
             playlist.Items.FirstOrDefault(i => i.UUID == itemId)

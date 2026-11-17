@@ -28,6 +28,17 @@ namespace HandsLiftedApp.Core.Undo
     }
 
     /// <summary>
+    /// A step that addresses things <em>by position</em> inside a playlist item (e.g. "slide 3 of this group"). Such a
+    /// step is only valid while that item's contents are the ones it was recorded against: if something outside
+    /// the undo system replaces them (a re-import), the step must be dropped, see
+    /// <see cref="UndoStack.DiscardStepsFor"/>.
+    /// </summary>
+    public interface IPositionalAction
+    {
+        bool AddressesItem(Guid itemId);
+    }
+
+    /// <summary>
     /// An undo/redo history for ONE scope (the playlist, or one editor window). Not a global singleton:
     /// the owner of the scope owns its stack, so Ctrl+Z in one scope can never undo another's edits.
     ///
@@ -144,6 +155,27 @@ namespace HandsLiftedApp.Core.Undo
             return true;
         }
 
+        /// <summary>
+        /// Drops every step (undo and redo side) that addresses the given item by position, because the item's contents
+        /// were just replaced by something that is not an undoable edit (a Sync / re-import, loading slides from a
+        /// file). Left in, such a step could silently hit the wrong slide. Steps that find their target by identity
+        /// (renames, theme changes, add/delete of the item itself) are unaffected and stay.
+        /// </summary>
+        /// <returns>How many steps were dropped.</returns>
+        public int DiscardStepsFor(Guid itemId)
+        {
+            bool About(IUndoableAction a) => a is IPositionalAction p && p.AddressesItem(itemId);
+
+            var removed = _undo.RemoveAll(About) + _redo.RemoveAll(About);
+            if (removed == 0) return 0;
+
+            Log.Debug("[UNDO] Dropped {Count} step(s) that addressed slides of item {Item} by position: its contents were replaced",
+                removed, itemId);
+            _lastRecordedAt = DateTime.MinValue; // never merge into a step that sits before a dropped one
+            NotifyChanged();
+            return removed;
+        }
+
         /// <summary>Forgets all history (playlist loaded / new).</summary>
         public void Clear()
         {
@@ -241,7 +273,7 @@ namespace HandsLiftedApp.Core.Undo
         }
 
         /// <summary>Several already-applied actions undone/redone as one step.</summary>
-        private sealed class CompositeAction : IUndoableAction
+        private sealed class CompositeAction : IUndoableAction, IPositionalAction
         {
             private readonly IReadOnlyList<IUndoableAction> _actions;
             public CompositeAction(string description, IReadOnlyList<IUndoableAction> actions)
@@ -251,6 +283,9 @@ namespace HandsLiftedApp.Core.Undo
             }
 
             public string Description { get; }
+
+            public bool AddressesItem(Guid itemId) =>
+                _actions.Any(a => a is IPositionalAction p && p.AddressesItem(itemId));
 
             public void Do()
             {

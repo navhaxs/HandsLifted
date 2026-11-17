@@ -206,6 +206,40 @@ Do not share these. Each has different config (e.g. motion bg uses `loop-file=in
 
 ---
 
+## Undo / redo (`HandsLiftedApp.Core/Undo/`)
+
+One `UndoStack` per **scope**: the playlist (`PlaylistInstance.UndoStack`, Edit menu + Ctrl+Z in `MainView`) and one per editor window (song editor, each custom slide inside a slide editor window, theme designer). Stacks never mix. UI thread only. A failed undo/redo clears that stack (a half-applied history is worse than none).
+
+**Which mechanism to use for a new edit**
+
+| Edit | Use |
+|---|---|
+| A command with a call site (add/delete/move) | `stack.Execute(new XAction(...))` |
+| A value a two-way binding writes (title box, slider, checkbox) | add it to the allow-list in `PlaylistPropertyRecorder` (playlist items) — it records old→new and merges typing/slider ticks |
+| An editor window with many ways to edit one object | a snapshot recorder: `SongEditRecorder`, `CustomSlideEditRecorder`, `ThemeEditRecorder` diff a whole-state snapshot and record before→after |
+| Several steps that are one user action | `stack.BeginTransaction(...)` / the recorder's `BeginBatch(...)` |
+
+**Rules learned the hard way**
+- Items are found again **by UUID**, never by object: undoing a delete rebuilds a *fresh* instance from an XML snapshot (`PlaylistItemSnapshot`), so any step holding the old instance is wrong.
+- Slides inside a group are found by **position** (`GroupSlideEdits`). Anything that replaces a group's whole `Items` list outside undo (Sync / re-import, group editor "Load") drops that group's position-based steps automatically (`PlaylistPropertyRecorder` → `UndoStack.DiscardStepsFor`). Undo/redo must edit `Items` in place and never swap the collection, or it would drop its own history. `MediaGroupItem` raises `Items` changed for *every* in-place edit, so compare the collection reference, not the property name.
+- Object-initializer assignments made after construction **are** recorded as edits: tests must `UndoStack.Clear()` after setup.
+- Snapshot comparison must ignore derived views. `BaseSlideTheme`'s `Calculated*` properties update asynchronously (and `BaseSlideTheme.CopyFrom` must skip them or it resets font weights) — never compare XML or all public properties of a theme.
+- Collections owned by a shared library object (song stanzas, theme list) are mutated in place on undo so the library's own change handlers and autosave fire.
+- Tests that touch `ReactiveObject`s with `ObserveOn(MainThreadScheduler)` pipelines should run inside `DispatcherTestThread.Run(...)`; otherwise the test dispatcher thread delivers derived-property notifications concurrently and a notification can occasionally be lost. Tests must not start real imports: `PlaylistItemSnapshot.StartImport` is stubbed in the assembly init.
+
+**Deliberately NOT undoable** (don't "fix" these without a design discussion)
+- Sync / re-import of PDF, PowerPoint, Google Slides and online-video items, and "Change PowerPoint file" (they refresh from an external source; generated files may be overwritten). Their effect on history is only to drop that group's position-based steps.
+- Group editor "Load" (replaces slides from a file) — same treatment as a re-import.
+- Files copied into the media library / playlist folder when media is added: undo removes the item, the file stays on disk.
+- Downloads (online video), the Setup window, and app preferences other than the default song/scripture themes ("Set as default" in the theme designer is undoable).
+- Song/theme **library file** operations (creating, renaming, deleting library files directly). Edits to a song or theme's *contents* are undoable.
+- In the playlist only a song's **title and theme** are recorded (while a song editor window has that song open, its edits go to the window's history instead — `SongEditRecorder.IsEditing`). Every other song edit happens in the song editor window, which has its own history.
+- Presentation state (Logo/Blank/Slides toggles) and the selected slide.
+
+Restored items have "save and reload" fidelity: generated slides are regenerated, and the selected slide inside the item resets. The Edit menu can't undo across a playlist load/new (history is cleared there).
+
+---
+
 ## A C# namespace does not tell you which project a file lives in
 
 This codebase does not enforce folder-equals-namespace or namespace-equals-project. Several runtime classes physically live in `HandsLiftedApp.Core` (folder-wise, e.g. under `Core/Models/RuntimeData/Slides/`) but declare themselves in the `HandsLiftedApp.Data.Slides`/`HandsLiftedApp.Data.Models.*` **namespace**, matching their base class's namespace rather than their own project (`ScriptureSlideInstance`, `SongItemInstance`, etc.). Likewise `ScriptureAddDialog` physically lives under `Views/AddItem/` but declares `namespace HandsLiftedApp.Core.Views` (flat), matching its folder-sibling `AddItemWindow`'s own namespace rather than `.AddItem`.

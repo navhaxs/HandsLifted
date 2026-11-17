@@ -68,9 +68,12 @@ namespace HandsLiftedApp.Core.Undo
         }
     }
 
-    internal abstract class GroupSlideAction : IUndoableAction
+    internal abstract class GroupSlideAction : IUndoableAction, IPositionalAction
     {
         private readonly Guid _groupId;
+
+        // these steps say "slide N of the group": see UndoStack.DiscardStepsFor
+        public bool AddressesItem(Guid itemId) => _groupId == itemId;
         private readonly MediaGroupItem _fallbackGroup;
         private readonly PlaylistInstance? _playlist;
         private readonly bool _regenerateOnFirstDo;

@@ -32,6 +32,7 @@ namespace HandsLiftedApp.Core.Undo
     {
         private readonly PlaylistInstance _playlist;
         private readonly int _ownerThread = Environment.CurrentManagedThreadId;
+        private readonly SynchronizationContext? _ownerContext = SynchronizationContext.Current;
         private readonly List<Attachment> _playlistAttachments = new();
         private readonly Dictionary<Item, List<Attachment>> _itemAttachments = new();
         private int _suppressed;
@@ -137,14 +138,38 @@ namespace HandsLiftedApp.Core.Undo
                 });
             }
 
+            var slideList = (item as MediaGroupItem)?.Items;
             Attach(item, attachments, itemWatches, onSourceChanged: name =>
             {
                 // the timer object itself was swapped: follow it
                 if (name == nameof(MediaGroupItem.AutoAdvanceTimer) && item is MediaGroupItem g)
                     AttachTimer(g, uuid, Find, attachments);
+
+                // The group's whole slide list was replaced by something outside the undo system (a Sync / re-import
+                // finishing, "Load" in the group editor). Undo itself never swaps the list, it edits it in place.
+                // Steps like "delete slide 3" no longer mean the same thing: drop them.
+                // ("Items" is also raised for every in-place edit, so compare the collection itself.)
+                if (name == nameof(MediaGroupItem.Items) && item is MediaGroupItem mg
+                    && !ReferenceEquals(mg.Items, slideList))
+                {
+                    slideList = mg.Items;
+                    DiscardPositionalSteps(uuid);
+                }
             });
 
             if (item is MediaGroupItem group) AttachTimer(group, uuid, Find, attachments);
+        }
+
+        private void DiscardPositionalSteps(Guid itemId)
+        {
+            if (_playlist.UndoStack.IsApplying || _playlist.IsPlaylistLoading) return;
+
+            // an import finishes on its worker thread; the history is only touched from the thread that owns the
+            // playlist, so hand the work back to it (its SynchronizationContext is the UI thread's in the app)
+            if (Environment.CurrentManagedThreadId == _ownerThread || _ownerContext == null)
+                _playlist.UndoStack.DiscardStepsFor(itemId);
+            else
+                _ownerContext.Post(_ => _playlist.UndoStack.DiscardStepsFor(itemId), null);
         }
 
         public void DetachItem(Item item)
