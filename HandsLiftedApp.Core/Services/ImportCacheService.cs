@@ -46,8 +46,52 @@ public static class ImportCacheService
             return false;
         }
 
+        // Images alone don't prove the conversion finished: a crashed or cancelled run leaves some behind.
+        // Only a directory whose conversion ran to the end (and was marked so) can be reused.
+        if (!File.Exists(Path.Combine(targetDirectory, CompletionMarkerFileName)))
+        {
+            return false;
+        }
+
         return Directory.EnumerateFiles(targetDirectory)
             .Any(filePath => ExportImageExtensions.Contains(Path.GetExtension(filePath)));
+    }
+
+    /// <summary>Written into a cache directory once a conversion has finished successfully.</summary>
+    public const string CompletionMarkerFileName = ".import-complete";
+
+    /// <summary>
+    /// Call before a fresh conversion into <paramref name="targetDirectory"/>: clears whatever an earlier,
+    /// unfinished run left (and its completion marker) so nothing stale is mixed into the new export.
+    /// </summary>
+    public static void BeginImport(string targetDirectory)
+    {
+        if (!Directory.Exists(targetDirectory)) return;
+        foreach (var file in Directory.EnumerateFiles(targetDirectory))
+        {
+            try { File.Delete(file); }
+            catch (IOException) { /* in use: it will be overwritten by the new export */ }
+        }
+    }
+
+    /// <summary>Records that the conversion into <paramref name="targetDirectory"/> finished, so it may be reused.</summary>
+    public static void MarkImportComplete(string targetDirectory)
+    {
+        File.WriteAllText(Path.Combine(targetDirectory, CompletionMarkerFileName), DateTime.UtcNow.ToString("O"));
+    }
+
+    /// <summary>
+    /// A sub-directory of <paramref name="parentDirectory"/> named after the content of <paramref name="contentFile"/>,
+    /// for sources that have no content-keyed directory of their own (Google Slides). Changed content gets a new
+    /// directory, so image paths never repeat for different pictures.
+    /// </summary>
+    public static string GetContentSubdirectory(string parentDirectory, string contentFile, string prefix)
+    {
+        using var stream = File.OpenRead(contentFile);
+        var hash = Convert.ToHexString(SHA256.HashData(stream))[..16];
+        var dir = Path.Combine(parentDirectory, prefix + hash);
+        Directory.CreateDirectory(dir);
+        return dir;
     }
 
     /// <summary>Cache dir for a local file. Stable per file content, so it survives the source file moving to a different absolute path (e.g. a different machine).</summary>

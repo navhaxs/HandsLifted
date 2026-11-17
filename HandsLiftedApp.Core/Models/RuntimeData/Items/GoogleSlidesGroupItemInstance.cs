@@ -173,11 +173,30 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                                 this.Title = importStats.Title;
                             }
 
-                            string exportDirectory = Path.Join(targetDirectory, "_export");
-                            Directory.CreateDirectory(exportDirectory);
+                            // The cache directory is keyed by presentation id, which says nothing about content. Export
+                            // the downloaded PDF into a directory named after *its* content: an edited deck gets fresh
+                            // pages at fresh paths (no leftovers, no stale cached images), an unchanged one is reused.
+                            string exportDirectory = ImportCacheService.GetContentSubdirectory(
+                                targetDirectory, importStats.OutputFullFilePath, "_export_");
 
-                            Log.Debug($"Importing PDF file: {importStats.OutputFullFilePath}");
-                            ConvertPDF.Convert(new ImportTask() { InputFile = importStats.OutputFullFilePath, OutputDirectory = exportDirectory, ExportFileFormat = ImportTask.ExportFileFormatType.PNG});
+                            if (ImportCacheService.HasUsableCachedExports(exportDirectory))
+                            {
+                                Log.Debug("Reusing cached Google Slides pages from {ExportDirectory}", exportDirectory);
+                            }
+                            else
+                            {
+                                ImportCacheService.BeginImport(exportDirectory);
+                                Log.Debug($"Importing PDF file: {importStats.OutputFullFilePath}");
+                                var converted = PdfRasterizer.Convert(new ImportTask()
+                                {
+                                    InputFile = importStats.OutputFullFilePath,
+                                    OutputDirectory = exportDirectory,
+                                    ExportFileFormat = ImportTask.ExportFileFormatType.PNG
+                                });
+                                if (!converted)
+                                    throw new InvalidOperationException("Google Slides page conversion did not complete");
+                                ImportCacheService.MarkImportComplete(exportDirectory);
+                            }
 
                             var oldKeys = _slideKeys;
                             var oldIndex = SelectedSlideIndex;
@@ -185,6 +204,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             var newItems = new TrulyObservableCollection<GroupItem>();
                             var files = new List<string>();
                             foreach (var convertedFilePath in Directory.GetFiles(exportDirectory)
+                                         .Where(f => !Path.GetFileName(f).StartsWith("."))
                                          .OrderBy(x => x, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
                             {
                                 newItems.Add(new MediaItem()

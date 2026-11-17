@@ -102,6 +102,7 @@ public class ImportCacheServiceTests
         Directory.CreateDirectory(dir);
         File.WriteAllText(Path.Combine(dir, "slide1.png"), "png-bytes");
         File.WriteAllText(Path.Combine(dir, "slide2.png"), "png-bytes");
+        ImportCacheService.MarkImportComplete(dir);
 
         Assert.IsTrue(ImportCacheService.HasUsableCachedExports(dir));
     }
@@ -113,6 +114,7 @@ public class ImportCacheServiceTests
         Directory.CreateDirectory(dir);
         File.WriteAllText(Path.Combine(dir, "sermon.pdf"), "pdf-bytes");
         File.WriteAllText(Path.Combine(dir, "slide1.JPG"), "jpg-bytes");
+        ImportCacheService.MarkImportComplete(dir);
 
         Assert.IsTrue(ImportCacheService.HasUsableCachedExports(dir));
     }
@@ -125,7 +127,56 @@ public class ImportCacheServiceTests
         var dir = Path.Combine(_tempDir, "warm-cache-video-only");
         Directory.CreateDirectory(dir);
         File.WriteAllText(Path.Combine(dir, "Slide.1.mp4"), "mp4-bytes");
+        ImportCacheService.MarkImportComplete(dir);
 
         Assert.IsTrue(ImportCacheService.HasUsableCachedExports(dir));
+    }
+
+    [TestMethod]
+    public void HasUsableCachedExports_ImagesButNoCompletionMarker_ReturnsFalse()
+    {
+        var dir = Path.Combine(_tempDir, "interrupted");
+        Directory.CreateDirectory(dir);
+        // a conversion that crashed half way leaves some pages behind: not a usable cache
+        File.WriteAllText(Path.Combine(dir, "Slide.1.png"), "png-bytes");
+
+        Assert.IsFalse(ImportCacheService.HasUsableCachedExports(dir));
+    }
+
+    [TestMethod]
+    public void BeginImport_ClearsLeftoversAndTheMarker()
+    {
+        var dir = Path.Combine(_tempDir, "stale");
+        Directory.CreateDirectory(dir);
+        File.WriteAllText(Path.Combine(dir, "Slide.1.png"), "old");
+        File.WriteAllText(Path.Combine(dir, "Slide.2.png"), "old");
+        ImportCacheService.MarkImportComplete(dir);
+        Assert.IsTrue(ImportCacheService.HasUsableCachedExports(dir));
+
+        ImportCacheService.BeginImport(dir);
+
+        Assert.AreEqual(0, Directory.GetFiles(dir).Length);
+        Assert.IsFalse(ImportCacheService.HasUsableCachedExports(dir));
+    }
+
+    [TestMethod]
+    public void GetContentSubdirectory_FollowsTheContentOfTheFile()
+    {
+        var parent = Path.Combine(_tempDir, "google");
+        Directory.CreateDirectory(parent);
+        var v1 = Path.Combine(parent, "deck-v1.pdf");
+        var v1Again = Path.Combine(parent, "deck-v1-again.pdf");
+        var v2 = Path.Combine(parent, "deck-v2.pdf");
+        File.WriteAllText(v1, "version one");
+        File.WriteAllText(v1Again, "version one");
+        File.WriteAllText(v2, "version two");
+
+        var a = ImportCacheService.GetContentSubdirectory(parent, v1, "_export_");
+        var b = ImportCacheService.GetContentSubdirectory(parent, v1Again, "_export_");
+        var c = ImportCacheService.GetContentSubdirectory(parent, v2, "_export_");
+
+        Assert.AreEqual(a, b, "unchanged content reuses the directory");
+        Assert.AreNotEqual(a, c, "edited content gets a fresh directory, so image paths never repeat");
+        Assert.IsTrue(Directory.Exists(c));
     }
 }

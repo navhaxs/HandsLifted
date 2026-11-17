@@ -169,6 +169,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         return;
                     }
 
+                    ImportCacheService.BeginImport(targetDirectory);
                     Log.Debug($"Importing PowerPoint file (Syncfusion): {SourcePresentationFile}");
                     string convertedPdfPath = PresentationFileFormatConverter.Run(new ImportTask
                     {
@@ -178,12 +179,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }, new ImportTaskReporter(stats => { }));
 
                     Log.Debug($"Converting PDF to slides: {SourcePresentationFile}");
-                    ConvertPDF.Convert(new ImportTask
+                    var converted = PdfRasterizer.Convert(new ImportTask
                     {
                         InputFile = convertedPdfPath,
                         OutputDirectory = targetDirectory,
                         ExportFileFormat = ImportTask.ExportFileFormatType.PDF
-                    }, new ImportTaskReporter(stats => { }));
+                    });
+                    if (!converted) throw new InvalidOperationException("PowerPoint page conversion did not complete");
+                    ImportCacheService.MarkImportComplete(targetDirectory);
 
                     ExtractEmbeddedVideos(targetDirectory);
 
@@ -218,6 +221,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         return;
                     }
 
+                    ImportCacheService.BeginImport(targetDirectory);
                     Log.Debug($"Importing PowerPoint file (native COM): {SourcePresentationFile}");
 
                     // Route through PDF (PowerPoint's SaveAs exporter) rather than Slide.Export("PNG"),
@@ -244,12 +248,14 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }
 
                     Log.Debug($"Converting PDF to slides: {SourcePresentationFile}");
-                    ConvertPDF.Convert(new ImportTask
+                    var converted = PdfRasterizer.Convert(new ImportTask
                     {
                         InputFile = result.OutputFilePath,
                         OutputDirectory = targetDirectory,
                         ExportFileFormat = ImportTask.ExportFileFormatType.PDF
-                    }, new ImportTaskReporter(stats => { }));
+                    });
+                    if (!converted) throw new InvalidOperationException("PowerPoint page conversion did not complete");
+                    ImportCacheService.MarkImportComplete(targetDirectory);
 
                     ExtractEmbeddedVideos(targetDirectory);
 

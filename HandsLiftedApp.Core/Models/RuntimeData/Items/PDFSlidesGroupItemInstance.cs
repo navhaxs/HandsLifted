@@ -157,15 +157,17 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             {
                                 Log.Debug($"Importing PDF file: {SourcePresentationFile}");
 
-                                ConvertPDF.Convert(new ImportTask()
-                                    {
-                                        InputFile = SourcePresentationFile,
-                                        OutputDirectory = targetDirectory,
-                                        ExportFileFormat = ImportTask.ExportFileFormatType.PNG
-                                    }, new ImportTaskReporter(stats =>
-                                    {
-                                        OnProgressUpdate(stats.JobPercentage);
-                                    }));
+                                ImportCacheService.BeginImport(targetDirectory);
+                                var converted = PdfRasterizer.Convert(new ImportTask()
+                                {
+                                    InputFile = SourcePresentationFile,
+                                    OutputDirectory = targetDirectory,
+                                    ExportFileFormat = ImportTask.ExportFileFormatType.PNG
+                                }, stats => OnProgressUpdate(stats.JobPercentage));
+
+                                if (!converted)
+                                    throw new InvalidOperationException("PDF conversion did not complete");
+                                ImportCacheService.MarkImportComplete(targetDirectory);
                             }
 
                             ApplySlidesFromDirectory(targetDirectory);
