@@ -296,4 +296,61 @@ public class SongEditRecorderTests
         e.Song.Title = "After close";
         Assert.IsFalse(e.Stack.CanUndo);
     }
+
+    [TestMethod]
+    public void QuickLyricsEditsInDifferentSections_AreSeparateSteps()
+    {
+        var clock = new DateTime(2026, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var e = Open(timeControlled: true, now: () => clock);
+
+        e.Song.Stanzas[0].Lyrics = "Amazing grace!";
+        clock = clock.AddMilliseconds(300);
+        e.Song.Stanzas[0].Lyrics = "Amazing grace!!"; // same section: merges
+        clock = clock.AddMilliseconds(300);
+        e.Song.Stanzas[1].Lyrics = "How sweet the sound!"; // another section, well inside the merge window
+
+        e.Stack.Undo();
+        Assert.AreEqual("How sweet the sound", e.Song.Stanzas[1].Lyrics);
+        Assert.AreEqual("Amazing grace!!", e.Song.Stanzas[0].Lyrics, "the first section's edit is a step of its own");
+        e.Stack.Undo();
+        Assert.AreEqual("Amazing grace", e.Song.Stanzas[0].Lyrics);
+        Assert.IsFalse(e.Stack.CanUndo);
+    }
+
+    [TestMethod]
+    public void SuppressedChangeInsideABatch_IsNotRecordedAsAnEdit()
+    {
+        var e = Open();
+        using (e.Recorder.BeginBatch("Apply Lyrics Text"))
+        {
+            using (e.Recorder.Suppress())
+            {
+                e.Song.Copyright = "Set by code";
+            }
+        }
+
+        Assert.IsFalse(e.Stack.CanUndo, "the batch held no user edit");
+        e.Song.Title = "Typed";
+        e.Stack.Undo();
+        Assert.AreEqual("Set by code", e.Song.Copyright);
+        Assert.AreEqual("Amazing Grace", e.Song.Title);
+    }
+
+    [TestMethod]
+    public void UserEditBeforeASuppressedChangeInsideABatch_IsStillRecorded()
+    {
+        var e = Open();
+        using (e.Recorder.BeginBatch("Apply Lyrics Text"))
+        {
+            e.Song.Title = "Typed";
+            using (e.Recorder.Suppress())
+            {
+                e.Song.Copyright = "Set by code";
+            }
+        }
+
+        Assert.AreEqual("Undo Apply Lyrics Text", e.Stack.UndoMenuText);
+        e.Stack.Undo();
+        Assert.AreEqual("Amazing Grace", e.Song.Title);
+    }
 }

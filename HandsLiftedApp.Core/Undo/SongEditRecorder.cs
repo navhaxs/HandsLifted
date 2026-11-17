@@ -92,12 +92,18 @@ namespace HandsLiftedApp.Core.Undo
         /// <summary>Changes made inside the returned scope are not recorded (but the next edit still diffs correctly).</summary>
         public IDisposable Suppress()
         {
-            Interlocked.Increment(ref _suppressed);
+            // Inside a batch the baseline can only be moved up if the user hasn't edited anything in the batch yet;
+            // otherwise that earlier edit would be swallowed with it (and the step then carries the suppressed change).
+            if (Interlocked.Increment(ref _suppressed) == 1)
+                _suppressedBeforeAnyBatchEdit = _batchDepth == 0 || Capture()?.Equals(_last) == true;
+
             return new Scope(() =>
             {
-                if (Interlocked.Decrement(ref _suppressed) == 0 && _batchDepth == 0) _last = Capture();
+                if (Interlocked.Decrement(ref _suppressed) == 0 && _suppressedBeforeAnyBatchEdit) _last = Capture();
             });
         }
+
+        private bool _suppressedBeforeAnyBatchEdit;
 
         public void Dispose() => Detach();
 
@@ -299,12 +305,16 @@ namespace HandsLiftedApp.Core.Undo
         private SongSnapshot _after;
         private readonly Action<SongSnapshot> _write;
 
+        // which sections this step changed: typing in one section must not merge into an edit of another
+        private readonly string _sections;
+
         public SongStateAction(SongSnapshot before, SongSnapshot after, string description, Action<SongSnapshot> write)
         {
             _before = before;
             _after = after;
             Description = description;
             _write = write;
+            _sections = SongSnapshot.ChangedSections(before, after);
         }
 
         public string Description { get; }
@@ -314,7 +324,8 @@ namespace HandsLiftedApp.Core.Undo
 
         public bool TryMerge(IUndoableAction next)
         {
-            if (next is not SongStateAction n || n.Description != Description || !Mergeable.Contains(Description))
+            if (next is not SongStateAction n || n.Description != Description || !Mergeable.Contains(Description)
+                || n._sections != _sections)
                 return false;
 
             _after = n._after;
@@ -389,6 +400,16 @@ namespace HandsLiftedApp.Core.Undo
         public bool Equals(SongSnapshot? other) => other != null && _key == other._key;
         public override bool Equals(object? obj) => Equals(obj as SongSnapshot);
         public override int GetHashCode() => _key.GetHashCode();
+
+        /// <summary>The ids of the sections whose name, lyrics or theme differ between two snapshots (sorted, joined).</summary>
+        public static string ChangedSections(SongSnapshot a, SongSnapshot b)
+        {
+            var before = a.Stanzas.ToDictionary(s => s.Id);
+            return string.Join(",", b.Stanzas
+                .Where(s => before.TryGetValue(s.Id, out var old) && old != s)
+                .Select(s => s.Id)
+                .OrderBy(id => id));
+        }
 
         /// <summary>A menu label for the difference between two snapshots.</summary>
         public static string Describe(SongSnapshot a, SongSnapshot b)

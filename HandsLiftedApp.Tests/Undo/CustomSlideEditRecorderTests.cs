@@ -265,4 +265,27 @@ public class CustomSlideEditRecorderTests
         Assert.IsFalse(stack.CanUndo);
         return Task.CompletedTask;
     });
+
+    [TestMethod]
+    public Task DraggingTwoDifferentElementsInQuickSuccession_IsTwoSteps() => DispatcherTestThread.Run(() =>
+    {
+        var clock = new DateTime(2026, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+        var (slide, stack, _) = Open(() => clock);
+        var text = slide.SlideElements[0];
+        var image = slide.SlideElements[1];
+
+        text.X = 150;
+        clock = clock.AddMilliseconds(200);
+        image.X = 60; // another element, well inside the merge window
+        clock = clock.AddMilliseconds(200);
+        image.X = 70; // same element again: still one step
+
+        stack.Undo();
+        Assert.AreEqual(10, image.X);
+        Assert.AreEqual(150, text.X, "the text element's move is a step of its own");
+        stack.Undo();
+        Assert.AreEqual(100, text.X);
+        Assert.IsFalse(stack.CanUndo);
+        return Task.CompletedTask;
+    });
 }

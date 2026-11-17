@@ -181,12 +181,16 @@ namespace HandsLiftedApp.Core.Undo
         private SlideSnapshot _after;
         private readonly Action<SlideSnapshot> _write;
 
+        // which elements this step changed: dragging one element must not merge into an edit of another
+        private readonly string _elements;
+
         public SlideStateAction(SlideSnapshot before, SlideSnapshot after, string description, Action<SlideSnapshot> write)
         {
             _before = before;
             _after = after;
             Description = description;
             _write = write;
+            _elements = SlideSnapshot.ChangedElements(before, after);
         }
 
         public string Description { get; private set; }
@@ -198,7 +202,7 @@ namespace HandsLiftedApp.Core.Undo
 
         public bool TryMerge(IUndoableAction next)
         {
-            if (next is not SlideStateAction n) return false;
+            if (next is not SlideStateAction n || n._elements != _elements) return false;
 
             // A resize writes X, Y, Width and Height one property at a time, so one drag alternates between
             // "move" and "resize" snapshots: geometry edits merge with each other, and the step is a resize if
@@ -238,6 +242,13 @@ namespace HandsLiftedApp.Core.Undo
         public bool Equals(SlideSnapshot? other) => other != null && _key == other._key;
         public override bool Equals(object? obj) => Equals(obj as SlideSnapshot);
         public override int GetHashCode() => _key.GetHashCode();
+
+        /// <summary>The positions of the elements that differ between two snapshots of a slide with the same elements.</summary>
+        public static string ChangedElements(SlideSnapshot a, SlideSnapshot b)
+        {
+            if (a.Elements.Count != b.Elements.Count) return "";
+            return string.Join(",", Enumerable.Range(0, a.Elements.Count).Where(i => a.Elements[i].Key != b.Elements[i].Key));
+        }
 
         public static string Describe(SlideSnapshot a, SlideSnapshot b)
         {
