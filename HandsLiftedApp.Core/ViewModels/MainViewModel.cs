@@ -653,6 +653,13 @@ public class MainViewModel : ViewModelBase
 
                     // Selection is preserved by the action (what was selected stays selected).
                     Playlist.UndoStack.Execute(new InsertPlaylistItemAction(Playlist, itemToInsert, insertIndex, "Add Item"));
+
+                    // A PowerPoint / PDF item has no slides until it is imported (dropping a file does the same).
+                    if (addItemMessage.Type == AddItemMessage.AddItemType.Presentation
+                        && itemToInsert is IItemSyncable presentation)
+                    {
+                        presentation.Sync();
+                    }
                 }
             });
 
