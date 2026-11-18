@@ -12,8 +12,11 @@ public record SlideRenderSpec(
 public abstract record BackgroundSpec;
 public record TransparentBackground() : BackgroundSpec;
 public record SolidBackground(SKColor Color) : BackgroundSpec;
-public record ImageBackground(string FilePath) : BackgroundSpec;
-public record SkiaBitmapBackground(SKBitmap Bitmap) : BackgroundSpec;
+/// <param name="BackColor">Drawn first, behind the image. Null = nothing behind it (the canvas below shows through).</param>
+/// <param name="Opacity">0..1 strength of the image over <paramref name="BackColor"/>.</param>
+public record ImageBackground(string FilePath, SKColor? BackColor = null, float Opacity = 1f) : BackgroundSpec;
+/// <inheritdoc cref="ImageBackground"/>
+public record SkiaBitmapBackground(SKBitmap Bitmap, SKColor? BackColor = null, float Opacity = 1f) : BackgroundSpec;
 
 public abstract record RenderElement(SKRect Bounds);
 

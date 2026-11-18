@@ -37,16 +37,9 @@ public static class ScriptureParagraphSpecBuilder
         return new SlideRenderSpec(bg, elements);
     }
 
-    private static BackgroundSpec BuildBackground(ScriptureSlideInstance slide)
-    {
-        if (!string.IsNullOrEmpty(slide.Theme?.BackgroundGraphicFilePath))
-            return new ImageBackground(slide.Theme.BackgroundGraphicFilePath);
-
-        var bg = slide.Theme != null
-            ? ToSkColor(slide.Theme.BackgroundAvaloniaColour)
-            : SKColors.Black;
-        return new SolidBackground(bg);
-    }
+    // Scripture slides have no motion background.
+    private static BackgroundSpec BuildBackground(ScriptureSlideInstance slide) =>
+        ThemeBackgroundSpecBuilder.Build(slide.Theme, hasMotionBackground: false);
 
     private static IReadOnlyList<RenderElement> BuildTextElements(
         IReadOnlyList<ScriptureParagraphLine> lines, BaseSlideTheme theme, float bodyFontSize)

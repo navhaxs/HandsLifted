@@ -36,19 +36,8 @@ public static class SongSlideSpecBuilder
         return new SlideRenderSpec(bg, elements);
     }
 
-    private static BackgroundSpec BuildBackground(SongSlideInstance slide)
-    {
-        if (slide.HasMotionBackground)
-            return new TransparentBackground();
-
-        if (!string.IsNullOrEmpty(slide.Theme?.BackgroundGraphicFilePath))
-            return new ImageBackground(slide.Theme.BackgroundGraphicFilePath);
-
-        var bg = slide.Theme != null
-            ? ToSkColor(slide.Theme.BackgroundAvaloniaColour)
-            : SKColors.Black;
-        return new SolidBackground(bg);
-    }
+    private static BackgroundSpec BuildBackground(SongSlideInstance slide) =>
+        ThemeBackgroundSpecBuilder.Build(slide.Theme, slide.HasMotionBackground);
 
     private static IReadOnlyList<RenderElement> BuildTextElements(string text, BaseSlideTheme theme)
     {

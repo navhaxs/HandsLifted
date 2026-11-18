@@ -47,22 +47,8 @@ public static class SongTitleSlideSpecBuilder
         return new SlideRenderSpec(bg, elements);
     }
 
-    private static BackgroundSpec BuildBackground(SongTitleSlideInstance slide, SKBitmap? videoFrame = null)
-    {
-        if (videoFrame != null)
-            return new SkiaBitmapBackground(videoFrame);
-
-        if (slide.HasMotionBackground)
-            return new TransparentBackground();
-
-        if (!string.IsNullOrEmpty(slide.Theme?.BackgroundGraphicFilePath))
-            return new ImageBackground(slide.Theme.BackgroundGraphicFilePath);
-
-        var bg = slide.Theme != null
-            ? ToSkColor(slide.Theme.BackgroundAvaloniaColour)
-            : SKColors.Black;
-        return new SolidBackground(bg);
-    }
+    private static BackgroundSpec BuildBackground(SongTitleSlideInstance slide, SKBitmap? videoFrame = null) =>
+        ThemeBackgroundSpecBuilder.Build(slide.Theme, slide.HasMotionBackground, videoFrame);
 
     private static TextLineElement BuildTitleElement(string title, BaseSlideTheme theme, float copyrightTop)
     {

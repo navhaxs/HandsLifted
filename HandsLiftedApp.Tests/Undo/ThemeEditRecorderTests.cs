@@ -84,6 +84,21 @@ public class ThemeEditRecorderTests
     });
 
     [TestMethod]
+    public Task ChangingBackgroundOpacity_IsUndoable_AndLabelledChangeBackground() => DispatcherTestThread.Run(() =>
+    {
+        var (themes, stack, _) = Open();
+
+        themes[0].BackgroundOpacity = 40;
+
+        Assert.AreEqual("Undo Change Background", stack.UndoMenuText);
+        stack.Undo();
+        Assert.AreEqual(100, themes[0].BackgroundOpacity);
+        stack.Redo();
+        Assert.AreEqual(40, themes[0].BackgroundOpacity);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
     public Task UndoRestoresEverySetting_IncludingAFontWeightThatIsNotNormalOrBold() => DispatcherTestThread.Run(() =>
     {
         var (themes, stack, _) = Open();

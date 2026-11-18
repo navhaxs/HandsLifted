@@ -58,6 +58,21 @@ public class SongSlideSpecBuilderTests
     }
 
     [TestMethod]
+    public void Build_ImageThemeWithOpacity_CarriesOpacity()
+    {
+        var slide = new SongSlideInstance(null, null, "id-opacity") { Text = "Test" };
+        slide.Theme = MakeTheme();
+        slide.Theme.BackgroundGraphicFilePath = "some/image.png";
+        slide.Theme.BackgroundOpacity = 40;
+
+        var spec = SongSlideSpecBuilder.Build(slide);
+
+        var img = (ImageBackground)spec.Background;
+        Assert.AreEqual("some/image.png", img.FilePath);
+        Assert.AreEqual(0.4f, img.Opacity);
+    }
+
+    [TestMethod]
     public void Build_EmptyText_ReturnsEmptyElements()
     {
         var slide = new SongSlideInstance(null, null, "id4") { Text = "" };

@@ -91,6 +91,10 @@ DisposeContext(ref _motionMpvContext)
 
 ---
 
+### Theme background opacity over a motion video
+
+`BaseSlideTheme.BackgroundOpacity` (0-100) blends the theme's image/video over `BackgroundColour`. For a **motion video** this is NOT done by changing the video layer's opacity (that layer is owned by `MotionBackgroundLayer` and sits below the canvas): `ThemeBackgroundSpecBuilder` returns `SolidBackground(colour, alpha = 1 - opacity)` so the canvas paints the colour *over* the video (source-over = `colour*(1-o) + video*o`). At 100 it returns `TransparentBackground`, as before. Images/video-frame thumbnails instead carry `BackColor` + `Opacity` on `ImageBackground`/`SkiaBitmapBackground`.
+
 ## avares:// path mangling
 
 The playlist XML serializer converts `avares://Assembly/path` to a relative path on save. On deserialization, `ToAbsolutePath(playlistDir, relative)` produces a garbage Windows path like:

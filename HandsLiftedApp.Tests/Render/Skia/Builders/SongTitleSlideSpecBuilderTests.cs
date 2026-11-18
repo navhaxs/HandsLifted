@@ -88,6 +88,34 @@ public class SongTitleSlideSpecBuilderTests
     }
 
     [TestMethod]
+    public void Build_ImageThemeWithOpacity_CarriesOpacity()
+    {
+        var slide = new SongTitleSlideInstance(null) { Title = "Test", Copyright = "" };
+        slide.Theme = MakeTheme();
+        slide.Theme.BackgroundGraphicFilePath = "some/image.png";
+        slide.Theme.BackgroundOpacity = 40;
+
+        var spec = SongTitleSlideSpecBuilder.Build(slide);
+
+        Assert.AreEqual(0.4f, ((ImageBackground)spec.Background).Opacity);
+    }
+
+    [TestMethod]
+    public void Build_VideoFrameWithOpacity_CarriesColourAndOpacity()
+    {
+        var slide = new SongTitleSlideInstance(null) { Title = "Test", Copyright = "" };
+        slide.Theme = MakeTheme();
+        slide.Theme.BackgroundOpacity = 40;
+        using var videoFrame = new SkiaSharp.SKBitmap(4, 4);
+
+        var spec = SongTitleSlideSpecBuilder.Build(slide, videoFrame);
+
+        var bg = (SkiaBitmapBackground)spec.Background;
+        Assert.AreEqual(SKColors.Black, bg.BackColor);
+        Assert.AreEqual(0.4f, bg.Opacity);
+    }
+
+    [TestMethod]
     public void Build_VideoFrameTakesPriorityOverThemeImage()
     {
         var slide = new SongTitleSlideInstance(null) { Title = "Test", Copyright = "" };
