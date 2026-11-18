@@ -2,6 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using HandsLiftedApp.Core.Services;
+using HandsLiftedApp.Core.Services.GoogleSignIn;
 using HandsLiftedApp.Core.Views.Confirmation;
 using HandsLiftedApp.Data;
 using HandsLiftedApp.Data.Models.Items;
@@ -23,7 +24,7 @@ using HandsLiftedApp.Importer.PDF;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 {
-    public class GoogleSlidesGroupItemInstance : GoogleSlidesGroupItem, IItemInstance, IItemDirtyBit, IItemSyncable, ISlideHoldable
+    public class GoogleSlidesGroupItemInstance : GoogleSlidesGroupItem, IItemInstance, IItemDirtyBit, IItemSyncable, ISlideHoldable, IGoogleSyncWaiter
     {
         public PlaylistInstance ParentPlaylist { get; set; }
 
@@ -56,6 +57,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         private BlankSlide _blankSlide = new();
 
         private static readonly object syncSlidesLock = new object();
+
+        // Set when a sign-in that this item waited on succeeded, so the retried Sync() does not prompt again.
+        private volatile bool _resumedAfterSignIn;
 
         public GoogleSlidesGroupItemInstance(PlaylistInstance parentPlaylist)
         {
@@ -148,6 +152,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 Callback = () =>
                 {
+                    // Read and clear: only the sync that follows a successful sign-in may not ask for another one.
+                    var resumedAfterSignIn = _resumedAfterSignIn;
+                    _resumedAfterSignIn = false;
+                    var handedOff = false;
+
                     lock (syncSlidesLock)
                     {
                         try
@@ -229,65 +238,37 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                         }
                         catch (TokenExpiredImportException)
                         {
-                            Log.Warning("Google Slides token expired - prompting reauth");
-                            var clientId = Globals.Instance.AppPreferences.GoogleClientId;
-                            var clientSecret = Globals.Instance.AppPreferences.GoogleClientSecret;
-
-                            if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
+                            if (resumedAfterSignIn)
                             {
-                                Log.Warning("Google Slides reauth requested but Client ID/Secret is not configured");
-                                Dispatcher.UIThread.Post(() =>
-                                {
-                                    var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-                                    new GoogleSlidesReauthWindow(
-                                        "Google Sign-In Not Configured",
-                                        "Google Client ID and Client Secret are not set. Open Setup and enter them before syncing Google Slides.",
-                                        isError: true).ShowDialog(mainWindow);
-                                });
+                                // A fresh sign-in was just accepted yet Google still rejects the token: asking again
+                                // would loop forever, so tell the user and release the item as for any other failure.
+                                Log.Warning("Google Slides token still rejected right after a successful sign-in");
+                                GoogleSlidesReauthWindow.ShowError("Google Sign-In Failed",
+                                    "Google did not accept the new sign-in. Try signing in again from Setup.");
                             }
                             else
                             {
-                                var tcs = new TaskCompletionSource<bool>();
-                                Dispatcher.UIThread.Post(async () =>
+                                Log.Warning("Google Slides token expired - handing this sync to the sign-in coordinator");
+                                // Hand off without blocking: the coordinator runs the sign-in on its own task and
+                                // calls ResumeAfterSignIn / AbandonSignIn when it ends. The item stays busy until then.
+                                // The owner window is a UI object, so it is read on the UI thread.
+                                handedOff = true;
+                                Dispatcher.UIThread.Post(() =>
                                 {
                                     try
                                     {
-                                        Log.Warning("[GoogleSlidesReauth] Post callback entered on UI thread");
-                                        var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-                                        Log.Warning("[GoogleSlidesReauth] mainWindow={MainWindow}", mainWindow == null ? "NULL" : mainWindow.GetType().Name);
-                                        var dialog = new GoogleSlidesReauthWindow();
-                                        Log.Warning("[GoogleSlidesReauth] dialog constructed, calling ShowDialog");
-                                        await dialog.ShowDialog(mainWindow);
-                                        Log.Warning("[GoogleSlidesReauth] ShowDialog returned, Confirmed={Confirmed}", dialog.Confirmed);
-                                        tcs.SetResult(dialog.Confirmed);
+                                        var mainWindow =
+                                            (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)
+                                            ?.MainWindow;
+                                        _ = GoogleSignInCoordinator.Instance.RequestSignIn(mainWindow, showExplanation: true,
+                                            waiter: this);
                                     }
                                     catch (Exception ex)
                                     {
-                                        Log.Error(ex, "[GoogleSlidesReauth] exception in Post callback");
-                                        tcs.SetException(ex);
+                                        Log.Error(ex, "Could not start Google sign-in for a Google Slides sync");
+                                        AbandonSignIn();
                                     }
                                 });
-                                bool confirmed = tcs.Task.GetAwaiter().GetResult();
-
-                                if (confirmed)
-                                {
-                                    try
-                                    {
-                                        Main.RevokeAndReauth(clientId, clientSecret);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Error(ex, "[GoogleSlidesReauth] RevokeAndReauth failed");
-                                        Dispatcher.UIThread.Post(() =>
-                                        {
-                                            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-                                            new GoogleSlidesReauthWindow(
-                                                "Google Sign-In Failed",
-                                                $"Could not complete Google sign-in: {ex.Message}",
-                                                isError: true).ShowDialog(mainWindow);
-                                        });
-                                    }
-                                }
                             }
                         }
                         catch (ImportFailureException e)
@@ -315,10 +296,23 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             });
                         }
 
-                        IsBusy = false;
+                        // Left busy only when handed to the sign-in coordinator, which clears it via Resume/Abandon.
+                        if (!handedOff) IsBusy = false;
                     }
                 }
             });
+        }
+
+        public void ResumeAfterSignIn()
+        {
+            _resumedAfterSignIn = true;
+            IsBusy = false; // Sync() returns early while busy
+            Sync();
+        }
+
+        public void AbandonSignIn()
+        {
+            IsBusy = false;
         }
     }
 }

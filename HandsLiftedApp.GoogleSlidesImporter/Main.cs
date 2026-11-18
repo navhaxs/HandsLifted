@@ -206,20 +206,6 @@ namespace HandsLiftedApp.Importer.GoogleSlides
             public string OutputDirectory { get; set; }
         }
 
-        public static void RevokeAndReauth(string clientId, string clientSecret)
-        {
-            string credPath = "token.json";
-            if (File.Exists(credPath))
-                File.Delete(credPath);
-
-            GoogleWebAuthorizationBroker.AuthorizeAsync(
-                new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
-                Scopes,
-                "user",
-                CancellationToken.None,
-                new FileDataStore(credPath, true)).GetAwaiter().GetResult();
-        }
-
         public static string ReplaceInvalidChars(string filename)
         {
             return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));

@@ -19,6 +19,14 @@ public class GoogleSignInCoordinator
         "Google Client ID and Client Secret are not set. Open Setup and enter them before syncing Google Slides.";
     private const string FailedTitle = "Google Sign-In Failed";
 
+    private static readonly Lazy<GoogleSignInCoordinator> _instance = new(() =>
+        new GoogleSignInCoordinator(new GoogleSignInRunner(), new AvaloniaGoogleSignInUi(),
+            () => (Globals.Instance.AppPreferences.GoogleClientId,
+                Globals.Instance.AppPreferences.GoogleClientSecret)));
+
+    /// <summary>The app-wide coordinator, shared by every sync and the Setup window.</summary>
+    public static GoogleSignInCoordinator Instance => _instance.Value;
+
     private readonly IGoogleSignInRunner _runner;
     private readonly IGoogleSignInUi _ui;
     private readonly Func<(string? ClientId, string? ClientSecret)> _credentials;
