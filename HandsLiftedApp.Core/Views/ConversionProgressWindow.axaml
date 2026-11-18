@@ -1,0 +1,41 @@
+<Window
+    CanResize="False"
+    SizeToContent="Height"
+    Title="Converting"
+    Width="460"
+    WindowStartupLocation="CenterOwner"
+    x:Class="HandsLiftedApp.Core.Views.ConversionProgressWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Margin="20" Spacing="12">
+        <TextBlock
+            FontSize="16"
+            TextTrimming="CharacterEllipsis"
+            x:Name="HeadingText" />
+        <ProgressBar
+            IsIndeterminate="True"
+            Maximum="100"
+            x:Name="Progress" />
+        <TextBlock
+            FontSize="13"
+            Opacity="0.8"
+            TextWrapping="Wrap"
+            x:Name="StatusText" />
+        <StackPanel
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="8">
+            <Button
+                Click="OpenFolderClicked"
+                Content="Open folder"
+                IsVisible="False"
+                x:Name="OpenFolderButton" />
+            <Button
+                Click="CloseClicked"
+                Content="Close"
+                IsEnabled="False"
+                x:Name="CloseButton" />
+        </StackPanel>
+    </StackPanel>
+</Window>

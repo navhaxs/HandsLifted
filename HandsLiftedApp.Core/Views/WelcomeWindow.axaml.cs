@@ -10,6 +10,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Services;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.Views.Setup;
 using ReactiveUI;
@@ -123,6 +124,38 @@ namespace HandsLiftedApp.Core.Views
         {
             LibraryWindow w = new LibraryWindow() { DataContext = Globals.Instance.MainViewModel };
             w.ShowDialog(this);
+        }
+
+        private async void ToolboxItem_Clicked(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem { Tag: string tag } || !Enum.TryParse<ToolboxConversion>(tag, out var kind))
+                return;
+
+            var isPdf = kind == ToolboxConversion.PdfToPngs;
+            var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = isPdf ? "Select a PDF to convert" : "Select a PowerPoint file to convert",
+                AllowMultiple = false,
+                FileTypeFilter =
+                [
+                    new FilePickerFileType(isPdf ? "PDF documents" : "PowerPoint presentations")
+                        { Patterns = [isPdf ? "*.pdf" : "*.pptx"] }
+                ]
+            });
+            if (files.Count == 0) return;
+            var inputFile = files[0].Path.LocalPath;
+
+            var startFolder = await StorageProvider.TryGetFolderFromPathAsync(
+                System.IO.Path.GetDirectoryName(inputFile) ?? "");
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select the folder to save into",
+                AllowMultiple = false,
+                SuggestedStartLocation = startFolder
+            });
+            if (folders.Count == 0) return;
+
+            await new ConversionProgressWindow(kind, inputFile, folders[0].Path.LocalPath).ShowDialog(this);
         }
 
         private void ExitClicked(object? sender, RoutedEventArgs e)

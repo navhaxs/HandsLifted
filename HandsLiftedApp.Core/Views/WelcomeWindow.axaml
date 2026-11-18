@@ -48,7 +48,7 @@
         <!--  footer  -->
         <Grid Background="#1F1F1F" DockPanel.Dock="Bottom">
             <Grid
-                ColumnDefinitions="*,6,*,6,*"
+                ColumnDefinitions="*,6,*,6,*,6,*"
                 Margin="0,14"
                 MaxWidth="700">
                 <Grid.Styles>
@@ -84,7 +84,29 @@
                         <TextBlock Text="Library" />
                     </DockPanel>
                 </Button>
-                <Button Click="ExitClicked" Grid.Column="4">
+                <Button Grid.Column="4">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="TopEdgeAlignedLeft">
+                            <MenuItem
+                                Click="ToolboxItem_Clicked"
+                                Header="Convert PPTX to PDF..."
+                                Tag="PptxToPdf" />
+                            <MenuItem
+                                Click="ToolboxItem_Clicked"
+                                Header="Convert PPTX to PNGs..."
+                                Tag="PptxToPngs" />
+                            <MenuItem
+                                Click="ToolboxItem_Clicked"
+                                Header="Convert PDF to PNGs..."
+                                Tag="PdfToPngs" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <DockPanel>
+                        <avalonia:MaterialIcon Kind="Toolbox" />
+                        <TextBlock Text="Toolbox" />
+                    </DockPanel>
+                </Button>
+                <Button Click="ExitClicked" Grid.Column="6">
                     <DockPanel>
                         <avalonia:MaterialIcon Kind="Shutdown" />
                         <TextBlock Text="Exit" />
