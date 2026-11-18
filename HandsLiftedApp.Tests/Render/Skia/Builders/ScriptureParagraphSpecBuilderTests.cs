@@ -37,6 +37,20 @@ public class ScriptureParagraphSpecBuilderTests
     }
 
     [TestMethod]
+    public void Build_ImageThemeWithOpacity_CarriesOpacity()
+    {
+        var theme = MakeTheme();
+        theme.BackgroundGraphicFilePath = "some/image.png";
+        theme.BackgroundOpacity = 40;
+        var slide = new ScriptureSlideInstance(null, "page0") { Theme = theme };
+        slide.Lines = new[] { HeaderLine("Genesis 1:1") };
+
+        var spec = ScriptureParagraphSpecBuilder.Build(slide);
+
+        Assert.AreEqual(0.4f, ((ImageBackground)spec.Background).Opacity);
+    }
+
+    [TestMethod]
     public void Build_NoTheme_ReturnsEmptyElements()
     {
         var slide = new ScriptureSlideInstance(null, "page0") { Theme = null };
