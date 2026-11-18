@@ -43,5 +43,11 @@ public class GoogleSignInRunner : IGoogleSignInRunner
             // user cancelled; a user cancel must never look like a failure.
             throw new OperationCanceledException(cancellationToken);
         }
+        catch (TokenResponseException ex) when (ex.Error?.Error == "access_denied")
+        {
+            // The user pressed Cancel/Deny on Google's consent page: say so instead of showing the raw OAuth error.
+            // (A user cancel of our own modal is mapped above, so this catch only sees a genuine consent denial.)
+            throw new InvalidOperationException("Google sign-in was declined.", ex);
+        }
     }
 }

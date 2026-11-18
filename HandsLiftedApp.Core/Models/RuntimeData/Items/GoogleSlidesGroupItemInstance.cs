@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using HandsLiftedApp.Importer.FileFormatConvertTaskData;
 using HandsLiftedApp.Importer.GoogleSlides;
@@ -60,6 +61,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         // Set when a sign-in that this item waited on succeeded, so the retried Sync() does not prompt again.
         private volatile bool _resumedAfterSignIn;
+
+        // SuccessGeneration for which the "new sign-in still rejected" dialog was already shown; -1 = never.
+        private static int _lastRejectionDialogGeneration = -1;
 
         public GoogleSlidesGroupItemInstance(PlaylistInstance parentPlaylist)
         {
@@ -147,7 +151,12 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 return;
             }
 
+            // Captured when the work is queued, not when it runs: a sync that waited behind slow imports and
+            // reaches an expired token after the user cancelled a sign-in must not prompt again.
+            var cancelEpochAtQueue = GoogleSignInCoordinator.Instance.CancelEpoch;
+
             IsBusy = true;
+
             ImportWorkerThread.priorityQueue.Add(new ImportWorkerThread.BackgroundWorkRequest()
             {
                 Callback = () =>
@@ -242,9 +251,21 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                             {
                                 // A fresh sign-in was just accepted yet Google still rejects the token: asking again
                                 // would loop forever, so tell the user and release the item as for any other failure.
+                                // Every item resumed by one sign-in fails the same way: show the dialog once per sign-in.
                                 Log.Warning("Google Slides token still rejected right after a successful sign-in");
-                                GoogleSlidesReauthWindow.ShowError("Google Sign-In Failed",
-                                    "Google did not accept the new sign-in. Try signing in again from Setup.");
+                                var generation = GoogleSignInCoordinator.Instance.SuccessGeneration;
+                                if (Interlocked.Exchange(ref _lastRejectionDialogGeneration, generation) != generation)
+                                {
+                                    GoogleSlidesReauthWindow.ShowError("Google Sign-In Failed",
+                                        "Google did not accept the new sign-in. Try signing in again from Setup.");
+                                }
+                            }
+                            else if (GoogleSignInCoordinator.Instance.CancelEpoch != cancelEpochAtQueue)
+                            {
+                                // The user cancelled a sign-in after this sync was queued. Respect that: no prompt,
+                                // no dialog. The item ends normally (handedOff stays false, so IsBusy clears below);
+                                // a sync the user starts now captures the new epoch and prompts as usual.
+                                Log.Information("Google Slides token expired but sign-in was cancelled since this sync was queued - not prompting again");
                             }
                             else
                             {

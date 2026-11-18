@@ -8,6 +8,9 @@ namespace HandsLiftedApp.Core.Services.GoogleSignIn;
 /// <summary>
 /// Something (a Google Slides sync) that is paused waiting for sign-in to finish.
 /// Exactly one of the two methods is called once the shared sign-in completes.
+/// Callbacks may arrive on a thread-pool thread, or inline on the UI thread (a user cancel runs its
+/// continuations from <see cref="CancellationTokenSource.Cancel()"/> on the UI thread), so implementations
+/// must not block.
 /// </summary>
 public interface IGoogleSyncWaiter
 {
@@ -43,6 +46,15 @@ public interface IGoogleSignInSession : IDisposable
 
     /// <summary>Makes the Google URL available to the Copy link button (the URL itself is not displayed).</summary>
     void SetAuthUrl(string url);
+
+    /// <summary>
+    /// Completes a pending <see cref="WaitForConfirmAsync"/> with true, as if the user had clicked Sign In.
+    /// Idempotent; does nothing when nothing is waiting.
+    /// </summary>
+    void Confirm();
+
+    /// <summary>Brings the modal to the front.</summary>
+    void Activate();
 
     // Dispose() closes the modal.
 }

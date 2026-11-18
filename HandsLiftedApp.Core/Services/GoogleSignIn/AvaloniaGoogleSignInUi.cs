@@ -9,8 +9,10 @@ using Serilog;
 namespace HandsLiftedApp.Core.Services.GoogleSignIn;
 
 /// <summary>
-/// Avalonia implementation of <see cref="IGoogleSignInUi"/>. The coordinator calls it from a
-/// thread-pool thread, so everything that touches a window is marshalled to the UI thread here.
+/// Avalonia implementation of <see cref="IGoogleSignInUi"/>. The coordinator usually calls it from a
+/// thread-pool thread, but session members can also arrive on the UI thread (for example a join
+/// from the Setup window), so everything that touches a window is marshalled with a UI-thread
+/// <c>Post</c> here and never blocks.
 /// </summary>
 public class AvaloniaGoogleSignInUi : IGoogleSignInUi
 {
@@ -40,6 +42,8 @@ public class AvaloniaGoogleSignInUi : IGoogleSignInUi
             else
             {
                 window.Show();
+                // No owner to keep it in front, so make sure it is not left behind other windows.
+                window.Activate();
             }
 
             return (IGoogleSignInSession)session;
@@ -88,6 +92,17 @@ public class AvaloniaGoogleSignInUi : IGoogleSignInUi
         public void ShowWaiting() => OnUi(() => _window.ShowWaiting());
 
         public void SetAuthUrl(string url) => OnUi(() => _window.SetAuthUrl(url));
+
+        public void Confirm() => OnUi(() =>
+        {
+            // Only meaningful while the explanation page is up; ShowWaiting also hides the Sign In button
+            // so it cannot be clicked after the confirmation was supplied programmatically.
+            if (!_startWithExplanation) return;
+            _window.ShowWaiting();
+            _confirm.TrySetResult(true);
+        });
+
+        public void Activate() => OnUi(() => _window.Activate());
 
         public void Dispose()
         {
