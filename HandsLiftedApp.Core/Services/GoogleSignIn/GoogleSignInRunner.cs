@@ -22,7 +22,7 @@ public class GoogleSignInRunner : IGoogleSignInRunner
     {
         try
         {
-            var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+            using var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
             {
                 ClientSecrets = new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
                 Scopes = Main.Scopes,

@@ -238,6 +238,27 @@ public class GoogleSignInCoordinatorTests
     }
 
     [TestMethod]
+    public async Task CancellationThatTheUserDidNotRequest_IsAFailure_NotACancel()
+    {
+        // e.g. an HTTP timeout surfacing as TaskCanceledException while the modal is still open
+        var runner = new FakeRunner { ThrowOnRun = new TaskCanceledException("The request timed out") };
+        var ui = new FakeUi();
+        var coordinator = Create(runner, ui);
+        var waiter = new FakeWaiter();
+
+        var task = coordinator.RequestSignIn(null, false, waiter);
+        await runner.Started.WaitAsync(Timeout);
+        runner.Complete();
+        var result = await task.WaitAsync(Timeout);
+
+        Assert.AreEqual(GoogleSignInOutcome.Failed, result.Outcome);
+        Assert.AreEqual(1, waiter.Abandoned);
+        Assert.AreEqual(0, waiter.Resumed);
+        Assert.AreEqual(1, ui.ErrorCalls);
+        Assert.AreEqual("Google Sign-In Failed", ui.Errors[0].Title);
+    }
+
+    [TestMethod]
     public async Task MissingCredentials_ShowsNotConfiguredOnce_AndAbandonsWaiters()
     {
         var runner = new FakeRunner();

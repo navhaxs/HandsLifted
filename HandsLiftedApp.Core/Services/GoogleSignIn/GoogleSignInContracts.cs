@@ -41,7 +41,7 @@ public interface IGoogleSignInSession : IDisposable
     /// <summary>Switch the modal to its "waiting for the browser" page.</summary>
     void ShowWaiting();
 
-    /// <summary>Show the Google URL in the waiting page so the user can open or copy it.</summary>
+    /// <summary>Makes the Google URL available to the Copy link button (the URL itself is not displayed).</summary>
     void SetAuthUrl(string url);
 
     // Dispose() closes the modal.

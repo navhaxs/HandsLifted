@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Serilog;
@@ -103,6 +104,8 @@ public class GoogleSignInCoordinator
 
     private async Task<GoogleSignInResult> ExecuteAsync(Window? owner, bool showExplanation)
     {
+        // Captured once the modal exists so the catch below can tell a user cancel from any other cancellation.
+        var userCancelled = CancellationToken.None;
         try
         {
             var (clientId, clientSecret) = _credentials();
@@ -113,6 +116,7 @@ public class GoogleSignInCoordinator
             }
 
             using var session = _ui.Open(owner, showExplanation);
+            userCancelled = session.UserCancelled;
 
             if (showExplanation && !await session.WaitForConfirmAsync().ConfigureAwait(false))
                 return new GoogleSignInResult(GoogleSignInOutcome.Cancelled);
@@ -122,7 +126,7 @@ public class GoogleSignInCoordinator
                 .ConfigureAwait(false);
             return new GoogleSignInResult(GoogleSignInOutcome.Success);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (userCancelled.IsCancellationRequested)
         {
             return new GoogleSignInResult(GoogleSignInOutcome.Cancelled);
         }
