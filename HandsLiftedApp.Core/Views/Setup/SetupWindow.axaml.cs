@@ -19,6 +19,7 @@ using Google.Apis.Util.Store;
 using HandsLiftedApp.Controls;
 using HandsLiftedApp.Core.Models.Library.Config;
 using HandsLiftedApp.Core.Models.UI;
+using HandsLiftedApp.Core.Services.GoogleSignIn;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Importer.OnlineSongLyrics;
 using ReactiveUI;
@@ -197,12 +198,11 @@ namespace HandsLiftedApp.Core.Views.Setup
             }
         }
 
-        private void SignInWithGoogle_OnClick(object? sender, RoutedEventArgs e)
+        private async void SignInWithGoogle_OnClick(object? sender, RoutedEventArgs e)
         {
             var clientId = Globals.Instance.AppPreferences.GoogleClientId;
             var clientSecret = Globals.Instance.AppPreferences.GoogleClientSecret;
 
-            var statusText = this.Get<TextBlock>("SignInStatusText");
             var button = this.Get<Button>("SignInWithGoogleButton");
 
             if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
@@ -214,32 +214,36 @@ namespace HandsLiftedApp.Core.Views.Setup
             button.IsEnabled = false;
             SetGoogleSignInStatus("Opening browser...", GoogleSignInStatus.Neutral);
 
-            System.Threading.Tasks.Task.Run(() =>
+            try
             {
-                try
-                {
-                    GoogleWebAuthorizationBroker.AuthorizeAsync(
-                        new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
-                        GoogleScopes,
-                        "user",
-                        CancellationToken.None,
-                        new FileDataStore("token.json", true)).Wait();
+                // The coordinator runs the flow on its own task and shows the modal (Copy link / Cancel)
+                // over this window; no explanation page since the user just clicked the button.
+                var result = await GoogleSignInCoordinator.Instance.RequestSignIn(this, showExplanation: false, waiter: null);
 
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        button.IsEnabled = true;
-                        RefreshGoogleSignInStatus();
-                    });
-                }
-                catch (Exception ex)
+                switch (result.Outcome)
                 {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        SetGoogleSignInStatus($"Sign-in failed: {ex.Message}", GoogleSignInStatus.Error);
-                        button.IsEnabled = true;
-                    });
+                    case GoogleSignInOutcome.Success:
+                        RefreshGoogleSignInStatus();
+                        break;
+                    case GoogleSignInOutcome.Cancelled:
+                        SetGoogleSignInStatus("Sign-in cancelled.", GoogleSignInStatus.Neutral);
+                        break;
+                    case GoogleSignInOutcome.NotConfigured:
+                        SetGoogleSignInStatus("Enter Client ID and Client Secret first.", GoogleSignInStatus.Error);
+                        break;
+                    default:
+                        SetGoogleSignInStatus($"Sign-in failed: {result.ErrorMessage}", GoogleSignInStatus.Error);
+                        break;
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                SetGoogleSignInStatus($"Sign-in failed: {ex.Message}", GoogleSignInStatus.Error);
+            }
+            finally
+            {
+                button.IsEnabled = true;
+            }
         }
 
         private enum GoogleSignInStatus { Ok, Error, Neutral }
