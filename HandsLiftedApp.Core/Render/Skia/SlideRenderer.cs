@@ -274,32 +274,40 @@ public static class SlideRenderer
                     break;
                 }
 
-                var bmp = LoadCachedBitmap(img.FilePath, width, height);
-                if (bmp != null)
-                {
-                    var dest = new SKRect(0, 0, width, height);
-                    using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
-                    if (alpha < 1f)
-                        paint.Color = SKColors.White.WithAlpha((byte)(255 * alpha));
-                    canvas.DrawBitmap(bmp, dest, paint);
-                }
+                // A missing/undecodable file (null bitmap) still draws the back colour.
+                DrawBitmapLayer(canvas, LoadCachedBitmap(img.FilePath, width, height), img.BackColor, img.Opacity,
+                    alpha, width, height);
                 break;
 
             case SkiaBitmapBackground bmpBg:
-            {
-                var dest = new SKRect(0, 0, width, height);
-                using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
-                if (alpha < 1f)
-                    paint.Color = SKColors.White.WithAlpha((byte)(255 * alpha));
-                canvas.DrawBitmap(bmpBg.Bitmap, dest, paint);
+                DrawBitmapLayer(canvas, bmpBg.Bitmap, bmpBg.BackColor, bmpBg.Opacity, alpha, width, height);
                 break;
-            }
 
             case TransparentBackground:
             default:
                 // leave the canvas cleared to transparent
                 break;
         }
+    }
+
+    // Back colour first (scaled by the transition alpha), then the bitmap on top at alpha * opacity.
+    private static void DrawBitmapLayer(
+        SKCanvas canvas, SKBitmap? bitmap, SKColor? backColor, float opacity, float alpha, int width, int height)
+    {
+        if (backColor is { } back)
+        {
+            using var backPaint = new SKPaint { Color = back.WithAlpha((byte)(back.Alpha * alpha)) };
+            canvas.DrawRect(0, 0, width, height, backPaint);
+        }
+
+        if (bitmap == null) return;
+
+        float bitmapAlpha = alpha * Math.Clamp(opacity, 0f, 1f);
+        var dest = new SKRect(0, 0, width, height);
+        using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
+        if (bitmapAlpha < 1f)
+            paint.Color = SKColors.White.WithAlpha((byte)(255 * bitmapAlpha));
+        canvas.DrawBitmap(bitmap, dest, paint);
     }
 
     private static void DrawTextElement(SKCanvas canvas, TextLineElement element, float alpha)

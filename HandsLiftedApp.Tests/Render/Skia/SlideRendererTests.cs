@@ -1,4 +1,5 @@
 // HandsLiftedApp.Tests/Render/Skia/SlideRendererTests.cs
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SkiaSharp;
 using HandsLiftedApp.Core.Render.Skia;
@@ -41,6 +42,123 @@ public class SlideRendererTests
         var pixel = bitmap.GetPixel(0, 0);
 
         Assert.AreEqual(0, pixel.Alpha);
+    }
+
+    // ── Background colour + opacity ────────────────────────────────────────────
+
+    private static SKBitmap SolidBitmap(SKColor color)
+    {
+        var bmp = new SKBitmap(2, 2);
+        bmp.Erase(color);
+        return bmp;
+    }
+
+    [TestMethod]
+    public void SkiaBitmapBackground_HalfOpacityOverBlue_BlendsEvenly()
+    {
+        using var red = SolidBitmap(SKColors.Red);
+        var spec = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 0.5f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(spec, 100, 100);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(128, pixel.Red, 2);
+        Assert.AreEqual(128, pixel.Blue, 2);
+        Assert.AreEqual(255, pixel.Alpha);
+    }
+
+    [TestMethod]
+    public void SkiaBitmapBackground_FullOpacity_ShowsOnlyBitmap()
+    {
+        using var red = SolidBitmap(SKColors.Red);
+        var spec = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 1f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(spec, 100, 100);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(255, pixel.Red);
+        Assert.AreEqual(0, pixel.Blue);
+    }
+
+    [TestMethod]
+    public void SkiaBitmapBackground_ZeroOpacity_ShowsOnlyBackColor()
+    {
+        using var red = SolidBitmap(SKColors.Red);
+        var spec = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 0f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(spec, 100, 100);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(0, pixel.Red);
+        Assert.AreEqual(255, pixel.Blue);
+    }
+
+    [TestMethod]
+    public void SkiaBitmapBackground_NoBackColor_DrawsBitmapUnchanged()
+    {
+        using var red = SolidBitmap(SKColors.Red);
+        var spec = new SlideRenderSpec(new SkiaBitmapBackground(red), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(spec, 100, 100);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(255, pixel.Red);
+        Assert.AreEqual(0, pixel.Blue);
+    }
+
+    [TestMethod]
+    public void ImageBackground_HalfOpacityOverBlue_BlendsEvenly()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
+        try
+        {
+            using (var red = SolidBitmap(SKColors.Red))
+            using (var image = SKImage.FromBitmap(red))
+            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                File.WriteAllBytes(path, data.ToArray());
+
+            var spec = new SlideRenderSpec(new ImageBackground(path, SKColors.Blue, 0.5f), Array.Empty<RenderElement>());
+
+            using var bitmap = SlideRenderer.RenderToSKBitmap(spec, 100, 100);
+            var pixel = bitmap.GetPixel(50, 50);
+
+            Assert.AreEqual(128, pixel.Red, 2);
+            Assert.AreEqual(128, pixel.Blue, 2);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [TestMethod]
+    public void ImageBackground_MissingFile_WithBackColor_DrawsBackColorAndDoesNotThrow()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png"); // never created
+        var spec = new SlideRenderSpec(new ImageBackground(path, SKColors.Red, 0.5f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(spec, 100, 100);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(255, pixel.Red);
+        Assert.AreEqual(0, pixel.Blue);
+    }
+
+    [TestMethod]
+    public void Transition_FromTransparent_FadesBackColorAndBitmapTogether()
+    {
+        // At progress 0.5: blue back colour at alpha 0.5, then red bitmap at 0.5 * 0.5 = 0.25 on top.
+        // Premultiplied: (0.25, 0, 0.375), alpha 0.625 -> unpremultiplied R 102, B 153, A 159.
+        using var red = SolidBitmap(SKColors.Red);
+        var prev = new SlideRenderSpec(new TransparentBackground(), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 0.5f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(102, pixel.Red, 3);
+        Assert.AreEqual(153, pixel.Blue, 3);
+        Assert.AreEqual(159, pixel.Alpha, 3);
     }
 
     [TestMethod]
