@@ -510,6 +510,22 @@
                             Watermark="" />
                     </DockPanel>
 
+                    <!--  Blends the image / motion video over the Background colour. Only meaningful with media.  -->
+                    <TextBlock Margin="0,6,0,0" Text="Background Opacity (%)" />
+                    <controls:NumericSliderBox
+                        Maximum="100"
+                        Minimum="0"
+                        Text="{Binding BackgroundOpacity, FallbackValue=100}"
+                        TextBoxMinWidth="40"
+                        TickFrequency="1">
+                        <controls:NumericSliderBox.IsEnabled>
+                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="BackgroundGraphicFilePath" />
+                                <Binding Converter="{StaticResource IsMotionBackgroundModeConverter}" Path="BackgroundMode" />
+                            </MultiBinding>
+                        </controls:NumericSliderBox.IsEnabled>
+                    </controls:NumericSliderBox>
+
                     <Border
                         Background="#808080"
                         Height="1"
