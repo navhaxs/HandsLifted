@@ -47,7 +47,7 @@ Failure modes the spec implies; each is pinned by a named test in the task that 
   - `interface IGoogleSignInSession : IDisposable { CancellationToken UserCancelled { get; } Task<bool> WaitForConfirmAsync(); void ShowWaiting(); void SetAuthUrl(string url); }` — `Dispose` closes the modal; `WaitForConfirmAsync` is true when the user clicks Sign In, false on cancel; all members callable from any thread.
   - `interface IGoogleSignInUi { IGoogleSignInSession Open(Window? owner, bool startWithExplanation); void ShowError(Window? owner, string title, string message); }`
   - `enum GoogleSignInOutcome { Success, Cancelled, Failed, NotConfigured }`; `record GoogleSignInResult(GoogleSignInOutcome Outcome, string? ErrorMessage = null)`
-  - `class GoogleSignInCoordinator` with ctor `(IGoogleSignInRunner runner, IGoogleSignInUi ui, Func<(string? ClientId, string? ClientSecret)> credentials)`, `static GoogleSignInCoordinator Instance` (Task 4 wires the real one), and `Task<GoogleSignInResult> RequestSignIn(Window? owner, bool showExplanation, IGoogleSyncWaiter? waiter)`.
+  - `class GoogleSignInCoordinator` with ctor `(IGoogleSignInRunner runner, IGoogleSignInUi ui, Func<(string? ClientId, string? ClientSecret)> credentials)`, and `Task<GoogleSignInResult> RequestSignIn(Window? owner, bool showExplanation, IGoogleSyncWaiter? waiter)`.
 
 - [ ] **Step 1: Write the failing tests** in `GoogleSignInCoordinatorTests` with hand-written fakes (`FakeRunner` driven by a `TaskCompletionSource` and honouring the token, `FakeUi`/`FakeSession` recording `Open`/`ShowError` call counts and exposing `Confirm(bool)`, `Cancel()`, `FakeWaiter` counting resume/abandon calls). Tests, all `async Task`, passing `owner: null`:
   - `OneSignInServesAllWaiters_AndResumesEachOnSuccess` — three waiters requested while the runner is pending; assert `Open` called once, runner called once; completing the runner gives `Success` and each waiter `Resumed == 1`, `Abandoned == 0`.
@@ -69,7 +69,7 @@ Failure modes the spec implies; each is pinned by a named test in the task that 
 **Files:**
 - Create: `HandsLiftedApp.Core/Services/GoogleSignIn/CapturingCodeReceiver.cs`
 - Create: `HandsLiftedApp.Core/Services/GoogleSignIn/GoogleSignInRunner.cs`
-- Modify: `HandsLiftedApp.GoogleSlidesImporter/Main.cs` (`Scopes` → `public static readonly string[]`; delete `RevokeAndReauth`, `Main.cs:209-221`, its only caller is replaced in Task 4)
+- Modify: `HandsLiftedApp.GoogleSlidesImporter/Main.cs` (`Scopes` → `public static readonly string[]` only; leave `RevokeAndReauth` in place, Task 4 deletes it together with its only caller)
 - Test: `HandsLiftedApp.Tests/Services/CapturingCodeReceiverTests.cs`
 
 **Interfaces:**
@@ -82,7 +82,7 @@ Failure modes the spec implies; each is pinned by a named test in the task that 
 - [ ] **Step 2: Run to verify failure** — `dotnet test HandsLiftedApp.Tests --filter "FullyQualifiedName~CapturingCodeReceiverTests"`; Expected: build fails.
 - [ ] **Step 3: Implement `CapturingCodeReceiver`**: `RedirectUri` delegates to inner; `ReceiveCodeAsync(AuthorizationCodeRequestUrl url, CancellationToken ct)` invokes `onAuthUrl(url.Build().AbsoluteUri)` then returns `inner.ReceiveCodeAsync(url, ct).WaitAsync(ct)` (WaitAsync guarantees prompt cancellation even if the library's listener lingers).
 - [ ] **Step 4: Implement `GoogleSignInRunner.SignInAsync`.** Build `new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer { ClientSecrets, Scopes = Main.Scopes, DataStore = <in-memory no-op store> })` (this mirrors what `GoogleWebAuthorizationBroker` builds, so token behaviour is unchanged; use `NullDataStore` if present in the referenced Google.Apis, else a ten-line dictionary-backed `IDataStore`). The throw-away store is deliberate: it forces the browser to open every time (a valid or revoked token on disk is never silently reused) and means Cancel never destroys an existing token. Authorize with `new AuthorizationCodeInstalledApp(flow, new CapturingCodeReceiver(new LocalServerCodeReceiver(), onAuthUrl)).AuthorizeAsync("user", cancellationToken)`, then store `credential.Token` under key `"user"` in `new FileDataStore("token.json", true)` via `StoreAsync<TokenResponse>`.
-- [ ] **Step 5: Run to verify pass** — same filter; Expected: 2 PASS. Then `dotnet build HandsLifted.sln` (or the Desktop project) — Expected: errors only for the removed `RevokeAndReauth` caller in `GoogleSlidesGroupItemInstance.cs`, fixed in Task 4. If the build gate matters, do Task 4 before building the whole solution.
+- [ ] **Step 5: Run to verify pass** — same filter; Expected: 2 PASS. Then `dotnet build HandsLiftedApp.Core/HandsLiftedApp.Core.csproj` — Expected: success.
 - [ ] **Step 6: Commit** — `git add -A HandsLiftedApp.Core/Services/GoogleSignIn HandsLiftedApp.Tests/Services HandsLiftedApp.GoogleSlidesImporter/Main.cs; git commit -m "google sign-in: capturing receiver and runner that never reuses or destroys the stored token"`
 
 ### Task 3: Modal window and Avalonia UI adapter
@@ -98,25 +98,26 @@ Failure modes the spec implies; each is pinned by a named test in the task that 
 
 - [ ] **Step 1: Build `GoogleSignInWindow`** styled like `GoogleSlidesReauthWindow` (same border/background resources, `WindowDecorations="None"`, centered on owner, ~400px wide, same `dialog-buttons` class). Two states in one window. Explanation: title "Google Sign-In Required", the existing message text ("Your Google account session has expired. Click Sign In to open a browser window and re-authenticate."), buttons *Sign In with Google* (default) and *Cancel*. Waiting: title "Waiting for Google sign-in…", message "Finish signing in in your browser. If you closed the tab, copy the link and open it in a browser.", buttons *Copy link* (disabled until `SetAuthUrl` is called; copies via the window's clipboard) and *Cancel*. Esc and closing the window count as Cancel.
 - [ ] **Step 2: Implement `AvaloniaGoogleSignInUi`.** `Open` creates the window on the UI thread (`Dispatcher.UIThread.Invoke`), shows it with `ShowDialog(owner)` when `owner != null` (else `Show()`), and returns an `IGoogleSignInSession` whose members marshal to the UI thread: `UserCancelled` is a `CancellationTokenSource` token cancelled on Cancel/close; `WaitForConfirmAsync` is a `TaskCompletionSource<bool>` completed true by Sign In, false by Cancel/close (and returns true immediately when `startWithExplanation` was false); `Dispose` closes the window without raising cancel. `ShowError` reuses `GoogleSlidesReauthWindow.ShowError`.
-- [ ] **Step 3: Build** — `dotnet build HandsLiftedApp.Core/HandsLiftedApp.Core.csproj`; Expected: success (an unrelated failure from the removed `RevokeAndReauth` call is acceptable until Task 4).
+- [ ] **Step 3: Build** — `dotnet build HandsLiftedApp.Core/HandsLiftedApp.Core.csproj`; Expected: success.
 - [ ] **Step 4: Commit** — `git add HandsLiftedApp.Core/Views/Confirmation HandsLiftedApp.Core/Services/GoogleSignIn; git commit -m "google sign-in: modal with Copy link and Cancel, and its Avalonia adapter"`
 
 ### Task 4: Sync path uses the coordinator
 
 **Files:**
 - Modify: `HandsLiftedApp.Core/Models/RuntimeData/Items/GoogleSlidesGroupItemInstance.cs` (`Sync()` catch block at lines 230-292, and the trailing `IsBusy = false` at line 318)
-- Modify: `HandsLiftedApp.Core/Services/GoogleSignIn/GoogleSignInCoordinator.cs` (real `Instance`)
+- Modify: `HandsLiftedApp.Core/Services/GoogleSignIn/GoogleSignInCoordinator.cs` (add the real `Instance`)
+- Modify: `HandsLiftedApp.GoogleSlidesImporter/Main.cs` (delete `RevokeAndReauth`)
 - Test: `HandsLiftedApp.Tests/Models/RuntimeData/Items/GoogleSlidesGroupItemInstanceSignInTests.cs`
 
 **Interfaces:**
 - Consumes: `IGoogleSyncWaiter`, `GoogleSignInCoordinator.Instance`, `RequestSignIn`.
-- Produces: `GoogleSlidesGroupItemInstance` implements `IGoogleSyncWaiter`.
+- Produces: `GoogleSlidesGroupItemInstance` implements `IGoogleSyncWaiter`; `public static GoogleSignInCoordinator Instance { get; }` on the coordinator (added in this task, not Task 1).
 
 - [ ] **Step 1: Write the failing test** `AbandonSignIn_ClearsIsBusy` — construct the instance the way `ImportInteractionTests.Group` constructs items (inside `DispatcherTestThread.Run`), set `IsBusy = true`, call `AbandonSignIn()`, assert `IsBusy == false`.
 - [ ] **Step 2: Run to verify failure** — `dotnet test HandsLiftedApp.Tests --filter "FullyQualifiedName~GoogleSlidesGroupItemInstanceSignInTests"`; Expected: build fails (`AbandonSignIn` missing).
 - [ ] **Step 3: Implement the waiter on `GoogleSlidesGroupItemInstance`.** `AbandonSignIn()` sets `IsBusy = false`. `ResumeAfterSignIn()` sets a private `_resumedAfterSignIn = true`, sets `IsBusy = false` (`Sync()` returns early when busy), then calls `Sync()`.
 - [ ] **Step 4: Replace the `TokenExpiredImportException` catch body in `Sync()`.** Read and clear `_resumedAfterSignIn` into a local at the top of the queued callback. In the catch: if that local is true (a fresh sign-in was just accepted yet Google still rejects the token), do **not** request another sign-in; show `GoogleSlidesReauthWindow.ShowError("Google Sign-In Failed", "Google did not accept the new sign-in. Try signing in again from Setup.")` and let `IsBusy` clear normally. Otherwise call `GoogleSignInCoordinator.Instance.RequestSignIn(MainWindow, showExplanation: true, waiter: this)` (MainWindow resolved as the existing code does via `IClassicDesktopStyleApplicationLifetime`), set a local `handedOff = true`, and skip the trailing `IsBusy = false` when `handedOff` so the item stays busy while it waits. The call must not block (the coordinator runs the sign-in on its own task), so the import worker thread and `syncSlidesLock` are released immediately. Delete the old reauth dialog/`tcs.GetAwaiter().GetResult()`/`RevokeAndReauth` code and the not-configured dialog (the coordinator now owns it).
-- [ ] **Step 5: Wire `GoogleSignInCoordinator.Instance`** as a lazily created singleton: `new GoogleSignInCoordinator(new GoogleSignInRunner(), new AvaloniaGoogleSignInUi(), () => (Globals.Instance.AppPreferences.GoogleClientId, Globals.Instance.AppPreferences.GoogleClientSecret))`.
+- [ ] **Step 5: Delete `Main.RevokeAndReauth` (`HandsLiftedApp.GoogleSlidesImporter/Main.cs:209-221`)** now that its only caller is gone, and add `GoogleSignInCoordinator.Instance` (a new property, absent from Task 1) as a lazily created singleton: `new GoogleSignInCoordinator(new GoogleSignInRunner(), new AvaloniaGoogleSignInUi(), () => (Globals.Instance.AppPreferences.GoogleClientId, Globals.Instance.AppPreferences.GoogleClientSecret))`.
 - [ ] **Step 6: Run to verify pass, then the whole suite** — filter above then `dotnet test HandsLiftedApp.Tests`; Expected: all PASS (confirm no other caller of `RevokeAndReauth` via the Grep tool over `*.cs` in the repo, per CLAUDE.md; `HandsLiftedApp.GoogleSlidesImporter/Program.cs` is a separate console tool with its own call and stays).
 - [ ] **Step 7: Commit** — `git add HandsLiftedApp.Core HandsLiftedApp.Tests; git commit -m "google slides sync: hand expired-token syncs to the sign-in coordinator and resume them after sign-in"`
 
