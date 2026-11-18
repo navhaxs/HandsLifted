@@ -19,7 +19,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 {
     public class Main
     {
-        static string[] Scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
+        public static readonly string[] Scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
         static string ApplicationName = "Google Slides API .NET Quickstart";
 
         static string PDF_MIME_TYPE = "application/pdf";
@@ -204,20 +204,6 @@ namespace HandsLiftedApp.Importer.GoogleSlides
         {
             public string GoogleSlidesPresentationId { get; set; }
             public string OutputDirectory { get; set; }
-        }
-
-        public static void RevokeAndReauth(string clientId, string clientSecret)
-        {
-            string credPath = "token.json";
-            if (File.Exists(credPath))
-                File.Delete(credPath);
-
-            GoogleWebAuthorizationBroker.AuthorizeAsync(
-                new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
-                Scopes,
-                "user",
-                CancellationToken.None,
-                new FileDataStore(credPath, true)).GetAwaiter().GetResult();
         }
 
         public static string ReplaceInvalidChars(string filename)

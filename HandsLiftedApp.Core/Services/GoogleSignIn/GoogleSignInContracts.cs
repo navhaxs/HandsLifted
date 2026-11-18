@@ -1,0 +1,77 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+
+namespace HandsLiftedApp.Core.Services.GoogleSignIn;
+
+/// <summary>
+/// Something (a Google Slides sync) that is paused waiting for sign-in to finish.
+/// Exactly one of the two methods is called once the shared sign-in completes.
+/// Callbacks may arrive on a thread-pool thread, or inline on the UI thread (a user cancel runs its
+/// continuations from <see cref="CancellationTokenSource.Cancel()"/> on the UI thread), so implementations
+/// must not block.
+/// </summary>
+public interface IGoogleSyncWaiter
+{
+    /// <summary>Sign-in succeeded; retry the paused work.</summary>
+    void ResumeAfterSignIn();
+
+    /// <summary>Sign-in was cancelled, failed or is not configured; give up on the paused work.</summary>
+    void AbandonSignIn();
+}
+
+/// <summary>Performs the actual Google OAuth flow (browser + loopback listener).</summary>
+public interface IGoogleSignInRunner
+{
+    /// <summary>
+    /// Runs the sign-in. Calls <paramref name="onAuthUrl"/> once the Google URL is known.
+    /// Throws <see cref="OperationCanceledException"/> when <paramref name="cancellationToken"/> is cancelled.
+    /// </summary>
+    Task SignInAsync(string clientId, string clientSecret, Action<string> onAuthUrl,
+        CancellationToken cancellationToken);
+}
+
+/// <summary>The modal shown for one sign-in. All members are callable from any thread.</summary>
+public interface IGoogleSignInSession : IDisposable
+{
+    /// <summary>Cancelled when the user dismisses the modal.</summary>
+    CancellationToken UserCancelled { get; }
+
+    /// <summary>True when the user clicks Sign In on the explanation page, false when they cancel.</summary>
+    Task<bool> WaitForConfirmAsync();
+
+    /// <summary>Switch the modal to its "waiting for the browser" page.</summary>
+    void ShowWaiting();
+
+    /// <summary>Makes the Google URL available to the Copy link button (the URL itself is not displayed).</summary>
+    void SetAuthUrl(string url);
+
+    /// <summary>
+    /// Completes a pending <see cref="WaitForConfirmAsync"/> with true, as if the user had clicked Sign In.
+    /// Idempotent; does nothing when nothing is waiting.
+    /// </summary>
+    void Confirm();
+
+    /// <summary>Brings the modal to the front.</summary>
+    void Activate();
+
+    // Dispose() closes the modal.
+}
+
+/// <summary>Creates sign-in modals and error dialogs.</summary>
+public interface IGoogleSignInUi
+{
+    IGoogleSignInSession Open(Window? owner, bool startWithExplanation);
+    void ShowError(Window? owner, string title, string message);
+}
+
+public enum GoogleSignInOutcome
+{
+    Success,
+    Cancelled,
+    Failed,
+    NotConfigured,
+}
+
+public record GoogleSignInResult(GoogleSignInOutcome Outcome, string? ErrorMessage = null);
