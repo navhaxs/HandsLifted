@@ -161,6 +161,50 @@ public class SlideRendererTests
         Assert.AreEqual(159, pixel.Alpha, 3);
     }
 
+    // A motion theme below 100% yields a translucent SolidBackground drawn over the video layer. The outgoing
+    // background must fade OUT beneath it; if it stayed at full strength it would pop away at progress 1.
+
+    [TestMethod]
+    public void Transition_OpaqueToTranslucentSolid_FadesPreviousOut()
+    {
+        // prev red at 0.5 -> premul R .498; curr blue alpha 128 at 0.5 -> .251. Over: R .373, B .251, A .624.
+        var prev = new SlideRenderSpec(new SolidBackground(SKColors.Red), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new SolidBackground(SKColors.Blue.WithAlpha(128)), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(152, pixel.Red, 4);
+        Assert.AreEqual(103, pixel.Blue, 4);
+        Assert.AreEqual(159, pixel.Alpha, 4);
+    }
+
+    [TestMethod]
+    public void Transition_OpaqueToTranslucentSolid_NearEnd_LeavesNoPreviousBackground()
+    {
+        var prev = new SlideRenderSpec(new SolidBackground(SKColors.Red), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new SolidBackground(SKColors.Blue.WithAlpha(128)), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.99f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.IsTrue(pixel.Red < 10, $"previous background must be (almost) gone just before the end, red was {pixel.Red}");
+    }
+
+    [TestMethod]
+    public void Transition_TranslucentToTranslucent_DoesNotStackTints()
+    {
+        // Both tints at 0.5 progress: prev alpha 76, curr alpha 76 -> total alpha ~0.507 (129). Stacking the
+        // previous at full strength would give ~0.72 (183).
+        var prev = new SlideRenderSpec(new SolidBackground(SKColors.Blue.WithAlpha(153)), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new SolidBackground(SKColors.Red.WithAlpha(153)), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(129, pixel.Alpha, 4);
+    }
+
     [TestMethod]
     public void RenderToSKBitmap_WithPreviousSpec_DoesNotThrow()
     {

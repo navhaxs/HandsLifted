@@ -169,6 +169,15 @@ public static class SlideRenderer
                 // prevBg == null covers the initial-selection case (no previous slide).
                 DrawBackground(canvas, currBg, progress, width, height);
             }
+            else if (IsTranslucent(currBg))
+            {
+                // Fading TO a translucent background (a motion theme below 100% opacity: the theme colour drawn
+                // over the video layer). The previous background is opaque or translucent too, so keeping it at
+                // full strength would stack the tints and then vanish in one frame at progress 1. Cross-fade
+                // instead: previous out, current in.
+                DrawBackground(canvas, prevBg, 1f - progress, width, height);
+                DrawBackground(canvas, currBg, progress, width, height);
+            }
             else
             {
                 // Fade-over between two opaque backgrounds (image→image, solid→image, etc.):
@@ -289,6 +298,16 @@ public static class SlideRenderer
                 break;
         }
     }
+
+    // True when the background lets what is beneath it (the motion video layer) show through. Image/bitmap
+    // backgrounds without a BackColor (image slides, logo) are treated as opaque, as they always have been.
+    private static bool IsTranslucent(BackgroundSpec bg) => bg switch
+    {
+        SolidBackground s => s.Color.Alpha < 255,
+        ImageBackground { BackColor: { Alpha: < 255 } } => true,
+        SkiaBitmapBackground { BackColor: { Alpha: < 255 } } => true,
+        _ => false,
+    };
 
     // Back colour first (scaled by the transition alpha), then the bitmap on top at alpha * opacity.
     private static void DrawBitmapLayer(
