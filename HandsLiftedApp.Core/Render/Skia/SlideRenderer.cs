@@ -313,20 +313,35 @@ public static class SlideRenderer
     private static void DrawBitmapLayer(
         SKCanvas canvas, SKBitmap? bitmap, SKColor? backColor, float opacity, float alpha, int width, int height)
     {
+        // With a back colour the background is ONE composite (colour, then image at opacity). While it is being
+        // faded by a transition (alpha < 1) it must fade as a group: fading the colour and the image as two
+        // separate layers lets the colour layer darken or tint whatever is underneath mid-fade.
+        bool grouped = alpha < 1f && backColor != null;
+        if (grouped)
+        {
+            using var groupPaint = new SKPaint { Color = SKColors.White.WithAlpha((byte)(255 * alpha)) };
+            canvas.SaveLayer(groupPaint);
+            alpha = 1f;
+        }
+
         if (backColor is { } back)
         {
             using var backPaint = new SKPaint { Color = back.WithAlpha((byte)(back.Alpha * alpha)) };
             canvas.DrawRect(0, 0, width, height, backPaint);
         }
 
-        if (bitmap == null) return;
+        if (bitmap != null)
+        {
+            float bitmapAlpha = alpha * Math.Clamp(opacity, 0f, 1f);
+            var dest = new SKRect(0, 0, width, height);
+            using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
+            if (bitmapAlpha < 1f)
+                paint.Color = SKColors.White.WithAlpha((byte)(255 * bitmapAlpha));
+            canvas.DrawBitmap(bitmap, dest, paint);
+        }
 
-        float bitmapAlpha = alpha * Math.Clamp(opacity, 0f, 1f);
-        var dest = new SKRect(0, 0, width, height);
-        using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
-        if (bitmapAlpha < 1f)
-            paint.Color = SKColors.White.WithAlpha((byte)(255 * bitmapAlpha));
-        canvas.DrawBitmap(bitmap, dest, paint);
+        if (grouped)
+            canvas.Restore();
     }
 
     private static void DrawTextElement(SKCanvas canvas, TextLineElement element, float alpha)

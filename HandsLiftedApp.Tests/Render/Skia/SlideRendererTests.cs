@@ -144,11 +144,14 @@ public class SlideRendererTests
         Assert.AreEqual(0, pixel.Blue);
     }
 
+    // A colour+image background is ONE composite: during a transition it must fade as a group, so the result
+    // is a straight cross-fade between the two composited backgrounds. Fading the colour layer and the image
+    // layer separately lets the colour layer darken/tint the picture mid-fade.
+
     [TestMethod]
-    public void Transition_FromTransparent_FadesBackColorAndBitmapTogether()
+    public void Transition_FromTransparent_FadesBackgroundAsOneGroup()
     {
-        // At progress 0.5: blue back colour at alpha 0.5, then red bitmap at 0.5 * 0.5 = 0.25 on top.
-        // Premultiplied: (0.25, 0, 0.375), alpha 0.625 -> unpremultiplied R 102, B 153, A 159.
+        // Composite = red at 50% over blue = (128, 0, 128), opaque. Faded in at 0.5 -> same colour, alpha ~128.
         using var red = SolidBitmap(SKColors.Red);
         var prev = new SlideRenderSpec(new TransparentBackground(), Array.Empty<RenderElement>());
         var curr = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 0.5f), Array.Empty<RenderElement>());
@@ -156,9 +159,78 @@ public class SlideRendererTests
         using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
         var pixel = bitmap.GetPixel(50, 50);
 
-        Assert.AreEqual(102, pixel.Red, 3);
-        Assert.AreEqual(153, pixel.Blue, 3);
-        Assert.AreEqual(159, pixel.Alpha, 3);
+        Assert.AreEqual(128, pixel.Red, 3);
+        Assert.AreEqual(128, pixel.Blue, 3);
+        Assert.AreEqual(128, pixel.Alpha, 3);
+    }
+
+    [TestMethod]
+    public void Transition_FullImageToFullImage_IsLinearCrossfade_NoDarkDip()
+    {
+        // Black back colour under both. Straight cross-fade at 0.5 = half green + half red = (128, 128, 0).
+        using var green = SolidBitmap(SKColors.Lime);
+        using var red = SolidBitmap(SKColors.Red);
+        var prev = new SlideRenderSpec(new SkiaBitmapBackground(green, SKColors.Black, 1f), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Black, 1f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(128, pixel.Red, 3);
+        Assert.AreEqual(128, pixel.Green, 3);
+        Assert.AreEqual(255, pixel.Alpha);
+    }
+
+    [TestMethod]
+    public void Transition_DimmedImageToFullImage_IsLinearCrossfadeOfComposites()
+    {
+        // prev composite: lime at 50% over blue = (0, 128, 128). curr composite: red = (255, 0, 0).
+        // Straight cross-fade at 0.5 = (128, 64, 64).
+        using var green = SolidBitmap(SKColors.Lime);
+        using var red = SolidBitmap(SKColors.Red);
+        var prev = new SlideRenderSpec(new SkiaBitmapBackground(green, SKColors.Blue, 0.5f), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 1f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(128, pixel.Red, 3);
+        Assert.AreEqual(64, pixel.Green, 3);
+        Assert.AreEqual(64, pixel.Blue, 3);
+    }
+
+    [TestMethod]
+    public void Transition_FullImageToDimmedImage_IsLinearCrossfadeOfComposites()
+    {
+        // prev composite: red = (255, 0, 0). curr composite: lime at 50% over blue = (0, 128, 128).
+        // Straight cross-fade at 0.5 = (128, 64, 64).
+        using var green = SolidBitmap(SKColors.Lime);
+        using var red = SolidBitmap(SKColors.Red);
+        var prev = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 1f), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new SkiaBitmapBackground(green, SKColors.Blue, 0.5f), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(128, pixel.Red, 3);
+        Assert.AreEqual(64, pixel.Green, 3);
+        Assert.AreEqual(64, pixel.Blue, 3);
+    }
+
+    [TestMethod]
+    public void Transition_DimmedImageToTransparent_FadesOutAsOneGroup()
+    {
+        // Composite = red at 50% over blue = (128, 0, 128); fading out at 0.5 keeps that colour at alpha ~128.
+        using var red = SolidBitmap(SKColors.Red);
+        var prev = new SlideRenderSpec(new SkiaBitmapBackground(red, SKColors.Blue, 0.5f), Array.Empty<RenderElement>());
+        var curr = new SlideRenderSpec(new TransparentBackground(), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderToSKBitmap(curr, 100, 100, prev, 0.5f);
+        var pixel = bitmap.GetPixel(50, 50);
+
+        Assert.AreEqual(128, pixel.Red, 3);
+        Assert.AreEqual(128, pixel.Blue, 3);
+        Assert.AreEqual(128, pixel.Alpha, 3);
     }
 
     // A motion theme below 100% yields a translucent SolidBackground drawn over the video layer. The outgoing
