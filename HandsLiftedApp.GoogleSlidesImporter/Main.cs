@@ -19,7 +19,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
 {
     public class Main
     {
-        static string[] Scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
+        public static readonly string[] Scopes = { SlidesService.Scope.PresentationsReadonly, DriveService.Scope.DriveFile, DriveService.Scope.DriveReadonly };
         static string ApplicationName = "Google Slides API .NET Quickstart";
 
         static string PDF_MIME_TYPE = "application/pdf";
