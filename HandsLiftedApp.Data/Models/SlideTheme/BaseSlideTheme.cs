@@ -453,6 +453,18 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _backgroundGraphicFilePath, value);
         }
 
+        // How strongly the background image / motion video shows over BackgroundColour, as a percent.
+        // 100 = media fully opaque (the pre-existing look); 0 = only the colour shows. Clamped on set so a
+        // hand-edited theme file can't carry an out-of-range value.
+        private int _backgroundOpacity = 100;
+
+        [DataMember]
+        public int BackgroundOpacity
+        {
+            get => _backgroundOpacity;
+            set => this.RaiseAndSetIfChanged(ref _backgroundOpacity, Math.Clamp(value, 0, 100));
+        }
+
         private string? _defaultMotionBackgroundVideoPath;
 
         [DataMember]
