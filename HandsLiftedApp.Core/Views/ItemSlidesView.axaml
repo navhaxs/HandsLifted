@@ -92,60 +92,22 @@
                 </DataTemplate>
                 <DataTemplate x:Key="SongSlideInstance">
                     <Border Background="#101010" Padding="48,36">
-                        <Grid>
-                            <!--  auto-fit on: shrink-only scale so the wrapped text fits the card  -->
-                            <Viewbox
-                                HorizontalAlignment="Left"
-                                IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextAutoFit}"
-                                StretchDirection="DownOnly"
-                                VerticalAlignment="Center">
-                                <TextBlock
-                                    FontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
-                                    Foreground="White"
-                                    Text="{Binding Text}"
-                                    TextWrapping="Wrap"
-                                    Width="1184" />
-                            </Viewbox>
-                            <!--  auto-fit off: clip at the card height with a trailing ellipsis  -->
-                            <TextBlock
-                                FontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
-                                Foreground="White"
-                                IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=!AppPreferences.SlidesTextAutoFit}"
-                                MaxHeight="648"
-                                Text="{Binding Text}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="Wrap"
-                                VerticalAlignment="Center" />
-                        </Grid>
+                        <controls:AutoFitTextBlock
+                            AutoFit="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextAutoFit}"
+                            Foreground="White"
+                            MaxFontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
+                            Text="{Binding Text}"
+                            VerticalAlignment="Center" />
                     </Border>
                 </DataTemplate>
                 <DataTemplate x:Key="Fallback">
                     <Border Background="#101010" Padding="48,36">
-                        <Grid>
-                            <!--  auto-fit on: shrink-only scale so the wrapped text fits the card  -->
-                            <Viewbox
-                                HorizontalAlignment="Left"
-                                IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextAutoFit}"
-                                StretchDirection="DownOnly"
-                                VerticalAlignment="Center">
-                                <TextBlock
-                                    FontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
-                                    Foreground="White"
-                                    Text="{Binding SlideText}"
-                                    TextWrapping="Wrap"
-                                    Width="1184" />
-                            </Viewbox>
-                            <!--  auto-fit off: clip at the card height with a trailing ellipsis  -->
-                            <TextBlock
-                                FontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
-                                Foreground="White"
-                                IsVisible="{Binding Source={x:Static app:Globals.Instance}, Path=!AppPreferences.SlidesTextAutoFit}"
-                                MaxHeight="648"
-                                Text="{Binding SlideText}"
-                                TextTrimming="CharacterEllipsis"
-                                TextWrapping="Wrap"
-                                VerticalAlignment="Center" />
-                        </Grid>
+                        <controls:AutoFitTextBlock
+                            AutoFit="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextAutoFit}"
+                            Foreground="White"
+                            MaxFontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
+                            Text="{Binding SlideText}"
+                            VerticalAlignment="Center" />
                     </Border>
                 </DataTemplate>
             </common:MyTemplateSelector>

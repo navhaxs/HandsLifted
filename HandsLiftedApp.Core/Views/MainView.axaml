@@ -340,8 +340,10 @@
                                                 <TextBlock Text="Text size" />
                                                 <Slider
                                                     IsEnabled="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextMode}"
-                                                    Maximum="140"
-                                                    Minimum="20"
+                                                    IsSnapToTickEnabled="True"
+                                                    Maximum="120"
+                                                    Minimum="24"
+                                                    TickFrequency="2"
                                                     Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize, Mode=TwoWay}" />
                                             </StackPanel>
                                         </Flyout>

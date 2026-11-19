@@ -292,8 +292,10 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _slidesTextAutoFit, value);
         }
 
-        // in 1280x720 slide units (scales with the thumbnail size)
-        private double _slidesTextModeFontSize = 56;
+        // Text mode font size, in 1280x720 slide units (scales with the thumbnail size). 64 is about the largest size at
+        // which a typical 4-line stanza keeps one lyric line per row; the slider (MainView) runs 24-120. Above ~80
+        // shrink-to-fit lands on the same size for most stanzas - only short ones use the larger sizes.
+        private double _slidesTextModeFontSize = 64;
         [DataMember]
         public double SlidesTextModeFontSize
         {
