@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Serialization;
 using Avalonia;
 using Avalonia.Controls;
@@ -10,9 +11,12 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
+using ReactiveUI;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
 {
@@ -214,34 +218,57 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
         private async void Open()
         {
             var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel == null) return;
 
             // Start async operation to open the dialog.
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "Open File",
-                AllowMultiple = false
+                AllowMultiple = false,
+                FileTypeFilter = new[] { XmlFileType, FilePickerFileTypes.All }
             });
 
             var filePath = files.Count > 0 ? files[0].TryGetLocalPath() : null;
 
             if (filePath == null) return;
 
-            XmlSerializer serializer = new XmlSerializer(typeof(MediaGroupItem));
-
-            using (FileStream stream = new FileStream(filePath, FileMode.Open))
+            try
             {
-                var x = serializer.Deserialize(stream);
-                if (x != null && x is MediaGroupItem mediaGroupItem)
+                XmlSerializer serializer = new XmlSerializer(typeof(MediaGroupItem));
+
+                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    // var itemInstance = ItemInstanceFactory.ToItemInstance((MediaGroupItem)x, null);
-                    if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
+                    var x = serializer.Deserialize(stream);
+                    if (x is MediaGroupItem mediaGroupItem)
                     {
-                        mediaGroupItemInstance.SelectedSlideIndex = 0;
-                        mediaGroupItemInstance.Items = mediaGroupItem.Items;
+                        // var itemInstance = ItemInstanceFactory.ToItemInstance((MediaGroupItem)x, null);
+                        if (DataContext is MediaGroupItemInstance mediaGroupItemInstance)
+                        {
+                            mediaGroupItemInstance.SelectedSlideIndex = 0;
+                            mediaGroupItemInstance.Items = mediaGroupItem.Items;
+                        }
                     }
                 }
             }
+            catch (Exception ex) when (ex is InvalidOperationException or XmlException or IOException
+                                           or UnauthorizedAccessException)
+            {
+                // InvalidOperationException = XmlSerializer wrapper (wrong root element, bad content, bad encoding).
+                Log.Error(ex, "Failed to load slide group file {FilePath}", filePath);
+                MessageBus.Current.SendMessage(new MessageWindowViewModel
+                {
+                    Title = "Couldn't load that file",
+                    Content = $"\"{Path.GetFileName(filePath)}\" isn't a valid slide group file. " +
+                              "Please choose a slide group XML file that was saved from this editor."
+                });
+            }
         }
+
+        private static readonly FilePickerFileType XmlFileType = new("XML Document")
+        {
+            Patterns = new[] { "*.xml" },
+            MimeTypes = new[] { "text/xml", "application/xml" }
+        };
 
         private void SaveButton_OnClick(object? sender, RoutedEventArgs e)
         {
@@ -255,6 +282,8 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
             var files = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 Title = "Save File",
+                DefaultExtension = "xml",
+                FileTypeChoices = new[] { XmlFileType },
             });
 
             if (files is null) return;
@@ -270,6 +299,8 @@ namespace HandsLiftedApp.Core.Views.Editors.MediaGroupItemEditor
                     // serialization was successful - only now do we write to disk
                     await using var stream = await files.OpenWriteAsync();
 
+                    // OpenWriteAsync may not truncate an existing file; stale trailing bytes would corrupt it.
+                    stream.SetLength(0);
                     memoryStream.WriteTo(stream);
                 }
             }
