@@ -14,7 +14,6 @@ public static class ScriptureParagraphSpecBuilder
     private const int CanvasWidth = ScriptureParagraphLayoutEngine.CanvasWidth;
     private const int CanvasHeight = ScriptureParagraphLayoutEngine.CanvasHeight;
     private const float HorizontalMargin = ScriptureParagraphLayoutEngine.HorizontalMargin;
-    private const float TopMargin = 160f;
 
     private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
         theme.DropShadowEnabled
@@ -61,19 +60,11 @@ public static class ScriptureParagraphSpecBuilder
         using var headerFont = new SKFont(headerTypeface, headerFontSize);
         using var headerPaint = new SKPaint(headerFont);
 
-        bool hasHeader = lines.Any(l => l.IsHeader);
-        float startY;
-        if (hasHeader)
-        {
-            float totalHeight = lines.Sum(l => l.IsHeader ? headerLineHeight : lineHeight);
-            if (lines.Any(l => !l.IsHeader))
-                totalHeight += ScriptureParagraphLayoutEngine.HeaderSpacingBelow;
-            startY = (CanvasHeight - totalHeight) / 2f;
-        }
-        else
-        {
-            startY = TopMargin;
-        }
+        // Top-align every slide at the same margin the paginator uses. The paginator fills each
+        // page up to CanvasHeight - 2*VerticalMargin at the theme's font size, so a full page
+        // ends exactly at the bottom margin whatever the size, and a short last page sits at the
+        // same top position as the others instead of floating in the middle.
+        float startY = ScriptureParagraphLayoutEngine.VerticalMargin;
 
         var result = new List<RenderElement>(lines.Count);
         float y = startY;
