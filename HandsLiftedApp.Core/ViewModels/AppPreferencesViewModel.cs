@@ -273,6 +273,25 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _slideThumbnailSizeMultiplier, value);
         }
 
+        // Main Slides view: show song items as plain lyrics text instead of rendered slide thumbnails
+        // (easier to read while operating a live service).
+        private bool _slidesTextMode;
+        [DataMember]
+        public bool SlidesTextMode
+        {
+            get => _slidesTextMode;
+            set => this.RaiseAndSetIfChanged(ref _slidesTextMode, value);
+        }
+
+        // in 1280x720 slide units (scales with the thumbnail size)
+        private double _slidesTextModeFontSize = 56;
+        [DataMember]
+        public double SlidesTextModeFontSize
+        {
+            get => _slidesTextModeFontSize;
+            set => this.RaiseAndSetIfChanged(ref _slidesTextModeFontSize, value);
+        }
+
         private double _songEditorThumbnailSizeMultiplier = 80;
         [DataMember]
         public double SongEditorThumbnailSizeMultiplier

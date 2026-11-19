@@ -61,6 +61,53 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <extensions:BitmapAssetValueConverter x:Key="variableImage" />
+
+            <!--
+                Text-only mode for song items (see ItemSlidesView.ApplyTextMode): the code-behind swaps the
+                list's ItemsPanel/ItemTemplate for these (a style can't, as the thumbnail ones are local values).
+            -->
+            <!--
+                Item content used instead of the rendered thumbnail when text mode is on. The ListBoxItem template
+                draws it inside its 1280x720 Viewbox, so FontSize is in slide units and scales with thumbnail size.
+            -->
+            <common:MyTemplateSelector x:Key="TextModeItemTemplate">
+                <DataTemplate x:Key="SongTitleSlideInstance">
+                    <Border Background="#101010" Padding="48,36">
+                        <StackPanel Spacing="12" VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                Text="{Binding Title}"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                FontSize="32"
+                                Foreground="#aaaaaa"
+                                Text="{Binding Copyright}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+                <DataTemplate x:Key="SongSlideInstance">
+                    <Border Background="#101010" Padding="48,36">
+                        <TextBlock
+                            FontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
+                            Foreground="White"
+                            Text="{Binding Text}"
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Center" />
+                    </Border>
+                </DataTemplate>
+                <DataTemplate x:Key="Fallback">
+                    <Border Background="#101010" Padding="48,36">
+                        <TextBlock
+                            FontSize="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize}"
+                            Foreground="White"
+                            Text="{Binding SlideText}"
+                            TextWrapping="Wrap" />
+                    </Border>
+                </DataTemplate>
+            </common:MyTemplateSelector>
             <ContextMenu x:Key="ItemContextMenu">
                 <MenuItem
                     Click="MoveUpItem_OnClick"

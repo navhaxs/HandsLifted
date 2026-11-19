@@ -319,6 +319,30 @@
                         Margin="0,0,-1,6">
                         <DockPanel>
                             <DockPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+                                <Button
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    DockPanel.Dock="Left"
+                                    Margin="0,0,8,0"
+                                    Padding="6,2"
+                                    ToolTip.Tip="Song lyrics view options">
+                                    <avalonia:MaterialIcon Foreground="#808080" Kind="FormatText" />
+                                    <Button.Flyout>
+                                        <Flyout Placement="TopEdgeAlignedRight">
+                                            <StackPanel Spacing="10" Width="260">
+                                                <CheckBox
+                                                    Content="Show song lyrics as text in slide boxes"
+                                                    IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextMode, Mode=TwoWay}" />
+                                                <TextBlock Text="Text size" />
+                                                <Slider
+                                                    IsEnabled="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextMode}"
+                                                    Maximum="140"
+                                                    Minimum="20"
+                                                    Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextModeFontSize, Mode=TwoWay}" />
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
                                 <corecontrols:ThumbnailSizeSlider Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlideThumbnailSizeMultiplier}" />
                             </DockPanel>
                             <!--    -->

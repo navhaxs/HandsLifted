@@ -313,6 +313,41 @@ namespace HandsLiftedApp.Controls
         {
             SetupDnd(sender as Grid);
             SetupHoverInsert(sender as Grid);
+            SetupTextMode(sender as Grid);
+        }
+
+        // Text mode for song items: swaps the thumbnail list's ItemTemplate for the lyric-text one (resource
+        // "TextModeItemTemplate"), keeping the same grid layout. Swapped here rather than via a style because
+        // the thumbnail ItemTemplate is a local value, which would beat a style setter.
+        private void SetupTextMode(Grid? dropContainer)
+        {
+            if (dropContainer?.DataContext is not SongItemInstance) return;
+            var listBox = dropContainer.Children.OfType<ListBoxWithoutKey>().FirstOrDefault();
+            if (listBox == null) return;
+            var prefs = Globals.Instance.AppPreferences;
+            if (prefs == null) return;
+
+            // remember the thumbnail template on first setup: on a re-attach the list may already be in text mode
+            if (listBox.Tag is not Avalonia.Controls.Templates.IDataTemplate)
+                listBox.Tag = listBox.ItemTemplate;
+            var thumbnailTemplate = (Avalonia.Controls.Templates.IDataTemplate)listBox.Tag;
+            var textTemplate = (Avalonia.Controls.Templates.IDataTemplate)this.FindResource("TextModeItemTemplate")!;
+
+            void Apply()
+            {
+                var wanted = prefs.SlidesTextMode ? textTemplate : thumbnailTemplate;
+                if (!ReferenceEquals(listBox.ItemTemplate, wanted)) listBox.ItemTemplate = wanted;
+            }
+
+            void OnPrefsChanged(object? s, System.ComponentModel.PropertyChangedEventArgs args)
+            {
+                if (args.PropertyName == nameof(prefs.SlidesTextMode)) Apply();
+            }
+
+            // the same visual may be detached and re-attached (e.g. when the playlist view is rebuilt)
+            prefs.PropertyChanged += OnPrefsChanged;
+            dropContainer.DetachedFromLogicalTree += (_, _) => prefs.PropertyChanged -= OnPrefsChanged;
+            Apply();
         }
 
         // Hover-reveal "+" button in the gaps between slide thumbnails (and before the
