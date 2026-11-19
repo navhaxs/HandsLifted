@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
 using Avalonia.LogicalTree;
+using Avalonia.VisualTree;
 using HandsLiftedApp.Data.Models.Items;
 
 namespace HandsLiftedApp.Core.Controls.Navigation
@@ -71,7 +72,17 @@ namespace HandsLiftedApp.Core.Controls.Navigation
 
         private void ListBox_PointerPressedPreview(object? sender, PointerPressedEventArgs e)
         {
-            _ignoreNextSelection = e.GetCurrentPoint(listBox).Properties.IsRightButtonPressed;
+            var props = e.GetCurrentPoint(listBox).Properties;
+            _ignoreNextSelection = props.IsRightButtonPressed;
+
+            // Clicking the already-selected item causes no SelectionChanged, so flash explicitly.
+            if (props.IsLeftButtonPressed
+                && (e.Source as Avalonia.Visual)?.FindAncestorOfType<ListBoxItem>() is { } container)
+            {
+                var index = listBox.IndexFromContainer(container);
+                if (index > -1 && index == listBox.SelectedIndex)
+                    MessageBus.Current.SendMessage(new NavigateToItemMessage() { Index = index, Flash = true });
+            }
         }
 
         private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
