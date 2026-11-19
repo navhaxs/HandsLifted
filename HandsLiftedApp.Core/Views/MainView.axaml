@@ -333,6 +333,10 @@
                                                 <CheckBox
                                                     Content="Show song lyrics as text in slide boxes"
                                                     IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextMode, Mode=TwoWay}" />
+                                                <CheckBox
+                                                    Content="Shrink text to fit (otherwise ends with …)"
+                                                    IsChecked="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextAutoFit, Mode=TwoWay}"
+                                                    IsEnabled="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextMode}" />
                                                 <TextBlock Text="Text size" />
                                                 <Slider
                                                     IsEnabled="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlidesTextMode}"

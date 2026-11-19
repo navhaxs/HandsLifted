@@ -283,6 +283,15 @@ namespace HandsLiftedApp.Core.ViewModels
             set => this.RaiseAndSetIfChanged(ref _slidesTextMode, value);
         }
 
+        // Text mode: shrink (never grow) lyrics that would overflow the slide box; when off they end with an ellipsis.
+        private bool _slidesTextAutoFit = true;
+        [DataMember]
+        public bool SlidesTextAutoFit
+        {
+            get => _slidesTextAutoFit;
+            set => this.RaiseAndSetIfChanged(ref _slidesTextAutoFit, value);
+        }
+
         // in 1280x720 slide units (scales with the thumbnail size)
         private double _slidesTextModeFontSize = 56;
         [DataMember]
