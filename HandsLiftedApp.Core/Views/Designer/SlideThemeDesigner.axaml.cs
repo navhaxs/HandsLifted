@@ -508,6 +508,8 @@ namespace HandsLiftedApp.Core.Views.Designer
                         {
                             await using (var stream = await file.OpenWriteAsync())
                             {
+                                // OpenWriteAsync may not truncate an existing file; stale trailing bytes would corrupt it.
+                                stream.SetLength(0);
                                 // Serialize with centralized utility and error handling
                                 var ok = await Utils.SlideThemeXmlSerializer.TrySerializeAsync(item, stream);
                                 if (!ok)

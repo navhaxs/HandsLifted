@@ -184,6 +184,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                         // serialization was successful - only now do we write to disk
                         await using var stream = await file.OpenWriteAsync();
 
+                        // OpenWriteAsync may not truncate an existing file; stale trailing bytes would corrupt it.
+                        stream.SetLength(0);
                         memoryStream.WriteTo(stream);
                     }
                 }

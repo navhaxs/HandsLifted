@@ -5,9 +5,11 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Importer.OnlineSongLyrics;
+using ReactiveUI;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.Song
@@ -44,8 +46,13 @@ namespace HandsLiftedApp.Core.Views.Editors.Song
             // Start async operation to open the dialog.
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Open Text File",
-                AllowMultiple = false
+                Title = "Import Song",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new FilePickerFileType("Song files") { Patterns = new[] { "*.xml", "*.txt" } },
+                    FilePickerFileTypes.All
+                }
             });
 
             if (files.Count >= 1)
@@ -72,11 +79,16 @@ namespace HandsLiftedApp.Core.Views.Editors.Song
                     }
                     catch (Exception e)
                     {
-                        Log.Error("Failed to parse file: [{Name}]", files[0].Name);
+                        Log.Error(e, "Failed to parse file: [{Name}]", files[0].Name);
                     }
 
                     if (loaded == null)
                     {
+                        MessageBus.Current.SendMessage(new MessageWindowViewModel
+                        {
+                            Title = "Couldn't import that file",
+                            Content = $"\"{files[0].Name}\" isn't a song file. Please choose a song .xml or .txt file."
+                        });
                         return;
                     }
 

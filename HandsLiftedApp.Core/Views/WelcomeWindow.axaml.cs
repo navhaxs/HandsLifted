@@ -171,8 +171,13 @@ namespace HandsLiftedApp.Core.Views
             var topLevel = GetTopLevel(this);
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Open Text File",
-                AllowMultiple = false
+                Title = "Open Playlist",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new FilePickerFileType("XML Document") { Patterns = new[] { "*.xml" }, MimeTypes = new[] { "text/xml", "application/xml" } },
+                    FilePickerFileTypes.All
+                }
             });
             if (files.Count >= 1)
             {
