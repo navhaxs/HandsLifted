@@ -28,7 +28,7 @@
             Maximum="150"
             Minimum="50"
             Name="ThumbnailSlider"
-            TickFrequency="0.1"
+            TickFrequency="0.05"
             Value="{Binding Value, RelativeSource={RelativeSource AncestorType=controls:ThumbnailSizeSlider}}"
             Width="100" />
     </DockPanel>

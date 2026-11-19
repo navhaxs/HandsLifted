@@ -147,7 +147,100 @@ namespace HandsLiftedApp.Core.Views
                     MessageBus.Current.SendMessage(new SpyScrollUpdateMessage() { Index = lastIndex });
                 });
 
+            // Keep the same slides under the viewport when the thumbnail size slider changes.
+            // Subscribed synchronously: the property-changed notification fires BEFORE the next layout pass, so the
+            // old geometry is still intact when we capture the anchor.
+            Globals.Instance.AppPreferences
+                .WhenAnyValue(p => p.SlideThumbnailSizeMultiplier)
+                .Skip(1)
+                .Subscribe(_ => CaptureZoomAnchor());
+
             this.KeyDown += PlaylistSlidesView_KeyDown;
+        }
+
+        // ---- thumbnail zoom: keep the viewport anchored ----
+
+        private ListBoxItem? _zoomAnchorItem;
+        private double _zoomAnchorFraction; // position of the viewport top within the anchor item (0 = its top, 1 = its bottom)
+        private double _zoomAnchorPixels;   // used instead when the viewport top sits above the item (header area), which doesn't scale
+        private bool _zoomAnchorUsesPixels;
+        private bool _zoomRestorePending;
+
+        /// <summary>
+        /// Remembers which slide sits at the top of the viewport (and how far into it we are), then restores that
+        /// after layout has applied the new thumbnail size. A plain pixel offset can't work: the wrap panel re-flows
+        /// into a different number of rows, so the same slide ends up at a completely different Y.
+        /// </summary>
+        private void CaptureZoomAnchor()
+        {
+            // slider drag fires many changes before layout runs; keep the first anchor (still valid, it is an item)
+            if (_zoomRestorePending)
+                return;
+
+            var item = listBox.GetVisualDescendants()
+                .OfType<ListBoxItem>()
+                .Where(i => i.IsEffectivelyVisible && i.Bounds.Height > 0)
+                .Select(i => (Item: i, Top: i.TranslatePoint(default, scrollViewer)))
+                .Where(t => t.Top.HasValue && t.Top.Value.Y + t.Item.Bounds.Height > 0.5) // bottom below viewport top
+                .OrderBy(t => t.Top!.Value.Y)
+                .ThenBy(t => t.Top!.Value.X)
+                .Select(t => ((ListBoxItem Item, double Y)?)(t.Item, t.Top!.Value.Y))
+                .FirstOrDefault();
+
+            if (item is null)
+                return;
+
+            _zoomAnchorItem = item.Value.Item;
+            var topInViewport = item.Value.Y; // <= 0 when the item straddles the viewport top
+            if (topInViewport > 0)
+            {
+                // viewport top is above the item (item header/gap): that distance is fixed-size, not scaled
+                _zoomAnchorUsesPixels = true;
+                _zoomAnchorPixels = topInViewport;
+            }
+            else
+            {
+                _zoomAnchorUsesPixels = false;
+                _zoomAnchorFraction = -topInViewport / item.Value.Item.Bounds.Height;
+            }
+
+            _zoomRestorePending = true;
+            scrollViewer.LayoutUpdated += OnZoomLayoutUpdated;
+
+            // stop restoring once layout has settled (after the last slider change of this burst)
+            Dispatcher.UIThread.Post(() =>
+            {
+                scrollViewer.LayoutUpdated -= OnZoomLayoutUpdated;
+                RestoreZoomAnchor();
+                _zoomRestorePending = false;
+                _zoomAnchorItem = null;
+            }, DispatcherPriority.Background);
+        }
+
+        private void OnZoomLayoutUpdated(object? sender, EventArgs e) => RestoreZoomAnchor();
+
+        private void RestoreZoomAnchor()
+        {
+            var item = _zoomAnchorItem;
+            if (item is null || !item.IsEffectivelyVisible || item.Bounds.Height <= 0)
+                return;
+
+            var top = item.TranslatePoint(default, scrollViewer);
+            if (top is null)
+                return;
+
+            // desired: the viewport top lands at the same place within the item as before
+            var delta = _zoomAnchorUsesPixels
+                ? -_zoomAnchorPixels
+                : _zoomAnchorFraction * item.Bounds.Height;
+            var targetY = scrollViewer.Offset.Y + top.Value.Y + delta;
+            targetY = Math.Clamp(targetY, 0, Math.Max(0, scrollViewer.ScrollBarMaximum.Y));
+
+            if (Math.Abs(targetY - scrollViewer.Offset.Y) >= 0.5)
+            {
+                CancelScrollAnimation();
+                scrollViewer.Offset = new Vector(scrollViewer.Offset.X, targetY);
+            }
         }
 
         // ---- animated scroll: critically damped spring ----
