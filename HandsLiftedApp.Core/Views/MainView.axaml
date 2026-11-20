@@ -349,7 +349,7 @@
                                         </Flyout>
                                     </Button.Flyout>
                                 </Button>
-                                <corecontrols:ThumbnailSizeSlider Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlideThumbnailSizeMultiplier}" />
+                                <corecontrols:ThumbnailSizeSlider AvailableWidth="{Binding #SlidesView.Bounds.Width}" Value="{Binding Source={x:Static app:Globals.Instance}, Path=AppPreferences.SlideThumbnailSizeMultiplier}" />
                             </DockPanel>
                             <!--    -->
                             <!--  <Border  -->
@@ -439,7 +439,7 @@
                                 CornerRadius="6,0,0,0"
                                 HorizontalAlignment="Stretch">
 
-                                <views:PlaylistSlidesView DataContext="{Binding Playlist}" />
+                                <views:PlaylistSlidesView x:Name="SlidesView" DataContext="{Binding Playlist}" />
                                 <!-- <ScrollViewer> -->
                                 <!--     <controls1:ItemSlidesView DataContext="{Binding Playlist.SelectedItem}" /> -->
                                 <!-- </ScrollViewer> -->
