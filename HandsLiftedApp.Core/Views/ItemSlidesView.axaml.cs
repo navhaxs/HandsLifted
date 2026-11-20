@@ -673,11 +673,13 @@ namespace HandsLiftedApp.Controls
                     dock.Children.Add(labelStrip);
                     dock.Children.Add(thumbnailGrid);
 
+                    var placeholderWidth = mainViewModel.ItemWidth * sizeMultiplier - 2 * HandsLiftedApp.Core.Views.SlideGridMetrics.ItemMargin;
                     emptyStatePlaceholder = new Grid
                     {
-                        Width = mainViewModel.ItemWidth * sizeMultiplier - 8,
-                        Height = mainViewModel.ItemHeight * sizeMultiplier - 16,
-                        Margin = new Thickness(12, 8, 0, 0),
+                        Width = placeholderWidth,
+                        Height = placeholderWidth / HandsLiftedApp.Core.Views.SlideGridMetrics.Aspect + HandsLiftedApp.Core.Views.SlideGridMetrics.LabelStripHeight,
+                        Margin = new Thickness(HandsLiftedApp.Core.Views.SlideGridMetrics.PanelMarginX + HandsLiftedApp.Core.Views.SlideGridMetrics.ItemMargin,
+                            HandsLiftedApp.Core.Views.SlideGridMetrics.ItemMargin, 0, 0),
                         HorizontalAlignment = HorizontalAlignment.Left,
                         VerticalAlignment = VerticalAlignment.Top
                     };

@@ -360,25 +360,21 @@
                                         </Style>
                                         <Style Selector="ListBoxItem">
                                             <Setter Property="Padding" Value="0" />
+                                            <!-- Keep equal to SlideGridMetrics.ItemMargin -->
+                                            <Setter Property="Margin" Value="2" />
                                             <!--<Setter Property="IsHitTestVisible" Value="False" />-->
                                             <!--<Setter Property="Focusable" Value="False"/>-->
                                         </Style>
                                     </controls:ListBoxWithoutKey.Styles>
                                     <controls:ListBoxWithoutKey.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <controls:JustifiedWrapPanel Margin="8,0" Spacing="8">
-                                                <controls:JustifiedWrapPanel.ItemHeight>
-                                                    <MultiBinding Converter="{StaticResource MultiplicationConverter}">
-                                                        <Binding
-                                                            FallbackValue="200"
-                                                            Path="MainViewModel.ItemHeight"
-                                                            Source="{x:Static app:Globals.Instance}" />
-                                                        <Binding
-                                                            FallbackValue="80"
-                                                            Path="AppPreferences.SlideThumbnailSizeMultiplier"
-                                                            Source="{x:Static app:Globals.Instance}" />
-                                                    </MultiBinding>
-                                                </controls:JustifiedWrapPanel.ItemHeight>
+                                            <!-- Margin X = SlideGridMetrics.PanelMarginX -->
+                                            <controls:JustifiedWrapPanel
+                                                AspectRatio="{x:Static views1:SlideGridMetrics.Aspect}"
+                                                ExtraHeight="{x:Static views1:SlideGridMetrics.ExtraHeight}"
+                                                ExtraWidth="{x:Static views1:SlideGridMetrics.ExtraWidth}"
+                                                Margin="4,0"
+                                                Spacing="{x:Static views1:SlideGridMetrics.Spacing}">
                                                 <controls:JustifiedWrapPanel.ItemWidth>
                                                     <MultiBinding Converter="{StaticResource MultiplicationConverter}">
                                                         <Binding
