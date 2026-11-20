@@ -20,10 +20,41 @@ namespace HandsLiftedApp.Controls
         public static readonly StyledProperty<double> SpacingProperty =
             AvaloniaProperty.Register<JustifiedWrapPanel, double>(nameof(Spacing), 8);
 
+        // Aspect mode (opt-in): when > 0, ItemHeight is ignored and each item's height is derived from its
+        // stretched width: (slotWidth - ExtraWidth) / AspectRatio + ExtraHeight. 0 = legacy fixed ItemHeight.
+        public static readonly StyledProperty<double> AspectRatioProperty =
+            AvaloniaProperty.Register<JustifiedWrapPanel, double>(nameof(AspectRatio), 0);
+
+        public static readonly StyledProperty<double> ExtraWidthProperty =
+            AvaloniaProperty.Register<JustifiedWrapPanel, double>(nameof(ExtraWidth), 0);
+
+        public static readonly StyledProperty<double> ExtraHeightProperty =
+            AvaloniaProperty.Register<JustifiedWrapPanel, double>(nameof(ExtraHeight), 0);
+
         static JustifiedWrapPanel()
         {
-            AffectsMeasure<JustifiedWrapPanel>(ItemWidthProperty, ItemHeightProperty, SpacingProperty);
-            AffectsArrange<JustifiedWrapPanel>(ItemWidthProperty, ItemHeightProperty, SpacingProperty);
+            AffectsMeasure<JustifiedWrapPanel>(ItemWidthProperty, ItemHeightProperty, SpacingProperty,
+                AspectRatioProperty, ExtraWidthProperty, ExtraHeightProperty);
+            AffectsArrange<JustifiedWrapPanel>(ItemWidthProperty, ItemHeightProperty, SpacingProperty,
+                AspectRatioProperty, ExtraWidthProperty, ExtraHeightProperty);
+        }
+
+        public double AspectRatio
+        {
+            get => GetValue(AspectRatioProperty);
+            set => SetValue(AspectRatioProperty, value);
+        }
+
+        public double ExtraWidth
+        {
+            get => GetValue(ExtraWidthProperty);
+            set => SetValue(ExtraWidthProperty, value);
+        }
+
+        public double ExtraHeight
+        {
+            get => GetValue(ExtraHeightProperty);
+            set => SetValue(ExtraHeightProperty, value);
         }
 
         public double ItemWidth
@@ -52,9 +83,26 @@ namespace HandsLiftedApp.Controls
             return Math.Max(1, (int)((width + Spacing) / (ItemWidth + Spacing)));
         }
 
+        private bool AspectMode => AspectRatio > 0;
+
+        private double SlotWidthFor(double availableWidth)
+        {
+            int columns = ColumnsFor(availableWidth);
+            if (double.IsNaN(availableWidth) || double.IsInfinity(availableWidth))
+                return ItemWidth;
+            if (columns > 1 || AspectMode)
+                return Math.Max(ItemWidth, (availableWidth - (columns - 1) * Spacing) / columns);
+            return ItemWidth;
+        }
+
+        private double SlotHeightFor(double slotWidth) =>
+            AspectMode ? Math.Max(0, (slotWidth - ExtraWidth) / AspectRatio + ExtraHeight) : ItemHeight;
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            var childConstraint = new Size(ItemWidth, ItemHeight);
+            double slotWidth = SlotWidthFor(availableSize.Width);
+            double slotHeight = SlotHeightFor(slotWidth);
+            var childConstraint = AspectMode ? new Size(slotWidth, slotHeight) : new Size(ItemWidth, ItemHeight);
             foreach (var child in Children)
                 child.Measure(childConstraint);
 
@@ -63,7 +111,7 @@ namespace HandsLiftedApp.Controls
 
             int columns = ColumnsFor(availableSize.Width);
             int rows = (int)Math.Ceiling(Children.Count / (double)columns);
-            double height = rows * ItemHeight + Math.Max(0, rows - 1) * Spacing;
+            double height = rows * slotHeight + Math.Max(0, rows - 1) * Spacing;
 
             double width = double.IsInfinity(availableSize.Width)
                 ? columns * ItemWidth + Math.Max(0, columns - 1) * Spacing
@@ -81,22 +129,24 @@ namespace HandsLiftedApp.Controls
 
             // Only stretch item width across multiple columns. ColumnsFor guarantees the nominal
             // (columns * ItemWidth + gaps) fits within finalSize.Width, so itemWidth only ever grows.
-            double itemWidth = columns > 1
-                ? (finalSize.Width - (columns - 1) * Spacing) / columns
-                : ItemWidth;
+            double itemWidth = AspectMode ? SlotWidthFor(finalSize.Width)
+                : columns > 1
+                    ? (finalSize.Width - (columns - 1) * Spacing) / columns
+                    : ItemWidth;
+            double itemHeight = SlotHeightFor(itemWidth);
 
             double x = 0, y = 0;
             int col = 0;
 
             foreach (var child in Children)
             {
-                child.Arrange(new Rect(x, y, itemWidth, ItemHeight));
+                child.Arrange(new Rect(x, y, itemWidth, itemHeight));
                 col++;
                 if (col >= columns)
                 {
                     col = 0;
                     x = 0;
-                    y += ItemHeight + Spacing;
+                    y += itemHeight + Spacing;
                 }
                 else
                 {
