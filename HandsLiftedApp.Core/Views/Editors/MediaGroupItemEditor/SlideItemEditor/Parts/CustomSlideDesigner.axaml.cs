@@ -108,6 +108,12 @@ namespace HandsLiftedApp.Core.Views.Editors
             // keys typed into the inline text box bubble up here too: "f" must type an f, not fill the view
             if (e.Handled || InlineEditor.IsEditing || e.Source is TextBox) return;
 
+            if (HandleKey(e.Key, e.KeyModifiers))
+            {
+                e.Handled = true;
+                return;
+            }
+
             switch (e.Key)
             {
                 case Key.F:
@@ -123,6 +129,54 @@ namespace HandsLiftedApp.Core.Views.Editors
                     _zoomBorder?.ToggleStretchMode();
                     _zoomBorder?.AutoFit();
                     break;
+            }
+        }
+
+        /// <summary>
+        /// The canvas keyboard shortcuts: Delete/Back remove the selected element, arrows nudge it 1 px (Shift: 10),
+        /// Ctrl+D duplicates it and selects the copy, Esc deselects, Enter/F2 edit a selected text element.
+        /// Returns whether the key was handled; always false with nothing selected or while typing in the inline box.
+        /// </summary>
+        internal bool HandleKey(Key key, KeyModifiers modifiers)
+        {
+            if (InlineEditor.IsEditing) return false;
+            if (DataContext is not CustomSlide slide) return false;
+            var element = _selectedElement;
+            if (element == null || !slide.SlideElements.Contains(element)) return false;
+
+            var plain = modifiers == KeyModifiers.None;
+            var step = modifiers == KeyModifiers.Shift ? 10 : 1;
+            var stepping = plain || modifiers == KeyModifiers.Shift;
+
+            switch (key)
+            {
+                case Key.Delete or Key.Back when plain:
+                    SlideElementCommands.Delete(slide, element);
+                    RemoveSelected();
+                    OnDeselectElement?.Invoke(this, new OnUpdateSelectedElementEventArgs(null));
+                    return true;
+                case Key.Left when stepping:
+                    return SlideElementCommands.Nudge(element, -step, 0);
+                case Key.Right when stepping:
+                    return SlideElementCommands.Nudge(element, step, 0);
+                case Key.Up when stepping:
+                    return SlideElementCommands.Nudge(element, 0, -step);
+                case Key.Down when stepping:
+                    return SlideElementCommands.Nudge(element, 0, step);
+                case Key.D when modifiers == KeyModifiers.Control:
+                    var copy = SlideElementCommands.Duplicate(slide, element);
+                    if (copy == null) return false;
+                    SelectElement(copy);
+                    return true;
+                case Key.Escape when plain:
+                    RemoveSelected();
+                    OnDeselectElement?.Invoke(this, new OnUpdateSelectedElementEventArgs(null));
+                    return true;
+                case Key.Enter or Key.F2 when plain && element is TextElement text:
+                    BeginEdit(text);
+                    return true;
+                default:
+                    return false;
             }
         }
 
@@ -286,7 +340,7 @@ namespace HandsLiftedApp.Core.Views.Editors
         {
             // The proxies are rebuilt, so the selection adorner would be left on a detached one (e.g. after Bring
             // forward or Duplicate): drop it and, if its element is still on the slide, put it on the new proxy.
-            var selectedElement = _selected?.Control?.DataContext as SlideElement;
+            var selectedElement = _selectedElement;
             RemoveSelected();
 
             // e.g. the element being typed into was deleted, or an undo replaced it
@@ -353,7 +407,7 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         public void SelectElement(SlideElement slideElement)
         {
-            if (_selected?.Control?.DataContext == slideElement)
+            if (_selectedElement == slideElement)
             {
                 return;
             }
@@ -369,14 +423,21 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private SelectedAdorner? _selected;
 
+        // The selected element, tracked apart from the adorner so the keyboard shortcuts also work (and can be tested)
+        // where there is no adorner layer.
+        private SlideElement? _selectedElement;
+
         private void AddSelected(Control control, Canvas canvas)
         {
             var layer = AdornerLayer.GetAdornerLayer(canvas);
             if (layer is null)
             {
+                _selectedElement = control.DataContext as SlideElement;
+                OnUpdateSelectedElement?.Invoke(this, new OnUpdateSelectedElementEventArgs(_selectedElement));
                 return;
             }
 
+            _selectedElement = control.DataContext as SlideElement;
             _selected = new SelectedAdorner
             {
                 [AdornerLayer.AdornedElementProperty] = canvas,
@@ -454,6 +515,7 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private void RemoveSelected()
         {
+            _selectedElement = null;
             if (_selected == null)
             {
                 return;
