@@ -134,8 +134,14 @@ namespace PerspectiveDemo
                 SyncHandlesToControl();
         }
 
+        // True while UpdateControl pushes the handles' rect into the control. The control's own change notifications
+        // (a diagonal move sets Left before Top; the two-way binding to int X/Y rounds and echoes back) then say nothing
+        // new: the handles already hold the true raw/snapped rect, and "syncing" would wipe the drag session.
+        private bool _applyingToControl;
+
         private void SyncHandlesToControl()
         {
+            if (_applyingToControl) return;
             if (Control == null || _topLeft == null || _bottomRight == null) return;
 
             var left = Canvas.GetLeft(Control);
@@ -278,6 +284,9 @@ namespace PerspectiveDemo
             if (_drag is { })
             {
                 _drag.PointerMoved += OnPointerMovedDrag;
+                // the gesture ends on release even when the pointer never moves again (and the guide lines come down)
+                _drag.PointerReleased += (_, _) => EndDragSession();
+                _drag.PointerCaptureLost += (_, _) => EndDragSession();
             }
 
             if (Control is { })
@@ -331,67 +340,74 @@ namespace PerspectiveDemo
             if (lastPosition is not null && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
                 Debug.Print($"OnPointerMovedDrag X={newPosition.X} Y={newPosition.Y}");
-                var deltaX = newPosition.X - lastPosition.Value.X;
-                var deltaY = newPosition.Y - lastPosition.Value.Y;
-
-                // Snap the raw (unsnapped) drag position, not the previously snapped rect, or a slow drag sticks.
-                _dragSession ??= new DragSnapSession(GetRect());
-                var snap = _dragSession.Move(deltaX, deltaY, SnapTargets, SlideSize.Width, SlideSize.Height);
-                var draggedRect = snap.Rect;
-                UpdateSnapLines(snap.GuideX, snap.GuideY);
-                // new[] { _top, _bottom, _left, _right, _topLeft, _bottomLeft, _topRight, _bottomRight }
-                //     .ToList()
-                //     .ForEach(thumb => ApplyDeltaToThumb(thumb, deltaX, deltaY));
-                
-                /*
-                 * ------> X
-                 * |
-                 * |
-                 * V
-                 * Y
-                 */
-                
-                /*
-                 * x-----x-----x
-                 * |           |
-                 * x           x
-                 * |           |
-                 * x-----x-----x
-                 */
-                
-                Canvas.SetLeft(_topLeft, draggedRect.X);
-                Canvas.SetTop(_topLeft, draggedRect.Y);
-                Canvas.SetLeft(_bottomRight, draggedRect.X + draggedRect.Width);
-                Canvas.SetTop(_bottomRight, draggedRect.Y + draggedRect.Height);
-                Canvas.SetLeft(_top, draggedRect.X + draggedRect.Width / 2);
-                Canvas.SetTop(_top, draggedRect.Y);
-                Canvas.SetLeft(_topRight, draggedRect.X + draggedRect.Width);
-                Canvas.SetTop(_topRight, draggedRect.Y);
-                Canvas.SetLeft(_left, draggedRect.X);
-                Canvas.SetTop(_left, draggedRect.Y + draggedRect.Height / 2);
-                Canvas.SetLeft(_bottomLeft, draggedRect.X);
-                Canvas.SetTop(_bottomLeft, draggedRect.Y + draggedRect.Height);
-                Canvas.SetLeft(_bottom, draggedRect.X + draggedRect.Width / 2);
-                Canvas.SetTop(_bottom, draggedRect.Y + draggedRect.Height);
-                Canvas.SetLeft(_right, draggedRect.X + draggedRect.Width);
-                Canvas.SetTop(_right, draggedRect.Y + draggedRect.Height / 2);
-
-                var rect = GetRect();
-                UpdateDrag(rect);
-             
-                if (Control is { })
-                {
-                    UpdateControl(Control,
-                        rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
-                }
+                DragBy(newPosition.X - lastPosition.Value.X, newPosition.Y - lastPosition.Value.Y);
             }
             else
             {
-                _dragSession = null;
-                UpdateSnapLines(null, null);
+                EndDragSession();
             }
 
             lastPosition = newPosition;
+        }
+
+        // The gesture is over (or none is running): the next drag seeds from wherever the element then is, and the
+        // snap guides come down.
+        private void EndDragSession()
+        {
+            _dragSession = null;
+            UpdateSnapLines(null, null);
+        }
+
+        /// <summary>Moves the element by a pointer delta (slide pixels), snapping the raw dragged position.</summary>
+        internal void DragBy(double deltaX, double deltaY)
+        {
+            // Snap the raw (unsnapped) drag position, not the previously snapped rect, or a slow drag sticks.
+            _dragSession ??= new DragSnapSession(GetRect());
+            var snap = _dragSession.Move(deltaX, deltaY, SnapTargets, SlideSize.Width, SlideSize.Height);
+            var draggedRect = snap.Rect;
+            UpdateSnapLines(snap.GuideX, snap.GuideY);
+
+            /*
+             * ------> X
+             * |
+             * |
+             * V
+             * Y
+             */
+
+            /*
+             * x-----x-----x
+             * |           |
+             * x           x
+             * |           |
+             * x-----x-----x
+             */
+
+            Canvas.SetLeft(_topLeft, draggedRect.X);
+            Canvas.SetTop(_topLeft, draggedRect.Y);
+            Canvas.SetLeft(_bottomRight, draggedRect.X + draggedRect.Width);
+            Canvas.SetTop(_bottomRight, draggedRect.Y + draggedRect.Height);
+            Canvas.SetLeft(_top, draggedRect.X + draggedRect.Width / 2);
+            Canvas.SetTop(_top, draggedRect.Y);
+            Canvas.SetLeft(_topRight, draggedRect.X + draggedRect.Width);
+            Canvas.SetTop(_topRight, draggedRect.Y);
+            Canvas.SetLeft(_left, draggedRect.X);
+            Canvas.SetTop(_left, draggedRect.Y + draggedRect.Height / 2);
+            Canvas.SetLeft(_bottomLeft, draggedRect.X);
+            Canvas.SetTop(_bottomLeft, draggedRect.Y + draggedRect.Height);
+            Canvas.SetLeft(_bottom, draggedRect.X + draggedRect.Width / 2);
+            Canvas.SetTop(_bottom, draggedRect.Y + draggedRect.Height);
+            Canvas.SetLeft(_right, draggedRect.X + draggedRect.Width);
+            Canvas.SetTop(_right, draggedRect.Y + draggedRect.Height / 2);
+
+            var rect = GetRect();
+            UpdateDrag(rect);
+
+            if (Control is { })
+            {
+                UpdateControl(Control,
+                    rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset, _topOffset)));
+            }
         }
 
         private Rect GetRect()
@@ -411,11 +427,19 @@ namespace PerspectiveDemo
 
         private void UpdateControl(Control control, Rect rect)
         {
-            Canvas.SetLeft(control, rect.Left);
-            Canvas.SetTop(control, rect.Top);
+            _applyingToControl = true;
+            try
+            {
+                Canvas.SetLeft(control, rect.Left);
+                Canvas.SetTop(control, rect.Top);
 
-            control.Width = rect.Width;
-            control.Height = rect.Height;
+                control.Width = rect.Width;
+                control.Height = rect.Height;
+            }
+            finally
+            {
+                _applyingToControl = false;
+            }
         }
 
         private void UpdateThumbs(Rect rect)
