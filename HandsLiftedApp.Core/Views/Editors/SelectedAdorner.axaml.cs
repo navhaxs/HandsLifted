@@ -178,6 +178,27 @@ namespace PerspectiveDemo
             UpdateDrag(target);
         }
 
+        /// <summary>
+        /// The rectangle of <paramref name="control"/> in its canvas, from its Canvas.Left/Top and Width/Height rather
+        /// than its laid-out Bounds. A control that has only just been added (the proxy of a newly added element,
+        /// which is selected in the same dispatch that creates it) has not been measured yet, so its Bounds are
+        /// empty and the handles would all start at the canvas origin with a zero-size outline. Falls back to the
+        /// Bounds when the control has no explicit position or size.
+        /// </summary>
+        internal static Rect LogicalRect(Control control)
+        {
+            var left = Canvas.GetLeft(control);
+            var top = Canvas.GetTop(control);
+            var width = control.Width;
+            var height = control.Height;
+            if (double.IsNaN(left) || double.IsNaN(top) || double.IsNaN(width) || double.IsNaN(height))
+                return control.Bounds;
+            return new Rect(left, top, width, height);
+        }
+
+        /// <summary>The rectangle the handles currently describe (for tests).</summary>
+        internal Rect HandlesRect => GetRect();
+
         private DragSnapSession? _dragSession;
         
         
@@ -317,11 +338,7 @@ namespace PerspectiveDemo
                 _leftOffset = 0; //Canvas.GetLeft(Control);
                 _topOffset = 0; //Canvas.GetTop(Control);
 
-                var rect = new Rect(
-                    Control.Bounds.Left,
-                    Control.Bounds.Top,
-                    Control.Bounds.Width,
-                    Control.Bounds.Height);
+                var rect = LogicalRect(Control);
 
                 UpdateThumbs(rect);
                 UpdateDrag(rect);

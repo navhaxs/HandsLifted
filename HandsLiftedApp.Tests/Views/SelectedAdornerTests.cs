@@ -24,10 +24,11 @@ public class SelectedAdornerTests
     // An adorner with the template's parts, following a proxy border bound two-way to the element exactly as the
     // designer's proxies are (int X/Y/Width/Height on the element, double Canvas.Left/Top on the proxy). There is no
     // window here, so no adorner layer: the template and the adorned canvas are supplied by hand.
-    private static (SelectedAdorner Adorner, TextElement Element) Create(int x, int y)
+    private static (SelectedAdorner Adorner, TextElement Element) Create(int x, int y, int width = 100, int height = 100,
+        bool reportRectToHandles = true)
     {
         AvaloniaTextRendering.EnsureInitialized();
-        var element = new TextElement { X = x, Y = y, Width = 100, Height = 100 };
+        var element = new TextElement { X = x, Y = y, Width = width, Height = height };
         var proxy = new Border
         {
             HorizontalAlignment = HorizontalAlignment.Left,
@@ -60,13 +61,29 @@ public class SelectedAdornerTests
         adorner[Avalonia.Controls.Primitives.AdornerLayer.AdornedElementProperty] = host;
         adorner.ApplyTemplate();
 
-        // the proxy has no layout in this host, so the handles start empty: report the element's rect to them
-        element.X = x + 1;
-        element.X = x;
-        element.Y = y + 1;
-        element.Y = y;
+        if (reportRectToHandles)
+        {
+            // the proxy has no layout in this host, so (before the fix) the handles started empty: report the
+            // element's rect to them
+            element.X = x + 1;
+            element.X = x;
+            element.Y = y + 1;
+            element.Y = y;
+        }
         return (adorner, element);
     }
+
+    [TestMethod]
+    public Task NewAdornerOnAProxyThatIsNotLaidOutYet_StartsOnTheElementsRect() => DispatcherTestThread.Run(() =>
+    {
+        // "Add textbox" rebuilds the proxies and selects the new element in the same dispatch, before the new proxy
+        // has been measured: its Bounds are still empty. The handles and outline must still start on the element's
+        // own rectangle, not pile up at the slide's top-left corner.
+        var (adorner, _) = Create(360, 390, 1200, 300, reportRectToHandles: false);
+
+        Assert.AreEqual(new Rect(360, 390, 1200, 300), adorner.HandlesRect);
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
     public Task SlowDragAwayFromSnap_LeavesTheSnapPoint_DespiteRoundingBinding() => DispatcherTestThread.Run(() =>
