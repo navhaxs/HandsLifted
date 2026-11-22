@@ -74,7 +74,7 @@ public static class SlideRenderer
             if (maxWidth > 0 && maxHeight > 0 &&
                 (decoded.Width > maxWidth || decoded.Height > maxHeight))
             {
-                Log.Debug("[SlideRenderer] Pre-scaling {W}x{H} → {MaxW}x{MaxH}: {Path}",
+                Log.Verbose("[SlideRenderer] Pre-scaling {W}x{H} → {MaxW}x{MaxH}: {Path}",
                     decoded.Width, decoded.Height, maxWidth, maxHeight, filePath);
                 var info = new SKImageInfo(maxWidth, maxHeight, decoded.ColorType, decoded.AlphaType);
                 var scaled = decoded.Resize(info, SKFilterQuality.High);

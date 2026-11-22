@@ -108,7 +108,7 @@ namespace HandsLiftedApp.Core.Models.Library
             // library rewrite-and-notify sweep on every startup instead of a true one-time migration.
             var needsStamp = FileLacksPersistedUuid(filePath);
             _uuidByPath[filePath] = song.UUID;
-            Log.Information("SongLibraryIndex: scanned {Title} SongId={SongId} PersistedUuid={Persisted} File={FilePath}",
+            Log.Debug("SongLibraryIndex: scanned {Title} SongId={SongId} PersistedUuid={Persisted} File={FilePath}",
                 song.Title, song.UUID, !needsStamp, filePath);
             Register(song, filePath, libraryDirectory);
             if (needsStamp)

@@ -118,7 +118,7 @@ namespace HandsLiftedApp.Controls.Behaviours
                     {
                         var slideReference = new SlideReference()
                             { ItemUUID = item.UUID, SlideIndex = sourceListBoxIndex };
-                        Log.Information($"OnSlideClickCommand [{slideReference}]");
+                        Log.Information("OnSlideClickCommand {SlideReference}", slideReference);
 
                         MessageBus.Current.SendMessage(new NavigateToSlideReferenceAction() { SlideReference = slideReference });
                     }

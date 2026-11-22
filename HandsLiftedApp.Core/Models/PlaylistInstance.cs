@@ -742,7 +742,7 @@ namespace HandsLiftedApp.Core.Models
                 });
             }
 
-            Log.Debug("NavigateToReference {SlideReference}", slideReference);
+            Log.Verbose("NavigateToReference {SlideReference}", slideReference);
 
             // MessageBus.Current.SendMessage(new ActiveSlideChangedMessage());
 

@@ -19,6 +19,9 @@ namespace HandsLiftedApp.Core
 {
     public class HandsLiftedDocXmlSerializer
     {
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> WarnedAbsolutePaths =
+            new(StringComparer.OrdinalIgnoreCase);
+
         // Serialize Playlist to XML
         public static void SerializePlaylist(PlaylistInstance playlist, string? filePath)
         {
@@ -92,9 +95,14 @@ namespace HandsLiftedApp.Core
             if (string.IsNullOrWhiteSpace(mediaLibraryPath) ||
                 !RelativeFilePathResolver.IsUnderDirectory(mediaLibraryPath, path))
             {
-                Log.Warning(
-                    "Keeping absolute path for source outside the media library folder (not portable): {Path}",
-                    path);
+                // Autosave re-serializes every item each time, so warn once per distinct path
+                // per session, not once per save.
+                if (WarnedAbsolutePaths.TryAdd(path, 0))
+                {
+                    Log.Warning(
+                        "Keeping absolute path for source outside the media library folder (not portable): {Path}",
+                        path);
+                }
                 return path;
             }
 
