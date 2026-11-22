@@ -106,7 +106,30 @@ namespace HandsLiftedApp.Data.Models.SlideElement
         private FontWeight _fontWeight = FontWeight.Normal;
 
         [DataMember]
-        public FontWeight FontWeight { get => _fontWeight; set => this.RaiseAndSetIfChanged(ref _fontWeight, value); }
+        public FontWeight FontWeight
+        {
+            get => _fontWeight;
+            set
+            {
+                if (_fontWeight == value) return;
+                this.RaiseAndSetIfChanged(ref _fontWeight, value);
+                // IsBold is derived from FontWeight; also covers undo writing FontWeight directly
+                this.RaisePropertyChanged(nameof(IsBold));
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsBold
+        {
+            get => _fontWeight == FontWeight.Bold;
+            set => FontWeight = value ? FontWeight.Bold : FontWeight.Normal;
+        }
+
+        private bool _italic;
+        public bool Italic { get => _italic; set => this.RaiseAndSetIfChanged(ref _italic, value); }
+
+        private bool _underline;
+        public bool Underline { get => _underline; set => this.RaiseAndSetIfChanged(ref _underline, value); }
 
         private int _fontSize = 90;
         public int FontSize { get => _fontSize; set => this.RaiseAndSetIfChanged(ref _fontSize, value); }

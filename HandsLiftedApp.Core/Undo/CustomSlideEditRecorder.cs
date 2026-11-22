@@ -305,7 +305,8 @@ namespace HandsLiftedApp.Core.Undo
                 X = t.X, Y = t.Y, Width = t.Width, Height = t.Height, Text = t.Text, FontFamily = t.FontFamilyAsText,
                 FontWeight = t.FontWeight, FontSize = t.FontSize, TextAlignment = t.TextAlignment,
                 VerticalAlignment = t.VerticalAlignment, Foreground = t.ForegroundAvaloniaColour,
-                Background = t.BackgroundAvaloniaColour, LineHeightEm = t.LineHeightEm
+                Background = t.BackgroundAvaloniaColour, LineHeightEm = t.LineHeightEm,
+                Italic = t.Italic, Underline = t.Underline
             },
             ImageElement i => new ImageState { X = i.X, Y = i.Y, Width = i.Width, Height = i.Height, FilePath = i.FilePath },
             _ => throw new NotSupportedException($"Unknown slide element type {element.GetType().Name}")
@@ -324,7 +325,7 @@ namespace HandsLiftedApp.Core.Undo
                 if (ta.Foreground != tb.Foreground || ta.Background != tb.Background) kinds.Add("Change Colour");
                 if (ta.FontFamily != tb.FontFamily || ta.FontWeight != tb.FontWeight || ta.FontSize != tb.FontSize
                     || ta.TextAlignment != tb.TextAlignment || ta.VerticalAlignment != tb.VerticalAlignment
-                    || ta.LineHeightEm != tb.LineHeightEm)
+                    || ta.LineHeightEm != tb.LineHeightEm || ta.Italic != tb.Italic || ta.Underline != tb.Underline)
                     kinds.Add("Format Text");
             }
             else if (a is ImageState ia && b is ImageState ib && ia.FilePath != ib.FilePath)
@@ -352,9 +353,11 @@ namespace HandsLiftedApp.Core.Undo
         public Color Foreground { get; init; }
         public Color Background { get; init; }
         public decimal LineHeightEm { get; init; }
+        public bool Italic { get; init; }
+        public bool Underline { get; init; }
 
         public override string Key =>
-            $"T|{X}|{Y}|{Width}|{Height}|{Text.Length}:{Text}|{FontFamily}|{(int)FontWeight}|{FontSize}|{TextAlignment}|{VerticalAlignment}|{Foreground}|{Background}|{LineHeightEm}";
+            $"T|{X}|{Y}|{Width}|{Height}|{Text.Length}:{Text}|{FontFamily}|{(int)FontWeight}|{FontSize}|{TextAlignment}|{VerticalAlignment}|{Foreground}|{Background}|{LineHeightEm}|{Italic}|{Underline}";
 
         public override bool AppliesTo(SlideElement element) => element is TextElement;
         public override SlideElement Create()
@@ -377,6 +380,8 @@ namespace HandsLiftedApp.Core.Undo
             if (t.ForegroundAvaloniaColour != Foreground) t.ForegroundAvaloniaColour = Foreground;
             if (t.BackgroundAvaloniaColour != Background) t.BackgroundAvaloniaColour = Background;
             if (t.LineHeightEm != LineHeightEm) t.LineHeightEm = LineHeightEm;
+            if (t.Italic != Italic) t.Italic = Italic;
+            if (t.Underline != Underline) t.Underline = Underline;
         }
     }
 

@@ -125,7 +125,37 @@ public class CustomSlideEditRecorderTests
     });
 
     [TestMethod]
-    public Task BackgroundColourAndGraphic_AreUndoable() => DispatcherTestThread.Run(() =>
+    public Task ItalicToggle_IsUndoable_AsFormatText() => DispatcherTestThread.Run(() =>
+    {
+        var (slide, stack, _) = Open();
+        var t = (TextElement)slide.SlideElements[0];
+
+        t.Italic = true;
+
+        Assert.AreEqual("Undo Format Text", stack.UndoMenuText);
+        stack.Undo();
+        Assert.IsFalse(t.Italic);
+        stack.Redo();
+        Assert.IsTrue(t.Italic);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task UnderlineToggle_IsUndoable() => DispatcherTestThread.Run(() =>
+    {
+        var (slide, stack, _) = Open();
+        var t = (TextElement)slide.SlideElements[0];
+
+        t.Underline = true;
+
+        Assert.AreEqual("Undo Format Text", stack.UndoMenuText);
+        stack.Undo();
+        Assert.IsFalse(t.Underline);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task BackgroundColourAndGraphic_AreUndoable()=> DispatcherTestThread.Run(() =>
     {
         var (slide, stack, _) = Open();
         var original = slide.BackgroundAvaloniaColour;
