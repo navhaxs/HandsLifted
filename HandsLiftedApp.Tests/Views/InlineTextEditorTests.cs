@@ -322,6 +322,67 @@ public class InlineTextEditorTests
         return Task.CompletedTask;
     });
 
+    // The test host has no TopLevel, so nothing can really be attached or detached; call the control's own
+    // OnDetachedFromVisualTree override the way Avalonia does when the editor's window closes or the designer is
+    // removed (the box always leaves the tree with the designer that hosts it).
+    private static void SimulateDetachedFromVisualTree(Visual control)
+    {
+        const System.Reflection.BindingFlags any = System.Reflection.BindingFlags.Instance
+            | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+        // Its constructor insists on a real presentation source (window), which this host cannot make; build the
+        // args without it, with just the attachment point.
+        var args = (VisualTreeAttachmentEventArgs)System.Runtime.CompilerServices.RuntimeHelpers
+            .GetUninitializedObject(typeof(VisualTreeAttachmentEventArgs));
+        foreach (var field in typeof(VisualTreeAttachmentEventArgs).GetFields(any).Where(f => f.FieldType == typeof(Visual)))
+            field.SetValue(args, control);
+        var method = control.GetType().GetMethod("OnDetachedFromVisualTree", any);
+        Assert.IsNotNull(method);
+        method.Invoke(control, new object[] { args });
+    }
+
+    [TestMethod]
+    public Task LeavingVisualTreeWhileEditing_CommitsTypedTextAndStopsFollowingElement() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, slide, text, overlay) = CreateDesigner();
+        var stack = new UndoStack();
+        using var recorder = new CustomSlideEditRecorder(stack, slide);
+        designer.BeginEdit(text);
+        overlay.Text = "typed before closing";
+
+        SimulateDetachedFromVisualTree(overlay);
+
+        Assert.IsFalse(designer.IsEditing);
+        Assert.AreEqual("typed before closing", text.Text, "nothing typed is lost when the window closes");
+        Assert.AreEqual("Undo Edit Text", stack.UndoMenuText);
+        Assert.IsNull(designer.HiddenTextElement);
+
+        // the element no longer holds on to the box (and through it the closed window)
+        var fontSize = overlay.FontSize;
+        text.FontSize = 33;
+        Assert.AreEqual(fontSize, overlay.FontSize, "unsubscribed from the element");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task Commit_WithEmptyText_KeepsEmptyElement_OneStep() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, slide, text, overlay) = CreateDesigner();
+        var stack = new UndoStack();
+        using var recorder = new CustomSlideEditRecorder(stack, slide);
+        designer.BeginEdit(text);
+        overlay.Text = "";
+
+        designer.CommitEdit();
+
+        CollectionAssert.Contains(slide.SlideElements, text, "an emptied text box stays on the slide");
+        Assert.AreEqual("", text.Text);
+        Assert.AreEqual("Undo Edit Text", stack.UndoMenuText);
+        stack.Undo();
+        Assert.AreEqual("Hello", text.Text);
+        Assert.IsFalse(stack.CanUndo, "exactly one step");
+        return Task.CompletedTask;
+    });
+
     [TestMethod]
     public Task ElementRemovedWhileEditing_EndsEditWithoutWriting() => DispatcherTestThread.Run(() =>
     {

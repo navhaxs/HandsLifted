@@ -261,6 +261,14 @@ namespace HandsLiftedApp.Core.Views.Editors
             base.OnKeyDown(e);
         }
 
+        // Window closed or designer removed mid-edit: keep what was typed (LostFocus is not guaranteed then), and stop
+        // following the element so it does not keep this box - and the closed window - alive.
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+            Commit();
+        }
+
         protected override void OnLostFocus(FocusChangedEventArgs e)
         {
             base.OnLostFocus(e);
