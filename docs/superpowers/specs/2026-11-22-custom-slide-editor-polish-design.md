@@ -57,7 +57,7 @@ goal**, not part of this work. Nothing built now should make it harder.
 
 ## Constraints
 
-- Avalonia 12 (12.0.5; do not bump without re-checking third-party package floors, see
+- Avalonia 12 (12.1.1, set in `Directory.Build.props`; no package bumps in this work, see
   `AVALONIA_12_UPGRADE_NOTES.md`), C#, SkiaSharp. Avalonia 12 specifics that touch this work: compiled bindings are
   stricter (give new views `x:DataType`); never cast `VisualRoot` to `Window`, use `TopLevel.GetTopLevel(...)`;
   window chrome is drawn by `WindowDrawnDecorations`. Project rules in `CLAUDE.md` apply. Notably: resolve the owning `Window` by walking the

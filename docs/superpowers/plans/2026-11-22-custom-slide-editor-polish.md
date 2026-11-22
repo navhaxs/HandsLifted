@@ -6,13 +6,13 @@
 
 **Architecture:** One shared SkiaSharp drawer (`CustomSlideDrawer`) renders a `CustomSlide` for both the projector (`CustomSlideSpecBuilder`) and the editor canvas (`CustomSlideEditorCanvas`). The designer keeps its existing `SelectedAdorner` and drives it through transparent per-element proxy controls, so hit-testing and resize handles keep working unchanged. Toolbar edits write the same model properties as today, so the existing `CustomSlideEditRecorder` captures undo. Inline editing is an overlay `TextBox` that writes `Text` once on commit.
 
-**Tech Stack:** C#, Avalonia 12.0.5, SkiaSharp, ReactiveUI, MSTest (`HandsLiftedApp.Tests`, `DispatcherTestThread.Run` for ReactiveObject tests).
+**Tech Stack:** C#, Avalonia 12.1.1, SkiaSharp, ReactiveUI, MSTest (`HandsLiftedApp.Tests`, `DispatcherTestThread.Run` for ReactiveObject tests).
 
 **Spec:** `docs/superpowers/specs/2026-11-22-custom-slide-editor-polish-design.md`
 
 ## Global Constraints
 
-- Avalonia 12 (12.0.5); do not bump packages. Never cast `VisualRoot` to `Window`; use `TopLevel.GetTopLevel(...)` or the logical-tree walk in CLAUDE.md. New views get `x:DataType` (stricter compiled bindings).
+- Avalonia 12 (12.1.1, `Directory.Build.props`); do not bump packages. Never cast `VisualRoot` to `Window`; use `TopLevel.GetTopLevel(...)` or the logical-tree walk in CLAUDE.md. New views get `x:DataType` (stricter compiled bindings).
 - Slide coordinate system stays 1920x1080 (`CustomSlide.SlideWidth/SlideHeight`); zoom is view-only. `SlideElements[0]` is frontmost.
 - Saved XML: only **add** optional `Italic` / `Underline` fields; old files must load (both default false).
 - Undo goes through `CustomSlideEditRecorder`; multi-property toolbar actions use `BeginBatch(...)`; new model properties must be in the recorder snapshot. Tests call `UndoStack.Clear()` after setup.
@@ -93,7 +93,7 @@
 - Consumes: `CustomSlideTextLayout.Layout/CreateFont` (Task 3).
 - Produces:
   - `static void CustomSlideDrawer.Draw(SKCanvas canvas, CustomSlide slide, TextElement? hideTextOf = null)` - clears nothing; draws background (graphic or colour), then elements in true z-order (iterate `SlideElements` from last to first so `[0]` is on top), text box fill + text (`Italic`, `Underline` via `font.GetFontMetrics`' underline position/thickness, fallback `FontSize*0.08`), clipped to the box. `hideTextOf` skips that element's text but still draws its fill.
-  - `static SKBitmap? SlideImageCache.Get(string path)` - handles `avares://` via `AssetLoader`, `File.Exists`, returns null on any failure, caches by path + last-write time, bounded (evict oldest beyond 32).
+  - `static SKBitmap? SlideImageCache.Get(string path)` - first runs `SlideSpecResolver.NormalizeMediaPath` (repairs mangled `avares:` paths from old saved playlists), handles `avares://` via `AssetLoader`, `File.Exists`, returns null on any failure, caches by path + last-write time, bounded (evict oldest beyond 32).
 - Behaviour change to call out in the commit: element z-order now follows the list (previously all text was drawn above all images).
 
 - [ ] **Step 1: Write failing tests** drawing to a 1920x1080 `SKBitmap`: `EmptySlide_DrawsOnlyBackground` (pixel at (10,10) equals background colour); `TextBoxFill_IsDrawnAtElementRect`; `HideTextOf_SkipsGlyphsButKeepsFill` (count of non-fill pixels inside the box is 0 when hidden, >0 when shown); `Underline_AddsPixelsBelowBaseline` (underline on vs off differ in the row at baseline+~underline offset); `Italic_ChangesRenderedPixels`; `ZOrder_FrontElementWinsOverlap` (two filled boxes overlapping, element 0's colour at the overlap); `MissingImageFile_IsSkippedWithoutThrowing`; `SlideImageCache_Get_ReturnsNullForMissingFile_AndSameInstanceForRepeatedHit`.

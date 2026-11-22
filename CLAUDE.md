@@ -21,28 +21,29 @@ Slides render via SkiaSharp, NOT Avalonia layout:
 1. `SlideRenderSpec` — data model describing background + text elements
 2. `SlideRenderer.Draw()` — static SkiaSharp drawing engine (no Avalonia dependency)
 3. `SlideCanvas` — Avalonia control hosting a Skia surface; drives transitions via `Transition(spec, duration)`
-4. `SongSlideSpecBuilder` / `SongTitleSlideSpecBuilder` — build `SlideRenderSpec` from runtime slide instances
+4. `SongSlideSpecBuilder` / `SongTitleSlideSpecBuilder` / `ScriptureParagraphSpecBuilder` / `CustomSlideSpecBuilder` — build `SlideRenderSpec` from runtime slide instances
 
-`OnActiveSlideChanged` in `LivePane.axaml.cs` and `ProjectorWindow.axaml.cs` converts the active `Slide` to a `SlideRenderSpec` and calls `SlideCanvas.Transition(spec, TimeSpan)`.
+`OnActiveSlideChanged` in `LivePane.axaml.cs` and `ProjectorWindow.axaml.cs` (and the stage display's `DefaultLayout.axaml.cs`) converts the active `Slide` to a `SlideRenderSpec` via `SlideSpecResolver.Resolve(slide, logoPath)` and calls `SlideCanvas.Transition(spec, TimeSpan)`.
 
-### Slide type switch — must handle ALL cases explicitly
+### Slide type switch — one shared copy: `SlideSpecResolver.Resolve`
+
+The `Slide -> SlideRenderSpec` switch lives in `HandsLiftedApp.Core/Render/Skia/Builders/SlideSpecResolver.cs` and is shared by `LivePane`, `ProjectorWindow`, `DefaultLayout` and `SlidePreloadService`. A new slide type is added **there, once**, and must be handled explicitly (the `_ => null` arm covers blank/custom AXAML slides only):
 
 ```csharp
-SlideRenderSpec? spec = slide switch
-{
-    SongSlideInstance s      => SongSlideSpecBuilder.Build(s),
-    SongTitleSlideInstance t => SongTitleSlideSpecBuilder.Build(t),
-    ImageSlideInstance img   => ...,
-    LogoSlide                => ...,   // ← synthetic; no file path; reads Playlist.LogoGraphicFile
-    _                        => null,  // blank/custom AXAML slides
-};
+SongSlideInstance s       => SongSlideSpecBuilder.Build(s),
+SongTitleSlideInstance t  => SongTitleSlideSpecBuilder.Build(t),
+ScriptureSlideInstance sc => ScriptureParagraphSpecBuilder.Build(sc),
+ImageSlideInstance img    => ...,
+LogoSlide                 => ...,   // synthetic; no file path; path from SlideSpecResolver.ResolveLogoPath(playlist)
+CustomSlide cs            => CustomSlideSpecBuilder.Build(cs),
+_                         => null,
 ```
 
-`LogoSlide` is a synthetic slide type returned when `Playlist.PresentationState == Logo`. It has no file path — the logo image comes from `_vm.Playlist.LogoGraphicFile`.
+`LogoSlide` is a synthetic slide type returned when `Playlist.PresentationState == Logo`. It has no file path — the logo image comes from `SlideSpecResolver.ResolveLogoPath(playlist)` (playlist logo, falling back to the app-wide default logo).
 
 ### Deleting or renaming a spec-builder class — grep the whole repo, not just your task's file list
 
-A spec-builder (e.g. `SongSlideSpecBuilder`, `ScriptureSlideSpecBuilder`) is called from more than just the runtime slide's own `Render()` method — it's also called directly from **both** slide-type switches above (`LivePane.axaml.cs` and `ProjectorWindow.axaml.cs`). When replacing `ScriptureSlideSpecBuilder` with `ScriptureParagraphSpecBuilder`, a written implementation plan's file list missed these two call sites entirely; the build wouldn't have passed without also fixing them. Before deleting/renaming any builder class, run `grep -rn "OldBuilderName" --include=*.cs .` across the whole repo — don't trust a task's own file list to have enumerated every caller.
+A spec-builder (e.g. `SongSlideSpecBuilder`, `ScriptureParagraphSpecBuilder`) is called from more than `SlideSpecResolver`: runtime slide instances call it from their own `Render()` (e.g. `SongSlideInstance`, `SongItemInstance`) and designer views call it directly (e.g. `SongSlideView`). When `ScriptureSlideSpecBuilder` was replaced by `ScriptureParagraphSpecBuilder`, a written implementation plan's file list missed call sites outside the files the plan named, and the build wouldn't have passed without fixing them. Before deleting/renaming any builder class, use Grep for the old name across the whole repo (scoped to the project directory, and ignoring `.claude/worktrees/`) — don't trust a task's own file list to have enumerated every caller.
 
 ### Reactive runtime slide instances: reassigning a property doesn't always trigger a re-render on its own
 
@@ -103,30 +104,25 @@ The playlist XML serializer converts `avares://Assembly/path` to a relative path
 C:\VisionScreens Data\avares:\HandsLiftedApp.Core\Assets\DefaultTheme\logo-default.png
 ```
 
-**Workaround** (applied in `OnActiveSlideChanged`):
+**Repair for already-saved files**: `SlideSpecResolver.NormalizeMediaPath` (public static, applied by `ResolveLogoPath`) turns a mangled path back into `avares://Assembly/path`. Keep it: playlists saved before the fix still contain mangled paths.
 
-```csharp
-private static string? NormalizeMediaPath(string? path)
-{
-    if (string.IsNullOrWhiteSpace(path)) return path;
-    var idx = path.IndexOf("avares:", StringComparison.OrdinalIgnoreCase);
-    if (idx > 0)
-    {
-        var rest = path.Substring(idx + "avares:".Length)
-                       .Replace('\\', '/')
-                       .TrimStart('/');
-        if (rest.Length == 0) return path;
-        return "avares://" + rest;
-    }
-    return path;
-}
-```
-
-**Root cause not fixed** — the serializer (`HandsLiftedDocXmlSerializer`) applies `ToRelativePath` to `avares://` paths it should leave alone. Needs fixing upstream.
+**Root cause is fixed for new saves** — `RelativeFilePathResolver.ToRelativePath` / `ToAbsolutePath` now leave `avares://` URIs alone (`IsAvaresUri` guard). Anything that stores a media path and might hold an `avares://` URI must go through those resolvers, not hand-rolled `Path` logic.
 
 `SlideRenderer.DrawBackground` handles `avares://` URIs via `AssetLoader.Open(new Uri(path))`.
 
 ---
+
+## Avalonia 12 API traps (the app is on Avalonia 12.1.1; full history in `AVALONIA_12_UPGRADE_NOTES.md`)
+
+Version lives in `Directory.Build.props` (`AvaloniaVersion`). Before bumping, check the third-party package floors listed in the upgrade notes. Things that compile in older Avalonia/blog-post code but not here:
+
+- **`VisualRoot` is not the `Window`.** It resolves to an internal `TopLevelHost`, so `(Window)VisualRoot` throws at runtime with no compile error. Use `TopLevel.GetTopLevel(visual)` (or `this` when you are the window). Code outside a `Visual` subclass can't read `VisualRoot` at all.
+- **Drag and drop** uses `DataTransfer` / `DataTransferItem` / `DataFormat` (`DataObject`, `DataFormats` are error-stubs); `DragDrop.DoDragDropAsync` needs the original `PointerPressedEventArgs`, not a later `PointerMoved` one.
+- **Compiled bindings are stricter:** a view with `{Binding ...}` needs `x:DataType` (or `x:CompileBindings="False"`).
+- Renamed or removed: `Window.SystemDecorations` -> `WindowDecorations` (also as an AXAML attribute), `ExtendClientAreaChromeHints` (removed), `PlacementMode` -> `Placement` on `Popup`/`ContextMenu`, `RadioButton.Checked`/`Unchecked` -> `IsCheckedChanged`, `OpenFileDialog` -> `StorageProvider.OpenFilePickerAsync`, `ItemContainerGenerator.IndexFromContainer/ContainerFromIndex` -> same methods on `ItemsControl`, `GotFocusEventArgs` -> `FocusChangedEventArgs`, clipboard `GetTextAsync` -> `TryGetTextAsync`.
+- Package/namespace renames: `ReactiveUI.Avalonia` (namespace `ReactiveUI.Avalonia`, `UseReactiveUI(_ => { })`), `Xaml.Behaviors.*` (the C# namespaces did **not** change, only the `assembly=` in AXAML xmlns), `PanAndZoom`. `DisposeWith` now needs `System.Reactive.Disposables.Fluent`.
+- Windows draw their own chrome (`WindowDrawnDecorations`); custom title bars mark interactive regions with `WindowDecorationProperties.ElementRole="DecorationsElement"`.
+- A full non-incremental build after a merge is the only reliable check: errors surface in waves as each project first compiles.
 
 ## Avalonia binding gotchas
 
@@ -152,7 +148,7 @@ If you add code that opens a dialog/window from inside a flyout or context menu,
 
 ### ReactiveUI's no-selector `WhenAnyValue` caps at 7 properties
 
-`this.WhenAnyValue(a, b, c, d, e, f, g)` (7 property expressions, no trailing selector) compiles; adding an 8th argument in the same no-selector form does not — this project's ReactiveUI version (20.1.1) has no no-selector overload beyond 7. Once you need to watch an 8th (or more) property in one subscription, add an explicit selector: `this.WhenAnyValue(a, b, c, d, e, f, g, h, (_1,_2,_3,_4,_5,_6,_7,_8) => Unit.Default)` — the selector-based overloads go higher. A no-op `Unit.Default` selector doesn't change the underlying combine-latest firing semantics; it only changes what the (usually discarded) emitted value is.
+`this.WhenAnyValue(a, b, c, d, e, f, g)` (7 property expressions, no trailing selector) compiles; adding an 8th argument in the same no-selector form did not on ReactiveUI 20.1.1. The project is now on ReactiveUI 23.2.28 (the Avalonia 12 upgrade forced it) and this cap has **not been re-verified** on 23.x — the selector form below is safe either way. Note also `RxApp.MainThreadScheduler` became `RxSchedulers.MainThreadScheduler` in 23.x. Once you need to watch an 8th (or more) property in one subscription, add an explicit selector: `this.WhenAnyValue(a, b, c, d, e, f, g, h, (_1,_2,_3,_4,_5,_6,_7,_8) => Unit.Default)` — the selector-based overloads go higher. A no-op `Unit.Default` selector doesn't change the underlying combine-latest firing semantics; it only changes what the (usually discarded) emitted value is.
 
 ### Element-name path bindings don't track intermediate object changes
 
@@ -254,15 +250,18 @@ This codebase does not enforce folder-equals-namespace or namespace-equals-proje
 
 ## Tooling rule — no `find`/`grep` shellouts
 
-Never run `find` or `grep` via Bash/PowerShell in this repo — Git-Bash `find.exe` over `.git`/`packages`/`bin`/`obj` runs long, stacks up, and eats CPU (multiple orphaned `find.exe` seen at 6%+ CPU each). Use Glob (file search) and Grep (content search) tools instead, always. Always scope `path` to project dir (or narrower subfolder) — never search unscoped from drive root or default cwd.
+Never run `find` or `grep` via Bash/PowerShell in this repo — Git-Bash `find.exe` over `.git`/`packages`/`bin`/`obj` runs long, stacks up, and eats CPU (multiple orphaned `find.exe` seen at 6%+ CPU each). Use Glob (file search) and Grep (content search) tools instead, always. Always scope `path` to project dir (or narrower subfolder) — never search unscoped from drive root or default cwd. The repo root also contains `.claude/worktrees/*` full checkouts: a root-scoped Glob/Grep returns every hit twice (once per worktree) — scope to `HandsLiftedApp.Core`, `HandsLiftedApp.Data`, etc. or add a glob that excludes `.claude`, and never edit a file under `.claude/worktrees/` by mistake.
 
 ## Key file locations
 
 | File | Purpose |
 |---|---|
 | `HandsLiftedApp.Core/Render/Skia/SlideRenderer.cs` | SkiaSharp drawing engine |
-| `HandsLiftedApp.Core/Render/Skia/SlideCanvas.axaml.cs` | Avalonia Skia host control |
-| `HandsLiftedApp.Core/Render/Skia/Builders/` | SongSlide / SongTitleSlide spec builders |
+| `HandsLiftedApp.Core/Render/Skia/SlideCanvas.cs` | Avalonia Skia host control (code-only, no AXAML) |
+| `HandsLiftedApp.Core/Render/Skia/Builders/` | Song / SongTitle / Scripture / Custom slide spec builders |
+| `HandsLiftedApp.Core/Render/Skia/Builders/SlideSpecResolver.cs` | The one shared `Slide -> SlideRenderSpec` switch, logo path resolution, `avares://` repair |
+| `HandsLiftedApp.Core/Undo/` | `UndoStack`, recorders (`PlaylistPropertyRecorder`, `SongEditRecorder`, `CustomSlideEditRecorder`, `ThemeEditRecorder`) and actions |
+| `HandsLiftedApp.Tests/TestSupport/DispatcherTestThread.cs` | Run `ReactiveObject` tests on a dispatcher thread |
 | `HandsLiftedApp.Core/Render/MotionBackground/MotionBackgroundLayer.axaml.cs` | libmpv owner — LivePane only |
 | `HandsLiftedApp.Core/Render/MotionBackground/MotionBackgroundObserver.axaml.cs` | Secondary windows |
 | `HandsLiftedApp.Core/Services/MotionBackgroundService.cs` | Context broadcast, create/dispose helpers |
