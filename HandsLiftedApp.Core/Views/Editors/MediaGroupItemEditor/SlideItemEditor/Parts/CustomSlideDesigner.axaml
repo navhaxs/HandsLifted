@@ -61,7 +61,10 @@
                           HorizontalScrollBarVisibility="Auto"
                           AllowAutoHide="False"
                           Background="{DynamicResource SurfaceBrush}">
+                <!-- EnableDoubleClickZoom="False": the control zooms 2x on any double-click by default, which fired with
+                     the double-click that starts inline text editing. Zoom with the wheel or the status bar instead. -->
                 <ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
+                            EnableDoubleClickZoom="False"
                             EnableZoom="True"
                             EnablePan="True"
                             Background="Transparent" ClipToBounds="True" Focusable="True"

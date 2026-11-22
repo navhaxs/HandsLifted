@@ -177,6 +177,19 @@ public class InlineTextEditorTests
     });
 
     [TestMethod]
+    public Task ZoomBorder_DoesNotZoomOnDoubleClick_BecauseDoubleClickStartsTextEditing() => DispatcherTestThread.Run(() =>
+    {
+        // PanAndZoom's ZoomBorder zooms in 2x on any double-tap by default, which fired together with the
+        // double-click that opens the inline editor. Zooming has its own controls (wheel, status bar, Fit).
+        var (designer, _, _, _) = CreateDesigner();
+        var zoomBorder = designer.FindControl<Avalonia.Controls.PanAndZoom.ZoomBorder>("ZoomBorder");
+
+        Assert.IsNotNull(zoomBorder);
+        Assert.IsFalse(zoomBorder.EnableDoubleClickZoom);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
     public Task BeginEdit_KeepsTheElementSelected_SoItsOutlineAndHandlesStayVisible() => DispatcherTestThread.Run(() =>
     {
         var (designer, _, text, _) = CreateDesigner();
