@@ -28,12 +28,15 @@ public static class SlideGridMetrics
 
     private const double MinNotch = 10;
 
+    /// <summary>Most columns the slider can reach (leaves room for ultrawide monitors).</summary>
+    public const int DefaultMaxColumns = 20;
+
     /// <summary>
     /// Ascending notch multipliers (0-100 scale), one per column count 1..maxColumns. Each notch is the
     /// item width at which the panel (columns = (W + Spacing) / (itemWidth + Spacing)) fits exactly c
     /// columns. Callers pass the panel width (already minus PanelInsetWidth).
     /// </summary>
-    public static double[] ColumnNotches(double availableWidth, double itemWidth, int maxColumns = 8)
+    public static double[] ColumnNotches(double availableWidth, double itemWidth, int maxColumns = DefaultMaxColumns)
     {
         var notches = new List<double>();
         for (int c = maxColumns; c >= 1; c--)

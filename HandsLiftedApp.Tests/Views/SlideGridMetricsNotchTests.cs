@@ -49,6 +49,13 @@ public class SlideGridMetricsNotchTests
     }
 
     [TestMethod]
+    public void ColumnNotches_UltrawideReachesDefaultMaxColumns()
+    {
+        var notches = SlideGridMetrics.ColumnNotches(3400, 290);
+        Assert.AreEqual(SlideGridMetrics.DefaultMaxColumns, notches.Length);
+    }
+
+    [TestMethod]
     public void NextNotch_StepsPastValueBetweenNotches()
     {
         var n = new[] { 50.0, 75, 100 };
