@@ -280,8 +280,41 @@ namespace HandsLiftedApp.Core.Views.Editors
             Dispatcher.UIThread.Post(() => BeginEdit(text));
         }
 
+        // The Visual/Code tab switch detaches this designer and attaches it again. While detached it holds no
+        // subscriptions on the slide (a hidden designer would otherwise re-render on every change, and the slide would
+        // keep it alive); on re-attach it subscribes and renders again. The first attach needs nothing: the
+        // constructor already registered.
+        private bool _detached;
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+            _detached = true;
+            _slideElementsSubscription?.Dispose();
+            _slideElementsSubscription = null;
+            WatchElements(null);
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            if (!_detached) return;
+            _detached = false;
+            RegisterDataContext(); // unsubscribes first, then subscribes and renders once
+        }
+
         private void RegisterDataContext()
         {
+            // changed while detached: the re-attach registers it (nothing to watch or draw in the meantime)
+            if (_detached)
+            {
+                CommitEdit();
+                CancelEditIfElementGone();
+                _renderedSlide = DataContext as CustomSlide;
+                SlideCanvas.Slide = _renderedSlide;
+                return;
+            }
+
             // The text being typed belongs to the slide shown until now.
             CommitEdit();
             CancelEditIfElementGone();

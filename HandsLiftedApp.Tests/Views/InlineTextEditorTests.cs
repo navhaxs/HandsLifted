@@ -325,7 +325,9 @@ public class InlineTextEditorTests
     // The test host has no TopLevel, so nothing can really be attached or detached; call the control's own
     // OnDetachedFromVisualTree override the way Avalonia does when the editor's window closes or the designer is
     // removed (the box always leaves the tree with the designer that hosts it).
-    private static void SimulateDetachedFromVisualTree(Visual control)
+    private static void SimulateDetachedFromVisualTree(Visual control) => SimulateTreeEvent(control, "OnDetachedFromVisualTree");
+
+    private static void SimulateTreeEvent(Visual control, string methodName)
     {
         const System.Reflection.BindingFlags any = System.Reflection.BindingFlags.Instance
             | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
@@ -335,7 +337,7 @@ public class InlineTextEditorTests
             .GetUninitializedObject(typeof(VisualTreeAttachmentEventArgs));
         foreach (var field in typeof(VisualTreeAttachmentEventArgs).GetFields(any).Where(f => f.FieldType == typeof(Visual)))
             field.SetValue(args, control);
-        var method = control.GetType().GetMethod("OnDetachedFromVisualTree", any);
+        var method = control.GetType().GetMethod(methodName, any);
         Assert.IsNotNull(method);
         method.Invoke(control, new object[] { args });
     }
@@ -360,6 +362,37 @@ public class InlineTextEditorTests
         var fontSize = overlay.FontSize;
         text.FontSize = 33;
         Assert.AreEqual(fontSize, overlay.FontSize, "unsubscribed from the element");
+        return Task.CompletedTask;
+    });
+
+    // The Visual/Code tab switch detaches the designer and attaches it again: while detached it must not keep (or
+    // re-run) subscriptions to the slide, and on re-attach it renders the proxies once and subscribes once.
+    [TestMethod]
+    public Task DesignerDetachAttach_UnsubscribesThenRendersOnceAndSubscribesOnce() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, slide, _, _) = CreateDesigner();
+        var root = designer.FindControl<Canvas>("Root")!;
+        // Render rebuilds one proxy per element, so the proxies added since the last reset count the renders
+        var added = 0;
+        ((System.Collections.Specialized.INotifyCollectionChanged)root.Children).CollectionChanged += (_, e) =>
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add) added++;
+        };
+        Assert.AreEqual(1, root.Children.Count);
+
+        SimulateTreeEvent(designer, "OnDetachedFromVisualTree");
+        added = 0;
+        slide.SlideElements.Add(new TextElement { Text = "while detached" });
+        Assert.AreEqual(0, added, "no longer watching the slide's elements once detached");
+
+        SimulateTreeEvent(designer, "OnAttachedToVisualTree");
+        Assert.AreEqual(2, added, "re-attaching renders the 2 proxies exactly once");
+        Assert.AreEqual(2, root.Children.Count, "and picks up what changed meanwhile");
+
+        added = 0;
+        slide.SlideElements.Add(new TextElement { Text = "after attach" });
+        Assert.AreEqual(3, added, "one subscription, so the 3 proxies are rebuilt once per change");
+        Assert.AreEqual(3, root.Children.Count);
         return Task.CompletedTask;
     });
 

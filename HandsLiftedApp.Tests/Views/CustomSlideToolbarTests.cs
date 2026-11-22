@@ -190,6 +190,26 @@ public class CustomSlideToolbarTests
     });
 
     [TestMethod]
+    public Task InstalledFontSelectedBeforeLoaded_EndsUpOnceInSortedPosition() => DispatcherTestThread.Run(() =>
+    {
+        AvaloniaTextRendering.EnsureInitialized();
+        var installed = Avalonia.Media.FontManager.Current.SystemFonts.Select(f => f.Name).OrderBy(n => n).ToList();
+        Assert.IsTrue(installed.Count > 1, "needs at least two installed fonts");
+        var last = installed[^1]; // sorts last, so a stray copy at the top (index 0) is easy to tell apart
+
+        // selected before the box's Loaded: the font is not in the (still empty) list yet, so it is shown as an extra
+        var toolbar = CreateToolbar(new TextElement { FontFamilyAsText = last });
+        var box = LoadFontBox(toolbar);
+
+        var items = box.Items.OfType<string>().ToList();
+        Assert.AreEqual(1, items.Count(i => i == last), "listed exactly once");
+        Assert.AreEqual(installed.Count, items.Count, "the whole system list, no extra copy");
+        CollectionAssert.AreEqual(installed, items, "in sorted position, not stuck at the top");
+        Assert.AreEqual(last, box.SelectedItem);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
     public Task PickingListedFont_WritesItToElement() => DispatcherTestThread.Run(() =>
     {
         var text = new TextElement { FontFamilyAsText = NotInstalledFont };

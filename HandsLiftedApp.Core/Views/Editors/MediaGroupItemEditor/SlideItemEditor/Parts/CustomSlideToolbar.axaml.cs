@@ -183,15 +183,16 @@ namespace HandsLiftedApp.Core.Views.Editors
                 _syncingFont = true;
                 try
                 {
-                    var present = new HashSet<string>(_fontItems);
-                    foreach (var name in _systemFontFamilies)
-                        if (present.Add(name)) _fontItems.Add(name);
-                    // the shown font turned out to be installed: it stays where it is, but is no longer an extra
+                    // the shown font turned out to be installed: drop the extra copy first so the loop below
+                    // lists it in its sorted place (it is then no longer an extra)
                     if (_extraFont != null && _systemFontFamilies.Contains(_extraFont))
                     {
                         _fontItems.Remove(_extraFont);
                         _extraFont = null;
                     }
+                    var present = new HashSet<string>(_fontItems);
+                    foreach (var name in _systemFontFamilies)
+                        if (present.Add(name)) _fontItems.Add(name);
                 }
                 finally
                 {

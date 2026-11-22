@@ -114,11 +114,11 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             Toolbar.SendBackwardRequested += (_, _) => SendBackward(SelectedElement);
             Toolbar.ReplaceImageRequested += async (_, _) =>
             {
-                if (SelectedElement is ImageElement image) await ReplaceImageAsync(image);
+                if (SelectedElement is ImageElement image) await RunLoggedAsync("replace image", () => ReplaceImageAsync(image));
             };
             Toolbar.FitImageRequested += async (_, _) =>
             {
-                if (SelectedElement is ImageElement image) await FitImageAsync(image);
+                if (SelectedElement is ImageElement image) await RunLoggedAsync("fit image", () => FitImageAsync(image));
             };
             Toolbar.ChangeBackgroundGraphicRequested += (_, _) => ChangeSlideBgGraphic_OnClick(Toolbar, new RoutedEventArgs());
         }
@@ -228,10 +228,26 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
 
+        /// <summary>
+        /// Runs an async handler body from an async-void entry point: a file-picker or decode exception is logged,
+        /// never rethrown (it would reach the dispatcher and crash the app).
+        /// </summary>
+        private static async Task RunLoggedAsync(string what, Func<Task> body)
+        {
+            try
+            {
+                await body();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Custom slide editor: failed to {Action}", what);
+            }
+        }
+
         private async void ChangeImageElement_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control { DataContext: ImageElement imageElement })
-                await ReplaceImageAsync(imageElement);
+                await RunLoggedAsync("replace image", () => ReplaceImageAsync(imageElement));
         }
 
         /// <summary>Asks for a picture and puts it in the element, fitting the box to it (one undo step).</summary>
@@ -297,11 +313,14 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         {
             if (this.DataContext is CustomSlide customSlide)
             {
-                var result = await SelectFilePicker();
-                if (!string.IsNullOrWhiteSpace(result))
+                await RunLoggedAsync("change background graphic", async () =>
                 {
-                    customSlide.BackgroundGraphicFilePath = result;
-                }
+                    var result = await SelectFilePicker();
+                    if (!string.IsNullOrWhiteSpace(result))
+                    {
+                        customSlide.BackgroundGraphicFilePath = result;
+                    }
+                });
             }
         }
         

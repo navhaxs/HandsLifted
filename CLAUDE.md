@@ -285,5 +285,5 @@ Never run `find` or `grep` via Bash/PowerShell in this repo — Git-Bash `find.e
 | `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/Parts/CustomSlideDesigner.axaml.cs` | Designer: selection proxies, keyboard (`HandleKey`), zoom |
 | `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/Parts/CustomSlideToolbar.axaml` | Editor toolbar |
 | `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/Parts/InlineTextEditor.cs` | Overlay TextBox for in-canvas text editing |
-| `HandsLiftedApp.Core/Views/Editors/SnapCalculator.cs` | Drag/resize snapping |
+| `HandsLiftedApp.Core/Views/Editors/SnapCalculator.cs` | Drag snapping |
 | `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/SlideElementCommands.cs` | Add/Duplicate/Delete/Bring/Send/Nudge |
