@@ -23,11 +23,15 @@ using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.FreeText
 {
+    /// <summary>A picture read from the clipboard, already encoded as PNG.</summary>
+    internal sealed record ClipboardPicture(byte[] PngBytes, PixelSize Pixels);
+
     public partial class CustomSlideEditor : UserControl
     {
         public CustomSlideEditor()
         {
             ReadClipboardFilePaths = ReadClipboardFilePathsFromSystem;
+            ReadClipboardPicture = ReadClipboardPictureFromSystem;
             InitializeComponent();
 
             if (Design.IsDesignMode)
@@ -240,7 +244,61 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 return;
             }
 
-            // Hook for pasting a raw bitmap (e.g. a screenshot) from the clipboard: not implemented yet.
+            // no files: a raw picture (screenshot, "Copy image" from a browser) is saved as a PNG in Media/Pasted and
+            // then added through the very same path as every other image
+            var picture = await ReadClipboardPicture();
+            if (picture == null) return;
+
+            CommitInlineEdit();
+            string savedPath;
+            try
+            {
+                var libraryPath = MediaLibraryPathProvider();
+                savedPath = await Task.Run(() => PortableAssetCopier.SavePastedImage(picture.PngBytes, libraryPath));
+            }
+            catch (MediaLibraryNotConfiguredException ex)
+            {
+                Log.Warning("Custom slide editor: Media Library not configured - pasted picture not added");
+                ShowMediaLibraryError("Media Library not configured", ex.Message);
+                return;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Log.Error(ex, "Custom slide editor: could not save the pasted picture into the Media Library");
+                return;
+            }
+
+            await AddImagesFromFilesAsync(new[] { savedPath }, null, _ => Task.FromResult<PixelSize?>(picture.Pixels));
+        }
+
+        /// <summary>
+        /// Reads a raw picture from the clipboard (null when there is none); injectable so tests do not need a real
+        /// clipboard.
+        /// </summary>
+        internal Func<Task<ClipboardPicture?>> ReadClipboardPicture { get; set; }
+
+        private async Task<ClipboardPicture?> ReadClipboardPictureFromSystem()
+        {
+            try
+            {
+                var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+                if (clipboard == null) return null;
+                using var bitmap = await clipboard.TryGetBitmapAsync();
+                if (bitmap == null) return null;
+                var pixels = bitmap.PixelSize;
+                var bytes = await Task.Run(() =>
+                {
+                    using var stream = new MemoryStream();
+                    bitmap.Save(stream); // PNG
+                    return stream.ToArray();
+                });
+                return new ClipboardPicture(bytes, pixels);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Custom slide editor: could not read a picture from the clipboard - treated as none");
+                return null;
+            }
         }
 
         /// <summary>

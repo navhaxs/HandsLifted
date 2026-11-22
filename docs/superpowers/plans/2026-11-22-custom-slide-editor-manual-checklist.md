@@ -106,3 +106,20 @@ Run in the real app (open a custom slide in the slide editor window). Check each
 - Justify renders as Left.
 - SlideImageCache is bounded by entry count (32), not bytes - many very large photos can hold a lot of memory.
 - CustomSlideRender (thumbnails, stage next-slide view) ignores font family, weight, italic and underline.
+
+## Drop and paste (added with Media/Pasted)
+
+- [ ] Drop one image file from Explorer on an empty part of the slide: one picture appears, fitted to its size and centred on the drop point, and it is selected.
+- [ ] Drop several image files at once: they fan out 40 px right and down from each other, the last is selected, and one Ctrl+Z removes all of them.
+- [ ] Drop an image file onto a selected full-slide picture: the selection adorner accepts the drop (a new picture is added, the selected one is not replaced).
+- [ ] While dragging, the cursor shows Copy over the slide for image files and not-allowed for dragged text.
+- [ ] Zoom in (or pan) and drop a file: the picture lands under the cursor, not at the unzoomed position.
+- [ ] Copy image files in Explorer, click the canvas, press Ctrl+V: the pictures are added in the middle of the slide and the files appear in `<MediaLibrary>/Media/Pasted`.
+- [ ] Take a screenshot with Win+Shift+S, click the canvas, press Ctrl+V: a file named `Pasted yyyy-MM-dd HH-mm-ss.png` appears in `<MediaLibrary>/Media/Pasted` and the picture is fitted and centred.
+- [ ] Use "Copy image" on a picture in a browser, then Ctrl+V on the canvas: the same result as the screenshot (a `Pasted ... .png` file, fitted and centred).
+- [ ] After pasting a picture, press Ctrl+Z once: the picture disappears and the PNG file is still in `Media/Pasted`.
+- [ ] Ctrl+V with only text on the clipboard: nothing is added and no message appears.
+- [ ] Ctrl+V while typing in the inline text box: the text is pasted into the box and no picture is added.
+- [ ] With no Media Library configured, drop a file and paste a picture: one clear message appears each time, nothing is added and nothing is written.
+- [ ] Click a row in the layers list, then press Ctrl+V: known limit - nothing happens until the canvas has focus.
+- [ ] Copy a playlist containing pasted pictures and the Media Library folder to another PC: the pictures still show.

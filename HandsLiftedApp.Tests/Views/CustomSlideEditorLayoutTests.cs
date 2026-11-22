@@ -716,6 +716,102 @@ public class CustomSlideEditorLayoutTests
         Assert.IsFalse(history.Stack.CanUndo);
     });
 
+    // ---- Ctrl+V of a raw picture (screenshot / "Copy image"): saved as a PNG in Media/Pasted ----
+    // Not covered headlessly: the real clipboard read (ReadClipboardPictureFromSystem: TryGetBitmapAsync + PNG encode).
+
+    private static readonly byte[] PictureBytes = { 0x89, 0x50, 0x4E, 0x47, 9, 8, 7, 6 };
+
+    private static System.Func<Task<ClipboardPicture?>> Picture(byte[]? bytes = null) =>
+        () => Task.FromResult<ClipboardPicture?>(new ClipboardPicture(bytes ?? PictureBytes, new PixelSize(800, 400)));
+
+    [TestMethod]
+    public Task Paste_ClipboardPicture_AddsOneFittedCentredSelectedElement_SavedUnderMediaPasted() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(null);
+        editor.ReadClipboardPicture = Picture();
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+        var layers = Named<ListBox>(editor, "ListBox");
+
+        await Pumped(editor.PasteAsync());
+
+        Assert.AreEqual(2, slide.SlideElements.Count);
+        var image = (ImageElement)slide.SlideElements[0];
+        StringAssert.StartsWith(image.FilePath, PastedDir(dirs));
+        StringAssert.Matches(System.IO.Path.GetFileName(image.FilePath), new System.Text.RegularExpressions.Regex(@"^Pasted \d{4}-\d\d-\d\d \d\d-\d\d-\d\d\.png$"));
+        CollectionAssert.AreEqual(PictureBytes, System.IO.File.ReadAllBytes(image.FilePath));
+        Assert.AreEqual(800, image.Width);
+        Assert.AreEqual(400, image.Height);
+        Assert.AreEqual((1920 - 800) / 2, image.X);
+        Assert.AreEqual((1080 - 400) / 2, image.Y);
+        Assert.AreSame(image, layers.SelectedItem);
+
+        Assert.AreEqual("Undo Add Image", history.Stack.UndoMenuText);
+        history.Stack.Undo();
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.IsFalse(history.Stack.CanUndo, "one step");
+        Assert.IsTrue(System.IO.File.Exists(image.FilePath), "undo removes the element, the file stays");
+    });
+
+    [TestMethod]
+    public Task Paste_FilesAndPicture_FilesWin_PictureIsNotRead() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var a = dirs.OutsideFile("copied.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        editor.MeasureImage = _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400));
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(new[] { a });
+        editor.ReadClipboardPicture = () => throw new System.InvalidOperationException("picture must not be read");
+
+        await Pumped(editor.PasteAsync());
+
+        Assert.AreEqual("copied.png", System.IO.Path.GetFileName(((ImageElement)slide.SlideElements[0]).FilePath));
+    });
+
+    [TestMethod]
+    public Task Paste_NeitherFilesNorPicture_DoesNothing() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(null);
+        editor.ReadClipboardPicture = () => Task.FromResult<ClipboardPicture?>(null);
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+        var errors = new System.Collections.Generic.List<string>();
+        editor.ShowMediaLibraryError = (t, _) => errors.Add(t);
+
+        await Pumped(editor.PasteAsync());
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.IsFalse(history.Stack.CanUndo);
+        Assert.AreEqual(0, errors.Count);
+        Assert.IsFalse(System.IO.Directory.Exists(PastedDir(dirs)));
+    });
+
+    [TestMethod]
+    public Task Paste_PictureWithoutMediaLibrary_AddsNothing_WritesNothing_ShowsErrorOnce() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => null;
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(null);
+        editor.ReadClipboardPicture = Picture();
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+        var errors = new System.Collections.Generic.List<string>();
+        editor.ShowMediaLibraryError = (t, _) => errors.Add(t);
+
+        await Pumped(editor.PasteAsync());
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.IsFalse(history.Stack.CanUndo);
+        CollectionAssert.AreEqual(new[] { "Media Library not configured" }, errors);
+    });
+
     [TestMethod]
     public Task CtrlVOnTheCanvas_And_ADrop_ReachTheEditor() => DispatcherTestThread.Run(async () =>
     {

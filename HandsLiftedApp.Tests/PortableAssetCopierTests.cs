@@ -320,6 +320,57 @@ public class PortableAssetCopierTests
             PortableAssetCopier.ResolveOrCopyIntoPastedFolder(image, @"relative\library"));
     }
 
+    private static readonly DateTime FixedNow = new(2026, 11, 22, 14, 5, 31);
+
+    [TestMethod]
+    public void SavePastedImage_WritesBytesUnderMediaPasted_WithTimestampName()
+    {
+        var library = MakeLibrary();
+        var bytes = new byte[] { 1, 2, 3, 4 };
+
+        var path = PortableAssetCopier.SavePastedImage(bytes, library, FixedNow);
+
+        Assert.AreEqual(Path.Combine(library, "Media", "Pasted", "Pasted 2026-11-22 14-05-31.png"), path);
+        CollectionAssert.AreEqual(bytes, File.ReadAllBytes(path));
+    }
+
+    [TestMethod]
+    public void SavePastedImage_SameSecondTwice_NumbersTheSecond_AndKeepsTheFirst()
+    {
+        var library = MakeLibrary();
+
+        var first = PortableAssetCopier.SavePastedImage(new byte[] { 1 }, library, FixedNow);
+        var second = PortableAssetCopier.SavePastedImage(new byte[] { 2 }, library, FixedNow);
+        var third = PortableAssetCopier.SavePastedImage(new byte[] { 3 }, library, FixedNow);
+
+        Assert.AreEqual("Pasted 2026-11-22 14-05-31 (2).png", Path.GetFileName(second));
+        Assert.AreEqual("Pasted 2026-11-22 14-05-31 (3).png", Path.GetFileName(third));
+        CollectionAssert.AreEqual(new byte[] { 1 }, File.ReadAllBytes(first), "first untouched");
+        CollectionAssert.AreEqual(new byte[] { 2 }, File.ReadAllBytes(second));
+    }
+
+    [TestMethod]
+    public void SavePastedImage_NotConfigured_Throws_AndWritesNothing()
+    {
+        Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
+            PortableAssetCopier.SavePastedImage(new byte[] { 1 }, null, FixedNow));
+        Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
+            PortableAssetCopier.SavePastedImage(new byte[] { 1 }, @"relative\library", FixedNow));
+        Assert.IsFalse(Directory.Exists(Path.Combine(Environment.CurrentDirectory, @"relative\library")));
+    }
+
+    [TestMethod]
+    public void SavePastedImage_ReturnedPath_IsReferencedInPlaceByResolveOrCopyIntoPastedFolder()
+    {
+        var library = MakeLibrary();
+        var path = PortableAssetCopier.SavePastedImage(new byte[] { 1 }, library, FixedNow);
+
+        var resolved = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(path, library);
+
+        Assert.AreEqual(path, resolved);
+        Assert.AreEqual(1, Directory.GetFiles(Path.Combine(library, "Media", "Pasted")).Length);
+    }
+
     [TestMethod]
     public void ResolveOrCopyIntoPastedFolder_NonImage_PassesThroughUnchanged()
     {

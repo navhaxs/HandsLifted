@@ -70,6 +70,38 @@ namespace HandsLiftedApp.Core.Utils
                 : CopyIntoSubfolder(filePath, fullMediaLibraryPath, PastedSubfolder);
         }
 
+        /// <summary>
+        /// Saves a picture taken from the clipboard (already PNG-encoded) as
+        /// <c>&lt;library&gt;/Media/Pasted/Pasted yyyy-MM-dd HH-mm-ss.png</c> (local time of <paramref name="now"/>, or
+        /// now). An existing file is never overwritten: " (2)", " (3)"... is added before the extension.
+        /// </summary>
+        /// <returns>The full path of the new file.</returns>
+        /// <exception cref="MediaLibraryNotConfiguredException">No (fully qualified) Media Library is configured.</exception>
+        public static string SavePastedImage(byte[] pngBytes, string? mediaLibraryPath, DateTime? now = null)
+        {
+            var fullMediaLibraryPath = RequireMediaLibrary(mediaLibraryPath);
+            var destDir = Path.Combine(fullMediaLibraryPath, PastedSubfolder);
+            Directory.CreateDirectory(destDir);
+
+            var baseName = "Pasted " + (now ?? DateTime.Now).ToString("yyyy-MM-dd HH-mm-ss", System.Globalization.CultureInfo.InvariantCulture);
+            for (var n = 1; ; n++)
+            {
+                var name = n == 1 ? $"{baseName}.png" : $"{baseName} ({n}).png";
+                var destPath = Path.Combine(destDir, name);
+                try
+                {
+                    // CreateNew: fails instead of overwriting when the name is taken
+                    using var stream = new FileStream(destPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+                    stream.Write(pngBytes, 0, pngBytes.Length);
+                    return destPath;
+                }
+                catch (IOException) when (File.Exists(destPath))
+                {
+                    // taken: try the next number
+                }
+            }
+        }
+
         /// <summary>A file already under the library is referenced in place (its full path), never copied.</summary>
         private static bool TryResolveInsideLibrary(string filePath, string fullMediaLibraryPath, out string resolved)
         {
