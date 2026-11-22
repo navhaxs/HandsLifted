@@ -177,6 +177,68 @@ public class InlineTextEditorTests
     });
 
     [TestMethod]
+    public Task BeginEdit_KeepsTheElementSelected_SoItsOutlineAndHandlesStayVisible() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, _, text, _) = CreateDesigner();
+        SlideElement? reported = null;
+        designer.OnUpdateSelectedElement += (_, e) => reported = e.SelectedElement;
+
+        // nothing selected yet (e.g. editing started from code): editing selects the element
+        designer.BeginEdit(text);
+        Assert.AreSame(text, designer.SelectedElement, "the edited element is the selected one");
+        Assert.AreSame(text, reported, "the layers list / toolbar are told about it");
+
+        designer.CommitEdit();
+        Assert.AreSame(text, designer.SelectedElement, "still selected after the edit ends");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task BeginEdit_OnTheAlreadySelectedElement_DoesNotDeselectOrReselect() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, _, text, _) = CreateDesigner();
+        designer.SelectElement(text);
+        var deselected = 0;
+        var selectedEvents = 0;
+        designer.OnDeselectElement += (_, _) => deselected++;
+        designer.OnUpdateSelectedElement += (_, _) => selectedEvents++;
+
+        designer.BeginEdit(text);
+
+        Assert.AreEqual(0, deselected, "starting the edit must not drop the selection");
+        Assert.AreEqual(0, selectedEvents, "and must not select it a second time");
+        Assert.AreSame(text, designer.SelectedElement);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task SelectionBody_StaysClickThroughWhileEditing_AndIsRestoredAfterwards() => DispatcherTestThread.Run(() =>
+    {
+        // The adorner's move area covers the element and would take the clicks meant for the text box, so while the
+        // box is open only the resize handles may be hit-testable. (The adorner itself needs a window's adorner
+        // layer, which the test host does not have, so the rule is checked on the designer's decision.)
+        var (designer, _, text, _) = CreateDesigner();
+        Assert.IsTrue(designer.SelectionBodyHitTestableFor(text), "not editing: the body can be dragged");
+
+        designer.BeginEdit(text);
+        Assert.IsFalse(designer.SelectionBodyHitTestableFor(text), "editing this element: clicks must reach the box");
+
+        designer.CommitEdit();
+        Assert.IsTrue(designer.SelectionBodyHitTestableFor(text), "edit over: the body can be dragged again");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task SelectedAdorner_BodyHitTestable_DefaultsToTrue_AndCanBeSwitchedOff() => DispatcherTestThread.Run(() =>
+    {
+        var adorner = new PerspectiveDemo.SelectedAdorner();
+        Assert.IsTrue(adorner.BodyHitTestable);
+        adorner.BodyHitTestable = false;
+        Assert.IsFalse(adorner.BodyHitTestable);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
     public Task Commit_WithUnchangedText_AddsNoUndoStep() => DispatcherTestThread.Run(() =>
     {
         var (designer, slide, text, overlay) = CreateDesigner();

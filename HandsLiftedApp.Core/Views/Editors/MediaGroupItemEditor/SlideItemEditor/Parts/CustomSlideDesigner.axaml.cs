@@ -213,7 +213,8 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         /// <summary>
         /// Opens the inline text box over <paramref name="el"/> (which must be on the slide shown). Its canvas text is
-        /// hidden while editing, and the selection handles are put away so clicks reach the box. With
+        /// hidden while editing. The element stays selected, so its outline and resize handles stay up while typing;
+        /// only the adorner's move area is made click-through so clicks reach the box. With
         /// <paramref name="selectAll"/> the current text is selected so typing replaces it.
         /// </summary>
         public void BeginEdit(TextElement el, bool selectAll = false)
@@ -223,14 +224,27 @@ namespace HandsLiftedApp.Core.Views.Editors
 
             CommitEdit();
 
-            // The selection adorner lives in the window's adorner layer, above this canvas; its drag thumb covers the
-            // element and would take every click meant for the text box. It comes back on commit.
-            RemoveSelected();
-
             HiddenTextElement = el;
             InlineEditor.Begin(el, selectAll);
             PositionInlineEditor();
+
+            // The selection adorner lives in the window's adorner layer, above this canvas; its move area covers the
+            // element and would take every click meant for the text box (and the drag that selects text), so that
+            // part stops taking the pointer while editing. A new adorner is created already click-through
+            // (AddSelected asks SelectionBodyHitTestableFor), an existing one is switched.
+            if (!ReferenceEquals(_selectedElement, el)) SelectElement(el);
+            else if (_selected != null) _selected.BodyHitTestable = false;
         }
+
+        /// <summary>The element the selection outline and handles are on, or null.</summary>
+        internal SlideElement? SelectedElement => _selectedElement;
+
+        /// <summary>
+        /// Whether the selection's move area should take the pointer for <paramref name="element"/>: not while that
+        /// element's text is being typed into (the text box underneath needs the clicks).
+        /// </summary>
+        internal bool SelectionBodyHitTestableFor(SlideElement? element) =>
+            !(InlineEditor.IsEditing && ReferenceEquals(InlineEditor.Element, element));
 
         /// <summary>Ends the inline edit, writing the text to the element only if it changed (one undo step).</summary>
         public void CommitEdit() => InlineEditor.Commit();
@@ -249,9 +263,12 @@ namespace HandsLiftedApp.Core.Views.Editors
 
             if (el.Text != newText) el.Text = newText;
 
-            // Put the handles back on the element, unless the click that ended the edit already selected something
-            // else (that click's own handler runs after the focus change that commits, and wins either way).
-            if (_selected == null) SelectElement(el);
+            // The element is still selected (its adorner stayed up during the edit): let its move area take the pointer
+            // again. If nothing is selected any more (the adorner was rebuilt away, or the click that ended the edit
+            // deselected) put the handles back on the element, unless that click selected something else (its own
+            // handler runs after the focus change that commits, and wins either way).
+            if (_selectedElement == null) SelectElement(el);
+            else if (ReferenceEquals(_selectedElement, el) && _selected != null) _selected.BodyHitTestable = true;
         }
 
         /// <summary>Ends an edit whose element is no longer on the slide shown, without writing to it.</summary>
@@ -482,6 +499,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                     ? new Size(sizedSlide.SlideWidth, sizedSlide.SlideHeight)
                     : new Size(1920, 1080),
                 SnapTargetsProvider = GetSnapTargets,
+                // a rebuilt adorner (Render, undo) for the element being typed into must not cover the text box
+                BodyHitTestable = SelectionBodyHitTestableFor(control.DataContext as SlideElement),
                 // ClippingBounds = new Rect(0, 0, this.Bounds.Width, this.Bounds.Height)
             };
             

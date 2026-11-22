@@ -25,6 +25,22 @@ namespace PerspectiveDemo
         private Canvas? _canvas;
         private Thumb? _drag;
         private Rectangle? _border;
+        private bool _bodyHitTestable = true;
+
+        /// <summary>
+        /// Whether the move area (the invisible thumb that covers the whole element) takes the pointer. Switched off
+        /// while the element's text is being typed into, so clicks and text selection reach the text box underneath;
+        /// the outline and the resize handles stay on.
+        /// </summary>
+        public bool BodyHitTestable
+        {
+            get => _bodyHitTestable;
+            set
+            {
+                _bodyHitTestable = value;
+                if (_drag != null) _drag.IsHitTestVisible = value;
+            }
+        }
         private Thumb? _top;
         private Thumb? _bottom;
         private Thumb? _left;
@@ -230,6 +246,7 @@ namespace PerspectiveDemo
             _canvas = e.NameScope.Find<Canvas>("PART_Canvas");
             _drag = e.NameScope.Find<Thumb>("PART_Drag");
             _border = e.NameScope.Find<Rectangle>("PART_Border");
+            if (_drag != null) _drag.IsHitTestVisible = _bodyHitTestable;
             _top = e.NameScope.Find<Thumb>("PART_Top");
             _bottom = e.NameScope.Find<Thumb>("PART_Bottom");
             _left = e.NameScope.Find<Thumb>("PART_Left");
