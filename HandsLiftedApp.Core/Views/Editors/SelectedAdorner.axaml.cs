@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
@@ -8,6 +9,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
+using HandsLiftedApp.Core.Views.Editors;
 using Point = Avalonia.Point;
 
 namespace PerspectiveDemo
@@ -46,54 +48,62 @@ namespace PerspectiveDemo
             set => SetValue(ZoomBorderProperty, value);
         }
 
+        // Slide size and the other elements' rects (slide coordinates) the dragged element snaps to. The provider is
+        // asked on every drag move, so the rects are never stale (element geometry/collection can change mid-selection).
+        public Size SlideSize { get; set; } = new Size(1920, 1080);
+        public Func<IReadOnlyList<Rect>>? SnapTargetsProvider { get; set; }
+        private IReadOnlyList<Rect> _snapTargets = Array.Empty<Rect>();
+
+        public IReadOnlyList<Rect> SnapTargets
+        {
+            get => SnapTargetsProvider?.Invoke() ?? _snapTargets;
+            set => _snapTargets = value;
+        }
+
         private Line? verticalLine = null;
         private Line? horizontalLine = null;
-        private void UpdateSnapLines(bool showX, bool showY)
+
+        // guideX: x of a vertical guide line, guideY: y of a horizontal guide line; null removes that line.
+        private void UpdateSnapLines(double? guideX, double? guideY)
         {
-            // <Line StartPoint="960,0" EndPoint="960,1080" Stroke="Red" StrokeThickness="2"/>
-            // <Line StartPoint="0,540" EndPoint="1920,540" Stroke="Red" StrokeThickness="2"/>
-            var rootCanvas = ZoomBorder.GetControl<Canvas>("Root");
-            if (showX)
+            var rootCanvas = ZoomBorder?.GetControl<Canvas>("Root");
+            if (rootCanvas == null) return;
+
+            if (guideX is { } x)
             {
-                if (horizontalLine == null)
-                {
-                    horizontalLine = new Line()
-                    {
-                        StartPoint = new Point(0, 540), EndPoint = new Point(1920, 540), Stroke = Brushes.Red,
-                        StrokeThickness = 2, Name = "HorizontalLine"
-                    };
-                    rootCanvas.Children.Add(horizontalLine);
-                }
+                verticalLine ??= AddGuide(rootCanvas, "VerticalLine");
+                verticalLine.StartPoint = new Point(x, 0);
+                verticalLine.EndPoint = new Point(x, SlideSize.Height);
             }
-            else
+            else if (verticalLine != null)
             {
-                if (horizontalLine != null)
-                {
-                    rootCanvas.Children.Remove(horizontalLine);
-                    horizontalLine = null;
-                }
+                rootCanvas.Children.Remove(verticalLine);
+                verticalLine = null;
             }
-            if (showY)
+
+            if (guideY is { } y)
             {
-                if (verticalLine == null)
-                {
-                    verticalLine = new Line() { StartPoint = new Point(960, 0), EndPoint = new Point(960, 1080), Stroke = Brushes.Red, StrokeThickness = 2, Name = "VerticalLine"};
-                    rootCanvas.Children.Add(verticalLine);
-                }
+                horizontalLine ??= AddGuide(rootCanvas, "HorizontalLine");
+                horizontalLine.StartPoint = new Point(0, y);
+                horizontalLine.EndPoint = new Point(SlideSize.Width, y);
             }
-            else
+            else if (horizontalLine != null)
             {
-                if (verticalLine != null)
-                {
-                    rootCanvas.Children.Remove(verticalLine);
-                    verticalLine = null;
-                }
+                rootCanvas.Children.Remove(horizontalLine);
+                horizontalLine = null;
             }
+        }
+
+        private static Line AddGuide(Canvas rootCanvas, string name)
+        {
+            var line = new Line { Stroke = Brushes.Red, StrokeThickness = 2, Name = name };
+            rootCanvas.Children.Add(line);
+            return line;
         }
 
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
-            UpdateSnapLines(false, false);
+            UpdateSnapLines(null, null);
             if (_followedControl != null)
             {
                 _followedControl.PropertyChanged -= OnFollowedControlPropertyChanged;
@@ -324,41 +334,9 @@ namespace PerspectiveDemo
                 var previousRect = GetRect();
                 var draggedRect = new Rect(previousRect.X + deltaX, previousRect.Y + deltaY, previousRect.Width, previousRect.Height);
 
-                // Calculate the center of the canvas
-                var canvasCenterX = ZoomBorder.GetControl<Canvas>("Root").Bounds.Width / 2;
-                var canvasCenterY = ZoomBorder.GetControl<Canvas>("Root").Bounds.Height / 2;
-
-                // Calculate the current position of the dragged element
-                var elementCenterX = draggedRect.X + (draggedRect.Width / 2);
-                var elementCenterY = draggedRect.Y + (draggedRect.Height / 2);
-                
-                // Define a snapping threshold
-                const double snappingThreshold = 10.0;
-
-                // Check if the element is near the center
-                if (Math.Abs(elementCenterX - canvasCenterX) <= snappingThreshold &&
-                    Math.Abs(elementCenterY - canvasCenterY) <= snappingThreshold)
-                {
-                    // Snap to the center
-                    draggedRect = new Rect(canvasCenterX - (draggedRect.Width / 2),  canvasCenterY - (draggedRect.Height / 2), previousRect.Width, previousRect.Height);
-                    UpdateSnapLines(true, true);
-                } 
-                else if (Math.Abs(elementCenterX - canvasCenterX) <= snappingThreshold)
-                {
-                    // Snap to the vertical axis
-                    draggedRect = new Rect(canvasCenterX - (draggedRect.Width / 2), draggedRect.Y, previousRect.Width, previousRect.Height);
-                    UpdateSnapLines(false, true);
-                }
-                else if (Math.Abs(elementCenterY - canvasCenterY) <= snappingThreshold)
-                {
-                    // Snap to the horizontal axis
-                    draggedRect = new Rect(draggedRect.X, canvasCenterY - (draggedRect.Height / 2), previousRect.Width, previousRect.Height);
-                    UpdateSnapLines(true, false);
-                }
-                else
-                {
-                    UpdateSnapLines(false, false);
-                }
+                var snap = SnapCalculator.Snap(draggedRect, SnapTargets, SlideSize.Width, SlideSize.Height);
+                draggedRect = snap.Rect;
+                UpdateSnapLines(snap.GuideX, snap.GuideY);
                 // new[] { _top, _bottom, _left, _right, _topLeft, _bottomLeft, _topRight, _bottomRight }
                 //     .ToList()
                 //     .ForEach(thumb => ApplyDeltaToThumb(thumb, deltaX, deltaY));
@@ -407,7 +385,7 @@ namespace PerspectiveDemo
             }
             else
             {
-                UpdateSnapLines(false, false);
+                UpdateSnapLines(null, null);
             }
 
             lastPosition = newPosition;

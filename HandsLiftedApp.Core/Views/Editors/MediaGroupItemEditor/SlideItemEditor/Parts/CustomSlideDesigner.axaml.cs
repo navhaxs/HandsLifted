@@ -445,6 +445,10 @@ namespace HandsLiftedApp.Core.Views.Editors
                 ClipToBounds = false,
                 Control = control,
                 ZoomBorder = _zoomBorder,
+                SlideSize = DataContext is CustomSlide sizedSlide
+                    ? new Size(sizedSlide.SlideWidth, sizedSlide.SlideHeight)
+                    : new Size(1920, 1080),
+                SnapTargetsProvider = GetSnapTargets,
                 // ClippingBounds = new Rect(0, 0, this.Bounds.Width, this.Bounds.Height)
             };
             
@@ -467,6 +471,16 @@ namespace HandsLiftedApp.Core.Views.Editors
             OnUpdateSelectedElement(this, args);
         }
         
+        // Rects of every element except the selected one, read fresh on each drag move.
+        private System.Collections.Generic.IReadOnlyList<Rect> GetSnapTargets()
+        {
+            if (DataContext is not CustomSlide slide) return Array.Empty<Rect>();
+            return slide.SlideElements
+                .Where(e => e != _selectedElement)
+                .Select(e => new Rect(e.X, e.Y, e.Width, e.Height))
+                .ToList();
+        }
+
         private void OnAdornerPointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (sender is not SelectedAdorner adorner || e.ClickCount != 2) return;
