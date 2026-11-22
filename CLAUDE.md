@@ -252,6 +252,17 @@ This codebase does not enforce folder-equals-namespace or namespace-equals-proje
 
 Never run `find` or `grep` via Bash/PowerShell in this repo — Git-Bash `find.exe` over `.git`/`packages`/`bin`/`obj` runs long, stacks up, and eats CPU (multiple orphaned `find.exe` seen at 6%+ CPU each). Use Glob (file search) and Grep (content search) tools instead, always. Always scope `path` to project dir (or narrower subfolder) — never search unscoped from drive root or default cwd. The repo root also contains `.claude/worktrees/*` full checkouts: a root-scoped Glob/Grep returns every hit twice (once per worktree) — scope to `HandsLiftedApp.Core`, `HandsLiftedApp.Data`, etc. or add a glob that excludes `.claude`, and never edit a file under `.claude/worktrees/` by mistake.
 
+## Custom slide editor
+
+- **One drawer.** `CustomSlideDrawer` (with `CustomSlideTextLayout` for text layout and `SlideImageCache` for decoded images) draws custom slides for BOTH the projector (`CustomSlideSpecBuilder`) and the editor (`CustomSlideEditorCanvas`). Fix rendering bugs there, never in a second copy. `CustomSlideRender` (Avalonia controls) is thumbnails only.
+- **Proxy borders.** The designer draws nothing itself: `Root` holds a transparent `Border` per element so `SelectedAdorner` (drag/resize handles) keeps working; the adorner adorns a proxy, not a drawn control. Proxy rects are bound two-way to the element.
+- **Z-order = list order, index 0 frontmost** (text no longer sits above images automatically). Bring forward / Send backward swap list positions.
+- **Inline text editing.** `InlineTextEditor` is an overlay `TextBox` that commits `Text` exactly once (commit, Esc, LostFocus or detach); while it is open the canvas hides that element's text (`HiddenTextElement`). Don't write `Text` per keystroke - that breaks undo (one step per edit).
+- **Toolbar buttons must stay `Focusable="False"`** (set per button and in the style), or clicking Bold etc. steals focus from the inline box and ends the edit.
+- **Keyboard** lives in `CustomSlideDesigner.HandleKey` and only fires with canvas focus (not after clicking a layers-list row).
+- **Headless tests** of these controls use `HandsLiftedApp.Tests/TestSupport/AvaloniaTextRendering.cs`, whose cursor-factory stub is found by reflection on an Avalonia designer-support type: expect it to break on an Avalonia upgrade.
+- Manual click-through list: `docs/superpowers/plans/2026-11-22-custom-slide-editor-manual-checklist.md`.
+
 ## Key file locations
 
 | File | Purpose |
@@ -269,3 +280,10 @@ Never run `find` or `grep` via Bash/PowerShell in this repo — Git-Bash `find.e
 | `Libraries/LibMpv/src/LibMpv.Context/MpvContext.Rendering.cs` | Render context lifecycle |
 | `HandsLiftedApp.Core/Views/LivePane.axaml.cs` | Slide subscription, spec building (MainWindow) |
 | `HandsLiftedApp.Core/Views/ProjectorWindow.axaml.cs` | Slide subscription, spec building (projector) |
+| `HandsLiftedApp.Core/Render/Skia/Builders/CustomSlideDrawer.cs` | The one custom-slide drawer (projector + editor canvas) |
+| `HandsLiftedApp.Core/Render/Skia/CustomSlideEditorCanvas.cs` | Editor canvas; draws via `CustomSlideDrawer` |
+| `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/Parts/CustomSlideDesigner.axaml.cs` | Designer: selection proxies, keyboard (`HandleKey`), zoom |
+| `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/Parts/CustomSlideToolbar.axaml` | Editor toolbar |
+| `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/Parts/InlineTextEditor.cs` | Overlay TextBox for in-canvas text editing |
+| `HandsLiftedApp.Core/Views/Editors/SnapCalculator.cs` | Drag/resize snapping |
+| `HandsLiftedApp.Core/Views/Editors/MediaGroupItemEditor/SlideItemEditor/SlideElementCommands.cs` | Add/Duplicate/Delete/Bring/Send/Nudge |
