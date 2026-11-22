@@ -80,3 +80,38 @@ public class SnapCalculatorTests
         Assert.IsNull(result.GuideY);
     }
 }
+
+[TestClass]
+public class DragSnapSessionTests
+{
+    private static readonly IReadOnlyList<Rect> None = new List<Rect>();
+
+    [TestMethod]
+    public void SlowDragLeavesSnapPoint()
+    {
+        var session = new DragSnapSession(new Rect(0, 300, 200, 100)); // starts snapped to x=0
+        SnapResult r = null!;
+        for (var i = 0; i < 5; i++) r = session.Move(3, 0, None, 1920, 1080); // raw x = 15
+        Assert.AreEqual(15, r.Rect.X, 0.001);
+        Assert.IsNull(r.GuideX);
+    }
+
+    [TestMethod]
+    public void WithinThresholdStillSnapsWithGuide()
+    {
+        var session = new DragSnapSession(new Rect(0, 300, 200, 100));
+        var r = session.Move(3, 0, None, 1920, 1080);
+        r = session.Move(3, 0, None, 1920, 1080); // raw x = 6
+        Assert.AreEqual(0, r.Rect.X, 0.001);
+        Assert.AreEqual(0, r.GuideX);
+    }
+
+    [TestMethod]
+    public void SnappedRectNeverFeedsBack()
+    {
+        var session = new DragSnapSession(new Rect(0, 300, 200, 100));
+        for (var i = 0; i < 3; i++) session.Move(4, 0, None, 1920, 1080); // snapped at 0 while raw reaches 12
+        var r = session.Move(4, 0, None, 1920, 1080); // raw 16, not 4
+        Assert.AreEqual(16, r.Rect.X, 0.001);
+    }
+}

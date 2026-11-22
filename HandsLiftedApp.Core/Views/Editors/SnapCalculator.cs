@@ -74,3 +74,24 @@ namespace HandsLiftedApp.Core.Views.Editors
         }
     }
 }
+
+namespace HandsLiftedApp.Core.Views.Editors
+{
+    /// <summary>
+    /// One drag gesture. Accumulates the raw (unsnapped) pointer movement from the start rect and snaps that,
+    /// so the snapped result never feeds back into the next move and the rect can always leave a snap point.
+    /// </summary>
+    public sealed class DragSnapSession
+    {
+        private Rect _raw;
+
+        public DragSnapSession(Rect start) => _raw = start;
+
+        public SnapResult Move(double deltaX, double deltaY, IReadOnlyList<Rect> others, double slideWidth,
+            double slideHeight, double threshold = 10)
+        {
+            _raw = new Rect(_raw.X + deltaX, _raw.Y + deltaY, _raw.Width, _raw.Height);
+            return SnapCalculator.Snap(_raw, others, slideWidth, slideHeight, threshold);
+        }
+    }
+}

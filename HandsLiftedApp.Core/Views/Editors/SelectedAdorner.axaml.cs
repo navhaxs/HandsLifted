@@ -150,9 +150,12 @@ namespace PerspectiveDemo
                 && Math.Abs(current.Width - target.Width) < 0.01 && Math.Abs(current.Height - target.Height) < 0.01)
                 return;
 
+            _dragSession = null; // changed from outside the drag: rebase the raw drag position
             UpdateThumbs(target);
             UpdateDrag(target);
         }
+
+        private DragSnapSession? _dragSession;
         
         
         public static readonly StyledProperty<Rect?> ClippingBoundsProperty =
@@ -331,11 +334,10 @@ namespace PerspectiveDemo
                 var deltaX = newPosition.X - lastPosition.Value.X;
                 var deltaY = newPosition.Y - lastPosition.Value.Y;
 
-                var previousRect = GetRect();
-                var draggedRect = new Rect(previousRect.X + deltaX, previousRect.Y + deltaY, previousRect.Width, previousRect.Height);
-
-                var snap = SnapCalculator.Snap(draggedRect, SnapTargets, SlideSize.Width, SlideSize.Height);
-                draggedRect = snap.Rect;
+                // Snap the raw (unsnapped) drag position, not the previously snapped rect, or a slow drag sticks.
+                _dragSession ??= new DragSnapSession(GetRect());
+                var snap = _dragSession.Move(deltaX, deltaY, SnapTargets, SlideSize.Width, SlideSize.Height);
+                var draggedRect = snap.Rect;
                 UpdateSnapLines(snap.GuideX, snap.GuideY);
                 // new[] { _top, _bottom, _left, _right, _topLeft, _bottomLeft, _topRight, _bottomRight }
                 //     .ToList()
@@ -385,6 +387,7 @@ namespace PerspectiveDemo
             }
             else
             {
+                _dragSession = null;
                 UpdateSnapLines(null, null);
             }
 
