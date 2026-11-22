@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using HandsLiftedApp.Core.Render.Skia.Builders;
+using Serilog;
 using SkiaSharp;
 
 namespace HandsLiftedApp.Core.Render.Skia;
@@ -48,6 +49,10 @@ public static class SlideImageCache
             using (stream) bmp = SKBitmap.Decode(stream);
             if (bmp == null) return null;
 
+            // Never written to once cached. A mutable bitmap is deep-copied by DrawBitmap (SKImage.FromBitmap) on every
+            // redraw and held by the recorded picture; an immutable one is shared.
+            bmp.SetImmutable();
+
             lock (Gate)
             {
                 if (Entries.ContainsKey(normalized))
@@ -65,9 +70,25 @@ public static class SlideImageCache
             }
             return bmp;
         }
-        catch
+        catch (Exception ex)
         {
+            WarnOnce(path, ex);
             return null;
         }
+    }
+
+    private const int MaxWarnedPaths = 64;
+    private static readonly HashSet<string> Warned = new();
+
+    // A failing image is asked for again on every redraw: log it once per path (bounded, so it cannot grow forever).
+    private static void WarnOnce(string? path, Exception ex)
+    {
+        var key = path ?? "";
+        lock (Gate)
+        {
+            if (Warned.Count >= MaxWarnedPaths) Warned.Clear();
+            if (!Warned.Add(key)) return;
+        }
+        Log.Warning("Could not load slide image {Path} - {Message}", key, ex.Message);
     }
 }

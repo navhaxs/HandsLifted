@@ -161,6 +161,8 @@ public class CustomSlideDrawerTests
             var b = SlideImageCache.Get(path);
             Assert.IsNotNull(a);
             Assert.AreSame(a, b);
+            // immutable, so DrawBitmap does not deep-copy its pixels into the recorded picture on every redraw
+            Assert.IsTrue(a.IsImmutable, "cached bitmaps are never written to");
         }
         finally
         {
