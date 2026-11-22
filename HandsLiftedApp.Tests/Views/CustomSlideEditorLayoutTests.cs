@@ -14,6 +14,7 @@ using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.SlideElement;
 using HandsLiftedApp.Tests.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static HandsLiftedApp.Tests.TestSupport.AsyncPump;
 
 namespace HandsLiftedApp.Tests.Views;
 
@@ -62,22 +63,8 @@ public class CustomSlideEditorLayoutTests
     private static readonly string SharedLibrary = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "vs-test-shared-library");
     private static string InLib(string name) => System.IO.Path.GetFullPath(System.IO.Path.Combine(SharedLibrary, name));
 
-    // The editor copies the picture on a pool thread and resumes on the test's thread. Depending on whether a
-    // control has been created yet that thread's context is Avalonia's (its queue only drains on RunJobs(), so
-    // block-and-pump) or the test pump's (blocking would deadlock the resume, so yield instead).
-    private static async Task Pumped(Task task)
-    {
-        var deadline = System.DateTime.UtcNow.AddSeconds(15);
-        var avalonia = System.Threading.SynchronizationContext.Current?.GetType().Name.Contains("Avalonia") == true;
-        while (!task.IsCompleted && System.DateTime.UtcNow < deadline)
-        {
-            Avalonia.Threading.Dispatcher.UIThread.RunJobs();
-            if (avalonia) System.Threading.Thread.Sleep(5);
-            else await Task.Delay(5);
-        }
-        Assert.IsTrue(task.IsCompleted, "the editor action did not finish");
-        await task;
-    }
+    // Every async editor action is awaited through AsyncPump.Pumped (TestSupport): the editor copies pictures on a
+    // pool thread and resumes on the test's thread, which needs pumping.
 
     private static readonly byte[] TinyPng = System.Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC");
 
@@ -220,7 +207,7 @@ public class CustomSlideEditorLayoutTests
         var history = GiveHistory(editor, slide);
         history.Stack.Clear();
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>(null), _ => Task.FromResult<PixelSize?>(new PixelSize(10, 10)));
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(null), _ => Task.FromResult<PixelSize?>(new PixelSize(10, 10))));
 
         Assert.AreEqual(1, slide.SlideElements.Count, "no empty image placeholder is left behind");
         Assert.IsFalse(history.Stack.CanUndo, "and no undo step");
@@ -231,7 +218,7 @@ public class CustomSlideEditorLayoutTests
     {
         var editor = EditorOnEmptySlide(out var slide);
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("broken.png")), _ => Task.FromResult<PixelSize?>(null));
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(InLib("broken.png")), _ => Task.FromResult<PixelSize?>(null)));
 
         Assert.AreEqual(1, slide.SlideElements.Count);
     });
@@ -242,13 +229,13 @@ public class CustomSlideEditorLayoutTests
         var editor = EditorOnEmptySlide(out var slide);
         var other = new CustomSlide();
 
-        await editor.AddImageAsync(
+        await Pumped(editor.AddImageAsync(
             () =>
             {
                 editor.DataContext = other; // e.g. the media group editor rebuilt the editor for another slide
                 return Task.FromResult<string?>(InLib("a.png"));
             },
-            _ => Task.FromResult<PixelSize?>(new PixelSize(100, 100)));
+            _ => Task.FromResult<PixelSize?>(new PixelSize(100, 100))));
 
         Assert.AreEqual(1, slide.SlideElements.Count);
         Assert.AreEqual(0, other.SlideElements.Count);
@@ -260,7 +247,7 @@ public class CustomSlideEditorLayoutTests
         var editor = EditorOnEmptySlide(out var slide);
         var layers = Named<ListBox>(editor, "ListBox");
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("a.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(InLib("a.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400))));
 
         var image = slide.SlideElements[0] as ImageElement;
         Assert.IsNotNull(image, "the new picture is frontmost");
@@ -277,7 +264,7 @@ public class CustomSlideEditorLayoutTests
     {
         var editor = EditorOnEmptySlide(out var slide);
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("big.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(3840, 2160)));
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(InLib("big.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(3840, 2160))));
 
         var image = (ImageElement)slide.SlideElements[0];
         Assert.AreEqual(1920, image.Width);
@@ -293,7 +280,7 @@ public class CustomSlideEditorLayoutTests
         var history = GiveHistory(editor, slide);
         history.Stack.Clear();
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("a.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(InLib("a.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400))));
 
         Assert.AreEqual("Undo Add Image", history.Stack.UndoMenuText);
         history.Stack.Undo();
