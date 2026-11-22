@@ -55,8 +55,163 @@ public class CustomSlideEditorLayoutTests
         AvaloniaTextRendering.EnsureInitialized();
         slide = new CustomSlide();
         slide.SlideElements.Add(new TextElement { Text = "existing" });
-        return new CustomSlideEditor { DataContext = slide };
+        return new CustomSlideEditor { DataContext = slide, MediaLibraryPathProvider = () => SharedLibrary };
     }
+
+    // A "library" that pictures which need no real file (already inside it, so referenced in place) live in.
+    private static readonly string SharedLibrary = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "vs-test-shared-library");
+    private static string InLib(string name) => System.IO.Path.GetFullPath(System.IO.Path.Combine(SharedLibrary, name));
+
+    // The editor copies the picture on a pool thread and resumes on the test's thread. Depending on whether a
+    // control has been created yet that thread's context is Avalonia's (its queue only drains on RunJobs(), so
+    // block-and-pump) or the test pump's (blocking would deadlock the resume, so yield instead).
+    private static async Task Pumped(Task task)
+    {
+        var deadline = System.DateTime.UtcNow.AddSeconds(15);
+        var avalonia = System.Threading.SynchronizationContext.Current?.GetType().Name.Contains("Avalonia") == true;
+        while (!task.IsCompleted && System.DateTime.UtcNow < deadline)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.RunJobs();
+            if (avalonia) System.Threading.Thread.Sleep(5);
+            else await Task.Delay(5);
+        }
+        Assert.IsTrue(task.IsCompleted, "the editor action did not finish");
+        await task;
+    }
+
+    private static readonly byte[] TinyPng = System.Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC");
+
+    private sealed class TempFolders : System.IDisposable
+    {
+        public string Library { get; } = Make();
+        public string Outside { get; } = Make();
+        private static string Make() => System.IO.Directory.CreateDirectory(
+            System.IO.Path.Combine(System.IO.Path.GetTempPath(), "vs-test-" + System.Guid.NewGuid().ToString("N"))).FullName;
+
+        public string OutsideFile(string name)
+        {
+            var p = System.IO.Path.Combine(Outside, name);
+            System.IO.File.WriteAllBytes(p, TinyPng);
+            return p;
+        }
+
+        public void Dispose()
+        {
+            try { System.IO.Directory.Delete(Library, true); } catch { }
+            try { System.IO.Directory.Delete(Outside, true); } catch { }
+        }
+    }
+
+    private static readonly System.Func<string, Task<PixelSize?>> Measure800x400 = _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400));
+
+    [TestMethod]
+    public Task AddImage_PickedFileOutsideLibrary_IsCopiedIntoMediaImages_AndElementPointsAtTheCopy() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var picked = dirs.OutsideFile("photo.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(picked), Measure800x400));
+
+        var image = (ImageElement)slide.SlideElements[0];
+        var imagesDir = System.IO.Path.Combine(dirs.Library, "Media", "Images");
+        StringAssert.StartsWith(image.FilePath, imagesDir);
+        Assert.IsTrue(System.IO.File.Exists(image.FilePath), "the copy exists");
+        Assert.IsTrue(System.IO.File.Exists(picked), "the original is untouched");
+    });
+
+    [TestMethod]
+    public Task AddImage_PickedFileAlreadyInLibrary_IsReferencedInPlace() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var inside = System.IO.Path.Combine(dirs.Library, "mine.png");
+        System.IO.File.WriteAllBytes(inside, TinyPng);
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(inside), Measure800x400));
+
+        Assert.AreEqual(inside, ((ImageElement)slide.SlideElements[0]).FilePath);
+        Assert.IsFalse(System.IO.Directory.Exists(System.IO.Path.Combine(dirs.Library, "Media")), "nothing copied");
+    });
+
+    [TestMethod]
+    public Task AddImage_MediaLibraryNotConfigured_AddsNothing_AndShowsTheError() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var picked = dirs.OutsideFile("photo.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+        editor.MediaLibraryPathProvider = () => null;
+        var errors = new System.Collections.Generic.List<(string Title, string Message)>();
+        editor.ShowMediaLibraryError = (t, m) => errors.Add((t, m));
+
+        await Pumped(editor.AddImageAsync(() => Task.FromResult<string?>(picked), Measure800x400));
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.IsFalse(history.Stack.CanUndo);
+        Assert.AreEqual(1, errors.Count);
+        Assert.AreEqual("Media Library not configured", errors[0].Title);
+    });
+
+    [TestMethod]
+    public Task ReplaceImage_PickedFileOutsideLibrary_IsCopied_AsOneUndoStep() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var picked = dirs.OutsideFile("new.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        var history = GiveHistory(editor, slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var image = new ImageElement { FilePath = InLib("old.png") };
+        slide.SlideElements.Add(image);
+        history.Stack.Clear();
+
+        await Pumped(editor.ReplaceImageAsync(image, () => Task.FromResult<string?>(picked), Measure800x400));
+
+        StringAssert.StartsWith(image.FilePath, System.IO.Path.Combine(dirs.Library, "Media", "Images"));
+        Assert.IsTrue(System.IO.File.Exists(image.FilePath));
+        Assert.AreEqual("Undo Change Image", history.Stack.UndoMenuText);
+        history.Stack.Undo();
+        Assert.AreEqual(InLib("old.png"), image.FilePath);
+        Assert.IsFalse(history.Stack.CanUndo, "picture and size were one step");
+    });
+
+    [TestMethod]
+    public Task ReplaceImage_MediaLibraryNotConfigured_ChangesNothing() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var picked = dirs.OutsideFile("new.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        var history = GiveHistory(editor, slide);
+        editor.MediaLibraryPathProvider = () => null;
+        var shown = 0;
+        editor.ShowMediaLibraryError = (_, _) => shown++;
+        var image = new ImageElement { FilePath = InLib("old.png") };
+        slide.SlideElements.Add(image);
+        history.Stack.Clear();
+
+        await Pumped(editor.ReplaceImageAsync(image, () => Task.FromResult<string?>(picked), Measure800x400));
+
+        Assert.AreEqual(InLib("old.png"), image.FilePath);
+        Assert.IsFalse(history.Stack.CanUndo);
+        Assert.AreEqual(1, shown);
+    });
+
+    [TestMethod]
+    public Task BackgroundGraphic_PickedFile_IsCopiedIntoTheMediaLibrary() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var picked = dirs.OutsideFile("bg.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+
+        await Pumped(editor.ChangeBackgroundGraphicAsync(() => Task.FromResult<string?>(picked)));
+
+        StringAssert.StartsWith(slide.BackgroundGraphicFilePath, System.IO.Path.Combine(dirs.Library, "Media", "Images"));
+        Assert.IsTrue(System.IO.File.Exists(slide.BackgroundGraphicFilePath));
+    });
 
     [TestMethod]
     public Task AddImage_CancellingThePicker_AddsNothing() => DispatcherTestThread.Run(async () =>
@@ -76,7 +231,7 @@ public class CustomSlideEditorLayoutTests
     {
         var editor = EditorOnEmptySlide(out var slide);
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/broken.png"), _ => Task.FromResult<PixelSize?>(null));
+        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("broken.png")), _ => Task.FromResult<PixelSize?>(null));
 
         Assert.AreEqual(1, slide.SlideElements.Count);
     });
@@ -91,7 +246,7 @@ public class CustomSlideEditorLayoutTests
             () =>
             {
                 editor.DataContext = other; // e.g. the media group editor rebuilt the editor for another slide
-                return Task.FromResult<string?>("C:/pics/a.png");
+                return Task.FromResult<string?>(InLib("a.png"));
             },
             _ => Task.FromResult<PixelSize?>(new PixelSize(100, 100)));
 
@@ -105,11 +260,11 @@ public class CustomSlideEditorLayoutTests
         var editor = EditorOnEmptySlide(out var slide);
         var layers = Named<ListBox>(editor, "ListBox");
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/a.png"), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
+        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("a.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
 
         var image = slide.SlideElements[0] as ImageElement;
         Assert.IsNotNull(image, "the new picture is frontmost");
-        Assert.AreEqual("C:/pics/a.png", image.FilePath);
+        Assert.AreEqual(InLib("a.png"), image.FilePath);
         Assert.AreEqual(800, image.Width, "sized to the picture, not the 100x100 starting box");
         Assert.AreEqual(400, image.Height);
         Assert.AreEqual((1920 - 800) / 2, image.X, "centred on the slide");
@@ -122,7 +277,7 @@ public class CustomSlideEditorLayoutTests
     {
         var editor = EditorOnEmptySlide(out var slide);
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/big.png"), _ => Task.FromResult<PixelSize?>(new PixelSize(3840, 2160)));
+        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("big.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(3840, 2160)));
 
         var image = (ImageElement)slide.SlideElements[0];
         Assert.AreEqual(1920, image.Width);
@@ -138,7 +293,7 @@ public class CustomSlideEditorLayoutTests
         var history = GiveHistory(editor, slide);
         history.Stack.Clear();
 
-        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/a.png"), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
+        await editor.AddImageAsync(() => Task.FromResult<string?>(InLib("a.png")), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
 
         Assert.AreEqual("Undo Add Image", history.Stack.UndoMenuText);
         history.Stack.Undo();
@@ -147,7 +302,7 @@ public class CustomSlideEditorLayoutTests
 
         history.Stack.Redo();
         var image = (ImageElement)slide.SlideElements[0];
-        Assert.AreEqual("C:/pics/a.png", image.FilePath);
+        Assert.AreEqual(InLib("a.png"), image.FilePath);
         Assert.AreEqual(800, image.Width);
     });
 

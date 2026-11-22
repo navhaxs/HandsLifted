@@ -9,11 +9,14 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia;
 using Avalonia.VisualTree;
+using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Undo;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Models.SlideElement;
 using HandsLiftedApp.Utils;
+using ReactiveUI;
 using Serilog;
 
 namespace HandsLiftedApp.Core.Views.Editors.FreeText
@@ -167,15 +170,50 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             // the editor is rebuilt for another slide when the selected slide changes; never add to the wrong one
             if (!ReferenceEquals(DataContext, slide)) return;
 
+            // like every other add flow, the picture is copied into the Media Library so the playlist is portable
+            var storedPath = await LocalizeImageAsync(path);
+            if (storedPath == null || !ReferenceEquals(DataContext, slide)) return;
+
             ImageElement element;
             using (_activeHistory?.BeginBatch("Add Image"))
             {
                 element = SlideElementCommands.AddImage(slide);
                 FitElementToImage(element, pixels.Value, slide);
-                element.FilePath = path;
+                element.FilePath = storedPath;
             }
 
             Select(element);
+        }
+
+        /// <summary>The configured Media Library folder; injectable so tests do not need <c>Globals</c>.</summary>
+        internal Func<string?> MediaLibraryPathProvider { get; set; } = () => Globals.Instance.AppPreferences?.MediaLibraryPath;
+
+        /// <summary>Shows "title, message" to the user; injectable so tests do not need a window.</summary>
+        internal Action<string, string> ShowMediaLibraryError { get; set; } = (title, message) =>
+            MessageBus.Current.SendMessage(new MessageWindowViewModel { Title = title, Content = message });
+
+        /// <summary>
+        /// Copies a picked picture into the Media Library (off the UI thread) and returns the library path, or null
+        /// when the picture must not be used (no library configured - the user is told - or the copy failed).
+        /// </summary>
+        private async Task<string?> LocalizeImageAsync(string pickedPath)
+        {
+            var libraryPath = MediaLibraryPathProvider();
+            try
+            {
+                return await Task.Run(() => PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(pickedPath, libraryPath));
+            }
+            catch (MediaLibraryNotConfiguredException ex)
+            {
+                Log.Warning("Custom slide editor: Media Library not configured - {Path} not added", pickedPath);
+                ShowMediaLibraryError("Media Library not configured", ex.Message);
+                return null;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Log.Error(ex, "Custom slide editor: could not copy {Path} into the Media Library", pickedPath);
+                return null;
+            }
         }
 
         private void Duplicate(SlideElement? element)
@@ -284,22 +322,30 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         }
 
         /// <summary>Asks for a picture and puts it in the element, fitting the box to it (one undo step).</summary>
-        private async Task ReplaceImageAsync(ImageElement imageElement)
+        private Task ReplaceImageAsync(ImageElement imageElement) => ReplaceImageAsync(
+            imageElement,
+            () => SelectFilePicker("Select Image"),
+            async path => (await BitmapLoader.LoadBitmapAsync(path))?.PixelSize);
+
+        internal async Task ReplaceImageAsync(ImageElement imageElement, Func<Task<string?>> pickFile, Func<string, Task<PixelSize?>> measure)
         {
             CommitInlineEdit();
-            var result = await SelectFilePicker("Select Image");
+            var result = await pickFile();
             if (string.IsNullOrWhiteSpace(result)) return;
 
             // decode first (off the UI thread; it also lands in the bitmap cache, so the element then
             // shows it immediately) so the box can be fitted to the picture
-            var bitmap = await BitmapLoader.LoadBitmapAsync(result);
+            var pixels = await measure(result);
+
+            var storedPath = await LocalizeImageAsync(result);
+            if (storedPath == null) return;
 
             // one undo step for the new picture and its new size
             using (_activeHistory?.BeginBatch("Change Image"))
             {
-                if (bitmap != null && DataContext is CustomSlide slide)
-                    FitElementToImage(imageElement, bitmap.PixelSize, slide);
-                imageElement.FilePath = result;
+                if (pixels != null && DataContext is CustomSlide slide)
+                    FitElementToImage(imageElement, pixels.Value, slide);
+                imageElement.FilePath = storedPath;
             }
         }
 
@@ -346,15 +392,20 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         {
             if (this.DataContext is CustomSlide customSlide)
             {
-                await RunLoggedAsync("change background graphic", async () =>
-                {
-                    var result = await SelectFilePicker();
-                    if (!string.IsNullOrWhiteSpace(result))
-                    {
-                        customSlide.BackgroundGraphicFilePath = result;
-                    }
-                });
+                await RunLoggedAsync("change background graphic",
+                    () => ChangeBackgroundGraphicAsync(() => SelectFilePicker()));
             }
+        }
+
+        internal async Task ChangeBackgroundGraphicAsync(Func<Task<string?>> pickFile)
+        {
+            if (DataContext is not CustomSlide customSlide) return;
+            var result = await pickFile();
+            if (string.IsNullOrWhiteSpace(result)) return;
+
+            var storedPath = await LocalizeImageAsync(result);
+            if (storedPath == null || !ReferenceEquals(DataContext, customSlide)) return;
+            customSlide.BackgroundGraphicFilePath = storedPath;
         }
         
         private void MoveItemUp_OnClick(object? sender, RoutedEventArgs e)
