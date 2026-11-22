@@ -139,6 +139,84 @@ public class CustomSlideToolbarTests
         return Task.CompletedTask;
     });
 
+    private const string NotInstalledFont = "Zz Not Installed Font 4711";
+
+    /// <summary>What happens in the app when the font box appears: Loaded fills it with the system fonts.</summary>
+    private static ComboBox LoadFontBox(CustomSlideToolbar toolbar)
+    {
+        var box = Named<ComboBox>(toolbar, "FontComboBox");
+        box.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
+        return box;
+    }
+
+    [TestMethod]
+    public Task FontNotInSystemList_SelectingElement_DoesNotChangeFont() => DispatcherTestThread.Run(() =>
+    {
+        AvaloniaTextRendering.EnsureInitialized();
+        var a = new TextElement { Text = "a", FontFamilyAsText = NotInstalledFont };
+        var b = new TextElement { Text = "b", FontFamilyAsText = "Another Missing Font 99" };
+        var slide = new CustomSlide();
+        slide.SlideElements.Add(a);
+        slide.SlideElements.Add(b);
+
+        var stack = new HandsLiftedApp.Core.Undo.UndoStack();
+        using var recorder = new HandsLiftedApp.Core.Undo.CustomSlideEditRecorder(stack, slide);
+
+        var toolbar = new CustomSlideToolbar { Slide = slide };
+        var box = LoadFontBox(toolbar);
+
+        toolbar.SelectedElement = a;
+        toolbar.SelectedElement = b;
+        toolbar.SelectedElement = null;
+        toolbar.SelectedElement = a;
+        LoadFontBox(toolbar); // loaded again (e.g. re-attached) while a is selected
+
+        // and via an element whose font IS in the list (the box then holds a real selection to lose)
+        var listed = box.Items.OfType<string>().First(f => f != NotInstalledFont && f != "Another Missing Font 99");
+        var c = new TextElement { Text = "c", FontFamilyAsText = listed };
+        slide.SlideElements.Add(c);
+        stack.Clear();
+        toolbar.SelectedElement = c;
+        toolbar.SelectedElement = b;
+        toolbar.SelectedElement = c;
+        toolbar.SelectedElement = a;
+
+        Assert.AreEqual(listed, c.FontFamilyAsText);
+        Assert.AreEqual(NotInstalledFont, a.FontFamilyAsText);
+        Assert.AreEqual("Another Missing Font 99", b.FontFamilyAsText);
+        Assert.IsFalse(stack.CanUndo, "selecting elements must not record an undo step");
+        Assert.AreEqual(NotInstalledFont, box.SelectedItem, "the box shows the element's font even when not installed");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task PickingListedFont_WritesItToElement() => DispatcherTestThread.Run(() =>
+    {
+        var text = new TextElement { FontFamilyAsText = NotInstalledFont };
+        var toolbar = CreateToolbar(text);
+        var box = LoadFontBox(toolbar);
+
+        var listed = box.Items.OfType<string>().First(f => f != NotInstalledFont);
+        box.SelectedItem = listed;
+
+        Assert.AreEqual(listed, text.FontFamilyAsText);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task ElementFontChangedElsewhere_BoxFollows() => DispatcherTestThread.Run(() =>
+    {
+        var text = new TextElement { FontFamilyAsText = "Arial" };
+        var toolbar = CreateToolbar(text);
+        var box = LoadFontBox(toolbar);
+
+        text.FontFamilyAsText = NotInstalledFont; // e.g. undo writing the old font back
+
+        Assert.AreEqual(NotInstalledFont, box.SelectedItem);
+        Assert.AreEqual(NotInstalledFont, text.FontFamilyAsText);
+        return Task.CompletedTask;
+    });
+
     [TestMethod]
     public Task DeleteButton_RaisesDeleteRequested() => DispatcherTestThread.Run(() =>
     {

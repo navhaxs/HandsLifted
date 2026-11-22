@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -52,10 +54,31 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private static List<string>? _systemFontFamilies;
 
+        // The font box's items: the system fonts (filled on Loaded) plus, at the top, the selected element's own font
+        // when it isn't installed (_extraFont), so the box can always show it.
+        private readonly ObservableCollection<string> _fontItems = new();
+        private bool _systemFontsLoaded;
+        private string? _extraFont;
+        private bool _syncingFont;
+        private TextElement? _fontElement;
+
         public CustomSlideToolbar()
         {
             InitializeComponent();
+            FontComboBox.ItemsSource = _fontItems;
             SyncSections();
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            SyncSections();
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+            WatchFontOf(null); // don't let a still-alive element keep this toolbar alive
         }
 
         /// <summary>Enables the Undo/Redo buttons and sets their tooltips (e.g. "Undo Move").</summary>
@@ -86,6 +109,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             TextSection.DataContext = null;
             TextSection.DataContext = text;
             TextSection.IsVisible = text != null;
+            WatchFontOf(text);
 
             ImageSection.DataContext = image;
             ImageSection.IsVisible = image != null;
@@ -96,19 +120,93 @@ namespace HandsLiftedApp.Core.Views.Editors
             SlideSection.IsVisible = element == null;
         }
 
+        // ---------------- font box ----------------
+        // The box is one long-lived control reused for every selected element, so it is kept in step from here rather
+        // than by a two-way SelectedItem binding: selecting an element only ever writes to the BOX, and only a user
+        // pick (a non-null item that differs from the element's font) writes to the ELEMENT. A missing font is shown
+        // as an extra item instead of being dropped, so it can never be replaced by null/default.
+
+        private void WatchFontOf(TextElement? element)
+        {
+            if (!ReferenceEquals(_fontElement, element))
+            {
+                if (_fontElement != null) _fontElement.PropertyChanged -= FontElement_OnPropertyChanged;
+                _fontElement = element;
+                if (_fontElement != null) _fontElement.PropertyChanged += FontElement_OnPropertyChanged;
+            }
+            SyncFontBox();
+        }
+
+        // the element's font can change elsewhere (undo, the code tab): show it
+        private void FontElement_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.PropertyName)
+                || e.PropertyName == nameof(TextElement.FontFamilyAsText)
+                || e.PropertyName == nameof(TextElement.FontFamilyAsAvalonia))
+                SyncFontBox();
+        }
+
+        private void SyncFontBox()
+        {
+            var font = _fontElement?.FontFamilyAsText;
+            _syncingFont = true;
+            try
+            {
+                if (_extraFont != null && _extraFont != font)
+                {
+                    _fontItems.Remove(_extraFont);
+                    _extraFont = null;
+                }
+                if (!string.IsNullOrEmpty(font) && !_fontItems.Contains(font))
+                {
+                    _fontItems.Insert(0, font);
+                    _extraFont = font;
+                }
+                FontComboBox.SelectedItem = string.IsNullOrEmpty(font) ? null : font;
+            }
+            finally
+            {
+                _syncingFont = false;
+            }
+        }
+
         private void FontComboBox_OnLoaded(object? sender, RoutedEventArgs e)
         {
-            if (sender is not ComboBox comboBox) return;
-            _systemFontFamilies ??= FontManager.Current.SystemFonts
-                .Select(x => x.Name)
-                .OrderBy(x => x)
-                .ToList();
+            if (!_systemFontsLoaded)
+            {
+                _systemFontsLoaded = true;
+                _systemFontFamilies ??= FontManager.Current.SystemFonts
+                    .Select(x => x.Name)
+                    .OrderBy(x => x)
+                    .ToList();
 
-            // setting ItemsSource can clear the selection; put the element's font back afterwards
-            var current = (TextSection.DataContext as TextElement)?.FontFamilyAsText;
-            comboBox.ItemsSource = _systemFontFamilies;
-            if (current != null && !Equals(comboBox.SelectedItem, current))
-                comboBox.SelectedItem = current;
+                _syncingFont = true;
+                try
+                {
+                    var present = new HashSet<string>(_fontItems);
+                    foreach (var name in _systemFontFamilies)
+                        if (present.Add(name)) _fontItems.Add(name);
+                    // the shown font turned out to be installed: it stays where it is, but is no longer an extra
+                    if (_extraFont != null && _systemFontFamilies.Contains(_extraFont))
+                    {
+                        _fontItems.Remove(_extraFont);
+                        _extraFont = null;
+                    }
+                }
+                finally
+                {
+                    _syncingFont = false;
+                }
+            }
+            SyncFontBox();
+        }
+
+        private void FontComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (_syncingFont || _fontElement == null) return;
+            if (FontComboBox.SelectedItem is not string picked || string.IsNullOrEmpty(picked)) return;
+            if (picked == _fontElement.FontFamilyAsText) return;
+            _fontElement.FontFamilyAsText = picked;
         }
 
         private void UndoButton_OnClick(object? sender, RoutedEventArgs e) => UndoRequested?.Invoke(this, EventArgs.Empty);

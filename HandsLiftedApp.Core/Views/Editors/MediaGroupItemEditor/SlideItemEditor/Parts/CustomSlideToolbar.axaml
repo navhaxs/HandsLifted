@@ -124,12 +124,15 @@
                    x:DataType="slideElement:TextElement">
 
             <StackPanel Classes="toolbarGroup">
+                <!-- Deliberately NOT bound to FontFamilyAsText: this one long-lived box is reused across elements, and a
+                     two-way SelectedItem binding can write null back when an element's font isn't installed (wiping it
+                     and recording an undo step just for selecting it). Code-behind keeps it in step instead. -->
                 <controls:ComboBoxWithoutWheelScroll Name="FontComboBox"
                                                      Width="170"
                                                      VerticalAlignment="Center"
                                                      ToolTip.Tip="Font"
                                                      Loaded="FontComboBox_OnLoaded"
-                                                     SelectedItem="{Binding FontFamilyAsText}">
+                                                     SelectionChanged="FontComboBox_OnSelectionChanged">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="x:String">
                             <TextBlock Text="{Binding}" FontFamily="{Binding}" />
