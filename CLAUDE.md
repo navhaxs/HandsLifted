@@ -254,9 +254,9 @@ Never run `find` or `grep` via Bash/PowerShell in this repo — Git-Bash `find.e
 
 ## Custom slide editor
 
-- **One drawer.** `CustomSlideDrawer` (with `CustomSlideTextLayout` for text layout and `SlideImageCache` for decoded images) draws custom slides for BOTH the projector (`CustomSlideSpecBuilder`) and the editor (`CustomSlideEditorCanvas`). Fix rendering bugs there, never in a second copy. `CustomSlideRender` (Avalonia controls) is thumbnails only.
+- **One drawer.** `CustomSlideDrawer` (with `CustomSlideTextLayout` for text layout and `SlideImageCache` for decoded images) draws custom slides for BOTH the projector (`CustomSlideSpecBuilder`) and the editor (`CustomSlideEditorCanvas`). Fix rendering bugs there, never in a second copy. `CustomSlideRender` (Avalonia controls) is only for slide-list thumbnails and the stage display's next-slide view (via `SlideRender`), never the projector or editor.
 - **Proxy borders.** The designer draws nothing itself: `Root` holds a transparent `Border` per element so `SelectedAdorner` (drag/resize handles) keeps working; the adorner adorns a proxy, not a drawn control. Proxy rects are bound two-way to the element.
-- **Z-order = list order, index 0 frontmost** (text no longer sits above images automatically). Bring forward / Send backward swap list positions.
+- **Z-order = list order, index 0 frontmost**. Bring forward / Send backward swap list positions.
 - **Inline text editing.** `InlineTextEditor` is an overlay `TextBox` that commits `Text` exactly once (commit, Esc, LostFocus or detach); while it is open the canvas hides that element's text (`HiddenTextElement`). Don't write `Text` per keystroke - that breaks undo (one step per edit).
 - **Toolbar buttons must stay `Focusable="False"`** (set per button and in the style), or clicking Bold etc. steals focus from the inline box and ends the edit.
 - **Keyboard** lives in `CustomSlideDesigner.HandleKey` and only fires with canvas focus (not after clicking a layers-list row).
