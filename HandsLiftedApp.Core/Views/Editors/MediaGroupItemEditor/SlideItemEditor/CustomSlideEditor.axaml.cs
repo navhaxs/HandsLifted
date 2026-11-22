@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -171,6 +172,9 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             var path = await pickFile();
             if (string.IsNullOrWhiteSpace(path)) return;
 
+            // busy from here, not while the file dialog was open (the user was choosing then)
+            using var busy = BeginBusy("Adding picture...");
+
             var pixels = await measure(path);
             if (pixels == null)
             {
@@ -194,6 +198,47 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
 
             Select(element);
+        }
+
+        // ---- busy feedback ----
+        // A paste, drop or add-image copies a file into the Media Library, may read and encode a large clipboard
+        // picture and decodes it to measure it, which takes visible time for a photo or a screenshot. While that runs
+        // the cursor is the wait cursor and the status bar shows an indeterminate progress bar. Scopes nest (a paste
+        // runs an add inside it); everything is on the UI thread (continuations resume there).
+        private int _busyCount;
+
+        /// <summary>True while a paste, drop or add-image is working.</summary>
+        internal bool IsBusy => _busyCount > 0;
+
+        private IDisposable BeginBusy(string message)
+        {
+            _busyCount++;
+            BusyText.Text = message;
+            BusyPanel.IsVisible = true;
+            Cursor = new Cursor(StandardCursorType.Wait);
+            return new BusyScope(this);
+        }
+
+        private void EndBusy()
+        {
+            if (--_busyCount > 0) return;
+            _busyCount = 0;
+            BusyPanel.IsVisible = false;
+            Cursor = null;
+        }
+
+        private sealed class BusyScope : IDisposable
+        {
+            private CustomSlideEditor? _editor;
+            public BusyScope(CustomSlideEditor editor) => _editor = editor;
+
+            public void Dispose()
+            {
+                // disposed twice is harmless
+                var editor = _editor;
+                _editor = null;
+                editor?.EndBusy();
+            }
         }
 
         /// <summary>The configured Media Library folder; injectable so tests do not need <c>Globals</c>.</summary>
@@ -238,6 +283,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         internal async Task PasteAsync()
         {
             CommitInlineEdit();
+            using var busy = BeginBusy("Pasting...");
             var slide = DataContext as CustomSlide;
             var paths = await ReadClipboardFilePaths();
             var images = CustomSlideDesigner.ImageFilePaths(paths);
@@ -319,6 +365,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             if (DataContext is not CustomSlide slide) return;
             // a paste captured its slide before its first await: if the editor moved on since, add nothing
             if (expectedSlide != null && !ReferenceEquals(expectedSlide, slide)) return;
+            using var busy = BeginBusy("Adding pictures...");
             measure ??= MeasureImage;
 
             var images = CustomSlideDesigner.ImageFilePaths(paths);
@@ -517,6 +564,8 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             CommitInlineEdit();
             var result = await pickFile();
             if (string.IsNullOrWhiteSpace(result)) return;
+
+            using var busy = BeginBusy("Replacing picture...");
 
             // decode first (off the UI thread; it also lands in the bitmap cache, so the element then
             // shows it immediately) so the box can be fitted to the picture

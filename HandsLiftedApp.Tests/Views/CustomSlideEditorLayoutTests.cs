@@ -91,6 +91,140 @@ public class CustomSlideEditorLayoutTests
 
     private static readonly System.Func<string, Task<PixelSize?>> Measure800x400 = _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400));
 
+    // ---- busy feedback: a wait cursor and a status-bar indicator while a paste / drop / add is working ----
+
+    private static (bool IsBusy, bool PanelShown, bool HasWaitCursor, string? Text) BusyState(CustomSlideEditor editor)
+    {
+        var panel = Named<StackPanel>(editor, "BusyPanel");
+        var text = Named<TextBlock>(editor, "BusyText");
+        return (editor.IsBusy, panel.IsVisible, editor.Cursor != null, text.Text);
+    }
+
+    [TestMethod]
+    public Task Busy_IsOffByDefault() => DispatcherTestThread.Run(() =>
+    {
+        var editor = EditorOnEmptySlide(out _);
+        var state = BusyState(editor);
+
+        Assert.IsFalse(state.IsBusy);
+        Assert.IsFalse(state.PanelShown, "no indicator when nothing is running");
+        Assert.IsFalse(state.HasWaitCursor, "no wait cursor when nothing is running");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task AddImagesFromFiles_ShowsBusyWhileWorking_AndClearsAfterwards() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        (bool IsBusy, bool PanelShown, bool HasWaitCursor, string? Text) during = default;
+
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { dirs.OutsideFile("a.png") }, null, _ =>
+        {
+            during = BusyState(editor); // sampled while the work is running
+            return Task.FromResult<PixelSize?>(new PixelSize(800, 400));
+        }));
+
+        Assert.IsTrue(during.IsBusy, "busy while the picture is being copied and measured");
+        Assert.IsTrue(during.PanelShown, "the status bar shows the indicator");
+        Assert.IsTrue(during.HasWaitCursor, "and the cursor is the wait cursor");
+        Assert.IsFalse(string.IsNullOrWhiteSpace(during.Text), "with a message");
+        Assert.AreEqual(2, slide.SlideElements.Count, "the picture was still added");
+
+        var after = BusyState(editor);
+        Assert.IsFalse(after.IsBusy);
+        Assert.IsFalse(after.PanelShown);
+        Assert.IsFalse(after.HasWaitCursor);
+    });
+
+    [TestMethod]
+    public Task Paste_IsBusyFromTheClipboardReadOnwards_AndClearsEvenWhenNothingIsPasted() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out _);
+        (bool IsBusy, bool PanelShown, bool HasWaitCursor, string? Text) readingFiles = default;
+        (bool IsBusy, bool PanelShown, bool HasWaitCursor, string? Text) readingPicture = default;
+        editor.ReadClipboardFilePaths = () =>
+        {
+            readingFiles = BusyState(editor);
+            return Task.FromResult<IReadOnlyList<string>?>(null);
+        };
+        editor.ReadClipboardPicture = () =>
+        {
+            readingPicture = BusyState(editor);
+            return Task.FromResult<ClipboardPicture?>(null);
+        };
+
+        await Pumped(editor.PasteAsync());
+
+        Assert.IsTrue(readingFiles.IsBusy && readingFiles.PanelShown && readingFiles.HasWaitCursor, "busy while the clipboard is read");
+        Assert.IsTrue(readingPicture.IsBusy, "and while looking for a picture");
+        Assert.IsFalse(BusyState(editor).IsBusy, "an empty clipboard must not leave the editor busy");
+        Assert.IsFalse(BusyState(editor).HasWaitCursor);
+    });
+
+    [TestMethod]
+    public Task Busy_IsClearedEvenWhenTheWorkThrows() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var editor = EditorOnEmptySlide(out _);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+
+        await Assert.ThrowsExceptionAsync<System.InvalidOperationException>(() => Pumped(editor.AddImagesFromFilesAsync(
+            new[] { dirs.OutsideFile("a.png") }, null,
+            _ => throw new System.InvalidOperationException("measure failed"))));
+
+        var after = BusyState(editor);
+        Assert.IsFalse(after.IsBusy, "a failure must not leave the wait cursor stuck");
+        Assert.IsFalse(after.PanelShown);
+        Assert.IsFalse(after.HasWaitCursor);
+    });
+
+    [TestMethod]
+    public Task AddImage_IsNotBusyWhileTheFileDialogIsOpen_ButIsBusyWhileThePictureIsProcessed() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var editor = EditorOnEmptySlide(out _);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var picked = dirs.OutsideFile("a.png");
+        var busyInDialog = true;
+        var busyWhileMeasuring = false;
+
+        await Pumped(editor.AddImageAsync(
+            () =>
+            {
+                busyInDialog = editor.IsBusy;
+                return Task.FromResult<string?>(picked);
+            },
+            _ =>
+            {
+                busyWhileMeasuring = editor.IsBusy;
+                return Task.FromResult<PixelSize?>(new PixelSize(800, 400));
+            }));
+
+        Assert.IsFalse(busyInDialog, "a wait cursor over the open file dialog would be wrong: the user is choosing");
+        Assert.IsTrue(busyWhileMeasuring, "busy once the file is chosen");
+        Assert.IsFalse(editor.IsBusy);
+    });
+
+    [TestMethod]
+    public Task AddImage_CancellingTheDialog_NeverShowsBusy() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out _);
+        var everBusy = false;
+
+        await Pumped(editor.AddImageAsync(
+            () =>
+            {
+                everBusy |= editor.IsBusy;
+                return Task.FromResult<string?>(null);
+            },
+            Measure800x400));
+
+        Assert.IsFalse(everBusy);
+        Assert.IsFalse(editor.IsBusy);
+    });
+
     [TestMethod]
     public Task AddImage_PickedFileOutsideLibrary_IsCopiedIntoMediaImages_AndElementPointsAtTheCopy() => DispatcherTestThread.Run(async () =>
     {

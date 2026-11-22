@@ -279,8 +279,15 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- status bar: canvas zoom -->
+        <!-- status bar: busy indicator (left) and canvas zoom (right) -->
         <Border Grid.Row="2" Classes="statusBar" BorderThickness="0 1 0 0" BorderBrush="{DynamicResource OutlineBrush}">
+            <DockPanel>
+            <!-- shown while a paste / drop / add-image is working (copying the file, reading the clipboard, decoding) -->
+            <StackPanel Name="BusyPanel" DockPanel.Dock="Left" Orientation="Horizontal" Spacing="8" Margin="8 1"
+                        VerticalAlignment="Center" IsVisible="False">
+                <ProgressBar Name="BusyBar" IsIndeterminate="True" Width="90" Height="4" VerticalAlignment="Center" />
+                <TextBlock Name="BusyText" VerticalAlignment="Center" />
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="2" Margin="4 1">
                 <Button Name="ZoomOutButton" ToolTip.Tip="Zoom out" Click="ZoomOutButton_OnClick">
                     <avalonia:MaterialIcon Kind="Minus" />
@@ -297,6 +304,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
+            </DockPanel>
         </Border>
     </Grid>
 </UserControl>
