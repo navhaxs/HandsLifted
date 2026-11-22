@@ -1,7 +1,9 @@
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Skia;
 
 namespace HandsLiftedApp.Tests.TestSupport;
@@ -15,7 +17,9 @@ internal static class AvaloniaTextRendering
         if (Application.Current != null) return;
         AppBuilder.Configure<Application>()
             .UseStandardRuntimePlatformSubsystem()
-            .UseWindowingSubsystem(() => { })
+            // No real windowing; just the one service XAML-built controls need: Cursor="Hand" (e.g. NumericSliderBox,
+            // the editor toggle style) asks for a cursor factory as soon as the control is constructed.
+            .UseWindowingSubsystem(RegisterStubCursorFactory)
             .UseSkia()
             .UseHarfBuzz()
             .SetupWithoutStarting();
@@ -28,6 +32,22 @@ internal static class AvaloniaTextRendering
         root.Measure(new Size(width, height));
         root.Arrange(new Rect(0, 0, width, height));
         return root;
+    }
+
+    // ICursorFactory is marked not-implementable by user code, and Avalonia.Headless isn't referenced, so borrow the
+    // stub the XAML previewer uses (it ships in Avalonia.DesignerSupport, part of the Avalonia package) and register
+    // it through the (internal in Avalonia 12) AvaloniaLocator.CurrentMutable.Bind<T>().ToConstant(...).
+    private static void RegisterStubCursorFactory()
+    {
+        const BindingFlags any = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+        var stubType = Type.GetType("Avalonia.DesignerSupport.Remote.CursorFactoryStub, Avalonia.DesignerSupport", throwOnError: true)!;
+        var stub = (ICursorFactory)Activator.CreateInstance(stubType, nonPublic: true)!;
+
+        var locator = typeof(AvaloniaLocator).GetProperty("CurrentMutable", any)!.GetValue(null)!;
+        var helper = locator.GetType().GetMethod("Bind", any)!.MakeGenericMethod(typeof(ICursorFactory)).Invoke(locator, null)!;
+        var toConstant = helper.GetType().GetMethod("ToConstant", any)!;
+        if (toConstant.ContainsGenericParameters) toConstant = toConstant.MakeGenericMethod(typeof(ICursorFactory));
+        toConstant.Invoke(helper, [stub]);
     }
 
     public static void SavePng(Control laidOutRoot, string path)

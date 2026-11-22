@@ -1,0 +1,84 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+
+    <!--
+        The one shared icon-toggle look for editor toolbars: a flat square button that fills with the primary action
+        colour when checked. Use Classes="editorToggle" on a ToggleButton (independent on/off, e.g. Bold) or on a
+        RadioButton (one-of-many, e.g. alignment: put the group's RadioButtons in one panel). Replaces the three
+        copy-pasted UniformGrid.Styles blocks of the old properties panel.
+
+        The template holds no inner button (the old one wrapped a ToggleButton), so nothing inside it can take focus;
+        Focusable is False so clicking a toggle never steals focus from the canvas or the inline text editor.
+    -->
+
+    <Design.PreviewWith>
+        <StackPanel Orientation="Horizontal" Margin="12" Spacing="2">
+            <ToggleButton Classes="editorToggle" IsChecked="True">
+                <avalonia:MaterialIcon Kind="FormatBold" />
+            </ToggleButton>
+            <ToggleButton Classes="editorToggle">
+                <avalonia:MaterialIcon Kind="FormatItalic" />
+            </ToggleButton>
+            <RadioButton Classes="editorToggle" IsChecked="True">
+                <avalonia:MaterialIcon Kind="FormatAlignLeft" />
+            </RadioButton>
+            <RadioButton Classes="editorToggle">
+                <avalonia:MaterialIcon Kind="FormatAlignCenter" />
+            </RadioButton>
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <Style Selector=":is(ToggleButton).editorToggle">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource OutlineBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="6" />
+        <Setter Property="MinWidth" Value="30" />
+        <Setter Property="MinHeight" Value="30" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="PART_Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector=":is(ToggleButton).editorToggle:pointerover /template/ Border#PART_Border">
+        <Setter Property="Background" Value="#40b7a6e7" />
+    </Style>
+    <Style Selector=":is(ToggleButton).editorToggle:pressed /template/ Border#PART_Border">
+        <Setter Property="Background" Value="#809072EA" />
+    </Style>
+    <Style Selector=":is(ToggleButton).editorToggle:checked /template/ Border#PART_Border">
+        <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
+    </Style>
+    <!-- PrimaryActionBrush is a dark purple in both themes, so the icon goes white on it -->
+    <Style Selector=":is(ToggleButton).editorToggle:checked /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector=":is(ToggleButton).editorToggle:disabled">
+        <Setter Property="Opacity" Value="0.4" />
+    </Style>
+
+    <Style Selector=":is(ToggleButton).editorToggle avalonia|MaterialIcon">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+    </Style>
+</Styles>

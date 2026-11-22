@@ -1,0 +1,251 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
+             xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
+             xmlns:slideElement="clr-namespace:HandsLiftedApp.Data.Models.SlideElement;assembly=HandsLiftedApp.Data"
+             mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="90"
+             x:DataType="slides:CustomSlide"
+             x:Class="HandsLiftedApp.Core.Views.Editors.CustomSlideToolbar">
+
+    <!--
+        Contextual toolbar for the custom slide editor. It only binds to the selected element / slide and raises
+        *Requested events; the hosting editor runs the actual commands (SlideElementCommands) and owns undo.
+        Section DataContexts are set from code when SelectedElement / Slide change (element-name path bindings go
+        stale on selection changes - see CLAUDE.md).
+    -->
+
+    <UserControl.Styles>
+        <StyleInclude Source="EditorToggleStyles.axaml" />
+
+        <!-- Catch-all: no button in the toolbar (including ones inside other controls' templates, e.g. the colour
+             pickers' drop-down and the numeric boxes' slider button) may take focus away from the canvas or the
+             inline text editor. Every button below also sets Focusable="False" itself. -->
+        <Style Selector=":is(Button)">
+            <Setter Property="Focusable" Value="False" />
+        </Style>
+
+        <Style Selector="Button.toolbarButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="MinWidth" Value="30" />
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.toolbarButton avalonia|MaterialIcon">
+            <Setter Property="Width" Value="18" />
+            <Setter Property="Height" Value="18" />
+        </Style>
+        <Style Selector="Button.toolbarButton:disabled avalonia|MaterialIcon">
+            <Setter Property="Opacity" Value="0.4" />
+        </Style>
+
+        <!-- one group of related controls; the groups wrap onto new lines when the window is narrow -->
+        <Style Selector="StackPanel.toolbarGroup">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Spacing" Value="2" />
+            <Setter Property="Margin" Value="0 2 10 2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.toolbarLabel">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="2 0 4 0" />
+            <Setter Property="Opacity" Value="0.8" />
+        </Style>
+        <Style Selector="avalonia|MaterialIcon.toolbarLabel">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Width" Value="18" />
+            <Setter Property="Height" Value="18" />
+            <Setter Property="Margin" Value="2 0" />
+            <Setter Property="Opacity" Value="0.8" />
+        </Style>
+        <Style Selector="ColorPicker">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+
+    <WrapPanel Name="RootPanel" Orientation="Horizontal" Margin="4 2">
+
+        <!-- always: history -->
+        <StackPanel Classes="toolbarGroup">
+            <Button Name="UndoButton" Classes="toolbarButton" Focusable="False" IsEnabled="False"
+                    ToolTip.Tip="Undo" Click="UndoButton_OnClick">
+                <avalonia:MaterialIcon Kind="Undo" />
+            </Button>
+            <Button Name="RedoButton" Classes="toolbarButton" Focusable="False" IsEnabled="False"
+                    ToolTip.Tip="Redo" Click="RedoButton_OnClick">
+                <avalonia:MaterialIcon Kind="Redo" />
+            </Button>
+        </StackPanel>
+
+        <!-- always: insert -->
+        <StackPanel Classes="toolbarGroup">
+            <Button Name="AddTextButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Add text box" Click="AddTextButton_OnClick">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <avalonia:MaterialIcon Kind="FormatText" />
+                    <TextBlock Text="Text" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <Button Name="AddImageButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Add image" Click="AddImageButton_OnClick">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <avalonia:MaterialIcon Kind="ImagePlus" />
+                    <TextBlock Text="Image" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- any selection: arrange -->
+        <StackPanel Name="SelectionActions" Classes="toolbarGroup" IsVisible="False">
+            <Button Name="DuplicateButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Duplicate" Click="DuplicateButton_OnClick">
+                <avalonia:MaterialIcon Kind="ContentCopy" />
+            </Button>
+            <Button Name="DeleteButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Delete" Click="DeleteButton_OnClick">
+                <avalonia:MaterialIcon Kind="DeleteOutline" />
+            </Button>
+            <Button Name="BringForwardButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Bring forward" Click="BringForwardButton_OnClick">
+                <avalonia:MaterialIcon Kind="ArrangeBringForward" />
+            </Button>
+            <Button Name="SendBackwardButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Send backward" Click="SendBackwardButton_OnClick">
+                <avalonia:MaterialIcon Kind="ArrangeSendBackward" />
+            </Button>
+        </StackPanel>
+
+        <!-- text element: formatting (DataContext = the selected TextElement, set from code) -->
+        <WrapPanel Name="TextSection" Orientation="Horizontal" IsVisible="False"
+                   x:DataType="slideElement:TextElement">
+
+            <StackPanel Classes="toolbarGroup">
+                <controls:ComboBoxWithoutWheelScroll Name="FontComboBox"
+                                                     Width="170"
+                                                     VerticalAlignment="Center"
+                                                     ToolTip.Tip="Font"
+                                                     Loaded="FontComboBox_OnLoaded"
+                                                     SelectedItem="{Binding FontFamilyAsText}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <TextBlock Text="{Binding}" FontFamily="{Binding}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </controls:ComboBoxWithoutWheelScroll>
+                <controls:NumericSliderBox Name="FontSizeBox"
+                                           ToolTip.Tip="Font size"
+                                           VerticalAlignment="Center"
+                                           TextBoxMinWidth="44"
+                                           Text="{Binding FontSize}"
+                                           Minimum="1" Maximum="600" TickFrequency="1" />
+            </StackPanel>
+
+            <StackPanel Classes="toolbarGroup">
+                <ToggleButton Name="BoldToggle" Classes="editorToggle" Focusable="False"
+                              ToolTip.Tip="Bold" IsChecked="{Binding IsBold}">
+                    <avalonia:MaterialIcon Kind="FormatBold" />
+                </ToggleButton>
+                <ToggleButton Name="ItalicToggle" Classes="editorToggle" Focusable="False"
+                              ToolTip.Tip="Italic" IsChecked="{Binding Italic}">
+                    <avalonia:MaterialIcon Kind="FormatItalic" />
+                </ToggleButton>
+                <ToggleButton Name="UnderlineToggle" Classes="editorToggle" Focusable="False"
+                              ToolTip.Tip="Underline" IsChecked="{Binding Underline}">
+                    <avalonia:MaterialIcon Kind="FormatUnderline" />
+                </ToggleButton>
+            </StackPanel>
+
+            <!-- RadioButtons sharing a parent panel form one group -->
+            <StackPanel Classes="toolbarGroup">
+                <RadioButton Name="AlignLeftToggle" Classes="editorToggle" Focusable="False"
+                             ToolTip.Tip="Align left" IsChecked="{Binding CalculatedTextAlignmentLeft}">
+                    <avalonia:MaterialIcon Kind="FormatAlignLeft" />
+                </RadioButton>
+                <RadioButton Name="AlignCentreToggle" Classes="editorToggle" Focusable="False"
+                             ToolTip.Tip="Centre" IsChecked="{Binding CalculatedTextAlignmentCenter}">
+                    <avalonia:MaterialIcon Kind="FormatAlignCenter" />
+                </RadioButton>
+                <RadioButton Name="AlignRightToggle" Classes="editorToggle" Focusable="False"
+                             ToolTip.Tip="Align right" IsChecked="{Binding CalculatedTextAlignmentRight}">
+                    <avalonia:MaterialIcon Kind="FormatAlignRight" />
+                </RadioButton>
+                <RadioButton Name="AlignJustifyToggle" Classes="editorToggle" Focusable="False"
+                             ToolTip.Tip="Justify (not yet supported)"
+                             IsChecked="{Binding CalculatedTextAlignmentJustify}">
+                    <avalonia:MaterialIcon Kind="FormatAlignJustify" />
+                </RadioButton>
+            </StackPanel>
+
+            <StackPanel Classes="toolbarGroup">
+                <RadioButton Name="AlignTopToggle" Classes="editorToggle" Focusable="False"
+                             ToolTip.Tip="Top" IsChecked="{Binding CalculatedVerticalAlignmentTop}">
+                    <avalonia:MaterialIcon Kind="FormatVerticalAlignTop" />
+                </RadioButton>
+                <RadioButton Name="AlignMiddleToggle" Classes="editorToggle" Focusable="False"
+                             ToolTip.Tip="Middle" IsChecked="{Binding CalculatedVerticalAlignmentCenter}">
+                    <avalonia:MaterialIcon Kind="FormatVerticalAlignCenter" />
+                </RadioButton>
+                <RadioButton Name="AlignBottomToggle" Classes="editorToggle" Focusable="False"
+                             ToolTip.Tip="Bottom" IsChecked="{Binding CalculatedVerticalAlignmentBottom}">
+                    <avalonia:MaterialIcon Kind="FormatVerticalAlignBottom" />
+                </RadioButton>
+            </StackPanel>
+
+            <StackPanel Classes="toolbarGroup">
+                <avalonia:MaterialIcon Classes="toolbarLabel" Kind="FormatColorText" ToolTip.Tip="Text colour" />
+                <ColorPicker Name="TextColourPicker" ToolTip.Tip="Text colour"
+                             Color="{Binding ForegroundAvaloniaColour}" />
+                <avalonia:MaterialIcon Classes="toolbarLabel" Kind="FormatColorFill" ToolTip.Tip="Box fill" />
+                <ColorPicker Name="BoxFillPicker" ToolTip.Tip="Box fill"
+                             Color="{Binding BackgroundAvaloniaColour}" />
+            </StackPanel>
+
+            <StackPanel Classes="toolbarGroup">
+                <avalonia:MaterialIcon Classes="toolbarLabel" Kind="FormatLineSpacing" ToolTip.Tip="Line height" />
+                <controls:NumericSliderBox Name="LineHeightBox"
+                                           ToolTip.Tip="Line height"
+                                           VerticalAlignment="Center"
+                                           TextBoxMinWidth="40"
+                                           Text="{Binding LineHeightEm}"
+                                           Minimum="0.1" Maximum="3" TickFrequency="0.01" />
+            </StackPanel>
+        </WrapPanel>
+
+        <!-- image element -->
+        <StackPanel Name="ImageSection" Classes="toolbarGroup" IsVisible="False">
+            <Button Name="ReplaceImageButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Replace image" Click="ReplaceImageButton_OnClick">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <avalonia:MaterialIcon Kind="ImageEdit" />
+                    <TextBlock Text="Replace" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <Button Name="FitImageButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Fit the box to the image's shape" Click="FitImageButton_OnClick">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <avalonia:MaterialIcon Kind="FitToScreenOutline" />
+                    <TextBlock Text="Fit to image" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- nothing selected: the slide itself (DataContext = Slide, set from code) -->
+        <StackPanel Name="SlideSection" Classes="toolbarGroup" IsVisible="False">
+            <TextBlock Classes="toolbarLabel" Text="Background" />
+            <ColorPicker Name="SlideBackgroundPicker" ToolTip.Tip="Slide background colour"
+                         Color="{Binding BackgroundAvaloniaColour}" />
+            <Button Name="BackgroundGraphicButton" Classes="toolbarButton" Focusable="False"
+                    ToolTip.Tip="Choose the slide's background graphic"
+                    Click="BackgroundGraphicButton_OnClick">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <avalonia:MaterialIcon Kind="ImageArea" />
+                    <TextBlock Text="Graphic..." VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </WrapPanel>
+</UserControl>
