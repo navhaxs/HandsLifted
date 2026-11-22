@@ -77,29 +77,51 @@ namespace HandsLiftedApp.Core.Utils
         /// </summary>
         /// <returns>The full path of the new file.</returns>
         /// <exception cref="MediaLibraryNotConfiguredException">No (fully qualified) Media Library is configured.</exception>
-        public static string SavePastedImage(byte[] pngBytes, string? mediaLibraryPath, DateTime? now = null)
+        public static string SavePastedImage(byte[] pngBytes, string? mediaLibraryPath, DateTime? now = null) =>
+            SavePastedImage(pngBytes, mediaLibraryPath, now, static (stream, bytes) => stream.Write(bytes, 0, bytes.Length));
+
+        /// <summary>How many names (" (2)" ... " (N)") are tried before giving up.</summary>
+        private const int MaxNameAttempts = 1000;
+
+        /// <summary>The write step is injectable so tests can simulate a failing disk.</summary>
+        internal static string SavePastedImage(byte[] pngBytes, string? mediaLibraryPath, DateTime? now,
+            Action<FileStream, byte[]> write)
         {
             var fullMediaLibraryPath = RequireMediaLibrary(mediaLibraryPath);
             var destDir = Path.Combine(fullMediaLibraryPath, PastedSubfolder);
             Directory.CreateDirectory(destDir);
 
             var baseName = "Pasted " + (now ?? DateTime.Now).ToString("yyyy-MM-dd HH-mm-ss", System.Globalization.CultureInfo.InvariantCulture);
-            for (var n = 1; ; n++)
+            for (var n = 1; n <= MaxNameAttempts; n++)
             {
                 var name = n == 1 ? $"{baseName}.png" : $"{baseName} ({n}).png";
                 var destPath = Path.Combine(destDir, name);
+
+                FileStream stream;
                 try
                 {
                     // CreateNew: fails instead of overwriting when the name is taken
-                    using var stream = new FileStream(destPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-                    stream.Write(pngBytes, 0, pngBytes.Length);
-                    return destPath;
+                    stream = new FileStream(destPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
                 }
                 catch (IOException) when (File.Exists(destPath))
                 {
-                    // taken: try the next number
+                    continue; // taken: try the next number
+                }
+
+                try
+                {
+                    using (stream) write(stream, pngBytes);
+                    return destPath;
+                }
+                catch
+                {
+                    // a failed write (disk full, drive gone) is not a name collision: remove the partial file and fail
+                    try { File.Delete(destPath); } catch (Exception) { /* best effort */ }
+                    throw;
                 }
             }
+
+            throw new IOException($"Could not find a free name for the pasted picture in {destDir}");
         }
 
         /// <summary>A file already under the library is referenced in place (its full path), never copied.</summary>

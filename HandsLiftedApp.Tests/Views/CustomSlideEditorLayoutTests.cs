@@ -773,6 +773,26 @@ public class CustomSlideEditorLayoutTests
     });
 
     [TestMethod]
+    public Task Paste_SlideSwitchedWhileReadingThePicture_AddsNothingToEither() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(null);
+        var other = new CustomSlide();
+        editor.ReadClipboardPicture = () =>
+        {
+            editor.DataContext = other; // the media group editor rebuilt the editor for another slide
+            return Task.FromResult<ClipboardPicture?>(new ClipboardPicture(PictureBytes, new PixelSize(800, 400)));
+        };
+
+        await Pumped(editor.PasteAsync());
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.AreEqual(0, other.SlideElements.Count);
+    });
+
+    [TestMethod]
     public Task Paste_NeitherFilesNorPicture_DoesNothing() => DispatcherTestThread.Run(async () =>
     {
         using var dirs = new TempFolders();

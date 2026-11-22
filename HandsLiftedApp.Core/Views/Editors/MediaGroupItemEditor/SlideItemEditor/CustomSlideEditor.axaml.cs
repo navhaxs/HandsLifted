@@ -231,23 +231,26 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         /// <summary>
         /// Ctrl+V on the canvas: picture FILES on the clipboard (copied in Explorer) are added like a drop at the slide
-        /// centre. Anything else on the clipboard is ignored for now.
+        /// centre. Failing that, a raw picture (<see cref="ReadClipboardPicture"/>: screenshot, "Copy image") is saved
+        /// as a PNG in Media/Pasted and added the same way. Anything else is ignored. Nothing is added when the slide
+        /// changes while the clipboard is read or the picture saved.
         /// </summary>
         internal async Task PasteAsync()
         {
             CommitInlineEdit();
+            var slide = DataContext as CustomSlide;
             var paths = await ReadClipboardFilePaths();
             var images = CustomSlideDesigner.ImageFilePaths(paths);
             if (images.Count > 0)
             {
-                await AddImagesFromFilesAsync(images, null);
+                await AddImagesFromFilesAsync(images, null, expectedSlide: slide);
                 return;
             }
 
             // no files: a raw picture (screenshot, "Copy image" from a browser) is saved as a PNG in Media/Pasted and
             // then added through the very same path as every other image
             var picture = await ReadClipboardPicture();
-            if (picture == null) return;
+            if (picture == null || !ReferenceEquals(DataContext, slide)) return;
 
             CommitInlineEdit();
             string savedPath;
@@ -268,7 +271,8 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 return;
             }
 
-            await AddImagesFromFilesAsync(new[] { savedPath }, null, _ => Task.FromResult<PixelSize?>(picture.Pixels));
+            await AddImagesFromFilesAsync(new[] { savedPath }, null, _ => Task.FromResult<PixelSize?>(picture.Pixels),
+                expectedSlide: slide);
         }
 
         /// <summary>
@@ -309,10 +313,12 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         /// the last one selected. Nothing at all happens when no file qualifies or the slide changed meanwhile.
         /// </summary>
         internal async Task AddImagesFromFilesAsync(IReadOnlyList<string> paths, Point? slidePoint,
-            Func<string, Task<PixelSize?>>? measure = null)
+            Func<string, Task<PixelSize?>>? measure = null, CustomSlide? expectedSlide = null)
         {
             CommitInlineEdit();
             if (DataContext is not CustomSlide slide) return;
+            // a paste captured its slide before its first await: if the editor moved on since, add nothing
+            if (expectedSlide != null && !ReferenceEquals(expectedSlide, slide)) return;
             measure ??= MeasureImage;
 
             var images = CustomSlideDesigner.ImageFilePaths(paths);

@@ -350,6 +350,38 @@ public class PortableAssetCopierTests
     }
 
     [TestMethod]
+    public void SavePastedImage_WriteFails_DeletesThePartialFile_AndThrowsWithoutTryingOtherNames()
+    {
+        var library = MakeLibrary();
+        var attempts = 0;
+
+        Assert.ThrowsException<IOException>(() => PortableAssetCopier.SavePastedImage(new byte[] { 1 }, library, FixedNow,
+            (stream, bytes) =>
+            {
+                attempts++;
+                stream.Write(bytes, 0, bytes.Length);
+                throw new IOException("disk full");
+            }));
+
+        Assert.AreEqual(1, attempts);
+        Assert.AreEqual(0, Directory.GetFiles(Path.Combine(library, "Media", "Pasted")).Length, "no partial or numbered files left");
+    }
+
+    [TestMethod]
+    public void SavePastedImage_AllNamesTaken_GivesUpAfterTheCap()
+    {
+        var library = MakeLibrary();
+        var dir = Path.Combine(library, "Media", "Pasted");
+        Directory.CreateDirectory(dir);
+        File.WriteAllBytes(Path.Combine(dir, "Pasted 2026-11-22 14-05-31.png"), new byte[] { 1 });
+        for (var n = 2; n <= 1000; n++)
+            File.WriteAllBytes(Path.Combine(dir, $"Pasted 2026-11-22 14-05-31 ({n}).png"), new byte[] { 1 });
+
+        Assert.ThrowsException<IOException>(() => PortableAssetCopier.SavePastedImage(new byte[] { 2 }, library, FixedNow));
+        Assert.AreEqual(1000, Directory.GetFiles(dir).Length, "nothing added");
+    }
+
+    [TestMethod]
     public void SavePastedImage_NotConfigured_Throws_AndWritesNothing()
     {
         Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
