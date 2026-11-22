@@ -5,7 +5,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
-             xmlns:converters="clr-namespace:Avalonia.Markup.Xaml.Converters;assembly=Avalonia.Markup.Xaml"
+             xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
              x:DataType="slides:CustomSlide"
              ClipToBounds="True"
@@ -16,7 +16,6 @@
     </UserControl.Styles>
     
     <UserControl.Resources>
-        <converters:ColorToBrushConverter x:Key="ColorToBrush" />
         <extensions:BitmapAssetValueConverter x:Key="VariableImage" />
     </UserControl.Resources>
 
@@ -74,26 +73,23 @@
             <!--               VerticalScrollBarVisibility="Auto" -->
             <!--               HorizontalScrollBarVisibility="Auto"> -->
             <ScrollViewer Name="MainScrollViewer"
-                          VerticalScrollBarVisibility="Visible"
-                          HorizontalScrollBarVisibility="Visible"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto"
                           AllowAutoHide="False"
-                          Background="Aquamarine">
+                          Background="{DynamicResource SurfaceBrush}">
                 <ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
                             EnableZoom="True"
                             EnablePan="True"
-                            Background="SlateBlue" ClipToBounds="True" Focusable="True"
-                            ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            Background="Transparent" ClipToBounds="True" Focusable="True"
+                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                    <Grid
-                        Background="{Binding BackgroundAvaloniaColour, Converter={StaticResource ColorToBrush}, FallbackValue='Black'}"
-                        Width="1920"
-                        Height="1080">
-                    <!-- The background image is set from code (CustomSlideDesigner.LoadBackgroundImage): a binding
-                         through the converter only shows an already-cached file and never loads a newly chosen one. -->
-                    <Border Name="BackgroundHost">
+                    <Grid Width="1920" Height="1080">
+                        <!-- The slide itself (background colour/graphic and every element) is drawn by
+                             CustomSlideEditorCanvas through the same drawer the projector uses. Root above it only
+                             holds transparent hit-test proxies, one per element, that the selection adorner drives. -->
+                        <skia:CustomSlideEditorCanvas Name="SlideCanvas" />
                         <Canvas Name="Root" Background="Transparent" />
-                    </Border>
                     </Grid>
                 </ZoomBorder>
                 <!-- <Canvas Name="FrontCanvas" /> -->

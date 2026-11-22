@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
@@ -8,10 +9,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Threading;
-using HandsLiftedApp.Core.Render.CustomSlide;
+using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.SlideElement;
@@ -100,67 +104,120 @@ namespace HandsLiftedApp.Core.Views.Editors
             UpdateAdornerClippingBounds();
         }
 
-        private CustomSlide? _watchedSlide;
-
-        private void OnWatchedSlideChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        /// <summary>
+        /// A text element whose glyphs the canvas does not draw (its fill still is), e.g. while it is edited inline.
+        /// </summary>
+        public TextElement? HiddenTextElement
         {
-            if (e.PropertyName == nameof(CustomSlide.BackgroundGraphicFilePath) && sender is CustomSlide slide)
-                LoadBackgroundImage(slide);
+            get => SlideCanvas.HiddenTextElement;
+            set => SlideCanvas.HiddenTextElement = value;
         }
 
-        private void LoadBackgroundImage(CustomSlide slide)
-        {
-            ImagePathLoader.Load(slide.BackgroundGraphicFilePath,
-                () => (DataContext as CustomSlide)?.BackgroundGraphicFilePath,
-                bitmap => BackgroundHost.Background =
-                    bitmap == null ? null : new Avalonia.Media.ImageBrush(bitmap) { Stretch = Avalonia.Media.Stretch.UniformToFill });
-        }
+        // What RegisterDataContext subscribed to, so a DataContext change does not leave the old slide's handlers behind.
+        private IDisposable? _slideElementsSubscription;
+        private ObservableCollection<SlideElement>? _watchedElements;
+        private CustomSlide? _renderedSlide;
 
         private void RegisterDataContext()
         {
-            if (_watchedSlide != null) _watchedSlide.PropertyChanged -= OnWatchedSlideChanged;
-            _watchedSlide = DataContext as CustomSlide;
-            if (_watchedSlide != null) _watchedSlide.PropertyChanged += OnWatchedSlideChanged;
+            _slideElementsSubscription?.Dispose();
+            _slideElementsSubscription = null;
+            WatchElements(null);
 
-            if (DataContext is CustomSlide customSlide)
+            var customSlide = DataContext as CustomSlide;
+            _renderedSlide = customSlide;
+            SlideCanvas.Slide = customSlide;
+
+            if (customSlide != null)
             {
-                LoadBackgroundImage(customSlide);
+                WatchElements(customSlide.SlideElements);
                 Render(customSlide);
 
-                customSlide.WhenAnyValue(x => x.SlideElements)
+                // The collection itself can be swapped (e.g. undo/redo or code edits replacing the list).
+                _slideElementsSubscription = customSlide.WhenAnyValue(x => x.SlideElements)
                     .ObserveOn(RxSchedulers.MainThreadScheduler)
-                    .Subscribe((ObservableCollection<SlideElement> SlideElements) =>
+                    .Subscribe(elements =>
                     {
-                        Dispatcher.UIThread.InvokeAsync(() => Render(customSlide));
+                        if (!ReferenceEquals(_renderedSlide, customSlide)) return;
+                        WatchElements(elements);
+                        Render(customSlide);
                     });
-
-                customSlide.SlideElements.CollectionChanged += (sender, args) => Render(customSlide);
+            }
+            else
+            {
+                RemoveSelected();
+                Root.Children.Clear();
             }
         }
 
+        private void WatchElements(ObservableCollection<SlideElement>? elements)
+        {
+            if (_watchedElements != null) _watchedElements.CollectionChanged -= OnWatchedElementsChanged;
+            _watchedElements = elements;
+            if (_watchedElements != null) _watchedElements.CollectionChanged += OnWatchedElementsChanged;
+        }
+
+        private void OnWatchedElementsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (_renderedSlide != null) Render(_renderedSlide);
+        }
+
+        /// <summary>
+        /// Rebuilds the transparent hit-test proxies in <c>Root</c>, one per element (the slide itself is drawn by
+        /// <see cref="CustomSlideEditorCanvas"/> underneath). Each proxy is bound two-way to its element's rect, so the
+        /// selection adorner moving/resizing a proxy edits the element, and edits elsewhere move the proxy.
+        /// </summary>
         public void Render(CustomSlide customSlide)
         {
             Root.Children.Clear();
-            int i = 0;
             foreach (SlideElement slideElement in customSlide.SlideElements.Reverse())
             {
-                var control = CustomSlideRender.CreateControlForElement(slideElement);
-                if (control is null)
-                    continue;
-                    
-                control.PointerPressed += (s, e) =>
+                var proxy = CreateProxyForElement(slideElement);
+
+                proxy.PointerPressed += (s, e) =>
                 {
                     RemoveSelected();
-                    if (_selected is null)
-                    {
-                        AddSelected(control, Root);
-                    }
-
+                    AddSelected(proxy, Root);
+                    _zoomBorder?.Focus();
                     e.Handled = true;
                 };
 
-                Root.Children.Add(control);
+                Root.Children.Add(proxy);
             }
+        }
+
+        private static Border CreateProxyForElement(SlideElement slideElement)
+        {
+            var proxy = new Border
+            {
+                Background = Brushes.Transparent, // hit-testable but invisible
+                DataContext = slideElement,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Width = slideElement.Width,
+                Height = slideElement.Height,
+            };
+            Canvas.SetLeft(proxy, slideElement.X);
+            Canvas.SetTop(proxy, slideElement.Y);
+
+            proxy.Bind(Canvas.LeftProperty, new Binding
+            {
+                Source = slideElement, Path = nameof(SlideElement.X), Mode = BindingMode.TwoWay
+            });
+            proxy.Bind(Canvas.TopProperty, new Binding
+            {
+                Source = slideElement, Path = nameof(SlideElement.Y), Mode = BindingMode.TwoWay
+            });
+            proxy.Bind(Layoutable.WidthProperty, new Binding
+            {
+                Source = slideElement, Path = nameof(SlideElement.Width), Mode = BindingMode.TwoWay
+            });
+            proxy.Bind(Layoutable.HeightProperty, new Binding
+            {
+                Source = slideElement, Path = nameof(SlideElement.Height), Mode = BindingMode.TwoWay
+            });
+
+            return proxy;
         }
 
         public void SelectElement(SlideElement slideElement)

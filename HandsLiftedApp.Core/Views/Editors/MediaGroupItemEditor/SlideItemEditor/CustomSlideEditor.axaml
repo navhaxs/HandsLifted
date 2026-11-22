@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:customSlide="clr-namespace:HandsLiftedApp.Core.Render.CustomSlide"
              xmlns:slideElement="clr-namespace:HandsLiftedApp.Data.Models.SlideElement;assembly=HandsLiftedApp.Data"
              xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -176,11 +175,6 @@
                         <Button DockPanel.Dock="Top" Content="Generate XML" Click="UpdateXmlButton_OnClick" />
                         <TextBox Name="CodeEditor" TextChanged="CodeEditor_OnTextChanged" AcceptsReturn="True" />
                     </DockPanel>
-                </TabItem>
-                <TabItem Header="Preview">
-                    <Viewbox>
-                        <customSlide:CustomSlideRender Name="Render" DataContext="{Binding }" />
-                    </Viewbox>
                 </TabItem>
             </TabControl>
         </DockPanel>
