@@ -84,6 +84,19 @@ Run in the real app (open a custom slide in the slide editor window). Check each
 - [ ] Undoing a drag is one step.
 - [ ] Add Text / Add Image: one Undo removes it.
 
+## Added after the final review
+
+- [ ] Open a playlist saved BEFORE this change that has a custom slide where an image overlaps text (image added first): check the projector output, the editor canvas and the slide thumbnails. Elements now draw in list order with index 0 frontmost, so an image earlier in the list than the text now covers it on the projector (previously all text was drawn above all images). Decide whether to accept this or add a one-time normalization on load.
+- [ ] Snapping at the fitted zoom (not 100%): drag an element until its edge snaps to the slide centre, then drag slowly away; it must leave the snap point after about 10 slide px of total travel. Repeat with a diagonal drag.
+- [ ] Release a drag while snapped with the pointer ending outside the element: the red guide lines must disappear.
+- [ ] Drag responsiveness with a large photo element (10+ MP) and a background graphic on the slide: dragging any element stays smooth, memory does not spike.
+- [ ] While the inline editor is open, click the toolbar buttons Duplicate, Delete, Bring forward, Add Image and Undo: the copy contains the typed text, no selection handles cover the box, and Undo undoes the typing as one "Edit Text" step first.
+- [ ] Switch to another slide in the media group editor's thumbnail strip while typing inline: the text lands on the original slide and is one Undo step there when you switch back.
+- [ ] Switch Visual -> Code -> Visual with an element selected, and again while editing inline: no stray handles are left behind, the canvas still redraws and the proxies still select/drag.
+- [ ] Thumbnails and the stage display's next-slide view for a slide that uses italic, underline, bold or a custom font: they use the older Avalonia renderer and are known not to match the projector for font family/weight/italic/underline (follow-up: render them through CustomSlideDrawer).
+- [ ] Select a row in the layers list, then press Delete / Ctrl+D: known limit - canvas shortcuts do nothing until the canvas has focus (follow-up: forward keys from the layers list).
+- [ ] Change a toolbar formatting option (bold, colour, size) and confirm the slide thumbnail strip and the projector output both update through the shared drawer and image cache.
+
 ## Known limits / deferred
 
 - Underline is not shown while typing in the inline box (shown once committed).
@@ -91,3 +104,5 @@ Run in the real app (open a custom slide in the slide editor window). Check each
 - The font size, line height and font boxes in the toolbar end the inline edit before applying.
 - Canvas keyboard shortcuts need canvas focus; they do not fire after clicking a row in the layers list.
 - Justify renders as Left.
+- SlideImageCache is bounded by entry count (32), not bytes - many very large photos can hold a lot of memory.
+- CustomSlideRender (thumbnails, stage next-slide view) ignores font family, weight, italic and underline.
