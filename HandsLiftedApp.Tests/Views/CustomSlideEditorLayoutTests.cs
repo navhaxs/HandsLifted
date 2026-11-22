@@ -1,11 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using HandsLiftedApp.Controls;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Core.Views.Editors.FreeText;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -36,6 +38,118 @@ public class CustomSlideEditorLayoutTests
         Assert.IsNotNull(control, $"control '{name}' not found");
         return control;
     }
+
+    // ---- Add Image: ask for the file first, then add a fitted element (no empty placeholder) ----
+
+    // the test host has no window, so give the editor the history it would get when attached
+    private static CustomSlideEditHistory GiveHistory(CustomSlideEditor editor, CustomSlide slide)
+    {
+        var history = new CustomSlideEditHistory(slide);
+        typeof(CustomSlideEditor).GetField("_activeHistory",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.SetValue(editor, history);
+        return history;
+    }
+
+    private static CustomSlideEditor EditorOnEmptySlide(out CustomSlide slide)
+    {
+        AvaloniaTextRendering.EnsureInitialized();
+        slide = new CustomSlide();
+        slide.SlideElements.Add(new TextElement { Text = "existing" });
+        return new CustomSlideEditor { DataContext = slide };
+    }
+
+    [TestMethod]
+    public Task AddImage_CancellingThePicker_AddsNothing() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out var slide);
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+
+        await editor.AddImageAsync(() => Task.FromResult<string?>(null), _ => Task.FromResult<PixelSize?>(new PixelSize(10, 10)));
+
+        Assert.AreEqual(1, slide.SlideElements.Count, "no empty image placeholder is left behind");
+        Assert.IsFalse(history.Stack.CanUndo, "and no undo step");
+    });
+
+    [TestMethod]
+    public Task AddImage_FileThatCannotBeRead_AddsNothing() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out var slide);
+
+        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/broken.png"), _ => Task.FromResult<PixelSize?>(null));
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+    });
+
+    [TestMethod]
+    public Task AddImage_EditorMovesToAnotherSlideWhilePickerIsOpen_AddsNothingToEither() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out var slide);
+        var other = new CustomSlide();
+
+        await editor.AddImageAsync(
+            () =>
+            {
+                editor.DataContext = other; // e.g. the media group editor rebuilt the editor for another slide
+                return Task.FromResult<string?>("C:/pics/a.png");
+            },
+            _ => Task.FromResult<PixelSize?>(new PixelSize(100, 100)));
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.AreEqual(0, other.SlideElements.Count);
+    });
+
+    [TestMethod]
+    public Task AddImage_PickedFile_AddsAFittedCentredFrontmostSelectedElement() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out var slide);
+        var layers = Named<ListBox>(editor, "ListBox");
+
+        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/a.png"), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
+
+        var image = slide.SlideElements[0] as ImageElement;
+        Assert.IsNotNull(image, "the new picture is frontmost");
+        Assert.AreEqual("C:/pics/a.png", image.FilePath);
+        Assert.AreEqual(800, image.Width, "sized to the picture, not the 100x100 starting box");
+        Assert.AreEqual(400, image.Height);
+        Assert.AreEqual((1920 - 800) / 2, image.X, "centred on the slide");
+        Assert.AreEqual((1080 - 400) / 2, image.Y);
+        Assert.AreSame(image, layers.SelectedItem, "and selected");
+    });
+
+    [TestMethod]
+    public Task AddImage_PictureLargerThanTheSlide_IsScaledDownToFit() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out var slide);
+
+        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/big.png"), _ => Task.FromResult<PixelSize?>(new PixelSize(3840, 2160)));
+
+        var image = (ImageElement)slide.SlideElements[0];
+        Assert.AreEqual(1920, image.Width);
+        Assert.AreEqual(1080, image.Height);
+        Assert.AreEqual(0, image.X);
+        Assert.AreEqual(0, image.Y);
+    });
+
+    [TestMethod]
+    public Task AddImage_IsOneUndoStep() => DispatcherTestThread.Run(async () =>
+    {
+        var editor = EditorOnEmptySlide(out var slide);
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+
+        await editor.AddImageAsync(() => Task.FromResult<string?>("C:/pics/a.png"), _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400)));
+
+        Assert.AreEqual("Undo Add Image", history.Stack.UndoMenuText);
+        history.Stack.Undo();
+        Assert.AreEqual(1, slide.SlideElements.Count, "one Ctrl+Z removes the picture again");
+        Assert.IsFalse(history.Stack.CanUndo, "the file, the size and the position were one step");
+
+        history.Stack.Redo();
+        var image = (ImageElement)slide.SlideElements[0];
+        Assert.AreEqual("C:/pics/a.png", image.FilePath);
+        Assert.AreEqual(800, image.Width);
+    });
 
     [TestMethod]
     public Task ToolbarSelectedElement_FollowsLayersSelection() => DispatcherTestThread.Run(() =>

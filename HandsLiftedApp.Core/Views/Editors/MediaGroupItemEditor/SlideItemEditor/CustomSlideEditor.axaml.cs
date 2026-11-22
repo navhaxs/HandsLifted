@@ -107,7 +107,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 _activeHistory?.Stack.Redo();
             };
             Toolbar.AddTextRequested += (_, _) => AddText();
-            Toolbar.AddImageRequested += (_, _) => AddImage();
+            Toolbar.AddImageRequested += async (_, _) => await RunLoggedAsync("add image", AddImageAsync);
             Toolbar.DuplicateRequested += (_, _) => Duplicate(SelectedElement);
             Toolbar.DeleteRequested += (_, _) => Delete(SelectedElement);
             Toolbar.BringForwardRequested += (_, _) => BringForward(SelectedElement);
@@ -139,10 +139,43 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         /// </summary>
         private void CommitInlineEdit() => VisualEditor.CommitEdit();
 
-        private void AddImage()
+        /// <summary>Add Image: asks for the picture first (an empty image box draws nothing and looks broken).</summary>
+        private Task AddImageAsync() => AddImageAsync(
+            () => SelectFilePicker("Add Image"),
+            async path => (await BitmapLoader.LoadBitmapAsync(path))?.PixelSize);
+
+        /// <summary>
+        /// Picks a file, then adds an image element already fitted to it, centred, frontmost and selected, as ONE undo
+        /// step. Cancelling the picker, or a file that cannot be read as a picture, adds nothing (no empty placeholder
+        /// and no undo step). The two functions are the file picker and the picture-size lookup, injected for tests.
+        /// </summary>
+        internal async Task AddImageAsync(Func<Task<string?>> pickFile, Func<string, Task<PixelSize?>> measure)
         {
             CommitInlineEdit();
-            if (DataContext is CustomSlide vm) Select(SlideElementCommands.AddImage(vm));
+            if (DataContext is not CustomSlide slide) return;
+
+            var path = await pickFile();
+            if (string.IsNullOrWhiteSpace(path)) return;
+
+            var pixels = await measure(path);
+            if (pixels == null)
+            {
+                Log.Warning("Custom slide editor: {Path} could not be read as a picture - no image added", path);
+                return;
+            }
+
+            // the editor is rebuilt for another slide when the selected slide changes; never add to the wrong one
+            if (!ReferenceEquals(DataContext, slide)) return;
+
+            ImageElement element;
+            using (_activeHistory?.BeginBatch("Add Image"))
+            {
+                element = SlideElementCommands.AddImage(slide);
+                FitElementToImage(element, pixels.Value, slide);
+                element.FilePath = path;
+            }
+
+            Select(element);
         }
 
         private void Duplicate(SlideElement? element)
@@ -254,7 +287,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         private async Task ReplaceImageAsync(ImageElement imageElement)
         {
             CommitInlineEdit();
-            var result = await SelectFilePicker();
+            var result = await SelectFilePicker("Select Image");
             if (string.IsNullOrWhiteSpace(result)) return;
 
             // decode first (off the UI thread; it also lands in the bitmap cache, so the element then
@@ -391,7 +424,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             GeometryPanel.IsVisible = element != null;
         }
         
-        private async Task<string?> SelectFilePicker()
+        private async Task<string?> SelectFilePicker(string title = "Select File")
         {
             var topLevel = TopLevel.GetTopLevel(this);
             if (topLevel is null)
@@ -399,8 +432,10 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Select File",
-                AllowMultiple = false
+                Title = title,
+                AllowMultiple = false,
+                // pictures first, but not exclusively (other formats the decoder supports can still be chosen)
+                FileTypeFilter = new[] { FilePickerFileTypes.ImageAll, FilePickerFileTypes.All },
             });
 
             if (files is null || files.Count == 0)
