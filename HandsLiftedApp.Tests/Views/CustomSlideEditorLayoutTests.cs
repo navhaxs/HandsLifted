@@ -91,6 +91,79 @@ public class CustomSlideEditorLayoutTests
         return Task.CompletedTask;
     });
 
+    private static (CustomSlideEditor Editor, CustomSlide Slide, ListBox Layers, CustomSlideToolbar Toolbar, SlideElement[] Elements) CreateEditorWithThree()
+    {
+        AvaloniaTextRendering.EnsureInitialized();
+        var a = new TextElement { Text = "a" };
+        var b = new TextElement { Text = "b" };
+        var c = new ImageElement();
+        var slide = new CustomSlide();
+        slide.SlideElements.Add(a);
+        slide.SlideElements.Add(b);
+        slide.SlideElements.Add(c);
+        var editor = new CustomSlideEditor { DataContext = slide };
+        return (editor, slide, Named<ListBox>(editor, "ListBox"), Named<CustomSlideToolbar>(editor, "Toolbar"), new SlideElement[] { a, b, c });
+    }
+
+    private static void Click(CustomSlideToolbar toolbar, string button)
+        => Named<Button>(toolbar, button).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+    private static void AssertStillSelected(SlideElement expected, ListBox layers, CustomSlideToolbar toolbar, string step)
+    {
+        Assert.AreSame(expected, layers.SelectedItem, $"{step}: layers selection");
+        Assert.AreSame(expected, toolbar.SelectedElement, $"{step}: toolbar selection");
+    }
+
+    [TestMethod]
+    public Task ToolbarBringForwardAndSendBackward_KeepElementSelected() => DispatcherTestThread.Run(() =>
+    {
+        var (_, slide, layers, toolbar, els) = CreateEditorWithThree();
+        var c = els[2];
+        layers.SelectedItem = c;
+
+        Click(toolbar, "BringForwardButton");
+        Assert.AreEqual(1, slide.SlideElements.IndexOf(c));
+        AssertStillSelected(c, layers, toolbar, "first bring forward");
+
+        Click(toolbar, "BringForwardButton"); // still works: the toolbar didn't fall back to the slide section
+        Assert.AreEqual(0, slide.SlideElements.IndexOf(c));
+        AssertStillSelected(c, layers, toolbar, "second bring forward");
+
+        Click(toolbar, "SendBackwardButton");
+        Assert.AreEqual(1, slide.SlideElements.IndexOf(c));
+        AssertStillSelected(c, layers, toolbar, "send backward");
+        return Task.CompletedTask;
+    });
+
+    private static void InvokeHandler(CustomSlideEditor editor, string handler, SlideElement element)
+    {
+        var method = typeof(CustomSlideEditor).GetMethod(handler,
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.IsNotNull(method, handler);
+        method.Invoke(editor, new object?[] { new MenuItem { DataContext = element }, new RoutedEventArgs() });
+    }
+
+    [TestMethod]
+    public Task ContextMenuMoveUpAndDown_KeepElementSelected() => DispatcherTestThread.Run(() =>
+    {
+        var (editor, slide, layers, toolbar, els) = CreateEditorWithThree();
+        var c = els[2];
+        layers.SelectedItem = c;
+
+        InvokeHandler(editor, "MoveItemUp_OnClick", c);
+        Assert.AreEqual(1, slide.SlideElements.IndexOf(c));
+        AssertStillSelected(c, layers, toolbar, "move up");
+
+        InvokeHandler(editor, "MoveItemUp_OnClick", c);
+        Assert.AreEqual(0, slide.SlideElements.IndexOf(c));
+        AssertStillSelected(c, layers, toolbar, "second move up");
+
+        InvokeHandler(editor, "MoveItemDown_OnClick", c);
+        Assert.AreEqual(1, slide.SlideElements.IndexOf(c));
+        AssertStillSelected(c, layers, toolbar, "move down");
+        return Task.CompletedTask;
+    });
+
     [TestMethod]
     public Task ZoomPercent_ReflectsZoomBorder_AndZoomIn_Increases() => DispatcherTestThread.Run(() =>
     {

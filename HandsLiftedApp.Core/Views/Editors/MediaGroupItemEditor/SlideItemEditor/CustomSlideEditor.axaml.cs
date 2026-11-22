@@ -102,14 +102,8 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             Toolbar.AddImageRequested += (_, _) => AddImage();
             Toolbar.DuplicateRequested += (_, _) => Duplicate(SelectedElement);
             Toolbar.DeleteRequested += (_, _) => Delete(SelectedElement);
-            Toolbar.BringForwardRequested += (_, _) =>
-            {
-                if (DataContext is CustomSlide vm && SelectedElement is { } el) SlideElementCommands.BringForward(vm, el);
-            };
-            Toolbar.SendBackwardRequested += (_, _) =>
-            {
-                if (DataContext is CustomSlide vm && SelectedElement is { } el) SlideElementCommands.SendBackward(vm, el);
-            };
+            Toolbar.BringForwardRequested += (_, _) => BringForward(SelectedElement);
+            Toolbar.SendBackwardRequested += (_, _) => SendBackward(SelectedElement);
             Toolbar.ReplaceImageRequested += async (_, _) =>
             {
                 if (SelectedElement is ImageElement image) await ReplaceImageAsync(image);
@@ -139,6 +133,20 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         private void Delete(SlideElement? element)
         {
             if (DataContext is CustomSlide vm) SlideElementCommands.Delete(vm, element);
+        }
+
+        // ObservableCollection.Move reaches the ListBox as remove + add, so it drops the moved element from its
+        // selection; select it again explicitly rather than relying on the order of CollectionChanged handlers.
+        private void BringForward(SlideElement? element)
+        {
+            if (DataContext is CustomSlide vm && element != null && SlideElementCommands.BringForward(vm, element))
+                Select(element);
+        }
+
+        private void SendBackward(SlideElement? element)
+        {
+            if (DataContext is CustomSlide vm && element != null && SlideElementCommands.SendBackward(vm, element))
+                Select(element);
         }
 
         /// <summary>Makes <paramref name="element"/> the selection (layers list, designer, toolbar, properties).</summary>
@@ -273,14 +281,12 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         
         private void MoveItemUp_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
-                SlideElementCommands.BringForward(vm, el);
+            if (sender is Control { DataContext: SlideElement el }) BringForward(el);
         }
 
         private void MoveItemDown_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
-                SlideElementCommands.SendBackward(vm, el);
+            if (sender is Control { DataContext: SlideElement el }) SendBackward(el);
         }
 
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
