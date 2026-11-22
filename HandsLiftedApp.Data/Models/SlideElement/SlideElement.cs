@@ -65,22 +65,22 @@ namespace HandsLiftedApp.Data.Models.SlideElement
             _calculatedVerticalAlignmentTop = this.WhenAnyValue(x => x.VerticalAlignment,
                     (a) => a == VerticalAlignment.Top)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
-                .ToProperty(this, x => x.CalculatedTextAlignmentLeft);
-            
+                .ToProperty(this, x => x.CalculatedVerticalAlignmentTop);
+
             _calculatedVerticalAlignmentCenter = this.WhenAnyValue(x => x.VerticalAlignment,
                     (a) => a == VerticalAlignment.Center)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
-                .ToProperty(this, x => x.CalculatedTextAlignmentCenter);
-            
+                .ToProperty(this, x => x.CalculatedVerticalAlignmentCenter);
+
             _calculatedVerticalAlignmentBottom = this.WhenAnyValue(x => x.VerticalAlignment,
                     (textAlignment) => textAlignment == VerticalAlignment.Bottom)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
-                .ToProperty(this, x => x.CalculatedTextAlignmentRight);
+                .ToProperty(this, x => x.CalculatedVerticalAlignmentBottom);
 
             _calculatedVerticalAlignmentStretch = this.WhenAnyValue(x => x.VerticalAlignment,
                     (textAlignment) => textAlignment == VerticalAlignment.Stretch)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
-                .ToProperty(this, x => x.CalculatedTextAlignmentJustify);
+                .ToProperty(this, x => x.CalculatedVerticalAlignmentStretch);
         }
 
         public string Text { get => _text; set => this.RaiseAndSetIfChanged(ref _text, value); }
