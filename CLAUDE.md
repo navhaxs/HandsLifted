@@ -1,6 +1,6 @@
 # VisionScreens — Claude Steering Notes
 
-Church presentation software (Avalonia 11 / C# / SkiaSharp / libmpv).
+Church presentation software (Avalonia 12 / C# / SkiaSharp / libmpv).
 
 ---
 
