@@ -35,12 +35,7 @@ namespace HandsLiftedApp.Core.Utils
                 return filePath;
             }
 
-            if (string.IsNullOrWhiteSpace(mediaLibraryPath) || !Path.IsPathFullyQualified(mediaLibraryPath))
-            {
-                throw new MediaLibraryNotConfiguredException();
-            }
-
-            var fullMediaLibraryPath = Path.GetFullPath(mediaLibraryPath);
+            var fullMediaLibraryPath = RequireMediaLibrary(mediaLibraryPath);
 
             if (Path.IsPathFullyQualified(filePath) &&
                 RelativeFilePathResolver.IsUnderDirectory(fullMediaLibraryPath, Path.GetFullPath(filePath)))
@@ -49,6 +44,56 @@ namespace HandsLiftedApp.Core.Utils
             }
 
             return CopyMediaOrPresentationIntoPlaylist(filePath, fullMediaLibraryPath);
+        }
+
+        /// <summary>
+        /// Where pictures dropped or pasted into the custom slide editor are copied, relative to the Media Library.
+        /// Kept apart from <c>Media/Images</c> so that clutter is easy to find and clean up.
+        /// </summary>
+        public static readonly string PastedSubfolder = Path.Combine("Media", "Pasted");
+
+        /// <summary>
+        /// Like <see cref="ResolveOrCopyIntoMediaLibrary"/>, but an image from outside the library is copied into
+        /// <see cref="PastedSubfolder"/> (collisions handled by <see cref="CopyIntoSubfolder"/>). A file already
+        /// anywhere under the library (even <c>Media/Images</c>) is referenced in place; a non-image passes through.
+        /// </summary>
+        /// <exception cref="MediaLibraryNotConfiguredException">
+        /// The file is an image and no (fully qualified) Media Library folder is configured.
+        /// </exception>
+        public static string ResolveOrCopyIntoPastedFolder(string filePath, string? mediaLibraryPath)
+        {
+            if (!IsImageFile(filePath))
+            {
+                return filePath;
+            }
+
+            var fullMediaLibraryPath = RequireMediaLibrary(mediaLibraryPath);
+
+            if (Path.IsPathFullyQualified(filePath) &&
+                RelativeFilePathResolver.IsUnderDirectory(fullMediaLibraryPath, Path.GetFullPath(filePath)))
+            {
+                return Path.GetFullPath(filePath);
+            }
+
+            return CopyIntoSubfolder(filePath, fullMediaLibraryPath, PastedSubfolder);
+        }
+
+        /// <summary>Whether the path has one of the <see cref="Constants.SUPPORTED_IMAGE"/> extensions (any case).</summary>
+        public static bool IsImageFile(string? filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var ext = Path.GetExtension(filePath).TrimStart('.').ToLowerInvariant();
+            return ext.Length > 0 && Constants.SUPPORTED_IMAGE.Contains(ext);
+        }
+
+        private static string RequireMediaLibrary(string? mediaLibraryPath)
+        {
+            if (string.IsNullOrWhiteSpace(mediaLibraryPath) || !Path.IsPathFullyQualified(mediaLibraryPath))
+            {
+                throw new MediaLibraryNotConfiguredException();
+            }
+
+            return Path.GetFullPath(mediaLibraryPath);
         }
 
         private static bool RequiresMediaLibrary(string filePath)

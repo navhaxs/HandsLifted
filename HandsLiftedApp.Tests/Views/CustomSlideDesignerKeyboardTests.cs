@@ -192,6 +192,93 @@ public class CustomSlideDesignerKeyboardTests
         return Task.CompletedTask;
     });
 
+    // ---- Ctrl+V and dropped image files ----
+
+    [TestMethod]
+    public Task CtrlV_RaisesPasteRequested_WithOrWithoutASelection() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, slide, text, _) = Create();
+        var pasted = 0;
+        designer.PasteRequested += (_, _) => pasted++;
+
+        Assert.IsTrue(designer.HandleKey(Key.V, KeyModifiers.Control), "nothing selected: still a paste");
+        Assert.AreEqual(1, pasted);
+
+        designer.SelectElement(text);
+        Assert.IsTrue(designer.HandleKey(Key.V, KeyModifiers.Control));
+        Assert.AreEqual(2, pasted);
+
+        Assert.IsFalse(designer.HandleKey(Key.V, KeyModifiers.None), "plain V is not a paste");
+        Assert.IsFalse(designer.HandleKey(Key.V, KeyModifiers.Control | KeyModifiers.Shift));
+        Assert.AreEqual(2, pasted);
+        Assert.AreEqual(2, slide.SlideElements.Count, "the designer itself adds nothing");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task CtrlV_WhileEditing_IsLeftToTheTextBox() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, _, text, _) = Create();
+        var pasted = 0;
+        designer.PasteRequested += (_, _) => pasted++;
+        designer.SelectElement(text);
+        designer.BeginEdit(text);
+
+        Assert.IsFalse(designer.HandleKey(Key.V, KeyModifiers.Control));
+        Assert.AreEqual(0, pasted);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public void ImageFilePaths_KeepsOnlyImagesByExtension_IgnoringCase()
+    {
+        var paths = CustomSlideDesigner.ImageFilePaths(new[]
+        {
+            @"C:\a\one.png", @"C:\a\two.JPG", @"C:\a\clip.mp4", null, "", @"C:\a\folder", @"C:\a\three.jpeg",
+        });
+
+        CollectionAssert.AreEqual(new[] { @"C:\a\one.png", @"C:\a\two.JPG", @"C:\a\three.jpeg" }, paths.ToList());
+        Assert.AreEqual(0, CustomSlideDesigner.ImageFilePaths(null).Count);
+    }
+
+    [TestMethod]
+    public void DropEffectFor_CopyOnlyWhenAtLeastOneImageFile()
+    {
+        Assert.AreEqual(DragDropEffects.Copy, CustomSlideDesigner.DropEffectFor(new[] { @"C:\a\clip.mp4", @"C:\a\one.png" }));
+        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(new[] { @"C:\a\clip.mp4", @"C:\a\notes.txt" }));
+        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(Array.Empty<string?>()));
+        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(null));
+    }
+
+    [TestMethod]
+    public Task DroppedImageFiles_AreReportedWithTheSlidePoint_NonImagesFilteredOut() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, _, _, _) = Create();
+        System.Collections.Generic.IReadOnlyList<string>? reported = null;
+        Avalonia.Point at = default;
+        designer.ImageFilesDropped += (paths, point) => { reported = paths; at = point; };
+
+        designer.OnFilesDropped(new[] { @"C:\a\notes.txt" }, new Avalonia.Point(5, 5));
+        Assert.IsNull(reported, "no image: nothing raised");
+
+        designer.OnFilesDropped(new[] { @"C:\a\one.png", @"C:\a\notes.txt" }, new Avalonia.Point(300, 200));
+        Assert.IsNotNull(reported);
+        CollectionAssert.AreEqual(new[] { @"C:\a\one.png" }, reported.ToList());
+        Assert.AreEqual(new Avalonia.Point(300, 200), at);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task Canvas_AcceptsDrops() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, _, _, _) = Create();
+        var scroll = designer.FindControl<ScrollViewer>("MainScrollViewer")!;
+        var root = designer.FindControl<Canvas>("Root")!;
+        Assert.IsTrue(DragDrop.GetAllowDrop(scroll), "the grey area takes drops");
+        Assert.IsTrue(DragDrop.GetAllowDrop(root), "and so does the slide (inherited)");
+        return Task.CompletedTask;
+    });
+
     [TestMethod]
     public Task Nudge_IsOneUndoStepForRepeatedPresses() => DispatcherTestThread.Run(() =>
     {

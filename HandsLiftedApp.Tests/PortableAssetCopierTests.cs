@@ -234,4 +234,127 @@ public class PortableAssetCopierTests
         Assert.AreEqual(Path.Combine(_libraryDir, "Media", "Images", "photo.jpg"), result);
         Assert.IsTrue(File.Exists(result));
     }
+
+    // ---- dropped / pasted pictures: Media/Pasted ----
+
+    private string MakeLibrary()
+    {
+        _libraryDir = Path.Combine(_tempDir, "Library");
+        Directory.CreateDirectory(_libraryDir);
+        return _libraryDir;
+    }
+
+    [TestMethod]
+    public void PastedSubfolder_IsMediaPasted()
+    {
+        Assert.AreEqual(Path.Combine("Media", "Pasted"), PortableAssetCopier.PastedSubfolder);
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_ImageOutsideLibrary_IsCopiedIntoMediaPasted()
+    {
+        var library = MakeLibrary();
+        var source = WriteSourceFile("photo.png", "png-bytes");
+
+        var result = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(source, library);
+
+        Assert.AreEqual(Path.Combine(library, "Media", "Pasted", "photo.png"), result);
+        Assert.IsTrue(File.Exists(result));
+        Assert.IsTrue(File.Exists(source), "the original is untouched");
+        Assert.AreEqual("png-bytes", File.ReadAllText(source));
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_FileAlreadyInMediaImages_IsReferencedInPlace()
+    {
+        var library = MakeLibrary();
+        Directory.CreateDirectory(Path.Combine(library, "Media", "Images"));
+        var inImages = Path.Combine(library, "Media", "Images", "photo.png");
+        File.WriteAllText(inImages, "png-bytes");
+
+        var result = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(inImages, library);
+
+        Assert.AreEqual(inImages, result);
+        Assert.IsFalse(Directory.Exists(Path.Combine(library, "Media", "Pasted")), "nothing copied");
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_FileElsewhereInsideLibrary_IsReferencedInPlace()
+    {
+        var library = MakeLibrary();
+        Directory.CreateDirectory(Path.Combine(library, "Backgrounds"));
+        var inside = Path.Combine(library, "Backgrounds", "bg.jpg");
+        File.WriteAllText(inside, "jpg-bytes");
+
+        var result = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(inside, library);
+
+        Assert.AreEqual(inside, result);
+        Assert.IsFalse(Directory.Exists(Path.Combine(library, "Media")), "nothing copied");
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_NotConfigured_Throws()
+    {
+        var image = WriteSourceFile("photo.png", "png-bytes");
+
+        Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
+            PortableAssetCopier.ResolveOrCopyIntoPastedFolder(image, null));
+        Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
+            PortableAssetCopier.ResolveOrCopyIntoPastedFolder(image, ""));
+        Assert.ThrowsException<MediaLibraryNotConfiguredException>(() =>
+            PortableAssetCopier.ResolveOrCopyIntoPastedFolder(image, @"relative\library"));
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_NonImage_PassesThroughUnchanged()
+    {
+        var library = MakeLibrary();
+        var video = WriteSourceFile("clip.mp4", "mp4-bytes");
+        var text = WriteSourceFile("notes.txt", "hello");
+
+        Assert.AreEqual(video, PortableAssetCopier.ResolveOrCopyIntoPastedFolder(video, library));
+        Assert.AreEqual(text, PortableAssetCopier.ResolveOrCopyIntoPastedFolder(text, null));
+        Assert.IsFalse(Directory.Exists(Path.Combine(library, "Media")), "nothing copied");
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_SameFileTwice_ReusesTheSameCopy()
+    {
+        var library = MakeLibrary();
+        var source = WriteSourceFile("photo.png", "png-bytes");
+
+        var first = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(source, library);
+        var second = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(source, library);
+
+        Assert.AreEqual(first, second);
+        Assert.AreEqual(1, Directory.GetFiles(Path.Combine(library, "Media", "Pasted")).Length);
+    }
+
+    [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_SameNameDifferentContent_GetsAHashSuffix()
+    {
+        var library = MakeLibrary();
+        var a = WriteSourceFile("photo.png", "png-A");
+        var first = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(a, library);
+        Directory.CreateDirectory(Path.Combine(_tempDir, "Other"));
+        var b = Path.Combine(_tempDir, "Other", "photo.png");
+        File.WriteAllText(b, "png-B-different");
+
+        var second = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(b, library);
+
+        Assert.AreNotEqual(first, second);
+        StringAssert.StartsWith(Path.GetFileName(second), "photo_");
+        Assert.AreEqual("png-A", File.ReadAllText(first));
+    }
+
+    [TestMethod]
+    public void IsImageFile_ChecksTheExtensionIgnoringCase()
+    {
+        Assert.IsTrue(PortableAssetCopier.IsImageFile(@"C:\x\a.PNG"));
+        Assert.IsTrue(PortableAssetCopier.IsImageFile(@"C:\x\a.jpg"));
+        Assert.IsFalse(PortableAssetCopier.IsImageFile(@"C:\x\a.mp4"));
+        Assert.IsFalse(PortableAssetCopier.IsImageFile(@"C:\x\noext"));
+        Assert.IsFalse(PortableAssetCopier.IsImageFile(null));
+        Assert.IsFalse(PortableAssetCopier.IsImageFile(""));
+    }
 }

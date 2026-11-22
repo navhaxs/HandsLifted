@@ -56,7 +56,10 @@
             <!-- <ScrollViewer -->
             <!--               VerticalScrollBarVisibility="Auto" -->
             <!--               HorizontalScrollBarVisibility="Auto"> -->
+            <!-- DragDrop.AllowDrop is inherited: dropped picture files are accepted over the grey area, the slide and
+                 its element proxies alike (see Canvas_DragOver / Canvas_Drop). -->
             <ScrollViewer Name="MainScrollViewer"
+                          DragDrop.AllowDrop="True"
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Auto"
                           AllowAutoHide="False"

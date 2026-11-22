@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -25,6 +27,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
     {
         public CustomSlideEditor()
         {
+            ReadClipboardFilePaths = ReadClipboardFilePathsFromSystem;
             InitializeComponent();
 
             if (Design.IsDesignMode)
@@ -40,6 +43,10 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             {
                 ListBox.SelectedItem = null;
             };
+            VisualEditor.ImageFilesDropped += (paths, slidePoint) =>
+                PendingImageAction = RunLoggedAsync("add dropped images", () => AddImagesFromFilesAsync(paths, slidePoint));
+            VisualEditor.PasteRequested += (_, _) =>
+                PendingImageAction = RunLoggedAsync("paste", PasteAsync);
 
             WireToolbar();
             WireStatusBar();
@@ -192,27 +199,141 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         internal Action<string, string> ShowMediaLibraryError { get; set; } = (title, message) =>
             MessageBus.Current.SendMessage(new MessageWindowViewModel { Title = title, Content = message });
 
+        /// <summary>The picture-size lookup used by drops and pastes; injectable for tests.</summary>
+        internal Func<string, Task<PixelSize?>> MeasureImage { get; set; } = MeasureWithBitmapLoader;
+
+        private static async Task<PixelSize?> MeasureWithBitmapLoader(string path) =>
+            (await BitmapLoader.LoadBitmapAsync(path))?.PixelSize;
+
+        /// <summary>
+        /// Reads the local paths of the files on the clipboard (null or empty when there are none); injectable so tests
+        /// do not need a real clipboard.
+        /// </summary>
+        internal Func<Task<IReadOnlyList<string>?>> ReadClipboardFilePaths { get; set; }
+
+        private async Task<IReadOnlyList<string>?> ReadClipboardFilePathsFromSystem()
+        {
+            var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+            if (clipboard == null) return null;
+            var items = await clipboard.TryGetFilesAsync();
+            return items?.Select(item => item.TryGetLocalPath()).OfType<string>().ToList();
+        }
+
+        /// <summary>
+        /// The most recent drop/paste started by a designer event (fire-and-forget from the UI's point of view);
+        /// tests await it.
+        /// </summary>
+        internal Task PendingImageAction { get; private set; } = Task.CompletedTask;
+
+        /// <summary>
+        /// Ctrl+V on the canvas: picture FILES on the clipboard (copied in Explorer) are added like a drop at the slide
+        /// centre. Anything else on the clipboard is ignored for now.
+        /// </summary>
+        internal async Task PasteAsync()
+        {
+            CommitInlineEdit();
+            var paths = await ReadClipboardFilePaths();
+            var images = CustomSlideDesigner.ImageFilePaths(paths);
+            if (images.Count > 0)
+            {
+                await AddImagesFromFilesAsync(images, null);
+                return;
+            }
+
+            // Hook for pasting a raw bitmap (e.g. a screenshot) from the clipboard: not implemented yet.
+        }
+
+        /// <summary>
+        /// Adds dropped or pasted picture files: only images (by extension) are used, each is localized into the Media
+        /// Library's <see cref="PortableAssetCopier.PastedSubfolder"/> and measured; files that fail are skipped. All
+        /// that succeeded are added as ONE undo step, the first centred on <paramref name="slidePoint"/> (the slide
+        /// centre when null) and each further one 40 px right and down from the previous, all fitted inside the slide,
+        /// the last one selected. Nothing at all happens when no file qualifies or the slide changed meanwhile.
+        /// </summary>
+        internal async Task AddImagesFromFilesAsync(IReadOnlyList<string> paths, Point? slidePoint,
+            Func<string, Task<PixelSize?>>? measure = null)
+        {
+            CommitInlineEdit();
+            if (DataContext is not CustomSlide slide) return;
+            measure ??= MeasureImage;
+
+            var images = CustomSlideDesigner.ImageFilePaths(paths);
+            var ready = new List<(string Path, PixelSize Pixels)>();
+            foreach (var path in images)
+            {
+                var (outcome, storedPath) = await TryLocalizeImageAsync(path, PortableAssetCopier.ResolveOrCopyIntoPastedFolder);
+                // the user has been told once; every other file would fail the same way
+                if (outcome == LocalizeOutcome.LibraryNotConfigured) return;
+                if (storedPath == null) continue;
+
+                var pixels = await measure(storedPath);
+                if (pixels == null)
+                {
+                    Log.Warning("Custom slide editor: {Path} could not be read as a picture - skipped", path);
+                    continue;
+                }
+
+                ready.Add((storedPath, pixels.Value));
+            }
+
+            // the editor is rebuilt for another slide when the selected slide changes; never add to the wrong one
+            if (ready.Count == 0 || !ReferenceEquals(DataContext, slide)) return;
+
+            var start = slidePoint ?? new Point(slide.SlideWidth / 2.0, slide.SlideHeight / 2.0);
+            ImageElement? last = null;
+            using (_activeHistory?.BeginBatch(ready.Count == 1 ? "Add Image" : "Add Images"))
+            {
+                for (var i = 0; i < ready.Count; i++)
+                {
+                    var element = SlideElementCommands.AddImage(slide);
+                    // put the starting box's centre where the picture should go; fitting keeps the centre (and clamps)
+                    var centreX = start.X + FanOutStep * i;
+                    var centreY = start.Y + FanOutStep * i;
+                    element.X = (int)Math.Round(centreX - element.Width / 2.0);
+                    element.Y = (int)Math.Round(centreY - element.Height / 2.0);
+                    FitElementToImage(element, ready[i].Pixels, slide);
+                    element.FilePath = ready[i].Path;
+                    last = element;
+                }
+            }
+
+            Select(last);
+        }
+
+        /// <summary>How far each further dropped/pasted picture is moved right and down from the previous one.</summary>
+        private const int FanOutStep = 40;
+
+        private enum LocalizeOutcome { Stored, LibraryNotConfigured, Failed }
+
         /// <summary>
         /// Copies a picked picture into the Media Library (off the UI thread) and returns the library path, or null
         /// when the picture must not be used (no library configured - the user is told - or the copy failed).
         /// </summary>
-        private async Task<string?> LocalizeImageAsync(string pickedPath)
+        private async Task<string?> LocalizeImageAsync(string pickedPath) =>
+            (await TryLocalizeImageAsync(pickedPath, PortableAssetCopier.ResolveOrCopyIntoMediaLibrary)).StoredPath;
+
+        /// <summary>
+        /// Runs <paramref name="copier"/> (which Media Library folder the picture goes to) off the UI thread. A missing
+        /// library is shown to the user; an IO failure is logged. Only <see cref="LocalizeOutcome.Stored"/> has a path.
+        /// </summary>
+        private async Task<(LocalizeOutcome Outcome, string? StoredPath)> TryLocalizeImageAsync(
+            string path, Func<string, string?, string> copier)
         {
             var libraryPath = MediaLibraryPathProvider();
             try
             {
-                return await Task.Run(() => PortableAssetCopier.ResolveOrCopyIntoMediaLibrary(pickedPath, libraryPath));
+                return (LocalizeOutcome.Stored, await Task.Run(() => copier(path, libraryPath)));
             }
             catch (MediaLibraryNotConfiguredException ex)
             {
-                Log.Warning("Custom slide editor: Media Library not configured - {Path} not added", pickedPath);
+                Log.Warning("Custom slide editor: Media Library not configured - {Path} not added", path);
                 ShowMediaLibraryError("Media Library not configured", ex.Message);
-                return null;
+                return (LocalizeOutcome.LibraryNotConfigured, null);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                Log.Error(ex, "Custom slide editor: could not copy {Path} into the Media Library", pickedPath);
-                return null;
+                Log.Error(ex, "Custom slide editor: could not copy {Path} into the Media Library", path);
+                return (LocalizeOutcome.Failed, null);
             }
         }
 

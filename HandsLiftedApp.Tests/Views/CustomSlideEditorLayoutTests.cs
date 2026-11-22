@@ -494,4 +494,250 @@ public class CustomSlideEditorLayoutTests
         Assert.AreEqual(1, all.OfType<ColorPicker>().Count(), "only the slide background colour");
         return Task.CompletedTask;
     });
+
+    // ---- dropped / pasted image files: Media/Pasted, one undo step, fanned out from the drop point ----
+
+    private static string PastedDir(TempFolders dirs) => System.IO.Path.Combine(dirs.Library, "Media", "Pasted");
+
+    [TestMethod]
+    public Task DroppedFiles_TwoImages_AreAddedAsOneStep_FannedOutFromThePoint_LastSelected() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var a = dirs.OutsideFile("a.png");
+        var b = dirs.OutsideFile("b.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+        var layers = Named<ListBox>(editor, "ListBox");
+
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { a, b }, new Point(600, 400), Measure800x400));
+
+        Assert.AreEqual(3, slide.SlideElements.Count);
+        var second = (ImageElement)slide.SlideElements[0]; // frontmost = added last
+        var first = (ImageElement)slide.SlideElements[1];
+        StringAssert.StartsWith(first.FilePath, PastedDir(dirs));
+        StringAssert.StartsWith(second.FilePath, PastedDir(dirs));
+        Assert.AreEqual("a.png", System.IO.Path.GetFileName(first.FilePath));
+        Assert.AreEqual("b.png", System.IO.Path.GetFileName(second.FilePath));
+        Assert.IsTrue(System.IO.File.Exists(first.FilePath) && System.IO.File.Exists(second.FilePath));
+        Assert.IsTrue(System.IO.File.Exists(a), "originals untouched");
+
+        Assert.AreEqual(800, first.Width);
+        Assert.AreEqual(400, first.Height);
+        Assert.AreEqual(600 - 400, first.X, "first centred on the drop point");
+        Assert.AreEqual(400 - 200, first.Y);
+        Assert.AreEqual(first.X + 40, second.X, "each further one 40 px right");
+        Assert.AreEqual(first.Y + 40, second.Y, "and 40 px down");
+        Assert.AreSame(second, layers.SelectedItem, "the last added is selected");
+
+        Assert.AreEqual("Undo Add Images", history.Stack.UndoMenuText);
+        history.Stack.Undo();
+        Assert.AreEqual(1, slide.SlideElements.Count, "one Ctrl+Z removes both");
+        Assert.IsFalse(history.Stack.CanUndo);
+    });
+
+    [TestMethod]
+    public Task DroppedFiles_OneImage_IsAnAddImageStep_CentredOnTheSlideWithoutAPoint() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var a = dirs.OutsideFile("a.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { a }, null, Measure800x400));
+
+        var image = (ImageElement)slide.SlideElements[0];
+        Assert.AreEqual((1920 - 800) / 2, image.X);
+        Assert.AreEqual((1080 - 400) / 2, image.Y);
+        Assert.AreEqual("Undo Add Image", history.Stack.UndoMenuText);
+    });
+
+    [TestMethod]
+    public Task DroppedFiles_NonImagesAreFilteredOut() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var a = dirs.OutsideFile("a.PNG");
+        var video = System.IO.Path.Combine(dirs.Outside, "clip.mp4");
+        System.IO.File.WriteAllText(video, "x");
+        var notes = System.IO.Path.Combine(dirs.Outside, "notes.txt");
+        System.IO.File.WriteAllText(notes, "x");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var measured = new System.Collections.Generic.List<string>();
+
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { video, a, notes }, null, p =>
+        {
+            measured.Add(p);
+            return Task.FromResult<PixelSize?>(new PixelSize(100, 100));
+        }));
+
+        Assert.AreEqual(2, slide.SlideElements.Count, "only the picture was added");
+        Assert.AreEqual(1, measured.Count);
+        Assert.IsFalse(System.IO.Directory.Exists(System.IO.Path.Combine(dirs.Library, "Media", "Video")), "the video was not copied");
+    });
+
+    [TestMethod]
+    public Task DroppedFiles_UnreadableOneIsSkipped_OthersAreAdded() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var good = dirs.OutsideFile("good.png");
+        var broken = dirs.OutsideFile("broken.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { broken, good }, new Point(500, 500),
+            p => Task.FromResult<PixelSize?>(p.Contains("broken") ? null : new PixelSize(200, 100))));
+
+        Assert.AreEqual(2, slide.SlideElements.Count);
+        var image = (ImageElement)slide.SlideElements[0];
+        Assert.AreEqual("good.png", System.IO.Path.GetFileName(image.FilePath));
+        Assert.AreEqual(500 - 100, image.X, "the first image that made it is centred on the point");
+        Assert.AreEqual("Undo Add Image", history.Stack.UndoMenuText);
+    });
+
+    [TestMethod]
+    public Task DroppedFiles_NothingQualifies_AddsNothing_AndNoUndoStep() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var notes = System.IO.Path.Combine(dirs.Outside, "notes.txt");
+        System.IO.File.WriteAllText(notes, "x");
+        var broken = dirs.OutsideFile("broken.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+
+        await Pumped(editor.AddImagesFromFilesAsync(System.Array.Empty<string>(), null, Measure800x400));
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { notes }, null, Measure800x400));
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { broken }, null, _ => Task.FromResult<PixelSize?>(null)));
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.IsFalse(history.Stack.CanUndo);
+    });
+
+    [TestMethod]
+    public Task DroppedFiles_MediaLibraryNotConfigured_AddsNothing_AndShowsTheErrorOnce() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var files = new[] { dirs.OutsideFile("a.png"), dirs.OutsideFile("b.png"), dirs.OutsideFile("c.png") };
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => null;
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+        var errors = new System.Collections.Generic.List<string>();
+        editor.ShowMediaLibraryError = (t, _) => errors.Add(t);
+
+        await Pumped(editor.AddImagesFromFilesAsync(files, null, Measure800x400));
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.IsFalse(history.Stack.CanUndo);
+        CollectionAssert.AreEqual(new[] { "Media Library not configured" }, errors, "one message, not one per file");
+    });
+
+    [TestMethod]
+    public Task DroppedFiles_SlideSwitchedWhileCopying_AddsNothingToEither() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var a = dirs.OutsideFile("a.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var other = new CustomSlide();
+
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { a }, null, _ =>
+        {
+            editor.DataContext = other; // e.g. the media group editor rebuilt the editor for another slide
+            return Task.FromResult<PixelSize?>(new PixelSize(100, 100));
+        }));
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.AreEqual(0, other.SlideElements.Count);
+    });
+
+    [TestMethod]
+    public Task DroppedFiles_NearTheSlideEdge_StayInsideTheSlide() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+
+        await Pumped(editor.AddImagesFromFilesAsync(new[] { dirs.OutsideFile("a.png"), dirs.OutsideFile("b.png") },
+            new Point(1910, 1075), Measure800x400));
+
+        foreach (var image in slide.SlideElements.OfType<ImageElement>())
+        {
+            Assert.IsTrue(image.X >= 0 && image.X + image.Width <= 1920, $"x {image.X}");
+            Assert.IsTrue(image.Y >= 0 && image.Y + image.Height <= 1080, $"y {image.Y}");
+        }
+        Assert.AreEqual(2, slide.SlideElements.OfType<ImageElement>().Count());
+    });
+
+    [TestMethod]
+    public Task Paste_ClipboardWithImageFiles_AddsThemIntoMediaPasted() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var a = dirs.OutsideFile("copied.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(new[] { a });
+        editor.MeasureImage = _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400));
+
+        await Pumped(editor.PasteAsync());
+
+        var image = (ImageElement)slide.SlideElements[0];
+        StringAssert.StartsWith(image.FilePath, PastedDir(dirs));
+        Assert.AreEqual((1920 - 800) / 2, image.X, "a paste lands in the middle of the slide");
+    });
+
+    [TestMethod]
+    public Task Paste_ClipboardWithoutImageFiles_DoesNothing() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var notes = System.IO.Path.Combine(dirs.Outside, "notes.txt");
+        System.IO.File.WriteAllText(notes, "x");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        var history = GiveHistory(editor, slide);
+        history.Stack.Clear();
+        editor.MeasureImage = _ => Task.FromResult<PixelSize?>(new PixelSize(800, 400));
+
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(null);
+        await Pumped(editor.PasteAsync());
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(System.Array.Empty<string>());
+        await Pumped(editor.PasteAsync());
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(new[] { notes });
+        await Pumped(editor.PasteAsync());
+
+        Assert.AreEqual(1, slide.SlideElements.Count);
+        Assert.IsFalse(history.Stack.CanUndo);
+    });
+
+    [TestMethod]
+    public Task CtrlVOnTheCanvas_And_ADrop_ReachTheEditor() => DispatcherTestThread.Run(async () =>
+    {
+        using var dirs = new TempFolders();
+        var copied = dirs.OutsideFile("copied.png");
+        var dropped = dirs.OutsideFile("dropped.png");
+        var editor = EditorOnEmptySlide(out var slide);
+        editor.MediaLibraryPathProvider = () => dirs.Library;
+        editor.MeasureImage = _ => Task.FromResult<PixelSize?>(new PixelSize(200, 100));
+        editor.ReadClipboardFilePaths = () => Task.FromResult<System.Collections.Generic.IReadOnlyList<string>?>(new[] { copied });
+        var designer = Named<CustomSlideDesigner>(editor, "VisualEditor");
+        designer.DataContext = slide; // as in CtrlD_ThroughEditor: no window, so set it like the binding would
+
+        Assert.IsTrue(designer.HandleKey(Avalonia.Input.Key.V, Avalonia.Input.KeyModifiers.Control));
+        await Pumped(editor.PendingImageAction);
+        Assert.AreEqual("copied.png", System.IO.Path.GetFileName(((ImageElement)slide.SlideElements[0]).FilePath));
+
+        designer.OnFilesDropped(new[] { dropped }, new Point(300, 300));
+        await Pumped(editor.PendingImageAction);
+        var image = (ImageElement)slide.SlideElements[0];
+        Assert.AreEqual("dropped.png", System.IO.Path.GetFileName(image.FilePath));
+        Assert.AreEqual(300 - 100, image.X, "centred on the drop point");
+        Assert.AreEqual(300 - 50, image.Y);
+    });
 }

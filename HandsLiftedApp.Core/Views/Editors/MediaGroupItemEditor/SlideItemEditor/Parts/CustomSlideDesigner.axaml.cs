@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
@@ -13,9 +14,11 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Core.Render.Skia;
+using HandsLiftedApp.Core.Utils;
 using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
 using HandsLiftedApp.Data.Data.Models.Slides;
 using HandsLiftedApp.Data.Models.SlideElement;
@@ -71,6 +74,73 @@ namespace HandsLiftedApp.Core.Views.Editors
                 _zoomBorder.ZoomChanged += ZoomBorder_ZoomChanged;
                 // Fit the slide once the zoom border first has a size (this used to be a fixed 1 s sleep on the UI thread).
                 _zoomBorder.SizeChanged += ZoomBorder_FirstSizeChanged;
+            }
+
+            // dropped picture files (AllowDrop is set on the scroll viewer in AXAML and inherited by everything in it)
+            MainScrollViewer.AddHandler(DragDrop.DragOverEvent, Canvas_DragOver);
+            MainScrollViewer.AddHandler(DragDrop.DropEvent, Canvas_Drop);
+        }
+
+        // ---------------- dropped / pasted picture files ----------------
+
+        /// <summary>Raised when picture files are dropped on the canvas: their local paths and the slide point.</summary>
+        public event Action<IReadOnlyList<string>, Point>? ImageFilesDropped;
+
+        /// <summary>Raised by Ctrl+V on the canvas (not while typing in the inline box); the editor reads the clipboard.</summary>
+        public event EventHandler? PasteRequested;
+
+        /// <summary>The paths among <paramref name="paths"/> that are pictures by extension (any case), in order.</summary>
+        internal static IReadOnlyList<string> ImageFilePaths(IEnumerable<string?>? paths) =>
+            paths?.Where(PortableAssetCopier.IsImageFile).Select(p => p!).ToList() ?? new List<string>();
+
+        /// <summary>Copy when the drag carries at least one picture file, otherwise None (the drop is refused).</summary>
+        internal static DragDropEffects DropEffectFor(IEnumerable<string?>? paths) =>
+            ImageFilePaths(paths).Count > 0 ? DragDropEffects.Copy : DragDropEffects.None;
+
+        /// <summary>
+        /// Reports the picture files among <paramref name="paths"/> dropped at <paramref name="slidePoint"/> (slide
+        /// coordinates). Returns whether there were any.
+        /// </summary>
+        internal bool OnFilesDropped(IEnumerable<string?>? paths, Point slidePoint)
+        {
+            var images = ImageFilePaths(paths);
+            if (images.Count == 0) return false;
+            ImageFilesDropped?.Invoke(images, slidePoint);
+            return true;
+        }
+
+        private static IReadOnlyList<string?> LocalPaths(IDataTransfer? data)
+        {
+            try
+            {
+                return data?.TryGetFiles()?.Select(item => item.TryGetLocalPath()).ToList() ?? new List<string?>();
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning(ex, "Custom slide designer: could not read the dragged files");
+                return new List<string?>();
+            }
+        }
+
+        private void Canvas_DragOver(object? sender, DragEventArgs e)
+        {
+            e.DragEffects &= DropEffectFor(LocalPaths(e.DataTransfer));
+            e.Handled = true;
+        }
+
+        private void Canvas_Drop(object? sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            // Root's coordinates are slide coordinates, whatever the zoom and pan
+            if (OnFilesDropped(LocalPaths(e.DataTransfer), e.GetPosition(Root)))
+            {
+                e.DragEffects &= DragDropEffects.Copy;
+                // so the canvas shortcuts (Delete, arrows, Ctrl+Z) work on the dropped pictures straight away
+                _zoomBorder?.Focus();
+            }
+            else
+            {
+                e.DragEffects = DragDropEffects.None;
             }
         }
 
@@ -134,13 +204,22 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         /// <summary>
         /// The canvas keyboard shortcuts: Delete/Back remove the selected element, arrows nudge it 1 px (Shift: 10),
-        /// Ctrl+D duplicates it and selects the copy, Esc deselects, Enter/F2 edit a selected text element.
-        /// Returns whether the key was handled; always false with nothing selected or while typing in the inline box.
+        /// Ctrl+D duplicates it and selects the copy, Esc deselects, Enter/F2 edit a selected text element, Ctrl+V raises
+        /// <see cref="PasteRequested"/> (with or without a selection). Returns whether the key was handled; always
+        /// false while typing in the inline box (the text box pastes text itself), and false with nothing selected
+        /// for every key except Ctrl+V.
         /// </summary>
         internal bool HandleKey(Key key, KeyModifiers modifiers)
         {
             if (InlineEditor.IsEditing) return false;
             if (DataContext is not CustomSlide slide) return false;
+
+            if (key == Key.V && modifiers == KeyModifiers.Control)
+            {
+                PasteRequested?.Invoke(this, EventArgs.Empty);
+                return true;
+            }
+
             var element = _selectedElement;
             if (element == null || !slide.SlideElements.Contains(element)) return false;
 
