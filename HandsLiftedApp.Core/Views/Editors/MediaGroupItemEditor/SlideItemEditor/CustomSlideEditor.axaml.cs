@@ -96,8 +96,16 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         private void WireToolbar()
         {
-            Toolbar.UndoRequested += (_, _) => _activeHistory?.Stack.Undo();
-            Toolbar.RedoRequested += (_, _) => _activeHistory?.Stack.Redo();
+            Toolbar.UndoRequested += (_, _) =>
+            {
+                CommitInlineEdit();
+                _activeHistory?.Stack.Undo();
+            };
+            Toolbar.RedoRequested += (_, _) =>
+            {
+                CommitInlineEdit();
+                _activeHistory?.Stack.Redo();
+            };
             Toolbar.AddTextRequested += (_, _) => AddText();
             Toolbar.AddImageRequested += (_, _) => AddImage();
             Toolbar.DuplicateRequested += (_, _) => Duplicate(SelectedElement);
@@ -124,18 +132,28 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             VisualEditor.BeginEdit(element, selectAll: true);
         }
 
+        /// <summary>
+        /// Ends an open inline text edit (writing the typed text as its one undo step) before an action that works on
+        /// the model. Toolbar buttons and menus cannot take focus, so clicking one does not end the edit by itself;
+        /// without this a duplicate copies the old text, a delete cancels the edit, and undo throws the typing away.
+        /// </summary>
+        private void CommitInlineEdit() => VisualEditor.CommitEdit();
+
         private void AddImage()
         {
+            CommitInlineEdit();
             if (DataContext is CustomSlide vm) Select(SlideElementCommands.AddImage(vm));
         }
 
         private void Duplicate(SlideElement? element)
         {
+            CommitInlineEdit();
             if (DataContext is CustomSlide vm && element != null) Select(SlideElementCommands.Duplicate(vm, element));
         }
 
         private void Delete(SlideElement? element)
         {
+            CommitInlineEdit();
             if (DataContext is CustomSlide vm) SlideElementCommands.Delete(vm, element);
         }
 
@@ -143,12 +161,14 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         // selection; select it again explicitly rather than relying on the order of CollectionChanged handlers.
         private void BringForward(SlideElement? element)
         {
+            CommitInlineEdit();
             if (DataContext is CustomSlide vm && element != null && SlideElementCommands.BringForward(vm, element))
                 Select(element);
         }
 
         private void SendBackward(SlideElement? element)
         {
+            CommitInlineEdit();
             if (DataContext is CustomSlide vm && element != null && SlideElementCommands.SendBackward(vm, element))
                 Select(element);
         }
@@ -217,6 +237,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         /// <summary>Asks for a picture and puts it in the element, fitting the box to it (one undo step).</summary>
         private async Task ReplaceImageAsync(ImageElement imageElement)
         {
+            CommitInlineEdit();
             var result = await SelectFilePicker();
             if (string.IsNullOrWhiteSpace(result)) return;
 
@@ -236,6 +257,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         /// <summary>Gives the element its current picture's proportions (one undo step).</summary>
         private async Task FitImageAsync(ImageElement imageElement)
         {
+            CommitInlineEdit();
             var path = imageElement.FilePath;
             if (string.IsNullOrWhiteSpace(path)) return;
 

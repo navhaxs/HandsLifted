@@ -399,6 +399,73 @@ public class InlineTextEditorTests
         return Task.CompletedTask;
     });
 
+    private static (CustomSlideEditor Editor, CustomSlide Slide, CustomSlideDesigner Designer, InlineTextEditor Overlay,
+        CustomSlideToolbar Toolbar, TextElement Text, CustomSlideEditHistory History) CreateEditorEditing()
+    {
+        AvaloniaTextRendering.EnsureInitialized();
+        var text = new TextElement { Text = "Text" };
+        var slide = new CustomSlide();
+        slide.SlideElements.Add(text);
+        var editor = new CustomSlideEditor { DataContext = slide };
+        var designer = editor.FindControl<CustomSlideDesigner>("VisualEditor")!;
+        designer.DataContext = slide;
+        // no window in the test host, so give the editor the history it would get when attached
+        var history = new CustomSlideEditHistory(slide);
+        typeof(CustomSlideEditor).GetField("_activeHistory",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.SetValue(editor, history);
+        editor.FindControl<ListBox>("ListBox")!.SelectedItem = text;
+        var overlay = designer.FindControl<InlineTextEditor>("InlineEditor")!;
+        designer.BeginEdit(text);
+        overlay.Text = "Hello";
+        history.Stack.Clear();
+        return (editor, slide, designer, overlay, editor.FindControl<CustomSlideToolbar>("Toolbar")!, text, history);
+    }
+
+    [TestMethod]
+    public Task ToolbarDuplicate_WhileEditing_CopiesTheTypedText() => DispatcherTestThread.Run(() =>
+    {
+        var (_, slide, designer, _, toolbar, text, _) = CreateEditorEditing();
+
+        toolbar.FindControl<Button>("DuplicateButton")!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+        Assert.IsFalse(designer.IsEditing);
+        Assert.AreEqual("Hello", text.Text);
+        Assert.AreEqual(2, slide.SlideElements.Count);
+        Assert.IsTrue(slide.SlideElements.OfType<TextElement>().All(t => t.Text == "Hello"), "the copy carries the typed text");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task ToolbarDelete_WhileEditing_UndoRestoresTypedText() => DispatcherTestThread.Run(() =>
+    {
+        var (_, slide, _, _, toolbar, _, history) = CreateEditorEditing();
+
+        toolbar.FindControl<Button>("DeleteButton")!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Assert.AreEqual(0, slide.SlideElements.Count);
+
+        history.Stack.Undo(); // the delete
+        history.Stack.Undo(); // the text edit that was committed first
+        Assert.AreEqual("Text", slide.SlideElements.OfType<TextElement>().Single().Text);
+        history.Stack.Redo();
+        Assert.AreEqual("Hello", slide.SlideElements.OfType<TextElement>().Single().Text);
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task ToolbarUndo_WhileEditing_CommitsThenUndoesTheTyping() => DispatcherTestThread.Run(() =>
+    {
+        var (_, slide, designer, _, toolbar, text, history) = CreateEditorEditing();
+
+        toolbar.FindControl<Button>("UndoButton")!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+        Assert.IsFalse(designer.IsEditing);
+        Assert.AreEqual(1, slide.SlideElements.Count, "the element survives: only the typing was undone");
+        Assert.AreEqual("Text", text.Text);
+        Assert.IsFalse(history.Stack.CanUndo, "the typing was exactly one step");
+        Assert.AreEqual("Redo Edit Text", history.Stack.RedoMenuText);
+        return Task.CompletedTask;
+    });
+
     [TestMethod]
     public Task AddedTextElement_StartsEditingWithAllSelected() => DispatcherTestThread.Run(() =>
     {
