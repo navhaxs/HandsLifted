@@ -123,6 +123,18 @@ public class SlideElementCommandsTests
     });
 
     [TestMethod]
+    public Task AddText_StartsWithAUsableBoxSize() => DispatcherTestThread.Run(() =>
+    {
+        // the model's 100x100 default only fits "Te" at the default 90pt font size
+        var el = SlideElementCommands.AddText(new CustomSlide());
+
+        Assert.AreEqual(SlideElementCommands.DefaultTextWidth, el.Width);
+        Assert.AreEqual(SlideElementCommands.DefaultTextHeight, el.Height);
+        Assert.IsTrue(el.Width >= 1000 && el.Height >= 200, "box is big enough for a line or two at the default font size");
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
     public Task AddText_IsCentredAndFrontmost() => DispatcherTestThread.Run(() =>
     {
         var slide = new CustomSlide();

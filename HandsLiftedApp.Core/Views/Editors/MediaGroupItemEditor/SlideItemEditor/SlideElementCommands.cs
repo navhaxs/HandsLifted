@@ -65,9 +65,16 @@ public static class SlideElementCommands
         return true;
     }
 
+    /// <summary>
+    /// Starting box for a new text element. The model's own 100x100 default only fits "Te" at the default 90pt
+    /// font size, so a freshly added box would look broken.
+    /// </summary>
+    public const int DefaultTextWidth = 1200;
+    public const int DefaultTextHeight = 300;
+
     public static TextElement AddText(CustomSlide slide)
     {
-        var element = new TextElement { Text = "Text" };
+        var element = new TextElement { Text = "Text", Width = DefaultTextWidth, Height = DefaultTextHeight };
         AddCentred(slide, element);
         return element;
     }

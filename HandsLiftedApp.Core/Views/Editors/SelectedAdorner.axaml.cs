@@ -24,6 +24,7 @@ namespace PerspectiveDemo
 
         private Canvas? _canvas;
         private Thumb? _drag;
+        private Rectangle? _border;
         private Thumb? _top;
         private Thumb? _bottom;
         private Thumb? _left;
@@ -193,6 +194,10 @@ namespace PerspectiveDemo
                 if (_bottomLeft != null) _bottomLeft.RenderTransform = inverseTransform;
                 if (_bottomRight != null) _bottomRight.RenderTransform = inverseTransform;
 
+                // The outline is scaled by the zoom with the slide, so counter-scale its stroke to keep a constant
+                // 2 screen pixels (the handles above do the same through their inverse transform).
+                if (_border != null) _border.StrokeThickness = 2.0 / Math.Max(zoomX, 0.01);
+
                 // Also apply to snap lines if they exist
                 if (verticalLine != null) verticalLine.RenderTransform = inverseTransform;
                 if (horizontalLine != null) horizontalLine.RenderTransform = inverseTransform;
@@ -224,6 +229,7 @@ namespace PerspectiveDemo
 
             _canvas = e.NameScope.Find<Canvas>("PART_Canvas");
             _drag = e.NameScope.Find<Thumb>("PART_Drag");
+            _border = e.NameScope.Find<Rectangle>("PART_Border");
             _top = e.NameScope.Find<Thumb>("PART_Top");
             _bottom = e.NameScope.Find<Thumb>("PART_Bottom");
             _left = e.NameScope.Find<Thumb>("PART_Left");
@@ -471,6 +477,15 @@ namespace PerspectiveDemo
 
         private void UpdateDrag(Rect rect)
         {
+            if (_border is { })
+            {
+                Canvas.SetLeft(_border, rect.Left);
+                Canvas.SetTop(_border, rect.Top);
+
+                _border.Width = rect.Width;
+                _border.Height = rect.Height;
+            }
+
             if (_drag is { })
             {
                 Canvas.SetLeft(_drag, rect.Left);

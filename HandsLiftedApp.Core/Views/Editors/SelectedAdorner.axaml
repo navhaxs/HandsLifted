@@ -11,6 +11,8 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Canvas Name="PART_Canvas">
+          <!-- outline of the selected element; purely visual (drawn under the thumbs, never hit-tested) -->
+          <Rectangle Name="PART_Border" Classes="selectionBorder" IsHitTestVisible="False" />
           <Thumb Name="PART_Drag" Classes="drag sizeAll"  />
           <Thumb Name="PART_Top" Classes="resize topSide"  />
           <Thumb Name="PART_Bottom" Classes="resize bottomSide"  />
@@ -29,6 +31,13 @@
     <!-- <Setter Property="Background" Value="Transparent" /> -->
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Rectangle.selectionBorder">
+    <Setter Property="Fill" Value="Transparent" />
+    <Setter Property="Stroke" Value="#2D8CFF" />
+    <!-- StrokeThickness is set in code so the line stays the same width on screen at any zoom level -->
+    <Setter Property="StrokeThickness" Value="2" />
   </Style>
 
   <Style Selector="Thumb.drag">
