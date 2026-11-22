@@ -117,7 +117,11 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         private void AddText()
         {
-            if (DataContext is CustomSlide vm) Select(SlideElementCommands.AddText(vm));
+            if (DataContext is not CustomSlide vm) return;
+            var element = SlideElementCommands.AddText(vm);
+            Select(element);
+            // straight into typing, with the placeholder selected so the first keystroke replaces it
+            VisualEditor.BeginEdit(element, selectAll: true);
         }
 
         private void AddImage()

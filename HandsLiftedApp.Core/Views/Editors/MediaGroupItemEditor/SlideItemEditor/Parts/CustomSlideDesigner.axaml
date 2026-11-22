@@ -5,6 +5,7 @@
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
              xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
+             xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="400"
              x:DataType="slides:CustomSlide"
              ClipToBounds="True"
@@ -73,6 +74,12 @@
                              holds transparent hit-test proxies, one per element, that the selection adorner drives. -->
                         <skia:CustomSlideEditorCanvas Name="SlideCanvas" />
                         <Canvas Name="Root" Background="Transparent" />
+                        <!-- Inline text editing: the box sits over the element being typed into, above the proxies
+                             and inside this zoomed grid so it scales with the slide. No background, so the layer
+                             itself never takes the pointer. -->
+                        <Canvas Name="EditLayer">
+                            <editors:InlineTextEditor Name="InlineEditor" />
+                        </Canvas>
                     </Grid>
                 </ZoomBorder>
                 <!-- <Canvas Name="FrontCanvas" /> -->

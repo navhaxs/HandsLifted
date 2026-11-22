@@ -14,6 +14,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using HandsLiftedApp.Core.Render.Skia;
 using HandsLiftedApp.Core.ViewModels.SlideElementEditor;
 using HandsLiftedApp.Data.Data.Models.Slides;
@@ -56,6 +57,9 @@ namespace HandsLiftedApp.Core.Views.Editors
                 OnDeselectElement?.Invoke(this, new OnUpdateSelectedElementEventArgs(null));
             };
             
+            InlineEditor.Committed += OnInlineEditCommitted;
+            InlineEditor.ElementChanged += (_, _) => PositionInlineEditor();
+
             RegisterDataContext();
 
             DataContextChanged += (sender, args) => { RegisterDataContext(); };
@@ -101,6 +105,9 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private void ZoomBorder_KeyDown(object? sender, KeyEventArgs e)
         {
+            // keys typed into the inline text box bubble up here too: "f" must type an f, not fill the view
+            if (e.Handled || InlineEditor.IsEditing || e.Source is TextBox) return;
+
             switch (e.Key)
             {
                 case Key.F:
@@ -142,8 +149,89 @@ namespace HandsLiftedApp.Core.Views.Editors
         private ObservableCollection<SlideElement>? _watchedElements;
         private CustomSlide? _renderedSlide;
 
+        // ---------------- inline text editing ----------------
+
+        /// <summary>True while a text element is being typed into on the canvas.</summary>
+        public bool IsEditing => InlineEditor.IsEditing;
+
+        /// <summary>The element being typed into, or null.</summary>
+        public TextElement? EditingElement => InlineEditor.Element;
+
+        /// <summary>
+        /// Opens the inline text box over <paramref name="el"/> (which must be on the slide shown). Its canvas text is
+        /// hidden while editing, and the selection handles are put away so clicks reach the box. With
+        /// <paramref name="selectAll"/> the current text is selected so typing replaces it.
+        /// </summary>
+        public void BeginEdit(TextElement el, bool selectAll = false)
+        {
+            if (_renderedSlide == null || !_renderedSlide.SlideElements.Contains(el)) return;
+            if (ReferenceEquals(InlineEditor.Element, el)) return;
+
+            CommitEdit();
+
+            // The selection adorner lives in the window's adorner layer, above this canvas; its drag thumb covers the
+            // element and would take every click meant for the text box. It comes back on commit.
+            RemoveSelected();
+
+            HiddenTextElement = el;
+            InlineEditor.Begin(el, selectAll);
+            PositionInlineEditor();
+        }
+
+        /// <summary>Ends the inline edit, writing the text to the element only if it changed (one undo step).</summary>
+        public void CommitEdit() => InlineEditor.Commit();
+
+        private void OnInlineEditCommitted(TextElement el, string newText)
+        {
+            if (ReferenceEquals(HiddenTextElement, el)) HiddenTextElement = null;
+
+            // Ended with Esc (not by clicking somewhere else): the hidden box had the focus, so give it to the canvas
+            // so the editor's keys (undo, and the canvas shortcuts) keep working.
+            var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+            if (focused == null || ReferenceEquals(focused, InlineEditor)) _zoomBorder?.Focus();
+
+            var onSlide = _renderedSlide != null && _renderedSlide.SlideElements.Contains(el);
+            if (!onSlide) return;
+
+            if (el.Text != newText) el.Text = newText;
+
+            // Put the handles back on the element, unless the click that ended the edit already selected something
+            // else (that click's own handler runs after the focus change that commits, and wins either way).
+            if (_selected == null) SelectElement(el);
+        }
+
+        /// <summary>Ends an edit whose element is no longer on the slide shown, without writing to it.</summary>
+        private void CancelEditIfElementGone()
+        {
+            var el = InlineEditor.Element;
+            if (el == null) return;
+            if (_renderedSlide != null && _renderedSlide.SlideElements.Contains(el)) return;
+
+            InlineEditor.Cancel();
+            if (ReferenceEquals(HiddenTextElement, el)) HiddenTextElement = null;
+        }
+
+        private void PositionInlineEditor()
+        {
+            if (InlineEditor.Element is not { } el) return;
+            Canvas.SetLeft(InlineEditor, el.X);
+            Canvas.SetTop(InlineEditor, el.Y);
+        }
+
+        // Opens the edit after the double-click's own pointer handling (focus on press, pointer capture) is done, so
+        // that does not immediately take the focus back from the box.
+        private void BeginEditAfterDoubleClick(SlideElement? element)
+        {
+            if (element is not TextElement text) return;
+            Dispatcher.UIThread.Post(() => BeginEdit(text));
+        }
+
         private void RegisterDataContext()
         {
+            // The text being typed belongs to the slide shown until now.
+            CommitEdit();
+            CancelEditIfElementGone();
+
             _slideElementsSubscription?.Dispose();
             _slideElementsSubscription = null;
             WatchElements(null);
@@ -158,7 +246,10 @@ namespace HandsLiftedApp.Core.Views.Editors
                 Render(customSlide);
 
                 // The collection itself can be swapped (e.g. undo/redo or code edits replacing the list).
+                // Skip the current list: it was just rendered above (rendering it again later would also rebuild the
+                // proxies under an open inline edit for nothing).
                 _slideElementsSubscription = customSlide.WhenAnyValue(x => x.SlideElements)
+                    .Skip(1)
                     .ObserveOn(RxSchedulers.MainThreadScheduler)
                     .Subscribe(elements =>
                     {
@@ -198,6 +289,9 @@ namespace HandsLiftedApp.Core.Views.Editors
             var selectedElement = _selected?.Control?.DataContext as SlideElement;
             RemoveSelected();
 
+            // e.g. the element being typed into was deleted, or an undo replaced it
+            CancelEditIfElementGone();
+
             Root.Children.Clear();
             foreach (SlideElement slideElement in customSlide.SlideElements.Reverse())
             {
@@ -209,6 +303,8 @@ namespace HandsLiftedApp.Core.Views.Editors
                     AddSelected(proxy, Root);
                     _zoomBorder?.Focus();
                     e.Handled = true;
+                    if (e.ClickCount == 2 && e.GetCurrentPoint(proxy).Properties.IsLeftButtonPressed)
+                        BeginEditAfterDoubleClick(slideElement);
                 };
 
                 Root.Children.Add(proxy);
@@ -294,6 +390,12 @@ namespace HandsLiftedApp.Core.Views.Editors
             // Calculate clipping bounds in the adorner's coordinate system
             UpdateAdornerClippingBounds();
 
+            // Once an element is selected its handles' drag thumb covers it, so the second click of a double-click
+            // lands on the adorner, not the proxy (the adorner layer is not under this control, so it is caught here).
+            // The thumb marks the press handled, hence handledEventsToo.
+            _selected.AddHandler(InputElement.PointerPressedEvent, OnAdornerPointerPressed, RoutingStrategies.Bubble,
+                handledEventsToo: true);
+
             ((ISetLogicalParent)_selected).SetParent(canvas);
             layer.Children.Add(_selected);
             
@@ -304,6 +406,16 @@ namespace HandsLiftedApp.Core.Views.Editors
             OnUpdateSelectedElement(this, args);
         }
         
+        private void OnAdornerPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (sender is not SelectedAdorner adorner || e.ClickCount != 2) return;
+            if (!e.GetCurrentPoint(adorner).Properties.IsLeftButtonPressed) return;
+            // only the body (drag thumb), not a resize handle
+            var thumb = (e.Source as Visual)?.FindAncestorOfType<Thumb>(includeSelf: true);
+            if (thumb?.Name != "PART_Drag") return;
+            BeginEditAfterDoubleClick(adorner.Control?.DataContext as SlideElement);
+        }
+
         private void UpdateAdornerClippingBounds()
         {
             if (_selected == null) return;
