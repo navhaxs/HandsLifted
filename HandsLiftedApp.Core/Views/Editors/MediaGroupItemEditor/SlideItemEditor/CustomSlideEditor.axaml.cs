@@ -123,16 +123,6 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
 
-        private void AddSlideElement(SlideElement slideElement)
-        {
-            if (this.DataContext is CustomSlide vm)
-            {
-                slideElement.X = vm.SlideWidth / 2 - slideElement.Width / 2;
-                slideElement.Y = vm.SlideHeight / 2 - slideElement.Height / 2;
-                vm.SlideElements.Add(slideElement);
-            }
-        }
-
         private async void ChangeImageElement_OnClick(object? sender, RoutedEventArgs e)
         {
             if (sender is Control control)
@@ -196,77 +186,36 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         
         private void ButtonAddTextElement_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm)
-            {
-                AddSlideElement(new TextElement());
-            }
+            if (this.DataContext is CustomSlide vm) SlideElementCommands.AddText(vm);
         }
-        
+
         private void ButtonAddImageElement_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm)
-            {
-                AddSlideElement(new ImageElement());
-            }
+            if (this.DataContext is CustomSlide vm) SlideElementCommands.AddImage(vm);
         }
 
         private void MoveItemUp_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm)
-            {
-                if (sender is Control { DataContext: SlideElement slideElement })
-                {
-                    var indexOf = vm.SlideElements.IndexOf(slideElement);
-                    vm.SlideElements.Move(indexOf, Math.Max(indexOf - 1, 0));
-                }
-            }
+            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
+                SlideElementCommands.BringForward(vm, el);
         }
 
         private void MoveItemDown_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm)
-            {
-                if (sender is Control { DataContext: SlideElement slideElement })
-                {
-                    var indexOf = vm.SlideElements.IndexOf(slideElement);
-                    vm.SlideElements.Move(indexOf, Math.Min(indexOf + 1, vm.SlideElements.Count - 1));
-                }
-            }
+            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
+                SlideElementCommands.SendBackward(vm, el);
         }
 
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm)
-            {
-                if (sender is Control { DataContext: SlideElement slideElement })
-                {
-                    vm.SlideElements.Remove(slideElement);
-                }
-            }
+            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
+                SlideElementCommands.Delete(vm, el);
         }
 
         private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm)
-            {
-                if (sender is Control { DataContext: SlideElement slideElement })
-                {
-                    
-                    
-                    XmlSerializer serializer = new XmlSerializer(typeof(SlideElement));
-                    using (StringWriter writer = new())
-                    {
-                        serializer.Serialize(writer, slideElement);
-                        var obj = writer.ToString();
-                        
-                        using (StringReader reader = new StringReader(obj))
-                        {
-                            vm.SlideElements.Add(serializer.Deserialize(reader) as SlideElement);
-                        }
-                    }
-                    
-                }
-            }
+            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
+                SlideElementCommands.Duplicate(vm, el);
         }
 
         private void UpdateXmlButton_OnClick(object? sender, RoutedEventArgs e)
