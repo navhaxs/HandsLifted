@@ -37,13 +37,9 @@ namespace HandsLiftedApp.Core.Utils
 
             var fullMediaLibraryPath = RequireMediaLibrary(mediaLibraryPath);
 
-            if (Path.IsPathFullyQualified(filePath) &&
-                RelativeFilePathResolver.IsUnderDirectory(fullMediaLibraryPath, Path.GetFullPath(filePath)))
-            {
-                return Path.GetFullPath(filePath);
-            }
-
-            return CopyMediaOrPresentationIntoPlaylist(filePath, fullMediaLibraryPath);
+            return TryResolveInsideLibrary(filePath, fullMediaLibraryPath, out var resolved)
+                ? resolved
+                : CopyMediaOrPresentationIntoPlaylist(filePath, fullMediaLibraryPath);
         }
 
         /// <summary>
@@ -69,13 +65,23 @@ namespace HandsLiftedApp.Core.Utils
 
             var fullMediaLibraryPath = RequireMediaLibrary(mediaLibraryPath);
 
+            return TryResolveInsideLibrary(filePath, fullMediaLibraryPath, out var resolved)
+                ? resolved
+                : CopyIntoSubfolder(filePath, fullMediaLibraryPath, PastedSubfolder);
+        }
+
+        /// <summary>A file already under the library is referenced in place (its full path), never copied.</summary>
+        private static bool TryResolveInsideLibrary(string filePath, string fullMediaLibraryPath, out string resolved)
+        {
             if (Path.IsPathFullyQualified(filePath) &&
                 RelativeFilePathResolver.IsUnderDirectory(fullMediaLibraryPath, Path.GetFullPath(filePath)))
             {
-                return Path.GetFullPath(filePath);
+                resolved = Path.GetFullPath(filePath);
+                return true;
             }
 
-            return CopyIntoSubfolder(filePath, fullMediaLibraryPath, PastedSubfolder);
+            resolved = filePath;
+            return false;
         }
 
         /// <summary>Whether the path has one of the <see cref="Constants.SUPPORTED_IMAGE"/> extensions (any case).</summary>

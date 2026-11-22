@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Views.Editors;
 using HandsLiftedApp.Core.Views.Editors.FreeText;
@@ -242,13 +243,109 @@ public class CustomSlideDesignerKeyboardTests
     }
 
     [TestMethod]
-    public void DropEffectFor_CopyOnlyWhenAtLeastOneImageFile()
+    public void DropEffectFor_AcceptsFiles_RefusesOnlyWhatIsReadableAndHasNoImage()
     {
-        Assert.AreEqual(DragDropEffects.Copy, CustomSlideDesigner.DropEffectFor(new[] { @"C:\a\clip.mp4", @"C:\a\one.png" }));
-        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(new[] { @"C:\a\clip.mp4", @"C:\a\notes.txt" }));
-        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(Array.Empty<string?>()));
-        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(null));
+        // no files in the drag at all (e.g. text): refused
+        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(false, null));
+        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(false, new[] { @"C:\a\one.png" }));
+
+        // files whose list can't be read during the drag: accepted (the drop itself filters)
+        Assert.AreEqual(DragDropEffects.Copy, CustomSlideDesigner.DropEffectFor(true, null));
+        Assert.AreEqual(DragDropEffects.Copy, CustomSlideDesigner.DropEffectFor(true, Array.Empty<string?>()));
+        Assert.AreEqual(DragDropEffects.Copy, CustomSlideDesigner.DropEffectFor(true, new string?[] { null }), "no local paths");
+
+        // readable list: accepted with at least one picture, refused with none
+        Assert.AreEqual(DragDropEffects.Copy, CustomSlideDesigner.DropEffectFor(true, new[] { @"C:\a\clip.mp4", @"C:\a\one.png" }));
+        Assert.AreEqual(DragDropEffects.None, CustomSlideDesigner.DropEffectFor(true, new[] { @"C:\a\clip.mp4", @"C:\a\notes.txt" }));
     }
+
+    // A dragged file. IStorageFile is not implementable by user code, so use Avalonia's own (internal) file-system
+    // implementation by reflection; the file need not exist, only its path matters. Expect this to break on an
+    // Avalonia upgrade if that type moves.
+    private static Avalonia.Platform.Storage.IStorageItem StorageFile(string path)
+    {
+        var type = typeof(Avalonia.Platform.Storage.IStorageFile).Assembly
+            .GetType("Avalonia.Platform.Storage.FileIO.BclStorageFile", throwOnError: true)!;
+        return (Avalonia.Platform.Storage.IStorageItem)Activator.CreateInstance(type,
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic,
+            null, new object[] { new System.IO.FileInfo(path) }, null)!;
+    }
+
+    private static DataTransfer FilesTransfer(params string[] paths)
+    {
+        var data = new DataTransfer();
+        foreach (var p in paths) data.Add(DataTransferItem.CreateFile(StorageFile(p)));
+        return data;
+    }
+
+    // The selection adorner lives in the window's adorner layer, OUTSIDE the designer's visual tree, and covers the
+    // selected element (a picture fitted to the slide covers the whole slide). The test host has no window,
+    // so an AdornerLayer next to the designer stands in for the window's: drag events raised on the adorner bubble
+    // through that layer, never through the designer's scroll viewer, as in the app.
+    [TestMethod]
+    public Task DropOverTheSelectionAdorner_ReachesTheDesigner() => DispatcherTestThread.Run(() =>
+    {
+        AvaloniaTextRendering.EnsureInitialized();
+        var image = new ImageElement { X = 0, Y = 0, Width = 1920, Height = 1080 };
+        var slide = new CustomSlide();
+        slide.SlideElements.Add(image);
+        var designer = new CustomSlideDesigner { DataContext = slide };
+        // AdornerLayer's constructor is internal and a VisualLayerManager only creates one once attached to a window
+        var layer = (Avalonia.Controls.Primitives.AdornerLayer)Activator.CreateInstance(
+            typeof(Avalonia.Controls.Primitives.AdornerLayer), nonPublic: true)!;
+        designer.AdornerLayerLookup = _ => layer;
+        var window = new Panel { Children = { designer, layer } }; // the layer is a sibling branch, as in a window
+        AvaloniaTextRendering.Layout(window, 800, 450);
+        designer.SelectElement(image);
+        var adorner = designer.SelectionAdorner;
+        Assert.IsNotNull(adorner, "a real adorner was created in the adorner layer");
+        Assert.AreSame(layer, adorner.GetVisualParent());
+        Assert.IsFalse(designer.IsVisualAncestorOf(adorner), "and it is outside the designer, as in the app");
+
+        System.Collections.Generic.IReadOnlyList<string>? reported = null;
+        designer.ImageFilesDropped += (paths, _) => reported = paths;
+
+        Assert.IsTrue(DragDrop.GetAllowDrop(adorner), "the adorner takes drops");
+
+        var over = new DragEventArgs(DragDrop.DragOverEvent, FilesTransfer(@"C:\a\one.png"), adorner, new Avalonia.Point(10, 10), KeyModifiers.None)
+            { DragEffects = DragDropEffects.Copy | DragDropEffects.Move };
+        adorner.RaiseEvent(over);
+        Assert.IsTrue(over.Handled);
+        Assert.AreEqual(DragDropEffects.Copy, over.DragEffects);
+
+        var drop = new DragEventArgs(DragDrop.DropEvent, FilesTransfer(@"C:\a\one.png", @"C:\a\notes.txt"), adorner, new Avalonia.Point(10, 10), KeyModifiers.None)
+            { DragEffects = DragDropEffects.Copy };
+        adorner.RaiseEvent(drop);
+        Assert.IsNotNull(reported, "the drop reached the designer");
+        CollectionAssert.AreEqual(new[] { @"C:\a\one.png" }, reported.ToList());
+
+        // a rebuilt adorner (reselect) gets the handlers too
+        designer.ClearSelection();
+        designer.SelectElement(image);
+        Assert.AreNotSame(adorner, designer.SelectionAdorner);
+        Assert.IsTrue(DragDrop.GetAllowDrop(designer.SelectionAdorner!));
+        return Task.CompletedTask;
+    });
+
+    [TestMethod]
+    public Task DragOverTheCanvas_WithFiles_IsAccepted_WithText_IsRefused() => DispatcherTestThread.Run(() =>
+    {
+        var (designer, _, _, _) = Create();
+        var scroll = designer.FindControl<ScrollViewer>("MainScrollViewer")!;
+
+        var files = new DragEventArgs(DragDrop.DragOverEvent, FilesTransfer(@"C:\a\one.png"), scroll, default, KeyModifiers.None)
+            { DragEffects = DragDropEffects.Copy | DragDropEffects.Move };
+        scroll.RaiseEvent(files);
+        Assert.AreEqual(DragDropEffects.Copy, files.DragEffects);
+
+        var textData = new DataTransfer();
+        textData.Add(DataTransferItem.CreateText("hello"));
+        var text = new DragEventArgs(DragDrop.DragOverEvent, textData, scroll, default, KeyModifiers.None)
+            { DragEffects = DragDropEffects.Copy | DragDropEffects.Move };
+        scroll.RaiseEvent(text);
+        Assert.AreEqual(DragDropEffects.None, text.DragEffects);
+        return Task.CompletedTask;
+    });
 
     [TestMethod]
     public Task DroppedImageFiles_AreReportedWithTheSlidePoint_NonImagesFilteredOut() => DispatcherTestThread.Run(() =>

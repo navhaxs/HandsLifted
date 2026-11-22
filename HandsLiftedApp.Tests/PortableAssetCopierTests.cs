@@ -279,6 +279,21 @@ public class PortableAssetCopierTests
     }
 
     [TestMethod]
+    public void ResolveOrCopyIntoPastedFolder_FileAlreadyInMediaPasted_IsReturnedUnchanged_NoSuffixedCopy()
+    {
+        var library = MakeLibrary();
+        var pasted = Path.Combine(library, "Media", "Pasted");
+        Directory.CreateDirectory(pasted);
+        var inPasted = Path.Combine(pasted, "photo.png");
+        File.WriteAllText(inPasted, "png-bytes");
+
+        var result = PortableAssetCopier.ResolveOrCopyIntoPastedFolder(inPasted, library);
+
+        Assert.AreEqual(inPasted, result);
+        CollectionAssert.AreEqual(new[] { inPasted }, Directory.GetFiles(pasted), "no hash-suffixed copy");
+    }
+
+    [TestMethod]
     public void ResolveOrCopyIntoPastedFolder_FileElsewhereInsideLibrary_IsReferencedInPlace()
     {
         var library = MakeLibrary();

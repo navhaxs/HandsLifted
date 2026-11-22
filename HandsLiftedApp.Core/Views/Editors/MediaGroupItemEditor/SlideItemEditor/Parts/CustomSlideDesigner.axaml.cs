@@ -76,9 +76,17 @@ namespace HandsLiftedApp.Core.Views.Editors
                 _zoomBorder.SizeChanged += ZoomBorder_FirstSizeChanged;
             }
 
-            // dropped picture files (AllowDrop is set on the scroll viewer in AXAML and inherited by everything in it)
-            MainScrollViewer.AddHandler(DragDrop.DragOverEvent, Canvas_DragOver);
-            MainScrollViewer.AddHandler(DragDrop.DropEvent, Canvas_Drop);
+            // dropped picture files: the scroll viewer covers the grey area, the slide and the proxies (AllowDrop is
+            // inherited); the selection adorner, outside this tree, gets the same in AddSelected
+            EnableImageDrop(MainScrollViewer);
+        }
+
+        /// <summary>Makes <paramref name="target"/> accept dropped picture files (DragOver/Drop handled here).</summary>
+        private void EnableImageDrop(Interactive target)
+        {
+            DragDrop.SetAllowDrop(target, true);
+            target.AddHandler(DragDrop.DragOverEvent, Canvas_DragOver);
+            target.AddHandler(DragDrop.DropEvent, Canvas_Drop);
         }
 
         // ---------------- dropped / pasted picture files ----------------
@@ -93,9 +101,21 @@ namespace HandsLiftedApp.Core.Views.Editors
         internal static IReadOnlyList<string> ImageFilePaths(IEnumerable<string?>? paths) =>
             paths?.Where(PortableAssetCopier.IsImageFile).Select(p => p!).ToList() ?? new List<string>();
 
-        /// <summary>Copy when the drag carries at least one picture file, otherwise None (the drop is refused).</summary>
-        internal static DragDropEffects DropEffectFor(IEnumerable<string?>? paths) =>
-            ImageFilePaths(paths).Count > 0 ? DragDropEffects.Copy : DragDropEffects.None;
+        /// <summary>
+        /// DragOver's answer: refused when the drag carries no files at all; accepted (Copy) when it does, unless its
+        /// file list is readable and holds no picture. A list that can't be read during the drag (null, empty, no
+        /// local paths) never refuses it: Drop filters the files again and does nothing without a picture.
+        /// </summary>
+        internal static DragDropEffects DropEffectFor(bool containsFiles, IReadOnlyList<string?>? readablePaths)
+        {
+            if (!containsFiles) return DragDropEffects.None;
+            var readable = readablePaths?.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            if (readable == null || readable.Count == 0) return DragDropEffects.Copy;
+            return ImageFilePaths(readable).Count > 0 ? DragDropEffects.Copy : DragDropEffects.None;
+        }
+
+        /// <summary>The selection adorner (in the window's adorner layer), or null; for tests.</summary>
+        internal Control? SelectionAdorner => _selected;
 
         /// <summary>
         /// Reports the picture files among <paramref name="paths"/> dropped at <paramref name="slidePoint"/> (slide
@@ -109,30 +129,33 @@ namespace HandsLiftedApp.Core.Views.Editors
             return true;
         }
 
-        private static IReadOnlyList<string?> LocalPaths(IDataTransfer? data)
+        /// <summary>The dragged files' local paths, or null when the list can't be read (never logs: DragOver calls it per move).</summary>
+        private static IReadOnlyList<string?>? TryLocalPaths(IDataTransfer? data)
         {
             try
             {
-                return data?.TryGetFiles()?.Select(item => item.TryGetLocalPath()).ToList() ?? new List<string?>();
+                return data?.TryGetFiles()?.Select(item => item.TryGetLocalPath()).ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Serilog.Log.Warning(ex, "Custom slide designer: could not read the dragged files");
-                return new List<string?>();
+                return null;
             }
         }
 
         private void Canvas_DragOver(object? sender, DragEventArgs e)
         {
-            e.DragEffects &= DropEffectFor(LocalPaths(e.DataTransfer));
+            var containsFiles = e.DataTransfer?.Contains(DataFormat.File) == true;
+            e.DragEffects &= DropEffectFor(containsFiles, containsFiles ? TryLocalPaths(e.DataTransfer) : null);
             e.Handled = true;
         }
 
         private void Canvas_Drop(object? sender, DragEventArgs e)
         {
             e.Handled = true;
-            // Root's coordinates are slide coordinates, whatever the zoom and pan
-            if (OnFilesDropped(LocalPaths(e.DataTransfer), e.GetPosition(Root)))
+            var paths = TryLocalPaths(e.DataTransfer);
+            if (paths == null) Serilog.Log.Warning("Custom slide designer: could not read the dropped files");
+            // Root's coordinates are slide coordinates, whatever the zoom and pan (and from the adorner layer too)
+            if (OnFilesDropped(paths, e.GetPosition(Root)))
             {
                 e.DragEffects &= DragDropEffects.Copy;
                 // so the canvas shortcuts (Delete, arrows, Ctrl+Z) work on the dropped pictures straight away
@@ -556,9 +579,15 @@ namespace HandsLiftedApp.Core.Views.Editors
         // where there is no adorner layer.
         private SlideElement? _selectedElement;
 
+        /// <summary>
+        /// Finds the adorner layer the selection adorner goes in (the window's). Injectable because a test host without
+        /// a window has none.
+        /// </summary>
+        internal Func<Visual, AdornerLayer?> AdornerLayerLookup { get; set; } = AdornerLayer.GetAdornerLayer;
+
         private void AddSelected(Control control, Canvas canvas)
         {
-            var layer = AdornerLayer.GetAdornerLayer(canvas);
+            var layer = AdornerLayerLookup(canvas);
             if (layer is null)
             {
                 _selectedElement = control.DataContext as SlideElement;
@@ -591,6 +620,10 @@ namespace HandsLiftedApp.Core.Views.Editors
             // The thumb marks the press handled, hence handledEventsToo.
             _selected.AddHandler(InputElement.PointerPressedEvent, OnAdornerPointerPressed, RoutingStrategies.Bubble,
                 handledEventsToo: true);
+
+            // Its drag thumb covers the element (a picture fitted to the slide covers the whole slide) and drag events
+            // bubble from it through the adorner layer, never through MainScrollViewer: take drops here too.
+            EnableImageDrop(_selected);
 
             ((ISetLogicalParent)_selected).SetParent(canvas);
             layer.Children.Add(_selected);
@@ -669,7 +702,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             var canvas = Root as Canvas;
             if (canvas != null)
             {
-                var layer = AdornerLayer.GetAdornerLayer(canvas);
+                var layer = AdornerLayerLookup(canvas);
                 if (layer != null)
                 {
                     layer.Children.Remove(_selected);

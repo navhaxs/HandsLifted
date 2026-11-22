@@ -57,7 +57,8 @@
             <!--               VerticalScrollBarVisibility="Auto" -->
             <!--               HorizontalScrollBarVisibility="Auto"> -->
             <!-- DragDrop.AllowDrop is inherited: dropped picture files are accepted over the grey area, the slide and
-                 its element proxies alike (see Canvas_DragOver / Canvas_Drop). -->
+                 its element proxies (see Canvas_DragOver / Canvas_Drop). The selection adorner lives in the window's
+                 adorner layer, outside this tree, so AddSelected gives it the same drop handlers. -->
             <ScrollViewer Name="MainScrollViewer"
                           DragDrop.AllowDrop="True"
                           VerticalScrollBarVisibility="Auto"
