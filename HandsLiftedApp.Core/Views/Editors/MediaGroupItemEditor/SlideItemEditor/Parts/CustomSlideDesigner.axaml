@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:extensions="clr-namespace:HandsLiftedApp.Extensions;assembly=HandsLiftedApp.Common"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
              xmlns:skia="clr-namespace:HandsLiftedApp.Core.Render.Skia"
@@ -20,22 +19,6 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <DockPanel DockPanel.Dock="Bottom">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Click="ButtonZoomOut_OnClick">
-                    <avalonia:MaterialIcon Kind="Minus" />
-                </Button>
-                <Slider Width="100" Minimum="0.01" Maximum="1.2" Value="{Binding #ZoomBorder.ZoomX, Mode=TwoWay}"
-                        ValueChanged="RangeBase_OnValueChanged" />
-                <Button Click="ButtonZoomIn_OnClick">
-                    <avalonia:MaterialIcon Kind="Plus" />
-                </Button>
-                <Separator />
-                <Button Click="ButtonResetZoom_OnClick">
-                    <avalonia:MaterialIcon Kind="Restart" />
-                </Button>
-            </StackPanel>
-        </DockPanel>
         <Grid>
 
             <!-- <Grid> -->

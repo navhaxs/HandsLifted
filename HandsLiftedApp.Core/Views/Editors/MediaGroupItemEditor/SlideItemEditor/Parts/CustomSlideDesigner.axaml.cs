@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.PanAndZoom;
@@ -66,15 +65,39 @@ namespace HandsLiftedApp.Core.Views.Editors
             {
                 _zoomBorder.KeyDown += ZoomBorder_KeyDown;
                 _zoomBorder.ZoomChanged += ZoomBorder_ZoomChanged;
-
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    Thread.Sleep(1_000);
-                    _zoomBorder.Uniform();
-                    _zoomBorder.ZoomOut();
-                });
+                // Fit the slide once the zoom border first has a size (this used to be a fixed 1 s sleep on the UI thread).
+                _zoomBorder.SizeChanged += ZoomBorder_FirstSizeChanged;
             }
         }
+
+        private bool _initialFitDone;
+
+        private void ZoomBorder_FirstSizeChanged(object? sender, SizeChangedEventArgs e)
+        {
+            if (_initialFitDone || _zoomBorder == null || e.NewSize.Width <= 0 || e.NewSize.Height <= 0) return;
+            _initialFitDone = true;
+            _zoomBorder.SizeChanged -= ZoomBorder_FirstSizeChanged;
+
+            // after the current layout pass, so the zoom border's bounds and its child are both arranged
+            Dispatcher.UIThread.Post(() =>
+            {
+                _zoomBorder.Uniform();
+                _zoomBorder.ZoomOut();
+            }, DispatcherPriority.Background);
+        }
+
+        /// <summary>The canvas zoom as a percentage (100 = the slide at its own pixel size).</summary>
+        public double ZoomPercent => (_zoomBorder?.ZoomX ?? 1.0) * 100.0;
+
+        /// <summary>Raised whenever the canvas zoom changes (buttons, mouse wheel, fit).</summary>
+        public event EventHandler? ZoomChanged;
+
+        public void ZoomIn() => _zoomBorder?.ZoomIn();
+
+        public void ZoomOut() => _zoomBorder?.ZoomOut();
+
+        /// <summary>Scales the slide to fit the visible canvas area.</summary>
+        public void FitToView() => _zoomBorder?.Uniform();
 
         private void ZoomBorder_KeyDown(object? sender, KeyEventArgs e)
         {
@@ -102,6 +125,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                 
             // Update adorner clipping bounds when zoom changes
             UpdateAdornerClippingBounds();
+            ZoomChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -169,6 +193,11 @@ namespace HandsLiftedApp.Core.Views.Editors
         /// </summary>
         public void Render(CustomSlide customSlide)
         {
+            // The proxies are rebuilt, so the selection adorner would be left on a detached one (e.g. after Bring
+            // forward or Duplicate): drop it and, if its element is still on the slide, put it on the new proxy.
+            var selectedElement = _selected?.Control?.DataContext as SlideElement;
+            RemoveSelected();
+
             Root.Children.Clear();
             foreach (SlideElement slideElement in customSlide.SlideElements.Reverse())
             {
@@ -184,7 +213,13 @@ namespace HandsLiftedApp.Core.Views.Editors
 
                 Root.Children.Add(proxy);
             }
+
+            if (selectedElement != null && customSlide.SlideElements.Contains(selectedElement))
+                SelectElement(selectedElement);
         }
+
+        /// <summary>Removes the selection adorner without raising <see cref="OnDeselectElement"/>.</summary>
+        public void ClearSelection() => RemoveSelected();
 
         private static Border CreateProxyForElement(SlideElement slideElement)
         {
@@ -347,27 +382,6 @@ namespace HandsLiftedApp.Core.Views.Editors
                     }
                 }
             }
-        }
-
-        private void ButtonResetZoom_OnClick(object? sender, RoutedEventArgs e)
-        {
-            _zoomBorder.Uniform();
-        }
-
-        private void ButtonZoomIn_OnClick(object? sender, RoutedEventArgs e)
-        {
-            _zoomBorder.ZoomIn();
-        }
-        
-        private void ButtonZoomOut_OnClick(object? sender, RoutedEventArgs e)
-        {
-            _zoomBorder.ZoomOut();
-        }
-
-        private void RangeBase_OnValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
-        {
-            // TODO actually want the centre point X, Y
-            _zoomBorder?.Zoom(e.NewValue, _zoomBorder.OffsetX, _zoomBorder.OffsetY);
         }
     }
 }

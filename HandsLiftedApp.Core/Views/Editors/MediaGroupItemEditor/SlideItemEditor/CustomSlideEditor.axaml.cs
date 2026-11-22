@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia;
@@ -39,7 +38,16 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 ListBox.SelectedItem = null;
             };
 
-            DataContextChanged += (_, _) => ActivateHistoryForCurrentSlide();
+            WireToolbar();
+            WireStatusBar();
+            SyncSelection();
+
+            DataContextChanged += (_, _) =>
+            {
+                Toolbar.Slide = DataContext as CustomSlide;
+                ActivateHistoryForCurrentSlide();
+            };
+            Toolbar.Slide = DataContext as CustomSlide;
             AttachedToVisualTree += (_, _) => ActivateHistoryForCurrentSlide();
             DetachedFromVisualTree += (_, _) => DeactivateHistory();
         }
@@ -79,14 +87,79 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
         private void RefreshUndoButtons()
         {
             var stack = _activeHistory?.Stack;
-            UndoButton.IsEnabled = stack?.CanUndo == true;
-            RedoButton.IsEnabled = stack?.CanRedo == true;
-            ToolTip.SetTip(UndoButton, stack?.UndoMenuText ?? "Undo");
-            ToolTip.SetTip(RedoButton, stack?.RedoMenuText ?? "Redo");
+            Toolbar.SetUndoState(stack?.CanUndo == true, stack?.CanRedo == true, stack?.UndoMenuText, stack?.RedoMenuText);
         }
 
-        private void UndoButton_OnClick(object? sender, RoutedEventArgs e) => _activeHistory?.Stack.Undo();
-        private void RedoButton_OnClick(object? sender, RoutedEventArgs e) => _activeHistory?.Stack.Redo();
+        // ---------------- toolbar ----------------
+
+        private SlideElement? SelectedElement => ListBox.SelectedItem as SlideElement;
+
+        private void WireToolbar()
+        {
+            Toolbar.UndoRequested += (_, _) => _activeHistory?.Stack.Undo();
+            Toolbar.RedoRequested += (_, _) => _activeHistory?.Stack.Redo();
+            Toolbar.AddTextRequested += (_, _) => AddText();
+            Toolbar.AddImageRequested += (_, _) => AddImage();
+            Toolbar.DuplicateRequested += (_, _) => Duplicate(SelectedElement);
+            Toolbar.DeleteRequested += (_, _) => Delete(SelectedElement);
+            Toolbar.BringForwardRequested += (_, _) =>
+            {
+                if (DataContext is CustomSlide vm && SelectedElement is { } el) SlideElementCommands.BringForward(vm, el);
+            };
+            Toolbar.SendBackwardRequested += (_, _) =>
+            {
+                if (DataContext is CustomSlide vm && SelectedElement is { } el) SlideElementCommands.SendBackward(vm, el);
+            };
+            Toolbar.ReplaceImageRequested += async (_, _) =>
+            {
+                if (SelectedElement is ImageElement image) await ReplaceImageAsync(image);
+            };
+            Toolbar.FitImageRequested += async (_, _) =>
+            {
+                if (SelectedElement is ImageElement image) await FitImageAsync(image);
+            };
+            Toolbar.ChangeBackgroundGraphicRequested += (_, _) => ChangeSlideBgGraphic_OnClick(Toolbar, new RoutedEventArgs());
+        }
+
+        private void AddText()
+        {
+            if (DataContext is CustomSlide vm) Select(SlideElementCommands.AddText(vm));
+        }
+
+        private void AddImage()
+        {
+            if (DataContext is CustomSlide vm) Select(SlideElementCommands.AddImage(vm));
+        }
+
+        private void Duplicate(SlideElement? element)
+        {
+            if (DataContext is CustomSlide vm && element != null) Select(SlideElementCommands.Duplicate(vm, element));
+        }
+
+        private void Delete(SlideElement? element)
+        {
+            if (DataContext is CustomSlide vm) SlideElementCommands.Delete(vm, element);
+        }
+
+        /// <summary>Makes <paramref name="element"/> the selection (layers list, designer, toolbar, properties).</summary>
+        private void Select(SlideElement? element)
+        {
+            if (element != null) ListBox.SelectedItem = element;
+        }
+
+        // ---------------- status bar (zoom) ----------------
+
+        private void WireStatusBar()
+        {
+            VisualEditor.ZoomChanged += (_, _) => RefreshZoomText();
+            RefreshZoomText();
+        }
+
+        private void RefreshZoomText() => ZoomPercentText.Text = $"{Math.Round(VisualEditor.ZoomPercent)}%";
+
+        private void ZoomOutButton_OnClick(object? sender, RoutedEventArgs e) => VisualEditor.ZoomOut();
+        private void ZoomInButton_OnClick(object? sender, RoutedEventArgs e) => VisualEditor.ZoomIn();
+        private void FitButton_OnClick(object? sender, RoutedEventArgs e) => VisualEditor.FitToView();
 
         /// <summary>Ctrl+Z / Ctrl+Y (or Ctrl+Shift+Z) for the slide being edited, unless a text box has focus (it keeps its own).</summary>
         protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
@@ -125,27 +198,41 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         private async void ChangeImageElement_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (sender is Control control)
-            {
-                if (control.DataContext is ImageElement imageElement)
-                {
-                    var result = await SelectFilePicker();
-                    if (!string.IsNullOrWhiteSpace(result))
-                    {
-                        // decode first (off the UI thread; it also lands in the bitmap cache, so the element then
-                        // shows it immediately) so the box can be fitted to the picture
-                        var bitmap = await BitmapLoader.LoadBitmapAsync(result);
+            if (sender is Control { DataContext: ImageElement imageElement })
+                await ReplaceImageAsync(imageElement);
+        }
 
-                        // one undo step for the new picture and its new size
-                        using (_activeHistory?.BeginBatch("Change Image"))
-                        {
-                            if (bitmap != null && DataContext is CustomSlide slide)
-                                FitElementToImage(imageElement, bitmap.PixelSize, slide);
-                            imageElement.FilePath = result;
-                        }
-                    }
-                }
+        /// <summary>Asks for a picture and puts it in the element, fitting the box to it (one undo step).</summary>
+        private async Task ReplaceImageAsync(ImageElement imageElement)
+        {
+            var result = await SelectFilePicker();
+            if (string.IsNullOrWhiteSpace(result)) return;
+
+            // decode first (off the UI thread; it also lands in the bitmap cache, so the element then
+            // shows it immediately) so the box can be fitted to the picture
+            var bitmap = await BitmapLoader.LoadBitmapAsync(result);
+
+            // one undo step for the new picture and its new size
+            using (_activeHistory?.BeginBatch("Change Image"))
+            {
+                if (bitmap != null && DataContext is CustomSlide slide)
+                    FitElementToImage(imageElement, bitmap.PixelSize, slide);
+                imageElement.FilePath = result;
             }
+        }
+
+        /// <summary>Gives the element its current picture's proportions (one undo step).</summary>
+        private async Task FitImageAsync(ImageElement imageElement)
+        {
+            var path = imageElement.FilePath;
+            if (string.IsNullOrWhiteSpace(path)) return;
+
+            var bitmap = await BitmapLoader.LoadBitmapAsync(path);
+            // skip if the picture or the slide changed while it was loading
+            if (bitmap == null || DataContext is not CustomSlide slide || imageElement.FilePath != path) return;
+
+            using (_activeHistory?.BeginBatch("Fit to Image"))
+                FitElementToImage(imageElement, bitmap.PixelSize, slide);
         }
         
         /// <summary>
@@ -184,16 +271,6 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
         
-        private void ButtonAddTextElement_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (this.DataContext is CustomSlide vm) SlideElementCommands.AddText(vm);
-        }
-
-        private void ButtonAddImageElement_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (this.DataContext is CustomSlide vm) SlideElementCommands.AddImage(vm);
-        }
-
         private void MoveItemUp_OnClick(object? sender, RoutedEventArgs e)
         {
             if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
@@ -208,35 +285,17 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
         private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
-                SlideElementCommands.Delete(vm, el);
+            if (sender is Control { DataContext: SlideElement el }) Delete(el);
         }
 
         private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
         {
-            if (this.DataContext is CustomSlide vm && sender is Control { DataContext: SlideElement el })
-                SlideElementCommands.Duplicate(vm, el);
+            if (sender is Control { DataContext: SlideElement el }) Duplicate(el);
         }
 
         private void UpdateXmlButton_OnClick(object? sender, RoutedEventArgs e)
         {
             UpdateXml();
-        }
-
-        private static System.Collections.Generic.List<string>? _systemFontFamilies;
-
-        // Font block lives inside a DataTemplate re-instantiated per selected element, so it can't be
-        // wired up once in the constructor like SlideThemeDesigner does - populate on each realization instead.
-        private void FontComboBox_OnLoaded(object? sender, RoutedEventArgs e)
-        {
-            if (sender is ComboBox comboBox)
-            {
-                _systemFontFamilies ??= FontManager.Current.SystemFonts
-                    .Select(x => x.Name)
-                    .OrderBy(x => x)
-                    .ToList();
-                comboBox.ItemsSource = _systemFontFamilies;
-            }
         }
 
         private bool _enableXMLParse = true;
@@ -262,17 +321,23 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
 
-        // TODO probably double-firing on visual editor selection click
-        private void ListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        // The layers list is the one source of truth for the selection: the designer reports clicks into it (see the
+        // constructor) and everything else follows it from here.
+        private void ListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) => SyncSelection();
+
+        private void SyncSelection()
         {
-            if (e.AddedItems.Count > 0)
-            {
-                var addedItem = e.AddedItems[0];
-                if (addedItem is SlideElement element)
-                {
-                    VisualEditor.SelectElement(element);
-                }
-            }
+            var element = SelectedElement;
+
+            if (element != null) VisualEditor.SelectElement(element);
+            else VisualEditor.ClearSelection();
+
+            Toolbar.SelectedElement = element;
+
+            // set imperatively, not via {Binding #ListBox.SelectedItem...} (goes stale on selection changes, CLAUDE.md)
+            SelectedElementProperties.Content = element;
+            GeometryPanel.DataContext = element;
+            GeometryPanel.IsVisible = element != null;
         }
         
         private async Task<string?> SelectFilePicker()
