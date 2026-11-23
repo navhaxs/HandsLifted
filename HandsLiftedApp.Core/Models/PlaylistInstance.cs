@@ -168,7 +168,7 @@ namespace HandsLiftedApp.Core.Models
                 return;
             }
 
-            MessageBus.Current.Listen<ActionMessage>()
+            _disposables.Add(MessageBus.Current.Listen<ActionMessage>()
                 .Subscribe(x =>
                 {
                     switch (x.Action)
@@ -186,9 +186,9 @@ namespace HandsLiftedApp.Core.Models
                             IsBlank = true;
                             break;
                     }
-                });
+                }));
 
-            this.WhenAnyValue(p => p.LogoGraphicFile)
+            _disposables.Add(this.WhenAnyValue(p => p.LogoGraphicFile)
                 .Throttle(TimeSpan.FromMilliseconds(200), RxSchedulers.TaskpoolScheduler)
                 .Subscribe(_ =>
                 {
@@ -209,7 +209,7 @@ namespace HandsLiftedApp.Core.Models
                     {
                         Log.Debug("LogoGraphicFile read failed", ex);
                     }
-                });
+                }));
 
             // try load Playlist Logo > Global Logo
             _disposables.Add(
@@ -336,14 +336,14 @@ namespace HandsLiftedApp.Core.Models
                     Changed?.Invoke(this, EventArgs.Empty);
                 });
 
-            MessageBus.Current.Listen<OnTimerEnabledToggleEvent>().Subscribe(mwvm =>
+            _disposables.Add(MessageBus.Current.Listen<OnTimerEnabledToggleEvent>().Subscribe(mwvm =>
             {
                 var selectedItem = SelectedItem?.GetAsIItemInstance();
                 if (selectedItem != null)
                 {
                     Dispatcher.UIThread.InvokeAsync(() => AutoAdvanceTimer.OnSlideNavigation(selectedItem));
                 }
-            });
+            }));
         }
 
         public IObservable<Unit> DefaultThemeAssignmentsChanged { get; }
