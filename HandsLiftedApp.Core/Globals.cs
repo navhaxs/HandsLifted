@@ -142,8 +142,17 @@ namespace HandsLiftedApp.Core
             MainViewModel.Playlist.Designs = SlideThemeLibrary.Themes;
             SlidePreloadService.Initialize(MainViewModel.Playlist);
 
-            RemoteControlServer = new HandsLiftedApp.Core.Services.RemoteControl.RemoteControlServer();
-            RemoteControlServer.Start();
+            // tools\devtools.ps1 sets HANDSLIFTED_NO_REMOTE_CONTROL: the WebSocket listener on 127.0.0.1 raises a Windows
+            // Firewall prompt on a fresh build, which blocks clicking through the app during a live check.
+            if (Environment.GetEnvironmentVariable("HANDSLIFTED_NO_REMOTE_CONTROL") is { Length: > 0 })
+            {
+                Log.Information("Remote control server disabled by HANDSLIFTED_NO_REMOTE_CONTROL");
+            }
+            else
+            {
+                RemoteControlServer = new HandsLiftedApp.Core.Services.RemoteControl.RemoteControlServer();
+                RemoteControlServer.Start();
+            }
 
             // Create an observable that combines the changes to both LogoBitmap properties
             _logoBitmap = MainViewModel.WhenAnyValue(x => x.Playlist.LogoBitmap)

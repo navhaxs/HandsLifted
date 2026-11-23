@@ -15,6 +15,7 @@ param(
     [Parameter(Position = 1)][string]$Path,
     [switch]$NoBuild,
     [switch]$RealData,
+    [switch]$RemoteControl,   # also start the remote-control WebSocket server (off by default: it triggers a Windows Firewall prompt)
     [int]$Port = 9333
 )
 
@@ -41,6 +42,7 @@ switch ($Command) {
             if ($LASTEXITCODE -ne 0) { throw 'build failed' }
         }
         $env:HANDSLIFTED_DEVTOOLS_PORT = "$Port"
+        if ($RemoteControl) { Remove-Item Env:HANDSLIFTED_NO_REMOTE_CONTROL -ErrorAction SilentlyContinue } else { $env:HANDSLIFTED_NO_REMOTE_CONTROL = '1' }
         if ($RealData) {
             Remove-Item Env:HANDSLIFTED_DATA_DIR -ErrorAction SilentlyContinue
         } else {

@@ -49,6 +49,10 @@ A spec-builder (e.g. `SongSlideSpecBuilder`, `ScriptureParagraphSpecBuilder`) is
 
 When code **reuses/mutates an existing runtime slide instance** across a regeneration pass (rather than constructing a fresh one) — e.g. `ScriptureItemInstance.UpdatePages` reusing a `ScriptureSlideInstance` by page-index identity — don't assume reassigning a rendering-relevant property (like `Theme`) automatically gets the slide re-rendered. If the slide's own reactive subscriptions don't happen to fire for that specific reassignment, and the surrounding batch-render logic gates on `Cached == null` (as `EnqueueBatch` calls throughout this codebase do), a content-unchanged-but-theme-changed slide can silently keep its stale cached thumbnail. When mutating a reused instance's `Theme` (or any other property the render queue doesn't already watch), explicitly reset `Cached = null` on that instance so the existing `Cached == null` sweep picks it up for re-render.
 
+### Previews and thumbnails: never build throwaway slide instances just to get a spec
+
+`new SongSlideInstance(...)` / `new ScriptureSlideInstance(...)` subscribe strongly to `theme.PropertyChanged` and queue a full-size render on `Globals.Instance.SlideRenderQueue`. Building one per preview leaked a slide per refresh, and every later edit of that theme then re-rendered all of them. Use the pure overloads `SongSlideSpecBuilder.Build(text, theme, hasMotionBackground)` / `ScriptureParagraphSpecBuilder.Build(theme, lines, effectiveFontSize)` (the instance overloads delegate to them), as `ThemePreviewSpecBuilder` does. Theme thumbnails: `ThemePreviewImage` control + `ThemeThumbnailCache` (never disposes replaced bitmaps, several controls share one); a theme's `BackgroundColour` is a plain field with no change notification, edit via `BackgroundAvaloniaColour` where a change must be observed.
+
 ---
 
 ## Motion background (libmpv)
@@ -166,6 +170,14 @@ private void SyncEditorToSelection()
 // Wire to: SelectionChanged, DataContextChanged, ItemsSource subscription
 ```
 
+### Theme picker / layout traps (learned building the theme thumbnails)
+
+- A `WrapPanel` with `ItemWidth` reserves a full slot even for collapsed (`IsVisible=false`) children, so items hidden by a style filter leave blank tiles. Leave slack in `Width` instead (see `ThemePickerStyles.axaml`).
+- A plain `ComboBox` writes **null** back to a two-way `SelectedItem` when the selected item is moved or removed in its `ItemsSource`, which silently clears the bound value (e.g. an item's theme). Anything that regroups/reorders a live picker must keep the selected item in place: see `ThemePickerComboBox` + `ThemePickerItems`.
+- `ContentPresenter` never applies an `ItemTemplate` to **null** content, so a "(None)" option needs its own template.
+- Closed `ComboBox` keyboard/wheel navigation only skips disabled *containers*; before the first open there are none, so non-selectable items (group headers, hidden themes) must be skipped by your own code.
+- `StyledElement.Theme` already exists: name a control property `SlideTheme`, not `Theme` (hiding it with `new` binds to the wrong property at runtime).
+
 ### Observing all property changes on a ReactiveObject
 
 `WhenAnyPropertyChanged()` (ReactiveUI extension) may not be accessible from all projects. Use `ReactiveObject.Changed` instead — available directly on any `ReactiveObject`:
@@ -242,7 +254,7 @@ Restored items have "save and reload" fidelity: generated slides are regenerated
 
 ## Headless UI tests (`HandsLiftedApp.UiTests/`)
 
-Boots the real `App` + real windows with `Avalonia.Headless` (real Skia rendering, no display), so a change can be checked by clicking through it and looking at the result. Run: `dotnet test HandsLiftedApp.UiTests` (needs the dotnet PATH workaround). Screenshots land in `HandsLiftedApp.UiTests/bin/Debug/net10.0/screenshots/` — **read them** after a UI change; a passing assert doesn't prove it looks right.
+Boots the real `App` + real windows with `Avalonia.Headless` (real Skia rendering, no display), so a change can be checked by clicking through it and looking at the result. Run: `tools\test.ps1` (both test projects, output reduced to a pass/fail line plus failing tests; `-Project UiTests -Filter Name`, `-NoBuild -Repeat 10` to hunt flakes; it also applies the dotnet PATH workaround). A plain `dotnet build`/`dotnet test` prints hundreds of nullable/obsolete warnings: use `-clp:ErrorsOnly` or the script. Screenshots land in `HandsLiftedApp.UiTests/bin/Debug/net10.0/screenshots/` — **read them** after a UI change; a passing assert doesn't prove it looks right.
 
 - Separate project from `HandsLiftedApp.Tests` on purpose: that one owns Avalonia's dispatcher via `DispatcherTestThread`; headless needs to own it here. Don't merge them.
 - Test body goes in `HeadlessSession.Run(() => { ... })` (UI thread). `UiTestHelpers.OpenMainWindow()` skips `Globals.OnStartup` (libmpv, Syncfusion licence, remote-control server) and sets just `AppPreferences` + `MainViewModel`. Libmpv/NDI/WebView don't run headless.
@@ -250,6 +262,10 @@ Boots the real `App` + real windows with `Avalonia.Headless` (real Skia renderin
 - Helpers: `FindByText<T>` (visual-tree lookup by visible text), `Click` (real pointer events through hit-testing), `Screenshot`.
 - **Flyout/MenuFlyout/ContextMenu content is NOT in the window's visual tree** — it lives in its own `PopupRoot`. Use `button.FindFlyoutMenuItem("Section")` then `item.ClickInPopup()`. Menu headers contain access-key underscores (`"_Section"`); the helper strips them. This is the test that would catch the "flyout MenuItem click silently does nothing" bug.
 - `HeadlessUnitTestSession` re-creates the `Application` per test, re-running `App.Initialize()`; `AttachDeveloperTools()` is guarded with a static flag for that reason.
+- **Async test bodies:** `HeadlessSession.Run(async () => ...)` now pumps the dispatcher like `RunAsync` (it used to bind to `Dispatch<Task>(Func<T>)` and return after the first `await`, so assertions after it could never fail: two `DevToolsApiTests` were silently false-green that way). Wait for async UI work with a bounded poll, not a single `Settle()` or a fixed sleep.
+- **Headless renders at scale 1.0 only.** Layouts that fit at 1.0 can wrap at 125%/150% display scaling (layout rounding: a 158 DIP item measures 158.4 at 1.25). Pin fixed-width arithmetic with `Avalonia.Layout.LayoutHelper.RoundLayoutSizeUp` over scales 1.0-2.25 and leave slack in fixed widths.
+- **Headless popups are hosted in the window's own overlay layer**, not a separate `PopupRoot`, so devtools `/windows` cannot list a headless flyout as a `popup` surface; assert on `button.Flyout.IsOpen` instead. The live app lists them.
+- Debounced UI (e.g. the 250 ms `ThemePreviewImage` refresh) makes tests wall-clock dependent: poll with a timeout, keep generous upper bounds, and loop `tools\test.ps1 -NoBuild -Repeat 15` before trusting a new timing-sensitive test.
 
 ---
 
@@ -270,6 +286,7 @@ Raw: `curl http://127.0.0.1:9333/` lists every endpoint; POST ones need `-X POST
 - **Acting:** `/click` (default `mode=invoke`: the in-process accessibility API; falls back to raising Click + running the Command, and dismisses the menu, when a control exposes no pattern — `MenuItem` currently doesn't; `mode=mouse` = real OS mouse at the control's screen position, moves your cursor), `/type`, `/key?key=Z&mods=ctrl`, `/focus`, `/prop` (set an Avalonia property live), `/hover`, `/scroll`.
 - **Selectors** (click/type/key/props/…): `node=<id>` or any of `text= type= name= aid= window= index= contains=1`. Popups are searched before windows. A click on a `TextBlock` resolves up to its `Button`.
 - **Safety, don't weaken:** compiled in **Debug only** (Desktop references it with `Condition="'$(Configuration)' == 'Debug'"`; Release has no copy); **off unless `HANDSLIFTED_DEVTOOLS_PORT` is set**; binds 127.0.0.1; requests with an `Origin` header are refused; mutating endpoints need POST + `X-DevTools: 1` (blocks browser CSRF). It can click anything — never enable it on a church machine's real profile.
+- **Remote control is off here:** `devtools.ps1 start` sets `HANDSLIFTED_NO_REMOTE_CONTROL=1` (the app skips its 127.0.0.1:8979 WebSocket server, whose Windows Firewall prompt on a fresh build blocks real-mouse clicking). Pass `-RemoteControl` to start it anyway. If a Firewall prompt does appear, leave it for the user.
 - **Gotchas:** keyboard focus inside a `TextBox` makes `MainView` ignore Ctrl+Z (by design); a still-open flyout swallows keys. Native layers (libmpv video/motion background, WebView) are **not** in `/screenshot`. The app only registers the service in `Program.cs` via `AfterSetup`. Stopping the app to rebuild is required — the exe is locked while running.
 - The same `DevToolsApi.Handle(...)` entry point is exercised headless in `HandsLiftedApp.UiTests/DevToolsApiTests.cs` (set `Surfaces.WindowProvider` to the test window).
 

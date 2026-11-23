@@ -32,7 +32,8 @@ public class DevToolsApiTests
             var window = UiTestHelpers.OpenMainWindow();
             Surfaces.WindowProvider = () => [window];
 
-            var tree = await Call("/tree?depth=6");
+            // Deep enough to reach the bottom toolbar's "Add Item" button (the layout nests it ~10 levels down).
+            var tree = await Call("/tree?depth=16");
             Assert.AreEqual(200, tree.Status, tree.BodyText);
             StringAssert.Contains(tree.BodyText, "MainWindow");
             StringAssert.Contains(tree.BodyText, "\"Add Item\"");
@@ -65,12 +66,15 @@ public class DevToolsApiTests
 
             var click = await Call("/click?text=Add%20Item", post: true);
             Assert.AreEqual(200, click.Status, click.BodyText);
-            Assert.IsTrue(Json(click).GetProperty("openPopups").GetInt32() >= 1, "flyout popup surface not discovered: " + click.BodyText);
+            UiTestHelpers.Settle();
 
-            var windows = Json(await Call("/windows"));
-            Assert.IsTrue(windows.EnumerateArray().Any(w => w.GetProperty("kind").GetString() == "popup"), "popup missing from /windows");
+            // The invoke-click must open the button's flyout like a real click does. (Headless popups are hosted in the
+            // window's own overlay layer, not a separate PopupRoot, so /windows cannot list them as "popup" surfaces here:
+            // assert on the flyout itself. The live app lists them; see tools\devtools.ps1.)
+            var addItem = window.FindByText<Avalonia.Controls.Button>("Add Item")!;
+            Assert.IsTrue(addItem.Flyout!.IsOpen, "the invoke-click did not open the Add Item flyout");
 
-            // Flyout content is a separate surface, found by the same selector machinery.
+            // In headless the flyout content is reachable by the same selector machinery.
             var pick = await Call("/click?text=Section", post: true);
             Assert.AreEqual(200, pick.Status, pick.BodyText);
             Assert.AreEqual(1, vm.Playlist.Items.Count, "clicking the 'Section' menu item via the accessibility API did not add a section");
