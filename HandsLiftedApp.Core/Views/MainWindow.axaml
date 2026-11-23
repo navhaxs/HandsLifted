@@ -16,6 +16,7 @@
     x:Class="HandsLiftedApp.Core.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:material="using:Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:HandsLiftedApp.Core.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -27,6 +28,39 @@
                 Fill="#80000000"
                 IsVisible="False"
                 x:Name="Shade" />
+
+            <!--  Toast: non-modal notification overlay (see ToastMessage). Never takes input.  -->
+            <Border
+                Background="#E6303036"
+                BorderBrush="#9a93cd"
+                BorderThickness="1"
+                CornerRadius="8"
+                HorizontalAlignment="Center"
+                IsHitTestVisible="False"
+                Margin="0,0,0,56"
+                Opacity="0"
+                Padding="16,10"
+                VerticalAlignment="Bottom"
+                x:Name="ToastHost">
+                <Border.Transitions>
+                    <Transitions>
+                        <DoubleTransition Duration="0:0:0.2" Property="Opacity" />
+                    </Transitions>
+                </Border.Transitions>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <material:MaterialIcon
+                        Foreground="#8BE28B"
+                        Height="18"
+                        Kind="CheckCircle"
+                        VerticalAlignment="Center"
+                        Width="18" />
+                    <TextBlock
+                        FontSize="14"
+                        Foreground="White"
+                        VerticalAlignment="Center"
+                        x:Name="ToastText" />
+                </StackPanel>
+            </Border>
         </Grid>
     </Border>
 

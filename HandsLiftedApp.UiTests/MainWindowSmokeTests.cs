@@ -37,6 +37,32 @@ public class MainWindowSmokeTests
         });
     }
 
+    // "Playlist saved" is a toast: it must show without disabling the window or raising the modal shade.
+    [TestMethod]
+    public async Task Toast_Shows_Without_Blocking_The_Window()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var window = UiTestHelpers.OpenMainWindow();
+
+            ReactiveUI.MessageBus.Current.SendMessage(new HandsLiftedApp.Core.Models.UI.ToastMessage { Text = "Playlist saved" });
+            UiTestHelpers.Settle();
+
+            var text = window.FindByText<TextBlock>("Playlist saved");
+            Assert.IsNotNull(text, "toast text not found in the visual tree");
+            Assert.IsTrue(window.IsEnabled, "toast must not disable the main window");
+            Assert.IsFalse(window.Find<Avalonia.Controls.Shapes.Rectangle>(r => r.Name == "Shade")!.IsVisible,
+                "toast must not raise the modal shade");
+            Assert.IsFalse(window.Find<Border>(b => b.Name == "ToastHost")!.IsHitTestVisible, "toast must not take input");
+
+            // opacity animates in; give the transition a moment so the screenshot shows it
+            Thread.Sleep(400);
+            UiTestHelpers.Settle();
+            window.Screenshot("toast");
+            window.Close();
+        });
+    }
+
     // The bug class CLAUDE.md warns about (a flyout MenuItem click that silently does nothing) is exactly
     // what this catches: click through button -> flyout -> menu item and assert the view-model changed.
     [TestMethod]

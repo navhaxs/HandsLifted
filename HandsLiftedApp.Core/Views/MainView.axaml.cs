@@ -228,8 +228,7 @@ public partial class MainView : UserControl
             try
             {
                 PlaylistDocumentService.SaveDocument(vm.Playlist);
-                MessageBus.Current.SendMessage(new MessageWindowViewModel()
-                    { Title = "Playlist Saved" });
+                MessageBus.Current.SendMessage(new ToastMessage { Text = "Playlist saved" });
                 MessageBus.Current.SendMessage(new UpdateLastOpenedPlaylistAction() {FilePath = vm.Playlist.PlaylistFilePath});
             }
             catch (Exception e)

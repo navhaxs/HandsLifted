@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -26,6 +28,27 @@ namespace HandsLiftedApp.Core.Views;
 
 public partial class MainWindow : ReactiveWindow<MainViewModel>
 {
+    private CancellationTokenSource? _toastCts;
+
+    /// <summary>Shows a brief non-modal overlay; a newer toast replaces the current one and restarts the timer.</summary>
+    private async void ShowToast(ToastMessage toast)
+    {
+        _toastCts?.Cancel();
+        var cts = _toastCts = new CancellationTokenSource();
+
+        ToastText.Text = toast.Text;
+        ToastHost.Opacity = 1;
+        try
+        {
+            await Task.Delay(toast.DurationMs, cts.Token);
+            ToastHost.Opacity = 0;
+        }
+        catch (TaskCanceledException)
+        {
+            // replaced by a newer toast, which owns the opacity now
+        }
+    }
+
     public MainWindow()
     {
         InitializeComponent();
@@ -53,6 +76,10 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
             IsEnabled = false;
             mw.ShowDialog(this);
         });
+
+        MessageBus.Current.Listen<ToastMessage>()
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(ShowToast);
 
         MessageBus.Current.Listen<ShowUnsavedChangesConfirmationAction>().Subscribe(async action =>
         {
