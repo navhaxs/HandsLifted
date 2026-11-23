@@ -47,9 +47,11 @@
         </Setter>
         <Setter Property="SelectionBoxItemTemplate">
             <DataTemplate x:DataType="slideTheme:BaseSlideTheme">
-                <StackPanel Orientation="Horizontal" Spacing="8">
+                <!--  A DockPanel (not a StackPanel) gives the name only the width left over, so it trims.  -->
+                <DockPanel LastChildFill="True">
                     <controls:ThemePreviewImage
-                        IsVisible="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                        DockPanel.Dock="Left"
+                        Margin="0,0,8,0"
                         SlideTheme="{Binding}"
                         VerticalAlignment="Center"
                         Width="48" />
@@ -57,7 +59,7 @@
                         Text="{Binding Name, FallbackValue=''}"
                         TextTrimming="CharacterEllipsis"
                         VerticalAlignment="Center" />
-                </StackPanel>
+                </DockPanel>
             </DataTemplate>
         </Setter>
     </Style>

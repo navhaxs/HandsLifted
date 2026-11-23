@@ -31,7 +31,8 @@ public static class ThemeThumbnailCache
 
     /// <summary>Fires on the UI thread after an edit that changes how the theme looks (not for derived <c>Calculated*</c> values).</summary>
     public static IObservable<BaseSlideTheme> Invalidated { get; } =
-        InvalidatedSubject.ObserveOn(RxSchedulers.MainThreadScheduler);
+        // Deferred, so the main-thread scheduler is looked up when someone subscribes, not when this type is first touched.
+        Observable.Defer(() => InvalidatedSubject.ObserveOn(RxSchedulers.MainThreadScheduler));
 
     /// <summary>Number of thumbnails rendered so far. Test hook.</summary>
     public static int RenderCount { get; private set; }

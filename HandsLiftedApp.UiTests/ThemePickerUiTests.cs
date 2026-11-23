@@ -197,6 +197,42 @@ public class ThemePickerUiTests
         });
     }
 
+    [TestMethod]
+    public async Task SongEditor_ClosedBox_TrimsALongThemeName()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var longName = new string('W', 60);
+            var theme = MakeTheme(longName, SlideThemeType.SongTheme);
+            playlist.Designs.Clear();
+            playlist.Designs.Add(theme);
+
+            var editor = new SongEditorViewModel(SongItemInstance.NewDraft(playlist), playlist);
+            var control = new SongEditorControl { DataContext = editor };
+            var window = new Window { Width = 520, Height = 700, Content = control };
+            window.Show();
+            control.Find<TabControl>(t => t.Name == "TabControl")!.SelectedIndex = 2; // Design tab
+            UiTestHelpers.Settle();
+            var combo = control.Find<ComboBox>(c => c.Classes.Contains("themePicker"))!;
+
+            editor.SelectedSlideTheme = theme;
+            UiTestHelpers.Settle();
+
+            // A horizontal StackPanel measures its text with unlimited width, so the ellipsis never kicked in and the
+            // name just ran out of the box.
+            var name = combo.FindByText<TextBlock>(longName) ?? throw new AssertFailedException("closed box shows no name");
+            Assert.IsTrue(name.Bounds.Width <= combo.Bounds.Width,
+                $"the name is {name.Bounds.Width} wide inside a {combo.Bounds.Width} wide box: it is not trimmed");
+            Assert.IsTrue(name.TranslatePoint(new Point(name.Bounds.Width, 0), combo)!.Value.X <= combo.Bounds.Width + 0.5,
+                "the name runs past the right edge of the box");
+
+            window.Close();
+            main.Close();
+        });
+    }
+
     // Headless runs at display scale 1.0, where two 158 DIP items trivially fit a 316 DIP panel. At 125% layout rounding
     // makes each item 158.4 DIP, two need 316.8 and the second tile wrapped onto its own row (one column instead of two).
     // So check the geometry at the scales Windows actually uses, from the realized panel and item.

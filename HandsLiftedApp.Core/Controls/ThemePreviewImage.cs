@@ -81,7 +81,8 @@ public class ThemePreviewImage : Control
             .Throttle(RefreshDebounce, RxSchedulers.MainThreadScheduler)
             .Subscribe(_ =>
             {
-                Source = ThemeThumbnailCache.GetOrRender(theme);
+                // A failed render (null) keeps the previous picture rather than blanking the tile.
+                Source = ThemeThumbnailCache.GetOrRender(theme) ?? Source;
                 InvalidateVisual();
             });
     }
