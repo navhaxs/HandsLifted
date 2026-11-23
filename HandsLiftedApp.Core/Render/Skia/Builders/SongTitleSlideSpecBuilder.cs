@@ -39,7 +39,7 @@ public static class SongTitleSlideSpecBuilder
             : CanvasHeight;
 
         if (!string.IsNullOrWhiteSpace(slide.Title))
-            elements.Add(BuildTitleElement(slide.Title, slide.Theme, copyrightTop));
+            elements.AddRange(BuildTitleElements(slide.Title, slide.Theme, copyrightTop));
 
         if (!string.IsNullOrWhiteSpace(slide.Copyright))
             elements.AddRange(BuildCopyrightElements(slide.Copyright, slide.Theme));
@@ -50,31 +50,68 @@ public static class SongTitleSlideSpecBuilder
     private static BackgroundSpec BuildBackground(SongTitleSlideInstance slide, SKBitmap? videoFrame = null) =>
         ThemeBackgroundSpecBuilder.Build(slide.Theme, slide.HasMotionBackground, videoFrame);
 
-    private static TextLineElement BuildTitleElement(string title, BaseSlideTheme theme, float copyrightTop)
+    private static List<RenderElement> BuildTitleElements(string title, BaseSlideTheme theme, float copyrightTop)
     {
         using var typeface = GetTypeface(theme);
         using var measureFont = new SKFont(typeface, theme.TitleFontSize);
         using var measurePaint = new SKPaint(measureFont);
-        float textWidth = measurePaint.MeasureText(title);
-        float x = theme.TitleTextAlignment switch
-        {
-            TextAlignment.Right => CanvasWidth - textWidth - HorizontalMargin,
-            TextAlignment.Left  => HorizontalMargin,
-            _                   => (CanvasWidth - textWidth) / 2f, // Center / Justify
-        };
+
+        var lines = WrapLines(title, measurePaint, CanvasWidth - 2 * HorizontalMargin);
+
         float titleLineHeight = theme.TitleFontSize * (float)theme.LineHeightEm;
+        float blockHeight = lines.Count * titleLineHeight;
         // Bottom alignment must never dip into the copyright block; Center always centers on the whole slide.
         float availableBottom = Math.Min(CanvasHeight, copyrightTop - TitleCopyrightGap);
-        float y = theme.TitleVerticalAlignment switch
+        float top = theme.TitleVerticalAlignment switch
         {
             VerticalAlignment.Top    => TitleVerticalMargin,
-            VerticalAlignment.Bottom => Math.Min(CanvasHeight - TitleVerticalMargin, availableBottom) - titleLineHeight,
-            _                        => (CanvasHeight - titleLineHeight) / 2f, // Center / Stretch
+            VerticalAlignment.Bottom => Math.Min(CanvasHeight - TitleVerticalMargin, availableBottom) - blockHeight,
+            _                        => (CanvasHeight - blockHeight) / 2f, // Center / Stretch
         };
-        var bounds = new SKRect(x, y, x + textWidth, y + titleLineHeight);
-        var elemTypeface = GetTypeface(theme);
-        return new TextLineElement(title, bounds, elemTypeface, theme.TitleFontSize,
-            ToSkColor(theme.TextAvaloniaColour), GetShadow(theme));
+
+        var result = new List<RenderElement>(lines.Count);
+        var color = ToSkColor(theme.TextAvaloniaColour);
+        for (int i = 0; i < lines.Count; i++)
+        {
+            float textWidth = measurePaint.MeasureText(lines[i]);
+            float x = theme.TitleTextAlignment switch
+            {
+                TextAlignment.Right => CanvasWidth - textWidth - HorizontalMargin,
+                TextAlignment.Left  => HorizontalMargin,
+                _                   => (CanvasWidth - textWidth) / 2f, // Center / Justify
+            };
+            float y = top + i * titleLineHeight;
+            var bounds = new SKRect(x, y, x + textWidth, y + titleLineHeight);
+            // Fresh typeface per element (the measurement typeface is disposed above).
+            result.Add(new TextLineElement(lines[i], bounds, GetTypeface(theme), theme.TitleFontSize,
+                color, GetShadow(theme)));
+        }
+        return result;
+    }
+
+    /// <summary>Word-wraps text (honouring explicit newlines) to lines no wider than maxWidth.</summary>
+    private static List<string> WrapLines(string text, SKPaint paint, float maxWidth)
+    {
+        var result = new List<string>();
+        foreach (var raw in text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
+        {
+            if (string.IsNullOrWhiteSpace(raw)) continue;
+            string current = string.Empty;
+            foreach (var word in raw.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (current.Length == 0) { current = word; continue; }
+                string candidate = current + " " + word;
+                if (paint.MeasureText(candidate) > maxWidth)
+                {
+                    result.Add(current);
+                    current = word;
+                }
+                else current = candidate;
+            }
+            if (current.Length > 0) result.Add(current);
+        }
+        if (result.Count == 0) result.Add(text);
+        return result;
     }
 
     private static float ComputeCopyrightTop(string copyright, BaseSlideTheme theme)
