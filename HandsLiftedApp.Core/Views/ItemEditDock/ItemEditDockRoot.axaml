@@ -8,19 +8,12 @@
     xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
-    xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:itemEditDock="clr-namespace:HandsLiftedApp.Core.Views.ItemEditDock"
     xmlns:items="clr-namespace:HandsLiftedApp.Data.Models.Items;assembly=HandsLiftedApp.Data"
     xmlns:items1="clr-namespace:HandsLiftedApp.Core.Models.RuntimeData.Items"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:slideTheme="clr-namespace:HandsLiftedApp.Data.SlideTheme;assembly=HandsLiftedApp.Data"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <UserControl.Resources>
-        <converters:PrependBlankThemeOptionConverter x:Key="PrependBlankThemeOptionConverter" />
-        <converters:AppliesToSongsVisibilityConverter x:Key="AppliesToSongsVisibilityConverter" />
-        <converters:AppliesToScriptureVisibilityConverter x:Key="AppliesToScriptureVisibilityConverter" />
-    </UserControl.Resources>
     <UserControl.Styles>
         <Style Selector="FlyoutPresenter">
             <Setter Property="Padding" Value="0" />
@@ -82,17 +75,12 @@
                                                     ToolTip.Tip="Use fallback theme">
                                                     <TextBlock>✕</TextBlock>
                                                 </Button>
-                                                <ComboBox
+                                                <controls:ThemePickerComboBox
                                                     Classes="themePicker"
                                                     HorizontalAlignment="Stretch"
-                                                    ItemsSource="{Binding ParentPlaylist.Designs}"
-                                                    SelectedItem="{Binding ResolvedDesignTheme}">
-                                                    <ComboBox.Styles>
-                                                        <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
-                                                            <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
-                                                        </Style>
-                                                    </ComboBox.Styles>
-                                                </ComboBox>
+                                                    SelectedItem="{Binding ResolvedDesignTheme}"
+                                                    Target="Songs"
+                                                    Themes="{Binding ParentPlaylist.Designs}" />
                                             </DockPanel>
                                         </Flyout>
                                     </Button.Flyout>
@@ -120,17 +108,13 @@
                                                 ToolTip.Tip="Use fallback theme">
                                                 <TextBlock>✕</TextBlock>
                                             </Button>
-                                            <ComboBox
+                                            <controls:ThemePickerComboBox
                                                 Classes="themePicker"
                                                 HorizontalAlignment="Stretch"
-                                                ItemsSource="{Binding ParentPlaylist.Designs, Converter={StaticResource PrependBlankThemeOptionConverter}}"
-                                                SelectedItem="{Binding ExplicitDesignTheme}">
-                                                <ComboBox.Styles>
-                                                    <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
-                                                        <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToScriptureVisibilityConverter}}" />
-                                                    </Style>
-                                                </ComboBox.Styles>
-                                            </ComboBox>
+                                                IncludeBlankOption="True"
+                                                SelectedItem="{Binding ExplicitDesignTheme}"
+                                                Target="Scripture"
+                                                Themes="{Binding ParentPlaylist.Designs}" />
                                         </DockPanel>
                                     </Flyout>
                                 </Button.Flyout>

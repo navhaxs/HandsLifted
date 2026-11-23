@@ -1,10 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Controls;
+using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
 using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.ViewModels;
@@ -273,9 +276,25 @@ public class ThemePickerUiTests
     private static double PanelWidth => StyleNumber("ThemePickerPanelWidth");
     private const double SelectionThumbnailWidth = 48; // set on the closed-box thumbnail in the same file
 
-    /// <summary>The dropdown's item containers that are laid out (the type filters hide the others, which still exist).</summary>
-    private static List<ComboBoxItem> VisibleItems(ComboBox combo) =>
+    /// <summary>Every row of the open dropdown that is laid out, in order: group headers and tiles (hidden themes still exist).</summary>
+    private static List<ComboBoxItem> VisibleRows(ComboBox combo) =>
         combo.ItemsPanelRoot!.Children.OfType<ComboBoxItem>().Where(i => i.IsVisible).ToList();
+
+    private static bool IsHeader(ComboBoxItem item) => item.Content is ThemePickerGroupHeader;
+
+    /// <summary>The dropdown's tiles that are laid out (themes and the blank option, not the group headers).</summary>
+    private static List<ComboBoxItem> VisibleItems(ComboBox combo) => VisibleRows(combo).Where(i => !IsHeader(i)).ToList();
+
+    /// <summary>The open dropdown as text: "#Header" for a group header, "(None)" for the blank option, else the theme name.</summary>
+    private static string DescribeRows(ComboBox combo) => string.Join(", ", VisibleRows(combo).Select(i => i.Content switch
+    {
+        ThemePickerGroupHeader h => "#" + h.Title,
+        BaseSlideTheme t => t.Name,
+        null => "(None)",
+        var other => "?" + other,
+    }));
+
+    private static Point PositionIn(ComboBox combo, Control item) => item.TranslatePoint(default, combo.ItemsPanelRoot!)!.Value;
 
     private static ThemePreviewImage Thumbnail(ComboBoxItem item) =>
         item.GetVisualDescendants().OfType<ThemePreviewImage>().Single();
@@ -406,12 +425,14 @@ public class ThemePickerUiTests
                 Assert.IsNotNull(item.FindByText<TextBlock>(theme.Name), $"{theme.Name}: name is not shown on its tile");
             }
 
-            // Two columns, wrapping, with no gap left by the hidden scripture theme.
-            var positions = items.Select(i => i.TranslatePoint(default, combo.ItemsPanelRoot!)!.Value).ToList();
-            Assert.AreEqual(positions[0].Y, positions[1].Y, 0.5, "tiles 1 and 2 share a row");
-            Assert.IsTrue(positions[1].X > positions[0].X, "tile 2 is to the right of tile 1");
-            Assert.AreEqual(positions[0].X, positions[2].X, 0.5, "tile 3 starts the next row");
-            Assert.IsTrue(positions[2].Y > positions[0].Y, "tile 3 is on a second row");
+            // Grouped: the general theme alone in its group, then the two song themes side by side under their header,
+            // with no gap left by the hidden scripture theme.
+            Assert.AreEqual("#General, Plain, #Song Themes, Song one, Song two", DescribeRows(combo));
+            var positions = items.Select(i => PositionIn(combo, i)).ToList();
+            Assert.AreEqual(positions[0].X, positions[1].X, 0.5, "the song group starts a new row");
+            Assert.IsTrue(positions[1].Y > positions[0].Y, "the song group is below the general group");
+            Assert.AreEqual(positions[1].Y, positions[2].Y, 0.5, "song tiles 1 and 2 share a row");
+            Assert.IsTrue(positions[2].X > positions[1].X, "song tile 2 is to the right of song tile 1");
 
             window.Screenshot("theme-dropdown-song-editor");
 
@@ -419,6 +440,372 @@ public class ThemePickerUiTests
             items[2].ClickInPopup();
             Assert.AreSame(themes[2], editor.SelectedSlideTheme, "clicking a tile did not select its theme");
             Assert.IsFalse(combo.IsDropDownOpen, "dropdown should close after picking");
+
+            window.Close();
+            main.Close();
+        });
+    }
+
+    /// <summary>Shows a <see cref="SongEditorControl"/> on its Design tab for a new draft song and returns its theme dropdown.</summary>
+    private static (Window Window, SongEditorViewModel Editor, ComboBox Combo) ShowSongEditorDesignTab(PlaylistInstance playlist)
+    {
+        var editor = new SongEditorViewModel(SongItemInstance.NewDraft(playlist), playlist);
+        var control = new SongEditorControl { DataContext = editor };
+        var window = new Window { Width = 520, Height = 700, Content = control };
+        window.Show();
+        control.Find<TabControl>(t => t.Name == "TabControl")!.SelectedIndex = 2; // Design tab
+        UiTestHelpers.Settle();
+        return (window, editor, control.Find<ComboBox>(c => c.Classes.Contains("themePicker"))!);
+    }
+
+    private static Rect BoundsIn(ComboBox combo, Control item) => new(PositionIn(combo, item), item.Bounds.Size);
+
+    [TestMethod]
+    public async Task SongEditor_ThemeDropdown_GroupsTilesUnderCategoryHeaders()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            playlist.Designs.Clear();
+            // Mixed source order; three general themes so the general group ends on a half-full row.
+            foreach (var t in new[]
+                     {
+                         MakeTheme("Gen A", SlideThemeType.General),
+                         MakeTheme("Song A", SlideThemeType.SongTheme),
+                         MakeTheme("Gen B", SlideThemeType.General),
+                         MakeTheme("Scripture A", SlideThemeType.ScriptureTheme),
+                         MakeTheme("Song B", SlideThemeType.SongTheme),
+                         MakeTheme("Gen C", SlideThemeType.General),
+                     })
+                playlist.Designs.Add(t);
+            playlist.DefaultSongThemeId = playlist.Designs[4].Id; // Song B: the star must still show on a grouped tile
+
+            var (window, _, combo) = ShowSongEditorDesignTab(playlist);
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+
+            Assert.AreEqual("#General, Gen A, Gen B, Gen C, #Song Themes, Song A, Song B", DescribeRows(combo),
+                "general themes, then song themes, each under its header, in playlist order; no scripture group");
+
+            var rows = VisibleRows(combo);
+            var generalHeader = rows[0];
+            var songHeader = rows[4];
+            ComboBoxItem Tile(string name) => rows.Single(r => r.Content is BaseSlideTheme t && t.Name == name);
+
+            foreach (var header in new[] { generalHeader, songHeader })
+            {
+                var title = ((ThemePickerGroupHeader)header.Content!).Title;
+                Assert.AreEqual(0, PositionIn(combo, header).X, 0.5, $"{title}: header does not start at the left edge");
+                Assert.AreEqual(PanelWidth, header.Bounds.Width, 0.5, $"{title}: header does not span the panel");
+                Assert.IsNotNull(header.FindByText<TextBlock>(title), $"{title}: header text not shown");
+                Assert.AreEqual(0, header.GetVisualDescendants().OfType<ThemePreviewImage>().Count(), $"{title}: a header has no thumbnail");
+                Assert.IsFalse(header.IsEnabled || header.Focusable, $"{title}: a header must not be selectable");
+                Assert.IsTrue(header.Classes.Contains("themeGroupHeader"), $"{title}: header lacks its style class");
+                Assert.IsTrue(header.Bounds.Height < 40, $"{title}: header row is {header.Bounds.Height} high, not a small label");
+                // Readable on the dark popup: the tiles' text colour (a header is disabled, and an unresolved or
+                // "disabled" brush made it near-black on black), only dimmed a little.
+                var tileName = rows[1].FindByText<TextBlock>("Gen A")!;
+                var headerText = header.FindByText<TextBlock>(title)!;
+                Assert.AreEqual((tileName.Foreground as ISolidColorBrush)?.Color, (headerText.Foreground as ISolidColorBrush)?.Color,
+                    $"{title}: header text colour differs from the tiles'");
+                var dimming = headerText.GetVisualAncestors().OfType<Visual>().TakeWhile(v => v != header).Aggregate(1.0, (o, v) => o * v.Opacity);
+                Assert.IsTrue(dimming is >= 0.5 and < 1, $"{title}: header opacity {dimming}: should be dimmed but readable");
+            }
+
+            // Two columns inside a group; the odd third general tile sits alone and the song header starts below it.
+            var genA = BoundsIn(combo, Tile("Gen A"));
+            var genB = BoundsIn(combo, Tile("Gen B"));
+            var genC = BoundsIn(combo, Tile("Gen C"));
+            var songA = BoundsIn(combo, Tile("Song A"));
+            var songB = BoundsIn(combo, Tile("Song B"));
+            var songHeaderRect = BoundsIn(combo, songHeader);
+            Assert.IsTrue(genA.Y >= BoundsIn(combo, generalHeader).Bottom - 0.5, "first general tile is below its header");
+            Assert.AreEqual(genA.Y, genB.Y, 0.5, "general tiles 1 and 2 share a row");
+            Assert.IsTrue(genB.X > genA.X, "general tile 2 is in the second column");
+            Assert.AreEqual(genA.X, genC.X, 0.5, "general tile 3 starts a new row");
+            Assert.IsTrue(genC.Y > genA.Y, "general tile 3 is on the next row");
+            Assert.IsTrue(songHeaderRect.Y >= genC.Bottom - 0.5, "the song header starts below the last general row");
+            Assert.AreEqual(genA.X, songA.X, 0.5, "the song group's first tile starts a fresh row (not beside Gen C)");
+            Assert.IsTrue(songA.Y >= songHeaderRect.Bottom - 0.5, "song tiles are below their header");
+            Assert.AreEqual(songA.Y, songB.Y, 0.5, "song tiles share a row");
+            Assert.IsTrue(songB.X > songA.X, "song tile 2 is in the second column");
+
+            // Nothing overlaps.
+            var rects = rows.Select(r => BoundsIn(combo, r)).ToList();
+            for (var i = 0; i < rects.Count; i++)
+            for (var j = i + 1; j < rects.Count; j++)
+                Assert.IsFalse(rects[i].Intersects(rects[j]) && rects[i].Intersect(rects[j]).Width > 0.5 && rects[i].Intersect(rects[j]).Height > 0.5,
+                    $"rows {i} and {j} overlap: {rects[i]} / {rects[j]}");
+
+            Assert.IsTrue(Thumbnail(Tile("Song B")).IsDefault, "the default theme's tile lost its star");
+            Assert.IsFalse(Thumbnail(Tile("Song A")).IsDefault);
+
+            window.Screenshot("theme-dropdown-grouped");
+            window.Close();
+            main.Close();
+        });
+    }
+
+    [TestMethod]
+    public async Task SongEditor_ThemeDropdown_ClickingAHeaderDoesNothing()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var genA = MakeTheme("Gen A", SlideThemeType.General);
+            var songA = MakeTheme("Song A", SlideThemeType.SongTheme);
+            playlist.Designs.Clear();
+            playlist.Designs.Add(genA);
+            playlist.Designs.Add(songA);
+
+            var (window, editor, combo) = ShowSongEditorDesignTab(playlist);
+            editor.SelectedSlideTheme = songA;
+            UiTestHelpers.Settle();
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+
+            var headers = VisibleRows(combo).Where(IsHeader).ToList();
+            Assert.AreEqual(2, headers.Count, "expected a General and a Song Themes header");
+            foreach (var header in headers)
+            {
+                header.ClickInPopup();
+                Assert.AreSame(songA, editor.SelectedSlideTheme, "clicking a header changed the theme");
+                Assert.AreSame(songA, combo.SelectedItem);
+                Assert.IsTrue(combo.IsDropDownOpen, "clicking a header closed the dropdown");
+                Assert.IsFalse(header.Classes.Contains(":pointerover"), "a header highlights on hover");
+                Assert.IsFalse(header.Classes.Contains(":selected"));
+            }
+
+            // A tile still works.
+            VisibleItems(combo).Single(i => i.Content == genA).ClickInPopup();
+            Assert.AreSame(genA, editor.SelectedSlideTheme, "clicking a tile did not select its theme");
+            Assert.IsFalse(combo.IsDropDownOpen);
+
+            window.Close();
+            main.Close();
+        });
+    }
+
+    [TestMethod]
+    public async Task SongEditor_ThemeDropdown_KeyboardNeverLandsOnAHeaderOrAHiddenTheme()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var genA = MakeTheme("Gen A", SlideThemeType.General);
+            var genB = MakeTheme("Gen B", SlideThemeType.General);
+            var songA = MakeTheme("Song A", SlideThemeType.SongTheme);
+            var songB = MakeTheme("Song B", SlideThemeType.SongTheme);
+            var scripture = MakeTheme("Scripture A", SlideThemeType.ScriptureTheme); // listed last, hidden
+            playlist.Designs.Clear();
+            foreach (var t in new[] { genA, genB, songA, songB, scripture }) playlist.Designs.Add(t);
+
+            var (window, editor, combo) = ShowSongEditorDesignTab(playlist);
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A, Gen B, #Song Themes, Song A, Song B", DescribeRows(combo));
+            combo.IsDropDownOpen = false;
+            UiTestHelpers.Settle();
+
+            void Press(Key key)
+            {
+                window.KeyPress(key, RawInputModifiers.None, PhysicalKey.None, null);
+                UiTestHelpers.Settle();
+            }
+
+            // Closed box: Up/Down step over the header between the groups and stop at the ends.
+            editor.SelectedSlideTheme = songA;
+            UiTestHelpers.Settle();
+            combo.Focus();
+            Press(Key.Up);
+            Assert.AreSame(genB, editor.SelectedSlideTheme, "Up from the first song theme should skip the 'Song Themes' header");
+            Press(Key.Down);
+            Assert.AreSame(songA, editor.SelectedSlideTheme);
+            Press(Key.Down);
+            Assert.AreSame(songB, editor.SelectedSlideTheme);
+            Press(Key.Down);
+            Assert.AreSame(songB, editor.SelectedSlideTheme, "Down past the last song theme landed on the hidden scripture theme");
+            editor.SelectedSlideTheme = genA;
+            UiTestHelpers.Settle();
+            Press(Key.Up);
+            Assert.AreSame(genA, editor.SelectedSlideTheme, "Up from the first theme landed on the 'General' header");
+            Press(Key.Home);
+            Press(Key.End);
+            Assert.IsInstanceOfType(combo.SelectedItem, typeof(BaseSlideTheme));
+
+            // Type-ahead matches theme names (not the "General" header, not the hidden scripture theme).
+            window.KeyTextInput("Gen");
+            UiTestHelpers.Settle();
+            Assert.AreSame(genA, editor.SelectedSlideTheme, "typing 'Gen' should pick the first general theme, not its header");
+            window.KeyTextInput("Song B");
+            UiTestHelpers.Settle();
+            Assert.AreSame(songB, editor.SelectedSlideTheme, "type-ahead by theme name");
+            window.KeyTextInput("Scr");
+            UiTestHelpers.Settle();
+            Assert.AreSame(songB, editor.SelectedSlideTheme, "type-ahead picked the hidden scripture theme (or a header)");
+
+            // Open list: Home/End/Up/Down move the focus over tiles only; Enter picks the focused tile.
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+            object? Focused() => (TopLevel.GetTopLevel(combo)!.FocusManager!.GetFocusedElement() as ComboBoxItem)?.Content;
+            Press(Key.Home);
+            Assert.AreSame(genA, Focused(), $"Home should focus the first tile, not the 'General' header (focus is on {(Focused() as BaseSlideTheme)?.Name ?? Focused()?.ToString()})");
+            Press(Key.Down);
+            Assert.AreSame(genB, Focused());
+            Press(Key.Down);
+            Assert.AreSame(songA, Focused(), "Down should step over the 'Song Themes' header");
+            Press(Key.Up);
+            Assert.AreSame(genB, Focused(), "Up should step over the 'Song Themes' header");
+            Press(Key.End);
+            Assert.AreSame(songB, Focused(), "End should focus the last shown tile");
+            Press(Key.Up);
+            Press(Key.Enter);
+            Assert.AreSame(songA, editor.SelectedSlideTheme, "Enter should pick the focused tile");
+            Assert.IsFalse(combo.IsDropDownOpen);
+
+            window.Close();
+            main.Close();
+        });
+    }
+
+    [TestMethod]
+    public async Task SongEditor_ThemeDropdown_TypeChangeRegroupsTheTile_AndKeepsTheSelection()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var genA = MakeTheme("Gen A", SlideThemeType.General);
+            var songA = MakeTheme("Song A", SlideThemeType.SongTheme);
+            var songB = MakeTheme("Song B", SlideThemeType.SongTheme);
+            playlist.Designs.Clear();
+            foreach (var t in new[] { genA, songA, songB }) playlist.Designs.Add(t);
+
+            var (window, editor, combo) = ShowSongEditorDesignTab(playlist);
+            editor.SelectedSlideTheme = songB;
+            UiTestHelpers.Settle();
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A, #Song Themes, Song A, Song B", DescribeRows(combo));
+
+            // "Move to General" in the designer, while this dropdown is open.
+            songB.Type = SlideThemeType.General;
+            UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A, Song B, #Song Themes, Song A", DescribeRows(combo));
+            var tiles = VisibleItems(combo);
+            Assert.AreEqual(PositionIn(combo, tiles[0]).Y, PositionIn(combo, tiles[1]).Y, 0.5, "Song B now sits beside Gen A");
+            Assert.AreSame(songB, combo.SelectedItem, "regrouping the selected theme dropped the selection");
+            Assert.AreSame(songB, editor.SelectedSlideTheme);
+            Assert.AreEqual(songB.Id, editor.Song.Design);
+            window.Screenshot("theme-dropdown-regrouped");
+
+            // The last song theme leaves: its header goes too.
+            songA.Type = SlideThemeType.ScriptureTheme;
+            UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A, Song B", DescribeRows(combo));
+
+            // The selected theme becomes a scripture theme: hidden from the song list, but still the song's theme.
+            songB.Type = SlideThemeType.ScriptureTheme;
+            UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A", DescribeRows(combo));
+            Assert.AreSame(songB, combo.SelectedItem);
+            Assert.AreEqual(songB.Id, editor.Song.Design);
+
+            // And it comes back.
+            songA.Type = SlideThemeType.SongTheme;
+            UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A, #Song Themes, Song A", DescribeRows(combo));
+
+            window.Close();
+            main.Close();
+        });
+    }
+
+    [TestMethod]
+    public async Task ItemDock_SongThemeFlyout_TypeChangeKeepsTheItemsTheme()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var genA = MakeTheme("Gen A", SlideThemeType.General);
+            var songA = MakeTheme("Song A", SlideThemeType.SongTheme);
+            var songB = MakeTheme("Song B", SlideThemeType.SongTheme);
+            playlist.Designs.Clear();
+            foreach (var t in new[] { genA, songA, songB }) playlist.Designs.Add(t);
+
+            var song = SongItemInstance.NewDraft(playlist);
+            song.Design = songB.Id;
+            var dock = new ItemEditDockRoot { DataContext = song };
+            var window = new Window { Width = 600, Height = 400, Content = dock };
+            window.Show();
+            UiTestHelpers.Settle();
+
+            var combo = OpenItemDockThemeCombo(dock);
+            Assert.AreSame(songB, combo.SelectedItem);
+
+            // The item dock writes a null selection straight into the item's Design, so a dropped selection would lose its theme.
+            songB.Type = SlideThemeType.General;
+            UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A, Song B, #Song Themes, Song A", DescribeRows(combo));
+            Assert.AreEqual(songB.Id, song.Design, "regrouping the item's theme cleared it");
+
+            songA.Type = SlideThemeType.General; // another theme moving past it
+            UiTestHelpers.Settle();
+            Assert.AreEqual(songB.Id, song.Design);
+
+            songB.Type = SlideThemeType.ScriptureTheme;
+            UiTestHelpers.Settle();
+            Assert.AreEqual(songB.Id, song.Design, "the theme turning into a scripture theme cleared the song's theme");
+            Assert.AreSame(songB, combo.SelectedItem);
+
+            window.Close();
+            main.Close();
+        });
+    }
+
+    [TestMethod]
+    public async Task ItemDock_ScriptureThemeFlyout_NoneFirst_ThenGeneralAndScriptureGroups()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var scriptureA = MakeTheme("Scripture A", SlideThemeType.ScriptureTheme);
+            playlist.Designs.Clear();
+            foreach (var t in new[]
+                     {
+                         MakeTheme("Song A", SlideThemeType.SongTheme),
+                         scriptureA,
+                         MakeTheme("Gen A", SlideThemeType.General),
+                         MakeTheme("Scripture B", SlideThemeType.ScriptureTheme),
+                         MakeTheme("Scripture C", SlideThemeType.ScriptureTheme),
+                     })
+                playlist.Designs.Add(t);
+
+            var item = new ScriptureItemInstance(playlist) { Title = "John 3" };
+            var dock = new ItemEditDockRoot { DataContext = item };
+            var window = new Window { Width = 600, Height = 500, Content = dock };
+            window.Show();
+            UiTestHelpers.Settle();
+
+            var combo = OpenItemDockThemeCombo(dock);
+            Assert.AreEqual("(None), #General, Gen A, #Scripture Themes, Scripture A, Scripture B, Scripture C", DescribeRows(combo),
+                "(None) first and ungrouped, then general and scripture themes; no song themes");
+
+            var rows = VisibleRows(combo);
+            Assert.IsTrue(rows[0].IsEnabled, "(None) is a choice, not a header");
+            Assert.IsTrue(BoundsIn(combo, rows[1]).Y >= BoundsIn(combo, rows[0]).Bottom - 0.5, "the General header starts below (None)");
+            Assert.AreEqual(PositionIn(combo, rows[4]).Y, PositionIn(combo, rows[5]).Y, 0.5, "scripture tiles 1 and 2 share a row");
+            Assert.AreEqual(PositionIn(combo, rows[4]).X, PositionIn(combo, rows[6]).X, 0.5, "scripture tile 3 starts a new row");
+
+            window.Screenshot("theme-dropdown-item-dock-scripture-grouped");
+
+            rows[4].ClickInPopup();
+            Assert.AreEqual(scriptureA.Id, item.Design, "clicking a grouped tile did not set the scripture item's theme");
 
             window.Close();
             main.Close();

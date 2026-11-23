@@ -10,18 +10,16 @@
     xmlns:common="clr-namespace:HandsLiftedApp.Common;assembly=HandsLiftedApp.Common"
     xmlns:controls="clr-namespace:HandsLiftedApp.Controls"
     xmlns:converters="using:HandsLiftedApp.Converters"
-    xmlns:coreConverters="clr-namespace:HandsLiftedApp.Core.Converters"
+    xmlns:coreControls="clr-namespace:HandsLiftedApp.Core.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editor="clr-namespace:HandsLiftedApp.Core.ViewModels.Editor"
     xmlns:editors="clr-namespace:HandsLiftedApp.Core.Views.Editors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:slideTheme="clr-namespace:HandsLiftedApp.Data.SlideTheme;assembly=HandsLiftedApp.Data"
     xmlns:slides="clr-namespace:HandsLiftedApp.Data.Slides"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:PercentageScaleConverter x:Key="PercentageScaleConverter" />
-            <coreConverters:AppliesToSongsVisibilityConverter x:Key="AppliesToSongsVisibilityConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -88,18 +86,12 @@
                 <StackPanel Margin="12">
                     <StackPanel Margin="12">
                         <TextBlock Margin="0,0,0,6" Text="Slide Theme" />
-                        <ComboBox
+                        <coreControls:ThemePickerComboBox
                             Classes="themePicker"
                             HorizontalAlignment="Stretch"
-                            ItemsSource="{Binding Playlist.Designs}"
-                            SelectedItem="{Binding SelectedSlideTheme}">
-                            <ComboBox.Styles>
-                                <Style Selector="ComboBoxItem" x:DataType="slideTheme:BaseSlideTheme">
-                                    <Setter Property="IsVisible"
-                                            Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
-                                </Style>
-                            </ComboBox.Styles>
-                        </ComboBox>
+                            SelectedItem="{Binding SelectedSlideTheme}"
+                            Target="Songs"
+                            Themes="{Binding Playlist.Designs}" />
                         <TextBlock
                             FontSize="11"
                             IsVisible="{Binding SelectedSlideTheme, Converter={x:Static ObjectConverters.IsNull}}"

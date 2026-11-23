@@ -6,11 +6,14 @@
     xmlns:slideTheme="clr-namespace:HandsLiftedApp.Data.SlideTheme;assembly=HandsLiftedApp.Data"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--
-        Theme dropdowns (song editor Design tab, item edit dock flyouts): `<ComboBox Classes="themePicker">`.
-        Open list: tiles (preview over name) wrapping into two columns. Closed box: small preview + name.
+        Theme dropdowns (song editor Design tab, item edit dock flyouts): `<controls:ThemePickerComboBox Classes="themePicker">`.
+        Open list: tiles (preview over name) wrapping into two columns, grouped under full-width "General" /
+        "Song Themes" / "Scripture Themes" header rows (ThemePickerItems; a header row has the themeGroupHeader class).
+        Closed box: small preview + name.
         Tile widths are fixed (a preview sizes itself to the width it is given, and a popup has no width to give),
-        and the panel is a WrapPanel so items hidden by the song/scripture filters leave no gap.
-        The null "none" option (PrependBlankThemeOptionConverter) has no theme, so its preview collapses to nothing
+        and the panel is a WrapPanel so themes the picker hides (the other kind's themes, still in the list) leave no gap.
+        A header is as wide as the panel, so it always gets a row of its own and the next group starts a fresh row.
+        The null "none" option (IncludeBlankOption) has no theme, so its preview collapses to nothing
         and only the "(None)" text remains.
         The tile geometry lives in the three x:Double resources below (ThemePickerUiTests reads the same ones).
     -->
@@ -112,5 +115,23 @@
                 </Panel>
             </ControlTemplate>
         </Setter>
+    </Style>
+    <!--  Group header rows: a small dimmed section label (like the designer's SectionHeader), never highlighted.  -->
+    <Style Selector="ComboBox.themePicker ComboBoxItem.themeGroupHeader">
+        <Setter Property="Width" Value="{DynamicResource ThemePickerPanelWidth}" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Padding" Value="6,10,6,2" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+    </Style>
+    <Style Selector="ComboBox.themePicker ComboBoxItem.themeGroupHeader /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <!--  Dimmed, but in the normal item colour (headers are disabled, and the disabled colour is too dark here).  -->
+        <Setter Property="Opacity" Value="0.7" />
+    </Style>
+    <Style Selector="ComboBox.themePicker ComboBoxItem.themeGroupHeader:disabled /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
     </Style>
 </Styles>
