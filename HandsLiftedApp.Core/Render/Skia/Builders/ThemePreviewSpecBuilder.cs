@@ -36,24 +36,18 @@ public static class ThemePreviewSpecBuilder
         return spec with { Background = ThemeBackgroundSpecBuilder.Build(theme, hasMotionBackground: false) };
     }
 
-    private static SlideRenderSpec BuildSong(BaseSlideTheme theme)
-    {
-        var slide = new SongSlideInstance(null, null, "preview", SampleLyrics) { Theme = theme };
-        return SongSlideSpecBuilder.Build(slide);
-    }
+    // Both use the pure spec-builder overloads: a runtime slide instance would subscribe itself to the theme (a leak that
+    // makes every later theme edit queue a full-size render per leaked slide) and queue renders of its own.
+    private static SlideRenderSpec BuildSong(BaseSlideTheme theme) =>
+        SongSlideSpecBuilder.Build(SampleLyrics, theme, hasMotionBackground: false);
 
     private static SlideRenderSpec BuildScripture(BaseSlideTheme theme)
     {
         var verses = new List<ScriptureVerseRef> { new(3, 16, SampleVerseText) };
         var pages = ScriptureParagraphLayoutEngine.Paginate(verses, SampleVerseHeader, theme);
 
-        var slide = new ScriptureSlideInstance(null, "preview") { Theme = theme };
-        if (pages.Count > 0)
-        {
-            slide.Lines = pages[0].Lines;
-            slide.EffectiveFontSize = pages[0].FontSize;
-        }
-
-        return ScriptureParagraphSpecBuilder.Build(slide);
+        return pages.Count > 0
+            ? ScriptureParagraphSpecBuilder.Build(theme, pages[0].Lines, pages[0].FontSize)
+            : ScriptureParagraphSpecBuilder.Build(theme, Array.Empty<ScriptureParagraphLine>(), null);
     }
 }
