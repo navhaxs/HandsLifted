@@ -81,12 +81,34 @@
                         </i:Interaction.Behaviors>
                     </TextBox>
 
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button
                         Background="Transparent"
                         BorderThickness="0"
                         CornerRadius="0"
                         Foreground="Black"
-                        HorizontalAlignment="Right"
+                        Margin="0"
+                        ToolTip.Tip="Re-split lyrics into slides (replaces existing breaks)"
+                        VerticalAlignment="Stretch"
+                        x:Name="ReflowButton">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <material:MaterialIcon Kind="FormatLineSpacing" />
+                            <TextBlock Text="Reflow" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Button.Flyout>
+                            <MenuFlyout>
+                                <MenuItem Click="Reflow_OnClick" Header="Smart" Tag="smart" />
+                                <MenuItem Click="Reflow_OnClick" Header="2 lines per slide" Tag="2" />
+                                <MenuItem Click="Reflow_OnClick" Header="3 lines per slide" Tag="3" />
+                                <MenuItem Click="Reflow_OnClick" Header="4 lines per slide" Tag="4" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        Foreground="Black"
                         Margin="0"
                         VerticalAlignment="Stretch">
                         <Button.Content>
@@ -112,6 +134,7 @@
 
                         </Button.Flyout>
                     </Button>
+                    </StackPanel>
 
                     <ItemsControl ItemsSource="{Binding Song.Stanzas}" Margin="0">
                         <ItemsControl.ItemsPanel>
