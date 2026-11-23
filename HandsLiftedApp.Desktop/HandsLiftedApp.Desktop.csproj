@@ -85,4 +85,32 @@
                 Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishDir=$(PublishDir)PowerPointInteropHost\;PublishSingleFile=false" />
       <Message Text="Published InteropHost to $(PublishDir)PowerPointInteropHost\" Importance="normal" />
     </Target>
+
+    <!--
+      Copy the native DLLs the app needs beside its exe into the publish folder, explicitly.
+      libmpv-2.dll and the NDI libraries are normally carried there by None/Content
+      CopyToOutputDirectory items inside the libmpv and AvaloniaNDI projects, but a single-file publish
+      on the .NET 11 preview SDK silently drops them (loose publish and the build output are fine), so
+      the app shipped without video playback or NDI. Setting CopyToPublishDirectory or
+      ExcludeFromSingleFile on those items does not help there; copying after Publish does.
+      On SDK 10 the files are already present and this just overwrites them with identical copies.
+      Keep the list in sync with NativeDependencyCheck.RequiredOnWindows (the runtime check).
+    -->
+    <Target Name="CopyNativeDependenciesToPublishDir" AfterTargets="Publish" Condition="$(RuntimeIdentifier.StartsWith('win'))">
+      <ItemGroup>
+        <_NativeDependencyFile Include="$(MSBuildThisFileDirectory)..\Libraries\LibMpv\mpv\mpv-dev-x86_64\libmpv-2.dll" />
+        <_NativeDependencyFile Include="$(MSBuildThisFileDirectory)..\Libraries\AvaloniaNDI\AvaloniaNDI\NDISDK\Processing.NDI.Lib.x64.dll" />
+        <_NativeDependencyFile Include="$(MSBuildThisFileDirectory)..\Libraries\AvaloniaNDI\AvaloniaNDI\NDISDK\Processing.NDI.Lib.x86.dll" />
+      </ItemGroup>
+      <Copy SourceFiles="@(_NativeDependencyFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="true" />
+    </Target>
+
+    <!-- Safety net: fail the publish if a required native DLL is still absent (e.g. the source file is gone). -->
+    <Target Name="VerifyNativeDependenciesPublished" AfterTargets="CopyNativeDependenciesToPublishDir" Condition="$(RuntimeIdentifier.StartsWith('win'))">
+      <ItemGroup>
+        <_RequiredNativeFile Include="$(PublishDir)libmpv-2.dll;$(PublishDir)Processing.NDI.Lib.x64.dll" />
+      </ItemGroup>
+      <Error Condition="!Exists('%(_RequiredNativeFile.FullPath)')"
+             Text="Publish output is missing %(_RequiredNativeFile.Filename)%(_RequiredNativeFile.Extension) (expected in $(PublishDir)). The source DLL under Libraries\ may be missing." />
+    </Target>
 </Project>
