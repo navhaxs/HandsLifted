@@ -588,10 +588,24 @@ public class ThemePickerUiTests
         });
     }
 
+    /// <summary>Settles the UI until <paramref name="condition"/> holds (bounded), for state that arrives through posted work or timers.</summary>
+    private static async Task<bool> WaitFor(Func<bool> condition, double seconds = 2)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(seconds);
+        while (DateTime.UtcNow < deadline)
+        {
+            UiTestHelpers.Settle();
+            if (condition()) return true;
+            await Task.Delay(10);
+        }
+        UiTestHelpers.Settle();
+        return condition();
+    }
+
     [TestMethod]
     public async Task SongEditor_ThemeDropdown_KeyboardNeverLandsOnAHeaderOrAHiddenTheme()
     {
-        await HeadlessSession.Run(() =>
+        await HeadlessSession.RunAsync(async () =>
         {
             var main = UiTestHelpers.OpenMainWindow();
             var playlist = Globals.Instance.MainViewModel.Playlist;
@@ -603,12 +617,8 @@ public class ThemePickerUiTests
             playlist.Designs.Clear();
             foreach (var t in new[] { genA, genB, songA, songB, scripture }) playlist.Designs.Add(t);
 
+            // Never opened: the dropdown has no item containers yet, so nothing can rely on a container being disabled.
             var (window, editor, combo) = ShowSongEditorDesignTab(playlist);
-            combo.IsDropDownOpen = true;
-            UiTestHelpers.Settle();
-            Assert.AreEqual("#General, Gen A, Gen B, #Song Themes, Song A, Song B", DescribeRows(combo));
-            combo.IsDropDownOpen = false;
-            UiTestHelpers.Settle();
 
             void Press(Key key)
             {
@@ -616,27 +626,60 @@ public class ThemePickerUiTests
                 UiTestHelpers.Settle();
             }
 
+            void Expect(BaseSlideTheme expected, string message)
+            {
+                Assert.AreSame(expected, combo.SelectedItem,
+                    $"{message} (combo selected {(combo.SelectedItem as BaseSlideTheme)?.Name ?? combo.SelectedItem?.ToString() ?? "nothing"})");
+                Assert.AreSame(expected, editor.SelectedSlideTheme, message);
+            }
+
             // Closed box: Up/Down step over the header between the groups and stop at the ends.
             editor.SelectedSlideTheme = songA;
             UiTestHelpers.Settle();
             combo.Focus();
             Press(Key.Up);
-            Assert.AreSame(genB, editor.SelectedSlideTheme, "Up from the first song theme should skip the 'Song Themes' header");
+            Expect(genB, "Up from the first song theme should skip the 'Song Themes' header");
             Press(Key.Down);
-            Assert.AreSame(songA, editor.SelectedSlideTheme);
+            Expect(songA, "Down from the last general theme should skip the 'Song Themes' header");
             Press(Key.Down);
-            Assert.AreSame(songB, editor.SelectedSlideTheme);
+            Expect(songB, "Down to the last song theme");
             Press(Key.Down);
-            Assert.AreSame(songB, editor.SelectedSlideTheme, "Down past the last song theme landed on the hidden scripture theme");
+            Expect(songB, "Down past the last song theme landed on the hidden scripture theme");
+            Press(Key.Home);
+            Expect(genA, "Home should select the first shown theme, not the 'General' header");
+            Press(Key.Up);
+            Expect(genA, "Up from the first theme landed on the 'General' header");
+            Press(Key.End);
+            Expect(songB, "End should select the last shown theme, not the hidden scripture theme");
+            Press(Key.Down);
+            Expect(songB, "Down at the last theme moved");
+
+            // The mouse wheel over the closed box: the same steps.
+            var centre = combo.CentreIn(window);
+            void Wheel(double dy)
+            {
+                window.MouseMove(centre);
+                window.MouseWheel(centre, new Vector(0, dy));
+                UiTestHelpers.Settle();
+            }
+
+            editor.SelectedSlideTheme = songA;
+            UiTestHelpers.Settle();
+            Wheel(1);
+            Expect(genB, "wheel up from the first song theme should skip the 'Song Themes' header");
+            Wheel(-1);
+            Expect(songA, "wheel down should skip the 'Song Themes' header");
+            Wheel(-1);
+            Wheel(-1);
+            Expect(songB, "wheel down past the last song theme landed on the hidden scripture theme");
             editor.SelectedSlideTheme = genA;
             UiTestHelpers.Settle();
-            Press(Key.Up);
-            Assert.AreSame(genA, editor.SelectedSlideTheme, "Up from the first theme landed on the 'General' header");
-            Press(Key.Home);
-            Press(Key.End);
-            Assert.IsInstanceOfType(combo.SelectedItem, typeof(BaseSlideTheme));
+            Wheel(1);
+            Expect(genA, "wheel up from the first theme landed on the 'General' header");
 
             // Type-ahead matches theme names (not the "General" header, not the hidden scripture theme).
+            editor.SelectedSlideTheme = songB;
+            UiTestHelpers.Settle();
             window.KeyTextInput("Gen");
             UiTestHelpers.Settle();
             Assert.AreSame(genA, editor.SelectedSlideTheme, "typing 'Gen' should pick the first general theme, not its header");
@@ -650,7 +693,10 @@ public class ThemePickerUiTests
             // Open list: Home/End/Up/Down move the focus over tiles only; Enter picks the focused tile.
             combo.IsDropDownOpen = true;
             UiTestHelpers.Settle();
+            Assert.AreEqual("#General, Gen A, Gen B, #Song Themes, Song A, Song B", DescribeRows(combo));
             object? Focused() => (TopLevel.GetTopLevel(combo)!.FocusManager!.GetFocusedElement() as ComboBoxItem)?.Content;
+            // Opening moves the focus to the selected tile through posted work: wait for it, or it can land after Home.
+            Assert.IsTrue(await WaitFor(() => ReferenceEquals(Focused(), songB)), "opening did not focus the selected tile");
             Press(Key.Home);
             Assert.AreSame(genA, Focused(), $"Home should focus the first tile, not the 'General' header (focus is on {(Focused() as BaseSlideTheme)?.Name ?? Focused()?.ToString()})");
             Press(Key.Down);
@@ -674,7 +720,7 @@ public class ThemePickerUiTests
     [TestMethod]
     public async Task SongEditor_ThemeDropdown_TypeChangeRegroupsTheTile_AndKeepsTheSelection()
     {
-        await HeadlessSession.Run(() =>
+        await HeadlessSession.RunAsync(async () =>
         {
             var main = UiTestHelpers.OpenMainWindow();
             var playlist = Globals.Instance.MainViewModel.Playlist;
@@ -686,15 +732,16 @@ public class ThemePickerUiTests
 
             var (window, editor, combo) = ShowSongEditorDesignTab(playlist);
             editor.SelectedSlideTheme = songB;
-            UiTestHelpers.Settle();
+            // The song's Design and the editor's selection sync through observable pipelines: wait, do not assume one pass.
+            Assert.IsTrue(await WaitFor(() => editor.Song.Design == songB.Id && ReferenceEquals(combo.SelectedItem, songB)), "setup: Song B not selected");
             combo.IsDropDownOpen = true;
-            UiTestHelpers.Settle();
-            Assert.AreEqual("#General, Gen A, #Song Themes, Song A, Song B", DescribeRows(combo));
+            Assert.IsTrue(await WaitFor(() => DescribeRows(combo) == "#General, Gen A, #Song Themes, Song A, Song B"), DescribeRows(combo));
 
             // "Move to General" in the designer, while this dropdown is open.
             songB.Type = SlideThemeType.General;
-            UiTestHelpers.Settle();
+            await WaitFor(() => DescribeRows(combo) == "#General, Gen A, Song B, #Song Themes, Song A");
             Assert.AreEqual("#General, Gen A, Song B, #Song Themes, Song A", DescribeRows(combo));
+            await WaitFor(() => false, 0.2); // let any (wrong) write-back of a dropped selection arrive before checking it
             var tiles = VisibleItems(combo);
             Assert.AreEqual(PositionIn(combo, tiles[0]).Y, PositionIn(combo, tiles[1]).Y, 0.5, "Song B now sits beside Gen A");
             Assert.AreSame(songB, combo.SelectedItem, "regrouping the selected theme dropped the selection");
@@ -704,19 +751,20 @@ public class ThemePickerUiTests
 
             // The last song theme leaves: its header goes too.
             songA.Type = SlideThemeType.ScriptureTheme;
-            UiTestHelpers.Settle();
+            await WaitFor(() => DescribeRows(combo) == "#General, Gen A, Song B");
             Assert.AreEqual("#General, Gen A, Song B", DescribeRows(combo));
 
             // The selected theme becomes a scripture theme: hidden from the song list, but still the song's theme.
             songB.Type = SlideThemeType.ScriptureTheme;
-            UiTestHelpers.Settle();
+            await WaitFor(() => DescribeRows(combo) == "#General, Gen A");
             Assert.AreEqual("#General, Gen A", DescribeRows(combo));
+            await WaitFor(() => false, 0.2);
             Assert.AreSame(songB, combo.SelectedItem);
             Assert.AreEqual(songB.Id, editor.Song.Design);
 
             // And it comes back.
             songA.Type = SlideThemeType.SongTheme;
-            UiTestHelpers.Settle();
+            await WaitFor(() => DescribeRows(combo) == "#General, Gen A, #Song Themes, Song A");
             Assert.AreEqual("#General, Gen A, #Song Themes, Song A", DescribeRows(combo));
 
             window.Close();
@@ -727,7 +775,7 @@ public class ThemePickerUiTests
     [TestMethod]
     public async Task ItemDock_SongThemeFlyout_TypeChangeKeepsTheItemsTheme()
     {
-        await HeadlessSession.Run(() =>
+        await HeadlessSession.RunAsync(async () =>
         {
             var main = UiTestHelpers.OpenMainWindow();
             var playlist = Globals.Instance.MainViewModel.Playlist;
@@ -745,20 +793,23 @@ public class ThemePickerUiTests
             UiTestHelpers.Settle();
 
             var combo = OpenItemDockThemeCombo(dock);
-            Assert.AreSame(songB, combo.SelectedItem);
+            Assert.IsTrue(await WaitFor(() => ReferenceEquals(combo.SelectedItem, songB)), "setup: Song B not selected");
 
             // The item dock writes a null selection straight into the item's Design, so a dropped selection would lose its theme.
             songB.Type = SlideThemeType.General;
-            UiTestHelpers.Settle();
+            await WaitFor(() => DescribeRows(combo) == "#General, Gen A, Song B, #Song Themes, Song A");
             Assert.AreEqual("#General, Gen A, Song B, #Song Themes, Song A", DescribeRows(combo));
+            await WaitFor(() => false, 0.2); // let any (wrong) write-back of a dropped selection arrive before checking it
             Assert.AreEqual(songB.Id, song.Design, "regrouping the item's theme cleared it");
 
             songA.Type = SlideThemeType.General; // another theme moving past it
-            UiTestHelpers.Settle();
+            await WaitFor(() => false, 0.2);
             Assert.AreEqual(songB.Id, song.Design);
 
             songB.Type = SlideThemeType.ScriptureTheme;
-            UiTestHelpers.Settle();
+            await WaitFor(() => DescribeRows(combo) == "#General, Gen A, Song A");
+            await WaitFor(() => false, 0.2);
+            Assert.AreEqual("#General, Gen A, Song A", DescribeRows(combo));
             Assert.AreEqual(songB.Id, song.Design, "the theme turning into a scripture theme cleared the song's theme");
             Assert.AreSame(songB, combo.SelectedItem);
 

@@ -117,6 +117,7 @@ namespace HandsLiftedApp.Core.Controls
         {
             base.ClearContainerForItemOverride(container);
             container.Classes.Remove(HeaderClass);
+            container.ClearValue(ContentControl.ContentTemplateProperty);
             container.ClearValue(IsEnabledProperty);
             container.ClearValue(FocusableProperty);
             container.ClearValue(IsVisibleProperty);
@@ -136,6 +137,8 @@ namespace HandsLiftedApp.Core.Controls
 
             container.Classes.Remove(HeaderClass);
             container.ClearValue(FocusableProperty);
+            if (container is ContentControl { ContentTemplate: var template } tile && ReferenceEquals(template, HeaderTemplate))
+                tile.ClearValue(ContentControl.ContentTemplateProperty); // a container that showed a header before
             if (_items.IsShown(item))
             {
                 container.ClearValue(IsEnabledProperty);
@@ -158,19 +161,62 @@ namespace HandsLiftedApp.Core.Controls
         }
 
         /// <summary>
-        /// In the open list, arrows and Home/End move the focus over the tiles only. The stock handling asks the
-        /// WrapPanel for its first/last/neighbouring child, which can be a header (or a hidden theme) that takes no
-        /// focus, so Home did nothing and Up/Down could stall at a group boundary.
+        /// Arrows and Home/End only ever reach a selectable theme (or the blank option), never a header or a hidden theme.
+        /// <list type="bullet">
+        /// <item>Open list: they move the focus over the tiles. Up/Left = the previous tile and Down/Right = the next
+        /// tile in LIST order (not the tile above/below in the two-column grid). The stock handling asks the WrapPanel
+        /// for its first/last/neighbouring child, which can be a header that takes no focus, so Home did nothing.</item>
+        /// <item>Closed box: Up/Down select the previous/next choice, Home/End the first/last, stopping at the ends.
+        /// The stock version only skips items whose container is disabled, and a dropdown that was never opened has no
+        /// containers, so it selected headers and hidden themes.</item>
+        /// </list>
         /// </summary>
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (IsDropDownOpen && e.KeyModifiers == KeyModifiers.None && MoveFocusInList(e.Key))
+            if (e.KeyModifiers == KeyModifiers.None &&
+                (IsDropDownOpen ? MoveFocusInList(e.Key) : MoveSelection(e.Key)))
             {
                 e.Handled = true;
                 return;
             }
 
             base.OnKeyDown(e);
+        }
+
+        /// <summary>The wheel over the closed, focused box steps the selection like Up/Down (as the stock ComboBox does, minus headers and hidden themes).</summary>
+        protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+        {
+            if (!e.Handled && !IsDropDownOpen && IsFocused && e.Delta.Y != 0)
+            {
+                MoveSelection(e.Delta.Y < 0 ? Key.Down : Key.Up);
+                e.Handled = true;
+                return;
+            }
+
+            base.OnPointerWheelChanged(e);
+        }
+
+        /// <summary>The items a user can choose, in list order: shown themes, plus the blank option where offered.</summary>
+        private List<object?> Choices() =>
+            _items.Where(item => item is not ThemePickerGroupHeader && _items.IsShown(item)).ToList();
+
+        private bool MoveSelection(Key key)
+        {
+            if (key is not (Key.Home or Key.End or Key.Up or Key.Down)) return false;
+
+            var choices = Choices();
+            if (choices.Count == 0) return true; // nothing to choose: swallow the key rather than let the stock code pick a header
+
+            var current = choices.FindIndex(c => ReferenceEquals(c, SelectedItem));
+            var target = key switch
+            {
+                Key.Home => 0,
+                Key.End => choices.Count - 1,
+                Key.Down => current < 0 ? 0 : Math.Min(current + 1, choices.Count - 1),
+                _ => current < 0 ? choices.Count - 1 : Math.Max(current - 1, 0),
+            };
+            if (!ReferenceEquals(choices[target], SelectedItem)) SelectedItem = choices[target];
+            return true;
         }
 
         private bool MoveFocusInList(Key key)
@@ -202,12 +248,14 @@ namespace HandsLiftedApp.Core.Controls
             if (e.Handled || string.IsNullOrEmpty(e.Text)) return;
 
             var now = DateTime.UtcNow;
-            _typeAhead = now - _typeAheadAt > TypeAheadTimeout ? e.Text : _typeAhead + e.Text;
+            var running = _typeAhead.Length > 0 && now - _typeAheadAt <= TypeAheadTimeout;
+            if (!running && string.IsNullOrWhiteSpace(e.Text)) return; // Space etc. cannot start (and so poison) a run
+            _typeAhead = running ? _typeAhead + e.Text : e.Text;
             _typeAheadAt = now;
 
             // Keep typing to refine; a fresh start if the run so far matches nothing.
             var match = FindShownTheme(_typeAhead);
-            if (match == null && _typeAhead != e.Text)
+            if (match == null && _typeAhead != e.Text && !string.IsNullOrWhiteSpace(e.Text))
             {
                 _typeAhead = e.Text;
                 match = FindShownTheme(_typeAhead);
