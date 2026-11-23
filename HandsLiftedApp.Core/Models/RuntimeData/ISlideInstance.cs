@@ -9,7 +9,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData
     {
         Bitmap? Cached { get; set; }
         Bitmap? Thumbnail { get; set; }
-        ItemAutoAdvanceTimer? SlideTimerConfig { get; }
         SlideThumbnailBadge? SlideThumbnailBadge { get; }
     }
     

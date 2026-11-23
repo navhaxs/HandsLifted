@@ -207,7 +207,7 @@ namespace HandsLiftedApp.Core.Views
                             contentStr +=
                                 $"File {item.Name}:{Environment.NewLine}{file.Name}{Environment.NewLine}{Environment.NewLine}";
 
-                            var quickSlide = new ImageSlideInstance(file.Path.LocalPath, null);
+                            var quickSlide = new ImageSlideInstance(file.Path.LocalPath);
                             quickSlide.OnPreloadSlide();
                             Globals.Instance.MainViewModel.Playlist.QuickShowItem = quickSlide; // TODO this doesnt let the slides XFADE between consecutive QuickShowItems. implement a slot A and slot B mechanism
                         }

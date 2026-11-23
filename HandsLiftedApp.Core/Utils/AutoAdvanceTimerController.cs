@@ -5,6 +5,8 @@ using Avalonia.Threading;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.AppState;
 using HandsLiftedApp.Core.Models.RuntimeData;
+using HandsLiftedApp.Data.Data.Models.Items;
+using HandsLiftedApp.Data.Models.Items;
 using HandsLiftedApp.Data.Slides;
 using ReactiveUI;
 
@@ -33,9 +35,15 @@ namespace HandsLiftedApp.Core.Utils
         public string PrettyTimerInterval { get => _PrettyTimerInterval; set => this.RaiseAndSetIfChanged(ref _PrettyTimerInterval, value); }
 
         private IItemInstance? itemInstance;
-        private Slide? itemInstanceSlide;
-        private ISlideInstance? slideInstance;
+        private ItemAutoAdvanceTimer? timerConfig;
         private bool userPaused;
+
+        /// <summary>
+        /// Autoplay is configured per item (media group), not per slide, so every slide type in the group -
+        /// image, custom, video - follows it. Items that aren't media groups (songs, scripture) have none.
+        /// </summary>
+        private static ItemAutoAdvanceTimer? ResolveTimerConfig(IItemInstance? item) =>
+            (item as MediaGroupItem)?.AutoAdvanceTimer;
 
         public void PauseTimer()
         {
@@ -57,20 +65,19 @@ namespace HandsLiftedApp.Core.Utils
             Timer.Stop(true);
 
             itemInstance = _itemInstance;
-            itemInstanceSlide = itemInstance?.Slides.ElementAtOrDefault(itemInstance.SelectedSlideIndex);
-            slideInstance = itemInstanceSlide?.GetAsISlideInstance();
+            timerConfig = ResolveTimerConfig(itemInstance);
 
-            IsTimerConfigured = slideInstance?.SlideTimerConfig is { IsEnabled: true };
+            IsTimerConfigured = timerConfig is { IsEnabled: true };
 
-            if (slideInstance == null || !IsTimerConfigured)
+            if (itemInstance == null || timerConfig == null || !IsTimerConfigured)
             {
                 userPaused = false;
                 return;
             }
 
-            PrettyTimerInterval = FormatTimeSpan(TimeSpan.FromMilliseconds(slideInstance.SlideTimerConfig.IntervalMs));
+            PrettyTimerInterval = FormatTimeSpan(TimeSpan.FromMilliseconds(timerConfig.IntervalMs));
 
-            Timer.Start(slideInstance.SlideTimerConfig.IntervalMs);
+            Timer.Start(timerConfig.IntervalMs);
 
             if (wasPaused)
             {
@@ -108,7 +115,7 @@ namespace HandsLiftedApp.Core.Utils
             // if (!parentSlidesGroup.State.IsSelected)
             //     return;
             //
-            if (slideInstance?.SlideTimerConfig?.IsEnabled != true)
+            if (timerConfig?.IsEnabled != true)
                 return;
                     
             if (itemInstance != null)

@@ -100,7 +100,7 @@ namespace HandsLiftedApp.Core
                 }
                 else
                 {
-                    return new ImageSlideInstance(fullFilePath, parentMediaGroupItem);
+                    return new ImageSlideInstance(fullFilePath);
                 }
             }
             else if (item is MediaGroupItem.SlideItem slideItem)

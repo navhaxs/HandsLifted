@@ -33,7 +33,6 @@ public class ScriptureSlideInstanceTests
 
         Assert.IsNull(slide.Cached);
         Assert.IsNull(slide.Thumbnail);
-        Assert.IsNull(slide.SlideTimerConfig);
         Assert.IsNull(slide.SlideThumbnailBadge);
     }
 

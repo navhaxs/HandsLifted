@@ -199,7 +199,6 @@ namespace HandsLiftedApp.Data.Slides
             set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
         }
 
-        public ItemAutoAdvanceTimer? SlideTimerConfig => null;
         
         public SlideThumbnailBadge? SlideThumbnailBadge { get; }
     }

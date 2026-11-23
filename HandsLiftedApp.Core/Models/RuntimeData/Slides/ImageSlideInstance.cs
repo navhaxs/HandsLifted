@@ -23,22 +23,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
         // Dispose() below and PlaylistInstance.DisposeSlideRenderResources).
         private BitmapCacheLease? _cachedLease;
 
-        public ImageSlideInstance(string imagePath, MediaGroupItem? parentMediaGroupItem) : base(imagePath)
+        public ImageSlideInstance(string imagePath) : base(imagePath)
         {
             this.WhenAnyValue(s => s.SourceMediaFilePath) // todo dirty bit?
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(text => { debounceDispatcher.Debounce(() => GenerateBitmaps()); });
-
-            SlideTimerConfig = parentMediaGroupItem?.AutoAdvanceTimer;
-
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            parentMediaGroupItem.WhenAnyValue(x => x.AutoAdvanceTimer)
-                .Subscribe(a => SlideTimerConfig = a);
         }
 
         private async Task GenerateBitmaps()
@@ -77,14 +66,6 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
         {
             get => _thumbnail;
             set => this.RaiseAndSetIfChanged(ref _thumbnail, value);
-        }
-
-        private ItemAutoAdvanceTimer? _SlideTimerConfig = null;
-
-        public ItemAutoAdvanceTimer? SlideTimerConfig
-        {
-            get => _SlideTimerConfig;
-            set => this.RaiseAndSetIfChanged(ref _SlideTimerConfig, value);
         }
 
         public SlideThumbnailBadge? SlideThumbnailBadge { get; }
