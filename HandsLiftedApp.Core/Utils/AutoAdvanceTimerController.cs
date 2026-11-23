@@ -19,6 +19,21 @@ namespace HandsLiftedApp.Core.Utils
         public AutoAdvanceTimerController()
         {
             Timer.OnElapsed += ApplyTimerConfig;
+            Timer.WhenAnyValue(t => t.Enabled).Subscribe(_ => this.RaisePropertyChanged(nameof(IsPaused)));
+        }
+
+        // True from the moment the countdown elapses until OnSlideNavigation restarts it for the next slide.
+        // The timer is stopped in that gap, but it is not "paused" from the user's point of view.
+        private bool _isAdvancing;
+
+        /// <summary>What the UI shows as "Paused": the timer is stopped and we are not mid-advance.</summary>
+        public bool IsPaused => !Timer.Enabled && !_isAdvancing;
+
+        private void SetAdvancing(bool value)
+        {
+            if (_isAdvancing == value) return;
+            _isAdvancing = value;
+            this.RaisePropertyChanged(nameof(IsPaused));
         }
 
         public CountdownTimer Timer { get => _Timer; set => this.RaiseAndSetIfChanged(ref _Timer, value); }
@@ -58,6 +73,18 @@ namespace HandsLiftedApp.Core.Utils
         }
 
         public void OnSlideNavigation(IItemInstance? _itemInstance)
+        {
+            try
+            {
+                OnSlideNavigationCore(_itemInstance);
+            }
+            finally
+            {
+                SetAdvancing(false);
+            }
+        }
+
+        private void OnSlideNavigationCore(IItemInstance? _itemInstance)
         {
             var isSameItemGroup = itemInstance != null && ReferenceEquals(itemInstance, _itemInstance);
             var wasPaused = IsTimerConfigured && userPaused && isSameItemGroup;
@@ -106,6 +133,10 @@ namespace HandsLiftedApp.Core.Utils
 
         private void ApplyTimerConfig(object? sender, EventArgs e)
         {
+            // Flag the advance before stopping, so the UI never sees "stopped and not advancing".
+            if (timerConfig?.IsEnabled == true && itemInstance is { Slides.Count: > 0 })
+                SetAdvancing(true);
+
             Timer.Stop();
             // Log.Information($"OnElapsed {parentSlidesGroup.UUID}");
             //

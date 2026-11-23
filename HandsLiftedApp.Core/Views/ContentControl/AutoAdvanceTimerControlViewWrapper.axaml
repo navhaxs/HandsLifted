@@ -86,13 +86,13 @@
                                                     <Setter Property="VerticalAlignment" Value="Center" />
                                                 </Style>
                                             </StackPanel.Styles>
-                                            <Button Click="ResumeButton_OnClick" IsVisible="{Binding !Timer.Enabled}">
+                                            <Button Click="ResumeButton_OnClick" IsVisible="{Binding IsPaused}">
                                                 <DockPanel>
                                                     <avalonia:MaterialIcon Kind="Play" />
                                                     <TextBlock Text="Resume" />
                                                 </DockPanel>
                                             </Button>
-                                            <Button Click="PauseButton_OnClick" IsVisible="{Binding Timer.Enabled}">
+                                            <Button Click="PauseButton_OnClick" IsVisible="{Binding !IsPaused}">
                                                 <DockPanel>
                                                     <avalonia:MaterialIcon Kind="Pause" />
                                                     <TextBlock Text="Pause" />
@@ -108,9 +108,9 @@
                                             <TextBlock Text="{Binding PrettyTimerInterval}" VerticalAlignment="Center" />
                                             <Border
                                                 Background="#bf3428"
-                                                Classes.blinking="{Binding !Timer.Enabled}"
+                                                Classes.blinking="{Binding IsPaused}"
                                                 HorizontalAlignment="Left"
-                                                IsVisible="{Binding !Timer.Enabled}"
+                                                IsVisible="{Binding IsPaused}"
                                                 Margin="6,0,0,0"
                                                 Padding="12,4"
                                                 VerticalAlignment="Center">
