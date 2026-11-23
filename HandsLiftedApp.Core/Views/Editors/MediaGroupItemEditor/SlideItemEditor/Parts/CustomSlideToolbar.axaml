@@ -6,6 +6,7 @@
              xmlns:controls="clr-namespace:HandsLiftedApp.Controls;assembly=HandsLiftedApp.Controls"
              xmlns:slides="clr-namespace:HandsLiftedApp.Data.Data.Models.Slides;assembly=HandsLiftedApp.Data"
              xmlns:slideElement="clr-namespace:HandsLiftedApp.Data.Models.SlideElement;assembly=HandsLiftedApp.Data"
+             Height="40"
              mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="90"
              x:DataType="slides:CustomSlide"
              x:Class="HandsLiftedApp.Core.Views.Editors.CustomSlideToolbar">
@@ -67,7 +68,8 @@
         </Style>
     </UserControl.Styles>
 
-    <WrapPanel Name="RootPanel" Orientation="Horizontal" Margin="4 2">
+    <WrapPanel Name="RootPanel" Orientation="Horizontal" Margin="4 2"
+                VerticalAlignment="Center">
 
         <!-- always: history -->
         <StackPanel Classes="toolbarGroup">
