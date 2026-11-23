@@ -77,7 +77,8 @@ namespace HandsLiftedApp.Data.Slides
             var spec = ScriptureParagraphSpecBuilder.Build(this);
             using var skBitmap = SlideRenderer.RenderToSKBitmap(spec);
             var cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
-            var thumb = BitmapUtils.CreateThumbnail(cached);
+            var thumb = BitmapUtils.RenderThumbnail(spec);
+            HandsLiftedApp.Core.Services.ThumbnailRenderSize.Track(this);
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
                 var oldCached = Cached;

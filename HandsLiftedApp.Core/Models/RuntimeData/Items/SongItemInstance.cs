@@ -750,7 +750,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongSlideSpecBuilder.Build(slide);
                 using var skBitmap = HandsLiftedApp.Core.Render.Skia.SlideRenderer.RenderToSKBitmap(spec);
                 slide.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
-                slide.Thumbnail = BitmapUtils.CreateThumbnail(slide.Cached);
+                slide.Thumbnail = BitmapUtils.RenderThumbnail(spec);
+                HandsLiftedApp.Core.Services.ThumbnailRenderSize.Track(slide);
             }
 
             // Also regenerate title slide bitmap
@@ -791,9 +792,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
                 var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongTitleSlideSpecBuilder.Build(titleInstance, videoFrame);
                 using var skBitmap = HandsLiftedApp.Core.Render.Skia.SlideRenderer.RenderToSKBitmap(spec);
-                videoFrame?.Dispose();
                 titleInstance.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
-                titleInstance.Thumbnail = BitmapUtils.CreateThumbnail(titleInstance.Cached);
+                // The spec's background can hold videoFrame, so render the thumbnail before disposing it.
+                titleInstance.Thumbnail = BitmapUtils.RenderThumbnail(spec);
+                videoFrame?.Dispose();
+                HandsLiftedApp.Core.Services.ThumbnailRenderSize.Track(titleInstance);
             }
         }
     }

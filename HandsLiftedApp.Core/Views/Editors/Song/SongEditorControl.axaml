@@ -179,13 +179,13 @@
                                     <common:MyTemplateSelector>
                                         <DataTemplate x:DataType="slides:SongTitleSlideInstance" x:Key="SongTitleSlideInstance">
                                             <Image
-                                                RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                RenderOptions.BitmapInterpolationMode="HighQuality"
                                                 Source="{Binding Thumbnail}"
                                                 Stretch="Uniform" />
                                         </DataTemplate>
                                         <DataTemplate x:DataType="slides:SongSlideInstance" x:Key="SongSlideInstance">
                                             <Image
-                                                RenderOptions.BitmapInterpolationMode="LowQuality"
+                                                RenderOptions.BitmapInterpolationMode="HighQuality"
                                                 Source="{Binding Thumbnail}"
                                                 Stretch="Uniform" />
                                         </DataTemplate>

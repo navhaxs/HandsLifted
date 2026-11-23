@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using HandsLiftedApp.Core.Render.Skia;
+using HandsLiftedApp.Core.Services;
 using SkiaSharp;
 
 namespace HandsLiftedApp.Core
@@ -23,7 +25,18 @@ namespace HandsLiftedApp.Core
             return SKBitmap.Decode(ms);
         }
 
-        public static Bitmap? CreateThumbnail(Bitmap? source)
+        /// <summary>
+        /// Renders a slide thumbnail straight from its spec at <see cref="ThumbnailRenderSize.CurrentWidth"/>,
+        /// avoiding the render-at-1920-then-shrink path of <see cref="CreateThumbnail"/>.
+        /// </summary>
+        public static Bitmap RenderThumbnail(SlideRenderSpec spec)
+        {
+            using var skBitmap = SlideRenderer.RenderThumbnail(spec, ThumbnailRenderSize.CurrentWidth);
+            return CopySkBitmapPixels(skBitmap, AlphaFormat.Opaque);
+        }
+
+        /// <param name="targetWidth">Thumbnail pixel width; null = <see cref="ThumbnailRenderSize.CurrentWidth"/>.</param>
+        public static Bitmap? CreateThumbnail(Bitmap? source, int? targetWidth = null)
         {
             if (source == null)
             {
@@ -57,9 +70,13 @@ namespace HandsLiftedApp.Core
                 // bitmap.SetPixels only points at bufferPtr, it does not copy - Resize below
                 // reads through that pointer into a fresh independent buffer, so bufferPtr
                 // must stay alive until after Resize completes.
-                using SKBitmap? resizedBitmapSource = bitmap.Resize(
-                    new SKImageInfo(500, (int)(source.Size.Height / source.Size.Width * 500)),
-                    SKFilterQuality.High);
+                var thumbWidth = Math.Max(1, targetWidth ?? ThumbnailRenderSize.CurrentWidth);
+                var thumbHeight = Math.Max(1, (int)(source.Size.Height / source.Size.Width * thumbWidth));
+                // Shrinking uses an area-averaging filter (BitmapScaling.Downscale); the cubic filter used for
+                // enlarging aliases badly on big reductions, which is exactly what a thumbnail is.
+                using SKBitmap? resizedBitmapSource = thumbWidth < bitmap.Width
+                    ? BitmapScaling.Downscale(bitmap, thumbWidth, thumbHeight)
+                    : bitmap.Resize(new SKImageInfo(thumbWidth, thumbHeight), new SKSamplingOptions(SKCubicResampler.Mitchell));
                 return resizedBitmapSource == null ? null : CopySkBitmapPixels(resizedBitmapSource, AlphaFormat.Opaque);
             }
             finally

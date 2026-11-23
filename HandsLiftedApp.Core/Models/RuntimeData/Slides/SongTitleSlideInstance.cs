@@ -155,9 +155,11 @@ namespace HandsLiftedApp.Data.Slides
 
             var spec = SongTitleSlideSpecBuilder.Build(this, videoFrame);
             using var skBitmap = SlideRenderer.RenderToSKBitmap(spec);
-            videoFrame?.Dispose();
             var cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
-            var thumb = BitmapUtils.CreateThumbnail(cached);
+            // The spec's background can hold videoFrame, so render the thumbnail before disposing it.
+            var thumb = BitmapUtils.RenderThumbnail(spec);
+            videoFrame?.Dispose();
+            HandsLiftedApp.Core.Services.ThumbnailRenderSize.Track(this);
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
                 var oldCached = Cached;

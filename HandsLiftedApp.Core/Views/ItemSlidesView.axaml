@@ -393,17 +393,29 @@
                                     <controls:ListBoxWithoutKey.ItemTemplate>
                                         <common:MyTemplateSelector>
                                             <DataTemplate x:DataType="slides:SongTitleSlideInstance" x:Key="SongTitleSlideInstance">
-                                                <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                                <Image
+                                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                    Source="{Binding Thumbnail}"
+                                                    Stretch="Uniform" />
                                             </DataTemplate>
                                             <DataTemplate x:DataType="slides:SongSlideInstance" x:Key="SongSlideInstance">
-                                                <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                                <Image
+                                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                    Source="{Binding Thumbnail}"
+                                                    Stretch="Uniform" />
                                             </DataTemplate>
                                             <DataTemplate x:DataType="slides:ScriptureSlideInstance" x:Key="ScriptureSlideInstance">
-                                                <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                                <Image
+                                                    RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                    Source="{Binding Thumbnail}"
+                                                    Stretch="Uniform" />
                                             </DataTemplate>
                                             <DataTemplate x:Key="ImageSlideInstance">
                                                 <views1:SlideThumbnail>
-                                                    <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                                    <Image
+                                                        RenderOptions.BitmapInterpolationMode="HighQuality"
+                                                        Source="{Binding Thumbnail}"
+                                                        Stretch="Uniform" />
                                                 </views1:SlideThumbnail>
                                             </DataTemplate>
                                             <DataTemplate x:Key="VideoSlide">

@@ -297,6 +297,10 @@ public partial class MainWindow : ReactiveWindow<MainViewModel>
 
     private void TopLevel_OnOpened(object? sender, EventArgs e)
     {
+        // Slide thumbnails are rendered at (roughly) the pixel size they are shown at; that depends on display scaling.
+        ThumbnailRenderSize.Start(RenderScaling);
+        ScalingChanged += (_, _) => ThumbnailRenderSize.UpdateRenderScaling(RenderScaling);
+
         if (DataContext is MainViewModel vm)
         {
             vm.OnMainWindowOpened();

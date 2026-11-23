@@ -9,11 +9,12 @@ using ReactiveUI;
 using System;
 using System.Reactive.Linq;
 using HandsLiftedApp.Core.Models.Thumbnail;
+using HandsLiftedApp.Core.Services;
 using System.Threading.Tasks;
 
 namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
 {
-    public class ImageSlideInstance : ImageSlide, ISlideInstance, IDisposable
+    public class ImageSlideInstance : ImageSlide, ISlideInstance, IRenderable, IDisposable
     {
         private DebounceDispatcher debounceDispatcher = new(200);
         private static readonly object loadDataLock = new object();
@@ -41,6 +42,33 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Slides
             _cachedLease = lease;
             Cached = lease?.Bitmap;
             Thumbnail = BitmapUtils.CreateThumbnail(Cached);
+            ThumbnailRenderSize.Track(this);
+        }
+
+        // Called by the render queue when the thumbnail size bucket changed (see ThumbnailRenderSize):
+        // re-makes the thumbnail from the already-loaded image at the new size.
+        public void Render()
+        {
+            var source = Cached;
+            if (source is null)
+                return;
+
+            Bitmap? thumb;
+            try
+            {
+                thumb = BitmapUtils.CreateThumbnail(source);
+            }
+            catch (ObjectDisposedException)
+            {
+                return; // the slide was torn down while this was queued
+            }
+
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                var oldThumbnail = Thumbnail;
+                Thumbnail = thumb;
+                oldThumbnail?.Dispose();
+            }, Avalonia.Threading.DispatcherPriority.Background);
         }
 
         // Releases this slide's lease on the shared, cached background bitmap so it can finally

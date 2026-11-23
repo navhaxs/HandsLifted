@@ -44,6 +44,194 @@ public class SlideRendererTests
         Assert.AreEqual(0, pixel.Alpha);
     }
 
+    // ── Drawing small (live preview) ───────────────────────────────────────────
+
+    private static SKBitmap Checkerboard(int width, int height)
+    {
+        var bmp = new SKBitmap(width, height);
+        for (var y = 0; y < height; y++)
+            for (var x = 0; x < width; x++)
+                bmp.SetPixel(x, y, (x + y) % 2 == 0 ? SKColors.Black : SKColors.White);
+        return bmp;
+    }
+
+    // Draws a spec the way SlideCanvas does in a Viewbox: 1920x1080 layout through a canvas scale.
+    private static SKBitmap DrawScaled(SlideRenderSpec spec, float scale)
+    {
+        var info = new SKImageInfo((int)(1920 * scale), (int)(1080 * scale), SKColorType.Bgra8888, SKAlphaType.Premul);
+        using var surface = SKSurface.Create(info);
+        surface.Canvas.Clear(SKColors.Black);
+        surface.Canvas.Scale(scale);
+        SlideRenderer.Draw(surface.Canvas, spec, null, 1f, 1920, 1080);
+        using var image = surface.Snapshot();
+        return SKBitmap.FromImage(image);
+    }
+
+    // A page of small black text on white: the kind of content that aliases when shrunk.
+    private static SKBitmap TextLikePage()
+    {
+        var bmp = new SKBitmap(1920, 1080);
+        bmp.Erase(SKColors.White);
+        using var canvas = new SKCanvas(bmp);
+        using var font = new SKFont(SKTypeface.FromFamilyName("Arial"), 34);
+        using var paint = new SKPaint { Color = SKColors.Black, IsAntialias = true };
+        var random = new Random(7);
+        var words = new[] { "Donations", "BSB", "transfer", "account", "reference", "youth", "please", "include", "name" };
+        for (var y = 40; y < 1060; y += 46)
+            for (var x = 40f; x < 1800;)
+            {
+                var word = words[random.Next(words.Length)];
+                canvas.DrawText(word, x, y, font, paint);
+                x += font.MeasureText(word) + 14;
+            }
+        return bmp;
+    }
+
+    // Root-mean-square difference between `drawn` and the exact area average of the source pixels each output pixel covers.
+    private static double ErrorVersusExactAreaAverage(SKBitmap drawn, SKBitmap source, float scale)
+    {
+        double sum = 0;
+        long count = 0;
+        for (var y = 2; y < drawn.Height - 2; y++)
+            for (var x = 2; x < drawn.Width - 2; x++)
+            {
+                double x0 = x / scale, x1 = (x + 1) / scale, y0 = y / scale, y1 = (y + 1) / scale;
+                double total = 0, weights = 0;
+                for (var sy = (int)Math.Floor(y0); sy < Math.Ceiling(y1) && sy < source.Height; sy++)
+                    for (var sx = (int)Math.Floor(x0); sx < Math.Ceiling(x1) && sx < source.Width; sx++)
+                    {
+                        var weight = (Math.Min(x1, sx + 1) - Math.Max(x0, sx)) * (Math.Min(y1, sy + 1) - Math.Max(y0, sy));
+                        total += source.GetPixel(sx, sy).Red * weight;
+                        weights += weight;
+                    }
+                var diff = drawn.GetPixel(x, y).Red - total / weights;
+                sum += diff * diff;
+                count++;
+            }
+        return Math.Sqrt(sum / count);
+    }
+
+    [TestMethod]
+    public void Draw_BitmapBackgroundShownMuchSmaller_IsCloseToAnExactAreaAverage()
+    {
+        DownscaledBitmapCache.Clear();
+        using var source = TextLikePage();
+        var spec = new SlideRenderSpec(new SkiaBitmapBackground(source), Array.Empty<RenderElement>());
+
+        using var drawn = DrawScaled(spec, 0.2f);
+
+        // Measured on this page at 0.2: letting the canvas shrink it by itself gives an error of about 41,
+        // the cached area-averaged copy about 18. The limit sits between the two.
+        var error = ErrorVersusExactAreaAverage(drawn, source, 0.2f);
+        Assert.IsTrue(error < 28, $"error vs exact area average was {error:F1}; the canvas's own shrink gives about 41");
+    }
+
+    [TestMethod]
+    public void Draw_BitmapBackgroundAtFullSize_IsNotShrunkOrCached()
+    {
+        DownscaledBitmapCache.Clear();
+        using var source = SolidBitmap(SKColors.Red);
+        var spec = new SlideRenderSpec(new SkiaBitmapBackground(source), Array.Empty<RenderElement>());
+
+        using var drawn = DrawScaled(spec, 1f);
+
+        Assert.AreEqual(0, DownscaledBitmapCache.Count);
+        Assert.AreEqual(255, drawn.GetPixel(100, 100).Red);
+    }
+
+    [TestMethod]
+    public void Draw_SameBitmapShownSmallRepeatedly_ReusesOneCachedCopy()
+    {
+        DownscaledBitmapCache.Clear();
+        using var source = Checkerboard(1920, 1080);
+        var spec = new SlideRenderSpec(new SkiaBitmapBackground(source), Array.Empty<RenderElement>());
+
+        for (var frame = 0; frame < 5; frame++)
+        {
+            using var drawn = DrawScaled(spec, 0.125f);
+        }
+
+        Assert.AreEqual(1, DownscaledBitmapCache.Count);
+    }
+
+    [TestMethod]
+    public void DownscaledBitmapCache_KeepsAtMostEightCopies()
+    {
+        DownscaledBitmapCache.Clear();
+        using var source = SolidBitmap(SKColors.Green);
+        var big = new SKBitmap(64, 64);
+        big.Erase(SKColors.Green);
+
+        for (var size = 8; size < 8 + 12; size++)
+            Assert.IsNotNull(DownscaledBitmapCache.GetOrCreate(big, size, size));
+
+        Assert.AreEqual(8, DownscaledBitmapCache.Count);
+        big.Dispose();
+    }
+
+    // ── Thumbnails ─────────────────────────────────────────────────────────────
+
+    [TestMethod]
+    public void BitmapScaling_Downscale_AveragesFineDetailInsteadOfSkippingIt()
+    {
+        // 1px black/white checkerboard: a faithful 4:1 reduction is mid grey everywhere. A filter that only samples
+        // a few source pixels lands on pure black or white (aliasing), which is what small text turns into.
+        using var source = new SKBitmap(400, 400);
+        for (var y = 0; y < 400; y++)
+            for (var x = 0; x < 400; x++)
+                source.SetPixel(x, y, (x + y) % 2 == 0 ? SKColors.Black : SKColors.White);
+
+        using var scaled = BitmapScaling.Downscale(source, 100, 100);
+
+        Assert.IsNotNull(scaled);
+        foreach (var (x, y) in new[] { (10, 10), (50, 50), (51, 50), (90, 33) })
+        {
+            var red = scaled.GetPixel(x, y).Red;
+            Assert.IsTrue(red is > 110 and < 145, $"({x},{y}) expected mid grey, got {red}");
+        }
+    }
+
+    [TestMethod]
+    public void RenderThumbnail_ReturnsRequestedWidthAt16By9()
+    {
+        var spec = new SlideRenderSpec(new SolidBackground(SKColors.Black), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderThumbnail(spec, 320);
+
+        Assert.AreEqual(320, bitmap.Width);
+        Assert.AreEqual(180, bitmap.Height);
+    }
+
+    [TestMethod]
+    public void RenderThumbnail_SolidBackground_FillsWholeThumbnail()
+    {
+        var spec = new SlideRenderSpec(new SolidBackground(SKColors.Red), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderThumbnail(spec, 160);
+
+        foreach (var (x, y) in new[] { (0, 0), (159, 0), (0, 89), (159, 89), (80, 45) })
+        {
+            var pixel = bitmap.GetPixel(x, y);
+            Assert.AreEqual(255, pixel.Red, $"({x},{y})");
+            Assert.AreEqual(0, pixel.Green, $"({x},{y})");
+            Assert.AreEqual(0, pixel.Blue, $"({x},{y})");
+        }
+    }
+
+    [TestMethod]
+    public void RenderThumbnail_TransparentBackground_CompositesOverOpaqueBlack()
+    {
+        var spec = new SlideRenderSpec(new TransparentBackground(), Array.Empty<RenderElement>());
+
+        using var bitmap = SlideRenderer.RenderThumbnail(spec, 160);
+        var pixel = bitmap.GetPixel(10, 10);
+
+        Assert.AreEqual(255, pixel.Alpha);
+        Assert.AreEqual(0, pixel.Red);
+        Assert.AreEqual(0, pixel.Green);
+        Assert.AreEqual(0, pixel.Blue);
+    }
+
     // ── Background colour + opacity ────────────────────────────────────────────
 
     private static SKBitmap SolidBitmap(SKColor color)

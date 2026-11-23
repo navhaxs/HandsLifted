@@ -262,6 +262,67 @@ public static class SlideRenderer
         return SKBitmap.FromImage(image);
     }
 
+    /// <summary>
+    /// Renders a thumbnail directly at <paramref name="pixelWidth"/> (16:9) instead of rendering 1920x1080 and
+    /// shrinking the bitmap: the slide is still laid out in 1920x1080 space but drawn through a canvas scale, so
+    /// text is rasterised at its final size and only background images are resampled (once). Composited over opaque
+    /// black, so the result is fully opaque.
+    /// </summary>
+    public static SKBitmap RenderThumbnail(SlideRenderSpec spec, int pixelWidth)
+    {
+        const int logicalWidth = 1920;
+        const int logicalHeight = 1080;
+
+        pixelWidth = Math.Max(1, pixelWidth);
+        var pixelHeight = Math.Max(1, (int)Math.Round(pixelWidth * (double)logicalHeight / logicalWidth));
+
+        var info = new SKImageInfo(pixelWidth, pixelHeight, SKColorType.Bgra8888, SKAlphaType.Premul);
+        using var surface = SKSurface.Create(info);
+        if (surface is null)
+            throw new InvalidOperationException($"SKSurface.Create failed for {pixelWidth}x{pixelHeight}.");
+
+        // A background image is reduced up front with an area-averaging filter. Letting the canvas shrink it during
+        // the draw uses a cubic filter that skips most source pixels and aliases (shimmering text in photos/slides).
+        SKBitmap? scaledBackground = null;
+        var drawSpec = spec;
+        switch (spec.Background)
+        {
+            case ImageBackground img when !string.IsNullOrWhiteSpace(img.FilePath):
+            {
+                var source = LoadCachedBitmap(img.FilePath, logicalWidth, logicalHeight); // owned by the cache: never dispose
+                if (source != null && source.Width > pixelWidth)
+                {
+                    scaledBackground = BitmapScaling.Downscale(source, pixelWidth, pixelHeight);
+                    if (scaledBackground != null)
+                        drawSpec = spec with { Background = new SkiaBitmapBackground(scaledBackground, img.BackColor, img.Opacity) };
+                }
+                break;
+            }
+            case SkiaBitmapBackground bmp when bmp.Bitmap.Width > pixelWidth:
+            {
+                scaledBackground = BitmapScaling.Downscale(bmp.Bitmap, pixelWidth, pixelHeight);
+                if (scaledBackground != null)
+                    drawSpec = spec with { Background = new SkiaBitmapBackground(scaledBackground, bmp.BackColor, bmp.Opacity) };
+                break;
+            }
+        }
+
+        try
+        {
+            var canvas = surface.Canvas;
+            canvas.Clear(SKColors.Black);
+            canvas.Scale(pixelWidth / (float)logicalWidth, pixelHeight / (float)logicalHeight);
+            Draw(canvas, drawSpec, null, 1f, logicalWidth, logicalHeight);
+
+            using var image = surface.Snapshot();
+            return SKBitmap.FromImage(image);
+        }
+        finally
+        {
+            scaledBackground?.Dispose();
+        }
+    }
+
     private static void DrawBackground(SKCanvas canvas, BackgroundSpec? bg, float alpha, int width, int height)
     {
         if (alpha <= 0f) return;
@@ -337,11 +398,43 @@ public static class SlideRenderer
             using var paint = new SKPaint { FilterQuality = SKFilterQuality.High };
             if (bitmapAlpha < 1f)
                 paint.Color = SKColors.White.WithAlpha((byte)(255 * bitmapAlpha));
-            canvas.DrawBitmap(bitmap, dest, paint);
+            canvas.DrawBitmap(ShrinkForDeviceScale(canvas, bitmap, width, height), dest, paint);
         }
 
         if (grouped)
             canvas.Restore();
+    }
+
+    // Below this device-pixels-per-layout-pixel the canvas is showing the slide much smaller than its 1920x1080 layout
+    // (live preview, editor previews). Above it (projector, full-size renders) bitmaps are drawn as they always were.
+    private const float ShrinkBelowDeviceScale = 0.75f;
+
+    /// <summary>
+    /// When the canvas is scaled well below 1:1, returns a cached area-averaged copy of <paramref name="bitmap"/> sized
+    /// for the device (its exact size, so it is drawn 1:1).
+    /// The canvas's own filter would otherwise shrink the full-size bitmap every frame with a cubic that skips most of
+    /// its pixels, which shimmers on fine text and thin lines (image slides, custom slides baked into a bitmap).
+    /// Returns <paramref name="bitmap"/> itself whenever shrinking is not needed or not possible.
+    /// </summary>
+    private static SKBitmap ShrinkForDeviceScale(SKCanvas canvas, SKBitmap bitmap, int width, int height)
+    {
+        var m = canvas.TotalMatrix;
+        if (m.SkewX != 0 || m.SkewY != 0)
+            return bitmap; // rotated or skewed: not a plain scale
+
+        var scaleX = Math.Abs(m.ScaleX);
+        var scaleY = Math.Abs(m.ScaleY);
+        if (scaleX <= 0 || scaleY <= 0 || Math.Max(scaleX, scaleY) >= ShrinkBelowDeviceScale)
+            return bitmap;
+
+        // The exact device size, so the copy is drawn 1:1. Rounding it up (to dodge a copy per pixel while a pane edge
+        // is dragged) would make the canvas stretch it again, which is the softness this exists to avoid.
+        var targetWidth = (int)Math.Round(width * scaleX);
+        var targetHeight = (int)Math.Round(height * scaleY);
+        if (targetWidth < 1 || targetHeight < 1 || bitmap.Width <= targetWidth || bitmap.Height <= targetHeight)
+            return bitmap; // already close to (or smaller than) the size it is drawn at
+
+        return DownscaledBitmapCache.GetOrCreate(bitmap, targetWidth, targetHeight) ?? bitmap;
     }
 
     private static void DrawTextElement(SKCanvas canvas, TextLineElement element, float alpha)
