@@ -21,14 +21,9 @@
     </Design.DataContext>
 
     <Grid Margin="0,26,0,0">
-
         <DockPanel>
-
             <DockPanel>
-
                 <ScrollViewer>
-
-
                     <StackPanel DockPanel.Dock="Top" Margin="6,0,2,0">
                         <StackPanel.Styles>
                             <Style Selector="Ellipse">
@@ -273,17 +268,16 @@
 
         </DockPanel>
 
-        <!-- Initial state only: overview of the steps with a start button. Covers the
-             regular sidebar + browser layout until the user clicks "Let's start!". -->
+        <!--
+            Initial state only: overview of the steps with a start button. Covers the
+            regular sidebar + browser layout until the user clicks "Let's start!".
+        -->
         <Grid Background="White" IsVisible="{Binding IsStartState}">
             <Grid.Styles>
                 <Style Selector="Border.IntroStep">
                     <Setter Property="CornerRadius" Value="6" />
                     <Setter Property="Padding" Value="16,20" />
                     <Setter Property="Margin" Value="8,0" />
-                </Style>
-                <Style Selector="Border.IntroStep.Active">
-                    <Setter Property="Background" Value="#33483d8b" />
                 </Style>
                 <Style Selector="Border.IntroStep Ellipse">
                     <Setter Property="Width" Value="38" />
@@ -316,7 +310,7 @@
                     Text="Import lyrics from online" />
 
                 <Grid ColumnDefinitions="*,*,*">
-                    <Border Classes="IntroStep Active" Grid.Column="0">
+                    <Border Classes="IntroStep" Grid.Column="0">
                         <StackPanel Spacing="20">
                             <Grid HorizontalAlignment="Center">
                                 <Ellipse />
