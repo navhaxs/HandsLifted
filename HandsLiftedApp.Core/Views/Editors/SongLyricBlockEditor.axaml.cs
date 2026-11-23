@@ -1,6 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using HandsLiftedApp.Core.Models.Library;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Data.Models.Items;
 
@@ -55,6 +56,13 @@ public partial class SongLyricBlockEditor : UserControl
                     StanzaArrangementListBox.SelectedIndex + 1);
             }
         }
+    }
+
+    private void Reflow_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (this.DataContext is not SongEditorViewModel viewModel || sender is not MenuItem { Tag: string tag }) return;
+
+        viewModel.ReflowLyrics(tag == "smart" ? ReflowMode.Smart : ReflowMode.Fixed(int.Parse(tag)));
     }
 
     private void TrimCopyrightBoilerplate_OnClick(object? sender, RoutedEventArgs e)

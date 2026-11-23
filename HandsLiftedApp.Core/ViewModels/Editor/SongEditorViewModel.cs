@@ -133,6 +133,17 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
             UndoStack.Clear();
         }
 
+        /// <summary>Re-splits every stanza's lyrics into slides (replacing existing breaks), as one undo step.</summary>
+        public void ReflowLyrics(ReflowMode mode)
+        {
+            using var undoStep = BeginUndoStep("Reflow lyrics");
+            foreach (var stanza in Song.Stanzas)
+            {
+                var reflowed = LyricReflow.Reflow(stanza.Lyrics, mode);
+                if (reflowed != (stanza.Lyrics ?? "")) stanza.Lyrics = reflowed;
+            }
+        }
+
         public ReactiveCommand<Unit, Unit> OnClickCommand { get; }
 
         void RunTheThing()
