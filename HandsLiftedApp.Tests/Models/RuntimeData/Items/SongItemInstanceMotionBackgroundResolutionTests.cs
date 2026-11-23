@@ -271,21 +271,13 @@ public class SongItemInstanceMotionBackgroundResolutionTests
         // synchronously - Design write-through is immediate. But this test's own subscription
         // chain (WhenAnyValue(ResolvedDesignTheme).Switch()) only re-attaches to theme.Changed once
         // ResolvedDesignTheme's PropertyChanged notification itself fires, which is routed through
-        // the dispatcher (RaiseForwardedPropertiesChanged, called from the ObserveOn(MainThreadScheduler)
-        // SongChanged subscription) - so wait for that notification specifically, not just for the
-        // value to match, before asserting on the toggle below.
-        var resolvedDesignThemeNotified = false;
-        instance.PropertyChanged += (_, args) =>
-        {
-            if (args.PropertyName == nameof(SongItemInstance.ResolvedDesignTheme))
-                resolvedDesignThemeNotified = true;
-        };
-        for (int i = 0; i < 20 && !resolvedDesignThemeNotified; i++)
-        {
-            Dispatcher.UIThread.RunJobs();
-            await Task.Delay(50);
-        }
-        Assert.IsTrue(resolvedDesignThemeNotified, "Precondition: ResolvedDesignTheme change notification must have fired");
+        // the main-thread scheduler (RaiseForwardedPropertiesChanged, called from the
+        // ObserveOn(MainThreadScheduler) SongChanged subscription). DispatcherTestThread uses the
+        // app's own AvaloniaScheduler, which runs that inline when already on the UI thread, so the
+        // notification has normally fired already (during the initializer above) by the time a handler
+        // could be attached here: do not wait for it - drain anything still queued, then check the result.
+        Dispatcher.UIThread.RunJobs();
+        await Task.Yield();
         Assert.AreSame(theme, instance.ResolvedDesignTheme, "Precondition: Design must have resolved to theme");
 
         var raised = false;

@@ -58,6 +58,20 @@ internal static class DispatcherTestThread
                 Avalonia.Skia.SkiaPlatform.Initialize();
                 ReactiveUI.Builder.RxAppBuilder.CreateReactiveUIBuilder().WithPlatformServices().BuildApp();
 
+                // Use the app's own main-thread scheduler (posts to Dispatcher.UIThread, which is bound to this
+                // thread just below, and which tests drain with Dispatcher.UIThread.RunJobs()), as the app and
+                // Avalonia.Headless do. WithPlatformServices() alone leaves RxSchedulers.MainThreadScheduler as
+                // DefaultScheduler, so every ObserveOn(MainThreadScheduler) pipeline (e.g. the ~20 Calculated*
+                // ToProperty pipelines in each BaseSlideTheme) delivered its PropertyChanged on a ThreadPool
+                // thread. ThemeEditRecorder ignores off-thread changes, so ThemeEditRecorderTests
+                // .LabelsFollowWhatChanged lost a real edit in roughly 10% of runs (10/100 with DefaultScheduler,
+                // 0/100 on a thread-correct scheduler, 0/100 on the headless host).
+                // NOT a SynchronizationContextScheduler over this thread's queue: that is never drained by
+                // RunJobs(), so tests that wait for derived properties (CustomSlideTextLayoutTests,
+                // InlineTextEditorTests, TextElementAlignmentTests) fail deterministically.
+                // Must be set before any ReactiveObject that uses MainThreadScheduler is constructed.
+                ReactiveUI.RxSchedulers.MainThreadScheduler = ReactiveUI.Avalonia.AvaloniaScheduler.Instance;
+
                 // Dispatcher.UIThread is lazily constructed on whichever thread first accesses it -
                 // SkiaPlatform.Initialize() only registers render services, it does not itself touch
                 // the dispatcher. Force that first touch here, on this thread, before returning control
