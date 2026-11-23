@@ -22,7 +22,8 @@
         <x:Double x:Key="ThemePickerItemWidth">158</x:Double>
         <!--
             Two items per row, with 4 of slack: at 125% display scaling layout rounding makes each item 158.4 wide, and
-            two of those do not fit 316. The panel's ItemWidth makes it decide the wrap with 158.
+            two of those do not fit 316. Do NOT set ItemWidth on the WrapPanel to get around that: it reserves a full
+            slot even for a collapsed child, so every theme hidden by the song/scripture filter would leave a blank tile.
         -->
         <x:Double x:Key="ThemePickerPanelWidth">320</x:Double>
     </Styles.Resources>
@@ -32,7 +33,6 @@
         <Setter Property="ItemsPanel">
             <ItemsPanelTemplate>
                 <WrapPanel
-                    ItemWidth="{DynamicResource ThemePickerItemWidth}"
                     Orientation="Horizontal"
                     Width="{DynamicResource ThemePickerPanelWidth}" />
             </ItemsPanelTemplate>

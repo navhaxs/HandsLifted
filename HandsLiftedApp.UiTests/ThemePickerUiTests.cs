@@ -299,6 +299,58 @@ public class ThemePickerUiTests
         return combo;
     }
 
+    /// <summary>
+    /// Themes hidden by the song/scripture filter sit in the middle of the list (not only at its end) and must not leave
+    /// an empty slot in the tile grid: a WrapPanel with an ItemWidth reserves a full slot even for a collapsed child.
+    /// </summary>
+    [TestMethod]
+    public async Task SongEditor_ThemeDropdown_HiddenThemesInTheMiddleLeaveNoGap()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+
+            var visible = Enumerable.Range(1, 5).Select(i => MakeTheme($"Song {i}", SlideThemeType.SongTheme)).ToList();
+            playlist.Designs.Clear();
+            // Hidden scripture themes between visible ones, including one that would land at the start of the second column.
+            playlist.Designs.Add(MakeTheme("Hidden A", SlideThemeType.ScriptureTheme));
+            playlist.Designs.Add(visible[0]);
+            playlist.Designs.Add(MakeTheme("Hidden B", SlideThemeType.ScriptureTheme));
+            playlist.Designs.Add(visible[1]);
+            playlist.Designs.Add(visible[2]);
+            playlist.Designs.Add(MakeTheme("Hidden C", SlideThemeType.ScriptureTheme));
+            playlist.Designs.Add(visible[3]);
+            playlist.Designs.Add(visible[4]);
+
+            var editor = new SongEditorViewModel(SongItemInstance.NewDraft(playlist), playlist);
+            var control = new SongEditorControl { DataContext = editor };
+            var window = new Window { Width = 520, Height = 700, Content = control };
+            window.Show();
+            control.Find<TabControl>(t => t.Name == "TabControl")!.SelectedIndex = 2; // Design tab
+            UiTestHelpers.Settle();
+            var combo = control.Find<ComboBox>(c => c.Classes.Contains("themePicker"))!;
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+
+            var items = VisibleItems(combo);
+            Assert.AreEqual(5, items.Count, "only the five song themes are visible");
+            var positions = items.Select(i => i.TranslatePoint(default, combo.ItemsPanelRoot!)!.Value).ToList();
+            var rowHeight = positions[2].Y - positions[0].Y;
+            Assert.IsTrue(rowHeight > 0, "the third tile starts a second row");
+            for (var i = 0; i < positions.Count; i++)
+            {
+                Assert.AreEqual(positions[i % 2].X, positions[i].X, 0.5, $"tile {i + 1} is in column {i % 2 + 1}");
+                Assert.AreEqual(positions[0].Y + i / 2 * rowHeight, positions[i].Y, 0.5,
+                    $"tile {i + 1} is in row {i / 2 + 1}: a hidden theme left a gap before it");
+            }
+            Assert.IsTrue(positions[1].X > positions[0].X, "two columns");
+
+            window.Close();
+            main.Close();
+        });
+    }
+
     [TestMethod]
     public async Task SongEditor_ThemeDropdown_ShowsTiles()
     {
