@@ -5,8 +5,13 @@ namespace HandsLiftedApp.Core
 {
     internal static class Constants
     {
-        public static readonly string APP_DATA_DIR = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HandsLifted");
+        // HANDSLIFTED_DATA_DIR redirects all app state (preferences, themes, libraries) elsewhere so
+        // automated UI tests never touch the user's real %APPDATA%\HandsLifted. Must be set before
+        // this type is first touched.
+        public static readonly string APP_DATA_DIR =
+            Environment.GetEnvironmentVariable("HANDSLIFTED_DATA_DIR") is { Length: > 0 } overrideDir
+                ? overrideDir
+                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HandsLifted");
 
         public static readonly string APP_STATE_FILEPATH = Path.Combine(APP_DATA_DIR, "appstate.json");
         public static readonly string LIBRARY_CONFIG_FILEPATH = Path.Combine(APP_DATA_DIR, "library.yml");

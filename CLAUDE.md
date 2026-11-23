@@ -240,6 +240,41 @@ Restored items have "save and reload" fidelity: generated slides are regenerated
 
 ---
 
+## Headless UI tests (`HandsLiftedApp.UiTests/`)
+
+Boots the real `App` + real windows with `Avalonia.Headless` (real Skia rendering, no display), so a change can be checked by clicking through it and looking at the result. Run: `dotnet test HandsLiftedApp.UiTests` (needs the dotnet PATH workaround). Screenshots land in `HandsLiftedApp.UiTests/bin/Debug/net10.0/screenshots/` — **read them** after a UI change; a passing assert doesn't prove it looks right.
+
+- Separate project from `HandsLiftedApp.Tests` on purpose: that one owns Avalonia's dispatcher via `DispatcherTestThread`; headless needs to own it here. Don't merge them.
+- Test body goes in `HeadlessSession.Run(() => { ... })` (UI thread). `UiTestHelpers.OpenMainWindow()` skips `Globals.OnStartup` (libmpv, Syncfusion licence, remote-control server) and sets just `AppPreferences` + `MainViewModel`. Libmpv/NDI/WebView don't run headless.
+- `HANDSLIFTED_DATA_DIR` env var redirects `Constants.APP_DATA_DIR`; the test session sets it to a temp dir so tests never touch the real `%APPDATA%\HandsLifted`. Set it before `Constants` is first touched.
+- Helpers: `FindByText<T>` (visual-tree lookup by visible text), `Click` (real pointer events through hit-testing), `Screenshot`.
+- **Flyout/MenuFlyout/ContextMenu content is NOT in the window's visual tree** — it lives in its own `PopupRoot`. Use `button.FindFlyoutMenuItem("Section")` then `item.ClickInPopup()`. Menu headers contain access-key underscores (`"_Section"`); the helper strips them. This is the test that would catch the "flyout MenuItem click silently does nothing" bug.
+- `HeadlessUnitTestSession` re-creates the `Application` per test, re-running `App.Initialize()`; `AttachDeveloperTools()` is guarded with a static flag for that reason.
+
+---
+
+## Live-app devtools service (`HandsLiftedApp.DevTools/`, `tools/devtools.ps1`)
+
+A Debug-only, in-process HTTP service for inspecting and driving the **running** app (our substitute for the Avalonia DevTools MCP). Use it after a UI change to look at and click through the real app, not just the headless tests.
+
+```powershell
+tools\devtools.ps1 start            # builds Debug, launches with an EMPTY throw-away profile, waits until ready (-RealData = your real %APPDATA%\HandsLifted; -NoBuild to skip the build)
+tools\devtools.ps1 get  "/tree?depth=6"
+tools\devtools.ps1 post "/click?text=New Playlist"
+tools\devtools.ps1 shot             # prints a PNG path: READ the image to see the screen
+tools\devtools.ps1 stop
+```
+Raw: `curl http://127.0.0.1:9333/` lists every endpoint; POST ones need `-X POST -H "X-DevTools: 1" -d ""` (curl needs `-d ""` or the listener answers 411).
+
+- **Reading:** `/windows` (windows *and* open popups), `/tree` (compact; `all=1` shows layout containers; node ids are used to target things), `/find?text=…&wait=<ms>` (polls instead of sleeping), `/props`, `/a11y` (what the accessibility API exposes), `/dc` + `/vm?path=MainViewModel.Playlist…` (reflective view-model dump), `/state` (playlist, selected item, active slide, undo stack), `/logs?level=Warning` (Serilog **and** Avalonia binding errors), `/screenshot`.
+- **Acting:** `/click` (default `mode=invoke`: the in-process accessibility API; falls back to raising Click + running the Command, and dismisses the menu, when a control exposes no pattern — `MenuItem` currently doesn't; `mode=mouse` = real OS mouse at the control's screen position, moves your cursor), `/type`, `/key?key=Z&mods=ctrl`, `/focus`, `/prop` (set an Avalonia property live), `/hover`, `/scroll`.
+- **Selectors** (click/type/key/props/…): `node=<id>` or any of `text= type= name= aid= window= index= contains=1`. Popups are searched before windows. A click on a `TextBlock` resolves up to its `Button`.
+- **Safety, don't weaken:** compiled in **Debug only** (Desktop references it with `Condition="'$(Configuration)' == 'Debug'"`; Release has no copy); **off unless `HANDSLIFTED_DEVTOOLS_PORT` is set**; binds 127.0.0.1; requests with an `Origin` header are refused; mutating endpoints need POST + `X-DevTools: 1` (blocks browser CSRF). It can click anything — never enable it on a church machine's real profile.
+- **Gotchas:** keyboard focus inside a `TextBox` makes `MainView` ignore Ctrl+Z (by design); a still-open flyout swallows keys. Native layers (libmpv video/motion background, WebView) are **not** in `/screenshot`. The app only registers the service in `Program.cs` via `AfterSetup`. Stopping the app to rebuild is required — the exe is locked while running.
+- The same `DevToolsApi.Handle(...)` entry point is exercised headless in `HandsLiftedApp.UiTests/DevToolsApiTests.cs` (set `Surfaces.WindowProvider` to the test window).
+
+---
+
 ## A C# namespace does not tell you which project a file lives in
 
 This codebase does not enforce folder-equals-namespace or namespace-equals-project. Several runtime classes physically live in `HandsLiftedApp.Core` (folder-wise, e.g. under `Core/Models/RuntimeData/Slides/`) but declare themselves in the `HandsLiftedApp.Data.Slides`/`HandsLiftedApp.Data.Models.*` **namespace**, matching their base class's namespace rather than their own project (`ScriptureSlideInstance`, `SongItemInstance`, etc.). Likewise `ScriptureAddDialog` physically lives under `Views/AddItem/` but declares `namespace HandsLiftedApp.Core.Views` (flat), matching its folder-sibling `AddItemWindow`'s own namespace rather than `.AddItem`.

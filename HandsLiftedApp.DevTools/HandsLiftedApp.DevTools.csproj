@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Debug-only, in-process "DIY devtools" HTTP service: inspect the live visual tree, take screenshots,
+       click/type, dump view-model state and logs, so a running build can be driven and checked without the
+       Avalonia DevTools MCP. Only the Debug build of HandsLiftedApp.Desktop references this project, and it is
+       opt-in at runtime (HANDSLIFTED_DEVTOOLS_PORT) and bound to 127.0.0.1. See CLAUDE.md. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HandsLiftedApp.Core\HandsLiftedApp.Core.csproj" />
+  </ItemGroup>
+
+</Project>

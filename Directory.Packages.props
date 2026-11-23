@@ -20,6 +20,7 @@
          independently of Avalonia core (2.x, not 12.x). -->
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Headless" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="$(AvaloniaVersion)" />
     <!-- Avalonia.ReactiveUI renamed to ReactiveUI.Avalonia (reactiveui org) for Avalonia 12. -->
     <PackageVersion Include="ReactiveUI.Avalonia" Version="12.0.3" />

@@ -37,6 +37,8 @@
     <ItemGroup>
         <ProjectReference Include="..\HandsLiftedApp.Controls\HandsLiftedApp.Controls.csproj" />
         <ProjectReference Include="..\HandsLiftedApp.Core\HandsLiftedApp.Core.csproj" />
+        <!-- Debug-only DIY devtools HTTP service (opt-in at runtime via HANDSLIFTED_DEVTOOLS_PORT). Never ships in Release. -->
+        <ProjectReference Condition="'$(Configuration)' == 'Debug'" Include="..\HandsLiftedApp.DevTools\HandsLiftedApp.DevTools.csproj" />
     </ItemGroup>
 
     <ItemGroup>

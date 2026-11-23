@@ -50,7 +50,8 @@ sealed class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             // .WithInterFont() this font is gross
             .With(new CompositionOptions()
@@ -65,4 +66,11 @@ sealed class Program
                 })
             .LogToTrace()
             .UseReactiveUI(_ => { });
+
+#if DEBUG
+        // DIY devtools HTTP service: inert unless HANDSLIFTED_DEVTOOLS_PORT is set. Debug builds only.
+        builder = builder.AfterSetup(_ => HandsLiftedApp.DevTools.DevToolsHost.StartIfEnabled());
+#endif
+        return builder;
+    }
 }

@@ -15,11 +15,21 @@ namespace HandsLiftedApp.Core;
 
 public partial class App : Application
 {
+#if DEBUG
+    // AttachDeveloperTools() throws if called twice in one process. The app only initialises once,
+    // but headless UI tests (HandsLiftedApp.UiTests) re-create the Application per test.
+    private static bool _developerToolsAttached;
+#endif
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
 #if DEBUG
-        this.AttachDeveloperTools();
+        if (!_developerToolsAttached)
+        {
+            _developerToolsAttached = true;
+            this.AttachDeveloperTools();
+        }
 #endif
     }
 
