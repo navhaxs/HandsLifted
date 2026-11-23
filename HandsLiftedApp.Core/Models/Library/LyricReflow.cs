@@ -77,7 +77,74 @@ namespace HandsLiftedApp.Core.Models.Library
             return sizes;
         }
 
-        private static List<int> SmartSizes(List<string> lines) =>
-            throw new NotImplementedException();
+        // Smart-mode weights (lower total cost wins). Starting values, tuned against the song library.
+        private const double ChunkCost = 1.5;     // each slide: fewer slides preferred
+        private const double FourLineCost = 0.25; // a 4-line slide is slightly busier than a 3-line one
+        private const double UnevenCost = 0.5;    // adjacent slides of different size
+        private const double RhymeBonus = 0.5;    // a slide break right after a rhyming pair of lines
+
+        private static List<int> SmartSizes(List<string> lines)
+        {
+            var n = lines.Count;
+            if (n <= 4) return new List<int> { n };
+
+            // memo[pos, last] = best (cost, sizes) for lines[pos..] given the previous slide had `last` lines
+            var memo = new Dictionary<(int, int), (double Cost, List<int> Sizes)?>();
+
+            (double Cost, List<int> Sizes)? Solve(int pos, int last)
+            {
+                if (pos == n) return (0, new List<int>());
+                if (memo.TryGetValue((pos, last), out var cached)) return cached;
+
+                (double Cost, List<int> Sizes)? best = null;
+                for (var size = 4; size >= 2; size--)
+                {
+                    var end = pos + size;
+                    if (end > n) continue;
+
+                    var rest = Solve(end, size);
+                    if (rest == null) continue;
+
+                    var cost = ChunkCost + (size == 4 ? FourLineCost : 0)
+                               + (last != 0 && last != size ? UnevenCost : 0)
+                               - (end < n && Rhymes(lines[end - 2], lines[end - 1]) ? RhymeBonus : 0)
+                               + rest.Value.Cost;
+
+                    // strictly cheaper wins; sizes are tried largest first so ties keep the larger earlier slide
+                    if (best == null || cost < best.Value.Cost - 1e-9)
+                    {
+                        var sizes = new List<int> { size };
+                        sizes.AddRange(rest.Value.Sizes);
+                        best = (cost, sizes);
+                    }
+                }
+
+                memo[(pos, last)] = best;
+                return best;
+            }
+
+            return Solve(0, 0)!.Value.Sizes;
+        }
+
+        /// <summary>Crude rhyme check: last words (letters only) share their final 2 letters.</summary>
+        internal static bool Rhymes(string lineA, string lineB)
+        {
+            var a = LastWord(lineA);
+            var b = LastWord(lineB);
+            if (a.Length == 0 || b.Length == 0) return false;
+            var k = Math.Min(2, Math.Min(a.Length, b.Length));
+            return a[^k..] == b[^k..];
+        }
+
+        private static string LastWord(string line)
+        {
+            var words = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            for (var i = words.Length - 1; i >= 0; i--)
+            {
+                var letters = new string(words[i].Where(char.IsLetter).ToArray()).ToLowerInvariant();
+                if (letters.Length > 0) return letters;
+            }
+            return "";
+        }
     }
 }

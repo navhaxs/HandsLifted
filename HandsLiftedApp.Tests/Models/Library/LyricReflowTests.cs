@@ -81,6 +81,78 @@ namespace HandsLiftedApp.Tests.Models.Library
                 }
         }
 
+        private static string Smart(string s) => LyricReflow.Reflow(s, ReflowMode.Smart);
+
+        [TestMethod]
+        public void Smart_6Lines_Is3_3() => AssertSizes(Smart(Lines(6)), 3, 3);
+
+        [TestMethod]
+        public void Smart_8Lines_Is4_4() => AssertSizes(Smart(Lines(8)), 4, 4);
+
+        [TestMethod]
+        public void Smart_4Lines_StaysWhole() => AssertSizes(Smart(Lines(4)), 4);
+
+        [TestMethod]
+        public void Smart_3Lines_StaysWhole() => AssertSizes(Smart(Lines(3)), 3);
+
+        [TestMethod]
+        public void Smart_1Line_StaysWhole() => AssertSizes(Smart(Lines(1)), 1);
+
+        [TestMethod]
+        public void Smart_9Lines_Is3_3_3() => AssertSizes(Smart(Lines(9)), 3, 3, 3);
+
+        [TestMethod]
+        public void Smart_7Lines_Is4_3() => AssertSizes(Smart(Lines(7)), 4, 3);
+
+        [TestMethod]
+        public void Smart_20Lines_AllChunks2To4() =>
+            Assert.IsTrue(Sizes(Smart(Lines(20))).All(s => s >= 2 && s <= 4));
+
+        [TestMethod]
+        public void Smart_NeverOrphansOneLine()
+        {
+            for (var n = 5; n <= 16; n++)
+                Assert.IsTrue(Sizes(Smart(Lines(n))).All(s => s >= 2), "n=" + n);
+        }
+
+        [TestMethod]
+        public void Smart_5Lines_RhymeDecidesSplit()
+        {
+            AssertSizes(Smart("x light\nx night\nx sight\ny hand\ny stand"), 3, 2);
+            AssertSizes(Smart("y hand\ny stand\nx light\nx night\nx sight"), 2, 3);
+        }
+
+        [TestMethod]
+        public void Smart_Idempotent()
+        {
+            for (var n = 0; n <= 12; n++)
+            {
+                var once = Smart(Lines(n));
+                Assert.AreEqual(once, Smart(once), "n=" + n);
+            }
+        }
+
+        [TestMethod]
+        public void Smart_TextPreserved()
+        {
+            var input = Lines(9);
+            CollectionAssert.AreEqual(LyricReflow.NormalisedLines(input),
+                Smart(input).Split('\n').Where(l => l.Length > 0).ToList());
+        }
+
+        [TestMethod]
+        public void Smart_OverwritesExistingBreaks() =>
+            AssertSizes(Smart("a\nb\n\nc\nd\n\ne\nf"), 3, 3);
+
+        [TestMethod]
+        public void Rhymes_Basics()
+        {
+            Assert.IsTrue(LyricReflow.Rhymes("In the light", "Through the night"));
+            Assert.IsFalse(LyricReflow.Rhymes("In the light", "Hand in hand"));
+            Assert.IsFalse(LyricReflow.Rhymes("...", "night"));
+            Assert.IsFalse(LyricReflow.Rhymes("", "night"));
+        }
+
         [TestMethod]
         public void Fixed_InvalidN_Throws()
         {
