@@ -11,16 +11,19 @@ namespace HandsLiftedApp.Core.Models.Library
             foreach (var token in tokens)
             {
                 int best = 0;
-                best = Math.Max(best, ScoreToken(token, entry.Title)     * 3);
-                best = Math.Max(best, ScoreToken(token, entry.Copyright) * 3 / 2);
-                best = Math.Max(best, ScoreToken(token, entry.LyricText));
+                // Only the title gets subsequence ("abbreviation") matching. On a long field such as the
+                // lyrics, almost any short term's letters occur in order somewhere, so a no-match
+                // search would still return nearly every song.
+                best = Math.Max(best, ScoreToken(token, entry.Title, allowSubsequence: true) * 3);
+                best = Math.Max(best, ScoreToken(token, entry.Copyright, allowSubsequence: false) * 3 / 2);
+                best = Math.Max(best, ScoreToken(token, entry.LyricText, allowSubsequence: false));
                 if (best == 0) return 0;
                 total += best;
             }
             return total;
         }
 
-        private static int ScoreToken(string token, string field)
+        private static int ScoreToken(string token, string field, bool allowSubsequence)
         {
             if (string.IsNullOrEmpty(field)) return 0;
             if (field.Contains(token, StringComparison.OrdinalIgnoreCase)) return 100;
@@ -33,7 +36,7 @@ namespace HandsLiftedApp.Core.Models.Library
                     return 70;
                 newWord = char.IsWhiteSpace(field[i]);
             }
-            return IsSubsequence(token, field) ? 40 : 0;
+            return allowSubsequence && IsSubsequence(token, field) ? 40 : 0;
         }
 
         private static bool IsSubsequence(string needle, string haystack)
