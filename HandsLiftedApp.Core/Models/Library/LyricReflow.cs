@@ -82,11 +82,34 @@ namespace HandsLiftedApp.Core.Models.Library
         private const double FourLineCost = 0.25; // a 4-line slide is slightly busier than a 3-line one
         private const double UnevenCost = 0.5;    // adjacent slides of different size
         private const double RhymeBonus = 0.5;    // a slide break right after a rhyming pair of lines
+        private const double RepeatOpenBonus = 1.0; // a slide break right before a line that opens like an earlier line (a new phrase starts)
+        private const int RepeatOpenWords = 3;
+
+        /// <summary>Key = first few words (letters only, lowercase); null when the line is too short to have one.</summary>
+        private static string? OpeningKey(string line)
+        {
+            var words = line.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(w => new string(w.Where(char.IsLetter).ToArray()).ToLowerInvariant())
+                .Where(w => w.Length > 0)
+                .Take(RepeatOpenWords)
+                .ToList();
+            return words.Count < RepeatOpenWords ? null : string.Join(" ", words);
+        }
 
         private static List<int> SmartSizes(List<string> lines)
         {
             var n = lines.Count;
             if (n <= 4) return new List<int> { n };
+
+            // opensRepeat[i] = line i opens (first words) the same as some earlier line, so a break before it reads naturally
+            var opensRepeat = new bool[n];
+            var seen = new HashSet<string>();
+            for (var i = 0; i < n; i++)
+            {
+                var key = OpeningKey(lines[i]);
+                if (key == null) continue;
+                opensRepeat[i] = !seen.Add(key);
+            }
 
             // memo[pos, last] = best (cost, sizes) for lines[pos..] given the previous slide had `last` lines
             var memo = new Dictionary<(int, int), (double Cost, List<int> Sizes)?>();
@@ -108,6 +131,7 @@ namespace HandsLiftedApp.Core.Models.Library
                     var cost = ChunkCost + (size == 4 ? FourLineCost : 0)
                                + (last != 0 && last != size ? UnevenCost : 0)
                                - (end < n && Rhymes(lines[end - 2], lines[end - 1]) ? RhymeBonus : 0)
+                               - (end < n && opensRepeat[end] ? RepeatOpenBonus : 0)
                                + rest.Value.Cost;
 
                     // strictly cheaper wins; sizes are tried largest first so ties keep the larger earlier slide

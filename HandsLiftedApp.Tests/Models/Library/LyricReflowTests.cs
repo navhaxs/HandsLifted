@@ -135,6 +135,15 @@ namespace HandsLiftedApp.Tests.Models.Library
         }
 
         [TestMethod]
+        public void Smart_RepeatedOpening_StartsNewSlide()
+        {
+            const string verse = "Your word is a lamp unto my feet\nYour way is the only way for me\n" +
+                                 "It's a narrow road that leads to life\nBut I want to be on it\n" +
+                                 "It's a narrow road but the mercy's wide\n'Cause You're good on Your promise";
+            AssertSizes(Smart(verse), 4, 2);
+        }
+
+        [TestMethod]
         public void Smart_Idempotent()
         {
             for (var n = 0; n <= 12; n++)
