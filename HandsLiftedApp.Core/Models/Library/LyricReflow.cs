@@ -85,6 +85,15 @@ namespace HandsLiftedApp.Core.Models.Library
         private const double RepeatOpenBonus = 1.0; // a slide break right before a line that opens like an earlier line (a new phrase starts)
         private const int RepeatOpenWords = 3;
 
+        /// <summary>
+        /// A slide holding more than this many characters (all its lines together) is "heavy": autofit shrinks
+        /// the font to the widest line and four long lines read as a wall of small text. Verses and bridges
+        /// of 3 short lines sit near 100; four ~45-character chorus lines sit near 180.
+        /// </summary>
+        internal const int SlideCharCap = 140;
+        private const double OverCapCost = 3.0;       // flat cost for any slide over the cap: beats the extra slide it takes to avoid it
+        private const double OverCapPerRatio = 4.0;   // plus this per 100% over, so a lighter slide still wins
+
         /// <summary>Key = first few words (letters only, lowercase); null when the line is too short to have one.</summary>
         private static string? OpeningKey(string line)
         {
@@ -99,7 +108,12 @@ namespace HandsLiftedApp.Core.Models.Library
         private static List<int> SmartSizes(List<string> lines)
         {
             var n = lines.Count;
-            if (n <= 4) return new List<int> { n };
+            // 1-3 lines can't split without a 1-line orphan; 4 lines only split (2+2) when too dense to read as one slide
+            if (n <= 3 || (n == 4 && lines.Sum(l => l.Length) <= SlideCharCap)) return new List<int> { n };
+
+            // prefix[i] = total characters in lines[0..i), so a slide's weight is one subtraction
+            var prefix = new int[n + 1];
+            for (var i = 0; i < n; i++) prefix[i + 1] = prefix[i] + lines[i].Length;
 
             // opensRepeat[i] = line i opens (first words) the same as some earlier line, so a break before it reads naturally
             var opensRepeat = new bool[n];
@@ -128,7 +142,12 @@ namespace HandsLiftedApp.Core.Models.Library
                     var rest = Solve(end, size);
                     if (rest == null) continue;
 
-                    var cost = ChunkCost + (size == 4 ? FourLineCost : 0)
+                    var chars = prefix[end] - prefix[pos];
+                    var overCap = chars > SlideCharCap
+                        ? OverCapCost + OverCapPerRatio * (chars - SlideCharCap) / SlideCharCap
+                        : 0;
+
+                    var cost = ChunkCost + (size == 4 ? FourLineCost : 0) + overCap
                                + (last != 0 && last != size ? UnevenCost : 0)
                                - (end < n && Rhymes(lines[end - 2], lines[end - 1]) ? RhymeBonus : 0)
                                - (end < n && opensRepeat[end] ? RepeatOpenBonus : 0)

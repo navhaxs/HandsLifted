@@ -143,6 +143,81 @@ namespace HandsLiftedApp.Tests.Models.Library
             AssertSizes(Smart(verse), 4, 2);
         }
 
+        // ---- character density: a slide over LyricReflow.SlideCharCap total characters is too heavy ----
+
+        /// <summary>One line of exactly <paramref name="len"/> characters (distinct per i, no repeated openings).</summary>
+        private static string Line(int i, int len)
+        {
+            var head = $"L{i} ";
+            return head + new string('x', len - head.Length);
+        }
+
+        private static string Dense(int count, int len) =>
+            string.Join("\n", Enumerable.Range(1, count).Select(i => Line(i, len)));
+
+        private static int[] CharsPerSlide(string s) =>
+            s.Split("\n\n").Select(c => c.Split('\n').Sum(l => l.Length)).ToArray();
+
+        [TestMethod]
+        public void Smart_4DenseLines_SplitInHalf() =>
+            AssertSizes(Smart(Dense(4, 45)), 2, 2); // 180 chars, the "Chorus 3" case
+
+        [TestMethod]
+        public void Smart_4Lines_JustOverCap_Splits() =>
+            AssertSizes(Smart(Dense(4, 36)), 2, 2); // 144 > 140
+
+        [TestMethod]
+        public void Smart_4Lines_ExactlyAtCap_StaysWhole() =>
+            AssertSizes(Smart(Dense(4, 35)), 4); // 140 = cap, not over it
+
+        [TestMethod]
+        public void Smart_4Lines_UnderCap_StaysWhole_EvenWithRhymeAndRepeatedOpening()
+        {
+            // rhyming pair + a repeated opening would tempt a 2+2 split; the cap says it fits, so it must not split
+            const string verse = "I walk in the light now\nI walk in the night now\nI walk in the dawn\nI walk in the day";
+            Assert.IsTrue(verse.Replace("\n", "").Length <= 140);
+            AssertSizes(Smart(verse), 4);
+        }
+
+        [TestMethod]
+        public void Smart_3DenseLines_StayWhole_NoOrphan() =>
+            AssertSizes(Smart(Dense(3, 60)), 3);
+
+        [TestMethod]
+        public void Smart_6DenseLines_SplitsFinerThanEvenThrees()
+        {
+            // 3 x 50 = 150 per slide is over the cap, so 3+3 loses to 2+2+2
+            AssertSizes(Smart(Dense(6, 50)), 2, 2, 2);
+        }
+
+        [TestMethod]
+        public void Smart_8DenseLines_NoSlideOverCapWhenAvoidable()
+        {
+            var r = Smart(Dense(8, 45));
+            Assert.IsTrue(CharsPerSlide(r).All(c => c <= LyricReflow.SlideCharCap), string.Join(",", CharsPerSlide(r)));
+            Assert.IsTrue(Sizes(r).All(s => s >= 2));
+        }
+
+        [TestMethod]
+        public void Smart_ShortLines_UnaffectedByCap()
+        {
+            AssertSizes(Smart(Dense(8, 30)), 4, 4); // 120 per slide, under the cap
+            AssertSizes(Smart(Dense(6, 30)), 3, 3);
+        }
+
+        [TestMethod]
+        public void Smart_Dense_Idempotent_AndTextPreserved()
+        {
+            for (var n = 1; n <= 12; n++)
+            {
+                var input = Dense(n, 48);
+                var once = Smart(input);
+                Assert.AreEqual(once, Smart(once), "n=" + n);
+                CollectionAssert.AreEqual(LyricReflow.NormalisedLines(input),
+                    once.Split('\n').Where(l => l.Length > 0).ToList(), "n=" + n);
+            }
+        }
+
         [TestMethod]
         public void Smart_Idempotent()
         {
