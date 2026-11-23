@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,10 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia;
 using Avalonia.VisualTree;
+using Avalonia.Media;
+using HandsLiftedApp.Controls;
+using Material.Icons;
+using Material.Icons.Avalonia;
 using HandsLiftedApp.Core.Models.UI;
 using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.Utils;
@@ -34,6 +39,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             ReadClipboardFilePaths = ReadClipboardFilePathsFromSystem;
             ReadClipboardPicture = ReadClipboardPictureFromSystem;
             InitializeComponent();
+            VisualEditor.ElementContextMenuFactory = CreateElementContextMenu;
 
             if (Design.IsDesignMode)
             {
@@ -55,6 +61,7 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
 
             WireToolbar();
             WireStatusBar();
+            WireAspectLock();
             SyncSelection();
 
             DataContextChanged += (_, _) =>
@@ -476,6 +483,20 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
                 Select(element);
         }
 
+        private void BringToFront(SlideElement? element)
+        {
+            CommitInlineEdit();
+            if (DataContext is CustomSlide vm && element != null && SlideElementCommands.BringToFront(vm, element))
+                Select(element);
+        }
+
+        private void SendToBack(SlideElement? element)
+        {
+            CommitInlineEdit();
+            if (DataContext is CustomSlide vm && element != null && SlideElementCommands.SendToBack(vm, element))
+                Select(element);
+        }
+
         /// <summary>Makes <paramref name="element"/> the selection (layers list, designer, toolbar, properties).</summary>
         private void Select(SlideElement? element)
         {
@@ -583,6 +604,103 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             }
         }
 
+        // ---------------- aspect ratio: lock between the size fields, reset to the picture's ratio ----------------
+
+        private double _lockRatio;        // width / height captured while the lock is on
+        private bool _applyingLock;       // our own write of the other field: not a user edit
+
+        private void WireAspectLock()
+        {
+            WidthBox.PropertyChanged += (_, e) =>
+            {
+                if (e.Property == NumericSliderBox.TextProperty) OnSizeFieldChanged(fromWidth: true);
+            };
+            HeightBox.PropertyChanged += (_, e) =>
+            {
+                if (e.Property == NumericSliderBox.TextProperty) OnSizeFieldChanged(fromWidth: false);
+            };
+        }
+
+        private void AspectLockToggle_OnIsCheckedChanged(object? sender, RoutedEventArgs e) => CaptureLockRatio();
+
+        private void CaptureLockRatio()
+        {
+            // the lock is for pictures only: dragging the handles keeps the ratio while it is on
+            VisualEditor.AspectLocked = AspectLockToggle.IsChecked == true && SelectedElement is ImageElement;
+
+            if (AspectLockToggle.IsChecked == true && SelectedElement is { Width: > 0, Height: > 0 } el)
+                _lockRatio = (double)el.Width / el.Height;
+        }
+
+        private void OnSizeFieldChanged(bool fromWidth)
+        {
+            if (_applyingLock || AspectLockToggle.IsChecked != true || SelectedElement is not ImageElement el) return;
+
+            var box = fromWidth ? WidthBox : HeightBox;
+            if (!(box.IsKeyboardFocusWithin || box.IsPointerOver))
+            {
+                // not typed or slid by the user (a handle drag, undo/redo): follow it, so the lock keeps the new ratio
+                CaptureLockRatio();
+                return;
+            }
+
+            if (_lockRatio <= 0 || !int.TryParse(box.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var typed)
+                || typed < 1) return;
+
+            var other = (int)Math.Round(Math.Max(1, fromWidth ? typed / _lockRatio : typed * _lockRatio));
+            _applyingLock = true;
+            try
+            {
+                if (fromWidth) el.Height = other;
+                else el.Width = other;
+            }
+            finally
+            {
+                _applyingLock = false;
+            }
+        }
+
+        private async void ResetAspectRatio_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (SelectedElement is ImageElement image)
+                await RunLoggedAsync("reset aspect ratio", () => ResetAspectRatioAsync(image));
+        }
+
+        /// <summary>Gives the element its picture's aspect ratio, fitted inside its current box (one undo step).</summary>
+        private async Task ResetAspectRatioAsync(ImageElement imageElement)
+        {
+            CommitInlineEdit();
+            var path = imageElement.FilePath;
+            if (string.IsNullOrWhiteSpace(path)) return;
+
+            var bitmap = await BitmapLoader.LoadBitmapAsync(path);
+            if (bitmap == null || imageElement.FilePath != path) return;
+
+            using (_activeHistory?.BeginBatch("Reset Aspect Ratio"))
+                ResetElementAspectRatio(imageElement, bitmap.PixelSize);
+        }
+
+        /// <summary>
+        /// Shrinks the element's box to the picture's proportions so the whole picture fits inside the old box,
+        /// keeping the box's centre where it was. Never grows the element.
+        /// </summary>
+        internal static void ResetElementAspectRatio(ImageElement element, PixelSize pixels)
+        {
+            if (pixels.Width <= 0 || pixels.Height <= 0 || element.Width <= 0 || element.Height <= 0) return;
+
+            var scale = Math.Min((double)element.Width / pixels.Width, (double)element.Height / pixels.Height);
+            var width = Math.Max(1, (int)Math.Round(pixels.Width * scale));
+            var height = Math.Max(1, (int)Math.Round(pixels.Height * scale));
+
+            var x = element.X + (int)Math.Round((element.Width - width) / 2.0);
+            var y = element.Y + (int)Math.Round((element.Height - height) / 2.0);
+
+            element.Width = width;
+            element.Height = height;
+            element.X = x;
+            element.Y = y;
+        }
+
         /// <summary>Gives the element its current picture's proportions (one undo step).</summary>
         private async Task FitImageAsync(ImageElement imageElement)
         {
@@ -642,24 +760,38 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             customSlide.BackgroundGraphicFilePath = storedPath;
         }
         
-        private void MoveItemUp_OnClick(object? sender, RoutedEventArgs e)
+        /// <summary>
+        /// The one element context menu: shared by the Layers list rows and the elements on the canvas (the designer
+        /// asks for one per proxy and for the selection adorner). Built per element, each menu has its own instance,
+        /// and the actions capture the element rather than reading a DataContext.
+        /// </summary>
+        private ContextMenu CreateElementContextMenu(SlideElement element)
         {
-            if (sender is Control { DataContext: SlideElement el }) BringForward(el);
+            MenuItem Item(string header, MaterialIconKind kind, Action action, IBrush? foreground = null)
+            {
+                var icon = new MaterialIcon { Kind = kind };
+                if (foreground != null) icon.Foreground = foreground;
+                var item = new MenuItem { Header = header, Icon = icon };
+                item.Click += (_, _) => action();
+                return item;
+            }
+
+            var menu = new ContextMenu();
+            menu.Items.Add(Item("Bring to Top", MaterialIconKind.ArrowCollapseUp, () => BringToFront(element)));
+            menu.Items.Add(Item("Move Up", MaterialIconKind.ArrowUp, () => BringForward(element)));
+            menu.Items.Add(Item("Move Down", MaterialIconKind.ArrowDown, () => SendBackward(element)));
+            menu.Items.Add(Item("Send to Bottom", MaterialIconKind.ArrowCollapseDown, () => SendToBack(element)));
+            menu.Items.Add(new Separator());
+            menu.Items.Add(Item("Duplicate", MaterialIconKind.ContentCopy, () => Duplicate(element)));
+            menu.Items.Add(Item("Delete", MaterialIconKind.Times, () => Delete(element), Brushes.Red));
+            return menu;
         }
 
-        private void MoveItemDown_OnClick(object? sender, RoutedEventArgs e)
+        private void ListBox_OnContainerPrepared(object? sender, ContainerPreparedEventArgs e)
         {
-            if (sender is Control { DataContext: SlideElement el }) SendBackward(el);
-        }
-
-        private void DeleteItem_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (sender is Control { DataContext: SlideElement el }) Delete(el);
-        }
-
-        private void DuplicateItem_OnClick(object? sender, RoutedEventArgs e)
-        {
-            if (sender is Control { DataContext: SlideElement el }) Duplicate(el);
+            // containers are recycled, so the menu follows whichever element the row shows now
+            if (e.Container.DataContext is SlideElement element)
+                e.Container.ContextMenu = CreateElementContextMenu(element);
         }
 
         private void UpdateXmlButton_OnClick(object? sender, RoutedEventArgs e)
@@ -707,6 +839,11 @@ namespace HandsLiftedApp.Core.Views.Editors.FreeText
             SelectedElementProperties.Content = element;
             GeometryPanel.DataContext = element;
             GeometryPanel.IsVisible = element != null;
+
+            var isImage = element is ImageElement;
+            AspectLockToggle.IsVisible = isImage;
+            ResetAspectRatioButton.IsVisible = isImage;
+            CaptureLockRatio();
         }
         
         private async Task<string?> SelectFilePicker(string title = "Select File")

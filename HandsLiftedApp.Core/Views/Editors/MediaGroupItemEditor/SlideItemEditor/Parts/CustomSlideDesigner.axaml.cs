@@ -502,6 +502,7 @@ namespace HandsLiftedApp.Core.Views.Editors
             foreach (SlideElement slideElement in customSlide.SlideElements.Reverse())
             {
                 var proxy = CreateProxyForElement(slideElement);
+                if (ElementContextMenuFactory != null) proxy.ContextMenu = ElementContextMenuFactory(slideElement);
 
                 proxy.PointerPressed += (s, e) =>
                 {
@@ -575,6 +576,25 @@ namespace HandsLiftedApp.Core.Views.Editors
 
         private SelectedAdorner? _selected;
 
+        /// <summary>
+        /// Makes the right-click menu for an element (the editor's shared one, the same as the Layers list rows). Each
+        /// call must return a new menu. Set once by the editor before slides are rendered.
+        /// </summary>
+        internal Func<SlideElement, ContextMenu>? ElementContextMenuFactory { get; set; }
+
+        private bool _aspectLocked;
+
+        /// <summary>Every handle resize keeps the selected element's aspect ratio (the editor's lock toggle).</summary>
+        internal bool AspectLocked
+        {
+            get => _aspectLocked;
+            set
+            {
+                _aspectLocked = value;
+                if (_selected != null) _selected.LockAspect = value;
+            }
+        }
+
         // The selected element, tracked apart from the adorner so the keyboard shortcuts also work (and can be tested)
         // where there is no adorner layer.
         private SlideElement? _selectedElement;
@@ -607,6 +627,7 @@ namespace HandsLiftedApp.Core.Views.Editors
                     ? new Size(sizedSlide.SlideWidth, sizedSlide.SlideHeight)
                     : new Size(1920, 1080),
                 SnapTargetsProvider = GetSnapTargets,
+                LockAspect = _aspectLocked,
                 // a rebuilt adorner (Render, undo) for the element being typed into must not cover the text box
                 BodyHitTestable = SelectionBodyHitTestableFor(control.DataContext as SlideElement),
                 // ClippingBounds = new Rect(0, 0, this.Bounds.Width, this.Bounds.Height)
@@ -620,6 +641,14 @@ namespace HandsLiftedApp.Core.Views.Editors
             // The thumb marks the press handled, hence handledEventsToo.
             _selected.AddHandler(InputElement.PointerPressedEvent, OnAdornerPointerPressed, RoutingStrategies.Bubble,
                 handledEventsToo: true);
+
+            // The adorner covers the selected element, so a right-click there lands on it, not on the proxy.
+            if (_selectedElement != null && ElementContextMenuFactory != null)
+                _selected.ContextMenu = ElementContextMenuFactory(_selectedElement);
+
+            // The thumb covers the selected element's whole rect, including the part another element is drawn over, so
+            // a click there never reaches that element's proxy. Look before the thumb takes the press (tunnel).
+            _selected.AddHandler(InputElement.PointerPressedEvent, OnAdornerPointerPressedPreview, RoutingStrategies.Tunnel);
 
             // Its drag thumb covers the element (a picture fitted to the slide covers the whole slide) and drag events
             // bubble from it through the adorner layer, never through MainScrollViewer: take drops here too.
@@ -643,6 +672,39 @@ namespace HandsLiftedApp.Core.Views.Editors
                 .Where(e => e != _selectedElement)
                 .Select(e => new Rect(e.X, e.Y, e.Width, e.Height))
                 .ToList();
+        }
+
+        /// <summary>
+        /// A press on the selected element's move area that lands on an element drawn in front of it (list index 0 is
+        /// frontmost) selects that element instead, as if the selection outline were not there.
+        /// </summary>
+        private void OnAdornerPointerPressedPreview(object? sender, PointerPressedEventArgs e)
+        {
+            if (sender is not SelectedAdorner adorner || _selectedElement == null) return;
+            if (DataContext is not CustomSlide slide) return;
+            var buttons = e.GetCurrentPoint(adorner).Properties;
+            if (!buttons.IsLeftButtonPressed && !buttons.IsRightButtonPressed) return; // right: its context menu
+            // only the body (drag thumb), not a resize handle
+            var thumb = (e.Source as Visual)?.FindAncestorOfType<Thumb>(includeSelf: true);
+            if (thumb?.Name != "PART_Drag") return;
+
+            var point = e.GetPosition(Root);
+            var selectedIndex = slide.SlideElements.IndexOf(_selectedElement);
+            for (var i = 0; i < selectedIndex; i++)
+            {
+                var el = slide.SlideElements[i];
+                if (!new Rect(el.X, el.Y, el.Width, el.Height).Contains(point)) continue;
+
+                var proxy = Root.Children.FirstOrDefault(c => ReferenceEquals(c.DataContext, el));
+                if (proxy == null) return;
+
+                RemoveSelected();
+                AddSelected(proxy, Root);
+                _zoomBorder?.Focus();
+                e.Handled = true;
+                if (e.ClickCount == 2) BeginEditAfterDoubleClick(el);
+                return;
+            }
         }
 
         private void OnAdornerPointerPressed(object? sender, PointerPressedEventArgs e)

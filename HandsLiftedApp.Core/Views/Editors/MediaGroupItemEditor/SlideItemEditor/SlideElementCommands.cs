@@ -57,6 +57,24 @@ public static class SlideElementCommands
         return true;
     }
 
+    /// <summary>Moves the element in front of everything else (index 0).</summary>
+    public static bool BringToFront(CustomSlide slide, SlideElement element)
+    {
+        var index = slide.SlideElements.IndexOf(element);
+        if (index <= 0) return false;
+        slide.SlideElements.Move(index, 0);
+        return true;
+    }
+
+    /// <summary>Moves the element behind everything else (end of the list).</summary>
+    public static bool SendToBack(CustomSlide slide, SlideElement element)
+    {
+        var index = slide.SlideElements.IndexOf(element);
+        if (index < 0 || index >= slide.SlideElements.Count - 1) return false;
+        slide.SlideElements.Move(index, slide.SlideElements.Count - 1);
+        return true;
+    }
+
     public static bool Nudge(SlideElement? element, int dx, int dy)
     {
         if (element == null) return false;

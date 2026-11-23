@@ -64,50 +64,9 @@
                 <TextBlock DockPanel.Dock="Top" Text="Layers" Classes="heading" />
                 <ListBox ItemsSource="{Binding SlideElements}" Name="ListBox"
                          SelectionChanged="ListBox_OnSelectionChanged"
+                         ContainerPrepared="ListBox_OnContainerPrepared"
                          BorderThickness="0"
                          SelectionMode="Single">
-                    <ListBox.Styles>
-                        <Style Selector="ListBoxItem">
-                            <Setter Property="ContextMenu">
-                                <Setter.Value>
-                                    <ContextMenu>
-                                        <MenuItem
-                                            Click="MoveItemUp_OnClick"
-                                            CommandParameter="{Binding}"
-                                            Header="Move Up">
-                                            <MenuItem.Icon>
-                                                <avalonia:MaterialIcon Kind="ArrowUp" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem
-                                            Click="MoveItemDown_OnClick"
-                                            CommandParameter="{Binding}"
-                                            Header="Move Down">
-                                            <MenuItem.Icon>
-                                                <avalonia:MaterialIcon Kind="ArrowDown" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem
-                                            Click="DuplicateItem_OnClick"
-                                            CommandParameter="{Binding}"
-                                            Header="Duplicate">
-                                            <MenuItem.Icon>
-                                                <avalonia:MaterialIcon Kind="ContentCopy" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem
-                                            Click="DeleteItem_OnClick"
-                                            CommandParameter="{Binding}"
-                                            Header="Delete">
-                                            <MenuItem.Icon>
-                                                <avalonia:MaterialIcon Kind="Times" Foreground="Red" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListBox.Styles>
                     <ListBox.DataTemplates>
                         <common:MyTemplateSelector>
                             <DataTemplate x:Key="ImageElement"
@@ -246,18 +205,41 @@
                             </StackPanel>
                         </Grid>
 
-                        <Grid ColumnDefinitions="*, *" Margin="0 6 0 0">
+                        <Grid ColumnDefinitions="*, Auto, *" Margin="0 6 0 0">
                             <StackPanel Grid.Column="0">
                                 <TextBlock>Width</TextBlock>
-                                <controls:NumericSliderBox Text="{Binding Width}"
+                                <controls:NumericSliderBox Name="WidthBox" Text="{Binding Width}"
                                                            Minimum="0" Maximum="1920" TickFrequency="1" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1" Margin="6 0 0 0">
+                            <!-- pictures only (shown from code): keeps width and height in proportion while typing -->
+                            <ToggleButton Grid.Column="1" Name="AspectLockToggle" IsVisible="False"
+                                          Focusable="False" Padding="4" Margin="4 0 4 0"
+                                          VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                                          ToolTip.Tip="Lock aspect ratio: changing the width or height changes the other to match"
+                                          IsCheckedChanged="AspectLockToggle_OnIsCheckedChanged">
+                                <Panel>
+                                    <avalonia:MaterialIcon Kind="Lock" Width="16" Height="16"
+                                                           IsVisible="{Binding #AspectLockToggle.IsChecked}" />
+                                    <avalonia:MaterialIcon Kind="LockOpenVariant" Width="16" Height="16"
+                                                           IsVisible="{Binding !#AspectLockToggle.IsChecked}" />
+                                </Panel>
+                            </ToggleButton>
+                            <StackPanel Grid.Column="2" Margin="6 0 0 0">
                                 <TextBlock>Height</TextBlock>
-                                <controls:NumericSliderBox Text="{Binding Height}"
+                                <controls:NumericSliderBox Name="HeightBox" Text="{Binding Height}"
                                                            Minimum="0" Maximum="1080" TickFrequency="1" />
                             </StackPanel>
                         </Grid>
+
+                        <Button Name="ResetAspectRatioButton" IsVisible="False" Focusable="False"
+                                Margin="0 6 0 0" HorizontalAlignment="Stretch"
+                                ToolTip.Tip="Reset the size to the picture's own aspect ratio (fits inside the current size)"
+                                Click="ResetAspectRatio_OnClick">
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <avalonia:MaterialIcon Kind="AspectRatio" Width="16" Height="16" />
+                                <TextBlock Text="Reset aspect ratio" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
 
                     <Separator />
