@@ -102,6 +102,12 @@
         </ContextMenu>
         <DataTemplate x:Key="DesignListItemTemplate">
             <DockPanel>
+                <!--  Fixed width keeps the list column a sensible size (an unconstrained preview would size to the thumbnail's pixel width).  -->
+                <coreControls:ThemePreviewImage
+                    DockPanel.Dock="Top"
+                    HorizontalAlignment="Left"
+                    SlideTheme="{Binding}"
+                    Width="180" />
                 <TextBlock
                     DockPanel.Dock="Bottom"
                     HorizontalAlignment="Left"
