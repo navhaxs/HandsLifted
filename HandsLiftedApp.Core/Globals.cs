@@ -31,6 +31,12 @@ namespace HandsLiftedApp.Core
 
         public MainViewModel MainViewModel { get; set; }
         public MpvContext? MpvContextInstance { get; set; }
+
+        /// <summary>
+        /// Non-null when startup found a broken install (native DLLs missing from a publish, or libmpv
+        /// failing to initialise). App.OnFrameworkInitializationCompleted shows it to the user once.
+        /// </summary>
+        public StartupWarning? StartupWarning { get; private set; }
         public AppPreferencesViewModel AppPreferences { get; set; }
 
         /// <summary>
@@ -65,6 +71,8 @@ namespace HandsLiftedApp.Core
 
             Directory.CreateDirectory(Constants.APP_DATA_DIR);
 
+            StartupWarning = NativeDependencyCheck.CheckCurrentInstall();
+
             // initialize LibMPV before MainViewModel
             try
             {
@@ -79,6 +87,12 @@ namespace HandsLiftedApp.Core
             catch (Exception ex)
             {
                 Log.Fatal(ex, "LibMPV failed to initialize");
+                // A missing file is already reported by the native-dependency check above; this covers
+                // libmpv being present but failing to load (e.g. one of its own dependencies is missing).
+                StartupWarning ??= new StartupWarning(
+                    "Video playback unavailable",
+                    $"The video library (libmpv) failed to start: {ex.Message}\n\n" +
+                    "Videos and motion backgrounds will not play.");
             }
 
             try

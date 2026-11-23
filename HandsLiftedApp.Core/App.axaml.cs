@@ -88,6 +88,19 @@ public partial class App : Application
                 desktop.MainWindow = welcome;
                 welcome.Show();
 
+                if (Globals.Instance.StartupWarning is { } warning)
+                {
+                    // Not awaited: the dialog must not hold up the rest of startup.
+                    _ = new HandsLiftedApp.Views.App.MessageWindow
+                    {
+                        DataContext = new HandsLiftedApp.Core.Models.UI.MessageWindowViewModel
+                        {
+                            Title = warning.Title,
+                            Content = warning.Message
+                        }
+                    }.ShowDialog(welcome);
+                }
+
             }
             catch (TaskCanceledException) {
             }
