@@ -20,9 +20,15 @@ public class ThemePreviewImage : Control
     public static readonly StyledProperty<BaseSlideTheme?> SlideThemeProperty =
         AvaloniaProperty.Register<ThemePreviewImage, BaseSlideTheme?>(nameof(SlideTheme));
 
+    public static readonly StyledProperty<bool> IsDefaultProperty =
+        AvaloniaProperty.Register<ThemePreviewImage, bool>(nameof(IsDefault));
+
     private static readonly TimeSpan RefreshDebounce = TimeSpan.FromMilliseconds(250);
     private static readonly IPen BorderPen = new Pen(new SolidColorBrush(Color.FromArgb(90, 128, 128, 128)), 1);
     private const double CornerRadius = 3;
+    private static readonly IBrush BadgeBrush = new SolidColorBrush(Color.FromArgb(170, 0, 0, 0));
+    private static readonly IBrush StarBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0xC1, 0x07));
+    private static readonly StreamGeometry UnitStar = CreateUnitStar();
 
     private IDisposable? _invalidatedSubscription;
     private bool _attached;
@@ -30,7 +36,14 @@ public class ThemePreviewImage : Control
     static ThemePreviewImage()
     {
         AffectsMeasure<ThemePreviewImage>(SlideThemeProperty);
-        AffectsRender<ThemePreviewImage>(SlideThemeProperty);
+        AffectsRender<ThemePreviewImage>(SlideThemeProperty, IsDefaultProperty);
+    }
+
+    /// <summary>True when the theme is marked as a default (general, songs, songs with motion, scripture): draws a star badge top-right.</summary>
+    public bool IsDefault
+    {
+        get => GetValue(IsDefaultProperty);
+        set => SetValue(IsDefaultProperty, value);
     }
 
     public BaseSlideTheme? SlideTheme
@@ -113,15 +126,26 @@ public class ThemePreviewImage : Control
 
         if (!string.IsNullOrEmpty(SlideTheme.DefaultMotionBackgroundVideoPath))
             DrawPlayBadge(context, bounds);
+        if (IsDefault)
+            DrawStarBadge(context, bounds);
+    }
+
+    /// <summary>Draws the dark disc both badges sit on, in the given corner offset, and returns its rectangle.</summary>
+    private static Rect DrawBadgeDisc(DrawingContext context, Rect bounds, bool top)
+    {
+        var size = Math.Clamp(bounds.Width * 0.16, 12, 22);
+        var margin = Math.Max(3, size * 0.25);
+        var y = top ? bounds.Top + margin : bounds.Bottom - size - margin;
+        var disc = new Rect(bounds.Right - size - margin, y, size, size);
+        context.DrawEllipse(BadgeBrush, null, disc);
+        return disc;
     }
 
     /// <summary>A small dark disc with a white play triangle, bottom-right: marks a theme whose background is a motion video.</summary>
     private static void DrawPlayBadge(DrawingContext context, Rect bounds)
     {
-        var size = Math.Clamp(bounds.Width * 0.16, 12, 22);
-        var margin = Math.Max(3, size * 0.25);
-        var disc = new Rect(bounds.Right - size - margin, bounds.Bottom - size - margin, size, size);
-        context.DrawEllipse(new SolidColorBrush(Color.FromArgb(170, 0, 0, 0)), null, disc);
+        var disc = DrawBadgeDisc(context, bounds, top: false);
+        var size = disc.Width;
 
         var c = disc.Center;
         var h = size * 0.3;
@@ -134,5 +158,34 @@ public class ThemePreviewImage : Control
             g.EndFigure(true);
         }
         context.DrawGeometry(Brushes.White, null, triangle);
+    }
+
+    /// <summary>A small dark disc with a gold star, top-right: marks a theme that is a default (general, songs, motion songs, scripture).</summary>
+    private static void DrawStarBadge(DrawingContext context, Rect bounds)
+    {
+        var disc = DrawBadgeDisc(context, bounds, top: true);
+        var radius = disc.Width * 0.34;
+        // The shared unit star is scaled and moved into place (a star's centroid sits a little below its circumcentre).
+        var centre = new Point(disc.Center.X, disc.Center.Y + radius * 0.06);
+        using (context.PushTransform(Matrix.CreateScale(radius, radius) * Matrix.CreateTranslation(centre.X, centre.Y)))
+            context.DrawGeometry(StarBrush, null, UnitStar);
+    }
+
+    /// <summary>A five-point star of circumradius 1 centred on the origin, one point up. Built once, scaled when drawn.</summary>
+    private static StreamGeometry CreateUnitStar()
+    {
+        const double innerRatio = 0.42;
+        var star = new StreamGeometry();
+        using var g = star.Open();
+        for (var i = 0; i < 10; i++)
+        {
+            var angle = -Math.PI / 2 + i * Math.PI / 5;
+            var r = i % 2 == 0 ? 1 : innerRatio;
+            var p = new Point(r * Math.Cos(angle), r * Math.Sin(angle));
+            if (i == 0) g.BeginFigure(p, true);
+            else g.LineTo(p);
+        }
+        g.EndFigure(true);
+        return star;
     }
 }

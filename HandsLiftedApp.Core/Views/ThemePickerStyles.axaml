@@ -1,6 +1,8 @@
 <Styles
     xmlns="https://github.com/avaloniaui"
     xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+    xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+    xmlns:core="clr-namespace:HandsLiftedApp.Core"
     xmlns:slideTheme="clr-namespace:HandsLiftedApp.Data.SlideTheme;assembly=HandsLiftedApp.Data"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--
@@ -13,6 +15,7 @@
         The tile geometry lives in the three x:Double resources below (ThemePickerUiTests reads the same ones).
     -->
     <Styles.Resources>
+        <converters:IsAnyDefaultThemeConverter x:Key="IsAnyDefaultThemeConverter" />
         <!--  Width of a tile (preview + name) and of the "(None)" label.  -->
         <x:Double x:Key="ThemePickerTileWidth">150</x:Double>
         <!--  A tile plus the 2 x 4 padding of its ComboBoxItem.  -->
@@ -37,7 +40,20 @@
         <Setter Property="ItemTemplate">
             <DataTemplate x:DataType="slideTheme:BaseSlideTheme">
                 <StackPanel Spacing="3" Width="{DynamicResource ThemePickerTileWidth}">
-                    <controls:ThemePreviewImage SlideTheme="{Binding}" />
+                    <!--  The star marks a default theme (same rule as the "default ..." labels in the designer's lists). The closed box's small thumbnail has no star.  -->
+                    <controls:ThemePreviewImage SlideTheme="{Binding}">
+                        <controls:ThemePreviewImage.IsDefault>
+                            <MultiBinding Converter="{StaticResource IsAnyDefaultThemeConverter}">
+                                <Binding Path="." />
+                                <Binding Path="AppPreferences.DefaultSongThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="MainViewModel.Playlist.DefaultSongThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="AppPreferences.DefaultSongMotionThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="MainViewModel.Playlist.DefaultSongMotionThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="AppPreferences.DefaultScriptureThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="MainViewModel.Playlist.DefaultScriptureThemeId" Source="{x:Static core:Globals.Instance}" />
+                            </MultiBinding>
+                        </controls:ThemePreviewImage.IsDefault>
+                    </controls:ThemePreviewImage>
                     <TextBlock
                         HorizontalAlignment="Center"
                         Text="{Binding Name, FallbackValue='(None)'}"

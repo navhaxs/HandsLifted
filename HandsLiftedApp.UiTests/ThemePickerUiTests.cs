@@ -6,6 +6,7 @@ using Avalonia.VisualTree;
 using HandsLiftedApp.Core;
 using HandsLiftedApp.Core.Controls;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
+using HandsLiftedApp.Core.Undo;
 using HandsLiftedApp.Core.ViewModels;
 using HandsLiftedApp.Core.ViewModels.Editor;
 using HandsLiftedApp.Core.Views.Designer;
@@ -83,6 +84,134 @@ public class ThemePickerUiTests
             }
 
             window.Screenshot("theme-designer-lists");
+            window.Close();
+            main.Close();
+        });
+    }
+
+    /// <summary>The thumbnail showing <paramref name="theme"/> among the visible ones of <paramref name="root"/> (a list or a dropdown).</summary>
+    private static ThemePreviewImage ThumbnailOf(Visual root, BaseSlideTheme theme) =>
+        root.GetVisualDescendants().OfType<ThemePreviewImage>().Where(t => t.IsEffectivelyVisible).Single(t => ReferenceEquals(t.SlideTheme, theme));
+
+    /// <summary>Applies a default the way the designer's "Set as default for ..." menu items do (the handlers run this action).</summary>
+    private static void SetDefault(DefaultThemeKind kind, BaseSlideTheme theme) =>
+        new SetDefaultThemeAction(Globals.Instance.AppPreferences, Globals.Instance.MainViewModel.Playlist, kind, theme.Id, () => { }).Do();
+
+    [TestMethod]
+    public async Task Designer_Lists_StarMarksTheDefaultThemes_AndFollowsChanges()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var vm = Globals.Instance.MainViewModel;
+
+            var general = MakeTheme("General theme", SlideThemeType.General);
+            var songA = MakeTheme("Song A", SlideThemeType.SongTheme);
+            var songB = MakeTheme("Song B", SlideThemeType.SongTheme);
+            var songMotion = MakeTheme("Song motion", SlideThemeType.SongTheme);
+            songMotion.DefaultMotionBackgroundVideoPath = @"Z:\loop.mp4";
+            var scripture = MakeTheme("Scripture theme", SlideThemeType.ScriptureTheme);
+            var scriptureOther = MakeTheme("Scripture other", SlideThemeType.ScriptureTheme);
+            vm.Playlist.Designs.Clear();
+            foreach (var t in new[] { general, songA, songB, songMotion, scripture, scriptureOther }) vm.Playlist.Designs.Add(t);
+
+            Globals.Instance.AppPreferences.DefaultTheme = general; // the general default
+            vm.Playlist.DefaultSongThemeId = songA.Id; // a playlist override
+            Globals.Instance.AppPreferences.DefaultSongMotionThemeId = songMotion.Id; // an app-wide default
+            Globals.Instance.AppPreferences.DefaultScriptureThemeId = scripture.Id;
+
+            var designer = new SlideThemeDesigner { DataContext = vm };
+            var window = new Window { Width = 1400, Height = 900, Content = designer };
+            window.Show();
+            UiTestHelpers.Settle();
+
+            ThemePreviewImage Thumb(BaseSlideTheme t) => ThumbnailOf(designer, t);
+
+            Assert.IsTrue(Thumb(general).IsDefault, "general default");
+            Assert.IsTrue(Thumb(songA).IsDefault, "song default (playlist override)");
+            Assert.IsFalse(Thumb(songB).IsDefault, "an ordinary song theme must not be starred");
+            Assert.IsTrue(Thumb(songMotion).IsDefault, "song motion default (app preference)");
+            Assert.IsTrue(Thumb(scripture).IsDefault, "scripture default");
+            Assert.IsFalse(Thumb(scriptureOther).IsDefault, "an ordinary scripture theme must not be starred");
+
+            // The star and the text labels agree for every theme.
+            foreach (var thumb in designer.GetVisualDescendants().OfType<ThemePreviewImage>().Where(t => t.IsEffectivelyVisible))
+            {
+                var row = thumb.GetVisualAncestors().OfType<ListBoxItem>().First();
+                var labelled = row.GetVisualDescendants().OfType<TextBlock>()
+                    .Any(t => t.IsEffectivelyVisible && t.Text != null && t.Text.StartsWith("default"));
+                Assert.AreEqual(labelled, thumb.IsDefault, $"{((BaseSlideTheme)thumb.SlideTheme!).Name}: star and 'default' label disagree");
+            }
+
+            window.Screenshot("theme-designer-lists-defaults");
+
+            // "Set as default for Songs" on B: the app default moves to B and the playlist override is cleared, so the star moves.
+            SetDefault(DefaultThemeKind.Song, songB);
+            UiTestHelpers.Settle();
+            Assert.IsFalse(Thumb(songA).IsDefault, "the star stayed on the old default");
+            Assert.IsTrue(Thumb(songB).IsDefault, "the star did not move to the new default");
+
+            // A playlist override (set outside the menu, e.g. by loading a playlist) moves it back.
+            vm.Playlist.DefaultSongThemeId = songA.Id;
+            UiTestHelpers.Settle();
+            Assert.IsTrue(Thumb(songA).IsDefault, "playlist override did not move the star");
+            Assert.IsFalse(Thumb(songB).IsDefault, "the app default kept its star under a playlist override");
+
+            SetDefault(DefaultThemeKind.Scripture, scriptureOther);
+            UiTestHelpers.Settle();
+            Assert.IsFalse(Thumb(scripture).IsDefault);
+            Assert.IsTrue(Thumb(scriptureOther).IsDefault);
+
+            window.Close();
+            main.Close();
+        });
+    }
+
+    [TestMethod]
+    public async Task SongEditor_ThemeDropdown_StarsTheDefaultTileOnly()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            var plain = MakeTheme("Plain", SlideThemeType.SongTheme);
+            var starred = MakeTheme("Starred", SlideThemeType.SongTheme);
+            var motion = MakeTheme("Motion default", SlideThemeType.SongTheme);
+            motion.DefaultMotionBackgroundVideoPath = @"Z:\loop.mp4";
+            playlist.Designs.Clear();
+            foreach (var t in new[] { plain, starred, motion }) playlist.Designs.Add(t);
+            playlist.DefaultSongThemeId = starred.Id;
+            Globals.Instance.AppPreferences.DefaultSongMotionThemeId = motion.Id;
+
+            var editor = new SongEditorViewModel(SongItemInstance.NewDraft(playlist), playlist);
+            var control = new SongEditorControl { DataContext = editor };
+            var window = new Window { Width = 520, Height = 700, Content = control };
+            window.Show();
+            control.Find<TabControl>(t => t.Name == "TabControl")!.SelectedIndex = 2; // Design tab
+            UiTestHelpers.Settle();
+            var combo = control.Find<ComboBox>(c => c.Classes.Contains("themePicker"))!;
+
+            // The closed box keeps its small, star-free thumbnail even for a default theme.
+            editor.SelectedSlideTheme = starred;
+            UiTestHelpers.Settle();
+            Assert.IsFalse(combo.GetVisualDescendants().OfType<ThemePreviewImage>().Single(t => t.IsEffectivelyVisible).IsDefault,
+                "the closed box's 48 px thumbnail must not carry a star");
+
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+            var items = VisibleItems(combo);
+            Assert.AreEqual(3, items.Count);
+            Assert.IsFalse(Thumbnail(items[0]).IsDefault, "ordinary tile starred");
+            Assert.IsTrue(Thumbnail(items[1]).IsDefault, "the default theme's tile has no star");
+            Assert.IsTrue(Thumbnail(items[2]).IsDefault, "the song-motion default's tile has no star");
+            window.Screenshot("theme-dropdown-song-editor-defaults");
+
+            // Changing the default while the dropdown is open moves the star.
+            SetDefault(DefaultThemeKind.Song, plain);
+            UiTestHelpers.Settle();
+            Assert.IsTrue(Thumbnail(items[0]).IsDefault, "star did not move to the new default tile");
+            Assert.IsFalse(Thumbnail(items[1]).IsDefault, "star stayed on the old default tile");
+
             window.Close();
             main.Close();
         });

@@ -29,6 +29,7 @@
         <converters2:IsDefaultSongThemeConverter x:Key="IsDefaultSongThemeConverter" />
         <converters2:IsDefaultSongMotionThemeConverter x:Key="IsDefaultSongMotionThemeConverter" />
         <converters2:IsDefaultScriptureThemeConverter x:Key="IsDefaultScriptureThemeConverter" />
+        <converters2:IsAnyDefaultThemeConverter x:Key="IsAnyDefaultThemeConverter" />
         <converters2:IsGeneralThemeTypeConverter x:Key="IsGeneralThemeTypeConverter" />
         <converters2:IsSongThemeTypeConverter x:Key="IsSongThemeTypeConverter" />
         <converters2:IsScriptureThemeTypeConverter x:Key="IsScriptureThemeTypeConverter" />
@@ -107,7 +108,20 @@
                     DockPanel.Dock="Top"
                     HorizontalAlignment="Left"
                     SlideTheme="{Binding}"
-                    Width="180" />
+                    Width="180">
+                    <!--  A star badge on any theme the "default ..." labels below mark as a default (same converters, so they cannot disagree).  -->
+                    <coreControls:ThemePreviewImage.IsDefault>
+                        <MultiBinding Converter="{StaticResource IsAnyDefaultThemeConverter}">
+                            <Binding Path="." />
+                            <Binding Path="AppPreferences.DefaultSongThemeId" Source="{x:Static core:Globals.Instance}" />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongThemeId" />
+                            <Binding Path="AppPreferences.DefaultSongMotionThemeId" Source="{x:Static core:Globals.Instance}" />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongMotionThemeId" />
+                            <Binding Path="AppPreferences.DefaultScriptureThemeId" Source="{x:Static core:Globals.Instance}" />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultScriptureThemeId" />
+                        </MultiBinding>
+                    </coreControls:ThemePreviewImage.IsDefault>
+                </coreControls:ThemePreviewImage>
                 <TextBlock
                     DockPanel.Dock="Bottom"
                     HorizontalAlignment="Left"
