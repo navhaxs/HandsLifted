@@ -544,6 +544,16 @@
                         </controls:NumericSliderBox.IsEnabled>
                     </controls:NumericSliderBox>
 
+                    <!--  mpv playback speed multiplier for the motion video; 1 = normal.  -->
+                    <TextBlock Margin="0,6,0,0" Text="Motion Speed (x)" />
+                    <controls:NumericSliderBox
+                        IsEnabled="{Binding BackgroundMode, Converter={StaticResource IsMotionBackgroundModeConverter}}"
+                        Maximum="4"
+                        Minimum="0.1"
+                        Text="{Binding MotionBackgroundSpeed, FallbackValue=1}"
+                        TextBoxMinWidth="40"
+                        TickFrequency="0.05" />
+
                     <Border
                         Background="#808080"
                         Height="1"

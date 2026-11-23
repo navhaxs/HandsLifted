@@ -230,6 +230,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             }
         }
 
+        // The theme that governs this item's motion background (resolved as the motion case, which is
+        // how it renders once a video exists). Null when the item isn't in a playlist.
+        [XmlIgnore]
+        public BaseSlideTheme? ResolvedMotionTheme => ParentPlaylist?.ResolveSongTheme(Design, true);
+
         public override ObservableCollection<Guid> Arrangement
         {
             get => ResolvedSong?.Arrangement ?? new ObservableCollection<Guid>();

@@ -465,6 +465,23 @@ namespace HandsLiftedApp.Data.SlideTheme
             set => this.RaiseAndSetIfChanged(ref _backgroundOpacity, Math.Clamp(value, 0, 100));
         }
 
+        // Playback speed of the motion background video as a multiplier (mpv "speed"). 1.0 = normal.
+        // Clamped on set so a hand-edited theme file can't carry an out-of-range value.
+        public const double MinMotionBackgroundSpeed = 0.1;
+        public const double MaxMotionBackgroundSpeed = 4.0;
+
+        private double _motionBackgroundSpeed = 1.0;
+
+        [DataMember]
+        public double MotionBackgroundSpeed
+        {
+            get => _motionBackgroundSpeed;
+            set => this.RaiseAndSetIfChanged(ref _motionBackgroundSpeed,
+                double.IsFinite(value)
+                    ? Math.Clamp(value, MinMotionBackgroundSpeed, MaxMotionBackgroundSpeed)
+                    : 1.0);
+        }
+
         private string? _defaultMotionBackgroundVideoPath;
 
         [DataMember]

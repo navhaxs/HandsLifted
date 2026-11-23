@@ -170,6 +170,7 @@ namespace HandsLiftedApp.Core.Undo
             {
                 nameof(BaseSlideTheme.BackgroundMode), nameof(BaseSlideTheme.BackgroundGraphicFilePath),
                 nameof(BaseSlideTheme.DefaultMotionBackgroundVideoPath), nameof(BaseSlideTheme.BackgroundOpacity),
+                nameof(BaseSlideTheme.MotionBackgroundSpeed),
             }),
             ("Change Shadow", new[]
             {

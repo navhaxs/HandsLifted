@@ -62,6 +62,25 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			SubscribeToActiveItemChanges();
 		}
 
+		private double _motionSpeed = 1.0;
+		private IDisposable? _speedSubscription;
+
+		// Pushes the theme's playback speed to the live motion context (mpv "speed"; no-op without one).
+		// Set before loadfile too: the property sticks to the context across files.
+		private void ApplySpeed()
+		{
+			var ctx = _motionMpvContext;
+			if (ctx == null) return;
+			try
+			{
+				ctx.SetPropertyString("speed", _motionSpeed.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
+			}
+			catch (Exception ex)
+			{
+				Log.Warning(ex, "[MotionBg] Failed to set playback speed {Speed}", _motionSpeed);
+			}
+		}
+
 		#region Playback Lifecycle
 
 		/// <summary>
@@ -103,6 +122,8 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 				// Connect the MpvContext to the SoftwareVideoView
 				Log.Debug("[MotionBg] Connecting MpvContext to VideoView...");
 				VideoView.MpvContext = _motionMpvContext;
+
+				ApplySpeed();
 
 				// Issue loadfile command to start playback
 				Log.Debug("[MotionBg] Issuing loadfile command for: {FilePath}", videoFilePath);
@@ -330,6 +351,25 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			_activeItemPathSubscription = null;
 
 			var songItem = newItem as SongItemInstance;
+
+			// Playback speed comes from the item's theme; follow live edits from the theme designer.
+			_speedSubscription?.Dispose();
+			_speedSubscription = null;
+			var speedTheme = songItem?.ResolvedMotionTheme;
+			_motionSpeed = speedTheme?.MotionBackgroundSpeed ?? 1.0;
+			if (speedTheme != null)
+			{
+				_speedSubscription = speedTheme
+					.WhenAnyValue(t => t.MotionBackgroundSpeed)
+					.Skip(1)
+					.Subscribe(s => Dispatcher.UIThread.Post(() =>
+					{
+						_motionSpeed = s;
+						ApplySpeed();
+					}));
+			}
+			ApplySpeed();
+
 			var hasMotionBackground = songItem?.HasMotionBackground == true;
 			var newVideoPath = hasMotionBackground ? songItem!.ResolvedMotionBackgroundVideoPath : null;
 
@@ -451,6 +491,8 @@ namespace HandsLiftedApp.Core.Render.MotionBackground
 			_activeItemSubscription = null;
 			_activeItemPathSubscription?.Dispose();
 			_activeItemPathSubscription = null;
+			_speedSubscription?.Dispose();
+			_speedSubscription = null;
 
 			// Release the slide-transition gate immediately so no async slide callback
 			// waits on the 5-second timeout during shutdown.
