@@ -13,12 +13,12 @@ namespace HandsLiftedApp.Core.Controls;
 /// <summary>
 /// A 16:9 preview of a slide theme, drawn from <see cref="ThemeThumbnailCache"/>. The bitmap is only fetched while the
 /// control is attached to a visual tree (so virtualised or closed dropdown items cost nothing) and is refreshed,
-/// debounced, when the theme is edited. A null <see cref="Theme"/> measures to zero size.
+/// debounced, when the theme is edited. A null <see cref="SlideTheme"/> measures to zero size.
 /// </summary>
 public class ThemePreviewImage : Control
 {
-    public static new readonly StyledProperty<BaseSlideTheme?> ThemeProperty =
-        AvaloniaProperty.Register<ThemePreviewImage, BaseSlideTheme?>(nameof(Theme));
+    public static readonly StyledProperty<BaseSlideTheme?> SlideThemeProperty =
+        AvaloniaProperty.Register<ThemePreviewImage, BaseSlideTheme?>(nameof(SlideTheme));
 
     private static readonly TimeSpan RefreshDebounce = TimeSpan.FromMilliseconds(250);
     private static readonly IPen BorderPen = new Pen(new SolidColorBrush(Color.FromArgb(90, 128, 128, 128)), 1);
@@ -29,14 +29,14 @@ public class ThemePreviewImage : Control
 
     static ThemePreviewImage()
     {
-        AffectsMeasure<ThemePreviewImage>(ThemeProperty);
-        AffectsRender<ThemePreviewImage>(ThemeProperty);
+        AffectsMeasure<ThemePreviewImage>(SlideThemeProperty);
+        AffectsRender<ThemePreviewImage>(SlideThemeProperty);
     }
 
-    public new BaseSlideTheme? Theme
+    public BaseSlideTheme? SlideTheme
     {
-        get => GetValue(ThemeProperty);
-        set => SetValue(ThemeProperty, value);
+        get => GetValue(SlideThemeProperty);
+        set => SetValue(SlideThemeProperty, value);
     }
 
     /// <summary>The bitmap currently drawn. Null until attached, or when there is no theme.</summary>
@@ -60,7 +60,7 @@ public class ThemePreviewImage : Control
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == ThemeProperty && _attached)
+        if (change.Property == SlideThemeProperty && _attached)
             Load();
     }
 
@@ -70,7 +70,7 @@ public class ThemePreviewImage : Control
         _invalidatedSubscription?.Dispose();
         _invalidatedSubscription = null;
 
-        var theme = Theme;
+        var theme = SlideTheme;
         Source = ThemeThumbnailCache.GetOrRender(theme);
         InvalidateVisual();
         if (theme == null)
@@ -88,7 +88,7 @@ public class ThemePreviewImage : Control
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        if (Theme == null)
+        if (SlideTheme == null)
             return default;
 
         var width = double.IsInfinity(availableSize.Width) ? ThemeThumbnailCache.PixelWidth : availableSize.Width;
@@ -98,7 +98,7 @@ public class ThemePreviewImage : Control
     public override void Render(DrawingContext context)
     {
         base.Render(context);
-        if (Theme == null)
+        if (SlideTheme == null)
             return;
 
         var bounds = new Rect(Bounds.Size);
@@ -110,7 +110,7 @@ public class ThemePreviewImage : Control
 
         context.DrawRectangle(null, BorderPen, bounds.Deflate(0.5), CornerRadius, CornerRadius);
 
-        if (!string.IsNullOrEmpty(Theme.DefaultMotionBackgroundVideoPath))
+        if (!string.IsNullOrEmpty(SlideTheme.DefaultMotionBackgroundVideoPath))
             DrawPlayBadge(context, bounds);
     }
 

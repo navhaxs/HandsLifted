@@ -59,7 +59,7 @@ public class ThemePreviewImageTests
         await HeadlessSession.Run(() =>
         {
             var theme = MakeTheme();
-            var control = new ThemePreviewImage { Theme = theme };
+            var control = new ThemePreviewImage { SlideTheme = theme };
             Host(control);
 
             Assert.IsNotNull(control.Source);
@@ -76,7 +76,7 @@ public class ThemePreviewImageTests
         {
             var before = ThemeThumbnailCache.RenderCount;
 
-            var control = new ThemePreviewImage { Theme = MakeTheme() };
+            var control = new ThemePreviewImage { SlideTheme = MakeTheme() };
             UiTestHelpers.Settle();
 
             Assert.IsNull(control.Source);
@@ -90,7 +90,7 @@ public class ThemePreviewImageTests
         await HeadlessSession.RunAsync(async () =>
         {
             var theme = MakeTheme();
-            var control = new ThemePreviewImage { Theme = theme };
+            var control = new ThemePreviewImage { SlideTheme = theme };
             Host(control);
             var first = control.Source;
             Assert.IsNotNull(first);
@@ -108,7 +108,7 @@ public class ThemePreviewImageTests
         await HeadlessSession.RunAsync(async () =>
         {
             var theme = MakeTheme();
-            var control = new ThemePreviewImage { Theme = theme };
+            var control = new ThemePreviewImage { SlideTheme = theme };
             Host(control);
             var first = control.Source;
             var before = ThemeThumbnailCache.RenderCount;
@@ -136,11 +136,11 @@ public class ThemePreviewImageTests
         {
             var themeA = MakeTheme("A");
             var themeB = MakeTheme("B");
-            var control = new ThemePreviewImage { Theme = themeA };
+            var control = new ThemePreviewImage { SlideTheme = themeA };
             Host(control);
             Assert.AreSame(ThemeThumbnailCache.GetOrRender(themeA), control.Source);
 
-            control.Theme = themeB;
+            control.SlideTheme = themeB;
             UiTestHelpers.Settle();
 
             Assert.AreSame(ThemeThumbnailCache.GetOrRender(themeB), control.Source);
@@ -165,7 +165,7 @@ public class ThemePreviewImageTests
         await HeadlessSession.RunAsync(async () =>
         {
             var theme = MakeTheme();
-            var control = new ThemePreviewImage { Theme = theme };
+            var control = new ThemePreviewImage { SlideTheme = theme };
             var window = Host(control);
             var shown = control.Source;
 
@@ -190,7 +190,7 @@ public class ThemePreviewImageTests
     {
         await HeadlessSession.Run(() =>
         {
-            var control = new ThemePreviewImage { Theme = null };
+            var control = new ThemePreviewImage { SlideTheme = null };
             Host(control);
 
             Assert.IsNull(control.Source);
@@ -206,7 +206,7 @@ public class ThemePreviewImageTests
         {
             var theme = MakeTheme();
             theme.DefaultMotionBackgroundVideoPath = @"Z:\loop.mp4";
-            var control = new ThemePreviewImage { Theme = theme };
+            var control = new ThemePreviewImage { SlideTheme = theme };
             var window = Host(control);
 
             Assert.IsNotNull(control.Source);
