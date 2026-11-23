@@ -287,7 +287,7 @@ namespace HandsLiftedApp.Core.Views.Setup
                     {
                         ClientSecrets = new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
                         Scopes = GoogleScopes,
-                        DataStore = new FileDataStore("token.json", true)
+                        DataStore = new FileDataStore(HandsLiftedApp.Importer.GoogleSlides.GoogleTokenStorePath.Resolve(), true)
                     });
 
                     var storedToken = flow.LoadTokenAsync("user", CancellationToken.None).GetAwaiter().GetResult();

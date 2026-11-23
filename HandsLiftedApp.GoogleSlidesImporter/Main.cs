@@ -36,7 +36,7 @@ namespace HandsLiftedApp.Importer.GoogleSlides
                 try
                 {
                                        
-                    string credPath = "token.json";
+                    string credPath = GoogleTokenStorePath.Resolve();
 
                     // NOTE: deliberately not GoogleWebAuthorizationBroker.AuthorizeAsync here — when the
                     // stored token is missing/revoked, that call silently launches the interactive

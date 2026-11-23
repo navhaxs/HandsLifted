@@ -33,7 +33,7 @@ public class GoogleSignInRunner : IGoogleSignInRunner
             var credential = await new AuthorizationCodeInstalledApp(flow, receiver)
                 .AuthorizeAsync("user", cancellationToken);
 
-            await new FileDataStore("token.json", true)
+            await new FileDataStore(GoogleTokenStorePath.Resolve(), true)
                 .StoreAsync<TokenResponse>("user", credential.Token);
         }
         catch (Exception ex) when (cancellationToken.IsCancellationRequested
