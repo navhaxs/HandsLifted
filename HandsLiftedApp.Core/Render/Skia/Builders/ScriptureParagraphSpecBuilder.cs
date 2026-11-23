@@ -24,21 +24,25 @@ public static class ScriptureParagraphSpecBuilder
                 ToSkColor(theme.DropShadowColour))
             : null;
 
-    public static SlideRenderSpec Build(ScriptureSlideInstance slide)
-    {
-        var bg = BuildBackground(slide);
+    public static SlideRenderSpec Build(ScriptureSlideInstance slide) =>
+        Build(slide.Theme, slide.Lines, slide.EffectiveFontSize);
 
-        if (slide.Theme == null || slide.Lines.Count == 0)
+    /// <summary>
+    /// Builds the spec from plain values, without a runtime slide instance (which would queue a render and subscribe to
+    /// the app-wide theme observables; callers like theme thumbnails must not construct one). Scripture slides have no
+    /// motion background.
+    /// </summary>
+    public static SlideRenderSpec Build(BaseSlideTheme? theme, IReadOnlyList<ScriptureParagraphLine> lines, float? effectiveFontSize)
+    {
+        var bg = ThemeBackgroundSpecBuilder.Build(theme, hasMotionBackground: false);
+
+        if (theme == null || lines.Count == 0)
             return new SlideRenderSpec(bg, Array.Empty<RenderElement>());
 
-        float bodyFontSize = slide.EffectiveFontSize ?? slide.Theme.FontSize;
-        var elements = BuildTextElements(slide.Lines, slide.Theme, bodyFontSize);
+        float bodyFontSize = effectiveFontSize ?? theme.FontSize;
+        var elements = BuildTextElements(lines, theme, bodyFontSize);
         return new SlideRenderSpec(bg, elements);
     }
-
-    // Scripture slides have no motion background.
-    private static BackgroundSpec BuildBackground(ScriptureSlideInstance slide) =>
-        ThemeBackgroundSpecBuilder.Build(slide.Theme, hasMotionBackground: false);
 
     private static IReadOnlyList<RenderElement> BuildTextElements(
         IReadOnlyList<ScriptureParagraphLine> lines, BaseSlideTheme theme, float bodyFontSize)

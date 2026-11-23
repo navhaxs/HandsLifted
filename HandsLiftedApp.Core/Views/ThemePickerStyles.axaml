@@ -1,0 +1,116 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+    xmlns:converters="clr-namespace:HandsLiftedApp.Core.Converters"
+    xmlns:core="clr-namespace:HandsLiftedApp.Core"
+    xmlns:slideTheme="clr-namespace:HandsLiftedApp.Data.SlideTheme;assembly=HandsLiftedApp.Data"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        Theme dropdowns (song editor Design tab, item edit dock flyouts): `<ComboBox Classes="themePicker">`.
+        Open list: tiles (preview over name) wrapping into two columns. Closed box: small preview + name.
+        Tile widths are fixed (a preview sizes itself to the width it is given, and a popup has no width to give),
+        and the panel is a WrapPanel so items hidden by the song/scripture filters leave no gap.
+        The null "none" option (PrependBlankThemeOptionConverter) has no theme, so its preview collapses to nothing
+        and only the "(None)" text remains.
+        The tile geometry lives in the three x:Double resources below (ThemePickerUiTests reads the same ones).
+    -->
+    <Styles.Resources>
+        <converters:IsAnyDefaultThemeConverter x:Key="IsAnyDefaultThemeConverter" />
+        <!--  Width of a tile (preview + name) and of the "(None)" label.  -->
+        <x:Double x:Key="ThemePickerTileWidth">150</x:Double>
+        <!--  A tile plus the 2 x 4 padding of its ComboBoxItem.  -->
+        <x:Double x:Key="ThemePickerItemWidth">158</x:Double>
+        <!--
+            Two items per row, with 4 of slack: at 125% display scaling layout rounding makes each item 158.4 wide, and
+            two of those do not fit 316. The panel's ItemWidth makes it decide the wrap with 158.
+        -->
+        <x:Double x:Key="ThemePickerPanelWidth">320</x:Double>
+    </Styles.Resources>
+    <Style Selector="ComboBox.themePicker">
+        <!--  The default 200px only fits the first row of tiles (a tile is ~110px tall).  -->
+        <Setter Property="MaxDropDownHeight" Value="380" />
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <WrapPanel
+                    ItemWidth="{DynamicResource ThemePickerItemWidth}"
+                    Orientation="Horizontal"
+                    Width="{DynamicResource ThemePickerPanelWidth}" />
+            </ItemsPanelTemplate>
+        </Setter>
+        <Setter Property="ItemTemplate">
+            <DataTemplate x:DataType="slideTheme:BaseSlideTheme">
+                <StackPanel Spacing="3" Width="{DynamicResource ThemePickerTileWidth}">
+                    <!--  The star marks a default theme (same rule as the "default ..." labels in the designer's lists). The closed box's small thumbnail has no star.  -->
+                    <controls:ThemePreviewImage SlideTheme="{Binding}">
+                        <controls:ThemePreviewImage.IsDefault>
+                            <MultiBinding Converter="{StaticResource IsAnyDefaultThemeConverter}">
+                                <Binding Path="." />
+                                <Binding Path="AppPreferences.DefaultSongThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="MainViewModel.Playlist.DefaultSongThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="AppPreferences.DefaultSongMotionThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="MainViewModel.Playlist.DefaultSongMotionThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="AppPreferences.DefaultScriptureThemeId" Source="{x:Static core:Globals.Instance}" />
+                                <Binding Path="MainViewModel.Playlist.DefaultScriptureThemeId" Source="{x:Static core:Globals.Instance}" />
+                            </MultiBinding>
+                        </controls:ThemePreviewImage.IsDefault>
+                    </controls:ThemePreviewImage>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Text="{Binding Name, FallbackValue='(None)'}"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </DataTemplate>
+        </Setter>
+        <Setter Property="SelectionBoxItemTemplate">
+            <DataTemplate x:DataType="slideTheme:BaseSlideTheme">
+                <!--  A DockPanel (not a StackPanel) gives the name only the width left over, so it trims.  -->
+                <DockPanel LastChildFill="True">
+                    <controls:ThemePreviewImage
+                        DockPanel.Dock="Left"
+                        Margin="0,0,8,0"
+                        SlideTheme="{Binding}"
+                        VerticalAlignment="Center"
+                        Width="48" />
+                    <TextBlock
+                        Text="{Binding Name, FallbackValue=''}"
+                        TextTrimming="CharacterEllipsis"
+                        VerticalAlignment="Center" />
+                </DockPanel>
+            </DataTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ComboBox.themePicker ComboBoxItem">
+        <Setter Property="Padding" Value="4" />
+        <!--
+            A ContentPresenter never applies the item template to a null item, so the blank option would be an empty
+            sliver. The stock ComboBoxItem template plus a "(None)" label that only shows for null content (the
+            presenter keeps its name so the theme's :selected / :pointerover styles still colour it).
+        -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <ContentPresenter
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Name="PART_ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        IsHitTestVisible="False"
+                        IsVisible="{TemplateBinding Content, Converter={x:Static ObjectConverters.IsNull}}"
+                        Margin="{TemplateBinding Padding}"
+                        Text="(None)"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="{DynamicResource ThemePickerTileWidth}" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

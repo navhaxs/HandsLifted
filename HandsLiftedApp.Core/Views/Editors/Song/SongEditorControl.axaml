@@ -89,6 +89,7 @@
                     <StackPanel Margin="12">
                         <TextBlock Margin="0,0,0,6" Text="Slide Theme" />
                         <ComboBox
+                            Classes="themePicker"
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding Playlist.Designs}"
                             SelectedItem="{Binding SelectedSlideTheme}">
@@ -98,11 +99,6 @@
                                             Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
                                 </Style>
                             </ComboBox.Styles>
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
                         </ComboBox>
                         <TextBlock
                             FontSize="11"

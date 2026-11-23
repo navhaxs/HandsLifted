@@ -29,9 +29,13 @@ namespace HandsLiftedApp.Core
         /// Renders a slide thumbnail straight from its spec at <see cref="ThumbnailRenderSize.CurrentWidth"/>,
         /// avoiding the render-at-1920-then-shrink path of <see cref="CreateThumbnail"/>.
         /// </summary>
-        public static Bitmap RenderThumbnail(SlideRenderSpec spec)
+        public static Bitmap RenderThumbnail(SlideRenderSpec spec) =>
+            RenderThumbnail(spec, ThumbnailRenderSize.CurrentWidth);
+
+        /// <summary>Same as <see cref="RenderThumbnail(SlideRenderSpec)"/> at an explicit pixel width.</summary>
+        public static Bitmap RenderThumbnail(SlideRenderSpec spec, int pixelWidth)
         {
-            using var skBitmap = SlideRenderer.RenderThumbnail(spec, ThumbnailRenderSize.CurrentWidth);
+            using var skBitmap = SlideRenderer.RenderThumbnail(spec, pixelWidth);
             return CopySkBitmapPixels(skBitmap, AlphaFormat.Opaque);
         }
 

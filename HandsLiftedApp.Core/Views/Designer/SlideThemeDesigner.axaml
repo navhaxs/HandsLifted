@@ -29,6 +29,7 @@
         <converters2:IsDefaultSongThemeConverter x:Key="IsDefaultSongThemeConverter" />
         <converters2:IsDefaultSongMotionThemeConverter x:Key="IsDefaultSongMotionThemeConverter" />
         <converters2:IsDefaultScriptureThemeConverter x:Key="IsDefaultScriptureThemeConverter" />
+        <converters2:IsAnyDefaultThemeConverter x:Key="IsAnyDefaultThemeConverter" />
         <converters2:IsGeneralThemeTypeConverter x:Key="IsGeneralThemeTypeConverter" />
         <converters2:IsSongThemeTypeConverter x:Key="IsSongThemeTypeConverter" />
         <converters2:IsScriptureThemeTypeConverter x:Key="IsScriptureThemeTypeConverter" />
@@ -101,21 +102,35 @@
             </MenuItem>
         </ContextMenu>
         <DataTemplate x:Key="DesignListItemTemplate">
-            <DockPanel>
+            <!--  Fixed width: the list's ScrollViewer measures with infinite width, so without it a long name would widen the whole column instead of wrapping.  -->
+            <DockPanel Width="230">
+                <coreControls:ThemePreviewImage
+                    DockPanel.Dock="Left"
+                    Margin="0,0,8,0"
+                    SlideTheme="{Binding}"
+                    VerticalAlignment="Top"
+                    Width="90">
+                    <!--  A star badge on any theme the "default ..." labels below mark as a default (same converters, so they cannot disagree).  -->
+                    <coreControls:ThemePreviewImage.IsDefault>
+                        <MultiBinding Converter="{StaticResource IsAnyDefaultThemeConverter}">
+                            <Binding Path="." />
+                            <Binding Path="AppPreferences.DefaultSongThemeId" Source="{x:Static core:Globals.Instance}" />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongThemeId" />
+                            <Binding Path="AppPreferences.DefaultSongMotionThemeId" Source="{x:Static core:Globals.Instance}" />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultSongMotionThemeId" />
+                            <Binding Path="AppPreferences.DefaultScriptureThemeId" Source="{x:Static core:Globals.Instance}" />
+                            <Binding Path="$parent[UserControl].DataContext.Playlist.DefaultScriptureThemeId" />
+                        </MultiBinding>
+                    </coreControls:ThemePreviewImage.IsDefault>
+                </coreControls:ThemePreviewImage>
+                <StackPanel>
                 <TextBlock
-                    DockPanel.Dock="Bottom"
-                    HorizontalAlignment="Left"
-                    Margin="0,6,0,0"
-                    Text="{Binding Name}" />
-                <TextBlock
-                    DockPanel.Dock="Bottom"
                     FontSize="10"
                     Foreground="#888888"
                     HorizontalAlignment="Left"
                     IsVisible="{Binding ., Converter={StaticResource IsDefaultThemeConverter}}"
                     Text="default" />
                 <TextBlock
-                    DockPanel.Dock="Bottom"
                     FontSize="10"
                     Foreground="#888888"
                     HorizontalAlignment="Left"
@@ -128,7 +143,6 @@
                     </TextBlock.IsVisible>
                 </TextBlock>
                 <TextBlock
-                    DockPanel.Dock="Bottom"
                     FontSize="10"
                     Foreground="#888888"
                     HorizontalAlignment="Left"
@@ -141,7 +155,6 @@
                     </TextBlock.IsVisible>
                 </TextBlock>
                 <TextBlock
-                    DockPanel.Dock="Bottom"
                     FontSize="10"
                     Foreground="#888888"
                     HorizontalAlignment="Left"
@@ -153,6 +166,11 @@
                         </MultiBinding>
                     </TextBlock.IsVisible>
                 </TextBlock>
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    Text="{Binding Name}"
+                    TextWrapping="Wrap" />
+                </StackPanel>
             </DockPanel>
         </DataTemplate>
     </UserControl.Resources>

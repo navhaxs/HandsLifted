@@ -24,6 +24,7 @@
         <StyleInclude Source="avares://HandsLiftedApp.Controls/Styles/AppStyles.axaml" />
         <StyleInclude Source="avares://HandsLiftedApp.Controls/ScrollViewer.axaml" />
         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
+        <StyleInclude Source="avares://HandsLiftedApp.Core/Views/ThemePickerStyles.axaml" />
 
         <!--  Align controls to top  -->
         <Style Selector="WindowDrawnDecorations /template/ StackPanel#PART_OverlayPanel &gt; Button">

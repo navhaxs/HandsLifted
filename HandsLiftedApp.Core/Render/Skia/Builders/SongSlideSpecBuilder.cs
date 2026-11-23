@@ -25,19 +25,24 @@ public static class SongSlideSpecBuilder
                 ToSkColor(theme.DropShadowColour))
             : null;
 
-    public static SlideRenderSpec Build(SongSlideInstance slide)
-    {
-        var bg = BuildBackground(slide);
+    public static SlideRenderSpec Build(SongSlideInstance slide) =>
+        Build(slide.Text, slide.Theme, slide.HasMotionBackground);
 
-        if (slide.Theme == null || string.IsNullOrWhiteSpace(slide.Text))
+    /// <summary>
+    /// Builds the spec from plain values, without a runtime slide instance. (A <see cref="SongSlideInstance"/> subscribes
+    /// itself to its theme for as long as the theme lives, so callers that only need a spec, like theme thumbnails,
+    /// must not construct one.)
+    /// </summary>
+    public static SlideRenderSpec Build(string? text, BaseSlideTheme? theme, bool hasMotionBackground)
+    {
+        var bg = ThemeBackgroundSpecBuilder.Build(theme, hasMotionBackground);
+
+        if (theme == null || string.IsNullOrWhiteSpace(text))
             return new SlideRenderSpec(bg, Array.Empty<RenderElement>());
 
-        var elements = BuildTextElements(slide.Text, slide.Theme);
+        var elements = BuildTextElements(text, theme);
         return new SlideRenderSpec(bg, elements);
     }
-
-    private static BackgroundSpec BuildBackground(SongSlideInstance slide) =>
-        ThemeBackgroundSpecBuilder.Build(slide.Theme, slide.HasMotionBackground);
 
     private static IReadOnlyList<RenderElement> BuildTextElements(string text, BaseSlideTheme theme)
     {
