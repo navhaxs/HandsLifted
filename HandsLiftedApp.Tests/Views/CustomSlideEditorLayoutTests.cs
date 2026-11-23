@@ -525,12 +525,17 @@ public class CustomSlideEditorLayoutTests
         return Task.CompletedTask;
     });
 
-    private static void InvokeHandler(CustomSlideEditor editor, string handler, SlideElement element)
+    // Builds the element's context menu through the editor's own factory (the one the Layers rows and the
+    // canvas use) and clicks the item with the given header.
+    private static void InvokeHandler(CustomSlideEditor editor, string header, SlideElement element)
     {
-        var method = typeof(CustomSlideEditor).GetMethod(handler,
+        var factory = typeof(CustomSlideEditor).GetMethod("CreateElementContextMenu",
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-        Assert.IsNotNull(method, handler);
-        method.Invoke(editor, new object?[] { new MenuItem { DataContext = element }, new RoutedEventArgs() });
+        Assert.IsNotNull(factory, "CreateElementContextMenu");
+        var menu = (ContextMenu)factory.Invoke(editor, new object?[] { element })!;
+        var item = menu.Items.OfType<MenuItem>().FirstOrDefault(m => m.Header as string == header);
+        Assert.IsNotNull(item, $"context menu item '{header}'");
+        item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
     }
 
     [TestMethod]
@@ -540,15 +545,15 @@ public class CustomSlideEditorLayoutTests
         var c = els[2];
         layers.SelectedItem = c;
 
-        InvokeHandler(editor, "MoveItemUp_OnClick", c);
+        InvokeHandler(editor, "Move Up", c);
         Assert.AreEqual(1, slide.SlideElements.IndexOf(c));
         AssertStillSelected(c, layers, toolbar, "move up");
 
-        InvokeHandler(editor, "MoveItemUp_OnClick", c);
+        InvokeHandler(editor, "Move Up", c);
         Assert.AreEqual(0, slide.SlideElements.IndexOf(c));
         AssertStillSelected(c, layers, toolbar, "second move up");
 
-        InvokeHandler(editor, "MoveItemDown_OnClick", c);
+        InvokeHandler(editor, "Move Down", c);
         Assert.AreEqual(1, slide.SlideElements.IndexOf(c));
         AssertStillSelected(c, layers, toolbar, "move down");
         return Task.CompletedTask;
@@ -624,7 +629,8 @@ public class CustomSlideEditorLayoutTests
         var panel = Named<Control>(editor, "PropertiesPanel");
         var all = panel.GetLogicalDescendants().OfType<Control>().ToList();
         Assert.AreEqual(0, all.OfType<ComboBox>().Count());
-        Assert.AreEqual(0, all.OfType<ToggleButton>().Count());
+        // the only toggle left is the picture aspect-ratio lock next to Width / Height
+        CollectionAssert.AreEqual(new[] { "AspectLockToggle" }, all.OfType<ToggleButton>().Select(t => t.Name).ToArray());
         Assert.AreEqual(1, all.OfType<ColorPicker>().Count(), "only the slide background colour");
         return Task.CompletedTask;
     });
