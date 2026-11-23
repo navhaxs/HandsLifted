@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Animation;
@@ -63,6 +64,8 @@ namespace HandsLiftedApp.Controls
             }
         };
 
+        private CancellationTokenSource? _flashCts;
+
         /// <summary>
         /// Momentarily highlights this item's header, then fades the highlight out.
         /// </summary>
@@ -74,7 +77,12 @@ namespace HandsLiftedApp.Controls
             if (overlay is null)
                 return;
 
-            _ = FlashAnimation.RunAsync(overlay);
+            _flashCts?.Cancel();
+            _flashCts?.Dispose();
+            var cts = new CancellationTokenSource();
+            _flashCts = cts;
+
+            _ = FlashAnimation.RunAsync(overlay, cts.Token);
         }
 
         public void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
