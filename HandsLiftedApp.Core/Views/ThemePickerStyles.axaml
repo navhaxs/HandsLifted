@@ -1,0 +1,85 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:controls="clr-namespace:HandsLiftedApp.Core.Controls"
+    xmlns:slideTheme="clr-namespace:HandsLiftedApp.Data.SlideTheme;assembly=HandsLiftedApp.Data"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        Theme dropdowns (song editor Design tab, item edit dock flyouts): `<ComboBox Classes="themePicker">`.
+        Open list: tiles (preview over name) wrapping into two columns. Closed box: small preview + name.
+        Tile widths are fixed (a preview sizes itself to the width it is given, and a popup has no width to give),
+        and the panel is a WrapPanel so items hidden by the song/scripture filters leave no gap.
+        The null "none" option (PrependBlankThemeOptionConverter) has no theme, so its preview collapses to nothing
+        and only the "(None)" text remains.
+        Keep the tile width (150) in sync with ThemePickerUiTests.
+    -->
+    <Style Selector="ComboBox.themePicker">
+        <!--  The default 200px only fits the first row of tiles (a tile is ~110px tall).  -->
+        <Setter Property="MaxDropDownHeight" Value="380" />
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <!--  2 x (150 tile + 2 x 4 item padding).  -->
+                <WrapPanel Orientation="Horizontal" Width="316" />
+            </ItemsPanelTemplate>
+        </Setter>
+        <Setter Property="ItemTemplate">
+            <DataTemplate x:DataType="slideTheme:BaseSlideTheme">
+                <StackPanel Spacing="3" Width="150">
+                    <controls:ThemePreviewImage SlideTheme="{Binding}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Text="{Binding Name, FallbackValue='(None)'}"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </DataTemplate>
+        </Setter>
+        <Setter Property="SelectionBoxItemTemplate">
+            <DataTemplate x:DataType="slideTheme:BaseSlideTheme">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <controls:ThemePreviewImage
+                        IsVisible="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                        SlideTheme="{Binding}"
+                        VerticalAlignment="Center"
+                        Width="48" />
+                    <TextBlock
+                        Text="{Binding Name, FallbackValue=''}"
+                        TextTrimming="CharacterEllipsis"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </DataTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ComboBox.themePicker ComboBoxItem">
+        <Setter Property="Padding" Value="4" />
+        <!--
+            A ContentPresenter never applies the item template to a null item, so the blank option would be an empty
+            sliver. The stock ComboBoxItem template plus a "(None)" label that only shows for null content (the
+            presenter keeps its name so the theme's :selected / :pointerover styles still colour it).
+        -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <ContentPresenter
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Name="PART_ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        IsHitTestVisible="False"
+                        IsVisible="{TemplateBinding Content, Converter={x:Static ObjectConverters.IsNull}}"
+                        Margin="{TemplateBinding Padding}"
+                        Text="(None)"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="150" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

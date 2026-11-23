@@ -83,6 +83,7 @@
                                                     <TextBlock>✕</TextBlock>
                                                 </Button>
                                                 <ComboBox
+                                                    Classes="themePicker"
                                                     HorizontalAlignment="Stretch"
                                                     ItemsSource="{Binding ParentPlaylist.Designs}"
                                                     SelectedItem="{Binding ResolvedDesignTheme}">
@@ -91,11 +92,6 @@
                                                             <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToSongsVisibilityConverter}}" />
                                                         </Style>
                                                     </ComboBox.Styles>
-                                                    <ComboBox.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock Text="{Binding Name}" />
-                                                        </DataTemplate>
-                                                    </ComboBox.ItemTemplate>
                                                 </ComboBox>
                                             </DockPanel>
                                         </Flyout>
@@ -125,6 +121,7 @@
                                                 <TextBlock>✕</TextBlock>
                                             </Button>
                                             <ComboBox
+                                                Classes="themePicker"
                                                 HorizontalAlignment="Stretch"
                                                 ItemsSource="{Binding ParentPlaylist.Designs, Converter={StaticResource PrependBlankThemeOptionConverter}}"
                                                 SelectedItem="{Binding ExplicitDesignTheme}">
@@ -133,11 +130,6 @@
                                                         <Setter Property="IsVisible" Value="{Binding Converter={StaticResource AppliesToScriptureVisibilityConverter}}" />
                                                     </Style>
                                                 </ComboBox.Styles>
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding Name, FallbackValue=''}" />
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
                                             </ComboBox>
                                         </DockPanel>
                                     </Flyout>
