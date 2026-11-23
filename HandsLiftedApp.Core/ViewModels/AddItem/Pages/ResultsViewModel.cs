@@ -35,13 +35,10 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
         {
             this._library = _library;
             // constructor
-            _searchResults = this
-                .WhenAnyValue(x => x.SearchTerm)
-                .Throttle(TimeSpan.FromMilliseconds(100))
-                .Select(term => term?.Trim().ToLower())
-                .DistinctUntilChanged()
-                // .Where(term => !string.IsNullOrWhiteSpace(term))
-                .SelectMany(SearchLibrary)
+            // Same pipeline as the library pane: Library.Search does the matching (fuzzy title/lyrics for songs).
+            _searchResults = LibrarySearch
+                .Observe(this.WhenAnyValue(x => x.SearchTerm),
+                    _library == null ? Array.Empty<Library>() : new[] { _library })
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
 
@@ -119,17 +116,6 @@ namespace HandsLiftedApp.Core.ViewModels.AddItem.Pages
         {
             get => _searchTerm;
             set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
-        }
-
-        private async Task<IEnumerable<LibraryItem>> SearchLibrary(
-            string? term, CancellationToken token)
-        {
-            var items = _library?.Items?.OrderBy(a => a?.Title);
-            if (string.IsNullOrEmpty(term))
-                return items;
-
-            // TODO: filter by file *content* as well (full-text search)
-            return items.Where(item => item.Title.ToLower().Contains(term));
         }
 
         private LibraryItem _selectedLibraryItem;

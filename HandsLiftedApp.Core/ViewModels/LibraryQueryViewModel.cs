@@ -17,7 +17,6 @@ namespace HandsLiftedApp.Core.ViewModels
         private ObservableAsPropertyHelper<IEnumerable<LibraryItem>> _searchResults;
         private LibraryItem _selectedLibraryItem;
         private readonly List<Library> _libraries;
-        private readonly Subject<string?> _reSearchTrigger = new();
 
         private string _query;
         public string Query
@@ -90,14 +89,7 @@ namespace HandsLiftedApp.Core.ViewModels
         {
             this._libraries = _libraries;
 
-            _searchResults = Observable.Merge(
-                    this.WhenAnyValue(x => x.SearchTerm)
-                        .Throttle(TimeSpan.FromMilliseconds(100))
-                        .Select(t => t?.Trim().ToLower())
-                        .DistinctUntilChanged(),
-                    _reSearchTrigger
-                )
-                .SelectMany(SearchLibrary)
+            _searchResults = LibrarySearch.Observe(this.WhenAnyValue(x => x.SearchTerm), _libraries)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .ToProperty(this, x => x.SearchResults);
 
@@ -113,26 +105,6 @@ namespace HandsLiftedApp.Core.ViewModels
                 .Select(item => CreateItem.GenerateItem(item.FullFilePath) as SongItem)
                 .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(song => SelectedSongItem = song);
-
-            foreach (var lib in this._libraries.OfType<SongLibrary>())
-            {
-                lib.WhenAnyValue(x => x.IsIndexReady)
-                   .Where(ready => ready)
-                   .Subscribe(_ => _reSearchTrigger.OnNext(SearchTerm?.Trim().ToLower()));
-            }
         }
-
-        private async Task<IEnumerable<LibraryItem>> SearchLibrary(
-            string? term, CancellationToken token)
-        {
-            return await Task.Run(() =>
-            {
-                var results = new List<LibraryItem>();
-                foreach (var library in _libraries)
-                    results.AddRange(library.Search(term));
-                return (IEnumerable<LibraryItem>)results;
-            }, token);
-        }
-
     }
 }
