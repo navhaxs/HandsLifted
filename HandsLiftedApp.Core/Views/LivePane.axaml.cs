@@ -60,8 +60,10 @@ namespace HandsLiftedApp.Core.Views
             if (DataContext is not MainViewModel vm) return;
             _vm = vm;
 
-            _slideSubscription = vm.Playlist
-                .WhenAnyValue(p => p.ActiveSlide, p => p.LogoGraphicFile, (slide, _) => slide)
+            // Path through vm.Playlist (not vm.Playlist.WhenAnyValue): "New playlist" replaces the
+            // PlaylistInstance, and a subscription on the old instance would go permanently stale.
+            _slideSubscription = vm
+                .WhenAnyValue(v => v.Playlist.ActiveSlide, v => v.Playlist.LogoGraphicFile, (slide, _) => slide)
                 .Subscribe(OnActiveSlideChanged);
         }
 

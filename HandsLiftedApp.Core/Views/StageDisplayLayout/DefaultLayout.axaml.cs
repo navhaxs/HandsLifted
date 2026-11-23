@@ -43,8 +43,9 @@ namespace HandsLiftedApp.Views.StageDisplayLayout
             if (DataContext is not MainViewModel vm) return;
             _vm = vm;
 
-            _slideSubscription = vm.Playlist
-                .WhenAnyValue(p => p.ActiveSlide, p => p.LogoGraphicFile, (slide, _) => slide)
+            // Path through vm.Playlist: see LivePane (a replaced PlaylistInstance must re-bind).
+            _slideSubscription = vm
+                .WhenAnyValue(v => v.Playlist.ActiveSlide, v => v.Playlist.LogoGraphicFile, (slide, _) => slide)
                 .Subscribe(OnActiveSlideChanged);
         }
 
