@@ -1,5 +1,6 @@
 ﻿using HandsLiftedApp.Extensions;
 using HandsLiftedApp.Importer.FileFormatConvertTaskData;
+using Syncfusion.Office;
 using Syncfusion.Presentation;
 using Syncfusion.PresentationRenderer;
 
@@ -22,6 +23,16 @@ public static class PresentationFileFormatConverter
                 }
             };
         }
+
+        // Embedded (and most decorative Latin) fonts have no CJK glyphs, so Chinese/Japanese/Korean
+        // text came out blank. Fall back to installed CJK fonts for those scripts.
+        presentation.FontSettings.FallbackFonts.InitializeDefault();
+        presentation.FontSettings.FallbackFonts.Add(ScriptType.Chinese,
+            "Microsoft YaHei, SimSun, PingFang SC, Noto Sans CJK SC, Noto Sans SC");
+        presentation.FontSettings.FallbackFonts.Add(ScriptType.Japanese,
+            "Yu Gothic, Meiryo, MS Gothic, Hiragino Sans, Noto Sans CJK JP");
+        presentation.FontSettings.FallbackFonts.Add(ScriptType.Korean,
+            "Malgun Gothic, Batang, Apple SD Gothic Neo, Noto Sans CJK KR");
 
         string outputFilePath;
         if (task.ExportFileFormat == ImportTask.ExportFileFormatType.PNG)
