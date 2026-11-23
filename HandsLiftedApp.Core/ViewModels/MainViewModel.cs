@@ -660,6 +660,10 @@ public class MainViewModel : ViewModelBase
                     {
                         presentation.Sync();
                     }
+
+                    // The new item may land below the visible area (e.g. appended to a long playlist): scroll to it.
+                    MessageBus.Current.SendMessage(new HandsLiftedApp.Models.UI.NavigateToItemMessage
+                        { Index = insertIndex, Flash = true });
                 }
             });
 

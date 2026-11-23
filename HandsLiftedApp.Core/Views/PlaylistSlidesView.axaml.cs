@@ -75,34 +75,37 @@ namespace HandsLiftedApp.Core.Views
             MessageBus.Current.Listen<NavigateToItemMessage>()
                 .Subscribe(x =>
                 {
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    void Navigate(bool retryAfterLayout)
                     {
                         // layout pass required, see https://github.com/AvaloniaUI/Avalonia/issues/9992#issuecomment-1408205703
-                        //Dispatcher.UIThread.RunJobs(DispatcherPriority.Layout);
-
-                        // and now we can jump to view
-                        // TODO: IF THE VIEW IS NOT ALREADY WITHIN VIEWPORT
                         var control = listBox.ContainerFromIndex(x.Index);
-                        if (control is not null)
+                        if (control is null || control.Bounds.Height <= 0)
                         {
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                var GUTTER = 300;
-                                
-                                // flash starts together with the scroll; its fade is long enough to outlast the spring
-                                if (x.Flash)
-                                    control.FindDescendantOfType<ItemSlidesView>()?.Flash();
-
-                                if (control.Bounds.Top < scrollViewer.Offset.Y + GUTTER || control.Bounds.Top >
-                                    (scrollViewer.Offset.Y + scrollViewer.Bounds.Height - GUTTER))
-                                {
-                                    AnimateScrollTo(control.Bounds.Top + 4);
-                                }
-
-                                //Debug.Print($"NavigateToItemMessage={x.Index}, control.Bounds.Top={control.Bounds.Top}");
-                            });
+                            // A just-inserted item has no container, or one that hasn't been measured yet (Bounds
+                            // is empty and the scroll extent is stale), until layout has run; Loaded priority is
+                            // after Layout/Render. Retry once.
+                            if (retryAfterLayout)
+                                Dispatcher.UIThread.Post(() => Navigate(false), DispatcherPriority.Loaded);
+                            return;
                         }
-                    });
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            var GUTTER = 300;
+
+                            // flash starts together with the scroll; its fade is long enough to outlast the spring
+                            if (x.Flash)
+                                control.FindDescendantOfType<ItemSlidesView>()?.Flash();
+
+                            if (control.Bounds.Top < scrollViewer.Offset.Y + GUTTER || control.Bounds.Top >
+                                (scrollViewer.Offset.Y + scrollViewer.Bounds.Height - GUTTER))
+                            {
+                                AnimateScrollTo(control.Bounds.Top + 4);
+                            }
+                        });
+                    }
+
+                    Dispatcher.UIThread.InvokeAsync(() => Navigate(true));
                 });
 
             // user input takes over from an in-flight animated scroll
