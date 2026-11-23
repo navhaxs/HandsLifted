@@ -68,7 +68,7 @@ public class ThemePickerUiTests
                 Assert.IsTrue(thumbnails[0].Bounds.Width > 0 && thumbnails[0].Bounds.Height > 0, $"{listName}: thumbnail has no size");
             }
 
-            // The thumbnail must not displace the existing labels: they stay visible below it.
+            // The thumbnail must not displace the existing labels: they stay visible beside it, at the top of the text column.
             foreach (var (listName, label) in new[]
                      {
                          ("songDesignsListBox", "default (songs)"),
@@ -79,11 +79,58 @@ public class ThemePickerUiTests
                 var labelBlock = list.FindByText<TextBlock>(label);
                 var thumbnail = VisibleThumbnails(list)[0];
                 Assert.IsNotNull(labelBlock, $"{listName}: '{label}' label is not visible");
-                Assert.IsTrue(labelBlock.TranslatePoint(default, list)!.Value.Y >= thumbnail.TranslatePoint(default, list)!.Value.Y + thumbnail.Bounds.Height - 0.5,
-                    $"{listName}: '{label}' label is not below the thumbnail");
+                Assert.IsTrue(labelBlock.TranslatePoint(default, list)!.Value.X >= thumbnail.TranslatePoint(default, list)!.Value.X + thumbnail.Bounds.Width - 0.5,
+                    $"{listName}: '{label}' label is not to the right of the thumbnail");
+                Assert.IsTrue(labelBlock.TranslatePoint(default, list)!.Value.Y < thumbnail.TranslatePoint(default, list)!.Value.Y + thumbnail.Bounds.Height,
+                    $"{listName}: '{label}' label is not level with the thumbnail");
             }
 
             window.Screenshot("theme-designer-lists");
+            window.Close();
+            main.Close();
+        });
+    }
+
+    [TestMethod]
+    public async Task Designer_Lists_PreviewIsHalfSize_AndLongNamesWrapWithoutWideningTheColumn()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var vm = Globals.Instance.MainViewModel;
+
+            var shortName = MakeTheme("Short", SlideThemeType.SongTheme);
+            var longName = MakeTheme("This is an extremely long theme name that has sixty chars!!!My new theme", SlideThemeType.SongTheme);
+            vm.Playlist.Designs.Clear();
+            vm.Playlist.Designs.Add(shortName);
+
+            var designer = new SlideThemeDesigner { DataContext = vm };
+            var window = new Window { Width = 1400, Height = 900, Content = designer };
+            window.Show();
+            UiTestHelpers.Settle();
+            var list = designer.Find<ListBox>(l => l.Name == "songDesignsListBox")!;
+            var columnBefore = list.Bounds.Width;
+            var shortHeight = list.FindByText<TextBlock>("Short")!.Bounds.Height;
+
+            vm.Playlist.Designs.Add(longName);
+            UiTestHelpers.Settle();
+
+            // The preview is half the old 180 DIP width (16:9 follows).
+            foreach (var thumbnail in VisibleThumbnails(list))
+            {
+                Assert.AreEqual(90, thumbnail.Bounds.Width, 0.5, "designer preview width");
+                Assert.AreEqual(90 * 9 / 16.0, thumbnail.Bounds.Height, 0.5, "designer preview height");
+            }
+
+            // The long name wraps onto several lines inside the item instead of widening the list column.
+            var nameBlock = list.FindByText<TextBlock>(longName.Name)!;
+            Assert.IsNotNull(nameBlock, "long name is not visible");
+            Assert.IsTrue(nameBlock.Bounds.Height > shortHeight * 1.5, $"long name did not wrap: {nameBlock.Bounds.Height} high vs {shortHeight} for one line");
+            Assert.AreEqual(columnBefore, list.Bounds.Width, 0.5, "a long name widened the list column");
+            Assert.IsTrue(nameBlock.TranslatePoint(new Point(nameBlock.Bounds.Width, 0), list)!.Value.X <= list.Bounds.Width + 0.5,
+                "the wrapped name sticks out of the list");
+
+            window.Screenshot("theme-designer-lists-long-name");
             window.Close();
             main.Close();
         });
