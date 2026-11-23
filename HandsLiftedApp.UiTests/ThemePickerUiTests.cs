@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using HandsLiftedApp.Core;
@@ -87,9 +88,14 @@ public class ThemePickerUiTests
         });
     }
 
-    // Must match the tile width / selection-box thumbnail width in Views/ThemePickerStyles.axaml.
-    private const double TileWidth = 150;
-    private const double SelectionThumbnailWidth = 48;
+    // The tile geometry lives in one place: the x:Double resources of Views/ThemePickerStyles.axaml.
+    private static double StyleNumber(string key) =>
+        (double)(Application.Current!.FindResource(key) ?? throw new AssertFailedException($"resource {key} not found"));
+
+    private static double TileWidth => StyleNumber("ThemePickerTileWidth");
+    private static double ItemWidth => StyleNumber("ThemePickerItemWidth");
+    private static double PanelWidth => StyleNumber("ThemePickerPanelWidth");
+    private const double SelectionThumbnailWidth = 48; // set on the closed-box thumbnail in the same file
 
     /// <summary>The dropdown's item containers that are laid out (the type filters hide the others, which still exist).</summary>
     private static List<ComboBoxItem> VisibleItems(ComboBox combo) =>
@@ -185,6 +191,49 @@ public class ThemePickerUiTests
             items[2].ClickInPopup();
             Assert.AreSame(themes[2], editor.SelectedSlideTheme, "clicking a tile did not select its theme");
             Assert.IsFalse(combo.IsDropDownOpen, "dropdown should close after picking");
+
+            window.Close();
+            main.Close();
+        });
+    }
+
+    // Headless runs at display scale 1.0, where two 158 DIP items trivially fit a 316 DIP panel. At 125% layout rounding
+    // makes each item 158.4 DIP, two need 316.8 and the second tile wrapped onto its own row (one column instead of two).
+    // So check the geometry at the scales Windows actually uses, from the realized panel and item.
+    [TestMethod]
+    public async Task ThemeDropdown_TwoTilesFitPerRow_AtFractionalDisplayScaling()
+    {
+        await HeadlessSession.Run(() =>
+        {
+            var main = UiTestHelpers.OpenMainWindow();
+            var playlist = Globals.Instance.MainViewModel.Playlist;
+            playlist.Designs.Clear();
+            playlist.Designs.Add(MakeTheme("One", SlideThemeType.SongTheme));
+            playlist.Designs.Add(MakeTheme("Two", SlideThemeType.SongTheme));
+
+            var editor = new SongEditorViewModel(SongItemInstance.NewDraft(playlist), playlist);
+            var control = new SongEditorControl { DataContext = editor };
+            var window = new Window { Width = 520, Height = 700, Content = control };
+            window.Show();
+            control.Find<TabControl>(t => t.Name == "TabControl")!.SelectedIndex = 2; // Design tab
+            UiTestHelpers.Settle();
+            var combo = control.Find<ComboBox>(c => c.Classes.Contains("themePicker"))!;
+            combo.IsDropDownOpen = true;
+            UiTestHelpers.Settle();
+
+            var panel = combo.ItemsPanelRoot as WrapPanel ?? throw new AssertFailedException("the theme list is not a WrapPanel");
+            var item = VisibleItems(combo)[0];
+            Assert.AreEqual(ItemWidth, item.DesiredSize.Width, 0.01, "ThemePickerItemWidth must equal tile + item padding");
+            Assert.AreEqual(PanelWidth, panel.Width, 0.01, "panel width");
+
+            foreach (var scale in new[] { 1.0, 1.25, 1.5, 1.75, 2.0, 2.25 })
+            {
+                var rounded = LayoutHelper.RoundLayoutSizeUp(item.DesiredSize, scale);
+                Assert.IsTrue(2 * rounded.Width <= panel.Width + 1e-9,
+                    $"scale {scale}: two items need {2 * rounded.Width} DIP but the panel is {panel.Width}, so the second tile wraps");
+                if (!double.IsNaN(panel.ItemWidth))
+                    Assert.IsTrue(2 * panel.ItemWidth <= panel.Width, $"scale {scale}: two ItemWidth slots do not fit the panel");
+            }
 
             window.Close();
             main.Close();
