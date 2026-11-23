@@ -75,6 +75,14 @@ public class SongEditorViewModelReflowTests
     });
 
     [TestMethod]
+    public Task ReflowLyrics_RefreshesFreeTextEntryField() => WithEditor((vm, song) =>
+    {
+        vm.ReflowLyrics(ReflowMode.Smart);
+        StringAssert.Contains(vm.FreeTextEntryField, "a\nb\nc\n\nd\ne\nf",
+            "free-text tab must not be left holding the pre-reflow lyrics");
+    });
+
+    [TestMethod]
     public Task ReflowLyrics_NoChange_RecordsNoUndoStep() => WithEditor((vm, song) =>
     {
         vm.ReflowLyrics(ReflowMode.Smart);

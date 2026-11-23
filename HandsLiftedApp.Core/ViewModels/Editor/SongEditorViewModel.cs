@@ -142,6 +142,9 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
                 var reflowed = LyricReflow.Reflow(stanza.Lyrics, mode);
                 if (reflowed != (stanza.Lyrics ?? "")) stanza.Lyrics = reflowed;
             }
+
+            // a stanza edit raises no Song.PropertyChanged, so refresh the free-text tab's copy explicitly
+            FreeTextEntryField = SongImporter.songItemToFreeText(Song);
         }
 
         public ReactiveCommand<Unit, Unit> OnClickCommand { get; }

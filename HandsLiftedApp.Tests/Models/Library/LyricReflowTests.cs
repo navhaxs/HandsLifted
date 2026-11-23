@@ -122,6 +122,18 @@ namespace HandsLiftedApp.Tests.Models.Library
             AssertSizes(Smart("y hand\ny stand\nx light\nx night\nx sight"), 2, 3);
         }
 
+        // Lines(n) all "rhyme" (digits are stripped), so also cover stanzas where nothing rhymes.
+        [TestMethod]
+        public void Smart_NoRhymes_FallsBackToEvenSplit()
+        {
+            string Plain(int n) => string.Join("\n", new[] { "apple", "stone", "river", "cloud", "wing", "mark", "bread", "glow", "tent" }.Take(n).Select(w => "I see " + w));
+            AssertSizes(Smart(Plain(5)), 3, 2);
+            AssertSizes(Smart(Plain(6)), 3, 3);
+            AssertSizes(Smart(Plain(7)), 4, 3);
+            AssertSizes(Smart(Plain(8)), 4, 4);
+            AssertSizes(Smart(Plain(9)), 3, 3, 3);
+        }
+
         [TestMethod]
         public void Smart_Idempotent()
         {
