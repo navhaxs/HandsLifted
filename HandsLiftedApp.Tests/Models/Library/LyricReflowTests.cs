@@ -249,6 +249,166 @@ namespace HandsLiftedApp.Tests.Models.Library
             Assert.IsFalse(LyricReflow.Rhymes("", "night"));
         }
 
+        // ---- phrase structure (Holy Forever) ----
+
+        private const string HolyVerse1 = "A thousand generations falling down in worship\nTo sing the song of ages to the Lamb\n" +
+                                          "And all who've gone before us\nAnd all who will believe\nWill sing the song of ages to the Lamb";
+
+        private const string HolyVerse2 = "If you've been forgiven and if you've been redeemed\nSing the song forever to the Lamb\n" +
+                                          "If you walk in freedom and if you bear His name\nSing the song forever to the Lamb\n" +
+                                          "We'll sing the song forever and amen";
+
+        private const string HolyPreChorus = "Your name is the highest\nYour name is the greatest\nYour name stands above them all\n" +
+                                             "All thrones and dominions\nAll powers and positions\nYour name stands above them all";
+
+        private static string[] Split(string s) => s.Split('\n');
+
+        private static string SmartWide(string s) => LyricReflow.Reflow(s, ReflowMode.Smart, ReflowMetrics.Unconstrained);
+
+        [TestMethod]
+        public void Similarity_ContractionsMatch() =>
+            Assert.IsTrue(LyricReflow.Similarity("If you've been forgiven and if you've been redeemed",
+                "If you walk in freedom and if you bear His name") >= 0.5);
+
+        [TestMethod]
+        public void Similarity_ExactRepeat_IsOne() =>
+            Assert.AreEqual(1.0, LyricReflow.Similarity("Sing the song forever to the Lamb", "sing the song, forever to the LAMB!"), 1e-9);
+
+        [TestMethod]
+        public void Similarity_Unrelated_IsLow() =>
+            Assert.IsTrue(LyricReflow.Similarity("Hear Your people sing Holy", "Your word is a lamp") < 0.3);
+
+        [TestMethod]
+        public void DetectPeriod_HolyForeverVerse2_Is2() => Assert.AreEqual(2, LyricReflow.DetectPeriod(Split(HolyVerse2)));
+
+        [TestMethod]
+        public void DetectPeriod_HolyForeverVerse1_Is3() => Assert.AreEqual(3, LyricReflow.DetectPeriod(Split(HolyVerse1)));
+
+        [TestMethod]
+        public void DetectPeriod_IdenticalLines_IsNone() => Assert.AreEqual(0, LyricReflow.DetectPeriod(Split(Lines(8))));
+
+        [TestMethod]
+        public void Smart_HolyForeverVerse2_Is2_3() => AssertSizes(SmartWide(HolyVerse2), 2, 3);
+
+        [TestMethod]
+        public void Smart_HolyForeverVerse1_Is3_2() => AssertSizes(SmartWide(HolyVerse1), 3, 2);
+
+        [TestMethod]
+        public void Smart_HolyForeverPreChorus_Is3_3() => AssertSizes(SmartWide(HolyPreChorus), 3, 3);
+
+        // ---- per-line splitting ----
+
+        private static void AssertSplit(string line, params string[] expected) =>
+            CollectionAssert.AreEqual(expected, LyricReflow.SplitLongLine(line, ReflowMetrics.Default).ToList());
+
+        private static string[] Words(string s) =>
+            s.ToLowerInvariant().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+
+        [TestMethod]
+        public void SplitLongLine_Verse2Line1() =>
+            AssertSplit("If you've been forgiven and if you've been redeemed", "If you've been forgiven", "And if you've been redeemed");
+
+        [TestMethod]
+        public void SplitLongLine_Verse2Line3() =>
+            AssertSplit("If you walk in freedom and if you bear His name", "If you walk in freedom", "And if you bear His name");
+
+        [TestMethod]
+        public void SplitLongLine_PrefersComma() =>
+            AssertSplit("Oh Lord, I will praise You for all of my days", "Oh Lord,", "I will praise You for all of my days");
+
+        [TestMethod]
+        public void SplitLongLine_SplitsBeforeIf() =>
+            AssertSplit("Who can stand against us if our God is for us", "Who can stand against us", "If our God is for us");
+
+        [TestMethod]
+        public void SplitLongLine_ShortLine_Unchanged() => AssertSplit("Holy forever", "Holy forever");
+
+        [TestMethod]
+        public void SplitLongLine_NoSpaces_OrTwoWords_Unchanged()
+        {
+            var token = new string('x', 60);
+            AssertSplit(token, token);
+            const string two = "Alleluiaaaaaaaaaaaaaaaaaaaaaaaaaaaa Hallelujahhhhhhhhhhhhhhhhhhhhhhhhhhh";
+            AssertSplit(two, two);
+        }
+
+        [TestMethod]
+        public void SplitLongLine_CapitalisesFirstLetterAfterLeadingPunctuation()
+        {
+            var parts = LyricReflow.SplitLongLine("all of creation sings out loud (and the angels join the song forever)", ReflowMetrics.Default);
+            Assert.AreEqual(2, parts.Count);
+            Assert.AreEqual("all of creation sings out loud", parts[0]); // first line is never touched
+            Assert.AreEqual("(And the angels join the song forever)", parts[1]);
+        }
+
+        [TestMethod]
+        public void SplitLongLine_AllLowerNoPunctuation_StillSplits() =>
+            AssertSplit("we will sing your praise forever and ever more amen", "we will sing your praise forever", "And ever more amen");
+
+        [TestMethod]
+        public void Smart_HolyForeverVerse2_EndToEnd()
+        {
+            Assert.AreEqual(
+                "If you've been forgiven\nAnd if you've been redeemed\nSing the song forever to the Lamb\n\n" +
+                "If you walk in freedom\nAnd if you bear His name\nSing the song forever to the Lamb\nWe'll sing the song forever and amen",
+                Smart(HolyVerse2));
+        }
+
+        [TestMethod]
+        public void Smart_SplitLine_NeverSeparatedFromItsPartner()
+        {
+            foreach (var chunk in Smart(HolyVerse2).Split("\n\n"))
+            {
+                Assert.AreEqual(chunk.Contains("If you've been forgiven"), chunk.Contains("And if you've been redeemed"));
+                Assert.AreEqual(chunk.Contains("If you walk in freedom"), chunk.Contains("And if you bear His name"));
+            }
+        }
+
+        [TestMethod]
+        public void Smart_FewLogicalLines_WithSplit_StillLegalSlides()
+        {
+            var wide = string.Join(" ", Enumerable.Repeat("word", 12)); // 59 characters: splits in two
+            var r = Smart(string.Join("\n", Enumerable.Repeat(wide, 3)));
+            Assert.IsTrue(Sizes(r).All(s => s is >= 2 and <= 4), string.Join(",", Sizes(r)));
+            Assert.AreEqual(6, r.Split('\n').Count(l => l.Length > 0));
+        }
+
+        [TestMethod]
+        public void Smart_SplitOutput_Rerun_PreservesWords_AndDoesNotSplitAgain()
+        {
+            var once = Smart(HolyVerse2);
+            var twice = Smart(once);
+            CollectionAssert.AreEqual(Words(HolyVerse2), Words(twice));
+            Assert.AreEqual(once.Split('\n').Count(l => l.Length > 0), twice.Split('\n').Count(l => l.Length > 0));
+        }
+
+        // ---- predicted font scale ----
+
+        private static readonly ReflowMetrics Px100 = new(l => l.Length * 100.0, 1000, 920, 120, 0.5);
+
+        [TestMethod]
+        public void PredictedScale_WideLine_ShrinksByWidthRatio()
+        {
+            Assert.AreEqual(0.5, LyricReflow.PredictedScale(new[] { new string('x', 20) }, Px100), 1e-9);
+            Assert.AreEqual(1000.0 / 1200.0, LyricReflow.PredictedScale(new[] { new string('x', 12) }, Px100), 1e-9);
+            Assert.AreEqual(1.0, LyricReflow.PredictedScale(new[] { new string('x', 5) }, Px100), 1e-9);
+        }
+
+        [TestMethod]
+        public void PredictedScale_TallSlide_ShrinksByHeightRatio()
+        {
+            var lines = Enumerable.Repeat("x", 10).ToList();
+            Assert.AreEqual(920.0 / 1200.0, LyricReflow.PredictedScale(lines, Px100), 1e-9);
+        }
+
+        [TestMethod]
+        public void PredictedScale_NeverBelowMinScale() =>
+            Assert.AreEqual(0.5, LyricReflow.PredictedScale(new[] { new string('x', 100) }, Px100), 1e-9);
+
+        [TestMethod]
+        public void Reflow_Fixed_IgnoresMetrics() =>
+            AssertSizes(LyricReflow.Reflow(Lines(6), ReflowMode.Fixed(2), ReflowMetrics.Default), 2, 2, 2);
+
         [TestMethod]
         public void Fixed_InvalidN_Throws()
         {

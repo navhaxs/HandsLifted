@@ -19,8 +19,11 @@ namespace HandsLiftedApp.Tests.Models.Library
         {
             if (!Directory.Exists(SongsDir)) return; // library not available on this machine
 
+            static string[] Words(string s) => s.ToLowerInvariant().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+            static int PhysicalLines(string s) => s.Split('\n').Count(l => l.Length > 0);
+
             var report = new StringBuilder();
-            int stanzas = 0, fourLine = 0, splitFourLine = 0;
+            int stanzas = 0, fourLine = 0, splitFourLine = 0, splitLines = 0, shrunkSlides = 0, slides = 0;
             foreach (var file in Directory.GetFiles(SongsDir, "*.xml"))
             {
                 var doc = XDocument.Load(file);
@@ -32,17 +35,27 @@ namespace HandsLiftedApp.Tests.Models.Library
 
                     var result = LyricReflow.Reflow(lyrics, ReflowMode.Smart);
 
-                    CollectionAssert.AreEqual(lines, result.Split('\n').Where(l => l.Length > 0).ToList(),
-                        $"{Path.GetFileName(file)} / {name}: text changed");
-                    Assert.AreEqual(result, LyricReflow.Reflow(result, ReflowMode.Smart),
-                        $"{Path.GetFileName(file)} / {name}: not idempotent");
-                    if (lines.Count > 3)
+                    // splitting a long line changes line breaks (and capitalises the new line's first letter), never the words
+                    CollectionAssert.AreEqual(Words(string.Join(" ", lines)), Words(result),
+                        $"{Path.GetFileName(file)} / {name}: words changed");
+                    var again = LyricReflow.Reflow(result, ReflowMode.Smart);
+                    CollectionAssert.AreEqual(Words(result), Words(again),
+                        $"{Path.GetFileName(file)} / {name}: re-run changed the words");
+                    Assert.AreEqual(PhysicalLines(result), PhysicalLines(again),
+                        $"{Path.GetFileName(file)} / {name}: re-run split again");
+                    if (PhysicalLines(result) > 3)
                         Assert.IsTrue(result.Split("\n\n").All(c => c.Split('\n').Length is >= 2 and <= 4),
                             $"{Path.GetFileName(file)} / {name}: chunk out of range");
 
                     if (lines.Count > 0)
                     {
                         stanzas++;
+                        splitLines += PhysicalLines(result) - lines.Count;
+                        foreach (var slide in result.Split("\n\n"))
+                        {
+                            slides++;
+                            if (LyricReflow.PredictedScale(slide.Split('\n'), ReflowMetrics.Default) < 0.8) shrunkSlides++;
+                        }
                         if (lines.Count == 4 && result.Contains("\n\n")) splitFourLine++;
                         if (lines.Count == 4) fourLine++;
                     }
@@ -53,7 +66,8 @@ namespace HandsLiftedApp.Tests.Models.Library
                 }
             }
 
-            report.Insert(0, $"SUMMARY: {stanzas} stanzas, {fourLine} with exactly 4 lines, {splitFourLine} of those split 2+2 for density\n\n");
+            report.Insert(0, $"SUMMARY: {stanzas} stanzas, {fourLine} with exactly 4 lines, {splitFourLine} of those split 2+2 for density; " +
+                             $"{splitLines} long lines split; {shrunkSlides}/{slides} slides predicted below 0.8 font scale (default theme)\n\n");
             File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "LyricReflowLibraryTests.out.txt"), report.ToString());
         }
     }

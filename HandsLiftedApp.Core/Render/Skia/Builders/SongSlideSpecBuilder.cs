@@ -16,6 +16,10 @@ public static class SongSlideSpecBuilder
     private const float HorizontalMargin = 80f;
     private const float VerticalMargin = 80f;
 
+    /// <summary>Widest/tallest text block autofit allows (canvas minus margins).</summary>
+    internal const float MaxTextWidth = CanvasWidth - 2 * HorizontalMargin;
+    internal const float MaxTextHeight = CanvasHeight - 2 * VerticalMargin;
+
     private static DropShadowSpec? GetShadow(BaseSlideTheme theme) =>
         theme.DropShadowEnabled
             ? new DropShadowSpec(
@@ -158,7 +162,7 @@ public static class SongSlideSpecBuilder
         }
     }
 
-    private static SKTypeface GetTypeface(BaseSlideTheme theme)
+    internal static SKTypeface GetTypeface(BaseSlideTheme theme)
     {
         var weight = (SKFontStyleWeight)(int)theme.FontWeight;
         var slant  = theme.CalculatedTextFontItalic ? SKFontStyleSlant.Italic : SKFontStyleSlant.Upright;

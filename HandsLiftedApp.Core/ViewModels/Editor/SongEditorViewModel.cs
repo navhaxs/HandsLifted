@@ -137,9 +137,11 @@ namespace HandsLiftedApp.Core.ViewModels.Editor
         public void ReflowLyrics(ReflowMode mode)
         {
             using var undoStep = BeginUndoStep("Reflow lyrics");
+            // Smart mode predicts autofit shrink from the song's real theme font (falls back to default-theme estimates)
+            var metrics = SelectedSlideTheme != null ? ReflowMetrics.FromTheme(SelectedSlideTheme) : ReflowMetrics.Default;
             foreach (var stanza in Song.Stanzas)
             {
-                var reflowed = LyricReflow.Reflow(stanza.Lyrics, mode);
+                var reflowed = LyricReflow.Reflow(stanza.Lyrics, mode, metrics);
                 if (reflowed != (stanza.Lyrics ?? "")) stanza.Lyrics = reflowed;
             }
 
