@@ -23,7 +23,7 @@ namespace HandsLiftedApp.Core.Services
             playlist.DirtyTracker.MarkSaved(SHA256.HashData(bytes));
 
             // disk now holds something we didn't hash; let the next autosave re-learn it
-            LastSavedHashes.Remove(playlist.PlaylistFilePath);
+            lock (StateLock) LastSavedHashes.Remove(playlist.PlaylistFilePath);
         }
 
         public enum AutoSaveResult
@@ -52,8 +52,11 @@ namespace HandsLiftedApp.Core.Services
         public static void ResetAutoSaveState(string? playlistFilePath)
         {
             if (string.IsNullOrEmpty(playlistFilePath)) return;
-            BackedUpPaths.Remove(playlistFilePath);
-            LastSavedHashes.Remove(playlistFilePath);
+            lock (StateLock)
+            {
+                BackedUpPaths.Remove(playlistFilePath);
+                LastSavedHashes.Remove(playlistFilePath);
+            }
         }
 
         /// <summary>
@@ -65,49 +68,102 @@ namespace HandsLiftedApp.Core.Services
         /// </summary>
         public static AutoSaveResult AutoSaveToFile(PlaylistInstance playlist)
         {
+            var pending = PrepareAutoSave(playlist, out var early);
+            if (pending == null) return early;
+            var result = WriteAutoSave(pending);
+            CompleteAutoSave(playlist, pending, result);
+            return result;
+        }
+
+        /// <summary>
+        /// Same as <see cref="AutoSaveToFile"/>, but the file I/O runs on a worker thread so a stalled
+        /// drive (network/cloud/removable) can't freeze the UI. Serialization still happens on the
+        /// calling (UI) thread, and the result is applied back on it.
+        /// </summary>
+        public static async System.Threading.Tasks.Task<AutoSaveResult> AutoSaveToFileAsync(PlaylistInstance playlist)
+        {
+            var pending = PrepareAutoSave(playlist, out var early);
+            if (pending == null) return early;
+            var result = await System.Threading.Tasks.Task.Run(() => WriteAutoSave(pending));
+            CompleteAutoSave(playlist, pending, result);
+            return result;
+        }
+
+        private sealed record PendingAutoSave(string Path, byte[] Bytes, byte[] Hash);
+
+        // Guards the three static state collections (touched from the UI thread and the writer thread).
+        private static readonly object StateLock = new();
+        // Serializes actual disk writes. Never taken on the UI thread by the async path's Prepare step.
+        private static readonly object IoLock = new();
+
+        /// <summary>UI thread, no disk access: serialize, hash, and short-circuit when nothing changed.</summary>
+        private static PendingAutoSave? PrepareAutoSave(PlaylistInstance playlist, out AutoSaveResult early)
+        {
+            early = AutoSaveResult.Skipped;
             string? path = playlist.PlaylistFilePath;
-            if (string.IsNullOrEmpty(path) || playlist.IsPlaylistLoading) return AutoSaveResult.Skipped;
+            if (string.IsNullOrEmpty(path) || playlist.IsPlaylistLoading) return null;
 
             byte[] bytes = HandsLiftedDocXmlSerializer.SerializePlaylistToBytes(playlist, path);
             byte[] hash = SHA256.HashData(bytes);
 
-            bool exists = File.Exists(path);
-            if (LastSavedHashes.TryGetValue(path, out var lastHash))
+            bool unchanged;
+            lock (StateLock)
+                unchanged = LastSavedHashes.TryGetValue(path, out var lastHash) && hash.AsSpan().SequenceEqual(lastHash);
+            if (unchanged)
             {
-                if (hash.AsSpan().SequenceEqual(lastHash))
+                playlist.DirtyTracker.MarkSaved(hash);
+                early = AutoSaveResult.Unchanged;
+                return null;
+            }
+
+            return new PendingAutoSave(path, bytes, hash);
+        }
+
+        /// <summary>All the file I/O. Safe on any thread.</summary>
+        private static AutoSaveResult WriteAutoSave(PendingAutoSave p)
+        {
+            var (path, bytes, hash) = p;
+            lock (IoLock)
+            {
+                bool exists = File.Exists(path);
+                bool hashKnown;
+                lock (StateLock) hashKnown = LastSavedHashes.ContainsKey(path);
+
+                if (!hashKnown && exists)
                 {
-                    playlist.DirtyTracker.MarkSaved(hash);
-                    return AutoSaveResult.Unchanged;
+                    // First check since load / manual save: learn what's on disk once.
+                    byte[] onDisk = File.ReadAllBytes(path);
+                    if (SHA256.HashData(onDisk).AsSpan().SequenceEqual(hash))
+                    {
+                        lock (StateLock) LastSavedHashes[path] = hash;
+                        return AutoSaveResult.Unchanged;
+                    }
                 }
-            }
-            else if (exists)
-            {
-                // First check since load / manual save: learn what's on disk once.
-                byte[] onDisk = File.ReadAllBytes(path);
-                if (SHA256.HashData(onDisk).AsSpan().SequenceEqual(hash))
+
+                bool needsBackup;
+                lock (StateLock) needsBackup = exists && BackedUpPaths.Add(path);
+                if (needsBackup)
                 {
-                    LastSavedHashes[path] = hash;
-                    playlist.DirtyTracker.MarkSaved(hash);
-                    return AutoSaveResult.Unchanged;
+                    File.Copy(path, GetBackupFilePath(path), overwrite: true);
                 }
+
+                // Write beside the target then swap in, so a crash mid-write can't truncate the playlist.
+                string tempPath = path + ".autosave.tmp";
+                File.WriteAllBytes(tempPath, bytes);
+                if (exists) File.Replace(tempPath, path, null);
+                else File.Move(tempPath, path);
+                lock (StateLock) LastSavedHashes[path] = hash;
+
+                Log.Information("Autosaved playlist to {FilePath}", path);
+                return AutoSaveResult.Saved;
             }
+        }
 
-            if (exists && BackedUpPaths.Add(path))
-            {
-                File.Copy(path, GetBackupFilePath(path), overwrite: true);
-            }
-
-            // Write beside the target then swap in, so a crash mid-write can't truncate the playlist.
-            string tempPath = path + ".autosave.tmp";
-            File.WriteAllBytes(tempPath, bytes);
-            if (exists) File.Replace(tempPath, path, null);
-            else File.Move(tempPath, path);
-            LastSavedHashes[path] = hash;
-
-            Log.Information("Autosaved playlist to {FilePath}", path);
-            playlist.DirtyTracker.MarkSaved(hash);
-            playlist.LastSaved = DateTime.Now;
-            return AutoSaveResult.Saved;
+        /// <summary>UI thread: record the outcome on the playlist.</summary>
+        private static void CompleteAutoSave(PlaylistInstance playlist, PendingAutoSave p, AutoSaveResult result)
+        {
+            playlist.DirtyTracker.MarkSaved(p.Hash);
+            if (result == AutoSaveResult.Saved) playlist.LastSaved = DateTime.Now;
         }
 
         /// <summary>

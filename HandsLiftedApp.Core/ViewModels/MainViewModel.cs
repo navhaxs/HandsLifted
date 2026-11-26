@@ -76,6 +76,31 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    private bool _autoSaveInFlight;
+
+    /// <summary>
+    /// Like <see cref="AutoSaveNow"/> but the disk I/O runs off the UI thread, so a slow or stalled
+    /// drive can't freeze the app. Used for the periodic/change autosaves; if one is still running
+    /// the call is skipped (the next tick retries). UI thread only.
+    /// </summary>
+    public async void AutoSaveInBackground(string reason)
+    {
+        if (!AutoSaveEnabled || _autoSaveInFlight) return;
+        _autoSaveInFlight = true;
+        try
+        {
+            await PlaylistDocumentService.AutoSaveToFileAsync(Playlist);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[DOC] Autosave failed ({Reason})", reason);
+        }
+        finally
+        {
+            _autoSaveInFlight = false;
+        }
+    }
+
     public LibraryViewModel LibraryViewModel { get; init; }
 
     public AddItemViewModel AddItemViewModel { get; init; }
@@ -271,7 +296,7 @@ public class MainViewModel : ViewModelBase
             {
                 // backstop for change events that were never raised; runs whether or not auto-save is on
                 Playlist.DirtyTracker.Refresh();
-                AutoSaveNow("timer");
+                AutoSaveInBackground("timer");
             });
 
         // Dirty tracking: change events are hints, the tracker confirms against the saved baseline
@@ -292,7 +317,7 @@ public class MainViewModel : ViewModelBase
                 handler => playlist.Changed -= handler))
             .Switch()
             .Throttle(TimeSpan.FromSeconds(AUTOSAVE_CHANGE_DEBOUNCE_SECONDS), RxSchedulers.MainThreadScheduler)
-            .Subscribe(_ => AutoSaveNow("change"));
+            .Subscribe(_ => AutoSaveInBackground("change"));
 
         MessageBus.Current.Listen<LoadPlaylistAction>().Subscribe(async (msg) =>
         {
