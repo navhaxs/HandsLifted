@@ -164,11 +164,11 @@ namespace HandsLiftedApp.Tests.Models.Library
 
         [TestMethod]
         public void Smart_4Lines_JustOverCap_Splits() =>
-            AssertSizes(Smart(Dense(4, 36)), 2, 2); // 144 > 140
+            AssertSizes(Smart(Dense(4, 38)), 2, 2); // 152 > 150
 
         [TestMethod]
         public void Smart_4Lines_ExactlyAtCap_StaysWhole() =>
-            AssertSizes(Smart(Dense(4, 35)), 4); // 140 = cap, not over it
+            AssertSizes(Smart(string.Join("\n", Line(1, 38), Line(2, 38), Line(3, 38), Line(4, 36))), 4); // 150 = cap, not over it
 
         [TestMethod]
         public void Smart_4Lines_UnderCap_StaysWhole_EvenWithRhymeAndRepeatedOpening()
@@ -186,8 +186,8 @@ namespace HandsLiftedApp.Tests.Models.Library
         [TestMethod]
         public void Smart_6DenseLines_SplitsFinerThanEvenThrees()
         {
-            // 3 x 50 = 150 per slide is over the cap, so 3+3 loses to 2+2+2
-            AssertSizes(Smart(Dense(6, 50)), 2, 2, 2);
+            // 3 x 52 = 156 per slide is over the cap, so 3+3 loses to 2+2+2
+            AssertSizes(Smart(Dense(6, 52)), 2, 2, 2);
         }
 
         [TestMethod]
@@ -296,6 +296,21 @@ namespace HandsLiftedApp.Tests.Models.Library
         [TestMethod]
         public void Smart_HolyForeverPreChorus_Is3_3() => AssertSizes(SmartWide(HolyPreChorus), 3, 3);
 
+        // Two quatrains of ~145 characters each; "Then through the darkness Your loving-kindness" is ~0.82 scale in Arial 100.
+        private const string LivingHopeVerse1 = "How great the chasm that lay between us\nHow high the mountain I could not climb\n" +
+                                                "In desperation I turned to heaven\nAnd spoke Your name into the night\n" +
+                                                "Then through the darkness Your loving-kindness\nTore through the shadows of my soul\n" +
+                                                "The work is finished the end is written\nJesus Christ my living hope";
+
+        [TestMethod]
+        public void Smart_LivingHopeVerse1_IsTwoQuatrains() =>
+            Assert.AreEqual(
+                "How great the chasm that lay between us\nHow high the mountain I could not climb\n" +
+                "In desperation I turned to heaven\nAnd spoke Your name into the night\n\n" +
+                "Then through the darkness Your loving-kindness\nTore through the shadows of my soul\n" +
+                "The work is finished the end is written\nJesus Christ my living hope",
+                Smart(LivingHopeVerse1));
+
         // ---- per-line splitting ----
 
         private static void AssertSplit(string line, params string[] expected) =>
@@ -309,16 +324,20 @@ namespace HandsLiftedApp.Tests.Models.Library
             AssertSplit("If you've been forgiven and if you've been redeemed", "If you've been forgiven", "And if you've been redeemed");
 
         [TestMethod]
-        public void SplitLongLine_Verse2Line3() =>
-            AssertSplit("If you walk in freedom and if you bear His name", "If you walk in freedom", "And if you bear His name");
+        public void SplitLongLine_Verse2Line3_FitsInTheWiderTextArea() =>
+            AssertSplit("If you walk in freedom and if you bear His name", "If you walk in freedom and if you bear His name"); // ~0.82 scale at 50px margins
 
         [TestMethod]
         public void SplitLongLine_PrefersComma() =>
-            AssertSplit("Oh Lord, I will praise You for all of my days", "Oh Lord,", "I will praise You for all of my days");
+            AssertSplit("Praise Him all you nations, sing His name above every other name", "Praise Him all you nations,", "Sing His name above every other name");
 
         [TestMethod]
         public void SplitLongLine_SplitsBeforeIf() =>
-            AssertSplit("Who can stand against us if our God is for us", "Who can stand against us", "If our God is for us");
+            AssertSplit("Who can ever stand against us if our God is for us", "Who can ever stand against us", "If our God is for us");
+
+        [TestMethod]
+        public void SplitLongLine_LineJustFitting_IsKept() =>
+            AssertSplit("Who can stand against us if our God is for us", "Who can stand against us if our God is for us"); // ~0.83 scale: not worth splitting
 
         [TestMethod]
         public void SplitLongLine_ShortLine_Unchanged() => AssertSplit("Holy forever", "Holy forever");
@@ -350,7 +369,7 @@ namespace HandsLiftedApp.Tests.Models.Library
         {
             Assert.AreEqual(
                 "If you've been forgiven\nAnd if you've been redeemed\nSing the song forever to the Lamb\n\n" +
-                "If you walk in freedom\nAnd if you bear His name\nSing the song forever to the Lamb\nWe'll sing the song forever and amen",
+                "If you walk in freedom and if you bear His name\nSing the song forever to the Lamb\nWe'll sing the song forever and amen",
                 Smart(HolyVerse2));
         }
 
@@ -360,7 +379,6 @@ namespace HandsLiftedApp.Tests.Models.Library
             foreach (var chunk in Smart(HolyVerse2).Split("\n\n"))
             {
                 Assert.AreEqual(chunk.Contains("If you've been forgiven"), chunk.Contains("And if you've been redeemed"));
-                Assert.AreEqual(chunk.Contains("If you walk in freedom"), chunk.Contains("And if you bear His name"));
             }
         }
 

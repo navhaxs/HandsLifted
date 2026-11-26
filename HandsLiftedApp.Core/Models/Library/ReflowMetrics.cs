@@ -16,12 +16,12 @@ namespace HandsLiftedApp.Core.Models.Library
         double LineHeight,
         double MinScale)
     {
-        // Theme defaults (FontSize 100, LineHeightEm 1.2) with an average glyph 0.5em wide.
-        private const double DefaultCharWidth = 50.0;
+        // Theme defaults (FontSize 100, LineHeightEm 1.2) with an average glyph 0.47em wide (measured from Arial lyric text).
+        private const double DefaultCharWidth = 47.0;
 
         /// <summary>No theme available: estimate from the default theme.</summary>
         public static ReflowMetrics Default { get; } =
-            new(l => l.Length * DefaultCharWidth, 1760, 920, 120, 0.5);
+            new(l => l.Length * DefaultCharWidth, SongSlideSpecBuilder.MaxTextWidth, SongSlideSpecBuilder.MaxTextHeight, 120, 0.5);
 
         /// <summary>Lines never count as too wide. Isolates phrasing from splitting/shrink in tests.</summary>
         public static ReflowMetrics Unconstrained { get; } =

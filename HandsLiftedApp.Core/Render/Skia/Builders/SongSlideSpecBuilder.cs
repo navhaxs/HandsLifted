@@ -13,7 +13,7 @@ public static class SongSlideSpecBuilder
 {
     private const int CanvasWidth = 1920;
     private const int CanvasHeight = 1080;
-    private const float HorizontalMargin = 80f;
+    private const float HorizontalMargin = 50f;
     private const float VerticalMargin = 80f;
 
     /// <summary>Widest/tallest text block autofit allows (canvas minus margins).</summary>

@@ -131,6 +131,22 @@ public class SongSlideSpecBuilderTests
     }
 
     [TestMethod]
+    public void Build_SideMargin_Is50px()
+    {
+        var left = MakeTheme();
+        left.TextAlignment = TextAlignment.Left;
+        var right = MakeTheme();
+        right.TextAlignment = TextAlignment.Right;
+
+        var leftEl = (TextLineElement)SongSlideSpecBuilder.Build("Hello", left, false).Elements[0];
+        var rightEl = (TextLineElement)SongSlideSpecBuilder.Build("Hello", right, false).Elements[0];
+
+        Assert.AreEqual(50f, leftEl.Bounds.Left, 0.01f);
+        Assert.AreEqual(1920f - 50f, rightEl.Bounds.Right, 0.01f);
+        Assert.AreEqual(1820f, SongSlideSpecBuilder.MaxTextWidth);
+    }
+
+    [TestMethod]
     public void Build_AutofitEnabled_ShortTextKeepsThemeFontSize()
     {
         var slide = new SongSlideInstance(null, null, "id-autofit-3") { Text = "Line one\nLine two" };

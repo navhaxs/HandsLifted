@@ -92,7 +92,7 @@ namespace HandsLiftedApp.Core.Models.Library
         /// the font to the widest line and four long lines read as a wall of small text. Verses and bridges
         /// of 3 short lines sit near 100; four ~45-character chorus lines sit near 180.
         /// </summary>
-        internal const int SlideCharCap = 140;
+        internal const int SlideCharCap = 150;
         private const double OverCapCost = 3.0;       // flat cost for any slide over the cap: beats the extra slide it takes to avoid it
         private const double OverCapPerRatio = 4.0;   // plus this per 100% over, so a lighter slide still wins
 
@@ -190,7 +190,7 @@ namespace HandsLiftedApp.Core.Models.Library
 
         // ---- per-line splitting ----
 
-        private const double SplitBelowScale = 0.85; // a line autofit would shrink below this is a candidate for splitting
+        private const double SplitBelowScale = 0.8; // a line autofit would shrink below this is a candidate for splitting
         private const double MinSplitGain = 0.1;     // ...and a split must lift the narrower-fitting half's scale by at least this much
         private const double SplitPunctuationBonus = 3.0;
         private const double SplitConnectorBonus = 2.0;
