@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -59,5 +60,28 @@ public class SlideRegenerationCheckTests
         });
 
         Assert.IsTrue(SlideRegenerationCheck.NeedsSlideRegeneration(pdfInstance));
+    }
+
+    [TestMethod]
+    public async Task NeedsSlideRegenerationAsync_MatchesSyncVersion()
+    {
+        var playlist = new PlaylistInstance();
+
+        var empty = new PDFSlidesGroupItemInstance(playlist);
+        Assert.IsTrue(await SlideRegenerationCheck.NeedsSlideRegenerationAsync(empty));
+
+        var present = new PDFSlidesGroupItemInstance(playlist);
+        var slidePath = Path.Combine(_tempDir, "slide1.png");
+        File.WriteAllText(slidePath, "png-bytes");
+        present.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = slidePath });
+        Assert.IsFalse(await SlideRegenerationCheck.NeedsSlideRegenerationAsync(present));
+
+        var missing = new PDFSlidesGroupItemInstance(playlist);
+        missing.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = Path.Combine(_tempDir, "does-not-exist.png") });
+        Assert.IsTrue(await SlideRegenerationCheck.NeedsSlideRegenerationAsync(missing));
+
+        var nullPath = new PDFSlidesGroupItemInstance(playlist);
+        nullPath.Items.Add(new MediaGroupItem.MediaItem { SourceMediaFilePath = null });
+        Assert.IsTrue(await SlideRegenerationCheck.NeedsSlideRegenerationAsync(nullPath));
     }
 }

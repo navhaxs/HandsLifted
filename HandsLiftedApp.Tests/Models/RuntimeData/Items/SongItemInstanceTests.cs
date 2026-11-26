@@ -208,6 +208,17 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
             Assert.AreEqual("(Missing Song)", placeholder.Text);
         }
 
+        [TestMethod]
+        public void UnassignedSongId_GeneratesNoPlaceholderSlide()
+        {
+            var instance = new SongItemInstance(null);
+
+            instance.GenerateSlides();
+
+            Assert.IsFalse(
+                instance.Slides.OfType<HandsLiftedApp.Data.Slides.SongSlideInstance>().Any(s => s.Id == "MISSING"));
+        }
+
         // Regression: ItemInstanceFactory assigns SongId in an object initializer AFTER the constructor
         // returns. On a slow machine the constructor can outlast the 200ms slide-generation debounce it
         // starts, so slides get generated while SongId is still Guid.Empty ("(Missing Song)"). Assigning
@@ -226,7 +237,10 @@ namespace HandsLiftedApp.Tests.Models.RuntimeData.Items
             // what happens when construction of the real item outlasts the debounce interval.
             await Task.Delay(800);
             Dispatcher.UIThread.RunJobs();
-            Assert.AreEqual("MISSING", ((HandsLiftedApp.Data.Slides.SongSlideInstance)instance.Slides[0]).Id);
+            // An unassigned SongId is "not yet known", not "missing": no placeholder is built for it.
+            Assert.IsFalse(
+                instance.Slides.OfType<HandsLiftedApp.Data.Slides.SongSlideInstance>().Any(s => s.Id == "MISSING"),
+                "An item whose SongId is still unassigned must not get a '(Missing Song)' placeholder");
 
             instance.SongId = song.UUID;
             await Task.Delay(800); // longer than the 200ms slide-generation debounce

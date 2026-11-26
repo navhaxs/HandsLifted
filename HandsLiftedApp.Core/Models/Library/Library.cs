@@ -69,11 +69,16 @@ namespace HandsLiftedApp.Core.Models.Library
                 .Concat(Constants.SUPPORTED_PDF).Concat(Constants.SUPPORTED_POWERPOINT),
             StringComparer.OrdinalIgnoreCase);
 
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> _warnedMissingDirectories = new();
+
         protected virtual void Refresh()
         {
             if (!Directory.Exists(Config.Directory))
             {
-                Log.Error($"Library [{Config.Label}] fail - directory [{Config.Directory}] does not exist");
+                // A missing folder is an environment problem (unmounted drive, other machine), not an app
+                // fault, and Refresh runs repeatedly: warn once per library and folder, not an Error each time.
+                if (_warnedMissingDirectories.TryAdd($"{Config.Label}|{Config.Directory}", 0))
+                    Log.Warning("Library [{Label}] unavailable - directory [{Directory}] does not exist", Config.Label, Config.Directory);
             }
             else
             {

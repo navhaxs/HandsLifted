@@ -311,6 +311,7 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         public SongItemInstance(PlaylistInstance? parentPlaylist) : base()
         {
+            var ctorTimer = System.Diagnostics.Stopwatch.StartNew();
             ParentPlaylist = parentPlaylist;
 
             _songChangedSubscription = Globals.Instance.SongLibraryIndex.SongChanged
@@ -455,6 +456,11 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             {
                 ItemDataModified?.Invoke(this, EventArgs.Empty);
             });
+
+            // The constructor arms a 200 ms slide-generation debounce, so a slow constructor is what makes
+            // slides get generated before the factory has assigned SongId. Surface it.
+            if (ctorTimer.ElapsedMilliseconds >= 50)
+                Log.Debug("SongItemInstance constructor took {CtorMs} ms", ctorTimer.ElapsedMilliseconds);
         }
 
         public void Dispose()
@@ -499,6 +505,15 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
 
         void UpdateStanzaSlides()
         {
+            // SongId is assigned in an object initializer after the constructor returns; if the constructor's
+            // debounce fires first, there is nothing to generate yet (and no song to call "missing"). The
+            // SongId setter re-triggers generation once the real id arrives, so skip quietly instead of
+            // logging a warning and building a throwaway "(Missing Song)" slide. A non-empty id that does not
+            // resolve is still reported below. Local drafts carry their own (non-empty) SongId.
+            if (SongId == Guid.Empty && _localDraft == null)
+                return;
+
+            var generateTimer = System.Diagnostics.Stopwatch.StartNew();
             System.Collections.Generic.List<IRenderable>? toRender = null;
             lock (stantaSlidesLock)
             {
@@ -636,7 +651,8 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                     }
                     
                     // StanzaSlides.RemoveAt(0);
-                    Log.Verbose("Generated Stanza Slides. Count={Count}", newSlides.Count);
+                    Log.Debug("Generated Stanza Slides. Count={Count} SongId={SongId} PlaylistItemUuid={ItemUuid} in {GenerateMs} ms",
+                        newSlides.Count, SongId, UUID, generateTimer.ElapsedMilliseconds);
                     StanzaSlides = newSlides;
                     // this.RaisePropertyChanged("StanzaSlides");
                     this.RaisePropertyChanged("Slides");

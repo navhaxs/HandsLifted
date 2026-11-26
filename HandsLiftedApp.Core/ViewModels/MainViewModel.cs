@@ -357,8 +357,10 @@ public class MainViewModel : ViewModelBase
 
                 Playlist.IsPlaylistLoading = true;
 
+                var loadTimer = System.Diagnostics.Stopwatch.StartNew();
                 var x = await Task.Run(() => HandsLiftedDocXmlSerializer.DeserializePlaylist(msg.FilePath));
-                
+                var parseMs = loadTimer.ElapsedMilliseconds;
+
                 string? playlistDirectoryPath = Path.GetDirectoryName(msg.FilePath);
 
                 if (playlistDirectoryPath == null)
@@ -406,13 +408,34 @@ public class MainViewModel : ViewModelBase
                 
                 Log.Debug("Playlist load: PlaylistWorkingDirectory={PlaylistWorkingDirectory}", playlistDirectoryPath);
 
+                var buildStartMs = loadTimer.ElapsedMilliseconds;
                 var builtItems = new List<Item>();
+                // Per-item timing split into time spent waiting for the UI thread (Background priority
+                // dispatch) and time spent inside the factory itself, so a slow load can be attributed.
+                long totalQueueMs = 0, totalFactoryMs = 0, slowestFactoryMs = 0;
+                string? slowestItem = null;
                 foreach (var deserializedItem in x.Items)
                 {
+                    var queuedAt = loadTimer.ElapsedMilliseconds;
+                    long factoryMs = 0;
                     builtItems.Add(await Dispatcher.UIThread.InvokeAsync(
-                        () => ItemInstanceFactory.ToItemInstance(deserializedItem, Playlist),
+                        () =>
+                        {
+                            var startedAt = loadTimer.ElapsedMilliseconds;
+                            totalQueueMs += startedAt - queuedAt;
+                            var built = ItemInstanceFactory.ToItemInstance(deserializedItem, Playlist);
+                            factoryMs = loadTimer.ElapsedMilliseconds - startedAt;
+                            return built;
+                        },
                         DispatcherPriority.Background));
+                    totalFactoryMs += factoryMs;
+                    if (factoryMs > slowestFactoryMs)
+                    {
+                        slowestFactoryMs = factoryMs;
+                        slowestItem = deserializedItem.GetType().Name;
+                    }
                 }
+                var builtMs = loadTimer.ElapsedMilliseconds;
                 // Assign empty collection first so ItemsControl starts with zero items,
                 // then add each item at Background priority. Template creation spreads
                 // across N dispatcher yields instead of one synchronous batch.
@@ -428,15 +451,27 @@ public class MainViewModel : ViewModelBase
                         () => Playlist.Items.Add(item),
                         DispatcherPriority.Background);
                 }
-                foreach (var item in builtItems)
+                var addedMs = loadTimer.ElapsedMilliseconds;
+                // The File.Exists checks can be slow (network drive, files that live on another machine),
+                // so they run off the UI thread; only the Sync() calls come back to it.
+                var syncChecks = builtItems
+                    .Where(i => i is IItemSyncable && i is MediaGroupItem)
+                    .Select(i => (Item: i, NeedsSync: SlideRegenerationCheck.NeedsSlideRegenerationAsync((MediaGroupItem)i)))
+                    .ToList();
+                await Task.WhenAll(syncChecks.Select(c => c.NeedsSync));
+                var syncCount = 0;
+                foreach (var check in syncChecks)
                 {
-                    if (item is IItemSyncable syncable && item is MediaGroupItem group
-                        && SlideRegenerationCheck.NeedsSlideRegeneration(group))
+                    if (check.NeedsSync.Result)
                     {
-                        syncable.Sync();
+                        ((IItemSyncable)check.Item).Sync();
+                        syncCount++;
                     }
                 }
                 Playlist.IsPlaylistLoading = false;
+                Log.Debug("Playlist load: {ItemCount} items - parse {ParseMs} ms, build {BuildMs} ms (UI-queue wait {QueueMs} ms, factory {FactoryMs} ms, slowest {SlowestType} {SlowestMs} ms), add {AddMs} ms, sync check {SyncCheckMs} ms ({SyncCount} to sync), total {TotalMs} ms",
+                    builtItems.Count, parseMs, builtMs - buildStartMs, totalQueueMs, totalFactoryMs, slowestItem, slowestFactoryMs,
+                    addedMs - builtMs, loadTimer.ElapsedMilliseconds - addedMs, syncCount, loadTimer.ElapsedMilliseconds);
 
                 Playlist.LastSaved = new DateTime();
                 Playlist.ActiveItemInsertIndex = null;

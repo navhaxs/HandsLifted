@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace HandsLiftedApp.Core.Services;
 
@@ -51,10 +53,52 @@ public sealed class SlideRenderQueue
     public void EnqueueBatch(IEnumerable<IRenderable> renderables)
         => _ = EnqueueBatchAsync(renderables.Select<IRenderable, Action>(r => r.Render));
 
+    // Busy-period bookkeeping, only used to log how long a burst of renders took (see LogDrainedIfNotable).
+    private readonly object _statsLock = new();
+    private int _pending;
+    private int _burstCount;
+    private long _burstStartTimestamp;
+
     private async Task RunWithGate(Action work)
     {
-        await _gate.WaitAsync().ConfigureAwait(false);
-        try { await Task.Run(work).ConfigureAwait(false); }
-        finally { _gate.Release(); }
+        lock (_statsLock)
+        {
+            if (_pending++ == 0)
+            {
+                _burstCount = 0;
+                _burstStartTimestamp = Stopwatch.GetTimestamp();
+            }
+            _burstCount++;
+        }
+
+        try
+        {
+            await _gate.WaitAsync().ConfigureAwait(false);
+            try { await Task.Run(work).ConfigureAwait(false); }
+            finally { _gate.Release(); }
+        }
+        finally
+        {
+            LogDrainedIfNotable();
+        }
+    }
+
+    /// <summary>
+    /// Logs when the queue goes idle after a burst of work, so "how long until every slide was rendered"
+    /// after a playlist load can be read straight off the log. Small bursts (a single edited slide) are skipped.
+    /// </summary>
+    private void LogDrainedIfNotable()
+    {
+        int count;
+        TimeSpan elapsed;
+        lock (_statsLock)
+        {
+            if (--_pending != 0) return;
+            count = _burstCount;
+            elapsed = Stopwatch.GetElapsedTime(_burstStartTimestamp);
+        }
+
+        if (count >= 5 || elapsed.TotalMilliseconds >= 500)
+            Log.Debug("Render queue drained: {RenderCount} renders in {ElapsedMs} ms", count, (long)elapsed.TotalMilliseconds);
     }
 }

@@ -24,6 +24,9 @@ namespace HandsLiftedApp.Core
 #endif
         );
 
+        /// <summary>Short random id, unique per app launch; attached to every log event as <c>LaunchId</c>.</summary>
+        public static readonly string LaunchId = Guid.NewGuid().ToString("N").Substring(0, 8);
+
         public static void InitLogging()
         {
             if (LoggingConfig.Instance.LogLevel != null)
@@ -38,9 +41,16 @@ namespace HandsLiftedApp.Core
                 "[{@t:HH:mm:ss} {@l:u3}]{#if SourceContext is not null} [{SourceContext:l}]{#end} {@m}\n{@x}");
             var seqUrl = LoggingConfig.Instance.SeqUrl;
 
+            // Properties on every event so one Seq instance shared by several machines / launches can be
+            // split apart: filter on e.g. LaunchId = '...' or Machine = '...' (Seq has no other way to tell
+            // two simultaneous app instances apart).
             var loggerConfig = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(LevelSwitch)
                 .Enrich.FromLogContext()
+                .Enrich.WithProperty("Machine", Environment.MachineName)
+                .Enrich.WithProperty("ProcessId", Environment.ProcessId)
+                .Enrich.WithProperty("LaunchId", LaunchId)
+                .Enrich.WithProperty("Build", BuildInfo.Version.GetGitHash())
                 .WriteTo.Debug(formatter: OUTPUT_TEMPLATE);
 
             if (LoggingConfig.Instance.EnableLogConsole)
