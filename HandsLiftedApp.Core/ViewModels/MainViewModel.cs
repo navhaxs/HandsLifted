@@ -288,6 +288,28 @@ public class MainViewModel : ViewModelBase
             }
         });
 
+        SplitGroupFromHereCommand = ReactiveCommand.Create<object>(x =>
+        {
+            if (x is not ReadOnlyCollection<object> parameters) return;
+            try
+            {
+                var slide = (Slide)parameters.ElementAt(0);
+                if (parameters.ElementAt(1) is not MediaGroupItem group) return;
+
+                var index = group is MediaGroupItemInstance mgi
+                    ? mgi.ItemIndexOfSlide(slide)
+                    : (group as IItemInstance)?.Slides.IndexOf(slide) ?? -1;
+                var playlist = GroupSlideEdits.PlaylistOf(group);
+                if (playlist == null || !SplitMediaGroupAction.CanSplit(group, index)) return;
+
+                playlist.UndoStack.Execute(new SplitMediaGroupAction(playlist, group, index));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Split media group failed");
+            }
+        });
+
         // Auto-save triggers. Periodic: a fixed-rate timer that deliberately does NOT depend on
         // IsDirty / Playlist.Changed, since change notification isn't complete (e.g. nested item
         // edits can be missed). AutoSaveToFile compares against disk, so idle ticks write nothing.
@@ -916,6 +938,9 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<object, Unit> ChangeMediaCommand { get; }
     public ReactiveCommand<object, Unit> EditCustomSlideCommand { get; }
     public ReactiveCommand<object, Unit> DuplicateSlideCommand { get; }
+
+    /// <summary>Splits the slide's media group in two, the second starting at that slide. Parameter: (slide, group).</summary>
+    public ReactiveCommand<object, Unit> SplitGroupFromHereCommand { get; }
 
     private PlaylistInstance _playlist = new();
 

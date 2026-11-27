@@ -245,6 +245,16 @@
                             </MultiBinding>
                         </MenuItem.CommandParameter>
                     </MenuItem>
+                    <MenuItem Command="{Binding $parent[Window].DataContext.SplitGroupFromHereCommand}"
+                              Header="Split media group from here"
+                              IsVisible="{Binding Converter={StaticResource isDuplicatableSlideConverter}}">
+                        <MenuItem.CommandParameter>
+                            <MultiBinding>
+                                <Binding />
+                                <Binding Path="$parent[ListBox].DataContext" />
+                            </MultiBinding>
+                        </MenuItem.CommandParameter>
+                    </MenuItem>
                     <!--  A LogoItem has a single synthetic slide, so deleting it removes the whole item.  -->
                     <MenuItem Command="{Binding $parent[Window].DataContext.DeleteItemCommand}"
                               CommandParameter="{Binding $parent[ListBox].DataContext}"

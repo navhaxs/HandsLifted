@@ -157,6 +157,7 @@ namespace HandsLiftedApp.Core.Undo
                 case MediaGroupItemInstance m: m.GenerateSlides(); break;
                 case PowerPointPresentationItemInstance p: p.GenerateSlides(); break;
                 case PDFSlidesGroupItemInstance d: d.GenerateSlides(); break;
+                case GoogleSlidesGroupItemInstance g: g.GenerateSlides(); break;
             }
         }
     }

@@ -87,6 +87,20 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
             return CreateItem.GenerateMediaContentSlide(item, this);
         }
 
+        /// <summary>
+        /// Index in <see cref="MediaGroupItem.Items"/> of the group item that produced <paramref name="slide"/>
+        /// (-1 if none). Differs from the slide's index when an item generates no slide.
+        /// </summary>
+        public int ItemIndexOfSlide(Slide slide)
+        {
+            for (var i = 0; i < Items.Count; i++)
+            {
+                if (ReferenceEquals(GetOrCreateSlide(Items[i]), slide)) return i;
+            }
+
+            return -1;
+        }
+
         public void GenerateSlides()
         {
             var newOrder = new List<Slide>();
