@@ -295,4 +295,29 @@ public class SongItemInstanceMotionBackgroundResolutionTests
         Assert.IsTrue(raised,
             "Editing the currently-assigned theme's own BackgroundMode must re-raise ShowMotionBackgroundVideoButton");
     });
+
+    // Regression: the constructor's motion-background subscription treated its first (construction-time)
+    // value as a change and re-rendered every bitmap inline - including a blocking video-frame extraction
+    // (0.8-2.4 s per song) - on the UI thread while a playlist loaded. Constructing must render nothing.
+    [TestMethod]
+    public void Construction_WithMotionBackgroundDefaultTheme_RendersNothingInline()
+    {
+        var playlist = new PlaylistInstance();
+        var theme = new BaseSlideTheme
+        {
+            BackgroundMode = ThemeBackgroundMode.MotionBackground,
+            DefaultMotionBackgroundVideoPath = TempVideoPath("ctor-regression.mp4")
+        };
+        playlist.Designs.Add(theme);
+        playlist.DefaultSongThemeId = theme.Id;
+
+        var instance = new SongItemInstance(playlist);
+
+        Assert.IsTrue(instance.HasMotionBackground, "precondition: the default theme supplies a motion video");
+        var titleSlide = (HandsLiftedApp.Data.Slides.SongTitleSlideInstance)typeof(SongItemInstance)
+            .GetField("titleSlide", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .GetValue(instance)!;
+        Assert.IsNull(titleSlide.Cached,
+            "the title slide bitmap must be rendered later on the render queue, not during construction");
+    }
 }

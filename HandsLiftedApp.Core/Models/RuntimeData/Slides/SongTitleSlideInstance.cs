@@ -122,34 +122,8 @@ namespace HandsLiftedApp.Data.Slides
                 var videoPath = ParentSongItem?.ResolvedMotionBackgroundVideoPath;
                 if (!string.IsNullOrWhiteSpace(videoPath))
                 {
-                    if (ThumbnailEngineSettings.UseMpvEngine)
-                    {
-                        try
-                        {
-                            using var avaBmp = MpvThumbnailExtractor.ExtractAsync(videoPath, maxWidth: 1920, maxHeight: 1080)
-                                .GetAwaiter().GetResult();
-                            if (avaBmp != null)
-                                videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Warning(ex, "[SongTitleSlideInstance] Failed to extract video thumbnail from {Path}", videoPath);
-                        }
-                    }
-                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        try
-                        {
-                            using var avaBmp = WindowsThumbnailProvider.GetThumbnail(
-                                videoPath, 1920, 1080, ThumbnailOptions.None);
-                            if (avaBmp != null)
-                                videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Warning(ex, "[SongTitleSlideInstance] Failed to extract video thumbnail from {Path}", videoPath);
-                        }
-                    }
+                    // A private copy of the (shared, cached) first frame: disposed below once drawn.
+                    videoFrame = MotionVideoFrameCache.GetFrame(videoPath);
                 }
             }
 

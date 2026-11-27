@@ -417,6 +417,9 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
                 .Scan(
                     new { Previous = (string?)null, Current = (string?)null },
                     (acc, newValue) => new { Previous = acc.Current, Current = newValue })
+                // The first emission is the value at construction, not a change: no slides exist yet, and
+                // UpdateStanzaSlides renders every slide it creates, so there is nothing to regenerate.
+                .Skip(1)
                 .Subscribe(pair =>
                 {
                     this.RaisePropertyChanged(nameof(HasMotionBackground));
@@ -764,61 +767,18 @@ namespace HandsLiftedApp.Core.Models.RuntimeData.Items
         [XmlIgnore]
         public bool HasMotionBackground => ResolvedMotionBackgroundVideoPath != null;
 
+        /// <summary>
+        /// Re-renders every slide bitmap (song slides and the title slide). Queued on the render queue like
+        /// every other render: doing it inline ran full-size renders and a blocking video-frame extraction
+        /// on whichever thread changed the motion background - the UI thread during a playlist load.
+        /// </summary>
         private void RegenerateAllSlideBitmaps()
         {
-            foreach (var slide in Slides.OfType<SongSlideInstance>())
-            {
-                var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongSlideSpecBuilder.Build(slide);
-                using var skBitmap = HandsLiftedApp.Core.Render.Skia.SlideRenderer.RenderToSKBitmap(spec);
-                slide.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
-                slide.Thumbnail = BitmapUtils.RenderThumbnail(spec);
-                HandsLiftedApp.Core.Services.ThumbnailRenderSize.Track(slide);
-            }
-
-            // Also regenerate title slide bitmap
+            var renderables = Slides.OfType<SongSlideInstance>().Cast<IRenderable>().ToList();
             if (titleSlide is SongTitleSlideInstance titleInstance)
-            {
-                SKBitmap? videoFrame = null;
-                if (HasMotionBackground)
-                {
-                    if (ThumbnailEngineSettings.UseMpvEngine)
-                    {
-                        try
-                        {
-                            using var avaBmp = MpvThumbnailExtractor.ExtractAsync(ResolvedMotionBackgroundVideoPath, maxWidth: 1920, maxHeight: 1080)
-                                .GetAwaiter().GetResult();
-                            if (avaBmp != null)
-                                videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", ResolvedMotionBackgroundVideoPath);
-                        }
-                    }
-                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        try
-                        {
-                            using var avaBmp = WindowsThumbnailProvider.GetThumbnail(
-                                ResolvedMotionBackgroundVideoPath, 1920, 1080, ThumbnailOptions.None);
-                            if (avaBmp != null)
-                                videoFrame = BitmapUtils.AvaloniaToSKBitmap(avaBmp);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Warning(ex, "[SongItemInstance] Failed to extract video thumbnail from {Path}", ResolvedMotionBackgroundVideoPath);
-                        }
-                    }
-                }
-
-                var spec = HandsLiftedApp.Core.Render.Skia.Builders.SongTitleSlideSpecBuilder.Build(titleInstance, videoFrame);
-                using var skBitmap = HandsLiftedApp.Core.Render.Skia.SlideRenderer.RenderToSKBitmap(spec);
-                titleInstance.Cached = BitmapUtils.SKBitmapToAvalonia(skBitmap);
-                // The spec's background can hold videoFrame, so render the thumbnail before disposing it.
-                titleInstance.Thumbnail = BitmapUtils.RenderThumbnail(spec);
-                videoFrame?.Dispose();
-                HandsLiftedApp.Core.Services.ThumbnailRenderSize.Track(titleInstance);
-            }
+                renderables.Add(titleInstance);
+            if (renderables.Count > 0)
+                Globals.Instance.SlideRenderQueue.EnqueueBatch(renderables);
         }
     }
 
