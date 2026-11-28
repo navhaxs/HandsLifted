@@ -614,9 +614,13 @@ namespace HandsLiftedApp.Core.Models
             get => PresentationState == PresentationStateEnum.Logo;
             set
             {
+                // The Logo/Blank RadioButtons bind two-way to IsLogo/IsBlank and share a group, so checking one
+                // un-checks the other and writes false back here. That must not clobber the state the other just set.
+                if (!value && PresentationState != PresentationStateEnum.Logo) return;
                 if (value) AutoAdvanceTimer.Timer.Stop(true);
-                this.RaiseAndSetIfChanged(ref _presentationState,
-                    value ? PresentationStateEnum.Logo : PresentationStateEnum.Slides, nameof(PresentationState));
+                // Through PresentationState so IsLogo/IsBlank/IsQuickShow change notifications fire: a change that
+                // starts elsewhere (WebSocket, F1/F12) has to update the radio buttons too.
+                PresentationState = value ? PresentationStateEnum.Logo : PresentationStateEnum.Slides;
             }
         }
 
@@ -625,9 +629,10 @@ namespace HandsLiftedApp.Core.Models
             get => PresentationState == PresentationStateEnum.Blank;
             set
             {
+                // See IsLogo: ignore the write-back from a radio button that was un-checked by its sibling.
+                if (!value && PresentationState != PresentationStateEnum.Blank) return;
                 if (value) AutoAdvanceTimer.Timer.Stop(true);
-                this.RaiseAndSetIfChanged(ref _presentationState,
-                    value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides, nameof(PresentationState));
+                PresentationState = value ? PresentationStateEnum.Blank : PresentationStateEnum.Slides;
             }
         }
 

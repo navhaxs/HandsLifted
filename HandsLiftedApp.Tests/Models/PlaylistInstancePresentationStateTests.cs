@@ -39,6 +39,58 @@ public class PlaylistInstancePresentationStateTests
         return Task.CompletedTask;
     });
 
+    // The Logo / Blank RadioButtons in LivePane bind IsChecked to IsLogo / IsBlank, so a state change that comes from
+    // the message bus (WebSocket, F1/F12) must raise those properties, not just PresentationState.
+    [TestMethod]
+    public Task GotoBlankAndLogo_RaiseIsBlankAndIsLogoChanged() => DispatcherTestThread.Run(() =>
+    {
+        var playlist = new PlaylistInstance();
+        var raised = new System.Collections.Generic.List<string>();
+        playlist.PropertyChanged += (_, e) => raised.Add(e.PropertyName ?? "");
+
+        Send(ActionMessage.NavigateSlideAction.GotoBlank);
+        CollectionAssert.Contains(raised, nameof(PlaylistInstance.IsBlank));
+        Assert.IsTrue(playlist.IsBlank);
+        Assert.IsFalse(playlist.IsLogo);
+
+        raised.Clear();
+        Send(ActionMessage.NavigateSlideAction.GotoLogo);
+        CollectionAssert.Contains(raised, nameof(PlaylistInstance.IsLogo));
+        CollectionAssert.Contains(raised, nameof(PlaylistInstance.IsBlank)); // Blank radio must un-check
+        Assert.IsTrue(playlist.IsLogo);
+        Assert.IsFalse(playlist.IsBlank);
+
+        raised.Clear();
+        Send(ActionMessage.NavigateSlideAction.GotoSlides);
+        CollectionAssert.Contains(raised, nameof(PlaylistInstance.IsLogo));
+        Assert.IsFalse(playlist.IsLogo);
+        Assert.IsFalse(playlist.IsBlank);
+
+        return Task.CompletedTask;
+    });
+
+    // A radio button that is un-checked because its sibling was checked writes false back to its binding. That must
+    // not knock the playlist out of the state the sibling just set.
+    [TestMethod]
+    public Task SettingIsLogoFalse_WhileBlank_KeepsBlank() => DispatcherTestThread.Run(() =>
+    {
+        var playlist = new PlaylistInstance();
+        Send(ActionMessage.NavigateSlideAction.GotoBlank);
+
+        playlist.IsLogo = false;
+
+        Assert.AreEqual(PlaylistInstance.PresentationStateEnum.Blank, playlist.PresentationState);
+
+        playlist.IsBlank = false;
+        Assert.AreEqual(PlaylistInstance.PresentationStateEnum.Slides, playlist.PresentationState);
+
+        playlist.IsLogo = true;
+        playlist.IsBlank = false; // Blank radio un-checked after Logo was checked
+        Assert.AreEqual(PlaylistInstance.PresentationStateEnum.Logo, playlist.PresentationState);
+
+        return Task.CompletedTask;
+    });
+
     [TestMethod]
     public Task GotoSlides_ClearsQuickShow() => DispatcherTestThread.Run(() =>
     {
