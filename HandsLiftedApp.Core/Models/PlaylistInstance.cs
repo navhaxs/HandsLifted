@@ -185,6 +185,9 @@ namespace HandsLiftedApp.Core.Models
                         case ActionMessage.NavigateSlideAction.GotoBlank:
                             IsBlank = true;
                             break;
+                        case ActionMessage.NavigateSlideAction.GotoSlides:
+                            PresentationState = PresentationStateEnum.Slides;
+                            break;
                     }
                 }));
 

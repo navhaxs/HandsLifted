@@ -4,13 +4,14 @@
     {
         public NavigateSlideAction Action { get; set; }
         
-        // TODO - clear LOGO / BLANK
         public enum NavigateSlideAction
         {
             NextSlide,
             PreviousSlide,
             GotoLogo,
             GotoBlank,
+            /// <summary>Clears Logo / Blank / QuickShow and shows the current slide again.</summary>
+            GotoSlides,
             // GotoFreeze,
         }
     }

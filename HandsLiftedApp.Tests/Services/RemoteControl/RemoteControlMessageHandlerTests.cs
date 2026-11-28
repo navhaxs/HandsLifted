@@ -65,13 +65,35 @@ public class RemoteControlMessageHandlerTests
     }
 
     [TestMethod]
+    [DataRow("GotoLogo")]
+    [DataRow("GotoBlank")]
+    [DataRow("GotoSlides")]
+    public void Handle_PresentationStateAction_PublishesActionMessageWithoutFocus(string action)
+    {
+        // wire names are the enum member names (ActionMessage is internal, so the parameter can't be the enum)
+        var expected = Enum.Parse<ActionMessage.NavigateSlideAction>(action);
+        ActionMessage? received = null;
+        var focusCount = 0;
+        using var actionSub = MessageBus.Current.Listen<ActionMessage>()
+            .Subscribe(msg => received = msg);
+        using var focusSub = MessageBus.Current.Listen<FocusSelectedItem>()
+            .Subscribe(_ => focusCount++);
+
+        RemoteControlMessageHandler.Handle("{\"action\":\"" + action + "\"}");
+
+        Assert.IsNotNull(received);
+        Assert.AreEqual(expected, received!.Action);
+        Assert.AreEqual(0, focusCount);
+    }
+
+    [TestMethod]
     public void Handle_UnknownAction_DoesNotPublish()
     {
         ActionMessage? received = null;
         using var subscription = MessageBus.Current.Listen<ActionMessage>()
             .Subscribe(msg => received = msg);
 
-        RemoteControlMessageHandler.Handle("{\"action\":\"GotoBlank\"}");
+        RemoteControlMessageHandler.Handle("{\"action\":\"Bogus\"}");
 
         Assert.IsNull(received);
     }

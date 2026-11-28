@@ -41,10 +41,13 @@ Other fields in the object are ignored.
 |---|---|
 | `NextSlide` | Same as pressing Right / Page Down in the main window: advance to the next slide. |
 | `PreviousSlide` | Same as pressing Left / Page Up: go back one slide. |
+| `GotoLogo` | Show the logo (same as F12). Idempotent: sending it while the logo is already up leaves it up. |
+| `GotoBlank` | Show a blank screen (same as F1). Idempotent. |
+| `GotoSlides` | Return to the current slide: clears Logo, Blank and QuickShow. No-op if slides are already showing. |
 
-Both publish `ActionMessage { Action = ... }` on `MessageBus.Current`, the same message the keyboard shortcuts publish, so behaviour (crossing item boundaries, group handling, and so on) is identical to a keypress.
+All of them publish `ActionMessage { Action = ... }` on `MessageBus.Current`, the same message the keyboard shortcuts publish, so behaviour (crossing item boundaries, group handling, and so on) is identical to a keypress. `NextSlide` / `PreviousSlide` also scroll the playlist so the selected slide is in view, like the keyboard and the on-screen buttons.
 
-> **Not exposed yet:** `GotoLogo` and `GotoBlank` exist in `ActionMessage.NavigateSlideAction` but the remote-control handler does not map them. Sending them is currently treated as an unrecognized action and ignored. Adding them is a two-line change in `RemoteControlMessageHandler.ParseAction`.
+Logo and Blank are states, not toggles: there is no "toggle" action, because the server never reports its state back and a toggle would drift out of sync. To leave Logo or Blank, send `GotoSlides`. `NextSlide` and `PreviousSlide` also leave Logo or Blank, but they only restore the current slide and do not advance, so a stray press while the screen is blank cannot skip a slide.
 
 ## Responses and errors
 
@@ -138,10 +141,11 @@ await ws.SendAsync(payload, WebSocketMessageType.Text, true, CancellationToken.N
 
 ## Extending
 
-To add an action (for example `GotoBlank`):
+To add an action:
 
-1. Add the case to the `switch` in `RemoteControlMessageHandler.ParseAction`. The string should match the `ActionMessage.NavigateSlideAction` member name.
-2. Add a test in `HandsLiftedApp.Tests/Services/RemoteControl/RemoteControlMessageHandlerTests.cs`.
-3. Update the Actions table above.
+1. Add a member to `ActionMessage.NavigateSlideAction` and handle it in the `ActionMessage` switch in `PlaylistInstance` (if it is not already handled there).
+2. Add the case to the `switch` in `RemoteControlMessageHandler.ParseAction`. The string should match the enum member name.
+3. Add a test in `HandsLiftedApp.Tests/Services/RemoteControl/RemoteControlMessageHandlerTests.cs`.
+4. Update the Actions table above.
 
 New actions are additive: clients on the old protocol keep working, and older servers ignore actions they do not know without closing the connection.

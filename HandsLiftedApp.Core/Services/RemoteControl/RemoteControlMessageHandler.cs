@@ -51,6 +51,9 @@ internal static class RemoteControlMessageHandler
         {
             "NextSlide" => ActionMessage.NavigateSlideAction.NextSlide,
             "PreviousSlide" => ActionMessage.NavigateSlideAction.PreviousSlide,
+            "GotoLogo" => ActionMessage.NavigateSlideAction.GotoLogo,
+            "GotoBlank" => ActionMessage.NavigateSlideAction.GotoBlank,
+            "GotoSlides" => ActionMessage.NavigateSlideAction.GotoSlides,
             null => LogAndReturnNull(json, "message had no \"action\" field or was not a JSON object"),
             _ => LogAndReturnNull(json, $"unrecognized action \"{message.Action}\"")
         };
