@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using HandsLiftedApp.Core.Models;
 using HandsLiftedApp.Core.Models.RuntimeData;
 using HandsLiftedApp.Core.Models.RuntimeData.Items;
@@ -31,11 +32,37 @@ namespace HandsLiftedApp.Core.Undo
             _playlist = playlist;
             _groupId = group.UUID;
             _splitIndex = splitIndex;
-            _newTitle = $"{group.Title} (part 2)";
+            _newTitle = NextPartTitle(playlist, group.Title);
             Description = description;
         }
 
         public string Description { get; }
+
+        private static readonly Regex PartSuffix = new(@"\s*\(part (\d+)\)$", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Title for the group a split creates. Repeated splits of one parent number their parts
+        /// ("X", "X (part 2)", "X (part 3)") instead of stacking suffixes ("X (part 2) (part 2)"):
+        /// the base title has any trailing "(part N)" removed, and the new part is one past the highest
+        /// part of that base already in the playlist (the unsuffixed group counts as part 1).
+        /// </summary>
+        public static string NextPartTitle(PlaylistInstance playlist, string? title)
+        {
+            var baseTitle = PartSuffix.Replace(title ?? "", "");
+            var highest = 1;
+            foreach (var item in playlist.Items)
+            {
+                var other = item.Title ?? "";
+                if (other == baseTitle) continue; // part 1, already counted
+                var m = PartSuffix.Match(other);
+                if (m.Success
+                    && PartSuffix.Replace(other, "") == baseTitle
+                    && int.TryParse(m.Groups[1].Value, out var n)
+                    && n > highest)
+                    highest = n;
+            }
+            return $"{baseTitle} (part {highest + 1})";
+        }
 
         /// <summary>Whether <paramref name="group"/> can be split so that slide <paramref name="itemIndex"/> starts the second half.</summary>
         public static bool CanSplit(MediaGroupItem group, int itemIndex) =>

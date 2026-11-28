@@ -75,6 +75,54 @@ public class SplitMediaGroupActionTests
     }
 
     [TestMethod]
+    public void Split_RepeatedlyFromTheTail_NumbersPartsInsteadOfStackingSuffixes()
+    {
+        var p = new PlaylistInstance();
+        var g = new MediaGroupItemInstance(p) { Title = "Deck" };
+        Fill(g, "1", "2", "3", "4");
+        p.Items.Add(g);
+        p.UndoStack.Clear();
+
+        p.UndoStack.Execute(new SplitMediaGroupAction(p, g, 1));
+        p.UndoStack.Execute(new SplitMediaGroupAction(p, (MediaGroupItem)p.Items[1], 1));
+        p.UndoStack.Execute(new SplitMediaGroupAction(p, (MediaGroupItem)p.Items[2], 1));
+
+        CollectionAssert.AreEqual(
+            new[] { "Deck", "Deck (part 2)", "Deck (part 3)", "Deck (part 4)" },
+            p.Items.Select(i => i.Title).ToArray());
+    }
+
+    [TestMethod]
+    public void Split_MiddlePart_TakesNextFreeNumber()
+    {
+        var p = new PlaylistInstance();
+        foreach (var t in new[] { "Deck", "Deck (part 2)", "Deck (part 3)", "Other (part 9)" })
+            p.Items.Add(new MediaGroupItemInstance(p) { Title = t });
+
+        Assert.AreEqual("Deck (part 4)", SplitMediaGroupAction.NextPartTitle(p, "Deck (part 2)"));
+        Assert.AreEqual("Deck (part 4)", SplitMediaGroupAction.NextPartTitle(p, "Deck"));
+        Assert.AreEqual("Fresh (part 2)", SplitMediaGroupAction.NextPartTitle(p, "Fresh"));
+        // a suffixed title with no unsuffixed sibling still continues from its own number
+        Assert.AreEqual("Other (part 10)", SplitMediaGroupAction.NextPartTitle(p, "Other (part 9)"));
+    }
+
+    [TestMethod]
+    public void Split_UndoRedo_KeepsTheSameNewTitle()
+    {
+        var p = new PlaylistInstance();
+        var g = new MediaGroupItemInstance(p) { Title = "G" };
+        Fill(g, "A", "B");
+        p.Items.Add(g);
+        p.UndoStack.Clear();
+
+        p.UndoStack.Execute(new SplitMediaGroupAction(p, g, 1));
+        p.UndoStack.Undo();
+        p.UndoStack.Redo();
+
+        Assert.AreEqual("G (part 2)", p.Items[1].Title);
+    }
+
+    [TestMethod]
     public void CanSplit_RejectsFirstSlideAndOutOfRange()
     {
         var p = new PlaylistInstance();
