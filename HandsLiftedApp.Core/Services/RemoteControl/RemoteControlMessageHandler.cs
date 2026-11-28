@@ -1,5 +1,6 @@
 using System;
 using HandsLiftedApp.Core.Models.AppState;
+using HandsLiftedApp.Core.Models.UI;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
@@ -22,6 +23,15 @@ internal static class RemoteControlMessageHandler
         }
 
         MessageBus.Current.SendMessage(new ActionMessage { Action = action.Value });
+
+        // KeyboardSlideNavigation and the on-screen Next/Previous buttons send FocusSelectedItem right after
+        // navigating, which scrolls the playlist so the newly selected slide is in view. Without it a remote
+        // navigates correctly but the playlist stays scrolled where it was.
+        if (action.Value is ActionMessage.NavigateSlideAction.NextSlide
+            or ActionMessage.NavigateSlideAction.PreviousSlide)
+        {
+            MessageBus.Current.SendMessage(new FocusSelectedItem());
+        }
     }
 
     private static ActionMessage.NavigateSlideAction? ParseAction(string json)
